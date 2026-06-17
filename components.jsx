@@ -55,17 +55,17 @@ function Trend({ v, small, animate }) {
 // ---- Sidebar ------------------------------
 const NAV = [
   { id: "overview", ko: "Executive Summary", en: "Executive Summary", icon: "grid" },
+  { id: "articles", ko: "데일리 기사", en: "Daily Articles", icon: "news" },
   { id: "native", ko: "AI 네이티브", en: "AI Native", icon: "ai" },
   { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", icon: "device" },
   { id: "startup", ko: "AI 스타트업", en: "AI Startups", icon: "spark" },
-  { id: "vp", ko: "밸류 프로포지션", en: "Value Proposition", icon: "target" },
-  { id: "articles", ko: "데일리 기사", en: "Daily Articles", icon: "news" },
   { id: "charts", ko: "정량 분석", en: "Quant Charts", icon: "chart" },
   { id: "monthly", ko: "월별 추이", en: "Monthly Trends", icon: "chart" },
   { id: "insights", ko: "핵심 인사이트", en: "Insights", icon: "pulse" },
   { id: "dynamics", ko: "경쟁 다이내믹스", en: "Competitive Map", icon: "target" },
   { id: "bizmodel", ko: "수익화 모델", en: "Biz Model", icon: "chart" },
   { id: "reports", ko: "리서치 리포트", en: "Research", icon: "report" },
+  { id: "stocks", ko: "주가 차트", en: "Stock Prices", icon: "pulse" },
 ];
 
 // gradient background for the sidebar, derived from a single brand color
@@ -373,7 +373,7 @@ function AIChatbot({ onNav }) {
       return { qa, score };
     });
     scored.sort((a, b) => b.score - a.score);
-    if (scored[0] && scored[0].score >= 4) { typeOut(scored[0].qa.a, scored[0].qa.nav); return; }
+    if (scored[0] && scored[0].score >= 3) { typeOut(scored[0].qa.a, scored[0].qa.nav); return; }
 
     const D = window.DASH;
     const results = [];
@@ -392,8 +392,9 @@ function AIChatbot({ onNav }) {
       if (s > 0) results.push({ text: ins.title + " — " + ins.desc, nav: "insights", score: s });
     });
     (D.ARTICLES || []).forEach(a => {
-      const txt = (a.title + " " + (a.summary || "")).toLowerCase();
+      const txt = (a.title + " " + (a.summary || "") + " " + (a.co || "")).toLowerCase();
       let s = 0;
+      if (a.co && q.includes(a.co.toLowerCase())) s += 6;
       words.forEach(w => { if (txt.includes(w)) s += 1; });
       if (s > 0) results.push({ text: a.source + ": " + a.title, nav: "articles", score: s });
     });
@@ -403,8 +404,13 @@ function AIChatbot({ onNav }) {
       const top = results.slice(0, 3);
       const answerText = top.map((r, i) => (i + 1) + ". " + r.text).join("\n\n");
       typeOut(answerText, top[0].nav);
+    } else if (scored[0] && scored[0].score > 0) {
+      // 키워드 매칭이 약해도 가장 가까운 Q&A로 답한다 (항상 답변)
+      typeOut(scored[0].qa.a, scored[0].qa.nav);
     } else {
-      typeOut("질문과 정확히 일치하는 항목을 찾지 못했어요. 기업명(OpenAI·Anthropic·Google·Mistral 등)이나 'LLM', 'GPT', 'RAG', '시장 규모', 'GPU' 같은 키워드로 다시 질문해 주세요.", null);
+      // 최후 폴백: 핵심 요약을 제시하고 길잡이를 준다
+      const fb = "정확히 일치하는 항목을 찾지 못했지만, 핵심을 요약하면: OpenAI 밸류 $852B(ARR ~$35B), NVIDIA 분기 $57B, Microsoft AI 런레이트 $37B, SpaceX가 Cursor를 $60B에 인수했습니다. 기업명(OpenAI·Anthropic·NVIDIA·Cursor 등)이나 '주가', '추론 비용', '에이전트', '반독점', '할루시네이션' 같은 키워드로 다시 질문해 보세요.";
+      typeOut(fb, "overview");
     }
   };
 

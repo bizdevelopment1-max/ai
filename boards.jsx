@@ -230,22 +230,42 @@ function BoldSummary({ text }) {
   );
 }
 
-// ---- Article feed (flat, sorted by publication date) -----------
+// ---- Article feed: category filter → company dropdown, deletable rows ----
 function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
+  const [co, setCo] = React.useState("all");          // company filter within category
+  const [deleted, setDeleted] = React.useState({});    // removed article keys
+  const keyOf = a => (a.co || "") + "|" + a.date + "|" + a.title;
+
+  // reset company filter whenever the category changes
+  React.useEffect(() => { setCo("all"); }, [filter]);
+
+  // companies available in the active category (from articles that have a `co`)
+  const coList = React.useMemo(() => {
+    const seen = [];
+    articles.forEach(a => {
+      if (filter !== "all" && a.cat !== filter) return;
+      if (a.co && !seen.includes(a.co)) seen.push(a.co);
+    });
+    return seen;
+  }, [articles, filter]);
+
   const filtered = articles
     .filter(a => filter === "all" || a.cat === filter)
-    .filter(a => !query || a.title.toLowerCase().includes(query.toLowerCase()) || a.source.toLowerCase().includes(query.toLowerCase()));
+    .filter(a => co === "all" || a.co === co)
+    .filter(a => !deleted[keyOf(a)])
+    .filter(a => !query || a.title.toLowerCase().includes(query.toLowerCase()) || a.source.toLowerCase().includes(query.toLowerCase()) || (a.co || "").toLowerCase().includes(query.toLowerCase()));
 
   const sorted = [...filtered].sort((a, b) => pubOf(b).localeCompare(pubOf(a)));
+  const activeCat = filter !== "all" ? catMap[filter] : null;
 
   return (
     <section className="board feed" ref={sectionRef} data-screen-label="Daily Articles">
       <div className="board-head">
         <span className="board-tab" style={{ background: "var(--ink)" }} />
         <div className="board-titles">
-          <h2>데일리 기사 피드 <span className="board-en">Daily Articles · AI 글로벌 외신 큐레이션</span></h2>
-          <p>기사 발표일 기준 최신순 정렬 · 클릭 시 원문 이동</p>
+          <h2>데일리 기사 피드 <span className="board-en">Daily Articles · 업체별 외신 큐레이션</span></h2>
+          <p>카테고리 선택 → 업체 선택 시 해당 기업 기사만 표시 · 매일 오전 7시 자동 갱신 · ✕로 기사 삭제</p>
         </div>
         <div className="feed-filters">
           <button className={filter === "all" ? "on" : ""} onClick={() => onFilter("all")}>전체</button>
@@ -258,26 +278,40 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
         </div>
       </div>
 
+      {(filter !== "all" || co !== "all") && (
+        <div className="feed-codrop" style={{ "--accent": activeCat ? activeCat.accent : "var(--ink)" }}>
+          <span className="fc-label">{activeCat ? activeCat.ko : "전체"} · 업체 선택</span>
+          <select className="fc-select" value={co} onChange={e => setCo(e.target.value)}>
+            <option value="all">전체 업체</option>
+            {coList.map(name => <option key={name} value={name}>{name}</option>)}
+          </select>
+          {co !== "all" && <button className="fc-clear" onClick={() => setCo("all")}>✕ 업체 해제</button>}
+        </div>
+      )}
+
       <div className="feed-body">
-        {sorted.length === 0 && <div className="feed-empty">검색 결과가 없습니다.</div>}
+        {sorted.length === 0 && <div className="feed-empty">표시할 기사가 없습니다.</div>}
         <div className="feed-list">
           {sorted.map((a, i) => {
-            const c = catMap[a.cat];
+            const c = catMap[a.cat] || {};
             return (
-              <a className="art" key={i} href={a.url} target="_blank" rel="noopener">
+              <div className="art" key={keyOf(a)}>
                 <span className="art-cat" style={{ background: c.accent }} />
-                <span className="art-body">
+                <a className="art-body" href={a.url} target="_blank" rel="noopener">
                   <span className="art-meta">
                     <em className="art-src">{a.source}</em>
+                    {a.co && <span className="art-co" style={{ color: c.accent, borderColor: c.accent }}>{a.co}</span>}
                     <span className="art-tag" style={{ color: c.accent, background: c.accentSoft }}>{a.tag}</span>
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
-                    <span className="art-catname">{c.ko}</span>
                   </span>
                   <span className="art-title">{a.title}</span>
                   {a.summary && <span className="art-summary"><BoldSummary text={a.summary} /></span>}
-                </span>
-                <Icon name="ext" size={13} />
-              </a>
+                </a>
+                <button className="art-del" title="이 기사 삭제" aria-label="기사 삭제"
+                  onClick={() => setDeleted(d => ({ ...d, [keyOf(a)]: true }))}>
+                  <Icon name="x" size={13} sw={2.2} />
+                </button>
+              </div>
             );
           })}
         </div>
@@ -458,6 +492,58 @@ function ReportsBoard({ reports, sectionRef, query }) {
             </div>
           );
         })}
+      </div>
+     </AnimCtx.Provider>
+    </section>
+  );
+}
+
+// ---- Stock board: listed AI companies, daily price, 1Y/5Y, inflection notes ----
+function StockBoard({ stocks, cats, sectionRef, theme }) {
+  const inView = useInView(sectionRef);
+  const catMap = Object.fromEntries((cats || []).map(c => [c.id, c]));
+  const [ticker, setTicker] = React.useState((stocks[0] || {}).ticker);
+  const [years, setYears] = React.useState(1);
+  const sel = stocks.find(s => s.ticker === ticker) || stocks[0];
+  const accent = (catMap[sel.cat] || {}).accent || theme.accent;
+  return (
+    <section className="board" ref={sectionRef} data-screen-label="Stock Prices">
+     <AnimCtx.Provider value={inView}>
+      <div className="board-head" style={{ "--accent": accent }}>
+        <span className="board-tab" style={{ background: accent }} />
+        <div className="board-titles">
+          <h2>주가 차트 <span className="board-en">Listed AI Stocks · 일별 주가</span></h2>
+          <p>상장 AI 기업 일별 주가 · 차트 위에 마우스를 올리면 종가 표시 · 변곡점(●)에 상승/하락 사유</p>
+        </div>
+        <div className="stock-range">
+          <button className={years === 1 ? "on" : ""} onClick={() => setYears(1)}>1년</button>
+          <button className={years === 5 ? "on" : ""} onClick={() => setYears(5)}>5년</button>
+        </div>
+      </div>
+
+      <div className="stock-tabs">
+        {stocks.map(s => {
+          const ac = (catMap[s.cat] || {}).accent || theme.accent;
+          const on = s.ticker === ticker;
+          return (
+            <button key={s.ticker} className={"stock-tab" + (on ? " on" : "")}
+              style={on ? { borderColor: ac, color: ac, background: (catMap[s.cat] || {}).accentSoft } : null}
+              onClick={() => setTicker(s.ticker)}>
+              <img src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
+              <b>{s.ticker}</b>
+              <em>{s.name.replace(/\s*\(.*\)/, "")}</em>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="stock-panel" style={{ "--accent": accent }}>
+        <div className="stock-panel-head">
+          <span className="sp-name">{sel.name}</span>
+          <span className="sp-tk">{sel.ticker}</span>
+          <span className="sp-cat" style={{ color: accent, background: (catMap[sel.cat] || {}).accentSoft }}>{(catMap[sel.cat] || {}).ko}</span>
+        </div>
+        <StockChart stock={sel} years={years} accent={accent} ink={theme.ink} muted={theme.muted} grid={theme.grid} />
       </div>
      </AnimCtx.Provider>
     </section>

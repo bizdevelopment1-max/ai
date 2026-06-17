@@ -40,6 +40,24 @@ function App() {
   const D = window.DASH;
   const dark = t.dark;
 
+  // crawler output: news.json (refreshed daily ~07:00 by GitHub Action) merged over static ARTICLES
+  const [crawled, setCrawled] = uS(null);
+  uE(() => {
+    let alive = true;
+    fetch("news.json", { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && Array.isArray(j.articles)) setCrawled(j.articles); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  const articles = useMemo(() => {
+    const base = D.ARTICLES || [];
+    if (!crawled || !crawled.length) return base;
+    const seen = new Set(base.map(a => (a.co || "") + "|" + a.title));
+    const extra = crawled.filter(a => a && a.title && !seen.has((a.co || "") + "|" + a.title));
+    return [...extra, ...base];
+  }, [crawled]);
+
   // category objects with tweakable accents
   const cats = useMemo(() => D.CATEGORIES.map(c => ({
     ...c,
@@ -59,8 +77,8 @@ function App() {
   // section refs
   const scrollRef = uR(null);
   const refs = {
-    overview: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    vp: uR(null), articles: uR(null), charts: uR(null), monthly: uR(null), insights: uR(null), dynamics: uR(null), bizmodel: uR(null), reports: uR(null),
+    overview: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
+    charts: uR(null), monthly: uR(null), insights: uR(null), dynamics: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
   };
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
@@ -141,8 +159,8 @@ function App() {
     }
   };
 
-  const latestArticleDate = D.ARTICLES.reduce((m, a) => (a.date > m ? a.date : m), "");
-  const articleCount = D.ARTICLES.filter(a => a.date === latestArticleDate).length;
+  const latestArticleDate = articles.reduce((m, a) => (a.date > m ? a.date : m), "");
+  const articleCount = articles.filter(a => a.date === latestArticleDate).length;
   const now = new Date();
   const renderTime = `${now.getMonth() + 1}/${now.getDate()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
@@ -170,13 +188,11 @@ function App() {
               <OverviewCharts data={D} cats={cats} theme={chartTheme} />
             </section>
 
+            <ArticleFeed articles={articles} cats={cats} sectionRef={refs.articles} filter={feedFilter} onFilter={setFeedFilter} query={query} />
+
             <CompanyBoard cat={cats[0]} companies={D.COMPANIES} density={t.density} sectionRef={refs.native} query={query} onSelect={setSelected} />
             <CompanyBoard cat={cats[1]} companies={D.COMPANIES} density={t.density} sectionRef={refs.bigtech} query={query} onSelect={setSelected} />
             <CompanyBoard cat={cats[2]} companies={D.COMPANIES} density={t.density} sectionRef={refs.startup} query={query} onSelect={setSelected} />
-
-            <VPBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.vp} onSelect={setSelected} query={query} />
-
-            <ArticleFeed articles={D.ARTICLES} cats={cats} sectionRef={refs.articles} filter={feedFilter} onFilter={setFeedFilter} query={query} />
 
             <ChartsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.charts} />
 
@@ -190,6 +206,8 @@ function App() {
 
             <ReportsBoard reports={D.REPORTS} sectionRef={refs.reports} query={query} />
 
+            <StockBoard stocks={D.STOCKS} cats={cats} sectionRef={refs.stocks} theme={chartTheme} />
+
             <footer className="foot">
               <span>AI Intelligence Dashboard</span>
               <span className="foot-update">자료 기준일: 2026-06-17 · 최종 팩트체크: 2026-06-17 · 렌더링: {renderTime}</span>
@@ -199,7 +217,7 @@ function App() {
         </main>
       </div>
 
-      <CompanyDetail company={selected} cats={cats} articles={D.ARTICLES} onClose={() => setSelected(null)} />
+      <CompanyDetail company={selected} cats={cats} articles={articles} onClose={() => setSelected(null)} />
 
       {/* Color change via palette button in TopBar */}
     </div>

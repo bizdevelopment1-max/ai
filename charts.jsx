@@ -353,4 +353,121 @@ function MonthlyLineChart({ series, months, colors, ink, muted, grid, unit, valu
   );
 }
 
-Object.assign(window, { MarketGrowthChart, HBarChart, DonutChart, MonthlyLineChart });
+// ---- Interactive daily stock chart (hover price + inflection notes) ----
+function StockChart({ stock, years, accent, ink, muted, grid }) {
+  const [ref, inView] = useEyeLevel();
+  const [nonce, bump] = useHoverReplay();
+  const prog = useProgress(inView, 1500, 0, nonce);
+  const tip = useTip();
+  const [hover, setHover] = useStateC(null);
+  const svgRef = useRefC(null);
+
+  const series = (window.DASH.buildStockSeries(stock, years)) || { points: [], events: [] };
+  const pts = series.points;
+  const W = 760, H = 320, padL = 54, padR = 18, padT = 22, padB = 30;
+  const iw = W - padL - padR, ih = H - padT - padB;
+  if (!pts || pts.length < 2) {
+    return <div ref={ref} className="stock-empty">주가 데이터가 부족합니다.</div>;
+  }
+  const lo0 = series.min, hi0 = series.max;
+  const pad = (hi0 - lo0) * 0.10 || 1;
+  const lo = Math.max(0, lo0 - pad), hi = hi0 + pad;
+  const x = i => padL + (iw * i) / (pts.length - 1);
+  const y = v => padT + ih - (ih * (v - lo)) / (hi - lo || 1);
+  const ticks = niceTicks(hi, 5).filter(t => t >= lo - 0.001 && t <= hi + 0.001);
+
+  const visN = Math.max(2, Math.floor(prog * (pts.length - 1)) + 1);
+  const shownArr = pts.slice(0, visN);
+  const shownLine = shownArr.map((p, i) => `${x(i)},${y(p.p)}`).join(" ");
+  const areaPts = `${x(0)},${y(lo)} ${shownLine} ${x(visN - 1)},${y(lo)}`;
+  const first = pts[0].p, last = pts[pts.length - 1].p;
+  const up = last >= first;
+  const lineCol = accent;
+  const changePct = ((last - first) / first) * 100;
+
+  const evList = (series.events || []).map(e => {
+    let bi = 0, bd = Infinity;
+    pts.forEach((p, i) => { const dd = Math.abs(p.t - e.t); if (dd < bd) { bd = dd; bi = i; } });
+    return { e, i: bi };
+  });
+
+  const fmtKo = d => { const [Y, M, D] = d.split("-"); return `${Y}.${M}.${D}`; };
+
+  const onMove = (ev) => {
+    bump();
+    const svg = svgRef.current; if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const px = ((ev.clientX - rect.left) / rect.width) * W;
+    let i = Math.round(((px - padL) / iw) * (pts.length - 1));
+    i = Math.max(0, Math.min(pts.length - 1, i));
+    setHover(i);
+  };
+  const hp = hover != null ? pts[hover] : pts[pts.length - 1];
+  const hChange = hp ? ((hp.p - first) / first) * 100 : 0;
+
+  return (
+    <div ref={ref} className="stock-chart" style={{ position: "relative" }} onMouseLeave={() => { setHover(null); tip.hide(); }}>
+      <div className="stock-readout">
+        <span className="sr-date">{hp ? fmtKo(hp.d) : ""}</span>
+        <span className="sr-price" style={{ color: lineCol }}>${hp ? hp.p.toFixed(2) : last.toFixed(2)}</span>
+        <span className={"sr-chg " + (hChange >= 0 ? "pos" : "neg")}>{hChange >= 0 ? "+" : ""}{hChange.toFixed(1)}% <em>(기간 시작 대비)</em></span>
+      </div>
+      <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: "block", cursor: "crosshair" }}
+        onMouseMove={onMove} onMouseEnter={bump}>
+        <defs>
+          <linearGradient id={`sc-fill-${stock.ticker}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={lineCol} stopOpacity="0.28" />
+            <stop offset="100%" stopColor={lineCol} stopOpacity="0.02" />
+          </linearGradient>
+        </defs>
+        {ticks.map((t, i) => (
+          <g key={i}>
+            <line x1={padL} x2={padL + iw} y1={y(t)} y2={y(t)} stroke={grid} strokeWidth="1" />
+            <text x={padL - 8} y={y(t) + 3} textAnchor="end" fontSize="10" fill={muted} style={{ fontVariantNumeric: "tabular-nums" }}>${t}</text>
+          </g>
+        ))}
+        {/* x labels: ~5 evenly spaced dates */}
+        {[0, 0.25, 0.5, 0.75, 1].map((f, i) => {
+          const idx = Math.round(f * (pts.length - 1));
+          return <text key={i} x={x(idx)} y={padT + ih + 18} textAnchor="middle" fontSize="9.5" fill={muted}>{pts[idx].d.slice(0, 7)}</text>;
+        })}
+        <polygon points={areaPts} fill={`url(#sc-fill-${stock.ticker})`} opacity={prog} />
+        <polyline points={shownLine} fill="none" stroke={lineCol} strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+        {/* inflection markers */}
+        {evList.map((o, k) => o.i < visN && (
+          <g key={k} style={{ cursor: "pointer" }}
+            onMouseEnter={e => tip.show(e, <span><b style={{ color: o.e.dir === "up" ? "#0E8F6E" : "#D23B3B" }}>{o.e.dir === "up" ? "▲ 상승" : "▼ 하락"} · {o.e.label}</b><br />{fmtKo(o.e.d)} · ${o.e.p.toFixed(2)}<br /><em>{o.e.reason}</em></span>)}
+            onMouseMove={tip.move} onMouseLeave={tip.hide}>
+            <circle cx={x(o.i)} cy={y(o.e.p)} r="9" fill="transparent" />
+            <circle cx={x(o.i)} cy={y(o.e.p)} r="5.5" fill={o.e.dir === "up" ? "#0E8F6E" : "#D23B3B"} opacity="0.18" />
+            <circle cx={x(o.i)} cy={y(o.e.p)} r="3.2" fill="#fff" stroke={o.e.dir === "up" ? "#0E8F6E" : "#D23B3B"} strokeWidth="2" />
+          </g>
+        ))}
+        {/* hover crosshair */}
+        {hover != null && (
+          <g pointerEvents="none">
+            <line x1={x(hover)} x2={x(hover)} y1={padT} y2={padT + ih} stroke={lineCol} strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+            <circle cx={x(hover)} cy={y(pts[hover].p)} r="4.5" fill="#fff" stroke={lineCol} strokeWidth="2" />
+          </g>
+        )}
+      </svg>
+      {/* inflection explanations list */}
+      {evList.length > 0 && (
+        <div className="stock-events">
+          {evList.slice().reverse().map((o, k) => (
+            <div key={k} className={"se-item " + (o.e.dir === "up" ? "up" : "down")}>
+              <span className="se-dot" />
+              <span className="se-date">{fmtKo(o.e.d)}</span>
+              <span className="se-label">{o.e.dir === "up" ? "▲" : "▼"} {o.e.label}</span>
+              <span className="se-reason">{o.e.reason}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {stock.note && <p className="stock-note">{stock.note}</p>}
+      {tip.node}
+    </div>
+  );
+}
+
+Object.assign(window, { MarketGrowthChart, HBarChart, DonutChart, MonthlyLineChart, StockChart });
