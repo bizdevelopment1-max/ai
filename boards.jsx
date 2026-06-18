@@ -603,7 +603,7 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
             asOf={real.asOf} accent={accent} ink={theme.ink} muted={theme.muted} grid={theme.grid} />
         ) : (
           <div className="stock-pending">
-            <p className="stock-empty">실제 일별 주가는 매일 자동 크롤링되어 표시됩니다(Stooq). 첫 갱신을 기다리는 중입니다.</p>
+            <p className="stock-empty">{sel.note || "실제 일별 주가는 매일 자동 크롤링되어 표시됩니다. 첫 갱신을 기다리는 중입니다."}</p>
             {(sel.events || []).length > 0 && (
               <div className="stock-events">
                 {sel.events.slice().reverse().map((e, k) => (
