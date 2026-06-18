@@ -45,16 +45,6 @@ window.DASH = (function () {
       url: "https://deepmind.google",
     },
     {
-      cat: "native", name: "xAI", domain: "x.ai", unit: "파운데이션 모델",
-      valuation: "$230B+", valAsof: "26.01", metric: "Grok MAU", value: "6억", metricAsof: "26.01",
-      funding: "Series E $20B", trend: 60, trendBasis: "누적 조달 $42B+",
-      note: "Grok, Colossus 슈퍼클러스터 — 일론 머스크 설립. 2026.01.06 Series E $20B 완료(NVIDIA·Cisco·카타르 국부펀드 참여), 누적 조달 $42B+(PitchBook). Grok 월간 활성 사용자 6억(X 포함). Grok 5 2026 상반기 예고. 단, 딥페이크 CSAM 생성 논란으로 다수 정부 조사 개시.",
-      vp: "X 플랫폼의 실시간 데이터와 6억 사용자 접점, 그리고 머스크 생태계(Tesla·SpaceX)와의 연계.",
-      direction: "최대 규모 컴퓨트(Colossus) 확장 + X 통합. SpaceX의 Cursor 인수로 코딩 에이전트 역량 보강.",
-      sources: ["Series E $20B 완료 (TechCrunch '26.1.6)", "누적 조달 $42B+ (PitchBook / NYT '26.1)", "Grok MAU 6억 (TechCrunch '26.1)", "딥페이크 논란·정부 조사 (The Guardian '26.1)"],
-      url: "https://x.ai",
-    },
-    {
       cat: "native", name: "DeepSeek", domain: "deepseek.com", unit: "오픈 파운데이션 모델(중국)",
       valuation: "$52B~59B", valAsof: "26.06", metric: "추론 비용", value: "GPT-4급 1/10", metricAsof: "26.05",
       funding: "첫 외부 라운드", trend: 50, trendBasis: "효율 혁신·첫 외부 투자",
@@ -235,8 +225,8 @@ window.DASH = (function () {
     // ── AI Native ──
     { date: "2026-06-08", co: "OpenAI", cat: "native", source: "Al Jazeera / Reuters", title: "OpenAI, 미국 증시 S-1 공식 제출 — IPO 역사상 최대 규모 예고", summary: "· 2026.06.08 SEC S-1 비밀 제출 확인, 공모가 기준 밸류 $852B(2026.03 라운드)\n· 이르면 2026.09 상장 목표(Reuters)\n· 2026 Q1 운영 손실 $3.7B — 매출 폭증에도 컴퓨트·인건비가 더 빠르게 증가\n· ARR $6B(2024말)→$20B(2025말)→$25B(2026.02)→~$35B(2026.05)", tag: "IPO", url: "https://www.aljazeera.com/economy/2026/6/8/tech-giant-openai-files-for-us-initial-public-offering" },
     { date: "2026-06-09", co: "Anthropic", cat: "native", source: "Anthropic", title: "Anthropic, Claude Fable 5 출시 — 자율 코딩 에이전트 SWE-bench 신기록", summary: "· 최신 플래그십 Claude Fable 5 출시(2026.06.09) — 코딩 에이전트 역대 최고 성능\n· SWE-bench Verified 최상위권, 1M 토큰 컨텍스트·128K 출력\n· Claude Opus 4.6(2026.02)→4.7(2026.04 GA)→Fable 5 빠른 사이클\n· Amazon 추가 $25B 투자 후 AWS Bedrock 최우선 배포", tag: "Product", url: "https://www.anthropic.com/news" },
-    { date: "2026-04-21", co: "Google DeepMind", cat: "native", source: "Google", title: "Google, Gemini 3.1 Pro + Deep Research Max — ARC-AGI-2 77.1%", summary: "· Gemini 3.1 Pro ARC-AGI-2 77.1%, SWE-Bench Verified 80.6%\n· Deep Research Max — 자율 리서치 에이전트, MCP 지원\n· 100만 토큰 컨텍스트, 검색·워크스페이스 전면 통합\n· Google AI Ultra 구독자 우선 배포", tag: "Product", url: "https://blog.google/technology/ai/" },
-    { date: "2026-01-06", co: "xAI", cat: "native", source: "TechCrunch / NYT / The Guardian", title: "xAI, Series E $20B 완료 — 밸류 $230B+, Grok 딥페이크 논란 동시 직면", summary: "· Series E $20B 완료(NVIDIA·Cisco·카타르 국부펀드·Fidelity)\n· 누적 총 조달액 $42B+(PitchBook) · 밸류 $230B+ 추정\n· Grok 월간 활성 사용자 6억(X 포함)\n· Grok 미성년 딥페이크 자동 생성 논란 → 다수 정부 조사 개시", tag: "Funding", url: "https://www.theguardian.com/technology/2026/jan/06/elon-musk-xai-investment-grok-backlash" },
+    { date: "2026-04-21", co: "Google DeepMind", cat: "bigtech", source: "Google", title: "Google, Gemini 3.1 Pro + Deep Research Max — ARC-AGI-2 77.1%", summary: "· Gemini 3.1 Pro ARC-AGI-2 77.1%, SWE-Bench Verified 80.6%\n· Deep Research Max — 자율 리서치 에이전트, MCP 지원\n· 100만 토큰 컨텍스트, 검색·워크스페이스 전면 통합\n· Google AI Ultra 구독자 우선 배포", tag: "Product", url: "https://blog.google/technology/ai/" },
+    { date: "2026-01-06", co: "SpaceX (xAI, Cursor)", cat: "native", source: "TechCrunch / NYT / The Guardian", title: "xAI, Series E $20B 완료 — 밸류 $230B+, Grok 딥페이크 논란 동시 직면", summary: "· Series E $20B 완료(NVIDIA·Cisco·카타르 국부펀드·Fidelity)\n· 누적 총 조달액 $42B+(PitchBook) · 밸류 $230B+ 추정\n· Grok 월간 활성 사용자 6억(X 포함)\n· Grok 미성년 딥페이크 자동 생성 논란 → 다수 정부 조사 개시", tag: "Funding", url: "https://www.theguardian.com/technology/2026/jan/06/elon-musk-xai-investment-grok-backlash" },
     { date: "2026-06-03", co: "DeepSeek", cat: "native", source: "Reuters / FT", title: "DeepSeek, 첫 외부 펀딩 — 밸류 최대 $59B, AI 비용 혁명 선도", summary: "· 중국 DeepSeek 첫 외부 펀딩, 국유 빅펀드 주도\n· 목표 밸류 $52B~$59B\n· R1·V3로 GPT-4급 성능을 1/10 비용 구현\n· 'Sputnik Moment' — AI 인프라 비용 혁신의 상징", tag: "Funding", url: "https://technode.com/2026/05/07/deepseek-reportedly-seeks-first-funding-round-at-45-billion-valuation/" },
 
     // ── Big Tech AI ──
@@ -306,9 +296,8 @@ window.DASH = (function () {
   const FUNDING = [
     { name: "OpenAI", value: 852, cat: "native", src: "CNBC '26.3 라운드 밸류 $852B" },
     { name: "Anthropic", value: 380, cat: "native", src: "CNBC '26.4 Amazon 투자 시 $380B" },
-    { name: "xAI", value: 230, cat: "native", src: "Series E '26.1, 밸류 $230B+, 누적 조달 $42B+" },
+    { name: "SpaceX (xAI, Cursor)", value: 230, cat: "native", src: "xAI Series E '26.1 밸류 $230B+ · Cursor 인수 $60B" },
     { name: "Databricks", value: 134, cat: "startup", src: "Series L '26.2 $134B ($175B 협의)" },
-    { name: "SpaceX (xAI, Cursor)", value: 60, cat: "native", src: "CNBC '26.6 Cursor 인수가 $60B (SpaceX·xAI)" },
     { name: "DeepSeek", value: 55, cat: "native", src: "Reuters '26.5 $52B~59B" },
     { name: "Mistral AI", value: 23, cat: "startup", src: "Bloomberg '26.6 €20B($23B) 협의" },
     { name: "Perplexity", value: 18, cat: "startup", src: "'26 추정 $18B" },

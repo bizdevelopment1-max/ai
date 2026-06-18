@@ -235,8 +235,17 @@ function BoldSummary({ text }) {
 function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
   const [co, setCo] = React.useState("all");          // company filter within category
-  const [deleted, setDeleted] = React.useState({});    // removed article keys
-  const keyOf = a => (a.co || "") + "|" + a.date + "|" + a.title;
+  const keyOf = a => a.url || ((a.co || "") + "|" + a.date + "|" + a.title);
+  // deleted articles persist in localStorage so ✕'d items never come back (across reloads/crawls)
+  const LS_KEY = "aiDashDeletedArticles";
+  const [deleted, setDeleted] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); } catch { return {}; }
+  });
+  const removeArticle = (a) => setDeleted(d => {
+    const next = { ...d, [keyOf(a)]: 1 };
+    try { localStorage.setItem(LS_KEY, JSON.stringify(next)); } catch {}
+    return next;
+  });
 
   // reset company filter whenever the category changes
   React.useEffect(() => { setCo("all"); }, [filter]);
@@ -251,7 +260,14 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
     return seen;
   }, [articles, filter]);
 
-  const filtered = articles
+  // de-dupe by key (drops duplicate content from crawl + static merge)
+  const deduped = React.useMemo(() => {
+    const seen = new Set(); const out = [];
+    articles.forEach(a => { const k = keyOf(a); if (!seen.has(k)) { seen.add(k); out.push(a); } });
+    return out;
+  }, [articles]);
+
+  const filtered = deduped
     .filter(a => filter === "all" || a.cat === filter)
     .filter(a => co === "all" || a.co === co)
     .filter(a => !deleted[keyOf(a)])
@@ -308,8 +324,8 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                   <span className="art-title">{a.title}</span>
                   {a.summary && <span className="art-summary"><BoldSummary text={a.summary} /></span>}
                 </a>
-                <button className="art-del" title="이 기사 삭제" aria-label="기사 삭제"
-                  onClick={() => setDeleted(d => ({ ...d, [keyOf(a)]: true }))}>
+                <button className="art-del" title="이 기사 삭제(다시 표시 안 함)" aria-label="기사 삭제"
+                  onClick={() => removeArticle(a)}>
                   <Icon name="x" size={13} sw={2.2} />
                 </button>
               </div>

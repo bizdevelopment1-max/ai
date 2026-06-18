@@ -31,9 +31,8 @@ const ALLOW = [
 const COMPANIES = [
   { co: "OpenAI", cat: "native", q: "OpenAI" },
   { co: "Anthropic", cat: "native", q: "Anthropic Claude" },
-  { co: "xAI", cat: "native", q: "xAI Grok Musk" },
   { co: "DeepSeek", cat: "native", q: "DeepSeek AI" },
-  { co: "SpaceX (xAI, Cursor)", cat: "native", q: "SpaceX Cursor Anysphere AI" },
+  { co: "SpaceX (xAI, Cursor)", cat: "native", q: "(xAI OR Grok OR SpaceX OR Cursor OR Anysphere) AI" },
   { co: "Google DeepMind", cat: "bigtech", q: "Google DeepMind Gemini" },
   { co: "Apple", cat: "bigtech", q: "Apple Intelligence on-device AI" },
   { co: "Microsoft", cat: "bigtech", q: "Microsoft Copilot AI" },
@@ -118,7 +117,7 @@ async function pull(src, limit) {
 // ---- Claude summarization: 3-line Korean brief, device-maker lens ----
 const SYS = "당신은 글로벌 스마트폰·온디바이스 AI 기기 제조사의 전략 분석가입니다. 영문 AI 뉴스를 한국어로 요약합니다. 특정 기업명(삼성, MX, 사업부 등)은 절대 언급하지 않습니다. 과장 없이 사실에 근거해 작성합니다.";
 function userPrompt(a) {
-  return `다음 영문 AI 뉴스를 한국어로 요약하세요.\n\n제목: ${a.title}\n출처: ${a.source}\n내용: ${a.descEn || "(요약 없음)"}\n\n출력 형식(JSON): title_ko는 25자 내외의 한국어 제목. summary는 정확히 3줄이며 각 줄은 "· "로 시작합니다. 1줄=핵심 사실, 2줄=수치/배경, 3줄=온디바이스 AI·AI 에이전트·스마트폰/노트북 단말 전략 관점의 시사점. 단 어떤 회사명도 시사점에 적지 마세요.`;
+  return `다음 영문 AI 뉴스를 한국어로 정리하세요.\n\n제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}\n\n출력(JSON):\n- title_ko: 위 영문 제목을 자연스러운 한국어로 번역(30자 내외, 직역 아닌 의역 허용).\n- summary: 주요 내용을 정확히 3줄, 한국어 개조식으로 요약. 각 줄은 "· "로 시작하고 명사형 종결("~함/~음/~임")로 끝냅니다. 1줄=핵심 사실, 2줄=수치·배경, 3줄=온디바이스 AI·AI 에이전트·스마트폰/노트북 단말 전략 관점의 시사점.\n\n금지: 출처/매체명을 본문에 적지 마세요. 특정 회사명(삼성·MX·사업부 등)을 시사점에 적지 마세요.`;
 }
 
 async function summarize(a) {
@@ -169,32 +168,50 @@ async function pool(items, n, fn) {
   return out;
 }
 
+const isKoreanSummary = a => a && /[가-힣]/.test(a.title || "") && a.summary && !/출처\s*[:：]/.test(a.summary);
+
 async function main() {
   console.log(`Crawling authoritative English AI news… (LLM summaries: ${KEY ? "on" : "OFF — set ANTHROPIC_API_KEY"})`);
   const companyItems = (await Promise.all(COMPANIES.map(c => pull(c, 1)))).flat();
   const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
 
-  // de-dupe by URL
+  // de-dupe this run by URL
   const seen = new Set();
   const raw = [...companyItems, ...topicItems].filter(a => a.url && !seen.has(a.url) && seen.add(a.url));
 
-  // summarize into Korean (3 lines, device-maker lens) with limited concurrency
-  const summaries = await pool(raw, 3, summarize);
-  const articles = raw.map((a, k) => {
-    const s = summaries[k];
-    return {
-      date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag, url: a.url,
-      title: s ? s.title_ko : a.title,                          // Korean title when available
-      summary: s ? s.summary : `· ${a.title}\n· 출처: ${a.source}`,
-    };
-  }).sort((x, y) => (x.date < y.date ? 1 : -1));
-
+  // previously stored articles — reuse their summaries so we never re-crawl/re-summarize duplicates
   let prev = [];
   try { prev = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
-  const final = articles.length ? articles : prev;
+  const prevByUrl = new Map(prev.map(a => [a.url, a]));
 
-  await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: final.length, articles: final }, null, 2) + "\n");
-  console.log(`Wrote news.json with ${final.length} articles (${summaries.filter(Boolean).length} Korean summaries).`);
+  // only call the API for genuinely new URLs (or prior entries that lack a good Korean summary)
+  const toSummarize = raw.filter(a => !isKoreanSummary(prevByUrl.get(a.url)));
+  const sums = await pool(toSummarize, 3, summarize);
+  const sumByUrl = new Map();
+  toSummarize.forEach((a, k) => { if (sums[k]) sumByUrl.set(a.url, sums[k]); });
+
+  const processed = raw.map(a => {
+    const old = prevByUrl.get(a.url);
+    if (isKoreanSummary(old)) return old;                 // reuse — no duplicate work
+    const s = sumByUrl.get(a.url);
+    return {
+      date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag, url: a.url,
+      title: s ? s.title_ko : a.title,                    // 한국어 번역 제목
+      summary: s ? s.summary : `· ${a.title}`,            // 출처 줄 없음 (출처는 상단 표기)
+    };
+  });
+
+  // accumulate: this run + older prev not re-seen, de-duped by URL, newest first, capped
+  const curUrls = new Set(raw.map(a => a.url));
+  const dseen = new Set();
+  const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
+    .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
+    .sort((x, y) => (x.date < y.date ? 1 : -1))
+    .slice(0, 100);
+
+  const out = raw.length ? final : prev;   // network failure → keep prev untouched
+  await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: out.length, articles: out }, null, 2) + "\n");
+  console.log(`Wrote news.json with ${out.length} articles (${sums.filter(Boolean).length} new Korean summaries).`);
 }
 
 main().catch((e) => { console.error(e); process.exit(0); });
