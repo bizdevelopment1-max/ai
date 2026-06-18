@@ -35,7 +35,7 @@ window.DASH = (function () {
       url: "https://anthropic.com",
     },
     {
-      cat: "native", name: "Google DeepMind", domain: "deepmind.google", unit: "파운데이션 모델(Alphabet)",
+      cat: "bigtech", name: "Google DeepMind", domain: "deepmind.google", unit: "파운데이션 모델(Alphabet)",
       valuation: "—", valAsof: "—", metric: "Gemini MAU", value: "6.5억", metricAsof: "26.05",
       funding: "Alphabet 산하", trend: 30, trendBasis: "Gemini 사용자·점유율 확대",
       note: "Gemini 3.x, AlphaFold, Gemma — Alphabet의 AI 연구 조직. Gemini 3 멀티모달 최고 성능권, 100만 토큰 컨텍스트. AlphaFold로 노벨화학상 수상. Gemma 오픈 모델로 개발자 생태계 확장. 검색·워크스페이스·안드로이드에 Gemini 전면 통합.",
@@ -118,16 +118,6 @@ window.DASH = (function () {
     },
 
     // ── startup ──
-    {
-      cat: "startup", name: "Cursor (SpaceX)", domain: "cursor.com", unit: "AI 코딩 에이전트",
-      valuation: "$60B", valAsof: "26.06", metric: "ARR", value: "$2B+", metricAsof: "26.06",
-      funding: "SpaceX 인수 $60B", trend: 560, trendBasis: "밸류 $29.3B→$50B→$60B",
-      note: "AI-first IDE·코딩 에이전트(Anysphere). 2026.06.16 SpaceX가 IPO 직후 $60B 주식 인수 합의(2026 Q3 완료 예정). ARR $2B+, 기업 고객 비중 60%(Stripe·Adobe·NVIDIA). 밸류 궤적 $29.3B(2025말)→$50B 협상(2026.03)→$60B 인수. Jensen Huang이 '최애 엔터프라이즈 AI 서비스'로 지목.",
-      vp: "전체 코드베이스 컨텍스트 이해와 다중 파일 자율 편집. 엔터프라이즈 코딩 워크플로우 표준으로 부상.",
-      direction: "SpaceX/xAI 생태계 편입으로 코딩 에이전트 전략 강화. Copilot·Codex·Claude Code와 정면 경쟁.",
-      sources: ["SpaceX, Cursor $60B 주식 인수 2026.06.16 (CNBC / Bloomberg / TechCrunch)", "ARR $2B+, 기업 고객 60% (Longbridge '26.6)", "밸류 협상 $29.3B→$50B→$60B"],
-      url: "https://cursor.com",
-    },
     {
       cat: "startup", name: "Perplexity", domain: "perplexity.ai", unit: "AI 검색·에이전트 브라우저",
       valuation: "$18B", valAsof: "26", metric: "ARR", value: "$450M+", metricAsof: "26.03",
@@ -219,16 +209,6 @@ window.DASH = (function () {
       url: "https://www.harvey.ai",
     },
     {
-      cat: "startup", name: "Waymo", domain: "waymo.com", unit: "자율주행·Physical AI",
-      valuation: "$126B", valAsof: "26.02", metric: "ARR", value: "$355M+", metricAsof: "26.02",
-      funding: "Series D $16B", trend: 180, trendBasis: "밸류 $45B→$126B (3배)",
-      note: "자율주행 로보택시 — 물리적 AI(Physical AI). 2026.02 Series D $16B로 밸류 $126B(2024.10 $45B 대비 3배). ARR $355M+, 주간 유료 라이드 10만+ 건, 2026년 말 100만 건 목표. Alphabet 산하지만 외부 투자 유치로 독립 성장.",
-      vp: "수년 누적 주행 데이터와 센서 스택으로 안전성·상업화 선두. 물리 세계 AI 상업화 대표 사례.",
-      direction: "도시 확장 + 라이드 단가·가동률 개선. 트럭·물류 등 인접 영역 검토.",
-      sources: ["Series D $16B, 밸류 $126B (Reuters / TechStartups '26.2)", "ARR $355M+ 추정 (2026.02)", "주간 유료 라이드 10만+ 건"],
-      url: "https://waymo.com",
-    },
-    {
       cat: "startup", name: "Glean", domain: "glean.com", unit: "엔터프라이즈 AI 검색",
       valuation: "$7.2B", valAsof: "26.02", metric: "ARR", value: "$200M+", metricAsof: "26.01",
       funding: "Series F", trend: 80, trendBasis: "엔터프라이즈 표준화",
@@ -267,7 +247,7 @@ window.DASH = (function () {
     { date: "2025-04-05", co: "Meta AI", cat: "bigtech", source: "Meta / NDTV", title: "Meta, Llama 4 발표 — Scout·Maverick 오픈소스, Behemoth 2T MoE 예고", summary: "· Llama 4 Scout·Maverick 오픈소스 즉시 공개\n· Behemoth: 2T 총 파라미터, 288B 활성 MoE — 업계 최대 규모\n· Meta AI 어시스턴트 WhatsApp·Instagram·Messenger 통합, 월 30억+\n· Llama Guard 4 등 오픈소스 보안 툴 동시 공개", tag: "Product", url: "https://www.ndtv.com/world-news/meta-launches-llama-4-all-about-the-latest-open-source-ai-model-8100928" },
 
     // ── AI Startup ──
-    { date: "2026-06-16", co: "Cursor (SpaceX)", cat: "startup", source: "CNBC / Bloomberg / Forbes", title: "SpaceX, Cursor $60B 인수 합의 — IPO 직후 AI 코딩 에이전트 M&A 시대", summary: "· SpaceX IPO 직후 Cursor(Anysphere) $60B 주식 인수 합의\n· ARR $2B+, 기업 고객 60%(Stripe·Adobe·NVIDIA)\n· 밸류 $2.5B→$29.3B→$50B 협상→$60B 최종\n· Jensen Huang '최애 엔터프라이즈 AI 서비스'로 지목, 2026 Q3 완료", tag: "M&A", url: "https://www.cnbc.com/2026/06/16/spacex-spcx-cursor-acquisition-ipo.html" },
+    { date: "2026-06-16", co: "SpaceX (xAI, Cursor)", cat: "native", source: "CNBC / Bloomberg / Forbes", title: "SpaceX, Cursor $60B 인수 합의 — IPO 직후 AI 코딩 에이전트 M&A 시대", summary: "· SpaceX(xAI 생태계)가 IPO 직후 Cursor(Anysphere) $60B 주식 인수 합의\n· ARR $2B+, 기업 고객 60%(Stripe·Adobe·NVIDIA)\n· 밸류 $2.5B→$29.3B→$50B 협상→$60B 최종\n· Jensen Huang '최애 엔터프라이즈 AI 서비스'로 지목, 2026 Q3 완료", tag: "M&A", url: "https://www.cnbc.com/2026/06/16/spacex-spcx-cursor-acquisition-ipo.html" },
     { date: "2026-06-04", co: "Perplexity", cat: "startup", source: "Perplexity / CNET", title: "Perplexity Comet 브라우저 전 세계 무료 공개 — ARR $450M, 크롬과 충돌", summary: "· Comet AI 브라우저 전 세계 무료 공개(기존 $200/월 전용→무료)\n· 무료화 후 1개월 만에 월 수익 50% 급등 → ARR $450M+\n· AI 에이전트가 탭 관리·이메일 요약·자동 구매 자율 수행\n· 보안 취약점 노출 후 6월 재출시 · Comet Plus 퍼블리셔 프로그램", tag: "Product", url: "https://www.perplexity.ai/hub/blog/comet-is-now-available-to-everyone-worldwide" },
     { date: "2026-06-11", co: "Mistral AI", cat: "startup", source: "Bloomberg / TechCrunch", title: "Mistral AI, €3B 라운드 협의 — 밸류 €20B($23B), 직전 대비 2배", summary: "· 밸류 €20B($23B) 신규 €3B 라운드 협의 개시\n· 직전 €11.7B($14B, 2025.09 ASML 주도) 대비 약 2배\n· 파리 데이터센터(13,800 NVIDIA 칩)·스웨덴 시설 건설\n· EU AI 자주권 기업으로 정부·기업 수요 지속 증가", tag: "Funding", url: "https://www.cnbc.com/2026/03/30/mistral-ai-paris-data-center-cluster-debt-financing.html" },
     { date: "2026-05-20", co: "Cohere", cat: "startup", source: "CNBC / Cohere", title: "Cohere, ARR $240M 돌파 + Command A+ 오픈소스 — IPO 준비 본격화", summary: "· 2025년 ARR $240M 달성(목표 $200M 초과), 전 분기 QoQ 50%+\n· Command A+ 오픈소스 출시 — 소버린 엔터프라이즈 AI 모델\n· North Mini Code 개발자용 에이전트 코딩 모델 공개\n· Oracle·Salesforce·SAP 파트너십, CEO IPO '곧' 재확인", tag: "Earnings", url: "https://www.cnbc.com/2026/02/13/ai-startup-cohere-revenue-ipo.html" },
@@ -277,7 +257,6 @@ window.DASH = (function () {
     { date: "2026-05-03", co: "Runway", cat: "startup", source: "Gadgets360 / Heise", title: "Runway Gen-4 출시 — 네이티브 오디오 생성, Adobe Firefly 독점 파트너십", summary: "· Gen-4 출시 — 텍스트·이미지→영상 차세대 모델\n· 네이티브 오디오 트랙 자동 생성·리얼리스틱 물리 엔진\n· TikTok/Reels용 수직형 출력 템플릿·하이브리드 파이프라인 API\n· Adobe Firefly에 Gen-4.5 최우선 배포 멀티이어 파트너십", tag: "Product", url: "https://www.vo3ai.com/blog/runway-gen-4-just-dropped-5-surprising-upgrades-ai-video-makers-need-to-know-2026-05-03" },
     { date: "2026-02-04", co: "ElevenLabs", cat: "startup", source: "CNBC / Reuters", title: "ElevenLabs, 밸류 $11B — AI 음성 생성 시장 1위 굳히기", summary: "· Series D $500M 완료, 밸류 $11B(전년比 3배+)\n· ARR $330M+ · Sequoia 주도, NVIDIA 백업\n· 텍스트→음성 API로 콘텐츠 제작 표준 도구\n· IPO 옵션 검토 중", tag: "Funding", url: "https://www.cnbc.com/2026/02/04/nvidia-backed-ai-startup-elevenlabs-11-billion-valuation.html" },
     { date: "2026-03-25", co: "Harvey", cat: "startup", source: "CNBC / Bloomberg", title: "Harvey AI, $200M 라운드 — 법률 버티컬 AI $11B 밸류 달성", summary: "· Harvey $200M Series C, 밸류 $11B(Sequoia·GIC)\n· ARR $190M(5개월 만에 $100M→$190M, +90%)\n· 변호사 10만 명+, AmLaw 100 과반수 고객\n· 버티컬 AI 에이전트 섹터 지표 기업으로 부상", tag: "Funding", url: "https://agentmarketcap.ai/blog/2026/04/06/harvey-200m-11b-valuation-legal-ai-vertical-agent-template" },
-    { date: "2026-02-02", co: "Waymo", cat: "startup", source: "Reuters / Bloomberg", title: "Waymo, $16B 라운드 — 자율주행 밸류 $126B, 1.5년 만에 3배", summary: "· Alphabet 산하 Waymo $16B Series D, 밸류 $126B\n· 2024.10 $45B 대비 3배 성장 · ARR $355M+\n· 주간 유료 라이드 10만+ 건, 연말 100만 건 목표\n· 물리적 AI(Physical AI) 상업화 선도 사례", tag: "Funding", url: "https://www.reuters.com/business/waymo-valued-126-billion-latest-financing-2026-02-02/" },
     { date: "2026-03-12", co: "Glean", cat: "startup", source: "Forbes / IBL News", title: "Glean, 엔터프라이즈 AI 검색 ARR $200M+ — 'The Agentic List 2026' 선정", summary: "· 밸류 $7.2B · ARR $200M+\n· 사내 SaaS·문서 권한 기반 통합 검색 + 업무 에이전트\n· 대형 기업 IT·운영의 AI 표준 도구로 부상\n· 검색에서 업무 자동화 에이전트로 확장", tag: "Funding", url: "https://www.glean.com" },
     { date: "2026-02-18", co: "Sierra AI", cat: "startup", source: "ValueAdd VC / The Information", title: "Sierra AI, 밸류 $10B — 고객 서비스 에이전트 ARR 배수 67x 최고치", summary: "· 밸류 $10B · ARR $150M\n· Revenue Multiple 67x — AI 에이전트 섹터 최고 수준\n· 기업 브랜드 맞춤형 고객 응대 에이전트로 CS 비용 재편\n· Bret Taylor 공동창업, Sequoia 투자", tag: "Funding", url: "https://sierra.ai" },
   ];
@@ -315,8 +294,7 @@ window.DASH = (function () {
     { name: "Anthropic", value: 380, cat: "native", src: "CNBC '26.4 Amazon 투자 시 $380B" },
     { name: "xAI", value: 230, cat: "native", src: "Series E '26.1, 밸류 $230B+, 누적 조달 $42B+" },
     { name: "Databricks", value: 134, cat: "startup", src: "Series L '26.2 $134B ($175B 협의)" },
-    { name: "Waymo", value: 126, cat: "startup", src: "Reuters '26.2 Series D $126B" },
-    { name: "Cursor (SpaceX)", value: 60, cat: "startup", src: "CNBC '26.6 SpaceX 인수가 $60B" },
+    { name: "SpaceX (xAI, Cursor)", value: 60, cat: "native", src: "CNBC '26.6 Cursor 인수가 $60B (SpaceX·xAI)" },
     { name: "DeepSeek", value: 55, cat: "native", src: "Reuters '26.5 $52B~59B" },
     { name: "Mistral AI", value: 23, cat: "startup", src: "Bloomberg '26.6 €20B($23B) 협의" },
     { name: "Perplexity", value: 18, cat: "startup", src: "'26 추정 $18B" },
@@ -385,7 +363,7 @@ window.DASH = (function () {
     { name: "AWS AI (추정)", value: 14.0, cat: "bigtech", src: "AWS Bedrock + AI 서비스 ARR 추정" },
     { name: "Anthropic (ARR)", value: 9.0, cat: "native", src: "2026초 $4B→급성장, 보수적 추정" },
     { name: "Databricks (ARR)", value: 2.4, cat: "startup", src: "Databricks IR '25 ARR $2.4B" },
-    { name: "Cursor (ARR)", value: 2.0, cat: "startup", src: "Longbridge '26.6 ARR $2B+" },
+    { name: "Cursor(SpaceX) ARR", value: 2.0, cat: "native", src: "Longbridge '26.6 ARR $2B+" },
     { name: "Scale AI (ARR)", value: 1.4, cat: "startup", src: "Forbes '25 ARR $1.4B 추정" },
   ];
 
@@ -419,6 +397,7 @@ window.DASH = (function () {
     { title: "AI 전력 수요 쇼크 — 데이터센터가 전력망을 흔들다", desc: "IEA: 데이터센터 전력 소비 2024년 460 TWh → 2026년 650~1,050 TWh(2배+). 미국 비중 2023년 4.4% → 2028년 6.7~12%(EIA). 전력 확충이 반도체보다 핵심 병목으로 부상", icon: "spark", src: "IEA '26, EIA '26, Goldman Sachs" },
     { title: "GenAI ROI — $1 투자 → $3.70 회수", desc: "성숙 AI 기업 평균 ROI $4.60/$1(Accenture), 파일럿 단계 $1.20/$1. 개발자 생산성 +26~40%. 회수기간: 고객서비스 4.1개월·마케팅 6.7개월·엔지니어링 9.3개월. 단 전사 ROI 체감은 29%에 그침", icon: "chart", src: "Accenture '26, McKinsey '26, Futurum '26" },
     { title: "AI 고용 충격 — 3억 명 노출, '고용 없는 성장'", desc: "Goldman Sachs: 전 세계 3억 명 일자리가 AI에 노출, 2026년 2,500만 대체 → 2030년 2.7억. 행정(26%)·고객서비스(20%)가 취약. 다만 신직종 창출로 순 고용 효과는 중립~플러스 전망", icon: "pulse", src: "Goldman Sachs Research '26.01" },
+    { title: "NVIDIA, AI PC용 Arm CPU 진입 — 노트북 시장 공략", desc: "NVIDIA가 MediaTek와 공동 개발한 Arm 기반 PC SoC 'N1·N1X'(Blackwell GPU 통합)로 AI PC 노트북·데스크톱에 진입(2026 예상). Apple M·Qualcomm Snapdragon X와 경쟁. AI PC는 2026년 신규 PC 출하의 40%+(Canalys), 2027년 과반 전망. CES 2025 GB10 데스크톱(Project DIGITS)도 공개", icon: "chip", src: "Canalys '26, NVIDIA CES 2025, 업계 보도" },
   ];
 
   /* ---- Q&A Pairs (Korean) ---- */
@@ -427,13 +406,13 @@ window.DASH = (function () {
     { q: "OpenAI의 실제 매출은? $12.7B가 맞나요?", a: "$12.7B은 오래된 수치입니다. ARR 궤적은 $6B(2024말) → $20B(2025말, CFO 확인) → $25B(2026.02, The Information/Reuters) → ~$35B(2026.05) 입니다. 매월 수십억 달러씩 ARR이 추가되는 속도이며, 이는 S-1 제출 시 밸류 $852B의 근거가 됩니다.", nav: "native", keywords: ["openai", "arr", "매출", "수익", "재무", "35"] },
     { q: "Anthropic과 OpenAI의 차이는?", a: "Anthropic은 Constitutional AI 기반 안전성 우선 설계가 핵심입니다. 2026.04 Amazon 추가 $25B 투자(누적 $33B)로 밸류 $380B를 공식 확인했고, 코딩 에이전트 성능이 최상위권입니다. OpenAI가 소비자 시장(ChatGPT 800M+)을 선도하는 반면, Anthropic은 규제 산업 엔터프라이즈에서 신뢰를 쌓고 있습니다.", nav: "native", keywords: ["anthropic", "claude", "openai", "차이", "380", "amazon"] },
     { q: "Amazon은 왜 OpenAI·Anthropic 양쪽에 투자하나요?", a: "AWS의 '양쪽 베팅(two-horse)' 전략입니다. 2026.02 OpenAI에 $50B 투자+$100B AWS 약정, 2개월 뒤 2026.04.20 Anthropic에 추가 $25B(누적 $33B)+$100B AWS 약정을 체결했습니다. 어느 AI가 이기든 인프라 공급자로서 수익을 확보하고, Azure-OpenAI 독점 구도를 견제하려는 포석입니다.", nav: "bigtech", keywords: ["amazon", "aws", "anthropic", "openai", "투자", "전략", "베팅"] },
-    { q: "Cursor가 SpaceX에 인수된다는데 코딩 AI 시장은?", a: "SpaceX가 2026.06.16 Cursor(Anysphere)를 $60B 주식 인수에 합의했습니다(2026 Q3 완료 예정). Cursor ARR은 $2B+, 기업 고객 60%이며 Stripe·Adobe·NVIDIA가 고객입니다. 밸류는 $29.3B→$50B→$60B로 뛰었습니다. 이는 코딩 에이전트 시장에서 GitHub Copilot·OpenAI Codex·Claude Code와의 경쟁 격화 신호입니다.", nav: "startup", keywords: ["cursor", "spacex", "인수", "코딩", "에이전트", "60"] },
+    { q: "Cursor가 SpaceX에 인수된다는데 코딩 AI 시장은?", a: "SpaceX(xAI 생태계)가 2026.06.16 Cursor(Anysphere)를 $60B 주식 인수에 합의했습니다(2026 Q3 완료 예정). Cursor ARR은 $2B+, 기업 고객 60%이며 Stripe·Adobe·NVIDIA가 고객입니다. 밸류는 $29.3B→$50B→$60B로 뛰었습니다. 본 대시보드는 'SpaceX (xAI, Cursor)'로 통일 표기합니다. 이는 GitHub Copilot·OpenAI Codex·Claude Code와의 경쟁 격화 신호입니다.", nav: "native", keywords: ["cursor", "spacex", "xai", "인수", "코딩", "에이전트", "60"] },
     { q: "Microsoft의 AI 매출은 얼마나 되나요?", a: "Satya Nadella가 Q3 FY2026 실적에서 AI 부문 연 매출 런레이트 $37B(+123% YoY)를 공식 확인했습니다. M365 Copilot 유료 좌석은 2,000만(+250%)을 돌파했고 Azure는 35% 재가속했습니다. Accenture가 74만 좌석으로 최대 고객입니다.", nav: "bigtech", keywords: ["microsoft", "copilot", "azure", "매출", "37", "런레이트"] },
     { q: "NVIDIA가 압도적인 이유는?", a: "AI GPU 시장 80%+ 점유에 CUDA 소프트웨어 락인(400M+ 개발자, 10년 축적)이 더해진 이중 해자입니다. Q3 FY2026 분기 매출 $57B·데이터센터 $51.2B(+66%), FY26 연 $130.5B를 기록했습니다. B200은 H100 대비 추론 30배, 연 150~200만 대 출하 전망입니다. 다만 위협도 큽니다: 하이퍼스케일러 4곳(Google TPU v7·Amazon Trainium 3·MS Maia 2·Meta MTIA 2)의 자체 칩 합산 배포가 190만 가속기에 달해 '분리'가 시작됐습니다. 그래도 CUDA 대체에는 5~7년이 걸린다는 평가이며 FY27 데이터센터 전망은 오히려 $105~120B로 상향됐습니다.", nav: "bigtech", keywords: ["nvidia", "엔비디아", "gpu", "b200", "cuda", "57", "tpu", "trainium"] },
     { q: "DeepSeek가 왜 중요한가요?", a: "중국 DeepSeek의 R1·V3 모델은 GPT-4급 성능을 약 1/10 비용으로 구현해 'AI 비용 혁명(Sputnik Moment)'을 촉발했습니다. 2026년 첫 외부 라운드에서 목표 밸류 $52B~$59B(중국 국유 빅펀드 주도)입니다. 효율 패러다임 전환의 상징이지만, 국유 자본·수출규제 등 지정학 리스크가 있습니다.", nav: "native", keywords: ["deepseek", "딥시크", "중국", "비용", "효율", "r1"] },
     { q: "AI 에이전트란 무엇이며 도입 현황은?", a: "AI 에이전트는 단순 챗봇을 넘어 스스로 계획을 세우고 작업을 실행하는 자율 시스템입니다. Gartner에 따르면 2026 Q1 기업 앱의 80%에 에이전트가 내장됐지만 실 프로덕션 배포는 31%에 그칩니다. Harvey(법률)·Sierra(고객서비스)·Glean(기업검색) 등 버티컬 에이전트가 고성장 중이며, 시장은 2027E $47B로 전망됩니다.", nav: "dynamics", keywords: ["에이전트", "agentic", "자율", "엔터프라이즈", "도입", "47"] },
-    { q: "가장 빠르게 성장하는 AI 스타트업은?", a: "Cursor(ARR $2B+, SpaceX $60B 인수), Waymo(밸류 $126B), ElevenLabs($11B·음성), Harvey($11B·법률), Sierra($10B·CS) 등입니다. 수평 LLM에서 산업 전문 '버티컬 AI'로 투자가 이동 중이며, ARR 배수가 최대 67x(Sierra)에 이릅니다.", nav: "startup", keywords: ["스타트업", "성장", "빠른", "cursor", "waymo", "버티컬"] },
-    { q: "상장 AI 기업 주가는 어디서 보나요?", a: "본 대시보드 하단 '주가 차트' 섹션에서 NVIDIA·Microsoft·Amazon·Apple·Alphabet(Google)·Meta와 SpaceX(Cursor 인수 주체)의 일별 주가를 1년/5년으로 볼 수 있습니다. 차트에 마우스를 올리면 해당일 종가가 표시되고, 주요 변곡점에는 상승/하락 사유 설명이 나타납니다.", nav: "stocks", keywords: ["주가", "주식", "차트", "상장", "stock", "변곡점"] },
+    { q: "가장 빠르게 성장하는 AI 스타트업은?", a: "ElevenLabs($11B·음성), Harvey($11B·법률), Sierra($10B·고객서비스), Glean($7.2B·기업검색), Databricks($134B·데이터+AI), Mistral($23B·유럽) 등입니다. 수평 LLM에서 산업 전문 '버티컬 AI'로 투자가 이동 중이며, ARR 배수가 최대 67x(Sierra)에 이릅니다. (Cursor는 SpaceX에 $60B로 인수돼 'SpaceX (xAI, Cursor)'로 편입됐습니다.)", nav: "startup", keywords: ["스타트업", "성장", "빠른", "버티컬", "elevenlabs", "harvey"] },
+    { q: "상장 AI 기업 주가는 어디서 보나요?", a: "본 대시보드 하단 '주가 차트' 섹션에서 NVIDIA·Microsoft·Amazon·Apple·Alphabet(Google)·Meta의 일별 주가와 시가총액을 1년/5년으로 볼 수 있습니다. 주가는 매일 자동 크롤링된 실제 종가(Stooq)이며, 차트에 마우스를 올리면 해당일 종가가, 주요 변곡점에는 상승/하락 사유가 표시됩니다. SpaceX(xAI, Cursor)는 비상장이라 사모 밸류에이션 추정치만 표시됩니다.", nav: "stocks", keywords: ["주가", "주식", "차트", "상장", "stock", "시총", "변곡점"] },
     { q: "Physical AI(물리적 AI)란?", a: "소프트웨어를 넘어 로봇·자율주행 등 현실 세계로 들어간 AI입니다. Waymo 로보택시(밸류 $126B), Tesla Optimus, Figure AI 공장 배포 등이 대표 사례입니다. 골드만삭스는 2026년 인간형 로봇 5~10만 대 출하를 전망하며, 물리적 AI 시장은 2035E $1.15T(CAGR 33.5%)로 추정됩니다.", nav: "insights", keywords: ["physical", "물리적", "로봇", "자율주행", "waymo", "optimus"] },
     { q: "AI가 정말 일자리를 빼앗나요?", a: "Goldman Sachs(2026.01)는 전 세계 3억 명의 일자리가 AI에 노출되며, 2026년 2,500만 대체 → 2030년 2.7억으로 확대될 것으로 추정합니다. 행정(26%)·고객서비스(20%)가 취약합니다. 다만 AI 신규 직종 창출로 순 고용 효과는 중립~플러스 전망이며, GenAI 사용자는 비사용자 대비 직업 안정성이 더 높다는 데이터도 있습니다.", nav: "insights", keywords: ["일자리", "고용", "자동화", "실직", "goldman", "직업"] },
     { q: "오픈소스와 클로즈드 모델의 차이는?", a: "오픈 가중치 모델(Llama·Mistral·DeepSeek)은 무료 배포로 커스터마이징·데이터 보안·비용 통제가 가능합니다. 클로즈드 모델(GPT·Claude)은 최고 성능을 API로 제공하며 인프라 부담이 없습니다. 2026년 성능 격차가 빠르게 줄고 있으며, EU AI Act 환경에서는 오픈소스 선호가 높습니다.", nav: "dynamics", keywords: ["오픈소스", "llama", "deepseek", "클로즈드", "차이"] },
@@ -445,6 +424,9 @@ window.DASH = (function () {
     { q: "빅테크가 AI를 독점한다는 반독점 조사는?", a: "미 DOJ는 NVIDIA, FTC는 Microsoft·OpenAI를 조사 중입니다. 핵심 이슈는 '순환 지출' — MS가 OpenAI에 투자한 $13B+ 상당이 Azure 크레딧 형태라 사실상 클라우드 락인을 구조화한다는 지적입니다. NVIDIA는 GPU 80%+ 점유보다 CUDA 400M+ 개발자 락인이 진입장벽이라는 점이 문제입니다. 미국이 글로벌 AI 컴퓨트의 75%(중국 15%)를 장악합니다. 아이러니하게도 OpenAI는 자신이 도전받자 2025.09 EU에 Google·Apple·MS를 반독점으로 신고했습니다.", nav: "bigtech", keywords: ["반독점", "독점", "ftc", "doj", "규제", "antitrust", "순환"] },
     { q: "Google·Amazon 자체 칩으로 NVIDIA 시대는 끝나나요?", a: "당분간 안 무너지지만 '분리(Decoupling)'는 시작됐습니다. 2026년 Google TPU v7(Ironwood)·Amazon Trainium 3·Microsoft Maia 2·Meta MTIA 2가 양산에 진입, 4대 하이퍼스케일러 자체 칩 합산 배포가 약 190만 가속기로 추정됩니다. TPU v7 추론 효율/와트는 B200의 약 2배입니다. 그러나 NVIDIA의 진짜 해자는 하드웨어가 아니라 CUDA 생태계(400M+ 개발자, 10년 축적)로, 대체에 5~7년이 걸린다는 평가입니다. 실제 NVIDIA FY27 데이터센터 매출 전망은 오히려 $105~120B로 상향됐습니다.", nav: "bigtech", keywords: ["nvidia", "tpu", "trainium", "칩", "cuda", "반도체", "custom"] },
     { q: "미국의 중국 AI 칩 수출통제는 효과가 있나요?", a: "느리게 작동하고 그 사이 중국이 우회로를 만들었습니다. 미국이 글로벌 AI 컴퓨트의 75%, 중국이 15%를 차지하지만, 2026.05.31 미 상무부는 미국 기업들이 1년 이상 중국 자회사에 고성능 칩을 불법 판매해온 사실을 인정했습니다. DeepSeek의 R1은 칩 부족을 알고리즘 효율로 돌파해 GPT-4급을 1/10 비용에 구현했는데, 이것이 더 위협적입니다 — 칩 규제는 막아도 알고리즘 혁신은 막을 수 없기 때문입니다. 중국은 '평행 구매' 정책으로 Huawei·SMIC 내수 생산을 의무 확대 중입니다.", nav: "dynamics", keywords: ["중국", "수출통제", "deepseek", "huawei", "지정학", "미중", "export"] },
+    { q: "앤스로픽의 기업가치(밸류)는 얼마인가요?", a: "Anthropic의 기업가치는 2026년 4월 Amazon의 추가 $25B 투자 시점 기준 $380B로 공식 확인됐습니다. Amazon 누적 투자는 $33B(기존 $8B + 신규 $25B)이며, Anthropic은 AWS에 10년간 $100B+ 클라우드 사용을 약정했습니다. ARR은 2026년 초 $4B에서 급성장 중이고 일부 추정치는 ~$45B(검증 중)까지 제시됩니다. 직전 라운드는 2025.03 Series E $61B였으니 약 1년 만에 6배 이상 뛴 셈입니다.", nav: "native", keywords: ["앤스로픽", "anthropic", "밸류", "기업가치", "380", "amazon"] },
+    { q: "엔비디아 CPU를 탑재한 AI 노트북 시장은 어떤가요?", a: "NVIDIA는 그동안 GPU 중심이었지만, MediaTek와 공동 개발한 Arm 기반 PC용 SoC 'N1·N1X'(Blackwell GPU 통합)로 AI PC 노트북·데스크톱 시장에 진입합니다(2026 출시 예상). Apple M 시리즈·Qualcomm Snapdragon X·Intel/AMD와 경쟁합니다. AI PC(온디바이스 NPU 탑재)는 Canalys 기준 2026년 신규 PC 출하의 약 40%+, 2027년 과반으로 전망되며 온디바이스 추론 수요가 견인합니다. NVIDIA는 CES 2025에서 GB10 기반 데스크톱(Project DIGITS)도 공개해 로컬 AI 워크스테이션 시장도 노립니다. 변수는 Arm PC의 x86 호환성·소프트웨어 생태계입니다.", nav: "bigtech", keywords: ["엔비디아", "노트북", "ai pc", "cpu", "arm", "n1x", "mediatek", "온디바이스", "snapdragon"] },
+    { q: "SpaceX·xAI·Cursor는 무슨 관계인가요?", a: "모두 일론 머스크 생태계로 묶입니다. xAI는 머스크의 AI 기업(Grok)이고, SpaceX는 2026.06 IPO 직후 AI 코딩 에이전트 Cursor(Anysphere)를 $60B에 인수했습니다. 본 대시보드는 이를 'SpaceX (xAI, Cursor)'로 통일해 표기합니다. Cursor는 ARR $2B+, 기업 고객 60%(Stripe·Adobe·NVIDIA)였고, 인수로 xAI의 코딩 에이전트 역량이 강화됩니다. SpaceX는 비상장이라 주가 차트에는 사모 밸류에이션(시총 추정)만 표시됩니다.", nav: "native", keywords: ["spacex", "xai", "cursor", "머스크", "인수", "코딩"] },
   ];
 
   /* ---- Monthly Trend: Top AI Apps (M downloads) ---- */
@@ -499,7 +481,7 @@ window.DASH = (function () {
       { name: "OpenAI", value: 2100, src: "ARR ~$25B 기준 월 배분" },
       { name: "AWS AI", value: 1150, src: "추정" },
       { name: "Anthropic", value: 600, src: "ARR 기준 추정" },
-      { name: "Cursor", value: 130, src: "ARR $2B 기준" },
+      { name: "Cursor(SpaceX)", value: 130, src: "ARR $2B 기준" },
     ]},
     { month: "2026-02", data: [
       { name: "NVIDIA", value: 18500, src: "NVIDIA IR" },
@@ -507,7 +489,7 @@ window.DASH = (function () {
       { name: "OpenAI", value: 2300, src: "ARR 기준" },
       { name: "AWS AI", value: 1180, src: "추정" },
       { name: "Anthropic", value: 650, src: "ARR 기준" },
-      { name: "Cursor", value: 145, src: "ARR 기준" },
+      { name: "Cursor(SpaceX)", value: 145, src: "ARR 기준" },
     ]},
     { month: "2026-03", data: [
       { name: "NVIDIA", value: 19000, src: "NVIDIA IR" },
@@ -515,7 +497,7 @@ window.DASH = (function () {
       { name: "OpenAI", value: 2600, src: "ARR 기준 성장" },
       { name: "AWS AI", value: 1200, src: "추정" },
       { name: "Anthropic", value: 700, src: "ARR 기준" },
-      { name: "Cursor", value: 160, src: "ARR 기준" },
+      { name: "Cursor(SpaceX)", value: 160, src: "ARR 기준" },
     ]},
     { month: "2026-04", data: [
       { name: "NVIDIA", value: 19500, src: "NVIDIA IR" },
@@ -523,7 +505,7 @@ window.DASH = (function () {
       { name: "OpenAI", value: 2800, src: "ARR 기준" },
       { name: "AWS AI", value: 1230, src: "추정" },
       { name: "Anthropic", value: 750, src: "ARR 기준" },
-      { name: "Cursor", value: 170, src: "ARR 기준" },
+      { name: "Cursor(SpaceX)", value: 170, src: "ARR 기준" },
     ]},
     { month: "2026-05", data: [
       { name: "NVIDIA", value: 20000, src: "NVIDIA IR" },
@@ -531,19 +513,18 @@ window.DASH = (function () {
       { name: "OpenAI", value: 2900, src: "ARR ~$35B 기준" },
       { name: "AWS AI", value: 1260, src: "추정" },
       { name: "Anthropic", value: 800, src: "ARR 기준" },
-      { name: "Cursor", value: 175, src: "ARR 기준" },
+      { name: "Cursor(SpaceX)", value: 175, src: "ARR 기준" },
     ]},
   ];
 
   /* ============================================================
-     STOCKS — listed AI companies, daily price (generated)
-     상장 AI 기업 일별 주가 + 변곡점 설명. SpaceX는 Cursor 인수 주체.
-     anchors: [날짜, 분할조정 근사 종가($)] · events: 변곡점 설명
+     STOCKS — listed AI companies. 실제 일별 주가는 매일 크롤링되어
+     stocks.json 으로 제공됩니다(scripts/crawl-stocks.mjs · Stooq).
+     여기에는 메타데이터 + 변곡점 설명(에디토리얼)만 둡니다.
      ============================================================ */
   const STOCKS = [
     {
       ticker: "NVDA", name: "NVIDIA", domain: "nvidia.com", cat: "bigtech",
-      anchors: [["2021-06-17",19.5],["2021-11-29",32.7],["2022-02-24",23.7],["2022-10-14",11.2],["2023-01-06",14.3],["2023-05-25",38.0],["2023-08-24",47.0],["2023-10-31",40.8],["2024-03-08",87.5],["2024-06-18",135.0],["2024-11-21",146.0],["2025-01-27",118.0],["2025-04-04",94.0],["2025-06-17",141.0],["2025-11-19",181.0],["2026-01-30",148.0],["2026-06-17",158.0]],
       events: [
         { date: "2023-05-25", dir: "up", label: "FY24 가이던스 서프라이즈", reason: "데이터센터 GPU 수요 폭증으로 분기 가이던스를 50%+ 상회. AI 학습 칩 독점 지위가 부각되며 하루 +24% 급등." },
         { date: "2024-06-07", dir: "up", label: "10:1 주식분할", reason: "액면분할 시행. 소매 접근성 확대 기대와 AI 모멘텀으로 사상 최고가 경신." },
@@ -554,7 +535,6 @@ window.DASH = (function () {
     },
     {
       ticker: "MSFT", name: "Microsoft", domain: "microsoft.com", cat: "bigtech",
-      anchors: [["2021-06-17",259],["2021-11-19",345],["2022-06-16",247],["2022-10-14",228],["2023-01-25",240],["2023-06-15",348],["2023-11-15",370],["2024-01-25",404],["2024-07-05",467],["2024-12-20",437],["2025-04-08",385],["2025-06-17",480],["2025-12-15",495],["2026-04-29",520],["2026-06-17",512]],
       events: [
         { date: "2023-01-23", dir: "up", label: "OpenAI $10B 투자", reason: "OpenAI에 최대 $10B 추가 투자 발표. Azure OpenAI 독점 파트너십으로 AI 클라우드 선두 기대." },
         { date: "2024-01-25", dir: "up", label: "시총 $3T 돌파", reason: "M365 Copilot 기업 도입 가속으로 사상 첫 시총 $3T 돌파." },
@@ -564,7 +544,6 @@ window.DASH = (function () {
     },
     {
       ticker: "AMZN", name: "Amazon", domain: "amazon.com", cat: "bigtech",
-      anchors: [["2021-06-17",172],["2021-11-18",184],["2022-06-16",105],["2022-12-28",81],["2023-06-15",127],["2023-11-15",145],["2024-07-08",200],["2024-12-16",230],["2025-04-08",170],["2025-06-17",212],["2025-12-15",228],["2026-04-20",240],["2026-06-17",236]],
       events: [
         { date: "2022-06-06", dir: "up", label: "20:1 주식분할", reason: "액면분할 시행으로 소매 접근성 확대." },
         { date: "2023-11-15", dir: "up", label: "Bedrock·Anthropic 베팅", reason: "AWS Bedrock 멀티모델 전략과 Anthropic 투자로 AI 클라우드 경쟁 본격 진입." },
@@ -574,7 +553,6 @@ window.DASH = (function () {
     },
     {
       ticker: "AAPL", name: "Apple", domain: "apple.com", cat: "bigtech",
-      anchors: [["2021-06-17",131],["2022-01-03",182],["2022-06-16",130],["2023-01-05",125],["2023-07-31",196],["2024-01-02",185],["2024-06-11",207],["2024-12-26",259],["2025-04-08",172],["2025-06-17",198],["2025-12-15",212],["2026-06-17",214]],
       events: [
         { date: "2024-06-10", dir: "up", label: "Apple Intelligence 공개", reason: "WWDC에서 온디바이스 AI 'Apple Intelligence' 발표. 기기 교체 수요 기대로 사상 최고가 경신." },
         { date: "2025-04-08", dir: "down", label: "관세·AI 지연 우려", reason: "중국 생산 관세 노출과 Siri AI 고도화 지연 우려로 조정." },
@@ -582,8 +560,7 @@ window.DASH = (function () {
       ],
     },
     {
-      ticker: "GOOGL", name: "Alphabet (Google)", domain: "abc.xyz", cat: "native",
-      anchors: [["2021-06-17",122],["2021-11-18",148],["2022-06-16",109],["2022-11-04",88],["2023-02-08",95],["2023-06-15",123],["2024-01-29",153],["2024-07-10",190],["2024-12-26",197],["2025-04-08",147],["2025-06-17",176],["2025-12-15",192],["2026-06-17",198]],
+      ticker: "GOOGL", name: "Alphabet (Google)", domain: "abc.xyz", cat: "bigtech",
       events: [
         { date: "2023-02-08", dir: "down", label: "Bard 시연 오류", reason: "첫 Bard 데모에서 사실 오류 노출로 하루 -7%. 검색 광고 수성 우려 확산." },
         { date: "2024-05-14", dir: "up", label: "Gemini 전면 통합", reason: "I/O에서 Gemini를 검색·워크스페이스에 통합 발표하며 AI 반격 본격화." },
@@ -592,7 +569,6 @@ window.DASH = (function () {
     },
     {
       ticker: "META", name: "Meta", domain: "meta.com", cat: "bigtech",
-      anchors: [["2021-06-17",340],["2021-09-07",378],["2022-02-03",237],["2022-11-04",90],["2023-02-02",188],["2023-07-27",325],["2024-02-02",474],["2024-07-05",538],["2024-12-16",585],["2025-04-08",505],["2025-06-17",698],["2025-12-15",640],["2026-06-17",688]],
       events: [
         { date: "2022-02-03", dir: "down", label: "실적 쇼크 -26%", reason: "이용자 정체와 메타버스 적자 확대로 하루 -26%. 당시 사상 최대 일일 시총 손실." },
         { date: "2022-11-04", dir: "down", label: "바닥·'효율의 해'", reason: "대규모 감원과 '효율의 해' 선언 직전 저점. 이후 강한 반등의 출발점." },
@@ -601,68 +577,45 @@ window.DASH = (function () {
       ],
     },
     {
-      ticker: "SPCX", name: "SpaceX (Cursor 인수)", domain: "spacex.com", cat: "startup",
-      anchors: [["2026-06-09",96],["2026-06-12",101],["2026-06-16",112],["2026-06-17",114]],
+      ticker: "SPCX", name: "SpaceX (xAI, Cursor)", domain: "spacex.com", cat: "native",
+      private: true, mcap: "$350B+ (비상장 추정)",
       events: [
-        { date: "2026-06-09", dir: "up", label: "SpaceX IPO 상장", reason: "대형 IPO로 시장 데뷔. 발행가 대비 강한 수요로 상승 출발." },
-        { date: "2026-06-16", dir: "up", label: "Cursor $60B 인수 발표", reason: "AI 코딩 에이전트 Cursor(Anysphere)를 $60B 주식 인수 합의. xAI 코딩 전략 강화 기대로 상승." },
+        { date: "2026-06-16", dir: "up", label: "Cursor $60B 인수 발표", reason: "AI 코딩 에이전트 Cursor(Anysphere)를 $60B 주식 인수 합의. xAI 코딩 전략 강화." },
       ],
-      note: "SpaceX는 2026.06 IPO 직후 Cursor(Anysphere)를 인수했습니다. 상장 이력이 짧아 1년/5년 모두 상장 이후 구간만 표시됩니다.",
+      note: "SpaceX는 비상장 기업으로 공개 거래 주가가 없습니다(xAI·Cursor 인수 주체). 시총은 사모 밸류에이션 추정치이며, 일별 주가 차트는 제공되지 않습니다.",
     },
   ];
 
-  // mulberry32 seeded PRNG — deterministic per ticker so the walk is stable
-  function mulberry32(a) {
-    return function () {
-      a |= 0; a = (a + 0x6D2B79F5) | 0;
-      let t = Math.imul(a ^ (a >>> 15), 1 | a);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-  function seedFrom(str) {
-    let h = 2166136261;
-    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
-    return h >>> 0;
-  }
+  // 시총 표시용 발행주식수(근사, 십억 주) — 크롤러 마켓캡 미수신 시 lastPrice×shares 로 추정
+  const STOCK_SHARES = { NVDA: 24.4, MSFT: 7.43, AMZN: 10.6, AAPL: 14.8, GOOGL: 12.2, META: 2.53 };
+
   const DAY = 86400000;
 
-  // Build a daily close series for the trailing `years` window from anchor points.
-  function buildStockSeries(stock, years) {
-    const anchors = (stock.anchors || []).map(a => ({ t: Date.parse(a[0] + "T00:00:00Z"), p: a[1] }));
-    if (anchors.length < 2) return { points: [], events: [], min: 0, max: 1 };
-    const firstT = anchors[0].t, lastT = anchors[anchors.length - 1].t;
-    const wantStart = lastT - years * 365 * DAY;
-    const startT = Math.max(firstT, wantStart);
-    const rnd = mulberry32(seedFrom(stock.ticker) + years * 2654435761);
-    const points = [];
-    let drift = 0, ai = 0;
-    for (let t = firstT; t <= lastT; t += DAY) {
-      while (ai < anchors.length - 2 && t > anchors[ai + 1].t) ai++;
-      const a0 = anchors[ai], a1 = anchors[ai + 1];
-      const f = (t - a0.t) / ((a1.t - a0.t) || 1);
-      const base = a0.p + (a1.p - a0.p) * f;
-      drift = drift * 0.9 + (rnd() - 0.5) * 0.9;            // mean-reverting walk
-      const noise = (rnd() - 0.5) * 0.6;
-      const price = Math.max(0.05, base * (1 + drift * 0.012 + noise * 0.006));
-      const dow = new Date(t).getUTCDay();
-      if (dow !== 0 && dow !== 6 && t >= startT) {
-        points.push({ t, d: new Date(t).toISOString().slice(0, 10), p: Math.round(price * 100) / 100 });
-      }
-    }
-    const events = [];
-    (stock.events || []).forEach(e => {
+  // 실제 크롤링된 일별 종가(points: [{d, p}])를 받아 변곡점(events)을 가까운
+  // 거래일에 스냅하고 min/max 를 계산한다. years 로 최근 구간만 자른다.
+  function attachStockEvents(rawPoints, events, years) {
+    const all = (rawPoints || [])
+      .filter(p => p && p.d && typeof p.p === "number")
+      .map(p => ({ d: p.d, p: p.p, t: Date.parse(p.d + "T00:00:00Z") }))
+      .sort((a, b) => a.t - b.t);
+    if (all.length < 2) return { points: [], events: [], min: 0, max: 1 };
+    const lastT = all[all.length - 1].t;
+    const startT = years ? lastT - years * 365 * DAY : all[0].t;
+    const points = all.filter(p => p.t >= startT);
+    if (points.length < 2) return { points: all, events: [], min: Math.min(...all.map(p => p.p)), max: Math.max(...all.map(p => p.p)) };
+    const evs = [];
+    (events || []).forEach(e => {
       const et = Date.parse(e.date + "T00:00:00Z");
-      if (et < startT || et > lastT) return;
+      if (et < points[0].t || et > points[points.length - 1].t) return;
       let best = null, bd = Infinity;
       for (const pt of points) { const dd = Math.abs(pt.t - et); if (dd < bd) { bd = dd; best = pt; } }
-      if (best) events.push({ date: e.date, dir: e.dir, label: e.label, reason: e.reason, p: best.p, t: best.t, d: best.d });
+      if (best) evs.push({ date: e.date, dir: e.dir, label: e.label, reason: e.reason, p: best.p, t: best.t, d: best.d });
     });
     let min = Infinity, max = -Infinity;
     points.forEach(pt => { if (pt.p < min) min = pt.p; if (pt.p > max) max = pt.p; });
     if (!isFinite(min)) { min = 0; max = 1; }
-    return { points, events, min, max };
+    return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, ARTICLES, REPORTS, MARKET_GROWTH, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, QA_PAIRS, APP_MONTHLY, REVENUE_MONTHLY, STOCKS, buildStockSeries };
+  return { CATEGORIES, COMPANIES, ARTICLES, REPORTS, MARKET_GROWTH, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, QA_PAIRS, APP_MONTHLY, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();

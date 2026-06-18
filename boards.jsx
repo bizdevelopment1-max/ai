@@ -499,26 +499,31 @@ function ReportsBoard({ reports, sectionRef, query }) {
 }
 
 // ---- Stock board: listed AI companies, daily price, 1Y/5Y, inflection notes ----
-function StockBoard({ stocks, cats, sectionRef, theme }) {
+function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
   const inView = useInView(sectionRef);
   const catMap = Object.fromEntries((cats || []).map(c => [c.id, c]));
   const [ticker, setTicker] = React.useState((stocks[0] || {}).ticker);
   const [years, setYears] = React.useState(1);
   const sel = stocks.find(s => s.ticker === ticker) || stocks[0];
   const accent = (catMap[sel.cat] || {}).accent || theme.accent;
+  const real = (stockData && stockData[sel.ticker]) || null;
+  const mcap = sel.private ? sel.mcap : (real && real.marketCap);
+  const updated = stockData && stockData.__generatedAt;
   return (
     <section className="board" ref={sectionRef} data-screen-label="Stock Prices">
      <AnimCtx.Provider value={inView}>
       <div className="board-head" style={{ "--accent": accent }}>
         <span className="board-tab" style={{ background: accent }} />
         <div className="board-titles">
-          <h2>주가 차트 <span className="board-en">Listed AI Stocks · 일별 주가</span></h2>
-          <p>상장 AI 기업 일별 주가 · 차트 위에 마우스를 올리면 종가 표시 · 변곡점(●)에 상승/하락 사유</p>
+          <h2>주가 차트 <span className="board-en">Listed AI Stocks · 실시간 일별 주가</span></h2>
+          <p>상장 AI 기업 실제 일별 종가(매일 자동 크롤링) · 시가총액 표시 · 마우스 호버 시 종가 · 변곡점(●)에 상승/하락 사유</p>
         </div>
-        <div className="stock-range">
-          <button className={years === 1 ? "on" : ""} onClick={() => setYears(1)}>1년</button>
-          <button className={years === 5 ? "on" : ""} onClick={() => setYears(5)}>5년</button>
-        </div>
+        {!sel.private && (
+          <div className="stock-range">
+            <button className={years === 1 ? "on" : ""} onClick={() => setYears(1)}>1년</button>
+            <button className={years === 5 ? "on" : ""} onClick={() => setYears(5)}>5년</button>
+          </div>
+        )}
       </div>
 
       <div className="stock-tabs">
@@ -542,8 +547,46 @@ function StockBoard({ stocks, cats, sectionRef, theme }) {
           <span className="sp-name">{sel.name}</span>
           <span className="sp-tk">{sel.ticker}</span>
           <span className="sp-cat" style={{ color: accent, background: (catMap[sel.cat] || {}).accentSoft }}>{(catMap[sel.cat] || {}).ko}</span>
+          {mcap && <span className="sp-mcap">시가총액 <b>{mcap}</b></span>}
         </div>
-        <StockChart stock={sel} years={years} accent={accent} ink={theme.ink} muted={theme.muted} grid={theme.grid} />
+
+        {sel.private ? (
+          <div className="stock-private">
+            <p className="stock-note">{sel.note}</p>
+            {(sel.events || []).length > 0 && (
+              <div className="stock-events">
+                {sel.events.map((e, k) => (
+                  <div key={k} className={"se-item " + (e.dir === "up" ? "up" : "down")}>
+                    <span className="se-dot" />
+                    <span className="se-date">{e.date}</span>
+                    <span className="se-label">{e.dir === "up" ? "▲" : "▼"} {e.label}</span>
+                    <span className="se-reason">{e.reason}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : real && real.points ? (
+          <StockChart stock={sel} rawPoints={real.points} years={years} marketCap={real.marketCap}
+            asOf={real.asOf} accent={accent} ink={theme.ink} muted={theme.muted} grid={theme.grid} />
+        ) : (
+          <div className="stock-pending">
+            <p className="stock-empty">실제 일별 주가는 매일 자동 크롤링되어 표시됩니다(Stooq). 첫 갱신을 기다리는 중입니다.</p>
+            {(sel.events || []).length > 0 && (
+              <div className="stock-events">
+                {sel.events.slice().reverse().map((e, k) => (
+                  <div key={k} className={"se-item " + (e.dir === "up" ? "up" : "down")}>
+                    <span className="se-dot" />
+                    <span className="se-date">{e.date}</span>
+                    <span className="se-label">{e.dir === "up" ? "▲" : "▼"} {e.label}</span>
+                    <span className="se-reason">{e.reason}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {updated && <p className="stock-updated">데이터 갱신: {String(updated).slice(0, 10)} · 출처 Stooq · 시총=종가×발행주식수(근사)</p>}
       </div>
      </AnimCtx.Provider>
     </section>

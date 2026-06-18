@@ -13,15 +13,15 @@ import { writeFile, readFile } from "node:fs/promises";
 const COMPANIES = [
   { co: "OpenAI", cat: "native", q: "OpenAI" },
   { co: "Anthropic", cat: "native", q: "Anthropic Claude" },
-  { co: "Google DeepMind", cat: "native", q: "Google DeepMind Gemini" },
   { co: "xAI", cat: "native", q: "xAI Grok Musk" },
   { co: "DeepSeek", cat: "native", q: "DeepSeek AI" },
+  { co: "SpaceX (xAI, Cursor)", cat: "native", q: "SpaceX Cursor Anysphere AI" },
+  { co: "Google DeepMind", cat: "bigtech", q: "Google DeepMind Gemini" },
   { co: "Apple", cat: "bigtech", q: "Apple Intelligence AI" },
   { co: "Microsoft", cat: "bigtech", q: "Microsoft Copilot AI" },
   { co: "Amazon", cat: "bigtech", q: "Amazon AWS AI Bedrock" },
   { co: "NVIDIA", cat: "bigtech", q: "Nvidia AI GPU" },
   { co: "Meta AI", cat: "bigtech", q: "Meta Llama AI" },
-  { co: "Cursor (SpaceX)", cat: "startup", q: "Cursor Anysphere AI coding" },
   { co: "Perplexity", cat: "startup", q: "Perplexity AI" },
   { co: "Mistral AI", cat: "startup", q: "Mistral AI" },
   { co: "Cohere", cat: "startup", q: "Cohere AI" },
@@ -31,7 +31,6 @@ const COMPANIES = [
   { co: "Runway", cat: "startup", q: "Runway AI video" },
   { co: "ElevenLabs", cat: "startup", q: "ElevenLabs voice AI" },
   { co: "Harvey", cat: "startup", q: "Harvey legal AI" },
-  { co: "Waymo", cat: "startup", q: "Waymo robotaxi" },
   { co: "Glean", cat: "startup", q: "Glean enterprise AI" },
   { co: "Sierra AI", cat: "startup", q: "Sierra AI agent customer service" },
 ];
@@ -58,21 +57,24 @@ function parseItems(xml) {
 }
 
 async function crawlOne(c) {
-  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(c.q + " when:7d")}&hl=en-US&gl=US&ceid=US:en`;
+  // 한국어판 Google News — 제목·요약이 한국어로 수집됨
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(c.q + " when:7d")}&hl=ko&gl=KR&ceid=KR:ko`;
   try {
     const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (AI-Dashboard NewsBot)" } });
     if (!res.ok) throw new Error("HTTP " + res.status);
     const xml = await res.text();
-    const items = parseItems(xml).slice(0, 3);
+    const items = parseItems(xml).slice(0, 2);
     const out = items.map((it) => {
       const rawTitle = decode(tag(it, "title"));
       const link = decode(tag(it, "link"));
       const pub = tag(it, "pubDate");
       const src = decode(tag(it, "source")) || (rawTitle.includes(" - ") ? rawTitle.split(" - ").pop() : "Google News");
-      const title = rawTitle.replace(/ - [^-]*$/, "").trim() || rawTitle;
+      const title = rawTitle.replace(/ - [^-]*$/, "").trim() || rawTitle;        // 한국어 제목 요약
+      const descTxt = decode(tag(it, "description")).replace(/^.*?<\/a>/, "").slice(0, 140);
       const d = pub ? new Date(pub) : new Date();
       const date = isNaN(d) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
-      return { date, co: c.co, cat: c.cat, source: src, title, summary: "", tag: "News", url: link };
+      const summary = `· ${title}\n· 출처: ${src}${descTxt ? "\n· " + descTxt : ""}`;   // 한국어 요약
+      return { date, co: c.co, cat: c.cat, source: src, title, summary, tag: "최신", url: link };
     }).filter((a) => a.title && a.url);
     console.log(`[agent:${c.co}] ${out.length} item(s)`);
     return out;

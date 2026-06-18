@@ -354,7 +354,7 @@ function MonthlyLineChart({ series, months, colors, ink, muted, grid, unit, valu
 }
 
 // ---- Interactive daily stock chart (hover price + inflection notes) ----
-function StockChart({ stock, years, accent, ink, muted, grid }) {
+function StockChart({ stock, rawPoints, years, marketCap, asOf, accent, ink, muted, grid }) {
   const [ref, inView] = useEyeLevel();
   const [nonce, bump] = useHoverReplay();
   const prog = useProgress(inView, 1500, 0, nonce);
@@ -362,12 +362,12 @@ function StockChart({ stock, years, accent, ink, muted, grid }) {
   const [hover, setHover] = useStateC(null);
   const svgRef = useRefC(null);
 
-  const series = (window.DASH.buildStockSeries(stock, years)) || { points: [], events: [] };
+  const series = window.DASH.attachStockEvents(rawPoints, stock.events, years) || { points: [], events: [] };
   const pts = series.points;
   const W = 760, H = 320, padL = 54, padR = 18, padT = 22, padB = 30;
   const iw = W - padL - padR, ih = H - padT - padB;
   if (!pts || pts.length < 2) {
-    return <div ref={ref} className="stock-empty">주가 데이터가 부족합니다.</div>;
+    return <div ref={ref} className="stock-empty">실시간 주가 데이터를 매일 크롤링합니다. 자동 갱신을 기다리는 중입니다.</div>;
   }
   const lo0 = series.min, hi0 = series.max;
   const pad = (hi0 - lo0) * 0.10 || 1;
@@ -411,6 +411,8 @@ function StockChart({ stock, years, accent, ink, muted, grid }) {
         <span className="sr-date">{hp ? fmtKo(hp.d) : ""}</span>
         <span className="sr-price" style={{ color: lineCol }}>${hp ? hp.p.toFixed(2) : last.toFixed(2)}</span>
         <span className={"sr-chg " + (hChange >= 0 ? "pos" : "neg")}>{hChange >= 0 ? "+" : ""}{hChange.toFixed(1)}% <em>(기간 시작 대비)</em></span>
+        {marketCap && <span className="sr-mcap">시총 <b>{marketCap}</b></span>}
+        {asOf && <span className="sr-asof">기준일 {asOf}</span>}
       </div>
       <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: "block", cursor: "crosshair" }}
         onMouseMove={onMove} onMouseEnter={bump}>

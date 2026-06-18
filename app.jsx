@@ -58,6 +58,17 @@ function App() {
     return [...extra, ...base];
   }, [crawled]);
 
+  // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
+  const [stockData, setStockData] = uS(null);
+  uE(() => {
+    let alive = true;
+    fetch("stocks.json", { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && j.stocks) setStockData({ ...j.stocks, __generatedAt: j.generatedAt }); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
   // category objects with tweakable accents
   const cats = useMemo(() => D.CATEGORIES.map(c => ({
     ...c,
@@ -206,7 +217,7 @@ function App() {
 
             <ReportsBoard reports={D.REPORTS} sectionRef={refs.reports} query={query} />
 
-            <StockBoard stocks={D.STOCKS} cats={cats} sectionRef={refs.stocks} theme={chartTheme} />
+            <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} sectionRef={refs.stocks} theme={chartTheme} />
 
             <footer className="foot">
               <span>AI Intelligence Dashboard</span>

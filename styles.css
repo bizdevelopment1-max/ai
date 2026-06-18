@@ -1222,3 +1222,24 @@ a[href]:hover .rainbow-on-hover,
   .se-label, .se-reason { grid-column: 2; }
   .stock-range { margin-left: 0; }
 }
+
+/* ============================================================
+   Mobile: keep chart text legible — scroll charts horizontally
+   instead of shrinking them, and let headers/meta wrap.
+   ============================================================ */
+@media (max-width: 760px) {
+  .ov-chart-card, .chart-card, .stock-panel { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .ov-chart-card svg, .chart-card svg { min-width: 440px; display: block; }
+  .stock-chart svg { min-width: 580px; display: block; }
+  .stock-readout { flex-wrap: wrap; row-gap: 2px; }
+  .stock-tabs { gap: 6px; }
+  .stock-tab em { display: none; }                 /* keep tabs compact, ticker stays */
+  .cc-head, .cc-head span { white-space: normal; word-break: keep-all; }
+  .board-titles h2, .board-titles p { white-space: normal; word-break: keep-all; }
+  .art-meta { flex-wrap: wrap; row-gap: 4px; }
+  .feed-codrop { gap: 6px; }
+  .fc-select { min-width: 130px; }
+  /* horizontal scroll hint scrollbar a touch thinner */
+  .ov-chart-card::-webkit-scrollbar, .chart-card::-webkit-scrollbar, .stock-panel::-webkit-scrollbar { height: 6px; }
+  .ov-chart-card::-webkit-scrollbar-thumb, .chart-card::-webkit-scrollbar-thumb, .stock-panel::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+}
