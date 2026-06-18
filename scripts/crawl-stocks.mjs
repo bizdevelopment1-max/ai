@@ -99,12 +99,51 @@ async function fromNasdaq(c) {
   } catch { return null; }
 }
 
+// StockAnalysis.com daily history (keyless JSON) — robust fallback, esp. for newer/odd tickers
+async function fromStockAnalysis(c) {
+  try {
+    const url = `https://stockanalysis.com/api/symbol/s/${c.y.toLowerCase()}/history?range=5Y&period=Daily`;
+    const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json", Referer: "https://stockanalysis.com/" } });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const j = await res.json();
+    const rows = (j && (Array.isArray(j.data) ? j.data : (j.data && j.data.data))) || [];
+    const cut = cutoffDate();
+    const points = rows.map((r) => {
+      const d = r.t || r.date || r[0];
+      const close = r.c != null ? r.c : (r.close != null ? r.close : r[4]);
+      const dd = typeof d === "number" ? new Date(d * 1000).toISOString().slice(0, 10) : String(d).slice(0, 10);
+      return { d: dd, p: round2(parseFloat(close)) };
+    }).filter((p) => p.d && isFinite(p.p) && new Date(p.d) >= cut).sort((a, b) => (a.d < b.d ? -1 : 1));
+    return points.length >= 5 ? points : null;
+  } catch { return null; }
+}
+
+// TradingView quote (keyless) — last price only; used to confirm a ticker trades when history APIs miss it
+async function tvLastPrice(c) {
+  try {
+    const res = await fetch("https://scanner.tradingview.com/symbol", {
+      method: "POST", headers: { "User-Agent": UA, "content-type": "application/json" },
+      body: JSON.stringify({ symbols: { tickers: [`NASDAQ:${c.y}`, `NYSE:${c.y}`, `AMEX:${c.y}`] }, columns: ["close", "update_mode"] }),
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const j = await res.json();
+    const row = (j.data || []).find(r => r.d && isFinite(r.d[0]));
+    return row ? round2(row.d[0]) : null;
+  } catch { return null; }
+}
+
 async function crawlOne(c, sess) {
   let points = await fromYahoo(c, sess);
   let src = "yahoo";
   if (!points) { points = await fromStooq(c); src = "stooq"; }
   if (!points) { points = await fromNasdaq(c); src = "nasdaq"; }
-  if (!points) { console.warn(`[stock:${c.t}] no data (all sources failed)`); return null; }
+  if (!points) { points = await fromStockAnalysis(c); src = "stockanalysis"; }
+  if (!points) {
+    // last resort: TradingView single-price (no history) → 1-point series so the ticker still appears
+    const tv = await tvLastPrice(c);
+    if (tv) { points = [{ d: new Date().toISOString().slice(0, 10), p: tv }]; src = "tradingview"; }
+  }
+  if (!points) { console.warn(`[stock:${c.t}] no data (all sources failed: yahoo/stooq/nasdaq/stockanalysis/tradingview)`); return null; }
   const last = points[points.length - 1];
   const marketCap = c.shares ? fmtCap(last.p * c.shares) : "";   // shares 미상(SPCX 등)은 시총 표시 안 함
   console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} $${last.p}${marketCap ? ", cap " + marketCap : ""}`);

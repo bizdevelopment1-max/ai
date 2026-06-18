@@ -63,14 +63,13 @@ function App() {
     const hit = DEVICE_CO_MAP.find(([re]) => re.test(a.title || ""));
     return { ...a, co: hit ? hit[1] : "" };   // 매칭되는 업체로, 없으면 업체 미지정(드롭다운 미노출)
   };
-  // 데일리 기사 정책: 제목 한글 + 한글 3줄 개조식 요약만 노출(영문/미요약 항목은 숨김)
-  const isKoArticle = (a) => a && /[가-힣]/.test(a.title || "") && /[가-힣]/.test(a.summary || "");
+  // 데일리 기사: 제목+요약이 있으면 표시(크롤러가 한글 번역 우선, 번역 불가 시 영문 폴백)
   const articles = useMemo(() => {
     const base = (D.ARTICLES || []).map(reclassCo);
     if (!crawled || !crawled.length) return base;
     const seen = new Set(base.map(a => (a.co || "") + "|" + a.title));
     const extra = crawled.map(reclassCo)
-      .filter(a => a && a.title && isKoArticle(a) && !seen.has((a.co || "") + "|" + a.title));
+      .filter(a => a && a.title && a.summary && !seen.has((a.co || "") + "|" + a.title));
     return [...extra, ...base];
   }, [crawled]);
 

@@ -169,6 +169,36 @@ async function summarize(a) {
   }
 }
 
+// ---- Keyless Korean translation (no API key): Google Translate gtx endpoint ----
+async function translateKo(text) {
+  const t = String(text || "").trim();
+  if (!t) return "";
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ko&dt=t&q=${encodeURIComponent(t.slice(0, 1800))}`;
+    const res = await fetch(url, { headers: { "User-Agent": UA } });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const j = await res.json();
+    return (j[0] || []).map(seg => seg[0]).join("").trim();
+  } catch { return ""; }
+}
+
+// No-API brief: 한글 제목(번역) + 영문 본문 번역을 3줄 개조식으로. 번역 실패 시 영문 폴백(사용자 허용).
+async function freeKoBrief(a) {
+  const titleKo = (await translateKo(a.title)) || a.title;
+  const descKo = await translateKo(a.descEn);
+  const src = descKo || a.descEn || a.title;
+  let lines = String(src).split(/(?<=[.!?。…])\s+|·|\n|;/).map(s => s.trim()).filter(s => s.length > 1).slice(0, 3);
+  if (!lines.length) lines = [titleKo];
+  const summary = lines.map(l => "· " + l.replace(/^[·\-•]\s*/, "")).join("\n");
+  return { title_ko: titleKo, summary };
+}
+
+// Best-effort brief: Claude(있으면) → 실패/무키 시 keyless 번역. 항상 3줄형 요약 반환.
+async function brief(a) {
+  if (KEY) { const s = await summarize(a); if (s) return s; }
+  return await freeKoBrief(a);
+}
+
 // limited-concurrency map
 async function pool(items, n, fn) {
   const out = new Array(items.length);
@@ -200,7 +230,7 @@ async function main() {
 
   // only call the API for genuinely new URLs (or prior entries that lack a good Korean summary)
   const toSummarize = raw.filter(a => !isKoreanSummary(prevByUrl.get(a.url)));
-  const sums = await pool(toSummarize, 3, summarize);
+  const sums = await pool(toSummarize, 4, brief);   // Claude→keyless 번역 폴백
   const sumByUrl = new Map();
   toSummarize.forEach((a, k) => { if (sums[k]) sumByUrl.set(a.url, sums[k]); });
 
@@ -223,7 +253,7 @@ async function main() {
   const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
     .map(a => ({ ...a, summary: stripSrc(a.summary) }))
-    .filter(isKoreanSummary)                              // 한글 제목+3줄 한글 요약 없는 항목은 노출 금지(영문 미요약 제외)
+    .filter(a => a.title && a.summary)                   // 요약은 한글 우선(번역), 불가 시 영문 폴백 허용
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .slice(0, 100);
 
