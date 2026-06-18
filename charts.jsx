@@ -287,6 +287,28 @@ function DonutChart({ data, colorOf, ink, muted, centerLabel, centerSub }) {
 const SHORT_NAMES = { "Google DeepMind": "DeepMind", "Anthropic Claude": "Anthropic", "Stability AI": "Stability", "Mistral AI": "Mistral" };
 function shortName(n) { return SHORT_NAMES[n] || n.split(" ")[0]; }
 
+// Map monthly-trend series labels (app / product / platform names) to a domain for favicon logos.
+const APP_DOMAINS = {
+  "ChatGPT": "openai.com", "OpenAI": "openai.com",
+  "Gemini": "gemini.google.com", "Google Gemini": "gemini.google.com",
+  "Grok": "x.ai",
+  "DeepSeek": "deepseek.com",
+  "Perplexity": "perplexity.ai",
+  "Claude": "claude.ai", "Anthropic": "anthropic.com",
+  "NVIDIA": "nvidia.com",
+  "Microsoft AI": "microsoft.com", "Microsoft Copilot": "microsoft.com",
+  "AWS AI": "aws.amazon.com",
+  "Cursor(SpaceX)": "cursor.com", "Cursor (SpaceX)": "cursor.com",
+  "GitHub Copilot": "github.com",
+  "iOS": "apple.com", "Android": "android.com",
+};
+function appDomain(name) {
+  if (!name) return null;
+  if (APP_DOMAINS[name]) return APP_DOMAINS[name];
+  const key = Object.keys(APP_DOMAINS).find(k => name.indexOf(k) === 0);
+  return key ? APP_DOMAINS[key] : null;
+}
+
 function MonthlyLineChart({ series, months, colors, ink, muted, grid, unit, valuePrefix, companies }) {
   const [ref, inView] = useEyeLevel();
   const [nonce, bump] = useHoverReplay();
@@ -338,7 +360,7 @@ function MonthlyLineChart({ series, months, colors, ink, muted, grid, unit, valu
       <div className="mlc-legend">
         {series.map((s, si) => {
           const co = companies && companies.find(c => s.name.startsWith(c.name.split(" (")[0]) || s.name.startsWith(shortName(c.name)));
-          const domain = co && co.domain;
+          const domain = (co && co.domain) || appDomain(s.name);
           return (
             <span key={si} className="mlc-leg-item" style={{ cursor: "pointer" }}
               onMouseEnter={e => tip.show(e, <span><b style={{ color: colors[si % colors.length] }}>{s.name}</b> — 월별 추이</span>)}

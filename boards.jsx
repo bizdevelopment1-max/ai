@@ -1091,9 +1091,15 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
 
       <div className="monthly-app-filter">
         <button className={selectedApp === "all" ? "monthly-btn on" : "monthly-btn"} onClick={() => setSelectedApp("all")}>전체</button>
-        {(tab === "revenue" ? allRevNames : allAppNames).map(name => (
-          <button key={name} className={selectedApp === name ? "monthly-btn on" : "monthly-btn"} onClick={() => setSelectedApp(name)}>{name}</button>
-        ))}
+        {(tab === "revenue" ? allRevNames : allAppNames).map(name => {
+          const dom = appDomain(name);
+          return (
+            <button key={name} className={selectedApp === name ? "monthly-btn on" : "monthly-btn"} onClick={() => setSelectedApp(name)}>
+              {dom && <img className="monthly-btn-logo" src={`https://www.google.com/s2/favicons?domain=${dom}&sz=32`} alt="" loading="lazy" />}
+              {name}
+            </button>
+          );
+        })}
       </div>
 
       <div className="chart-grid">

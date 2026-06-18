@@ -202,10 +202,13 @@ async function main() {
   });
 
   // accumulate: this run + older prev not re-seen, de-duped by URL, newest first, capped
+  // 하단 '출처:' 줄은 어떤 항목에서도 노출되지 않도록 제거(출처는 상단에 표기)
+  const stripSrc = s => String(s || "").split("\n").filter(l => !/출처\s*[:：]/.test(l)).join("\n").trim();
   const curUrls = new Set(raw.map(a => a.url));
   const dseen = new Set();
   const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
+    .map(a => ({ ...a, summary: stripSrc(a.summary) }))
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .slice(0, 100);
 
