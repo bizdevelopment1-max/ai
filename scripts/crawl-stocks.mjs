@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 /* ============================================================
    Daily stock crawler — REAL daily closes + market cap.
-   Primary source: Yahoo Finance chart API (JSON, no key, works
-   from cloud runners). Fallback: Stooq CSV. Writes stocks.json,
-   which the dashboard renders. No synthetic prices.
+   Sources tried in order (all keyless):
+     1) Yahoo Finance v8 chart with cookie+crumb session
+     2) Stooq daily CSV
+     3) Nasdaq historical API
+   Writes stocks.json for the dashboard. No synthetic prices.
    ============================================================ */
 import { writeFile, readFile } from "node:fs/promises";
 
-// ticker -> { yahoo symbol, stooq symbol, shares outstanding (billions) }
 const TICKERS = [
   { t: "NVDA", y: "NVDA", s: "nvda.us", shares: 24.4 },
   { t: "MSFT", y: "MSFT", s: "msft.us", shares: 7.43 },
@@ -21,13 +22,32 @@ const YEARS = 5;
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const fmtCap = (capB) => (capB >= 1000 ? `$${(capB / 1000).toFixed(2)}T` : `$${Math.round(capB)}B`);
 const round2 = (n) => Math.round(n * 100) / 100;
+const cutoffDate = () => { const d = new Date(); d.setFullYear(d.getFullYear() - YEARS); return d; };
 
-async function fromYahoo(c) {
-  const hosts = ["query1.finance.yahoo.com", "query2.finance.yahoo.com"];
-  for (const h of hosts) {
+// ---- Yahoo cookie + crumb session (required for datacenter IPs) ----
+async function yahooSession() {
+  try {
+    const r = await fetch("https://fc.yahoo.com/", { headers: { "User-Agent": UA } });
+    const setC = (typeof r.headers.getSetCookie === "function" ? r.headers.getSetCookie() : []) || [];
+    const cookie = setC.map((c) => c.split(";")[0]).join("; ");
+    if (!cookie) return null;
+    const cr = await fetch("https://query2.finance.yahoo.com/v1/test/getcrumb", {
+      headers: { "User-Agent": UA, Cookie: cookie, Accept: "text/plain" },
+    });
+    const crumb = (await cr.text()).trim();
+    if (!crumb || crumb.length > 40 || /<|\{/.test(crumb)) return { cookie, crumb: "" };
+    return { cookie, crumb };
+  } catch { return null; }
+}
+
+async function fromYahoo(c, sess) {
+  for (const h of ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]) {
     try {
-      const url = `https://${h}/v8/finance/chart/${c.y}?range=${YEARS}y&interval=1d`;
-      const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" } });
+      const q = sess && sess.crumb ? `&crumb=${encodeURIComponent(sess.crumb)}` : "";
+      const url = `https://${h}/v8/finance/chart/${c.y}?range=${YEARS}y&interval=1d${q}`;
+      const headers = { "User-Agent": UA, Accept: "application/json" };
+      if (sess && sess.cookie) headers.Cookie = sess.cookie;
+      const res = await fetch(url, { headers });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const j = await res.json();
       const r = j && j.chart && j.chart.result && j.chart.result[0];
@@ -37,9 +57,8 @@ async function fromYahoo(c) {
         .map((t, i) => ({ d: new Date(t * 1000).toISOString().slice(0, 10), p: closes[i] }))
         .filter((p) => typeof p.p === "number" && isFinite(p.p))
         .map((p) => ({ d: p.d, p: round2(p.p) }));
-      if (points.length < 30) throw new Error("too few points");
-      return points;
-    } catch (e) { /* try next host */ }
+      if (points.length >= 30) return points;
+    } catch { /* next host */ }
   }
   return null;
 }
@@ -48,33 +67,52 @@ async function fromStooq(c) {
   try {
     const res = await fetch(`https://stooq.com/q/d/l/?s=${c.s}&i=d`, { headers: { "User-Agent": UA } });
     if (!res.ok) throw new Error("HTTP " + res.status);
-    const csv = await res.text();
-    const lines = csv.trim().split(/\r?\n/);
+    const lines = (await res.text()).trim().split(/\r?\n/);
     if (lines.length < 30 || !/^Date/i.test(lines[0])) throw new Error("bad csv");
-    const cutoff = new Date(); cutoff.setFullYear(cutoff.getFullYear() - YEARS);
-    const points = [];
+    const cut = cutoffDate(), points = [];
     for (let i = 1; i < lines.length; i++) {
-      const col = lines[i].split(",");
-      const d = col[0], close = parseFloat(col[4]);
-      if (!d || isNaN(close) || new Date(d) < cutoff) continue;
+      const col = lines[i].split(","), d = col[0], close = parseFloat(col[4]);
+      if (!d || isNaN(close) || new Date(d) < cut) continue;
       points.push({ d, p: round2(close) });
     }
     return points.length >= 30 ? points : null;
   } catch { return null; }
 }
 
-async function crawlOne(c) {
-  const points = (await fromYahoo(c)) || (await fromStooq(c));
-  if (!points) { console.warn(`[stock:${c.t}] no data (Yahoo+Stooq failed)`); return null; }
+async function fromNasdaq(c) {
+  try {
+    const from = cutoffDate().toISOString().slice(0, 10);
+    const to = new Date().toISOString().slice(0, 10);
+    const url = `https://api.nasdaq.com/api/quote/${c.y}/historical?assetclass=stocks&fromdate=${from}&todate=${to}&limit=9999`;
+    const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json", Origin: "https://www.nasdaq.com", Referer: "https://www.nasdaq.com/" } });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const j = await res.json();
+    const rows = j && j.data && j.data.tradesTable && j.data.tradesTable.rows;
+    if (!rows || !rows.length) throw new Error("no rows");
+    const points = rows.map((r) => {
+      const [m, d, y] = r.date.split("/");
+      return { d: `${y}-${m}-${d}`, p: round2(parseFloat(String(r.close).replace(/[$,]/g, ""))) };
+    }).filter((p) => isFinite(p.p)).sort((a, b) => (a.d < b.d ? -1 : 1));
+    return points.length >= 30 ? points : null;
+  } catch { return null; }
+}
+
+async function crawlOne(c, sess) {
+  let points = await fromYahoo(c, sess);
+  let src = "yahoo";
+  if (!points) { points = await fromStooq(c); src = "stooq"; }
+  if (!points) { points = await fromNasdaq(c); src = "nasdaq"; }
+  if (!points) { console.warn(`[stock:${c.t}] no data (all sources failed)`); return null; }
   const last = points[points.length - 1];
   const marketCap = fmtCap(last.p * c.shares);
-  console.log(`[stock:${c.t}] ${points.length} days, last ${last.d} $${last.p}, cap ${marketCap}`);
-  return [c.t, { ticker: c.t, asOf: last.d, currency: "$", lastPrice: last.p, marketCap, points }];
+  console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} $${last.p}, cap ${marketCap}`);
+  return [c.t, { ticker: c.t, asOf: last.d, currency: "$", lastPrice: last.p, marketCap, source: src, points }];
 }
 
 async function main() {
-  console.log(`Crawling ${TICKERS.length} tickers (Yahoo primary, Stooq fallback)…`);
-  const results = (await Promise.all(TICKERS.map(crawlOne))).filter(Boolean);
+  const sess = await yahooSession();
+  console.log(`Yahoo session: ${sess ? (sess.crumb ? "cookie+crumb" : "cookie only") : "none"}`);
+  const results = (await Promise.all(TICKERS.map((c) => crawlOne(c, sess)))).filter(Boolean);
   const stocks = Object.fromEntries(results);
 
   let prev = {};
