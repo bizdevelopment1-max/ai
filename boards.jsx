@@ -565,6 +565,7 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
           <span className="sp-tk">{sel.ticker}</span>
           <span className="sp-cat" style={{ color: accent, background: (catMap[sel.cat] || {}).accentSoft }}>{(catMap[sel.cat] || {}).ko}</span>
           {mcap && <span className="sp-mcap">시가총액 <b>{mcap}</b></span>}
+          {sel.proxy && <span className="sp-mcap">대체지표 <b>{sel.proxy}</b></span>}
         </div>
 
         {sel.private ? (
@@ -645,35 +646,43 @@ function OverviewCharts({ data, cats, theme }) {
 
 // ---- Dynamics Board (competitive landscape visualization) ------
 // ---- Knowledge Graph (interactive force-directed) ----
-const EDGES = [
-  { from: "OpenAI", to: "Microsoft", type: "투자", label: "투자 · $13B 투자" },
-  { from: "Anthropic", to: "Google", type: "투자", label: "투자 · $2B 투자" },
-  { from: "Anthropic", to: "Amazon", type: "투자", label: "투자 · $4B 투자" },
-  { from: "Google DeepMind", to: "Google", type: "모회사", label: "모회사 · 자회사" },
-  { from: "Meta AI", to: "Meta", type: "모회사", label: "모회사 · 자회사" },
-  { from: "xAI", to: "X/Twitter", type: "계열사", label: "Elon Musk 계열사" },
-  { from: "NVIDIA", to: "OpenAI", type: "GPU 공급", label: "GPU 공급 · H100/B200" },
-  { from: "NVIDIA", to: "Microsoft", type: "GPU 공급", label: "GPU 공급 · Azure AI" },
-  { from: "NVIDIA", to: "Google", type: "GPU 공급", label: "GPU 공급 · GCP" },
-  { from: "Microsoft", to: "GitHub Copilot", type: "서비스", label: "서비스 · AI 코딩" },
-  { from: "OpenAI", to: "ChatGPT", type: "서비스", label: "서비스 · 대화형 AI" },
-  { from: "OpenAI", to: "Cursor", type: "API 공급", label: "API 공급 · GPT-4" },
-  { from: "Mistral AI", to: "Microsoft", type: "파트너십", label: "파트너십 · Azure 배포" },
-  { from: "Databricks", to: "Mosaic ML", type: "인수", label: "인수 · $1.3B" },
-  { from: "Scale AI", to: "OpenAI", type: "데이터", label: "데이터 라벨링 공급" },
-  { from: "Scale AI", to: "Anthropic", type: "데이터", label: "데이터 라벨링 공급" },
-  { from: "Stability AI", to: "Amazon", type: "클라우드", label: "클라우드 · AWS" },
-  { from: "Cohere", to: "Oracle", type: "파트너십", label: "파트너십 · OCI 배포" },
-  { from: "Perplexity", to: "NVIDIA", type: "투자", label: "투자 · NVIDIA Ventures" },
-  { from: "Apple", to: "OpenAI", type: "파트너십", label: "Siri 통합 · Apple Intelligence" },
-  { from: "Runway", to: "Google", type: "투자", label: "투자 · GV" },
-  { from: "Anthropic", to: "OpenAI", type: "경쟁", label: "LLM 플랫폼 경쟁" },
-  { from: "Google DeepMind", to: "OpenAI", type: "경쟁", label: "AGI 경쟁" },
-  { from: "Meta AI", to: "OpenAI", type: "경쟁", label: "오픈소스 vs 클로즈드" },
-  { from: "xAI", to: "OpenAI", type: "경쟁", label: "Grok vs ChatGPT" },
-  { from: "Hugging Face", to: "Meta AI", type: "생태계", label: "Llama 모델 호스팅" },
-  { from: "Hugging Face", to: "Google", type: "생태계", label: "Gemma 모델 호스팅" },
-  { from: "Microsoft", to: "OpenAI", type: "독점", label: "독점 API 라이선스" },
+// 경쟁 다이내믹스 전용 — 같은 시장을 두고 다투는 라이벌 구도만 표시
+const COMPETE_EDGES = [
+  { from: "OpenAI", to: "Anthropic", type: "경쟁", label: "LLM 플랫폼 경쟁" },
+  { from: "OpenAI", to: "Google DeepMind", type: "경쟁", label: "AGI·검색 경쟁" },
+  { from: "OpenAI", to: "Meta AI", type: "경쟁", label: "오픈소스 vs 클로즈드" },
+  { from: "OpenAI", to: "DeepSeek", type: "경쟁", label: "비용·효율 경쟁" },
+  { from: "Anthropic", to: "Google DeepMind", type: "경쟁", label: "프런티어 모델 경쟁" },
+  { from: "Anthropic", to: "DeepSeek", type: "경쟁", label: "가격·효율 경쟁" },
+  { from: "Perplexity", to: "Google DeepMind", type: "경쟁", label: "AI 검색 경쟁" },
+  { from: "Microsoft", to: "Amazon", type: "경쟁", label: "AI 클라우드 경쟁" },
+  { from: "Microsoft", to: "Google DeepMind", type: "경쟁", label: "Copilot vs Gemini" },
+  { from: "Cohere", to: "OpenAI", type: "경쟁", label: "엔터프라이즈 LLM 경쟁" },
+  { from: "Mistral AI", to: "Meta AI", type: "경쟁", label: "오픈 가중치 모델 경쟁" },
+  { from: "Runway", to: "OpenAI", type: "경쟁", label: "영상 생성(Sora) 경쟁" },
+  { from: "Glean", to: "Microsoft", type: "경쟁", label: "엔터프라이즈 검색 vs Copilot" },
+  { from: "ElevenLabs", to: "OpenAI", type: "경쟁", label: "음성 AI 경쟁" },
+  { from: "Harvey", to: "Microsoft", type: "경쟁", label: "법률 AI vs Copilot" },
+];
+
+// 비즈니스 모델 전용 — 실제 '돈의 흐름'(투자·인수·매출·파트너십). 경쟁 관계는 제외
+const MONEY_EDGES = [
+  { from: "Microsoft", to: "OpenAI", type: "투자", label: "투자 $13B+ (Azure 크레딧)" },
+  { from: "Amazon", to: "Anthropic", type: "투자", label: "투자 $33B 누적" },
+  { from: "NVIDIA", to: "Perplexity", type: "투자", label: "전략 투자(NVIDIA)" },
+  { from: "NVIDIA", to: "ElevenLabs", type: "투자", label: "전략 투자(NVIDIA)" },
+  { from: "NVIDIA", to: "Mistral AI", type: "투자", label: "전략 투자(NVIDIA)" },
+  { from: "OpenAI", to: "NVIDIA", type: "매출", label: "GPU 구매 → NVIDIA 매출" },
+  { from: "Microsoft", to: "NVIDIA", type: "매출", label: "GPU 구매 → NVIDIA 매출" },
+  { from: "Amazon", to: "NVIDIA", type: "매출", label: "GPU 구매 → NVIDIA 매출" },
+  { from: "Meta AI", to: "NVIDIA", type: "매출", label: "GPU 구매 → NVIDIA 매출" },
+  { from: "Anthropic", to: "Amazon", type: "매출", label: "AWS 클라우드 $100B 약정" },
+  { from: "OpenAI", to: "Microsoft", type: "매출", label: "Azure 컴퓨트 비용" },
+  { from: "OpenAI", to: "Scale AI", type: "매출", label: "데이터·평가 구매" },
+  { from: "Anthropic", to: "Scale AI", type: "매출", label: "데이터·평가 구매" },
+  { from: "Apple", to: "OpenAI", type: "파트너십", label: "Siri 통합 파트너십" },
+  { from: "Mistral AI", to: "Microsoft", type: "파트너십", label: "Azure 배포 파트너십" },
+  { from: "Cohere", to: "Amazon", type: "파트너십", label: "AWS·소버린 배포" },
 ];
 
 function KnowledgeGraph({ companies, cats, catMap, progress, mode }) {
@@ -688,7 +697,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode }) {
   const frameRef = React.useRef(null);
   const mouseRef = React.useRef({ x: 0, y: 0 });
 
-  const edgeColors = { "경쟁": "#FF4D4D", "투자": "#00C2A8", "파트너십": "#2D6BFF", "생태계": "#FFB02E", "인수": "#C026D3", "모회사": "#6366F1", "계열사": "#8B5CF6", "GPU 공급": "#F97316", "서비스": "#06B6D4", "API 공급": "#14B8A6", "데이터": "#84CC16", "클라우드": "#0EA5E9", "독점": "#EF4444" };
+  const edgeColors = { "경쟁": "#FF4D4D", "투자": "#00C2A8", "매출": "#F59E0B", "파트너십": "#2D6BFF", "인수": "#C026D3", "생태계": "#FFB02E", "모회사": "#6366F1", "계열사": "#8B5CF6" };
   const edgeDash = { "경쟁": [], "투자": [6, 4], "파트너십": [3, 3], "생태계": [8, 3], "인수": [2, 2], "모회사": [], "계열사": [4, 4], "GPU 공급": [6, 2], "서비스": [3, 3], "API 공급": [5, 3], "데이터": [4, 4], "클라우드": [6, 4], "독점": [2, 4] };
 
   React.useEffect(() => {
@@ -718,7 +727,8 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode }) {
           cat: catMap[c.cat], fixed: false,
         };
       });
-      edgesRef.current = EDGES.filter(e =>
+      const EDGE_SET = mode === "dynamics" ? COMPETE_EDGES : MONEY_EDGES;
+      edgesRef.current = EDGE_SET.filter(e =>
         nodesRef.current.some(n => n.id === e.from) && nodesRef.current.some(n => n.id === e.to)
       );
     }
@@ -884,7 +894,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode }) {
   }, [companies, cats, hovered, selected]);
 
   const selCo = selected ? companies.find(c => c.name === selected) : null;
-  const selEdges = selected ? EDGES.filter(e => e.from === selected || e.to === selected) : [];
+  const selEdges = selected ? (mode === "dynamics" ? COMPETE_EDGES : MONEY_EDGES).filter(e => e.from === selected || e.to === selected) : [];
 
   return (
     <div className="kg-wrap" style={{ opacity: Math.min(1, progress * 2) }}>
@@ -934,8 +944,8 @@ function DynamicsBoard({ companies, cats, sectionRef }) {
       <div className="board-head">
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
-          <h2>AI 경쟁 다이내믹스 <span className="board-en">Competitive Dynamics · Knowledge Graph</span></h2>
-          <p>AI 기업 간 투자·경쟁·파트너십·인수·생태계 관계를 인터랙티브 그래프로 탐색</p>
+          <h2>AI 경쟁 다이내믹스 <span className="board-en">Competitive Dynamics · Rivalry Map</span></h2>
+          <p>같은 시장을 두고 다투는 AI 기업 간 <b>경쟁 관계</b>만 인터랙티브 그래프로 표시 (붉은 선=경쟁)</p>
         </div>
       </div>
       <KnowledgeGraph companies={companies} cats={cats} catMap={catMap} progress={dynProg} mode="dynamics" />
@@ -957,8 +967,8 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
       <div className="board-head">
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
-          <h2>AI 비즈니스 모델 <span className="board-en">Biz Model Network · 2026.06</span></h2>
-          <p>AI 기업 간 수익 모델 연관성 · 가격 전략 · 생태계 연동을 그래프로 탐색</p>
+          <h2>AI 비즈니스 모델 <span className="board-en">Money Flow · Who Pays Whom</span></h2>
+          <p>투자·인수·GPU/클라우드/데이터 <b>매출</b> 등 실제 '돈의 흐름'을 그래프로 표시 (초록=투자, 주황=매출, 파랑=파트너십 · 경쟁 관계 제외)</p>
         </div>
       </div>
       <KnowledgeGraph companies={companies} cats={cats} catMap={catMap} progress={bizProg} mode="bizmodel" />

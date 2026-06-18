@@ -580,12 +580,11 @@ window.DASH = (function () {
       ],
     },
     {
-      ticker: "SPCX", name: "SpaceX (xAI, Cursor)", domain: "spacex.com", cat: "native",
-      private: true, mcap: "$350B+ (비상장 추정)",
+      ticker: "SPCX", name: "SpaceX (xAI, Cursor)", domain: "spacex.com", cat: "native", proxy: "DXYZ",
       events: [
         { date: "2026-06-16", dir: "up", label: "Cursor $60B 인수 발표", reason: "AI 코딩 에이전트 Cursor(Anysphere)를 $60B 주식 인수 합의. xAI 코딩 전략 강화." },
       ],
-      note: "SpaceX는 비상장 기업으로 공개 거래 주가가 없습니다(xAI·Cursor 인수 주체). 시총은 사모 밸류에이션 추정치이며, 일별 주가 차트는 제공되지 않습니다.",
+      note: "SpaceX 주식은 직접 상장 거래되지 않으므로, SpaceX를 최대 비중으로 보유한 상장 펀드 Destiny Tech100(DXYZ) 주가로 움직임을 대체 표시합니다. 매일 Yahoo Finance에서 자동 갱신됩니다.",
     },
   ];
 

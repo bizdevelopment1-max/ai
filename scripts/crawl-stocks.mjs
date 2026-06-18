@@ -16,6 +16,9 @@ const TICKERS = [
   { t: "AAPL", y: "AAPL", s: "aapl.us", shares: 14.8 },
   { t: "GOOGL", y: "GOOGL", s: "googl.us", shares: 12.2 },
   { t: "META", y: "META", s: "meta.us", shares: 2.53 },
+  // SpaceX is not directly listed — use Destiny Tech100 (DXYZ), a listed fund whose
+  // top holding is SpaceX, as a daily Yahoo Finance proxy for the SpaceX (xAI, Cursor) entry.
+  { t: "SPCX", y: "DXYZ", s: "dxyz.us", shares: 0, proxy: true },
 ];
 
 const YEARS = 5;
@@ -104,9 +107,9 @@ async function crawlOne(c, sess) {
   if (!points) { points = await fromNasdaq(c); src = "nasdaq"; }
   if (!points) { console.warn(`[stock:${c.t}] no data (all sources failed)`); return null; }
   const last = points[points.length - 1];
-  const marketCap = fmtCap(last.p * c.shares);
-  console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} $${last.p}, cap ${marketCap}`);
-  return [c.t, { ticker: c.t, asOf: last.d, currency: "$", lastPrice: last.p, marketCap, source: src, points }];
+  const marketCap = c.proxy ? "" : fmtCap(last.p * c.shares);   // proxy(SpaceX↔DXYZ): 시총 표시 안 함
+  console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} $${last.p}${c.proxy ? " (proxy " + c.y + ")" : ", cap " + marketCap}`);
+  return [c.t, { ticker: c.t, asOf: last.d, currency: "$", lastPrice: last.p, marketCap, source: src, proxy: c.proxy ? c.y : undefined, points }];
 }
 
 async function main() {
