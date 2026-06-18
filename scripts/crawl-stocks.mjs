@@ -65,6 +65,58 @@ async function fromYahoo(c, sess) {
   return null;
 }
 
+// Yahoo Finance WEB pages (exact URLs: finance.yahoo.com/quote/<T>/history & /quote/<T>).
+// Some symbols resolve on the web property even when the datacenter API path is blocked.
+async function fromYahooWeb(c, sess) {
+  const headers = { "User-Agent": UA, Accept: "text/html,application/xhtml+xml", "Accept-Language": "en-US,en;q=0.9" };
+  if (sess && sess.cookie) headers.Cookie = sess.cookie;
+  try {
+    const res = await fetch(`https://finance.yahoo.com/quote/${c.y}/history`, { headers });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const html = await res.text();
+    let points = [];
+    // (a) embedded HistoricalPriceStore JSON (classic)
+    const m = html.match(/"prices":\[(\{"date".*?\})\]/s);
+    if (m) {
+      try {
+        const arr = JSON.parse("[" + m[1] + "]");
+        points = arr.filter(p => p && p.date && (p.close != null || p.adjclose != null))
+          .map(p => ({ d: new Date(p.date * 1000).toISOString().slice(0, 10), p: round2(p.close != null ? p.close : p.adjclose) }))
+          .filter(p => isFinite(p.p)).sort((a, b) => (a.d < b.d ? -1 : 1));
+      } catch {}
+    }
+    // (b) HTML history table rows: <td>Mon DD, YYYY</td> ... close in 5th numeric cell
+    if (points.length < 2) {
+      const rows = [...html.matchAll(/<tr[^>]*class="[^"]*yf-[^"]*"[^>]*>([\s\S]*?)<\/tr>/g)];
+      for (const [, row] of rows) {
+        const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map(x => x[1].replace(/<[^>]+>/g, "").trim());
+        if (cells.length >= 6) {
+          const d = new Date(cells[0]);
+          const close = parseFloat(cells[4].replace(/,/g, ""));
+          if (!isNaN(d) && isFinite(close)) points.push({ d: d.toISOString().slice(0, 10), p: round2(close) });
+        }
+      }
+      points.sort((a, b) => (a.d < b.d ? -1 : 1));
+    }
+    return points.length >= 2 ? points : null;
+  } catch { return null; }
+}
+
+// Market cap from Yahoo quote summary page (regex on embedded JSON / data cell)
+async function yahooMarketCap(c, sess) {
+  const headers = { "User-Agent": UA, Accept: "text/html", "Accept-Language": "en-US,en;q=0.9" };
+  if (sess && sess.cookie) headers.Cookie = sess.cookie;
+  try {
+    const res = await fetch(`https://finance.yahoo.com/quote/${c.y}`, { headers });
+    if (!res.ok) return "";
+    const html = await res.text();
+    const m = html.match(/"marketCap":\{"raw":([0-9.eE+]+)/) || html.match(/data-field="marketCap"[^>]*>([\d.,]+[TBMK]?)/);
+    if (!m) return "";
+    if (/^[0-9.eE+]+$/.test(m[1])) { const capB = parseFloat(m[1]) / 1e9; return fmtCap(capB); }
+    return m[1];
+  } catch { return ""; }
+}
+
 async function fromStooq(c) {
   try {
     const res = await fetch(`https://stooq.com/q/d/l/?s=${c.s}&i=d`, { headers: { "User-Agent": UA } });
@@ -133,20 +185,28 @@ async function tvLastPrice(c) {
 }
 
 async function crawlOne(c, sess) {
-  let points = await fromYahoo(c, sess);
-  let src = "yahoo";
-  if (!points) { points = await fromStooq(c); src = "stooq"; }
-  if (!points) { points = await fromNasdaq(c); src = "nasdaq"; }
-  if (!points) { points = await fromStockAnalysis(c); src = "stockanalysis"; }
-  if (!points) {
-    // last resort: TradingView single-price (no history) → 1-point series so the ticker still appears
-    const tv = await tvLastPrice(c);
-    if (tv) { points = [{ d: new Date().toISOString().slice(0, 10), p: tv }]; src = "tradingview"; }
+  // Source order: Yahoo API → Yahoo web pages → Stooq → Nasdaq → StockAnalysis → TradingView(last price)
+  const sources = [
+    ["yahoo-api", () => fromYahoo(c, sess)],
+    ["yahoo-web", () => fromYahooWeb(c, sess)],
+    ["stooq", () => fromStooq(c)],
+    ["nasdaq", () => fromNasdaq(c)],
+    ["stockanalysis", () => fromStockAnalysis(c)],
+    ["tradingview", async () => { const tv = await tvLastPrice(c); return tv ? [{ d: new Date().toISOString().slice(0, 10), p: tv }] : null; }],
+  ];
+  let points = null, src = "";
+  const tried = [];
+  for (const [name, fn] of sources) {
+    let got = null;
+    try { got = await fn(); } catch { got = null; }
+    tried.push(`${name}:${got ? got.length : 0}`);
+    if (got && got.length) { points = got; src = name; break; }
   }
-  if (!points) { console.warn(`[stock:${c.t}] no data (all sources failed: yahoo/stooq/nasdaq/stockanalysis/tradingview)`); return null; }
+  if (!points) { console.warn(`[stock:${c.t}] no data — tried ${tried.join(" ")}`); return null; }
   const last = points[points.length - 1];
-  const marketCap = c.shares ? fmtCap(last.p * c.shares) : "";   // shares 미상(SPCX 등)은 시총 표시 안 함
-  console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} $${last.p}${marketCap ? ", cap " + marketCap : ""}`);
+  let marketCap = c.shares ? fmtCap(last.p * c.shares) : "";
+  if (!marketCap) { marketCap = await yahooMarketCap(c, sess); }   // shares 미상(SPCX 등) → Yahoo 요약에서 시총 파싱
+  console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} $${last.p}${marketCap ? ", cap " + marketCap : ""} (${tried.join(" ")})`);
   return [c.t, { ticker: c.t, asOf: last.d, currency: "$", lastPrice: last.p, marketCap, source: src, points }];
 }
 
