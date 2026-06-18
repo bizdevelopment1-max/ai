@@ -220,15 +220,25 @@ function CompanyDetail({ company, cats, articles, onClose }) {
 }
 
 // ---- Bold key numbers helper (accent bold + yellow marker) -----
-function BoldSummary({ text }) {
-  if (!text) return null;
-  text = String(text).replace(/<[^>]+>/g, "");   // strip any stray HTML (e.g. <font color>) from crawled summaries
-  const parts = text.split(/(\$[\d,.]+[BMK]?(?:\+|~)?|\d+\.?\d*%|\+\d+\.?\d*%|-\d+\.?\d*%)/g);
+// highlight numbers/currency inside one line of text
+function hlNums(text, keyBase) {
+  const parts = String(text).split(/(\$[\d,.]+[BMK]?(?:\+|~)?|\d+\.?\d*%|\+\d+\.?\d*%|-\d+\.?\d*%)/g);
   return parts.map((part, i) =>
     /^\$|^\d+\.?\d*%$|^[+-]\d+\.?\d*%$/.test(part)
-      ? <b key={i} className="num-hl">{part}</b>
+      ? <b key={keyBase + "-" + i} className="num-hl">{part}</b>
       : part
   );
+}
+
+// Render a feed summary as up to 3 개조식 lines (제목 한글 + 3줄 요약 정책).
+function BoldSummary({ text }) {
+  if (!text) return null;
+  const clean = String(text).replace(/<[^>]+>/g, "");          // strip stray HTML (e.g. <font color>)
+  const lines = clean.split(/\n+/).map(l => l.trim()).filter(Boolean).slice(0, 3);   // 최대 3줄
+  if (lines.length <= 1) return <>{hlNums(clean, "s")}</>;
+  return lines.map((line, i) => (
+    <span className="art-sum-line" key={i}>{hlNums(line.replace(/^[·\-•]\s*/, ""), "l" + i)}</span>
+  ));
 }
 
 // ---- Article feed: category filter → company dropdown, deletable rows ----
@@ -348,7 +358,7 @@ function InsightsBoard({ insights, sectionRef }) {
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
           <h2>핵심 인사이트 <span className="board-en">Key Insights · 2026.06</span></h2>
-          <p>AI 시장 핵심 동향 10선 · IDC · Gartner · Stanford HAI · 공식 발표</p>
+          <p>AI 시장 핵심 동향 · IDC · Gartner · Stanford HAI · 공식 발표</p>
         </div>
       </div>
       <div className="insight-grid">
@@ -565,7 +575,6 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
           <span className="sp-tk">{sel.ticker}</span>
           <span className="sp-cat" style={{ color: accent, background: (catMap[sel.cat] || {}).accentSoft }}>{(catMap[sel.cat] || {}).ko}</span>
           {mcap && <span className="sp-mcap">시가총액 <b>{mcap}</b></span>}
-          {sel.proxy && <span className="sp-mcap">대체지표 <b>{sel.proxy}</b></span>}
         </div>
 
         {sel.private ? (
@@ -1174,27 +1183,6 @@ function CapRelChart({ data, theme }) {
   );
 }
 
-function AdoptionFunnel({ data }) {
-  const max = Math.max(...data.map(d => d.value));
-  return (
-    <div className="funnel">
-      {data.map((d, i) => (
-        <div className="funnel-row" key={i} title={d.sub + " — " + d.src}>
-          <div className="funnel-bar-wrap">
-            <div className="funnel-bar" style={{ width: `${(d.value / max) * 100}%`, background: `linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #16A34A))` }}>
-              <span className="funnel-val">{d.value}%</span>
-            </div>
-          </div>
-          <div className="funnel-meta">
-            <b>{i + 1}. {d.stage}</b>
-            <em>{d.sub}</em>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const FC_GRADE = { A: { c: "#16A34A", t: "공식" }, B: { c: "#2D6BFF", t: "보도" }, C: { c: "#D97706", t: "추정" } };
 function FactCheckLayer({ data }) {
   return (
@@ -1235,12 +1223,8 @@ function SignalBoard({ data, theme, sectionRef }) {
           <div className="cc-head"><h3>① Capability–Reliability Gap</h3><span>성능은 오르지만 자율 신뢰성은 지연 · Stanford HAI AI Index 2026</span></div>
           <CapRelChart data={data.CAP_REL} theme={theme} />
         </div>
-        <div className="chart-card">
-          <div className="cc-head"><h3>② AI 도입 단계 퍼널</h3><span>도입률 ≠ 가치 실현 · McKinsey State of AI 2025</span></div>
-          <AdoptionFunnel data={data.ADOPTION_FUNNEL} />
-        </div>
-        <div className="chart-card">
-          <div className="cc-head"><h3>③ 팩트체크 레이어</h3><span>수치별 등급(A 공식/B 보도/C 추정)·검증일</span></div>
+        <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
+          <div className="cc-head"><h3>② 팩트체크 레이어</h3><span>수치별 등급(A 공식/B 보도/C 추정)·유형·검증일·출처</span></div>
           <FactCheckLayer data={data.FACTCHECK} />
         </div>
       </div>
