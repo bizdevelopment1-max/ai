@@ -263,8 +263,8 @@ window.DASH = (function () {
 
   /* ---- Reports (industry reports) ---- */
   const REPORTS = [
-    { house: "Grand View Research", type: "Market", date: "2026-03-15", title: "글로벌 AI 시장 2025 $279B → 2030E $1,811B, CAGR 45.1%", figure: "$279B → $1,811B", rating: "Report", url: "https://www.grandviewresearch.com/industry-analysis/artificial-intelligence-ai-market",
-      bullets: ["2025년 $279B → 2030E $1,811B · CAGR 45.1%", "GenAI 세그먼트 최고 성장률 CAGR 52%", "북미 최대 시장 · 아태 최고 성장률"] },
+    { house: "Grand View Research", type: "Market", date: "2026-03-15", title: "글로벌 AI 시장 2024 $279B → 2030E $1,812B, CAGR 35.9%", figure: "$279B → $1,812B", rating: "Report", url: "https://www.grandviewresearch.com/industry-analysis/artificial-intelligence-ai-market",
+      bullets: ["2024년 $279.22B(실측) → 2030E $1,811.75B · CAGR 35.9%", "GenAI 세그먼트 최고 성장률 · BFSI·헬스케어 채택 선도", "북미 최대 시장 · 아태 최고 성장률"] },
     { house: "KPMG Venture Pulse", type: "Market", date: "2026-04-15", title: "Q1 2026 글로벌 VC $330.9B 신기록 — AI가 미국 VC의 73% 차지", figure: "Q1 $330.9B", rating: "Report", url: "https://kpmg.com/xx/en/media/press-releases/2026/04/global-vc-investment-surges-to-record-330-9-billion-dollar-in-q1-26.html",
       bullets: ["Q1 2026 글로벌 VC $330.9B — 분기 신기록", "미국 $267.2B · OpenAI·Anthropic·xAI 메가딜 주도", "AI가 글로벌 VC의 61%, 미국 VC의 73% 차지", "신규 유니콘 중 26%가 AI 기업"] },
     { house: "Gartner", type: "Market", date: "2026-03-10", title: "AI 에이전트 소프트웨어 시장 2027E $47B — 기업 앱 80%에 에이전트 내장", figure: "$47B 에이전트 시장", rating: "Report", url: "https://www.gartner.com/en/newsroom",
@@ -277,15 +277,29 @@ window.DASH = (function () {
       bullets: ["Q1 2026 AI 펀딩 메가라운드 비중 65%", "AI 스타트업 유니콘 다수 신규 탄생", "엔터프라이즈 AI 도입률 상승세 지속"] },
   ];
 
-  /* ---- Market Growth (AI market size $B) ---- */
+  /* ---- Market Growth (global AI market size $B) — Grand View Research ----
+     2024 $279.22B (actual) → 2030 $1,811.75B, CAGR ~35.9%. YoY ~36%. ---- */
   const MARKET_GROWTH = [
-    { year: "2022", size: 136, growth: 21, src: "Grand View Research '23.01" },
-    { year: "2023", size: 197, growth: 45, src: "Grand View Research '24.02" },
-    { year: "2024", size: 244, growth: 24, src: "Grand View Research '25.01" },
-    { year: "2025", size: 279, growth: 14, src: "Grand View Research '26.01" },
-    { year: "2026E", size: 391, growth: 40, src: "Grand View Research '26.01 전망" },
-    { year: "2027E", size: 548, growth: 40, src: "Grand View Research '26.01 전망" },
-    { year: "2028E", size: 811, growth: 48, src: "Grand View Research '26.01 전망" },
+    { year: "2023", size: 196, growth: 40, src: "Grand View Research '24 (2023 $196B)" },
+    { year: "2024", size: 279, growth: 42, src: "Grand View Research '25 (2024 $279.22B 실측)" },
+    { year: "2025E", size: 379, growth: 36, src: "Grand View Research '26 전망 (CAGR 35.9%)" },
+    { year: "2026E", size: 515, growth: 36, src: "Grand View Research '26 전망" },
+    { year: "2027E", size: 700, growth: 36, src: "Grand View Research '26 전망" },
+    { year: "2028E", size: 951, growth: 36, src: "Grand View Research '26 전망" },
+    { year: "2029E", size: 1292, growth: 36, src: "Grand View Research '26 전망" },
+    { year: "2030E", size: 1812, growth: 40, src: "Grand View Research '26 전망 ($1,811.75B)" },
+  ];
+
+  /* ---- AI Market by Vertical / Industry (share %, 2025) ---- */
+  const MARKET_VERTICAL = [
+    { cat: "bigtech", label: "BFSI(금융)", value: 18, src: "Grand View Research / Statista '26 — 산업별 AI 채택" },
+    { cat: "native", label: "헬스케어·제약", value: 16, src: "Precedence Research '26 — 헬스케어 AI" },
+    { cat: "startup", label: "리테일·이커머스", value: 14, src: "IDC '26 — 리테일 AI" },
+    { cat: "bigtech", label: "IT·통신", value: 13, src: "IDC '26 — IT/Telecom AI" },
+    { cat: "native", label: "제조·산업", value: 12, src: "McKinsey '26 — 제조 AI" },
+    { cat: "startup", label: "자동차·모빌리티", value: 10, src: "Statista '26 — 오토모티브 AI" },
+    { cat: "bigtech", label: "미디어·광고", value: 8, src: "Grand View Research '26" },
+    { cat: "startup", label: "기타(법률·보안 등)", value: 9, src: "CB Insights '26" },
   ];
 
   /* ---- Funding / Valuation ($B) ---- */
@@ -378,7 +392,7 @@ window.DASH = (function () {
 
   /* ---- KPI Cards (6) ---- */
   const KPIS = [
-    { label: "글로벌 AI 시장 (2025)", value: "$279B", delta: +40, sub: "Grand View Research · 2030E $1,811B · CAGR 45.1%", fill: 0.72, src: "Grand View Research AI Market Report '26.03" },
+    { label: "글로벌 AI 시장 (2024)", value: "$279B", delta: +42, sub: "Grand View Research · 2030E $1,812B · CAGR 35.9%", fill: 0.72, src: "Grand View Research AI Market Report '26" },
     { label: "OpenAI 밸류 (2026.03)", value: "$852B", delta: +184, sub: "사모 사상 최고 · ARR ~$35B · S-1 비밀 제출", fill: 0.95, src: "CNBC '26.3 / Bloomberg S-1" },
     { label: "NVIDIA 분기 매출 (FY26 Q3)", value: "$57B", delta: +66, sub: "데이터센터 $51.2B(+66%) · FY26 연 $130.5B · 시총 $3.5T+", fill: 0.90, src: "NVIDIA IR FY26 Q3" },
     { label: "Microsoft AI 런레이트", value: "$37B", delta: +123, sub: "Copilot 2,000만 좌석 · Azure 35% 재가속", fill: 0.78, src: "Microsoft IR FY26 Q3" },
@@ -416,7 +430,7 @@ window.DASH = (function () {
     { q: "Physical AI(물리적 AI)란?", a: "소프트웨어를 넘어 로봇·자율주행 등 현실 세계로 들어간 AI입니다. Waymo 로보택시(밸류 $126B), Tesla Optimus, Figure AI 공장 배포 등이 대표 사례입니다. 골드만삭스는 2026년 인간형 로봇 5~10만 대 출하를 전망하며, 물리적 AI 시장은 2035E $1.15T(CAGR 33.5%)로 추정됩니다.", nav: "insights", keywords: ["physical", "물리적", "로봇", "자율주행", "waymo", "optimus"] },
     { q: "AI가 정말 일자리를 빼앗나요?", a: "Goldman Sachs(2026.01)는 전 세계 3억 명의 일자리가 AI에 노출되며, 2026년 2,500만 대체 → 2030년 2.7억으로 확대될 것으로 추정합니다. 행정(26%)·고객서비스(20%)가 취약합니다. 다만 AI 신규 직종 창출로 순 고용 효과는 중립~플러스 전망이며, GenAI 사용자는 비사용자 대비 직업 안정성이 더 높다는 데이터도 있습니다.", nav: "insights", keywords: ["일자리", "고용", "자동화", "실직", "goldman", "직업"] },
     { q: "오픈소스와 클로즈드 모델의 차이는?", a: "오픈 가중치 모델(Llama·Mistral·DeepSeek)은 무료 배포로 커스터마이징·데이터 보안·비용 통제가 가능합니다. 클로즈드 모델(GPT·Claude)은 최고 성능을 API로 제공하며 인프라 부담이 없습니다. 2026년 성능 격차가 빠르게 줄고 있으며, EU AI Act 환경에서는 오픈소스 선호가 높습니다.", nav: "dynamics", keywords: ["오픈소스", "llama", "deepseek", "클로즈드", "차이"] },
-    { q: "2026년 AI 시장 규모와 투자 전망은?", a: "Grand View Research 기준 2025년 글로벌 AI 시장은 $279B, 2030년 $1,811B 전망(CAGR 45.1%)입니다. KPMG에 따르면 Q1 2026 글로벌 VC는 $330.9B 신기록이며 AI가 미국 VC의 73%를 차지했습니다. AI 인프라에 2025~2028 누적 $1T+ 투자가 예상됩니다.", nav: "overview", keywords: ["시장", "규모", "투자", "전망", "330", "vc"] },
+    { q: "2026년 AI 시장 규모와 투자 전망은?", a: "Grand View Research 기준 2024년 글로벌 AI 시장은 $279.22B(실측)이며, 2030년 $1,811.75B 전망(CAGR 35.9%)입니다. 산업별로는 BFSI(금융)·헬스케어·리테일·IT통신 순으로 채택이 빠릅니다. KPMG에 따르면 Q1 2026 글로벌 VC는 $330.9B 신기록이며 AI가 미국 VC의 73%를 차지했습니다. AI 인프라에 2025~2028 누적 $1T+ 투자가 예상됩니다.", nav: "overview", keywords: ["시장", "규모", "투자", "전망", "버티컬", "산업", "330", "vc"] },
     { q: "ChatGPT가 Google 검색을 죽이나요? 실제 숫자는?", a: "'Google이 망한다'는 말은 2023년부터 나왔지만 실제는 더 복잡합니다. Google은 여전히 글로벌 검색 74~80%를 점유합니다. ChatGPT Search는 글로벌 쿼리 17~18%로 급성장했고, Gemini는 LLM 트래픽의 20%를 차지합니다. 더 의미있는 지표는 세션 깊이로, Perplexity 사용자의 세션당 쿼리는 Google의 4.5배입니다. 역설은 OpenAI가 2025.09 EU에 'Google·Apple·MS의 데이터 독점이 경쟁을 막는다'고 신고한 점 — AI 검색의 진짜 해자는 아직 모델이 아니라 데이터입니다.", nav: "dynamics", keywords: ["구글", "검색", "chatgpt", "시장점유율", "gemini", "perplexity", "검색전쟁"] },
     { q: "AI 추론 비용은 얼마나 빠르게 떨어지나요?", a: "AI 추론 비용은 2021년 대비 약 280배 하락했습니다. GPT-4급 API가 2023.03 $60/100만 토큰에서 2026년 초 $0.40 이하로 폭락(연 10배), Blackwell은 H100 대비 추론 비용을 10~15배 추가 절감했습니다. 그러나 역설이 있습니다: 단가가 90% 하락하는 동안 기업 총 AI 인프라 지출은 오히려 320% 증가했고(쌀수록 더 많이 씀), 최고 성능 프런티어 모델은 여전히 $15~$75/100만 토큰 프리미엄을 유지합니다. 평범한 인텔리전스는 공짜로 수렴하되 최첨단 추론의 프리미엄은 벌어집니다.", nav: "dynamics", keywords: ["추론", "비용", "inference", "토큰", "가격", "commoditization"] },
     { q: "AI 할루시네이션은 얼마나 심각한가요?", a: "할루시네이션이 2024년 한 해 전 세계 기업에 약 $67.4B 손실을 일으켰다는 추정이 있습니다. 모델별 실측(요약 작업): Gemini 2.0 Flash 0.7%, GPT-4o 1.5%, Claude 4.6 4%, 평균 프로덕션 ~9.2%, 법률 분야는 17~34%까지 치솟습니다(Stanford HAI). 역설은 가장 비싼 추론 모델이 오히려 근거 기반 작업에서 확신에 차 더 높은 할루시네이션을 보일 수 있다는 점입니다. IT 전문가 68%가 프로덕션에서 직접 목격했고, 엔터프라이즈 사용자 47%가 할루시네이션 정보로 실제 의사결정을 내린 적이 있다고 답했습니다.", nav: "dynamics", keywords: ["할루시네이션", "hallucination", "거짓", "신뢰", "오류", "위험"] },
@@ -617,5 +631,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, ARTICLES, REPORTS, MARKET_GROWTH, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, QA_PAIRS, APP_MONTHLY, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, QA_PAIRS, APP_MONTHLY, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();

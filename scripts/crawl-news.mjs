@@ -1,15 +1,33 @@
 #!/usr/bin/env node
 /* ============================================================
-   Daily AI news crawler — multiple concurrent per-company agents.
-   Each company is crawled by its own agent against Google News RSS
-   (authoritative outlets surface naturally). Results are written to
-   news.json at the repo root; the dashboard fetches and merges it
-   over the static ARTICLES at load. Runs daily before 07:00 KST.
-   No external dependencies — uses Node 20+ global fetch.
+   Daily AI news crawler — authoritative ENGLISH sources only.
+   - Per-company + device-topic (AI agent / AI PC / AI phone) streams
+     from Google News (en-US), filtered to an allowlist of authoritative
+     English outlets. Korean sources are excluded by construction.
+   - Each item is summarized into a 3-line KOREAN brief via the Claude API
+     (claude-opus-4-8), written from the strategic lens of a global
+     smartphone / on-device-AI device maker — WITHOUT naming any company.
+   - Source label is always the original English outlet (never an aggregator).
+   - HTML (e.g. <font color>) is stripped from all text.
+   Requires ANTHROPIC_API_KEY (repo secret). Degrades gracefully if absent.
    ============================================================ */
 import { writeFile, readFile } from "node:fs/promises";
 
-// Company roster mirrors data.js COMPANIES (co must match exactly for filtering).
+const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
+const KEY = process.env.ANTHROPIC_API_KEY || "";
+const MODEL = "claude-opus-4-8";
+
+// Authoritative English outlets (publisher homepage hostnames). Anything not here is dropped.
+const ALLOW = [
+  "reuters.com", "bloomberg.com", "cnbc.com", "techcrunch.com", "theverge.com", "wsj.com",
+  "ft.com", "nytimes.com", "wired.com", "arstechnica.com", "axios.com", "theinformation.com",
+  "engadget.com", "venturebeat.com", "theguardian.com", "businessinsider.com", "forbes.com",
+  "fortune.com", "cnet.com", "zdnet.com", "semafor.com", "theregister.com", "technologyreview.com",
+  "spectrum.ieee.org", "androidauthority.com", "9to5google.com", "9to5mac.com", "macrumors.com",
+  "tomshardware.com", "anandtech.com", "nikkei.com", "restofworld.org", "platformer.news",
+];
+
+// co must match data.js COMPANIES names exactly (for per-company filtering in the feed).
 const COMPANIES = [
   { co: "OpenAI", cat: "native", q: "OpenAI" },
   { co: "Anthropic", cat: "native", q: "Anthropic Claude" },
@@ -17,9 +35,9 @@ const COMPANIES = [
   { co: "DeepSeek", cat: "native", q: "DeepSeek AI" },
   { co: "SpaceX (xAI, Cursor)", cat: "native", q: "SpaceX Cursor Anysphere AI" },
   { co: "Google DeepMind", cat: "bigtech", q: "Google DeepMind Gemini" },
-  { co: "Apple", cat: "bigtech", q: "Apple Intelligence AI" },
+  { co: "Apple", cat: "bigtech", q: "Apple Intelligence on-device AI" },
   { co: "Microsoft", cat: "bigtech", q: "Microsoft Copilot AI" },
-  { co: "Amazon", cat: "bigtech", q: "Amazon AWS AI Bedrock" },
+  { co: "Amazon", cat: "bigtech", q: "Amazon AWS Bedrock AI" },
   { co: "NVIDIA", cat: "bigtech", q: "Nvidia AI GPU" },
   { co: "Meta AI", cat: "bigtech", q: "Meta Llama AI" },
   { co: "Perplexity", cat: "startup", q: "Perplexity AI" },
@@ -32,78 +50,151 @@ const COMPANIES = [
   { co: "ElevenLabs", cat: "startup", q: "ElevenLabs voice AI" },
   { co: "Harvey", cat: "startup", q: "Harvey legal AI" },
   { co: "Glean", cat: "startup", q: "Glean enterprise AI" },
-  { co: "Sierra AI", cat: "startup", q: "Sierra AI agent customer service" },
+  { co: "Sierra AI", cat: "startup", q: "Sierra AI agent" },
 ];
 
-const decode = (s) =>
-  (s || "")
-    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ").trim();
+// Device-relevant AI topics (most material for an on-device-AI device maker).
+const TOPICS = [
+  { co: "AI 에이전트", cat: "native", tag: "AI 에이전트", n: 3, q: '("AI agent" OR "agentic AI" OR "AI agents")' },
+  { co: "AI 노트북", cat: "bigtech", tag: "AI 노트북", n: 3, q: '("AI PC" OR "AI laptop" OR "Copilot+ PC" OR "on-device AI" OR "NPU laptop")' },
+  { co: "AI 폰", cat: "bigtech", tag: "AI 폰", n: 3, q: '("AI smartphone" OR "AI phone" OR "Galaxy AI" OR "Apple Intelligence" OR "on-device AI" phone)' },
+];
 
-const tag = (xml, name) => {
-  const m = xml.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`, "i"));
-  return m ? m[1] : "";
-};
+// ---- XML / HTML helpers -------------------------------------------------
+function decode(s) {
+  return String(s || "")
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ")  // entities FIRST
+    .replace(/<[^>]+>/g, " ")                                                 // then strip tags (kills <font ...>)
+    .replace(/\s+/g, " ").trim();
+}
+const tag = (xml, name) => { const m = xml.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`, "i")); return m ? m[1] : ""; };
+const attr = (xml, name, a) => { const m = xml.match(new RegExp(`<${name}[^>]*\\b${a}="([^"]*)"`, "i")); return m ? m[1] : ""; };
+function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } }
+function allowed(host) { return ALLOW.some(d => host === d || host.endsWith("." + d)); }
 
 function parseItems(xml) {
-  const items = [];
-  const re = /<item>([\s\S]*?)<\/item>/g;
-  let m;
+  const items = []; const re = /<item>([\s\S]*?)<\/item>/g; let m;
   while ((m = re.exec(xml))) items.push(m[1]);
   return items;
 }
 
-async function crawlOne(c) {
-  // 한국어판 Google News — 제목·요약이 한국어로 수집됨
-  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(c.q + " when:7d")}&hl=ko&gl=KR&ceid=KR:ko`;
+async function fetchRss(query) {
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query + " when:14d")}&hl=en-US&gl=US&ceid=US:en`;
+  const res = await fetch(url, { headers: { "User-Agent": UA } });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.text();
+}
+
+// pull authoritative English items for one query
+async function pull(src, limit) {
   try {
-    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (AI-Dashboard NewsBot)" } });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const xml = await res.text();
-    const items = parseItems(xml).slice(0, 2);
-    const out = items.map((it) => {
+    const xml = await fetchRss(src.q);
+    const out = [];
+    for (const it of parseItems(xml)) {
       const rawTitle = decode(tag(it, "title"));
       const link = decode(tag(it, "link"));
+      const srcUrl = attr(it, "source", "url");
+      const srcName = decode(tag(it, "source")) || (rawTitle.includes(" - ") ? rawTitle.split(" - ").pop() : "");
+      const host = hostOf(srcUrl);
+      if (!host || !allowed(host)) continue;                 // authoritative English only
+      const title = rawTitle.replace(/ - [^-]*$/, "").trim() || rawTitle;
+      const desc = decode(tag(it, "description")).slice(0, 240);
       const pub = tag(it, "pubDate");
-      const src = decode(tag(it, "source")) || (rawTitle.includes(" - ") ? rawTitle.split(" - ").pop() : "Google News");
-      const title = rawTitle.replace(/ - [^-]*$/, "").trim() || rawTitle;        // 한국어 제목 요약
-      const descTxt = decode(tag(it, "description")).replace(/^.*?<\/a>/, "").slice(0, 140);
       const d = pub ? new Date(pub) : new Date();
       const date = isNaN(d) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
-      const summary = `· ${title}\n· 출처: ${src}${descTxt ? "\n· " + descTxt : ""}`;   // 한국어 요약
-      return { date, co: c.co, cat: c.cat, source: src, title, summary, tag: "최신", url: link };
-    }).filter((a) => a.title && a.url);
-    console.log(`[agent:${c.co}] ${out.length} item(s)`);
+      out.push({ date, co: src.co, cat: src.cat, source: srcName || host, title, descEn: desc, url: link, tag: src.tag || "최신" });
+      if (out.length >= limit) break;
+    }
+    console.log(`[news:${src.co}] ${out.length} authoritative item(s)`);
     return out;
   } catch (e) {
-    console.warn(`[agent:${c.co}] failed: ${e.message}`);
+    console.warn(`[news:${src.co}] failed: ${e.message}`);
     return [];
   }
 }
 
-async function main() {
-  console.log(`Launching ${COMPANIES.length} crawler agents…`);
-  // run all per-company agents concurrently
-  const results = await Promise.all(COMPANIES.map(crawlOne));
-  const articles = results.flat();
+// ---- Claude summarization: 3-line Korean brief, device-maker lens ----
+const SYS = "당신은 글로벌 스마트폰·온디바이스 AI 기기 제조사의 전략 분석가입니다. 영문 AI 뉴스를 한국어로 요약합니다. 특정 기업명(삼성, MX, 사업부 등)은 절대 언급하지 않습니다. 과장 없이 사실에 근거해 작성합니다.";
+function userPrompt(a) {
+  return `다음 영문 AI 뉴스를 한국어로 요약하세요.\n\n제목: ${a.title}\n출처: ${a.source}\n내용: ${a.descEn || "(요약 없음)"}\n\n출력 형식(JSON): title_ko는 25자 내외의 한국어 제목. summary는 정확히 3줄이며 각 줄은 "· "로 시작합니다. 1줄=핵심 사실, 2줄=수치/배경, 3줄=온디바이스 AI·AI 에이전트·스마트폰/노트북 단말 전략 관점의 시사점. 단 어떤 회사명도 시사점에 적지 마세요.`;
+}
 
-  // de-dupe by url, keep newest first
+async function summarize(a) {
+  if (!KEY) return null;
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": KEY, "anthropic-version": "2023-06-01" },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 600,
+        system: SYS,
+        messages: [{ role: "user", content: userPrompt(a) }],
+        output_config: {
+          format: {
+            type: "json_schema",
+            schema: {
+              type: "object",
+              properties: { title_ko: { type: "string" }, summary: { type: "string" } },
+              required: ["title_ko", "summary"],
+              additionalProperties: false,
+            },
+          },
+        },
+      }),
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status + " " + (await res.text()).slice(0, 120));
+    const j = await res.json();
+    if (j.stop_reason === "refusal") throw new Error("refusal");
+    const block = (j.content || []).find(b => b.type === "text");
+    if (!block) throw new Error("no text");
+    const parsed = JSON.parse(block.text);
+    if (!parsed.title_ko || !parsed.summary) throw new Error("bad json");
+    return { title_ko: decode(parsed.title_ko), summary: decode(parsed.summary.replace(/\\n/g, "\n")) };
+  } catch (e) {
+    console.warn(`[sum:${a.co}] ${e.message}`);
+    return null;
+  }
+}
+
+// limited-concurrency map
+async function pool(items, n, fn) {
+  const out = new Array(items.length);
+  let i = 0;
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => {
+    while (i < items.length) { const idx = i++; out[idx] = await fn(items[idx], idx); }
+  }));
+  return out;
+}
+
+async function main() {
+  console.log(`Crawling authoritative English AI news… (LLM summaries: ${KEY ? "on" : "OFF — set ANTHROPIC_API_KEY"})`);
+  const companyItems = (await Promise.all(COMPANIES.map(c => pull(c, 1)))).flat();
+  const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
+
+  // de-dupe by URL
   const seen = new Set();
-  const merged = articles
-    .filter((a) => (a.url && !seen.has(a.url)) && seen.add(a.url))
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+  const raw = [...companyItems, ...topicItems].filter(a => a.url && !seen.has(a.url) && seen.add(a.url));
+
+  // summarize into Korean (3 lines, device-maker lens) with limited concurrency
+  const summaries = await pool(raw, 3, summarize);
+  const articles = raw.map((a, k) => {
+    const s = summaries[k];
+    return {
+      date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag, url: a.url,
+      title: s ? s.title_ko : a.title,                          // Korean title when available
+      summary: s ? s.summary : `· ${a.title}\n· 출처: ${a.source}`,
+    };
+  }).sort((x, y) => (x.date < y.date ? 1 : -1));
 
   let prev = [];
   try { prev = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
-  // if every agent failed (e.g., network blocked), keep the previous file
-  const final = merged.length ? merged : prev;
+  const final = articles.length ? articles : prev;
 
-  const payload = { generatedAt: new Date().toISOString(), count: final.length, articles: final };
-  await writeFile("news.json", JSON.stringify(payload, null, 2) + "\n");
-  console.log(`Wrote news.json with ${final.length} articles.`);
+  await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: final.length, articles: final }, null, 2) + "\n");
+  console.log(`Wrote news.json with ${final.length} articles (${summaries.filter(Boolean).length} Korean summaries).`);
 }
 
-main().catch((e) => { console.error(e); process.exit(0); }); // never hard-fail the workflow
+main().catch((e) => { console.error(e); process.exit(0); });

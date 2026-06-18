@@ -33,7 +33,9 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Crawl per-company news (Korean)
+      - name: Crawl authoritative English news → Korean briefs
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node scripts/crawl-news.mjs
 
       - name: Crawl real stock prices + market cap

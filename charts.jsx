@@ -108,8 +108,10 @@ function MarketGrowthChart({ data, accent, ink, grid, muted }) {
       </g>
       {data.map((d, i) => {
         const frac = i / (n - 1);
-        const reveal = prog >= frac - 0.001;
-        const localProg = reveal ? Math.min((prog - frac) / (1 / (n - 1)), 1) : 0;
+        const span = 1 / (n - 1) || 1;
+        const reveal = prog >= frac - span;
+        // count up over the step leading into this point so the LAST point also reaches its full value
+        const localProg = reveal ? Math.min(Math.max((prog - (frac - span)) / span, 0), 1) : 0;
         const shownGrowth = Math.round(d.growth * (reveal ? Math.min(localProg * 3, 1) : 0));
         const shownSize = Math.round(d.size * (reveal ? Math.min(localProg * 3, 1) : 0));
         return (

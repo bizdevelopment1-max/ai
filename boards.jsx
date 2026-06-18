@@ -222,6 +222,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
 // ---- Bold key numbers helper (accent bold + yellow marker) -----
 function BoldSummary({ text }) {
   if (!text) return null;
+  text = String(text).replace(/<[^>]+>/g, "");   // strip any stray HTML (e.g. <font color>) from crawled summaries
   const parts = text.split(/(\$[\d,.]+[BMK]?(?:\+|~)?|\d+\.?\d*%|\+\d+\.?\d*%|-\d+\.?\d*%)/g);
   return parts.map((part, i) =>
     /^\$|^\d+\.?\d*%$|^[+-]\d+\.?\d*%$/.test(part)
@@ -606,8 +607,12 @@ function OverviewCharts({ data, cats, theme }) {
           <MarketGrowthChart data={data.MARKET_GROWTH} accent={theme.accent} ink={theme.ink} grid={theme.grid} muted={theme.muted} />
         </div>
         <div className="ov-chart-card">
-          <div className="cc-head"><h3>AI 시장 점유율</h3><span title="Statista · IDC · 각사 공시 기준">카테고리별 · IDC / Statista</span></div>
-          <DonutChart data={data.SHARE} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} centerLabel="$280B" centerSub="글로벌 AI 시장" />
+          <div className="cc-head"><h3>AI 시장 점유율</h3><span title="Statista · IDC · 각사 공시 기준">세그먼트별 · IDC / Statista</span></div>
+          <DonutChart data={data.SHARE} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} centerLabel="$279B" centerSub="글로벌 AI 시장" />
+        </div>
+        <div className="ov-chart-card">
+          <div className="cc-head"><h3>AI 시장 버티컬별</h3><span title="Grand View Research · IDC · Statista 산업별 AI 채택">산업별 비중 · 2025</span></div>
+          <DonutChart data={data.MARKET_VERTICAL} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} centerLabel="8개" centerSub="주요 버티컬" />
         </div>
         <div className="ov-chart-card">
           <div className="cc-head"><h3>AI 주요 딜</h3><span title="Crunchbase · PitchBook 기준">2025~2026 주요 투자</span></div>
@@ -1023,34 +1028,23 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
     }));
   };
 
+  // iOS(아이폰) vs Android 비교 — '전체'면 전 앱 합계, 특정 앱이면 그 앱의 두 플랫폼
+  // 색상은 항상 iOS=파랑 / Android=초록으로 고정해 명확히 구분한다.
+  const PLATFORM_COLORS = ["#2D6BFF", "#16A34A"];
   const buildPlatformSeries = () => {
-    const names = selectedApp === "all" ? allAppNames.slice(0, 4) : [selectedApp];
-    const result = [];
-    names.forEach(name => {
-      result.push({
-        name: name + " iOS",
-        values: months.map((_m, mi) => {
-          const app = appMonthly[mi].apps.find(a => a.name === name);
-          return app ? app.ios : 0;
-        }),
-        srcs: months.map((_m, mi) => {
-          const app = appMonthly[mi].apps.find(a => a.name === name);
-          return app ? app.src : "";
-        }),
-      });
-      result.push({
-        name: name + " Android",
-        values: months.map((_m, mi) => {
-          const app = appMonthly[mi].apps.find(a => a.name === name);
-          return app ? app.android : 0;
-        }),
-        srcs: months.map((_m, mi) => {
-          const app = appMonthly[mi].apps.find(a => a.name === name);
-          return app ? app.src : "";
-        }),
-      });
-    });
-    return result;
+    const label = selectedApp === "all" ? "전체" : selectedApp;
+    const pick = (mi, plat) => {
+      if (selectedApp === "all") {
+        return appMonthly[mi].apps.reduce((s, a) => s + (a[plat] || 0), 0);
+      }
+      const app = appMonthly[mi].apps.find(a => a.name === selectedApp);
+      return app ? (app[plat] || 0) : 0;
+    };
+    const src = selectedApp === "all" ? "SensorTower 추정 (전 앱 합계)" : "SensorTower 추정";
+    return [
+      { name: `${label} · iOS(아이폰)`, values: months.map((_m, mi) => pick(mi, "ios")), srcs: months.map(() => src) },
+      { name: `${label} · Android`, values: months.map((_m, mi) => pick(mi, "android")), srcs: months.map(() => src) },
+    ];
   };
 
   return (
@@ -1085,8 +1079,8 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
         )}
         {tab === "platform" && (
           <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-            <div className="cc-head"><h3>iOS vs Android 다운로드</h3><span>M(백만) · 플랫폼별 분리 · SensorTower 추정</span></div>
-            <MonthlyLineChart series={buildPlatformSeries()} months={months} colors={["#1428A0", "#0E8F6E", "#7A38D6", "#D23B3B", "#F59E0B", "#0891B2", "#2D6BFF", "#C026D3"]} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" companies={data.COMPANIES} />
+            <div className="cc-head"><h3>iOS(아이폰) vs Android 다운로드 비교</h3><span>M(백만) · <b style={{ color: "#2D6BFF" }}>파랑=iOS</b> / <b style={{ color: "#16A34A" }}>초록=Android</b> · 위 버튼에서 앱 선택(전체=합계) · SensorTower 추정</span></div>
+            <MonthlyLineChart series={buildPlatformSeries()} months={months} colors={PLATFORM_COLORS} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" companies={data.COMPANIES} />
           </div>
         )}
         {tab === "revenue" && (
