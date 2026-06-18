@@ -18,7 +18,7 @@ const TICKERS = [
   { t: "META", y: "META", s: "meta.us", shares: 2.53 },
   // SpaceX (SPCX) — try the real listed ticker first; if no public feed carries it yet,
   // fall back to a clearly-labeled scenario series from the 2026-06-12 listing date.
-  { t: "SPCX", y: "SPCX", s: "spcx.us", shares: 0, scenario: { start: "2026-06-12", ipo: 80, shares: 4.44 } },
+  { t: "SPCX", y: "SPCX", s: "spcx.us", shares: 0, scenario: { start: "2026-06-12", ipo: 135, last: 191.82, shares: 2.6 } },
 ];
 
 const YEARS = 5;
@@ -215,18 +215,21 @@ async function crawlOne(c, sess) {
   return [c.t, { ticker: c.t, asOf: last.d, currency: "$", lastPrice: last.p, marketCap, source: src, scenario: scenario || undefined, points }];
 }
 
-// Deterministic post-IPO scenario series (weekdays from listing date to today). Clearly labeled, not real feed data.
+// Deterministic post-IPO scenario series anchored to known IPO price → current price (weekdays).
+// 첫날=상장가(ipo), 마지막날=현재가(last)로 고정하고 중간만 약하게 흔든다. 실데이터 아님(라벨 표기).
 function scenarioSeries(c) {
-  const { start, ipo } = c.scenario;
-  let p = ipo, seed = 1337;
-  const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
-  const out = [], d = new Date(start + "T00:00:00Z"), today = new Date();
-  while (d <= today) {
-    const wd = d.getUTCDay();
-    if (wd !== 0 && wd !== 6) { p = Math.max(5, p * (1 + (rnd() - 0.42) * 0.07)); out.push({ d: d.toISOString().slice(0, 10), p: round2(p) }); }
-    d.setUTCDate(d.getUTCDate() + 1);
-  }
-  return out.length ? out : null;
+  const { start, ipo, last } = c.scenario;
+  const dates = [], d = new Date(start + "T00:00:00Z"), today = new Date();
+  while (d <= today) { const wd = d.getUTCDay(); if (wd !== 0 && wd !== 6) dates.push(d.toISOString().slice(0, 10)); d.setUTCDate(d.getUTCDate() + 1); }
+  if (!dates.length) return null;
+  const n = dates.length, end = (typeof last === "number" ? last : ipo);
+  let seed = 99; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  return dates.map((dd, i) => {
+    const t = n === 1 ? 1 : i / (n - 1);
+    const base = ipo + (end - ipo) * t;                         // 상장가 → 현재가 선형
+    const noise = (i === 0 || i === n - 1) ? 0 : (rnd() - 0.5) * Math.abs(end - ipo) * 0.14;  // 양끝 고정, 중간만 변동
+    return { d: dd, p: round2(Math.max(1, base + noise)) };
+  });
 }
 
 async function main() {

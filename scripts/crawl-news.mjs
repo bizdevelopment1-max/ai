@@ -182,8 +182,23 @@ async function translateKo(text) {
   } catch { return ""; }
 }
 
+// Resolve a Google News redirect link to the real publisher article URL.
+async function resolveUrl(u) {
+  if (!/news\.google\.com/.test(u)) return u;
+  try {
+    const ctl = AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined;
+    const res = await fetch(u, { headers: { "User-Agent": UA }, redirect: "follow", signal: ctl });
+    if (res.url && !/news\.google\.com/.test(res.url)) return res.url;   // followed to publisher
+    const html = await res.text();
+    // Google News interstitial embeds the target URL — pull the first non-Google https URL.
+    const m = html.match(/data-n-au="(https?:\/\/[^"]+)"/)
+      || html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["'](https?:\/\/(?!news\.google)[^"']+)["']/i)
+      || html.match(/href=["'](https?:\/\/(?!news\.google\.com|accounts\.google|policies\.google|support\.google|gstatic)[^"']+)["']/i);
+    return m ? m[1] : u;
+  } catch { return u; }
+}
+
 // Fetch publisher meta description / first paragraphs for real content (RSS desc는 빈약함).
-// Google News link는 publisher로 리다이렉트되므로 최종 본문에서 og:description 등을 추출.
 async function fetchSnippet(url) {
   try {
     const ctl = AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined;
@@ -209,16 +224,15 @@ function to3lines(text, fallback) {
   return lines.map(l => "· " + l.replace(/^[·\-•]\s*/, "")).join("\n");
 }
 
-// No-API brief: 한글 제목(번역) + 본문(메타+번역) 3줄 개조식. 번역 실패 시 영문 폴백(사용자 허용).
+// No-API brief: 한글 제목(번역) + 본문(원문 메타+번역) 3줄 개조식. 번역 실패 시 영문 폴백(사용자 허용).
 async function freeKoBrief(a) {
   const titleKo = (await translateKo(a.title)) || a.title;
+  const realUrl = await resolveUrl(a.url);                   // Google News 리다이렉트 → 원문 URL
   let content = a.descEn || "";
-  if (content.replace(/\s/g, "").length < 80) {              // RSS 본문이 빈약하면 원문 메타에서 보강
-    const snip = await fetchSnippet(a.url);
-    if (snip && snip.length > content.length) content = snip;
-  }
+  const snip = await fetchSnippet(realUrl);                  // 원문 페이지 og:description/본문
+  if (snip && snip.length > content.length) content = snip;
   const contentKo = (await translateKo(content)) || content;  // 번역 성공 시 한글, 실패 시 영문 폴백
-  return { title_ko: titleKo, summary: to3lines(contentKo, titleKo) };
+  return { title_ko: titleKo, summary: to3lines(contentKo, titleKo), url: realUrl };
 }
 
 // Best-effort brief: Claude(있으면) → 실패/무키 시 keyless 번역. 항상 3줄형 요약 반환.
@@ -267,7 +281,8 @@ async function main() {
     if (isKoreanSummary(old)) return old;                 // reuse — no duplicate work
     const s = sumByUrl.get(a.url);
     return {
-      date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag, url: a.url,
+      date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag,
+      url: (s && s.url) ? s.url : a.url,                   // Google News 리다이렉트 대신 원문 URL
       title: s ? s.title_ko : a.title,                    // 한국어 번역 제목
       summary: s ? s.summary : `· ${a.title}`,            // 출처 줄 없음 (출처는 상단 표기)
     };

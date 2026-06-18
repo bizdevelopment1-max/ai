@@ -297,7 +297,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
         <span className="board-tab" style={{ background: "var(--ink)" }} />
         <div className="board-titles">
           <h2>데일리 기사 피드 <span className="board-en">Daily Articles · 업체별 외신 큐레이션</span></h2>
-          <p>카테고리 선택 → 업체 선택 시 해당 기업 기사만 표시 · 매일 오전 7시 자동 갱신 · ✕로 기사 삭제</p>
+          <p>✕로 불필요한 기사 삭제</p>
         </div>
         <div className="feed-filters">
           <button className={filter === "all" ? "on" : ""} onClick={() => onFilter("all")}>전체</button>
