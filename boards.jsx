@@ -1022,39 +1022,20 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
   );
 }
 
-// ---- Monthly Trends Board (downloads + revenue by month) ----
+// ---- Monthly Revenue Trends Board ----
+// 앱 다운로드(SensorTower) 차트는 무료로 크롤링 가능한 실데이터 소스가 없어(유료 전용) 삭제함.
+// 매출 추이는 공시/ARR·run-rate 기반 모델값이라 유지하되 성격을 명시한다.
 function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
   const inView = useInView(sectionRef);
   const [selectedApp, setSelectedApp] = React.useState("all");
-  const [tab, setTab] = React.useState("downloads");
 
-  const appMonthly = data.APP_MONTHLY || [];
   const revMonthly = data.REVENUE_MONTHLY || [];
-  const months = appMonthly.map(m => m.month);
   const revMonths = revMonthly.map(m => m.month);
-
-  const allAppNames = appMonthly.length > 0 ? appMonthly[0].apps.map(a => a.name) : [];
   const allRevNames = revMonthly.length > 0 ? revMonthly[0].data.map(d => d.name) : [];
-
   const appColors = ["#1428A0", "#7A38D6", "#0E8F6E", "#D23B3B", "#F59E0B", "#0891B2", "#2D6BFF", "#C026D3"];
 
-  const buildDownloadSeries = () => {
-    const names = selectedApp === "all" ? allAppNames.slice(0, 6) : [selectedApp];
-    return names.map(name => ({
-      name,
-      values: months.map((_m, mi) => {
-        const app = appMonthly[mi].apps.find(a => a.name === name);
-        return app ? app.ios + app.android : 0;
-      }),
-      srcs: months.map((_m, mi) => {
-        const app = appMonthly[mi].apps.find(a => a.name === name);
-        return app ? app.src : "";
-      }),
-    }));
-  };
-
   const buildRevenueSeries = () => {
-    const names = selectedApp === "all" ? allRevNames.slice(0, 6) : allRevNames.filter(n => n === selectedApp || selectedApp === "all");
+    const names = selectedApp === "all" ? allRevNames.slice(0, 6) : [selectedApp];
     return names.map(name => ({
       name,
       values: revMonths.map((_m, mi) => {
@@ -1068,44 +1049,20 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
     }));
   };
 
-  // iOS(아이폰) vs Android 비교 — '전체'면 전 앱 합계, 특정 앱이면 그 앱의 두 플랫폼
-  // 색상은 항상 iOS=파랑 / Android=초록으로 고정해 명확히 구분한다.
-  const PLATFORM_COLORS = ["#2D6BFF", "#16A34A"];
-  const buildPlatformSeries = () => {
-    const label = selectedApp === "all" ? "전체" : selectedApp;
-    const pick = (mi, plat) => {
-      if (selectedApp === "all") {
-        return appMonthly[mi].apps.reduce((s, a) => s + (a[plat] || 0), 0);
-      }
-      const app = appMonthly[mi].apps.find(a => a.name === selectedApp);
-      return app ? (app[plat] || 0) : 0;
-    };
-    const src = selectedApp === "all" ? "SensorTower 추정 (전 앱 합계)" : "SensorTower 추정";
-    return [
-      { name: `${label} · iOS(아이폰)`, values: months.map((_m, mi) => pick(mi, "ios")), srcs: months.map(() => src) },
-      { name: `${label} · Android`, values: months.map((_m, mi) => pick(mi, "android")), srcs: months.map(() => src) },
-    ];
-  };
-
   return (
-    <section className="board" ref={sectionRef} data-screen-label="Monthly Trends">
+    <section className="board" ref={sectionRef} data-screen-label="Monthly Revenue">
      <AnimCtx.Provider value={inView}>
       <div className="board-head">
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
-          <h2>AI 월별 추이 <span className="board-en">Monthly Trends · Downloads & Revenue</span></h2>
-          <p>AI 앱 다운로드(추정) · 매출 월별 추이 · 유료 데이터/공시/내부 추정 혼재</p>
-        </div>
-        <div className="feed-filters">
-          <button className={tab === "downloads" ? "on" : ""} onClick={() => setTab("downloads")}>AI 앱 월별(합산)</button>
-          <button className={tab === "platform" ? "on" : ""} onClick={() => setTab("platform")}>iOS vs Android</button>
-          <button className={tab === "revenue" ? "on" : ""} onClick={() => setTab("revenue")}>AI 월별 매출</button>
+          <h2>AI 월별 매출 추이 <span className="board-en">Monthly Revenue Trends</span></h2>
+          <p>공시 매출·ARR/run-rate 월 배분 기반 모델값 · 데이터 성격은 각 포인트 소스 참조</p>
         </div>
       </div>
 
       <div className="monthly-app-filter">
         <button className={selectedApp === "all" ? "monthly-btn on" : "monthly-btn"} onClick={() => setSelectedApp("all")}>전체</button>
-        {(tab === "revenue" ? allRevNames : allAppNames).map(name => {
+        {allRevNames.map(name => {
           const dom = appDomain(name);
           return (
             <button key={name} className={selectedApp === name ? "monthly-btn on" : "monthly-btn"} onClick={() => setSelectedApp(name)}>
@@ -1117,24 +1074,10 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
       </div>
 
       <div className="chart-grid">
-        {tab === "downloads" && (
-          <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-            <div className="cc-head"><h3>AI 앱 월별 다운로드 추이 (Modeled Estimate)</h3><span>M(백만) · iOS+Android 합산 · SensorTower 유료 데이터 기반 · 공개 검증 불가(Paid dataset / not publicly verifiable)</span></div>
-            <MonthlyLineChart series={buildDownloadSeries()} months={months} colors={appColors} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" companies={data.COMPANIES} />
-          </div>
-        )}
-        {tab === "platform" && (
-          <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-            <div className="cc-head"><h3>iOS(아이폰) vs Android 다운로드 비교</h3><span>M(백만) · <b style={{ color: "#2D6BFF" }}>파랑=iOS</b> / <b style={{ color: "#16A34A" }}>초록=Android</b> · 위 버튼에서 앱 선택(전체=합계) · SensorTower 추정</span></div>
-            <MonthlyLineChart series={buildPlatformSeries()} months={months} colors={PLATFORM_COLORS} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" companies={data.COMPANIES} />
-          </div>
-        )}
-        {tab === "revenue" && (
-          <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-            <div className="cc-head"><h3>AI 월별 매출 추이 (Reported / ARR / Run-rate / Estimate 혼재)</h3><span>$M · 공시 매출, ARR 배분, 런레이트, 내부 추정이 혼재됨 — 데이터 성격은 각 포인트 소스 참조</span></div>
-            <MonthlyLineChart series={buildRevenueSeries()} months={revMonths} colors={appColors} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" valuePrefix="$" companies={data.COMPANIES} />
-          </div>
-        )}
+        <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
+          <div className="cc-head"><h3>AI 월별 매출 추이 (Reported / ARR / Run-rate / Estimate 혼재)</h3><span>$M · 공시 매출, ARR 배분, 런레이트, 내부 추정이 혼재됨 — 데이터 성격은 각 포인트 소스 참조</span></div>
+          <MonthlyLineChart series={buildRevenueSeries()} months={revMonths} colors={appColors} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" valuePrefix="$" companies={data.COMPANIES} />
+        </div>
       </div>
      </AnimCtx.Provider>
     </section>

@@ -60,7 +60,7 @@ const NAV = [
   { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", icon: "device" },
   { id: "startup", ko: "AI 스타트업", en: "AI Startups", icon: "spark" },
   { id: "charts", ko: "정량 분석", en: "Quant Charts", icon: "chart" },
-  { id: "monthly", ko: "월별 추이", en: "Monthly Trends", icon: "chart" },
+  { id: "monthly", ko: "월별 매출 추이", en: "Monthly Revenue", icon: "chart" },
   { id: "insights", ko: "핵심 인사이트", en: "Insights", icon: "pulse" },
   { id: "signals", ko: "신뢰성·도입·검증", en: "Reliability & Adoption", icon: "target" },
   { id: "dynamics", ko: "경쟁 다이내믹스", en: "Competitive Map", icon: "target" },

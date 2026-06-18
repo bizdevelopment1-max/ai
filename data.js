@@ -498,50 +498,6 @@ window.DASH = (function () {
     { q: "AI 에이전트가 스마트폰에서 지금 당장 할 수 있는 일과 아직 위험한 일은?", a: "지금 적합한 영역은 검색·요약·번역·사진 편집·일정 정리·설정 변경·쇼핑 후보 비교·이메일 초안처럼 위험이 낮고 되돌릴 수 있는 작업입니다. 반대로 결제·계약·계정 변경·의료/금융 판단·외부 전송은 사용자 승인, 작업 로그, 취소 기능, 권한 제한이 반드시 필요합니다. OpenAI의 Computer Use 모델도 WebVoyager 87%·OSWorld 38.1%로 아직 실수 가능성과 휴먼 감독 필요성을 명시했습니다. 모바일 에이전트는 당분간 완전 자동화보다 '승인형 자동화(approval-based)'가 현실적이며, 작업 로그·취소/복구·민감 작업 차단이 핵심 UX입니다.", nav: "dynamics", keywords: ["에이전트", "agent", "스마트폰", "모바일", "승인", "자동화", "computer use", "온디바이스"] },
   ];
 
-  /* ---- Monthly Trend: Top AI Apps (M downloads) ---- */
-  const APP_MONTHLY = [
-    { month: "2026-01", apps: [
-      { name: "ChatGPT", ios: 45, android: 62, src: "SensorTower '26.1" },
-      { name: "Gemini", ios: 18, android: 35, src: "SensorTower '26.1" },
-      { name: "Grok", ios: 12, android: 16, src: "SensorTower '26.1" },
-      { name: "DeepSeek", ios: 14, android: 11, src: "SensorTower '26.1" },
-      { name: "Perplexity", ios: 8, android: 5, src: "SensorTower '26.1" },
-      { name: "Claude", ios: 5, android: 3, src: "SensorTower '26.1" },
-    ]},
-    { month: "2026-02", apps: [
-      { name: "ChatGPT", ios: 48, android: 65, src: "SensorTower '26.2" },
-      { name: "Gemini", ios: 20, android: 38, src: "SensorTower '26.2" },
-      { name: "Grok", ios: 13, android: 18, src: "SensorTower '26.2" },
-      { name: "DeepSeek", ios: 15, android: 12, src: "SensorTower '26.2" },
-      { name: "Perplexity", ios: 9, android: 6, src: "SensorTower '26.2" },
-      { name: "Claude", ios: 6, android: 3.5, src: "SensorTower '26.2" },
-    ]},
-    { month: "2026-03", apps: [
-      { name: "ChatGPT", ios: 52, android: 70, src: "SensorTower '26.3" },
-      { name: "Gemini", ios: 22, android: 42, src: "SensorTower '26.3" },
-      { name: "Grok", ios: 14, android: 20, src: "SensorTower '26.3" },
-      { name: "DeepSeek", ios: 16, android: 13, src: "SensorTower '26.3" },
-      { name: "Perplexity", ios: 10, android: 7, src: "SensorTower '26.3" },
-      { name: "Claude", ios: 7, android: 4, src: "SensorTower '26.3" },
-    ]},
-    { month: "2026-04", apps: [
-      { name: "ChatGPT", ios: 55, android: 73, src: "SensorTower '26.4" },
-      { name: "Gemini", ios: 24, android: 45, src: "SensorTower '26.4" },
-      { name: "Grok", ios: 15, android: 22, src: "SensorTower '26.4" },
-      { name: "DeepSeek", ios: 17, android: 14, src: "SensorTower '26.4" },
-      { name: "Perplexity", ios: 11, android: 8, src: "SensorTower '26.4" },
-      { name: "Claude", ios: 8, android: 5, src: "SensorTower '26.4" },
-    ]},
-    { month: "2026-05", apps: [
-      { name: "ChatGPT", ios: 58, android: 76, src: "SensorTower '26.5" },
-      { name: "Gemini", ios: 26, android: 48, src: "SensorTower '26.5" },
-      { name: "Grok", ios: 16, android: 24, src: "SensorTower '26.5" },
-      { name: "DeepSeek", ios: 18, android: 15, src: "SensorTower '26.5" },
-      { name: "Perplexity", ios: 12, android: 9, src: "SensorTower '26.5" },
-      { name: "Claude", ios: 9, android: 6, src: "SensorTower '26.5" },
-    ]},
-  ];
-
   /* ---- Monthly Revenue Trends ($M) ---- */
   const REVENUE_MONTHLY = [
     { month: "2026-01", data: [
@@ -685,5 +641,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, COMPANY_ORDER, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, CAP_REL, FACTCHECK, QA_PAIRS, APP_MONTHLY, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, COMPANY_ORDER, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, CAP_REL, FACTCHECK, QA_PAIRS, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();
