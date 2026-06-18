@@ -182,15 +182,43 @@ async function translateKo(text) {
   } catch { return ""; }
 }
 
-// No-API brief: 한글 제목(번역) + 영문 본문 번역을 3줄 개조식으로. 번역 실패 시 영문 폴백(사용자 허용).
+// Fetch publisher meta description / first paragraphs for real content (RSS desc는 빈약함).
+// Google News link는 publisher로 리다이렉트되므로 최종 본문에서 og:description 등을 추출.
+async function fetchSnippet(url) {
+  try {
+    const ctl = AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined;
+    const res = await fetch(url, { headers: { "User-Agent": UA }, redirect: "follow", signal: ctl });
+    if (!res.ok) return "";
+    const html = await res.text();
+    const og = html.match(/<meta[^>]+(?:property|name)=["'](?:og:description|description|twitter:description)["'][^>]+content=["']([^"']+)["']/i)
+      || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["'](?:og:description|description)["']/i);
+    let txt = og ? og[1] : "";
+    if (txt.length < 60) {
+      const ps = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)].map(m => decode(m[1])).filter(t => t.length > 50);
+      txt = (txt + " " + ps.slice(0, 2).join(" ")).trim();
+    }
+    return decode(txt).slice(0, 500);
+  } catch { return ""; }
+}
+
+// 텍스트를 한국어 개조식 3줄로 분해
+function to3lines(text, fallback) {
+  let lines = String(text || "").split(/(?<=[.!?。…])\s+|·|\n|;/).map(s => s.trim())
+    .filter(s => s.length > 4).slice(0, 3);
+  if (!lines.length) lines = [fallback];
+  return lines.map(l => "· " + l.replace(/^[·\-•]\s*/, "")).join("\n");
+}
+
+// No-API brief: 한글 제목(번역) + 본문(메타+번역) 3줄 개조식. 번역 실패 시 영문 폴백(사용자 허용).
 async function freeKoBrief(a) {
   const titleKo = (await translateKo(a.title)) || a.title;
-  const descKo = await translateKo(a.descEn);
-  const src = descKo || a.descEn || a.title;
-  let lines = String(src).split(/(?<=[.!?。…])\s+|·|\n|;/).map(s => s.trim()).filter(s => s.length > 1).slice(0, 3);
-  if (!lines.length) lines = [titleKo];
-  const summary = lines.map(l => "· " + l.replace(/^[·\-•]\s*/, "")).join("\n");
-  return { title_ko: titleKo, summary };
+  let content = a.descEn || "";
+  if (content.replace(/\s/g, "").length < 80) {              // RSS 본문이 빈약하면 원문 메타에서 보강
+    const snip = await fetchSnippet(a.url);
+    if (snip && snip.length > content.length) content = snip;
+  }
+  const contentKo = (await translateKo(content)) || content;  // 번역 성공 시 한글, 실패 시 영문 폴백
+  return { title_ko: titleKo, summary: to3lines(contentKo, titleKo) };
 }
 
 // Best-effort brief: Claude(있으면) → 실패/무키 시 keyless 번역. 항상 3줄형 요약 반환.
