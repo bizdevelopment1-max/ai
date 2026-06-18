@@ -580,6 +580,7 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
           <span className="sp-tk">{sel.ticker}</span>
           <span className="sp-cat" style={{ color: accent, background: (catMap[sel.cat] || {}).accentSoft }}>{(catMap[sel.cat] || {}).ko}</span>
           {mcap && <span className="sp-mcap">시가총액 <b>{mcap}</b></span>}
+          {real && real.scenario && <span className="sp-scenario">시나리오(실시세 피드 미반영)</span>}
         </div>
 
         {sel.private ? (
@@ -1131,49 +1132,22 @@ function CapRelChart({ data, theme }) {
   );
 }
 
-const FC_GRADE = { A: { c: "#16A34A", t: "공식" }, B: { c: "#2D6BFF", t: "보도" }, C: { c: "#D97706", t: "추정" } };
-function FactCheckLayer({ data }) {
-  return (
-    <div className="factcheck">
-      <div className="fc-head-row">
-        <span>지표</span><span>값</span><span>등급</span><span>유형</span><span>검증일 · 출처</span>
-      </div>
-      {data.map((d, i) => {
-        const g = FC_GRADE[d.grade] || FC_GRADE.C;
-        return (
-          <div className="fc-row" key={i}>
-            <span className="fc-item">{d.item}</span>
-            <span className="fc-value">{d.value}</span>
-            <span className="fc-grade"><b style={{ background: g.c }}>{d.grade}</b></span>
-            <span className="fc-type" style={{ color: g.c, borderColor: g.c }}>{d.type}</span>
-            <span className="fc-src"><time>{d.verified}</time> · {d.src}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 function SignalBoard({ data, theme, sectionRef }) {
   const inView = useInView(sectionRef);
   return (
-    <section className="board" ref={sectionRef} data-screen-label="Reliability & Adoption">
+    <section className="board" ref={sectionRef} data-screen-label="Capability vs Reliability">
      <AnimCtx.Provider value={inView}>
       <div className="board-head">
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
-          <h2>신뢰성 · 도입 · 검증 <span className="board-en">Reliability · Adoption · Fact-Check</span></h2>
-          <p>'AI 대세' 단정 대신 — 성능↔신뢰성 격차, 파일럿→스케일 퍼널, 수치별 검증 레이어</p>
+          <h2>AI 성능 vs 신뢰성 격차 <span className="board-en">Capability–Reliability Gap</span></h2>
+          <p>'AI 대세' 단정 대신 — 벤치마크 성능은 오르지만 자율 신뢰성(실제 성공률)은 지연</p>
         </div>
       </div>
       <div className="chart-grid">
         <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-          <div className="cc-head"><h3>① Capability–Reliability Gap</h3><span>성능은 오르지만 자율 신뢰성은 지연 · Stanford HAI AI Index 2026</span></div>
+          <div className="cc-head"><h3>Capability–Reliability Gap</h3><span>성능은 오르지만 자율 신뢰성은 지연 · Stanford HAI AI Index 2026</span></div>
           <CapRelChart data={data.CAP_REL} theme={theme} />
-        </div>
-        <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-          <div className="cc-head"><h3>② 팩트체크 레이어</h3><span>수치별 등급(A 공식/B 보도/C 추정)·유형·검증일·출처</span></div>
-          <FactCheckLayer data={data.FACTCHECK} />
         </div>
       </div>
      </AnimCtx.Provider>

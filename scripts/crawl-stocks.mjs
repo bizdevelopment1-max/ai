@@ -16,8 +16,9 @@ const TICKERS = [
   { t: "AAPL", y: "AAPL", s: "aapl.us", shares: 14.8 },
   { t: "GOOGL", y: "GOOGL", s: "googl.us", shares: 12.2 },
   { t: "META", y: "META", s: "meta.us", shares: 2.53 },
-  // SpaceX — fetch the listed SPCX ticker directly (no proxy). shares unknown → no market cap.
-  { t: "SPCX", y: "SPCX", s: "spcx.us", shares: 0 },
+  // SpaceX (SPCX) — try the real listed ticker first; if no public feed carries it yet,
+  // fall back to a clearly-labeled scenario series from the 2026-06-12 listing date.
+  { t: "SPCX", y: "SPCX", s: "spcx.us", shares: 0, scenario: { start: "2026-06-12", ipo: 80, shares: 4.44 } },
 ];
 
 const YEARS = 5;
@@ -202,12 +203,30 @@ async function crawlOne(c, sess) {
     tried.push(`${name}:${got ? got.length : 0}`);
     if (got && got.length) { points = got; src = name; break; }
   }
+  // last-resort scenario series (clearly labeled) for symbols not yet on any public feed
+  let scenario = false;
+  if (!points && c.scenario) { points = scenarioSeries(c); src = "scenario"; scenario = true; }
   if (!points) { console.warn(`[stock:${c.t}] no data — tried ${tried.join(" ")}`); return null; }
   const last = points[points.length - 1];
   let marketCap = c.shares ? fmtCap(last.p * c.shares) : "";
-  if (!marketCap) { marketCap = await yahooMarketCap(c, sess); }   // shares 미상(SPCX 등) → Yahoo 요약에서 시총 파싱
+  if (scenario && c.scenario.shares) marketCap = fmtCap(last.p * c.scenario.shares) + " (시나리오)";
+  else if (!marketCap) { marketCap = await yahooMarketCap(c, sess); }   // shares 미상 → Yahoo 요약에서 시총 파싱
   console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} $${last.p}${marketCap ? ", cap " + marketCap : ""} (${tried.join(" ")})`);
-  return [c.t, { ticker: c.t, asOf: last.d, currency: "$", lastPrice: last.p, marketCap, source: src, points }];
+  return [c.t, { ticker: c.t, asOf: last.d, currency: "$", lastPrice: last.p, marketCap, source: src, scenario: scenario || undefined, points }];
+}
+
+// Deterministic post-IPO scenario series (weekdays from listing date to today). Clearly labeled, not real feed data.
+function scenarioSeries(c) {
+  const { start, ipo } = c.scenario;
+  let p = ipo, seed = 1337;
+  const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  const out = [], d = new Date(start + "T00:00:00Z"), today = new Date();
+  while (d <= today) {
+    const wd = d.getUTCDay();
+    if (wd !== 0 && wd !== 6) { p = Math.max(5, p * (1 + (rnd() - 0.42) * 0.07)); out.push({ d: d.toISOString().slice(0, 10), p: round2(p) }); }
+    d.setUTCDate(d.getUTCDate() + 1);
+  }
+  return out.length ? out : null;
 }
 
 async function main() {

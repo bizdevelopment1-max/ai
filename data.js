@@ -430,7 +430,7 @@ window.DASH = (function () {
     { title: "Anthropic, OpenAI ARR 추월 — 최대 경쟁 역학 변화", desc: "Anthropic run-rate 매출이 2026.05 $47B로 6주 만에 $30B(4월)에서 급증해 OpenAI 연환산 $25B을 2배 가까이 추월. NVIDIA $215.9B·Microsoft AI $37B까지 더하면 GenAI 런레이트 합계는 $100B을 훌쩍 넘어 독립 산업화", icon: "ai", src: "Anthropic Series H '26.05.28, Microsoft IR" },
     { title: "OpenAI 수익성 역설 — 밸류 $852B vs 마진 -122%", desc: "OpenAI는 $852B(2026.03) 밸류로 S-1 제출했으나 Q1 Non-GAAP 운영 마진 -122%(분기 손실 ~$6.95B)로 연 캐시번이 연매출($30B 목표)에 육박. $852B는 2030년 매출 $280B 가정 기반 — 파운데이션 모델(대규모 적자) vs NVIDIA(~75% 마진)의 수익성 스펙트럼 양극단", icon: "pulse", src: "The Information '26.05, Bloomberg" },
     { title: "AI 칩 전쟁 — NVIDIA vs 커스텀 실리콘", desc: "NVIDIA B200이 AI 학습 시장 80%+를 점유하나, Google TPU·Amazon Trainium·Microsoft Maia 등 커스텀 칩이 추격. DeepSeek의 1/10 비용 모델로 효율이 핵심 변수로 부상", icon: "chip", src: "Goldman Sachs '26.02, NVIDIA IR FY26" },
-    { title: "AI 에이전트 — 파일럿에서 프로덕션으로", desc: "Gartner: 2026년 말 엔터프라이즈 앱 40%에 task-specific 에이전트 내장(2025년 <5%에서), 2028년 SW 33%에 agentic AI 포함, 2026 agentic AI 지출 $201.9B(+141% YoY). 단, 프로젝트 40%+는 2027년까지 취소 경고. 독립 시장조사 기준 에이전트 시장은 $8.8~12.1B(2026)→$33.9~53.2B(2030~32)", icon: "spark", src: "Gartner '26 / Reuters '25.6, 독립 시장조사" },
+    { title: "AI 에이전트 — 파일럿에서 프로덕션으로", desc: "Gartner: 2026년 말 엔터프라이즈 앱 40%에 task-specific 에이전트 내장(2025년 <5%에서·현재 실제 배포는 17%), 2028년 SW 33%에 agentic AI 포함, 2026 agentic AI 지출 $201.9B(+141% YoY). 단, 프로젝트 40%+는 2027년까지 취소 경고. 독립 시장조사 기준 에이전트 시장은 $8.8~12.1B(2026)→$33.9~53.2B(2030~32)", icon: "spark", src: "Gartner '26 / Reuters '25.6, 독립 시장조사" },
     { title: "버티컬 AI — 모든 산업에 $1B+ 유니콘", desc: "법률(Harvey $11B), 음성(ElevenLabs $11B), 기업검색(Glean $7.2B), 고객서비스(Sierra $10B) — 수평 LLM 경쟁에서 산업 전문화 AI로 투자 이동. ARR 배수 최대 67x", icon: "chart", src: "AgentMarketCap '26.04, 각사 공식" },
     { title: "오픈소스 vs 클로즈드 — 전략 분기", desc: "Meta Llama·Mistral·DeepSeek 등 오픈 가중치 모델이 도입을 가속하며 클로즈드 모델과 성능 격차 축소. EU AI Act 규제 환경에서 오픈소스 선호도 상승", icon: "chart", src: "Mistral·Meta·DeepSeek 공식, EU AI Act" },
     { title: "Physical AI — AI가 현실 세계로", desc: "Tesla Optimus Gen 3 제한 생산(2026 여름), Figure AI 공장 배포, Waymo 밸류 $126B. 골드만삭스: 2026년 인간형 로봇 5~10만 대 출하·휴머노이드 TAM 2035E $38B(구 $6B서 6배↑, 단가 $4~6만으로 하락). 물리적 AI 전체(자율주행 포함)는 별도 추정 2035E $1.15T — scope 구분", icon: "chip", src: "Goldman Sachs '26, Pomegra '26" },
@@ -451,22 +451,6 @@ window.DASH = (function () {
     { period: "2026 H1", cap: 66, rel: 45, note: "OSWorld ~66% 도달 · 그러나 ~1/3 여전히 실패", src: "Stanford HAI AI Index 2026" },
   ];
 
-  /* ---- Widget 3: Fact-Check Layer ----
-     핵심 수치마다 grade(A 공식/B 보도/C 추정)·type·검증일·소스를 명시. */
-  const FACTCHECK = [
-    { item: "OpenAI 밸류·조달", value: "$852B post · 총 조달 $122B", grade: "A", type: "공식", verified: "2026-06-17", src: "2026.03.31 확정 (Bloomberg/CNBC) — 구 '$730B+$110B=$840B'에서 증액" },
-    { item: "OpenAI 연환산 매출", value: "$25B+ · Q1 실매출 $5.7B", grade: "A", type: "공식·보도", verified: "2026-06-17", src: "OpenAI·Reuters '26.02 / The Information '26.05" },
-    { item: "OpenAI 운영 마진", value: "Non-GAAP -122% (Q1 손실 ~$6.95B)", grade: "B", type: "보도", verified: "2026-06-17", src: "The Information '26.05 (단순 '$3.7B'은 과소표현)" },
-    { item: "Anthropic run-rate 매출", value: "$47B (OpenAI ARR 추월)", grade: "A", type: "공식", verified: "2026-06-17", src: "Series H 발표문 '26.05.28 — 4월 $30B에서 급증" },
-    { item: "NVIDIA FY2026 / FY27 1Q", value: "$215.9B 연 · 1Q $81.6B·DC $75.2B", grade: "A", type: "공식", verified: "2026-06-17", src: "NVIDIA IR (Q2 FY27 가이던스 $91B)" },
-    { item: "Gartner 에이전트 내장률", value: "40% by 2026말 · 현재 배포 17%", grade: "B", type: "전망·현재", verified: "2026-06-17", src: "Gartner '26.05 (전망 40% vs 현재 17% 병기, '80%'는 오인용)" },
-    { item: "글로벌 AI 지출(2026)", value: "전체 $2.59T (+47%) ≠ 순수시장 $539.5B", grade: "B", type: "전망·scope", verified: "2026-06-17", src: "Gartner '26.05.19(전체) / GVR(순수 AI 시장) — scope 다름" },
-    { item: "Meta AI 제품 MAU", value: "1.2B (Family DAP 35억과 구분)", grade: "A", type: "공식", verified: "2026-06-17", src: "Meta Q1 2026 IR (DAP QoQ -5% 리스크 부기)" },
-    { item: "DeepSeek 펀딩", value: "완료 $7.4B · 밸류 $50B+", grade: "B", type: "보도", verified: "2026-06-17", src: "TrendForce '26.06.16 (구 '협의중'에서 완료)" },
-    { item: "Goldman 휴머노이드 TAM", value: "2035E $38B (구 $6B서 6배↑)", grade: "B", type: "보고서·scope", verified: "2026-06-17", src: "Goldman Sachs '26 (physical AI 전체 $1.15T와 scope 다름)" },
-    { item: "IEA 데이터센터 전력", value: "460TWh=2022 (2024는 ~415~490)", grade: "C", type: "기준연도 주의", verified: "2026-06-17", src: "IEA Energy & AI '25 (2030E ~945TWh)" },
-    { item: "Cohere ARR/밸류", value: "$240M / $5.5B (2025)", grade: "C", type: "구버전", verified: "2025-07", src: "2026 최신 공식 미확인 — 업데이트 대기" },
-  ];
 
   /* ---- Q&A Pairs (Korean) ---- */
   const QA_PAIRS = [
@@ -606,7 +590,7 @@ window.DASH = (function () {
       events: [
         { date: "2026-06-16", dir: "up", label: "Cursor $60B 인수 발표", reason: "AI 코딩 에이전트 Cursor(Anysphere)를 $60B 주식 인수 합의. xAI 코딩 전략 강화." },
       ],
-      note: "SPCX(나스닥, 2026-06-12 상장 표기). 일별 시세를 매일 자동 크롤링합니다 — Yahoo Finance → Stooq → Nasdaq → StockAnalysis → TradingView 순으로 시도. 현재 공개 시세 피드에 SPCX 데이터가 아직 반영되지 않아 차트는 피드 확인 시 자동 표시됩니다.",
+      note: "SPCX(나스닥, 2026-06-12 상장). 매일 Yahoo Finance→Stooq→Nasdaq→StockAnalysis→TradingView 순으로 실시세를 시도하며, 실데이터가 확인되면 자동 대체됩니다. 현재 차트는 상장일 기준 '시나리오 추정 시세'이며 실제 거래 데이터가 아닙니다.",
     },
   ];
 
@@ -641,5 +625,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, COMPANY_ORDER, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, CAP_REL, FACTCHECK, QA_PAIRS, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, COMPANY_ORDER, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, CAP_REL, QA_PAIRS, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();
