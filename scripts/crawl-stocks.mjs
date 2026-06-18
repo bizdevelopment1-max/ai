@@ -59,7 +59,7 @@ async function fromYahoo(c, sess) {
         .map((t, i) => ({ d: new Date(t * 1000).toISOString().slice(0, 10), p: closes[i] }))
         .filter((p) => typeof p.p === "number" && isFinite(p.p))
         .map((p) => ({ d: p.d, p: round2(p.p) }));
-      if (points.length >= 30) return points;
+      if (points.length >= 5) return points;
     } catch { /* next host */ }
   }
   return null;
@@ -77,7 +77,7 @@ async function fromStooq(c) {
       if (!d || isNaN(close) || new Date(d) < cut) continue;
       points.push({ d, p: round2(close) });
     }
-    return points.length >= 30 ? points : null;
+    return points.length >= 5 ? points : null;
   } catch { return null; }
 }
 
@@ -95,7 +95,7 @@ async function fromNasdaq(c) {
       const [m, d, y] = r.date.split("/");
       return { d: `${y}-${m}-${d}`, p: round2(parseFloat(String(r.close).replace(/[$,]/g, ""))) };
     }).filter((p) => isFinite(p.p)).sort((a, b) => (a.d < b.d ? -1 : 1));
-    return points.length >= 30 ? points : null;
+    return points.length >= 5 ? points : null;
   } catch { return null; }
 }
 

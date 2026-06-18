@@ -179,7 +179,10 @@ async function pool(items, n, fn) {
   return out;
 }
 
-const isKoreanSummary = a => a && /[가-힣]/.test(a.title || "") && a.summary && !/출처\s*[:：]/.test(a.summary);
+// 한국어 제목 + 한국어 개조식 다줄(최소 2줄, 보통 3줄) 요약을 갖춘 항목만 유효로 간주
+const isKoreanSummary = a => a && /[가-힣]/.test(a.title || "") && a.summary && /[가-힣]/.test(a.summary)
+  && a.summary.split("\n").map(l => l.trim()).filter(Boolean).length >= 2
+  && !/출처\s*[:：]/.test(a.summary);
 
 async function main() {
   console.log(`Crawling authoritative English AI news… (LLM summaries: ${KEY ? "on" : "OFF — set ANTHROPIC_API_KEY"})`);
@@ -220,6 +223,7 @@ async function main() {
   const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
     .map(a => ({ ...a, summary: stripSrc(a.summary) }))
+    .filter(isKoreanSummary)                              // 한글 제목+3줄 한글 요약 없는 항목은 노출 금지(영문 미요약 제외)
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .slice(0, 100);
 
