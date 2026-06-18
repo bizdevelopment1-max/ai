@@ -18,7 +18,7 @@ window.DASH = (function () {
       cat: "native", name: "OpenAI", domain: "openai.com", unit: "파운데이션 모델",
       valuation: "$730B", valAsof: "26.02", metric: "연환산 매출", value: "$25B+", metricAsof: "26.02",
       funding: "$110B 신규(2026.02)", trend: 120, trendBasis: "매출 연환산 $25B+ (회사·Reuters)",
-      note: "[회사 발표] GPT-4o·o3, ChatGPT, Sora. 2026.02 공식 자금조달: $110B 신규 투자·$730B pre-money(post ~$840B). [회사 발표] ChatGPT 주간 활성 사용자 900M+. [회사·Reuters] 연환산 매출 $25B+(2026.02 말, 월 매출 ~$2B). [업계 추정] $35B 등 그 이상 수치는 외부 추정.",
+      note: "[회사 발표] GPT-4o·o3, ChatGPT, Sora. 2026.02 공식 자금조달: $110B 신규 투자·$730B pre-money(post ~$840B). [보도] IPO 공모 목표 밸류는 ~$840B에서 최대 $1T까지 상향 보도(2026.06). [회사 발표] ChatGPT 주간 활성 사용자 900M+. [회사·Reuters] 연환산 매출 $25B+(2026.02 말, 월 매출 ~$2B). [업계 추정] $35B 등 그 이상 수치는 외부 추정.",
       vp: "최고 성능 멀티모달 모델과 9억 규모의 소비자 접점을 동시에 보유한 유일한 사업자. API·구독·엔터프라이즈로 매출 다각화.",
       direction: "범용 인공지능(AGI) 지향 + 대규모 컴퓨트 자금 조달. 추론 모델(o-시리즈)과 에이전트로 확장.",
       sources: ["[회사 발표] $110B 신규·$730B pre-money (OpenAI 2026.02.27)", "[회사 발표] 주간 활성 사용자 900M+ (OpenAI 2026.02)", "[Reuters] 연환산 매출 $25B 초과 (2026.02 말)", "[업계 추정] ARR ~$35B (Gerstner 인용) — 회사 확인 아님"],
@@ -28,7 +28,7 @@ window.DASH = (function () {
       cat: "native", name: "Anthropic", domain: "anthropic.com", unit: "파운데이션 모델·안전성",
       valuation: "$965B", valAsof: "26.05", metric: "연환산 매출", value: "$30B+", metricAsof: "26.04",
       funding: "Series H $65B(2026.05)", trend: 140, trendBasis: "밸류 $380B→$965B, 매출 $30B+",
-      note: "[회사 발표] Claude Opus/Sonnet/Haiku, Constitutional AI. 2026.05.28 Series H $65B 조달·$965B post-money(직전 2026.02 Series G $380B). [Reuters] 연환산 매출 $30B+ 돌파(2026.04). [회사 발표] Amazon은 기존 $8B 외 즉시 $5B 투자, 향후 최대 $20B 추가 가능(2026.04.20) — '기존 $8B+즉시 $5B(추가 최대 $20B 가능) 투자 완료'는 부정확. AWS 10년 $100B+ 약정.",
+      note: "[회사 발표] Claude Opus/Sonnet/Haiku, Constitutional AI. 2026.05.28 Series H $65B 조달·$965B post-money(직전 2026.02 Series G $380B). [회사 발표] 2026.04.07 ARR $30B 공식 발표(단, OpenAI는 AWS·Google 파트너십 수익 인식 방식 차이로 실질 ~$22B라 반박 — $22B~$30B 논쟁). [회사 발표] Amazon은 기존 $8B 외 즉시 $5B 투자, 향후 최대 $20B 추가 가능(2026.04.20) — '기존 $8B+즉시 $5B(추가 최대 $20B 가능) 투자 완료'는 부정확. AWS 10년 $100B+ 약정.",
       vp: "Constitutional AI 기반 신뢰·안전성으로 금융·의료·법률 등 규제 산업 엔터프라이즈에서 선호. 코딩 에이전트 성능 최상위.",
       direction: "안전성 연구와 상업화의 균형. Amazon·Google 클라우드 파트너십으로 컴퓨트 확보, 엔터프라이즈 침투 가속.",
       sources: ["[회사 발표] Series H $65B·$965B post-money (Anthropic 2026.05.28)", "[회사 발표] Series G $380B (2026.02)", "[Reuters] 연환산 매출 $30B+ (2026.04)", "[회사 발표] Amazon 즉시 $5B + 향후 최대 $20B(기존 $8B 별도) (2026.04.20)"],
@@ -90,7 +90,7 @@ window.DASH = (function () {
       cat: "bigtech", name: "NVIDIA", domain: "nvidia.com", unit: "AI GPU·CUDA",
       valuation: "$3.5T+", valAsof: "26.06", metric: "분기 매출", value: "$81.6B", metricAsof: "FY27 1Q",
       funding: "상장 (NVDA)", trend: 56, trendBasis: "FY26 연 $215.9B · 최신 분기 $81.6B",
-      note: "[회사 발표] H100/B200 GPU, CUDA — AI 학습/추론 GPU 시장 80%+ 점유. 최신 공개 분기는 FY2027 1Q 매출 $81.6B(2026.05 발표). FY2026 연매출 $215.9B(직전 FY2025 연 $130.5B와 구분 필요). [업계 추정] B200 출하량은 외부 추정치. 개발자 생태계는 NVIDIA Developer Program 7.5M+ / CUDA-X 1M+ developers(공식) — '400M 개발자'는 근거 없음.",
+      note: "[회사 발표] H100/B200 GPU, CUDA — AI 학습/추론 GPU 시장 80%+ 점유. 최신 공개 분기는 FY2027 1Q 매출 $81.6B(2026.05 발표). FY2026 연매출 $215.9B(+65% YoY) — Q4 FY2026 $68.1B(+73%)·DC $62.3B(+75%) 포함, 직전 FY2025 연 $130.5B와 구분 필요. [업계 추정] B200 출하량은 외부 추정치. 개발자 생태계는 NVIDIA Developer Program 7.5M+ / CUDA-X 1M+ developers(공식) — '400M 개발자'는 근거 없음.",
       vp: "GPU 하드웨어 80%+ 점유에 CUDA 소프트웨어 락인을 더한 이중 해자. 풀스택(칩·네트워킹·소프트웨어).",
       direction: "Blackwell(B200)·차세대 아키텍처 램프 + DGX Cloud + Omniverse. 전력·공급망이 핵심 변수.",
       sources: ["[회사 발표] FY2027 1Q 매출 $81.6B (NVIDIA 2026.05)", "[회사 발표] FY2026 연매출 $215.9B · FY2025 $130.5B (구분)", "[회사 발표] NVIDIA Developer Program 7.5M+ / CUDA-X 1M+ developers", "[업계 추정] B200 연 출하량(외부 추정)"],
@@ -130,9 +130,9 @@ window.DASH = (function () {
     },
     {
       cat: "startup", name: "Cohere", domain: "cohere.com", unit: "엔터프라이즈·소버린 LLM",
-      valuation: "$5.5B", valAsof: "25.07", metric: "ARR", value: "$240M", metricAsof: "25",
+      valuation: "$5.5B", valAsof: "25.07", metric: "ARR", value: "$240M", metricAsof: "25(2026 갱신 대기)",
       funding: "Series D · IPO 준비", trend: 50, trendBasis: "전 분기 QoQ 50%+",
-      note: "기업용·소버린 AI 특화. 2025년 ARR $240M(목표 $200M 초과, 전 분기 QoQ 50%+). 2026.05 Command A+ 오픈소스·North Mini Code 출시. 밸류 $5.5B(2025.07). Oracle·Salesforce·SAP 파트너십, IPO 준비.",
+      note: "기업용·소버린 AI 특화. 표기 수치는 2025년 기준(ARR $240M·밸류 $5.5B, 2025.07) — 2026 최신 공식 수치 미확인으로 업데이트 대기. 2026.05 Command A+ 오픈소스·North Mini Code 출시. Oracle·Salesforce·SAP 파트너십, IPO 준비.",
       vp: "엔터프라이즈 데이터 보안·소버린(주권) 배포와 RAG 최적화 모델.",
       direction: "규제·보안 민감 산업 + 국가 소버린 AI 타깃, IPO 추진.",
       sources: ["ARR $240M (CNBC '26.2)", "Command A+ 오픈소스 (2026.5)", "Oracle·Salesforce·SAP 파트너십"],
@@ -223,7 +223,7 @@ window.DASH = (function () {
   /* ---- Articles (per-company, newest first) — co: 기업명(필터용) ---- */
   const ARTICLES = [
     // ── AI Native ──
-    { date: "2026-06-08", co: "OpenAI", cat: "native", source: "Al Jazeera / Reuters", title: "OpenAI, 미국 증시 S-1 공식 제출 — IPO 역사상 최대 규모 예고", summary: "· 2026.06.08 SEC S-1 비밀 제출 확인, 공모가 기준 밸류 $840B(2026.03 라운드)\n· 이르면 2026.09 상장 목표(Reuters)\n· 2026 Q1 운영 손실 $3.7B — 매출 폭증에도 컴퓨트·인건비가 더 빠르게 증가\n· 연환산 매출 $25B+(2026.02 회사·Reuters 확인) · ~$35B 등은 외부 추정", tag: "IPO", url: "https://www.aljazeera.com/economy/2026/6/8/tech-giant-openai-files-for-us-initial-public-offering" },
+    { date: "2026-06-08", co: "OpenAI", cat: "native", source: "Al Jazeera / Reuters", title: "OpenAI, 미국 증시 S-1 공식 제출 — IPO 역사상 최대 규모 예고", summary: "· 2026.06.08 SEC S-1 비밀 제출 확인 · 공모 목표 밸류 ~$840B에서 최대 $1T까지 상향 보도\n· 이르면 2026.09 상장 목표(Reuters)\n· 2026 Q1 운영 손실 $3.7B — 매출 폭증에도 컴퓨트·인건비가 더 빠르게 증가\n· 연환산 매출 $25B+(2026.02 회사·Reuters 확인) · ~$35B 등은 외부 추정", tag: "IPO", url: "https://www.aljazeera.com/economy/2026/6/8/tech-giant-openai-files-for-us-initial-public-offering" },
     { date: "2026-06-09", co: "Anthropic", cat: "native", source: "Anthropic", title: "Anthropic, Claude Fable 5 출시 — 자율 코딩 에이전트 SWE-bench 신기록", summary: "· 최신 플래그십 Claude Fable 5 출시(2026.06.09) — 코딩 에이전트 역대 최고 성능\n· SWE-bench Verified 최상위권, 1M 토큰 컨텍스트·128K 출력\n· Claude Opus 4.6(2026.02)→4.7(2026.04 GA)→Fable 5 빠른 사이클\n· Amazon 추가 $25B 투자 후 AWS Bedrock 최우선 배포", tag: "Product", url: "https://www.anthropic.com/news" },
     { date: "2026-04-21", co: "Google DeepMind", cat: "bigtech", source: "Google", title: "Google, Gemini 3.1 Pro + Deep Research Max — ARC-AGI-2 77.1%", summary: "· Gemini 3.1 Pro ARC-AGI-2 77.1%, SWE-Bench Verified 80.6%\n· Deep Research Max — 자율 리서치 에이전트, MCP 지원\n· 100만 토큰 컨텍스트, 검색·워크스페이스 전면 통합\n· Google AI Ultra 구독자 우선 배포", tag: "Product", url: "https://blog.google/technology/ai/" },
     { date: "2026-01-06", co: "SpaceX (xAI, Cursor)", cat: "native", source: "TechCrunch / NYT / The Guardian", title: "xAI, Series E $20B 완료 — 밸류 $230B+, Grok 딥페이크 논란 동시 직면", summary: "· Series E $20B 완료(NVIDIA·Cisco·카타르 국부펀드·Fidelity)\n· 누적 총 조달액 $42B+(PitchBook) · 밸류 $230B+ 추정\n· Grok+X 합산 도달 6억(독립 제품 MAU와는 구분 — 대부분 X 사용자)\n· Grok 미성년 딥페이크 자동 생성 논란 → 다수 정부 조사 개시", tag: "Funding", url: "https://www.theguardian.com/technology/2026/jan/06/elon-musk-xai-investment-grok-backlash" },
@@ -233,7 +233,7 @@ window.DASH = (function () {
     { date: "2026-06-08", co: "Apple", cat: "bigtech", source: "MacRumors / Apple", title: "Apple WWDC 2026 — Siri AI 재설계, 온디바이스 + Private Cloud Compute 강화", summary: "· Siri를 'Siri AI'로 재설계 — 온디바이스 Foundation Models 중심\n· Private Cloud Compute: 클라우드 처리 시 무기명(Anonymous) 보장\n· 시스템 전역 컨텍스트 이해·Visual Intelligence 확장\n· Foundation Models 프레임워크 외부 개발자 공개 · iOS 27 가을 출시", tag: "Product", url: "https://www.apple.com/apple-intelligence/" },
     { date: "2026-04-29", co: "Microsoft", cat: "bigtech", source: "Microsoft IR / UC Today", title: "Microsoft Q3 FY2026 — AI 연 매출 $37B 런레이트, Azure 35% 재가속", summary: "· Nadella 확인: AI 사업 연 매출 런레이트 $37B(+123% YoY)\n· M365 Copilot 유료 좌석 2,000만 돌파(+250% YoY)\n· 전체 매출 $82.9B(+18%) · Azure 35% 재가속\n· Accenture 74만 좌석 최대 고객", tag: "Earnings", url: "https://www.uctoday.com/unified-communications/microsoft-earnings-2026-ai-copilot-enterprise/" },
     { date: "2026-04-20", co: "Amazon", cat: "bigtech", source: "CNBC / NYT / GeekWire", title: "Amazon, Anthropic에 추가 투자 — 즉시 $5B + 향후 최대 $20B, AWS $100B+ 약정", summary: "· 즉시 $5B 투자 + 향후 최대 $20B 추가 가능(기존 $8B와 별도) — '누적 $33B 완료'는 부정확\n· Anthropic의 AWS 10년 클라우드 약정 $100B+\n· 2개월 전 OpenAI $50B+$100B 딜과 동시 진행 '양쪽 베팅'\n· Bedrock ~100개 파운데이션 모델 지원, Guardrails 80% 인하", tag: "Funding", url: "https://www.cnbc.com/2026/04/20/amazon-invest-up-to-25-billion-in-anthropic-part-of-ai-infrastructure.html" },
-    { date: "2026-01-29", co: "NVIDIA", cat: "bigtech", source: "NVIDIA IR / The Verge", title: "NVIDIA Q4 FY2026 분기 매출 $57B — Blackwell 역사상 가장 빠른 램프업", summary: "· 분기 매출 $57B(신기록), 데이터센터 $51.2B(+66%)\n· FY2026 연 $215.9B 확정(직전 FY2025 $130.5B 대비 +65%)\n· B200 추론 성능 H100 대비 30배, 연 150~200만 대 출하 전망\n· 하이퍼스케일러 자체 칩 190만 가속기 배포로 '분리' 가속", tag: "Earnings", url: "https://www.nvidia.com/en-us/investor-relations/" },
+    { date: "2026-02-25", co: "NVIDIA", cat: "bigtech", source: "NVIDIA IR / The Verge", title: "NVIDIA Q4 FY2026 분기 매출 $68.1B — FY2026 연 $215.9B 확정", summary: "· Q4 FY2026 분기 매출 $68.1B(+73% YoY, 신기록) · 데이터센터 $62.3B(+75%)\n· FY2026 연 $215.9B 확정(+65% YoY) — Q1 $44.1B+Q2 $46.7B+Q3 $57.0B+Q4 $68.1B (직전 FY2025 $130.5B와 구분)\n· B200 추론 성능 H100 대비 30배, 연 150~200만 대 출하 전망\n· 하이퍼스케일러 자체 칩 190만 가속기 배포로 '분리' 가속", tag: "Earnings", url: "https://www.nvidia.com/en-us/investor-relations/" },
     { date: "2025-04-05", co: "Meta AI", cat: "bigtech", source: "Meta / NDTV", title: "Meta, Llama 4 발표 — Scout·Maverick 오픈소스, Behemoth 2T MoE 예고", summary: "· Llama 4 Scout·Maverick 오픈소스 즉시 공개\n· Behemoth: 2T 총 파라미터, 288B 활성 MoE — 업계 최대 규모\n· Meta AI 어시스턴트 WhatsApp·Instagram·Messenger 통합, 월 30억+\n· Llama Guard 4 등 오픈소스 보안 툴 동시 공개", tag: "Product", url: "https://www.ndtv.com/world-news/meta-launches-llama-4-all-about-the-latest-open-source-ai-model-8100928" },
 
     // ── AI Startup ──
@@ -259,12 +259,12 @@ window.DASH = (function () {
 
   /* ---- Reports (industry reports) ---- */
   const REPORTS = [
-    { house: "Grand View Research", type: "Market", date: "2026-03-15", title: "글로벌 AI 시장 2024 $279B → 2030E $1,812B, CAGR 35.9%", figure: "$279B → $1,812B", rating: "Report", url: "https://www.grandviewresearch.com/industry-analysis/artificial-intelligence-ai-market",
-      bullets: ["2024년 $279.22B(실측) → 2030E $1,811.75B · CAGR 35.9%", "GenAI 세그먼트 최고 성장률 · BFSI·헬스케어 채택 선도", "북미 최대 시장 · 아태 최고 성장률"] },
+    { house: "Grand View Research", type: "Market", date: "2026-03-15", title: "글로벌 AI 시장 2025 $390.9B → 2026E $539.5B → 2030E $1,812B", figure: "$390.9B → $1,812B", rating: "Report", url: "https://www.grandviewresearch.com/industry-analysis/artificial-intelligence-ai-market",
+      bullets: ["최신판: 2025년 $390.9B · 2026E $539.5B (구판 2024 $279.22B 기준에서 상향)", "2030E $1,811.75B · CAGR ~35% (기준연도에 따라 30.6~36.6%)", "GenAI 세그먼트 최고 성장률 · BFSI·헬스케어 채택 선도 · 북미 최대 시장"] },
     { house: "KPMG Venture Pulse", type: "Market", date: "2026-04-15", title: "Q1 2026 글로벌 VC $330.9B 신기록 — AI가 미국 VC의 73% 차지", figure: "Q1 $330.9B", rating: "Report", url: "https://kpmg.com/xx/en/media/press-releases/2026/04/global-vc-investment-surges-to-record-330-9-billion-dollar-in-q1-26.html",
       bullets: ["Q1 2026 글로벌 VC $330.9B — 분기 신기록", "미국 $267.2B · OpenAI·Anthropic·xAI 메가딜 주도", "AI가 글로벌 VC의 61%, 미국 VC의 73% 차지", "신규 유니콘 중 26%가 AI 기업"] },
-    { house: "Gartner", type: "Market", date: "2026-03-10", title: "AI 에이전트 소프트웨어 지출 2026 $206.5B — 2026말 엔터프라이즈 앱 40%에 task-specific 에이전트", figure: "$206.5B 지출", rating: "Report", url: "https://www.gartner.com/en/newsroom",
-      bullets: ["[Gartner] 2026 AI agent software 지출 $206.5B", "[Gartner] 2026년 말 엔터프라이즈 앱 40%에 task-specific AI 에이전트 내장", "[Gartner] 2028년 엔터프라이즈 SW 33%에 agentic AI 포함", "2027년까지 40%+ 에이전트 프로젝트 취소 경고(ROI 불명확)"] },
+    { house: "Gartner", type: "Market", date: "2026-03-10", title: "agentic AI 지출 2026 $201.9B(+141% YoY) — 2026말 엔터프라이즈 앱 40%에 에이전트 내장", figure: "$201.9B 지출", rating: "Report", url: "https://www.gartner.com/en/newsroom",
+      bullets: ["[Gartner] 2026 agentic AI 지출 $201.9B(+141% YoY) · 2027년 챗봇·어시스턴트 지출 추월 전망", "[Gartner] 2026년 말 엔터프라이즈 앱 40%에 에이전트 내장(2025년 <5%에서)", "[Gartner] 2028년 엔터프라이즈 SW 33%에 agentic AI 포함 · 일상 업무 의사결정 15% 자율", "독립 시장조사: 에이전트 시장 $8.8~12.1B(2026)→$33.9~53.2B(2030~32) · 프로젝트 40%+ 2027년까지 취소 경고"] },
     { house: "Goldman Sachs", type: "Securities", date: "2026-02-10", title: "AI 인프라 투자: 2025~2028 글로벌 $1T+ 전망, 전력이 핵심 병목", figure: "$1T+ 인프라 투자", rating: "Overweight", url: "https://www.goldmansachs.com/insights/articles/ai-investment-forecast-2025",
       bullets: ["글로벌 AI 인프라 투자 2025~2028 누적 $1T+", "데이터센터 건설 CAPEX 연 $200B+", "전력 확충이 반도체보다 핵심 병목으로 부상"] },
     { house: "Goldman Sachs Research", type: "Securities", date: "2026-01-15", title: "AI 자동화 2026 — 전 세계 3억 명 일자리 노출, '고용 없는 성장' 경고", figure: "3억 명 노출", rating: "Report", url: "https://www.goldmansachs.com/insights/",
@@ -281,17 +281,16 @@ window.DASH = (function () {
       bullets: ["Alphabet·Amazon·Meta·Microsoft 등 AI 인프라 투자 2025 ~$410B → 2026 ~$650B", "클라우드 AI 비용·컴퓨트 부족·메모리 수요가 모바일·PC BOM과 서비스 원가에 직접 영향", "온디바이스 AI는 프라이버시 전략이자 클라우드 비용·공급망 리스크를 줄이는 원가 전략"] },
   ];
 
-  /* ---- Market Growth (global AI market size $B) — Grand View Research ----
-     2024 $279.22B (actual) → 2030 $1,811.75B, CAGR ~35.9%. YoY ~36%. ---- */
+  /* ---- Market Growth (global AI market size $B) — Grand View Research 최신판 ----
+     2024 $279.22B(구판 실측) → 2025 $390.9B → 2026E $539.5B → 2030E $1,811.75B. CAGR ~35% (기준연도 명시). ---- */
   const MARKET_GROWTH = [
-    { year: "2023", size: 196, growth: 40, src: "Grand View Research '24 (2023 $196B)" },
-    { year: "2024", size: 279, growth: 42, src: "Grand View Research '25 (2024 $279.22B 실측)" },
-    { year: "2025E", size: 379, growth: 36, src: "Grand View Research '26 전망 (CAGR 35.9%)" },
-    { year: "2026E", size: 515, growth: 36, src: "Grand View Research '26 전망" },
-    { year: "2027E", size: 700, growth: 36, src: "Grand View Research '26 전망" },
-    { year: "2028E", size: 951, growth: 36, src: "Grand View Research '26 전망" },
-    { year: "2029E", size: 1292, growth: 36, src: "Grand View Research '26 전망" },
-    { year: "2030E", size: 1812, growth: 40, src: "Grand View Research '26 전망 ($1,811.75B)" },
+    { year: "2024", size: 279, growth: 42, src: "Grand View Research 구판 (2024 $279.22B 실측)" },
+    { year: "2025", size: 391, growth: 40, src: "Grand View Research 최신판 (2025 $390.9B)" },
+    { year: "2026E", size: 540, growth: 38, src: "Grand View Research 최신판 (2026E $539.5B)" },
+    { year: "2027E", size: 731, growth: 35, src: "Grand View Research 최신판 전망" },
+    { year: "2028E", size: 991, growth: 35, src: "Grand View Research 최신판 전망" },
+    { year: "2029E", size: 1342, growth: 35, src: "Grand View Research 최신판 전망" },
+    { year: "2030E", size: 1812, growth: 35, src: "Grand View Research 최신판 (2030E $1,811.75B)" },
   ];
 
   /* ---- AI Market by Vertical / Industry (share %, 2025) ---- */
@@ -376,7 +375,7 @@ window.DASH = (function () {
   const REVENUE = [
     { name: "NVIDIA (FY26 연)", value: 215.9, cat: "bigtech", src: "[회사] NVIDIA FY2026 연매출 $215.9B (FY25 $130.5B와 구분)" },
     { name: "Microsoft AI (런레이트)", value: 37.0, cat: "bigtech", src: "[회사] Microsoft IR FY26 Q3 — $37B(+123%)" },
-    { name: "Anthropic (연환산)", value: 30.0, cat: "native", src: "[Reuters] 연환산 $30B+ (2026.04)" },
+    { name: "Anthropic (ARR)", value: 30.0, cat: "native", src: "[회사] ARR $30B 공식(2026.04.07) · OpenAI는 회계 인식 차이로 실질 ~$22B 반박" },
     { name: "OpenAI (연환산)", value: 25.0, cat: "native", src: "[회사·Reuters] 연환산 $25B+ (2026.02)" },
     { name: "AWS AI (추정)", value: 14.0, cat: "bigtech", src: "[업계 추정] AWS Bedrock + AI 서비스 ARR" },
     { name: "Databricks (ARR)", value: 2.4, cat: "startup", src: "Databricks IR '25 ARR $2.4B" },
@@ -395,7 +394,7 @@ window.DASH = (function () {
 
   /* ---- KPI Cards (6) ---- */
   const KPIS = [
-    { label: "글로벌 AI 시장 (2024)", value: "$279B", delta: +42, sub: "Grand View Research · 2030E $1,812B · CAGR 35.9%", fill: 0.72, src: "Grand View Research AI Market Report '26" },
+    { label: "글로벌 AI 시장 (2025)", value: "$390.9B", delta: +40, sub: "Grand View Research 최신판 · 2026E $539.5B · 2030E $1,812B", fill: 0.74, src: "Grand View Research AI Market Report '26 최신판" },
     { label: "OpenAI 밸류 (2026.02)", value: "$730B", delta: +120, sub: "[회사] pre-money · $110B 신규(post ~$840B) · 연환산 $25B+", fill: 0.92, src: "OpenAI 공식 2026.02.27" },
     { label: "Anthropic 밸류 (2026.05)", value: "$965B", delta: +154, sub: "[회사] Series H $65B · post-money · 연환산 $30B+", fill: 0.96, src: "Anthropic 공식 2026.05.28" },
     { label: "NVIDIA 매출 (FY27 1Q)", value: "$81.6B", delta: +56, sub: "[회사] 최신 분기 · FY26 연 $215.9B(FY25 $130.5B 구분)", fill: 0.90, src: "NVIDIA IR 2026.05" },
@@ -407,7 +406,7 @@ window.DASH = (function () {
   const INSIGHTS = [
     { title: "GenAI 연간 매출 $100B+ 시대", desc: "OpenAI $25B+ + Microsoft AI $37B + Anthropic $30B+ + Google/AWS — GenAI 플레이어들의 연간 매출 런레이트 합계가 $100B을 넘어서며 독립 산업으로 자리매김", icon: "ai", src: "Microsoft IR '26.Q3, Reuters '26.5" },
     { title: "AI 칩 전쟁 — NVIDIA vs 커스텀 실리콘", desc: "NVIDIA B200이 AI 학습 시장 80%+를 점유하나, Google TPU·Amazon Trainium·Microsoft Maia 등 커스텀 칩이 추격. DeepSeek의 1/10 비용 모델로 효율이 핵심 변수로 부상", icon: "chip", src: "Goldman Sachs '26.02, NVIDIA IR FY26" },
-    { title: "AI 에이전트 — 파일럿에서 프로덕션으로", desc: "Gartner: 2026년 말 엔터프라이즈 앱 40%에 task-specific 에이전트 내장, 2028년 SW 33%에 agentic AI 포함, 2026 에이전트 SW 지출 $206.5B. McKinsey: 기업 88%가 1개+ 기능에 AI 사용", icon: "spark", src: "Gartner '26 공식, McKinsey '26" },
+    { title: "AI 에이전트 — 파일럿에서 프로덕션으로", desc: "Gartner: 2026년 말 엔터프라이즈 앱 40%에 task-specific 에이전트 내장(2025년 <5%에서), 2028년 SW 33%에 agentic AI 포함, 2026 agentic AI 지출 $201.9B(+141% YoY). 단, 프로젝트 40%+는 2027년까지 취소 경고. 독립 시장조사 기준 에이전트 시장은 $8.8~12.1B(2026)→$33.9~53.2B(2030~32)", icon: "spark", src: "Gartner '26 / Reuters '25.6, 독립 시장조사" },
     { title: "버티컬 AI — 모든 산업에 $1B+ 유니콘", desc: "법률(Harvey $11B), 음성(ElevenLabs $11B), 기업검색(Glean $7.2B), 고객서비스(Sierra $10B) — 수평 LLM 경쟁에서 산업 전문화 AI로 투자 이동. ARR 배수 최대 67x", icon: "chart", src: "AgentMarketCap '26.04, 각사 공식" },
     { title: "오픈소스 vs 클로즈드 — 전략 분기", desc: "Meta Llama·Mistral·DeepSeek 등 오픈 가중치 모델이 도입을 가속하며 클로즈드 모델과 성능 격차 축소. EU AI Act 규제 환경에서 오픈소스 선호도 상승", icon: "chart", src: "Mistral·Meta·DeepSeek 공식, EU AI Act" },
     { title: "Physical AI — AI가 현실 세계로", desc: "Tesla Optimus Gen 3 제한 생산(2026 여름), Figure AI 공장 배포(정밀도 99.8%), Waymo 밸류 $126B. 골드만삭스: 2026년 인간형 로봇 5~10만 대 출하. 물리적 AI 시장 2035E $1.15T(CAGR 33.5%)", icon: "chip", src: "Goldman Sachs '26, Pomegra '26" },
@@ -415,6 +414,42 @@ window.DASH = (function () {
     { title: "GenAI ROI — $1 투자 → $3.70 회수", desc: "성숙 AI 기업 평균 ROI $4.60/$1(Accenture), 파일럿 단계 $1.20/$1. 개발자 생산성 +26~40%. 회수기간: 고객서비스 4.1개월·마케팅 6.7개월·엔지니어링 9.3개월. 단 전사 ROI 체감은 29%에 그침", icon: "chart", src: "Accenture '26, McKinsey '26, Futurum '26" },
     { title: "AI 고용 충격 — 3억 명 노출, '고용 없는 성장'", desc: "Goldman Sachs: 전 세계 3억 명 일자리가 AI에 노출, 2026년 2,500만 대체 → 2030년 2.7억. 행정(26%)·고객서비스(20%)가 취약. 다만 신직종 창출로 순 고용 효과는 중립~플러스 전망", icon: "pulse", src: "Goldman Sachs Research '26.01" },
     { title: "NVIDIA, AI PC용 Arm CPU 진입 — 노트북 시장 공략", desc: "NVIDIA가 MediaTek와 공동 개발한 Arm 기반 PC SoC 'N1·N1X'(Blackwell GPU 통합)로 AI PC 노트북·데스크톱에 진입(2026 예상). Apple M·Qualcomm Snapdragon X와 경쟁. AI PC는 2026년 신규 PC 출하의 40%+(Canalys), 2027년 과반 전망. CES 2025 GB10 데스크톱(Project DIGITS)도 공개", icon: "chip", src: "Canalys '26, NVIDIA CES 2025, 업계 보도" },
+  ];
+
+  /* ---- Widget 1: Capability vs Reliability Gap ----
+     AI 성능(capability)은 빠르게 오르지만 신뢰성(reliability, 구조화 과제 성공률)은 뒤처짐.
+     cap=벤치마크 성능, rel=실제 자율 성공률(나머지는 실패·휴먼 개입). 출처: Stanford HAI AI Index 2026 등. */
+  const CAP_REL = [
+    { period: "2024 H1", cap: 12, rel: 9, note: "에이전트 OSWorld ~12% · 실사용 성공률 한 자릿수", src: "Stanford HAI AI Index 2026" },
+    { period: "2024 H2", cap: 28, rel: 18, note: "도구사용 LLM 급성장 · 신뢰성은 지연", src: "Stanford HAI AI Index 2026" },
+    { period: "2025 H1", cap: 42, rel: 27, note: "Computer Use 등장 · OSWorld 38.1%(OpenAI)", src: "OpenAI / HAI '26" },
+    { period: "2025 H2", cap: 55, rel: 38, note: "WebArena 58% · 구조화 과제 ~1/3 실패 지속", src: "OpenAI / HAI '26" },
+    { period: "2026 H1", cap: 66, rel: 45, note: "OSWorld ~66% 도달 · 그러나 ~1/3 여전히 실패", src: "Stanford HAI AI Index 2026" },
+  ];
+
+  /* ---- Widget 2: Adoption Funnel (도입은 높지만 가치 실현은 좁아짐) ----
+     '도입률 88%'만 보지 말고 pilot→scale→EBIT impact→workflow redesign 단계로 분해. 출처: McKinsey State of AI 2025. */
+  const ADOPTION_FUNNEL = [
+    { stage: "AI 사용(1개+ 기능)", value: 88, sub: "기업 88%가 최소 1개 기능에서 AI 사용", src: "McKinsey State of AI 2025" },
+    { stage: "에이전트 실험(Pilot)", value: 62, sub: "62%가 AI 에이전트 실험 중", src: "McKinsey State of AI 2025" },
+    { stage: "스케일 운영(Scale)", value: 23, sub: "23%만 일부 스케일 단계서 agentic AI 운영", src: "McKinsey State of AI 2025" },
+    { stage: "EBIT 임팩트 보고", value: 8, sub: "기업 수익(EBIT)에 의미 있는 기여 보고는 소수", src: "McKinsey State of AI 2025(추정 환산)" },
+    { stage: "워크플로 재설계", value: 5, sub: "AI 중심으로 업무 흐름을 재설계한 비율은 가장 좁음", src: "McKinsey State of AI 2025(추정 환산)" },
+  ];
+
+  /* ---- Widget 3: Fact-Check Layer ----
+     핵심 수치마다 grade(A 공식/B 보도/C 추정)·type·검증일·소스를 명시. */
+  const FACTCHECK = [
+    { item: "NVIDIA FY2026 연매출", value: "$215.9B (+65% YoY)", grade: "A", type: "공식", verified: "2026-06-17", src: "NVIDIA IR (Q4 FY26 $68.1B 포함)" },
+    { item: "Anthropic ARR", value: "$30B (반박 시 ~$22B)", grade: "B", type: "공식·논쟁", verified: "2026-06-17", src: "Anthropic 2026.04.07 발표 / OpenAI 회계 반박" },
+    { item: "OpenAI 연환산 매출", value: "$25B+ ( ~$35B은 추정)", grade: "A", type: "공식·보도", verified: "2026-06-17", src: "OpenAI·Reuters 2026.02" },
+    { item: "OpenAI IPO 목표 밸류", value: "$840B ~ 최대 $1T", grade: "B", type: "보도", verified: "2026-06-17", src: "Guardian·Reuters 2026.06 (목표 상향)" },
+    { item: "Gartner 에이전트 내장률", value: "40% by 2026말 (2025 <5%)", grade: "B", type: "전망", verified: "2026-06-17", src: "Gartner / Reuters '25.6 (※'80%'는 오인용)" },
+    { item: "agentic AI 지출(2026)", value: "$201.9B (+141% YoY)", grade: "B", type: "전망", verified: "2026-06-17", src: "Gartner '26" },
+    { item: "글로벌 AI 시장(2025)", value: "$390.9B → 2026E $539.5B", grade: "B", type: "보고서", verified: "2026-06-17", src: "Grand View Research 최신판 (구판 2024 $279B)" },
+    { item: "Grok 사용자 6억", value: "X 플랫폼 포함 도달", grade: "C", type: "추정·주의", verified: "2026-06-17", src: "xAI '26.1 (Grok 단독 사용자와 구분 필요)" },
+    { item: "Cohere ARR/밸류", value: "$240M / $5.5B (2025)", grade: "C", type: "구버전", verified: "2025-07", src: "2026 최신 공식 미확인 — 업데이트 대기" },
+    { item: "Anthropic '~$45B 추정'", value: "공식 미확인 → 격하", grade: "C", type: "미확인", verified: "2026-06-17", src: "주류는 $30~35B · $45B는 비주류 추정" },
   ];
 
   /* ---- Q&A Pairs (Korean) ---- */
@@ -427,13 +462,13 @@ window.DASH = (function () {
     { q: "Microsoft의 AI 매출은 얼마나 되나요?", a: "Satya Nadella가 Q3 FY2026 실적에서 AI 부문 연 매출 런레이트 $37B(+123% YoY)를 공식 확인했습니다. M365 Copilot 유료 좌석은 2,000만(+250%)을 돌파했고 Azure는 35% 재가속했습니다. Accenture가 74만 좌석으로 최대 고객입니다.", nav: "bigtech", keywords: ["microsoft", "copilot", "azure", "매출", "37", "런레이트"] },
     { q: "NVIDIA가 압도적인 이유는?", a: "AI GPU 시장 80%+ 점유에 CUDA 소프트웨어 락인(7.5M+·CUDA-X 1M+ 개발자, 10년 축적)이 더해진 이중 해자입니다. Q3 FY2026 분기 매출 $57B·데이터센터 $51.2B(+66%), FY26 연 $215.9B를 기록했습니다. B200은 H100 대비 추론 30배, 연 150~200만 대 출하 전망입니다. 다만 위협도 큽니다: 하이퍼스케일러 4곳(Google TPU v7·Amazon Trainium 3·MS Maia 2·Meta MTIA 2)의 자체 칩 합산 배포가 190만 가속기에 달해 '분리'가 시작됐습니다. 그래도 CUDA 대체에는 5~7년이 걸린다는 평가이며 FY27 데이터센터 전망은 오히려 $105~120B로 상향됐습니다.", nav: "bigtech", keywords: ["nvidia", "엔비디아", "gpu", "b200", "cuda", "57", "tpu", "trainium"] },
     { q: "DeepSeek가 왜 중요한가요?", a: "중국 DeepSeek의 R1·V3 모델은 GPT-4급 성능을 약 1/10 비용으로 구현해 'AI 비용 혁명(Sputnik Moment)'을 촉발했습니다. 2026년 첫 외부 라운드에서 목표 밸류 $52B~$59B(중국 국유 빅펀드 주도)입니다. 효율 패러다임 전환의 상징이지만, 국유 자본·수출규제 등 지정학 리스크가 있습니다.", nav: "native", keywords: ["deepseek", "딥시크", "중국", "비용", "효율", "r1"] },
-    { q: "AI 에이전트란 무엇이며 도입 현황은?", a: "AI 에이전트는 단순 챗봇을 넘어 스스로 계획을 세우고 작업을 실행하는 자율 시스템입니다. Gartner 공개 예측 기준 2026년 말 엔터프라이즈 앱의 40%에 task-specific 에이전트가 내장되고, 2028년에는 엔터프라이즈 SW의 33%가 agentic AI를 포함하며, 2026년 AI 에이전트 소프트웨어 지출은 $206.5B로 전망됩니다. Harvey(법률)·Sierra(고객서비스)·Glean(기업검색) 등 버티컬 에이전트가 고성장 중입니다.", nav: "dynamics", keywords: ["에이전트", "agentic", "자율", "엔터프라이즈", "도입", "gartner", "206"] },
+    { q: "AI 에이전트란 무엇이며 도입 현황은?", a: "AI 에이전트는 단순 챗봇을 넘어 스스로 계획을 세우고 작업을 실행하는 자율 시스템입니다. Gartner 공개 예측 기준 2026년 말 엔터프라이즈 앱의 40%에 에이전트가 내장되고(2025년 5% 미만에서 급증), 2028년에는 엔터프라이즈 SW의 33%가 agentic AI를 포함하며 일상 업무 의사결정의 15%가 자율 수행될 전망입니다. 2026년 agentic AI 지출은 $201.9B(+141% YoY)로 전망되나, 동시에 agentic AI 프로젝트의 40%+가 2027년까지 비용·불명확한 가치 때문에 취소될 것이라는 경고(Gartner)도 공존합니다. Harvey(법률)·Sierra(고객서비스)·Glean(기업검색) 등 버티컬 에이전트가 고성장 중입니다.", nav: "dynamics", keywords: ["에이전트", "agentic", "자율", "엔터프라이즈", "도입", "gartner", "201", "취소"] },
     { q: "가장 빠르게 성장하는 AI 스타트업은?", a: "ElevenLabs($11B·음성), Harvey($11B·법률), Sierra($10B·고객서비스), Glean($7.2B·기업검색), Databricks($134B·데이터+AI), Mistral($23B·유럽) 등입니다. 수평 LLM에서 산업 전문 '버티컬 AI'로 투자가 이동 중이며, ARR 배수가 최대 67x(Sierra)에 이릅니다. (Cursor는 SpaceX에 $60B로 인수돼 'SpaceX (xAI, Cursor)'로 편입됐습니다.)", nav: "startup", keywords: ["스타트업", "성장", "빠른", "버티컬", "elevenlabs", "harvey"] },
     { q: "상장 AI 기업 주가는 어디서 보나요?", a: "본 대시보드 하단 '주가 차트' 섹션에서 NVIDIA·Microsoft·Amazon·Apple·Alphabet(Google)·Meta의 일별 주가와 시가총액을 1년/5년으로 볼 수 있습니다. 주가는 매일 자동 크롤링된 실제 종가(Stooq)이며, 차트에 마우스를 올리면 해당일 종가가, 주요 변곡점에는 상승/하락 사유가 표시됩니다. SpaceX(xAI, Cursor)는 비상장이라 사모 밸류에이션 추정치만 표시됩니다.", nav: "stocks", keywords: ["주가", "주식", "차트", "상장", "stock", "시총", "변곡점"] },
     { q: "Physical AI(물리적 AI)란?", a: "소프트웨어를 넘어 로봇·자율주행 등 현실 세계로 들어간 AI입니다. Waymo 로보택시(밸류 $126B), Tesla Optimus, Figure AI 공장 배포 등이 대표 사례입니다. 골드만삭스는 2026년 인간형 로봇 5~10만 대 출하를 전망하며, 물리적 AI 시장은 2035E $1.15T(CAGR 33.5%)로 추정됩니다.", nav: "insights", keywords: ["physical", "물리적", "로봇", "자율주행", "waymo", "optimus"] },
     { q: "AI가 정말 일자리를 빼앗나요?", a: "Goldman Sachs(2026.01)는 전 세계 3억 명의 일자리가 AI에 노출되며, 2026년 2,500만 대체 → 2030년 2.7억으로 확대될 것으로 추정합니다. 행정(26%)·고객서비스(20%)가 취약합니다. 다만 AI 신규 직종 창출로 순 고용 효과는 중립~플러스 전망이며, GenAI 사용자는 비사용자 대비 직업 안정성이 더 높다는 데이터도 있습니다.", nav: "insights", keywords: ["일자리", "고용", "자동화", "실직", "goldman", "직업"] },
     { q: "오픈소스와 클로즈드 모델의 차이는?", a: "오픈 가중치 모델(Llama·Mistral·DeepSeek)은 무료 배포로 커스터마이징·데이터 보안·비용 통제가 가능합니다. 클로즈드 모델(GPT·Claude)은 최고 성능을 API로 제공하며 인프라 부담이 없습니다. 2026년 성능 격차가 빠르게 줄고 있으며, EU AI Act 환경에서는 오픈소스 선호가 높습니다.", nav: "dynamics", keywords: ["오픈소스", "llama", "deepseek", "클로즈드", "차이"] },
-    { q: "2026년 AI 시장 규모와 투자 전망은?", a: "Grand View Research 기준 2024년 글로벌 AI 시장은 $279.22B(실측)이며, 2030년 $1,811.75B 전망(CAGR 35.9%)입니다. 산업별로는 BFSI(금융)·헬스케어·리테일·IT통신 순으로 채택이 빠릅니다. KPMG에 따르면 Q1 2026 글로벌 VC는 $330.9B 신기록이며 AI가 미국 VC의 73%를 차지했습니다. AI 인프라에 2025~2028 누적 $1T+ 투자가 예상됩니다.", nav: "overview", keywords: ["시장", "규모", "투자", "전망", "버티컬", "산업", "330", "vc"] },
+    { q: "2026년 AI 시장 규모와 투자 전망은?", a: "Grand View Research 최신판 기준 2025년 글로벌 AI 시장은 $390.9B, 2026E $539.5B이며, 2030년 $1,811.75B 전망(CAGR ~35%, 기준연도에 따라 30.6~36.6%)입니다. 구판의 2024년 $279.22B 수치에서 상향됐습니다. 산업별로는 BFSI(금융)·헬스케어·리테일·IT통신 순으로 채택이 빠릅니다. KPMG에 따르면 Q1 2026 글로벌 VC는 $330.9B 신기록이며 AI가 미국 VC의 73%를 차지했습니다. AI 인프라에 2025~2028 누적 $1T+ 투자가 예상됩니다.", nav: "overview", keywords: ["시장", "규모", "투자", "전망", "버티컬", "산업", "330", "vc"] },
     { q: "ChatGPT가 Google 검색을 죽이나요? 실제 숫자는?", a: "'Google이 망한다'는 말은 2023년부터 나왔지만 실제는 더 복잡합니다. Google은 여전히 글로벌 검색 74~80%를 점유합니다. ChatGPT Search는 글로벌 쿼리 17~18%로 급성장했고, Gemini는 LLM 트래픽의 20%를 차지합니다. 더 의미있는 지표는 세션 깊이로, Perplexity 사용자의 세션당 쿼리는 Google의 4.5배입니다. 역설은 OpenAI가 2025.09 EU에 'Google·Apple·MS의 데이터 독점이 경쟁을 막는다'고 신고한 점 — AI 검색의 진짜 해자는 아직 모델이 아니라 데이터입니다.", nav: "dynamics", keywords: ["구글", "검색", "chatgpt", "시장점유율", "gemini", "perplexity", "검색전쟁"] },
     { q: "AI 추론 비용은 얼마나 빠르게 떨어지나요?", a: "AI 추론 비용은 2021년 대비 약 280배 하락했습니다. GPT-4급 API가 2023.03 $60/100만 토큰에서 2026년 초 $0.40 이하로 폭락(연 10배), Blackwell은 H100 대비 추론 비용을 10~15배 추가 절감했습니다. 그러나 역설이 있습니다: 단가가 90% 하락하는 동안 기업 총 AI 인프라 지출은 오히려 320% 증가했고(쌀수록 더 많이 씀), 최고 성능 프런티어 모델은 여전히 $15~$75/100만 토큰 프리미엄을 유지합니다. 평범한 인텔리전스는 공짜로 수렴하되 최첨단 추론의 프리미엄은 벌어집니다.", nav: "dynamics", keywords: ["추론", "비용", "inference", "토큰", "가격", "commoditization"] },
     { q: "AI 할루시네이션은 얼마나 심각한가요?", a: "할루시네이션이 2024년 한 해 전 세계 기업에 약 $67.4B 손실을 일으켰다는 추정이 있습니다. 모델별 실측(요약 작업): Gemini 2.0 Flash 0.7%, GPT-4o 1.5%, Claude 4.6 4%, 평균 프로덕션 ~9.2%, 법률 분야는 17~34%까지 치솟습니다(Stanford HAI). 역설은 가장 비싼 추론 모델이 오히려 근거 기반 작업에서 확신에 차 더 높은 할루시네이션을 보일 수 있다는 점입니다. IT 전문가 68%가 프로덕션에서 직접 목격했고, 엔터프라이즈 사용자 47%가 할루시네이션 정보로 실제 의사결정을 내린 적이 있다고 답했습니다.", nav: "dynamics", keywords: ["할루시네이션", "hallucination", "거짓", "신뢰", "오류", "위험"] },
@@ -634,5 +669,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, QA_PAIRS, APP_MONTHLY, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, CAP_REL, ADOPTION_FUNNEL, FACTCHECK, QA_PAIRS, APP_MONTHLY, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();

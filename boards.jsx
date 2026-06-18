@@ -625,7 +625,7 @@ function OverviewCharts({ data, cats, theme }) {
         </div>
         <div className="ov-chart-card">
           <div className="cc-head"><h3>AI 시장 점유율</h3><span title="Statista · IDC · 각사 공시 기준">세그먼트별 · IDC / Statista</span></div>
-          <DonutChart data={data.SHARE} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} centerLabel="$279B" centerSub="글로벌 AI 시장" />
+          <DonutChart data={data.SHARE} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} centerLabel="$390.9B" centerSub="글로벌 AI 시장(2025)" />
         </div>
         <div className="ov-chart-card">
           <div className="cc-head"><h3>AI 시장 버티컬별</h3><span title="Grand View Research · IDC · Statista 산업별 AI 채택">산업별 비중 · 2025</span></div>
@@ -1127,4 +1127,126 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
   );
 }
 
-Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, DynamicsBoard, OverviewCharts, BizModelBoard, MonthlyTrendsBoard });
+// ---- Signals board: capability-reliability gap · adoption funnel · fact-check layer ----
+function CapRelChart({ data, theme }) {
+  const W = 520, H = 210, padL = 36, padR = 14, padT = 18, padB = 30;
+  const iw = W - padL - padR, ih = H - padT - padB;
+  const n = data.length;
+  const x = i => padL + (iw * i) / (n - 1 || 1);
+  const y = v => padT + ih - (ih * v) / 100;
+  const capPts = data.map((d, i) => `${x(i)},${y(d.cap)}`).join(" ");
+  const relPts = data.map((d, i) => `${x(i)},${y(d.rel)}`).join(" ");
+  const gapArea = `${data.map((d, i) => `${x(i)},${y(d.cap)}`).join(" ")} ${[...data].reverse().map((d, i) => `${x(n - 1 - i)},${y(d.rel)}`).join(" ")}`;
+  const [tip, setTip] = React.useState(null);
+  return (
+    <div style={{ position: "relative" }} onMouseLeave={() => setTip(null)}>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: "block", overflow: "visible" }}>
+        {[0, 25, 50, 75, 100].map(t => (
+          <g key={t}>
+            <line x1={padL} x2={padL + iw} y1={y(t)} y2={y(t)} stroke={theme.grid} strokeWidth="1" />
+            <text x={padL - 6} y={y(t) + 3} textAnchor="end" fontSize="9" fill={theme.muted}>{t}</text>
+          </g>
+        ))}
+        <polygon points={gapArea} fill="#F59E0B" opacity="0.14" />
+        <polyline points={capPts} fill="none" stroke="#2D6BFF" strokeWidth="2.6" strokeLinejoin="round" />
+        <polyline points={relPts} fill="none" stroke="#16A34A" strokeWidth="2.6" strokeLinejoin="round" strokeDasharray="5 3" />
+        {data.map((d, i) => (
+          <g key={i}>
+            <text x={x(i)} y={H - 16} textAnchor="middle" fontSize="8.5" fill={theme.muted}>{d.period}</text>
+            <circle cx={x(i)} cy={y(d.cap)} r="3" fill="#fff" stroke="#2D6BFF" strokeWidth="1.6" />
+            <circle cx={x(i)} cy={y(d.rel)} r="3" fill="#fff" stroke="#16A34A" strokeWidth="1.6" />
+            <rect x={x(i) - 16} y={padT} width="32" height={ih} fill="transparent" style={{ cursor: "pointer" }}
+              onMouseEnter={e => setTip({ x: e.clientX, y: e.clientY, d })} onMouseMove={e => setTip(t => t ? { ...t, x: e.clientX, y: e.clientY } : t)} />
+            <text x={x(i)} y={y(d.cap) - 7} textAnchor="middle" fontSize="8.5" fontWeight="800" fill="#2D6BFF">{d.cap}</text>
+            <text x={x(i)} y={y(d.rel) + 13} textAnchor="middle" fontSize="8.5" fontWeight="800" fill="#16A34A">{d.rel}</text>
+          </g>
+        ))}
+      </svg>
+      <div className="caprel-legend">
+        <span><i style={{ background: "#2D6BFF" }} /> 성능(capability)</span>
+        <span><i style={{ background: "#16A34A" }} /> 신뢰성(자율 성공률)</span>
+        <span><i style={{ background: "#F59E0B" }} /> 격차(gap)</span>
+      </div>
+      {tip && <div className="chart-tip" style={{ left: Math.min(tip.x + 16, window.innerWidth - 260), top: tip.y + 18 }}>
+        <b>{tip.d.period}</b> · 성능 {tip.d.cap} / 신뢰성 {tip.d.rel} (격차 {tip.d.cap - tip.d.rel}p)<br /><em>{tip.d.note} — {tip.d.src}</em>
+      </div>}
+    </div>
+  );
+}
+
+function AdoptionFunnel({ data }) {
+  const max = Math.max(...data.map(d => d.value));
+  return (
+    <div className="funnel">
+      {data.map((d, i) => (
+        <div className="funnel-row" key={i} title={d.sub + " — " + d.src}>
+          <div className="funnel-bar-wrap">
+            <div className="funnel-bar" style={{ width: `${(d.value / max) * 100}%`, background: `linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #16A34A))` }}>
+              <span className="funnel-val">{d.value}%</span>
+            </div>
+          </div>
+          <div className="funnel-meta">
+            <b>{i + 1}. {d.stage}</b>
+            <em>{d.sub}</em>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const FC_GRADE = { A: { c: "#16A34A", t: "공식" }, B: { c: "#2D6BFF", t: "보도" }, C: { c: "#D97706", t: "추정" } };
+function FactCheckLayer({ data }) {
+  return (
+    <div className="factcheck">
+      <div className="fc-head-row">
+        <span>지표</span><span>값</span><span>등급</span><span>유형</span><span>검증일 · 출처</span>
+      </div>
+      {data.map((d, i) => {
+        const g = FC_GRADE[d.grade] || FC_GRADE.C;
+        return (
+          <div className="fc-row" key={i}>
+            <span className="fc-item">{d.item}</span>
+            <span className="fc-value">{d.value}</span>
+            <span className="fc-grade"><b style={{ background: g.c }}>{d.grade}</b></span>
+            <span className="fc-type" style={{ color: g.c, borderColor: g.c }}>{d.type}</span>
+            <span className="fc-src"><time>{d.verified}</time> · {d.src}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function SignalBoard({ data, theme, sectionRef }) {
+  const inView = useInView(sectionRef);
+  return (
+    <section className="board" ref={sectionRef} data-screen-label="Reliability & Adoption">
+     <AnimCtx.Provider value={inView}>
+      <div className="board-head">
+        <span className="board-tab" style={{ background: "var(--accent)" }} />
+        <div className="board-titles">
+          <h2>신뢰성 · 도입 · 검증 <span className="board-en">Reliability · Adoption · Fact-Check</span></h2>
+          <p>'AI 대세' 단정 대신 — 성능↔신뢰성 격차, 파일럿→스케일 퍼널, 수치별 검증 레이어</p>
+        </div>
+      </div>
+      <div className="chart-grid">
+        <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
+          <div className="cc-head"><h3>① Capability–Reliability Gap</h3><span>성능은 오르지만 자율 신뢰성은 지연 · Stanford HAI AI Index 2026</span></div>
+          <CapRelChart data={data.CAP_REL} theme={theme} />
+        </div>
+        <div className="chart-card">
+          <div className="cc-head"><h3>② AI 도입 단계 퍼널</h3><span>도입률 ≠ 가치 실현 · McKinsey State of AI 2025</span></div>
+          <AdoptionFunnel data={data.ADOPTION_FUNNEL} />
+        </div>
+        <div className="chart-card">
+          <div className="cc-head"><h3>③ 팩트체크 레이어</h3><span>수치별 등급(A 공식/B 보도/C 추정)·검증일</span></div>
+          <FactCheckLayer data={data.FACTCHECK} />
+        </div>
+      </div>
+     </AnimCtx.Provider>
+    </section>
+  );
+}
+
+Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, DynamicsBoard, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard });

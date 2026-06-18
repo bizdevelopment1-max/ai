@@ -1042,6 +1042,37 @@ a[href]:hover .rainbow-on-hover,
 .chart-tip b { color: #fff; font-weight: 800; }
 .chart-tip em { font-style: normal; font-weight: 500; color: rgba(255,255,255,.66); font-size: 10.5px; }
 
+/* ---- Signals board: capability-reliability gap · adoption funnel · fact-check layer ---- */
+.caprel-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; padding: 8px 4px 0; font-size: 11px; font-weight: 700; color: var(--ink-2); }
+.caprel-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.caprel-legend i { width: 10px; height: 10px; border-radius: 2px; }
+
+.funnel { display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
+.funnel-row { display: flex; align-items: center; gap: 12px; }
+.funnel-bar-wrap { flex: 0 0 42%; }
+.funnel-bar { height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; min-width: 36px; transition: width .8s cubic-bezier(.2,.8,.3,1); box-shadow: var(--shadow); }
+.funnel-val { color: #fff; font-weight: 800; font-size: 12px; padding-right: 8px; }
+.funnel-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.funnel-meta b { font-size: 12.5px; font-weight: 800; color: var(--ink); }
+.funnel-meta em { font-style: normal; font-size: 10.5px; color: var(--muted); font-weight: 600; }
+
+.factcheck { display: flex; flex-direction: column; font-size: 11px; }
+.fc-head-row, .fc-row { display: grid; grid-template-columns: 1.5fr 1.5fr 0.5fr 0.7fr 2fr; gap: 6px; align-items: center; padding: 7px 4px; }
+.fc-head-row { font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; font-size: 9.5px; border-bottom: 1px solid var(--line); }
+.fc-row { border-bottom: 1px solid var(--line-2); }
+.fc-row:hover { background: var(--panel-2); }
+.fc-item { font-weight: 700; color: var(--ink); }
+.fc-value { color: var(--ink-2); font-weight: 600; }
+.fc-grade b { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 5px; color: #fff; font-weight: 800; font-size: 10px; }
+.fc-type { justify-self: start; font-size: 9.5px; font-weight: 800; border: 1px solid; border-radius: 5px; padding: 1px 5px; white-space: nowrap; }
+.fc-src { color: var(--muted); font-weight: 500; font-size: 10px; }
+.fc-src time { font-weight: 700; color: var(--ink-2); }
+@media (max-width: 760px) {
+  .fc-head-row, .fc-row { grid-template-columns: 1.3fr 1.2fr 0.5fr; }
+  .fc-head-row span:nth-child(4), .fc-head-row span:nth-child(5), .fc-row .fc-type, .fc-row .fc-src { display: none; }
+  .funnel-bar-wrap { flex-basis: 34%; }
+}
+
 /* ---------- dynamic hover micro-interactions ---------- */
 .tb-color, .tb-theme, .tb-menu {
   transition: transform .18s cubic-bezier(.34,1.56,.64,1), color .15s, border-color .15s, background .15s, box-shadow .18s;

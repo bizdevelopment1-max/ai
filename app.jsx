@@ -89,7 +89,7 @@ function App() {
   const scrollRef = uR(null);
   const refs = {
     overview: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    charts: uR(null), monthly: uR(null), insights: uR(null), dynamics: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
+    charts: uR(null), monthly: uR(null), insights: uR(null), signals: uR(null), dynamics: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
   };
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
@@ -210,6 +210,8 @@ function App() {
             <MonthlyTrendsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.monthly} />
 
             <InsightsBoard insights={D.INSIGHTS} sectionRef={refs.insights} />
+
+            <SignalBoard data={D} theme={chartTheme} sectionRef={refs.signals} />
 
             <DynamicsBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.dynamics} />
 
