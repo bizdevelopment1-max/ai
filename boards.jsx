@@ -329,7 +329,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
             return (
               <div className="art" key={keyOf(a)}>
                 <span className="art-cat" style={{ background: c.accent }} />
-                <a className="art-body" href={a.url} target="_blank" rel="noopener">
+                <a className="art-body" href={a.url} target="_blank" rel="noopener" draggable={false}>
                   <span className="art-meta">
                     <em className="art-src">{a.source}</em>
                     {a.co && <span className="art-co" style={{ color: c.accent, borderColor: c.accent }}>{a.co}</span>}

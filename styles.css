@@ -630,6 +630,9 @@ a[href]:hover .rainbow-on-hover,
 .art:hover .art-catname { color: rgba(255,255,255,.7); }
 .art-cat { width: 3px; align-self: stretch; border-radius: 3px; flex-shrink: 0; }
 .art-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+/* 기사 제목·요약 텍스트는 드래그 선택/복사 가능하게(링크 안이라도) */
+.art-title, .art-summary, .art-sum-line, .art-src { -webkit-user-select: text; user-select: text; }
+.art-summary, .art-sum-line { cursor: text; }
 .art-meta { display: flex; align-items: center; gap: 9px; }
 .art-src { font-style: normal; font-size: 11px; font-weight: 800; color: var(--ink-2); letter-spacing: .01em; white-space: nowrap; flex-shrink: 0; }
 .art-tag { font-size: 9.5px; font-weight: 700; padding: 1px 7px; border-radius: 4px; letter-spacing: .02em; }
