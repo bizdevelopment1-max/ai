@@ -411,8 +411,8 @@ window.DASH = (function () {
     { name: "API 사용량 과금", cat: "native", model: "API Usage-based", pricing: "토큰당 과금($0.25~$75/1M)", sub: "무료 티어 + 사용량 과금", revenue: "OpenAI 연환산 $25B+, Anthropic 연환산 $30B+", margin: "비공개", arpu: "기업당 $10K~$10M+/yr", retention: "높음(기술 의존성)", moat: "모델 성능 + 개발자 생태계 + 안전성 프레임워크", strategy: "모델 성능 경쟁 + 엔터프라이즈 침투 + 구독 병행", src: "OpenAI/Anthropic 공식 가격표" },
     { name: "SaaS 구독", cat: "bigtech", model: "SaaS Subscription", pricing: "$20~$60/사용자/월", sub: "Copilot Pro/Business/Enterprise", revenue: "Microsoft AI $37B 런레이트, Copilot 2,000만 좌석", margin: "높음(80%+ 추정)", arpu: "$240~$720/yr", retention: "매우 높음(Office 번들)", moat: "Office/Windows/Teams 락인 + OpenAI 파트너", strategy: "Copilot 전 영역 통합 + 워크플로우 AI 표준화", src: "Microsoft IR FY26 Q3" },
     { name: "오픈소스+엔터프라이즈", cat: "bigtech", model: "Open Source + Enterprise", pricing: "오픈 가중치 무료 + 광고/엔터프라이즈", sub: "Llama 무료 + Meta AI 광고", revenue: "Meta AI 광고 기여 $20B+ 추정", margin: "광고 기반 고마진", arpu: "광고주 기반", retention: "개발자 생태계 락인", moat: "30억 앱 사용자 + 가장 넓은 오픈소스 분포", strategy: "오픈 Llama로 생태계 확장 + AI 광고 최적화", src: "Meta IR '26, Llama 배포 통계" },
-    { name: "하드웨어+클라우드", cat: "bigtech", model: "Hardware + Cloud", pricing: "B200 $30K~$50K · DGX Cloud 시간당 과금", sub: "GPU 판매 + DGX Cloud + CUDA 무료", revenue: "NVIDIA $215.9B(FY26 연), 분기 $57B", margin: "~78% 데이터센터 마진", arpu: "기업당 수백만~수십억 달러", retention: "CUDA 7.5M+·CUDA-X 1M+ 개발자 락인", moat: "GPU 80%+ 점유 + CUDA 생태계 + 풀스택", strategy: "B200 램프 + DGX Cloud + Omniverse", src: "NVIDIA IR FY2026" },
-    { name: "버티컬 AI 에이전트", cat: "startup", model: "Vertical AI Agent", pricing: "시트/사용량 구독 + 성과 기반", sub: "산업별 전문 에이전트 구독", revenue: "Harvey $190M, Sierra $150M, Glean $200M+ ARR", margin: "SaaS형 고마진 지향", arpu: "기업당 수만~수백만 달러", retention: "워크플로우 내재화로 높음", moat: "도메인 데이터 + 업무 통합 + 규제 신뢰", strategy: "특정 산업 전문화로 수평 LLM과 차별화(ARR 배수 최대 67x)", src: "AgentMarketCap '26, 각사 공식" },
+    { name: "하드웨어+클라우드", cat: "bigtech", model: "Hardware + Cloud", pricing: "B200 $30K~$50K · DGX Cloud 시간당 과금", sub: "GPU 판매 + DGX Cloud + CUDA 무료", revenue: "NVIDIA $215.9B(FY26 연), 분기 $57B", margin: "~78% 데이터센터 마진", arpu: "기업당 $1M~$10B+/yr", retention: "CUDA 7.5M+·CUDA-X 1M+ 개발자 락인", moat: "GPU 80%+ 점유 + CUDA 생태계 + 풀스택", strategy: "B200 램프 + DGX Cloud + Omniverse", src: "NVIDIA IR FY2026" },
+    { name: "버티컬 AI 에이전트", cat: "startup", model: "Vertical AI Agent", pricing: "시트/사용량 구독 + 성과 기반", sub: "산업별 전문 에이전트 구독", revenue: "Harvey $190M, Sierra $150M, Glean $200M+ ARR", margin: "SaaS형 고마진 지향", arpu: "기업당 $10K~$1M+/yr", retention: "워크플로우 내재화로 높음", moat: "도메인 데이터 + 업무 통합 + 규제 신뢰", strategy: "특정 산업 전문화로 수평 LLM과 차별화(ARR 배수 최대 67x)", src: "AgentMarketCap '26, 각사 공식" },
   ];
 
   /* ---- KPI Cards (6) ---- */
@@ -597,7 +597,7 @@ window.DASH = (function () {
       events: [
         { date: "2023-05-25", dir: "up", label: "FY24 가이던스 서프라이즈", reason: "데이터센터 GPU 수요 폭증으로 분기 가이던스를 50%+ 상회. AI 학습 칩 독점 지위가 부각되며 하루 +24% 급등." },
         { date: "2024-06-07", dir: "up", label: "10:1 주식분할", reason: "액면분할 시행. 소매 접근성 확대 기대와 AI 모멘텀으로 사상 최고가 경신." },
-        { date: "2025-01-27", dir: "down", label: "DeepSeek 쇼크", reason: "DeepSeek가 1/10 비용으로 GPT-4급 성능을 구현했다는 소식에 'AI 칩 과잉투자' 우려. 하루 -17%, 시총 약 6천억 달러 증발." },
+        { date: "2025-01-27", dir: "down", label: "DeepSeek 쇼크", reason: "DeepSeek가 1/10 비용으로 GPT-4급 성능을 구현했다는 소식에 'AI 칩 과잉투자' 우려. 하루 -17%, 시총 약 $600B 증발." },
         { date: "2025-04-04", dir: "down", label: "관세·수출규제 우려", reason: "반도체 관세·대중 수출규제 확대 우려로 조정. 이후 B200 수요 확인되며 회복." },
         { date: "2026-01-30", dir: "down", label: "Blackwell 정점·차익실현", reason: "Q3 FY26 매출 $57B·데이터센터 $51.2B(+66%) 기록에도 '정점론'과 차익실현 매물로 단기 조정." },
       ],
