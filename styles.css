@@ -660,6 +660,8 @@ a[href]:hover .rainbow-on-hover,
 .chart-card .cc-head { margin-bottom: 14px; }
 .chart-card:hover .cc-head h3 { color: var(--accent); }
 .chart-card > svg, .chart-card > div:not(.cc-head) { margin: auto 0; }
+/* let chart labels that sit at the very edge spill into the card padding instead of being clipped by the SVG viewport */
+.chart-card svg, .ov-chart-card svg, .stock-panel svg { overflow: visible; }
 .cc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
 .cc-head h3 { font-size: 13.5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cc-head span { font-size: 10.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; flex-shrink: 0; }

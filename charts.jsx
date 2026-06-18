@@ -148,7 +148,7 @@ function HBarChart({ data, colorOf, ink, muted, grid, unit, valuePrefix }) {
 
   const rowH = 28, padL = 4, padT = 6;
   const labelW = 108, barMaxW = 300;
-  const W = labelW + barMaxW + 64, H = padT * 2 + data.length * rowH;
+  const W = labelW + barMaxW + 96, H = padT * 2 + data.length * rowH;
   const max = Math.max(...data.map(d => d.value));
   const pre = valuePrefix || "";
   const stagger = 0.08;
