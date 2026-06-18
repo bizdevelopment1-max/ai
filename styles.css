@@ -54,7 +54,7 @@ html, body, #root { height: 100%; overflow-x: hidden; }
 .chatbot-bubble, .chatbot-bubble * {
   -webkit-user-select: text; user-select: text; -webkit-touch-callout: default;
 }
-.sidebar, .sidebar *, .topbar, .topbar *, .board-head, .board-head *,
+.sidebar, .sidebar *, .topbar, .topbar *, .board-head,
 button, .sb-item, .stock-tabs, .stock-tab, .feed-filters, .feed-filters *,
 .monthly-app-filter, .monthly-btn, .stock-range, .fc-clear, .art-del,
 .tweak-panel, .tweak-panel *, .chatbot-drop-item {
@@ -650,7 +650,8 @@ a[href]:hover .rainbow-on-hover,
 .art-src { font-style: normal; font-size: 11px; font-weight: 800; color: var(--ink-2); letter-spacing: .01em; white-space: nowrap; flex-shrink: 0; }
 .art-tag { font-size: 9.5px; font-weight: 700; padding: 1px 7px; border-radius: 4px; letter-spacing: .02em; }
 .art-catname { font-size: 10.5px; color: var(--muted); font-weight: 600; white-space: nowrap; }
-.art-title { font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.4; text-wrap: pretty; }
+.art-title { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.4; text-wrap: pretty; text-decoration: none; cursor: pointer; }
+.art-title:hover { text-decoration: underline; }
 .art-summary { font-size: 12px; font-weight: 500; color: var(--muted); line-height: 1.55; text-wrap: pretty; margin-top: 2px; white-space: pre-line; }
 .art-sum-line { display: block; position: relative; padding-left: 11px; margin-top: 1px; }
 .art-sum-line::before { content: "·"; position: absolute; left: 2px; color: var(--accent); font-weight: 800; }
@@ -1291,7 +1292,12 @@ a[href]:hover .rainbow-on-hover,
   .stock-tabs { gap: 6px; }
   .stock-tab em { display: none; }                 /* keep tabs compact, ticker stays */
   .cc-head, .cc-head span { white-space: normal; word-break: keep-all; }
-  .board-titles h2, .board-titles p { white-space: normal; word-break: keep-all; }
+  /* 보드 헤더: 제목/부제는 각각 한 줄(전체 폭 차지), 필터는 아래 줄로 */
+  .board-head { flex-wrap: wrap; }
+  .board-titles { flex: 1 1 100%; min-width: 0; }
+  .board-titles h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .board-titles p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .feed-filters { flex: 1 1 100%; flex-wrap: wrap; }
   /* 데일리 기사 메타: 모바일에서도 한 줄(소스명만 말줄임), 세로 적층 방지 */
   .art-meta { flex-wrap: nowrap; gap: 6px; min-width: 0; }
   .art-src { font-size: 10px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }

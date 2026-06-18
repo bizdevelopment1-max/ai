@@ -329,16 +329,16 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
             return (
               <div className="art" key={keyOf(a)}>
                 <span className="art-cat" style={{ background: c.accent }} />
-                <a className="art-body" href={a.url} target="_blank" rel="noopener" draggable={false}>
+                <div className="art-body">
                   <span className="art-meta">
                     <em className="art-src">{a.source}</em>
                     {a.co && <span className="art-co" style={{ color: c.accent, borderColor: c.accent }}>{a.co}</span>}
                     <span className="art-tag" style={{ color: c.accent, background: c.accentSoft }}>{a.tag}</span>
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
                   </span>
-                  <span className="art-title">{a.title}</span>
+                  <a className="art-title" href={a.url} target="_blank" rel="noopener">{a.title}</a>
                   {a.summary && <span className="art-summary"><BoldSummary text={a.summary} /></span>}
-                </a>
+                </div>
                 <button className="art-del" title="이 기사 삭제(다시 표시 안 함)" aria-label="기사 삭제"
                   onClick={() => removeArticle(a)}>
                   <Icon name="x" size={13} sw={2.2} />
