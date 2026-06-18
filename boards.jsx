@@ -260,14 +260,19 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   // reset company filter whenever the category changes
   React.useEffect(() => { setCo("all"); }, [filter]);
 
-  // companies available in the active category (from articles that have a `co`)
+  // companies available in the active category (from articles that have a `co`),
+  // sorted to match the company cards & sidebar (규모 큰 순 = COMPANY_ORDER)
   const coList = React.useMemo(() => {
+    const order = (window.DASH && window.DASH.COMPANY_ORDER) || [];
     const seen = [];
     articles.forEach(a => {
       if (filter !== "all" && a.cat !== filter) return;
       if (a.co && !seen.includes(a.co)) seen.push(a.co);
     });
-    return seen;
+    return seen.sort((x, y) => {
+      const ix = order.indexOf(x), iy = order.indexOf(y);
+      return (ix === -1 ? 1e9 : ix) - (iy === -1 ? 1e9 : iy);   // 로스터에 없는 co는 맨 뒤
+    });
   }, [articles, filter]);
 
   // de-dupe by key (drops duplicate content from crawl + static merge)

@@ -55,9 +55,19 @@ const COMPANIES = [
 // Device-relevant AI topics (most material for an on-device-AI device maker).
 const TOPICS = [
   { co: "AI 에이전트", cat: "native", tag: "AI 에이전트", n: 3, q: '("AI agent" OR "agentic AI" OR "AI agents")' },
-  { co: "AI 노트북", cat: "bigtech", tag: "AI 노트북", n: 3, q: '("AI PC" OR "AI laptop" OR "Copilot+ PC" OR "on-device AI" OR "NPU laptop")' },
-  { co: "AI 폰", cat: "bigtech", tag: "AI 폰", n: 3, q: '("AI smartphone" OR "AI phone" OR "Galaxy AI" OR "Apple Intelligence" OR "on-device AI" phone)' },
+  { co: "", cat: "bigtech", tag: "AI 노트북", topic: true, n: 3, q: '("AI PC" OR "AI laptop" OR "Copilot+ PC" OR "on-device AI" OR "NPU laptop")' },
+  { co: "", cat: "bigtech", tag: "AI 폰", topic: true, n: 3, q: '("AI smartphone" OR "AI phone" OR "Galaxy AI" OR "Apple Intelligence" OR "on-device AI" phone)' },
 ];
+
+// device-topic 기사를 제목 기준으로 실제 업체에 재분류(매칭 없으면 업체 미지정). 토픽은 tag로만 남김.
+const DEVICE_CO = [
+  [/iphone|ipad|siri|apple intelligence|\bapple\b|macbook|vision pro/i, "Apple"],
+  [/copilot\+|surface|windows|\bmicrosoft\b/i, "Microsoft"],
+  [/nvidia|geforce|\brtx\b|n1x|\bgb10\b|project digits|jetson/i, "NVIDIA"],
+  [/pixel|gemini|\bgoogle\b|android|tensor/i, "Google DeepMind"],
+  [/\bmeta\b|llama|ray-ban|quest/i, "Meta AI"],
+];
+const deviceCo = (title) => { const h = DEVICE_CO.find(([re]) => re.test(title || "")); return h ? h[1] : ""; };
 
 // ---- XML / HTML helpers -------------------------------------------------
 function decode(s) {
@@ -103,13 +113,14 @@ async function pull(src, limit) {
       const pub = tag(it, "pubDate");
       const d = pub ? new Date(pub) : new Date();
       const date = isNaN(d) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
-      out.push({ date, co: src.co, cat: src.cat, source: srcName || host, title, descEn: desc, url: link, tag: src.tag || "최신" });
+      const co = src.topic ? deviceCo(title) : src.co;
+      out.push({ date, co, cat: src.cat, source: srcName || host, title, descEn: desc, url: link, tag: src.tag || "최신" });
       if (out.length >= limit) break;
     }
-    console.log(`[news:${src.co}] ${out.length} authoritative item(s)`);
+    console.log(`[news:${src.tag || src.co || "topic"}] ${out.length} authoritative item(s)`);
     return out;
   } catch (e) {
-    console.warn(`[news:${src.co}] failed: ${e.message}`);
+    console.warn(`[news:${src.tag || src.co || "topic"}] failed: ${e.message}`);
     return [];
   }
 }

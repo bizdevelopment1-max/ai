@@ -218,7 +218,29 @@ window.DASH = (function () {
       sources: ["밸류 $10B, ARR $150M (ValueAdd VC '26)", "Revenue Multiple 67x"],
       url: "https://sierra.ai",
     },
+    {
+      cat: "native", name: "SpaceX (xAI, Cursor)", domain: "x.ai", unit: "AI 생태계(xAI·Grok·Cursor)",
+      valuation: "$230B+", valAsof: "26.01", metric: "Grok+X 합산 도달", value: "6억", metricAsof: "26.01",
+      funding: "xAI Series E $20B · SPCX 상장", trend: 120, trendBasis: "xAI 밸류 $230B+ · Cursor $60B 인수",
+      note: "일론 머스크 AI 생태계 통합 표기. xAI(Grok)는 2026.01 Series E $20B 완료·밸류 $230B+(누적 조달 $42B+). SpaceX는 SPCX 티커로 거래되며 2026.06.16 AI 코딩 에이전트 Cursor(Anysphere)를 $60B 주식 인수 합의(ARR $2B+, 기업고객 60%). Grok+X 합산 도달 6억(독립 제품 MAU와 구분 — 대부분 X 사용자). 단, Grok 딥페이크 논란 등 거버넌스 리스크.",
+      vp: "X 플랫폼 유통·자체 컴퓨트(Colossus)·코딩 에이전트(Cursor)를 묶은 수직 통합. 머스크 생태계 시너지.",
+      direction: "Grok 프런티어 모델 + Cursor 코딩 에이전트 + X 통합. SPCX 상장으로 자본 조달.",
+      sources: ["xAI Series E $20B·밸류 $230B+ (TechCrunch/NYT '26.1)", "SpaceX, Cursor $60B 인수 합의 (CNBC '26.06.16)", "Grok+X 합산 도달 6억 (Grok 단독 아님)"],
+      url: "https://x.ai",
+    },
   ];
+
+  // 업체 정렬: 카테고리 내에서 규모(밸류에이션) 큰 순. 카드·사이드바·피드 드롭다운이 동일 순서를 따름.
+  const VAL_OVERRIDE = { "Google DeepMind": 2500 };   // Alphabet 산하 — 밸류 '—'이므로 ~$2.5T로 정렬
+  const sizeOf = (c) => {
+    if (VAL_OVERRIDE[c.name] != null) return VAL_OVERRIDE[c.name];
+    const m = String(c.valuation).replace(/[$,+~\s]/g, "").match(/([\d.]+)\s*([TBM])?/i);
+    if (!m) return 0;
+    const v = parseFloat(m[1]); const u = (m[2] || "B").toUpperCase();
+    return u === "T" ? v * 1000 : u === "M" ? v / 1000 : v;
+  };
+  COMPANIES.sort((a, b) => sizeOf(b) - sizeOf(a));
+  const COMPANY_ORDER = COMPANIES.map(c => c.name);   // 피드 드롭다운 정렬 기준
 
   /* ---- Articles (per-company, newest first) — co: 기업명(필터용) ---- */
   const ARTICLES = [
@@ -663,5 +685,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, CAP_REL, FACTCHECK, QA_PAIRS, APP_MONTHLY, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, COMPANY_ORDER, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, CAP_REL, FACTCHECK, QA_PAIRS, APP_MONTHLY, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();
