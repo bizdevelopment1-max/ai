@@ -627,7 +627,7 @@ window.DASH = (function () {
       events: [
         { date: "2026-06-16", dir: "up", label: "Cursor $60B 인수 발표", reason: "AI 코딩 에이전트 Cursor(Anysphere)를 $60B 주식 인수 합의. xAI 코딩 전략 강화." },
       ],
-      note: "SPCX(나스닥, 2026-06-12 상장). 매일 Yahoo Finance→Stooq→Nasdaq→StockAnalysis→TradingView 순으로 실시세를 시도하며, 실데이터가 확인되면 자동 대체됩니다. 현재 차트는 상장일 기준 '시나리오 추정 시세'이며 실제 거래 데이터가 아닙니다.",
+      note: "SPCX(나스닥, 2026-06-12 상장). 매일 Yahoo Finance→Stooq→Nasdaq→StockAnalysis→TradingView 순으로 실시세를 자동 크롤링합니다. 공개 피드 미수집 시에만 상장일 기준 시나리오 시세로 폴백합니다.",
     },
   ];
 
