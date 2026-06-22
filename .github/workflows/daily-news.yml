@@ -41,11 +41,14 @@ jobs:
       - name: Crawl real stock prices + market cap
         run: node scripts/crawl-stocks.mjs
 
+      - name: Build daily insights (rule-based, deterministic — no API key)
+        run: node scripts/build-insights.mjs
+
       - name: Commit refreshed data
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json
+          git add news.json stocks.json insights.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

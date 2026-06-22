@@ -1211,32 +1211,64 @@ function SignalBoard({ data, theme, sectionRef }) {
   );
 }
 
+// 핵심 수치($·%·MAU·토큰단가 등)를 굵게+하이라이트 처리
+function hlKey(text) {
+  const parts = String(text || "").split(/(\$[\d,.]+\s?[TBMK]?(?:\+|토큰)?|\d+\.?\d*%|\d+\.?\d*억\+?|[0-9]{2,}M\+?|OSWorld\s?\d+%?|12GB|900M\+?)/g);
+  return parts.map((p, i) => /^\$|%$|억\+?$|M\+?$|GB$|^OSWorld|^\d/.test(p) && /\d/.test(p)
+    ? <mark className="tl-hl" key={i}>{p}</mark> : p);
+}
+
 // ---- Executive Top-line: 현상 → 의사결정 5초 브리핑 (Overview 최상단) ----
-function ExecToplines({ items, onNav }) {
-  const [open, setOpen] = React.useState(0);   // 인터랙티브: 펼친 카드 인덱스
-  if (!items || !items.length) return null;
+// insights.json(매일 규칙기반 갱신)이 있으면 그걸로, 없으면 정적 TOPLINE으로 폴백.
+function ExecToplines({ items, insights, onNav }) {
+  const [open, setOpen] = React.useState(0);
   const TONE = { warn: "#D23B3B", signal: "#2D6BFF", revenue: "#16A34A", compete: "#C026D3" };
   const ICON = { warn: "target", signal: "pulse", revenue: "chart", compete: "brain" };
   const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "성능·신뢰성", native: "AI 네이티브", dynamics: "경쟁 다이내믹스" };
+
+  // 데이터 정규화: insights 카드 → 공통 셰이프 / 폴백은 정적 TOPLINE
+  const cards = (insights && insights.cards && insights.cards.length)
+    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, decision: c.soWhat, evidence: c.evidence || [], score: c.score, live: c.live, updatedAt: c.updatedAt }))
+    : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, decision: t.decision, evidence: [], score: null, live: false }));
+  if (!cards.length) return null;
+  const stamp = insights && insights.generatedAt ? insights.generatedAt.slice(0, 10) : null;
+
   return (
     <div className="topline">
       <div className="topline-head">
         <span className="topline-kicker">오늘의 톱라인</span>
-        <span className="topline-sub">현상 → 의사결정 · 온디바이스 AI 단말 사업 관점 · 카드를 눌러 상세로 이동</span>
+        <span className="topline-sub">현상 → 의사결정 · 온디바이스 AI 단말 사업 관점{stamp ? ` · 매일 자동 갱신 (${stamp})` : ""}</span>
       </div>
       <div className="topline-grid">
-        {items.map((t, i) => {
+        {cards.map((t, i) => {
           const isOpen = open === i;
+          const tone = TONE[t.tone] || "#2D6BFF";
           return (
-            <div className={"tl-card" + (isOpen ? " tl-open" : "")} key={i} style={{ "--tl": TONE[t.tone] || "#2D6BFF" }}
+            <div className={"tl-card" + (isOpen ? " tl-open" : "")} key={i} style={{ "--tl": tone }}
               onMouseEnter={() => setOpen(i)} onClick={() => setOpen(i)}>
               <div className="tl-cardhead">
-                <span className="tl-ico"><Icon name={ICON[t.tone] || "spark"} size={14} /></span>
+                <span className="tl-ico"><Icon name={ICON[t.tone] || "spark"} size={16} /></span>
                 <span className="tl-tag">{t.tag}</span>
+                {t.live && <span className="tl-live">LIVE</span>}
                 <i className="tl-dot" />
               </div>
-              <p className="tl-now">{t.now}</p>
+              <p className="tl-now">{hlKey(t.now)}</p>
+              {t.score != null && (
+                <div className="tl-meter" title={`관련도 ${t.score}/100`}>
+                  <span className="tl-meter-fill" style={{ width: t.score + "%", background: tone }} />
+                  <em>{t.score}</em>
+                </div>
+              )}
               <p className="tl-dec"><span className="tl-arrow">→</span>{t.decision}</p>
+              {t.evidence && t.evidence.length > 0 && (
+                <div className="tl-ev">
+                  {t.evidence.slice(0, 2).map((e, k) => (
+                    <a className="tl-ev-chip" key={k} href={e.url} target="_blank" rel="noopener" onClick={ev => ev.stopPropagation()}>
+                      <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${e.date.slice(5)}` : ""}
+                    </a>
+                  ))}
+                </div>
+              )}
               {t.nav && (
                 <button className="tl-link" onClick={e => { e.stopPropagation(); onNav && onNav(t.nav); }}>
                   {NAVLABEL[t.nav] || "상세"} 보기 ›

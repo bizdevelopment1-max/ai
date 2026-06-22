@@ -73,6 +73,17 @@ function App() {
     return [...extra, ...base];
   }, [crawled]);
 
+  // 매일 갱신되는 '오늘의 톱라인' 인사이트(insights.json, 규칙 기반). 없으면 정적 TOPLINE 폴백.
+  const [insights, setInsights] = uS(null);
+  uE(() => {
+    let alive = true;
+    fetch("insights.json", { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && Array.isArray(j.cards) && j.cards.length) setInsights(j); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
   // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
   const [stockData, setStockData] = uS(null);
   uE(() => {
@@ -210,7 +221,7 @@ function App() {
               <div className="ov-head">
                 <h2 className="ov-title">Executive Summary</h2>
               </div>
-              <ExecToplines items={D.TOPLINE} onNav={navTo} />
+              <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
             </section>
 
             <ArticleFeed articles={articles} cats={cats} sectionRef={refs.articles} filter={feedFilter} onFilter={setFeedFilter} query={query} />

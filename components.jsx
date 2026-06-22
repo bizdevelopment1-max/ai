@@ -101,7 +101,7 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
       <nav className="sb-nav">
         {NAV.map((n, idx) => {
           const cat = isCat(n.id) ? (cats || []).find(c => c.id === n.id) : null;
-          const subs = cat ? (companies || []).filter(c => c.cat === n.id) : [];
+          const subs = cat ? (companies || []).filter(c => c.cat === n.id).filter(c => n.id !== "startup" || c.rel) : [];
           const openS = openCat === n.id;
           const showGroup = n.group && (idx === 0 || NAV[idx - 1].group !== n.group);
           return (
