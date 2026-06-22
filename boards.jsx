@@ -285,6 +285,18 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
     return next;
   });
 
+  // 기사 삭제는 비밀번호('000') 입력 시에만 동작. 틀리면 삭제하지 않고 안내만 표시.
+  const DEL_PW = "000";
+  const [pendingDel, setPendingDel] = React.useState(null);  // 비밀번호 입력 대기 중인 기사 key
+  const [pwInput, setPwInput] = React.useState("");
+  const [pwErr, setPwErr] = React.useState(false);
+  const askDelete = (a) => { setPendingDel(keyOf(a)); setPwInput(""); setPwErr(false); };
+  const cancelDelete = () => { setPendingDel(null); setPwInput(""); setPwErr(false); };
+  const confirmDelete = (a) => {
+    if (pwInput === DEL_PW) { removeArticle(a); cancelDelete(); }
+    else { setPwErr(true); }   // 비밀번호 불일치 — 삭제하지 않음
+  };
+
   // reset company filter whenever the category changes
   React.useEffect(() => { setCo("all"); }, [filter]);
 
@@ -367,10 +379,22 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                   <a className="art-title" href={a.url} target="_blank" rel="noopener">{a.title}</a>
                   {a.summary && <span className="art-summary"><BoldSummary text={a.summary} /></span>}
                 </div>
-                <button className="art-del" title="이 기사 삭제(다시 표시 안 함)" aria-label="기사 삭제"
-                  onClick={() => removeArticle(a)}>
-                  <Icon name="x" size={13} sw={2.2} />
-                </button>
+                {pendingDel === keyOf(a) ? (
+                  <div className="art-del-pw" onClick={e => e.stopPropagation()}>
+                    <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")}
+                      placeholder="비밀번호" value={pwInput} autoFocus aria-label="삭제 비밀번호"
+                      onChange={e => { setPwInput(e.target.value); setPwErr(false); }}
+                      onKeyDown={e => { if (e.key === "Enter") confirmDelete(a); else if (e.key === "Escape") cancelDelete(); }} />
+                    <button className="art-pw-ok" onClick={() => confirmDelete(a)} title="삭제 확인">삭제</button>
+                    <button className="art-pw-cancel" onClick={cancelDelete} title="취소" aria-label="취소"><Icon name="x" size={12} sw={2.2} /></button>
+                    {pwErr && <span className="art-pw-err">비밀번호가 틀렸습니다.</span>}
+                  </div>
+                ) : (
+                  <button className="art-del" title="이 기사 삭제(비밀번호 필요)" aria-label="기사 삭제"
+                    onClick={() => askDelete(a)}>
+                    <Icon name="x" size={13} sw={2.2} />
+                  </button>
+                )}
               </div>
             );
           })}

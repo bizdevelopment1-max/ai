@@ -1249,6 +1249,33 @@ a[href]:hover .rainbow-on-hover,
 .art:hover .art-del { opacity: 1; }
 .art-del:hover { background: #D23B3B; border-color: #D23B3B; color: #fff; }
 
+/* 기사 삭제 비밀번호 입력(000) */
+.art-del-pw { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; position: relative; align-self: center; }
+.art-pw-input {
+  width: 70px; height: 30px; border-radius: 7px; padding: 0 9px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  font-size: 13px; font-family: var(--f); transition: border-color .14s;
+}
+.art-pw-input::placeholder { color: var(--muted); font-size: 12px; }
+.art-pw-input:focus { outline: none; border-color: var(--accent); }
+.art-pw-input.err { border-color: #D23B3B; }
+.art-pw-ok {
+  height: 30px; padding: 0 10px; border-radius: 7px; border: none;
+  background: #D23B3B; color: #fff; font-size: 11.5px; font-weight: 800; cursor: pointer; transition: filter .14s;
+}
+.art-pw-ok:hover { filter: brightness(1.08); }
+.art-pw-cancel {
+  width: 28px; height: 30px; display: grid; place-items: center; border-radius: 7px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--muted); cursor: pointer;
+}
+.art-pw-cancel:hover { color: var(--ink); border-color: var(--ink-2); }
+.art-pw-err {
+  position: absolute; top: 35px; right: 0; white-space: nowrap; z-index: 6;
+  font-size: 11px; font-weight: 700; color: #D23B3B;
+  background: var(--panel); border: 1px solid color-mix(in srgb, #D23B3B 42%, var(--line));
+  border-radius: 6px; padding: 3px 8px; box-shadow: var(--shadow-lg);
+}
+
 /* ============================================================
    Stock price board
    ============================================================ */
@@ -1370,6 +1397,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .art-title { font-size: 13px; line-height: 1.45; }
   .art-summary { font-size: 11.5px; }
   .art-del { width: 32px; height: 32px; align-self: flex-start; }
+  .art-del-pw { align-self: flex-start; gap: 4px; }
+  .art-pw-input { width: 58px; }
   .feed-body { padding: 6px 12px 14px; }
   /* 주가 종목 탭: 가로 스크롤(잘림 방지) */
   .stock-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
