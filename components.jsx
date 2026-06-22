@@ -63,7 +63,7 @@ const NAV = [
   { id: "signals", ko: "성능·신뢰성 격차", en: "Capability–Reliability", icon: "brain", group: "심층 분석" },
   { id: "reports", ko: "리서치 리포트", en: "Research", icon: "report", group: "심층 분석" },
   { id: "charts", ko: "정량 분석", en: "Quant Charts", icon: "chart", group: "정량 데이터" },
-  { id: "monthly", ko: "월별 매출 추이", en: "Monthly Revenue", icon: "pulse", group: "정량 데이터" },
+  { id: "monthly", ko: "분기별 매출 추이", en: "Quarterly Revenue", icon: "pulse", group: "정량 데이터" },
   { id: "stocks", ko: "주가 차트", en: "Stock Prices", icon: "up", group: "정량 데이터" },
 ];
 

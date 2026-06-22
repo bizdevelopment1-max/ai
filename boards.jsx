@@ -1143,8 +1143,9 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
   const inView = useInView(sectionRef);
   const [selectedApp, setSelectedApp] = React.useState("all");
 
-  const revMonthly = data.REVENUE_MONTHLY || [];
-  const revMonths = revMonthly.map(m => m.month);
+  const revMonthly = data.REVENUE_QUARTERLY || data.REVENUE_MONTHLY || [];
+  const periodOf = m => m.q || m.month;
+  const revMonths = revMonthly.map(periodOf);
   const allRevNames = revMonthly.length > 0 ? revMonthly[0].data.map(d => d.name) : [];
   const appColors = ["#1428A0", "#7A38D6", "#0E8F6E", "#D23B3B", "#F59E0B", "#0891B2", "#2D6BFF", "#C026D3"];
 
@@ -1171,13 +1172,13 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
   };
 
   return (
-    <section className="board" ref={sectionRef} data-screen-label="Monthly Revenue">
+    <section className="board" ref={sectionRef} data-screen-label="Quarterly Revenue">
      <AnimCtx.Provider value={inView}>
       <div className="board-head">
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
-          <h2>AI 월별 매출 추이 <span className="board-en">Monthly Revenue Trends</span></h2>
-          <p>축적된 <b>매출 추세</b>(시계열·Δ) — 데일리 기사(오늘의 이벤트)와 역할 분리 · <b>분기 공시(10-Q/IR)·공개 ARR/run-rate</b> 기반 월 배분(내부 추정 제외)</p>
+          <h2>AI 분기별 매출 추이 <span className="board-en">Quarterly Revenue Trends</span></h2>
+          <p>축적된 <b>매출 추세</b>(분기 시계열·Δ) — 데일리 기사(오늘의 이벤트)와 역할 분리 · <b>분기 공시(NVIDIA)·공개 ARR/run-rate÷4</b> 환산(내부 추정 제외, NVIDIA는 회계분기)</p>
         </div>
       </div>
 
@@ -1196,13 +1197,13 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
 
       <div className="chart-grid">
         <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-          <div className="cc-head"><h3>AI 월별 매출 추이 (분기 공시·공개 ARR/Run-rate 기반)</h3><span>$M · 분기 공시 매출(10-Q/IR)·공개 ARR·run-rate를 월 단위로 배분 — 데이터 성격은 각 포인트 소스 참조</span></div>
+          <div className="cc-head"><h3>AI 분기별 매출 추이 (분기 공시·공개 ARR/Run-rate 기반)</h3><span>$M · 분기 공시 매출(NVIDIA)·공개 ARR·run-rate÷4 환산 — 데이터 성격은 각 포인트 소스 참조</span></div>
           <MonthlyLineChart series={buildRevenueSeries()} months={revMonths} colors={appColors} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" valuePrefix="$" companies={data.COMPANIES} />
         </div>
       </div>
       {revDeltas.length > 0 && (
         <div className="monthly-delta">
-          <b>핵심 변화 (Δ {revMonths[0]?.replace("2026-", "")}→{revMonths[revMonths.length - 1]?.replace("2026-", "")}월):</b>
+          <b>핵심 변화 (Δ {revMonths[0]}→{revMonths[revMonths.length - 1]}):</b>
           {revDeltas.slice(0, 3).map((d, i) => (
             <span className="md-item" key={i}>{d.name} <em className={d.pct >= 0 ? "up" : "down"}>{d.pct >= 0 ? "+" : ""}{d.pct}%</em></span>
           ))}

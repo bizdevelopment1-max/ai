@@ -628,6 +628,41 @@ window.DASH = (function () {
     ]},
   ];
 
+  /* ---- 분기별 매출 추이 ($M) — 분기 공시 매출(NVIDIA)·공개 ARR/run-rate÷4 환산. 내부 추정 제외.
+     NVIDIA는 회계분기(FY) 기준, 라벨은 보고 시점의 캘린더 분기에 근사. ---- */
+  const REVENUE_QUARTERLY = [
+    { q: "2025 Q2", data: [
+      { name: "NVIDIA", value: 46700, src: "NVIDIA FY26 Q2 매출 공시" },
+      { name: "Microsoft AI", value: 5000, src: "AI run-rate ~$20B ÷4" },
+      { name: "OpenAI", value: 2800, src: "공개 ARR 기반" },
+      { name: "Anthropic", value: 1000, src: "공개 run-rate ~$4B ÷4" },
+    ]},
+    { q: "2025 Q3", data: [
+      { name: "NVIDIA", value: 57000, src: "NVIDIA FY26 Q3 매출 공시" },
+      { name: "Microsoft AI", value: 6500, src: "AI run-rate ~$26B ÷4" },
+      { name: "OpenAI", value: 3300, src: "공개 ARR 기반" },
+      { name: "Anthropic", value: 1750, src: "공개 run-rate ~$7B ÷4" },
+    ]},
+    { q: "2025 Q4", data: [
+      { name: "NVIDIA", value: 68100, src: "NVIDIA FY26 Q4 매출 공시" },
+      { name: "Microsoft AI", value: 8000, src: "AI run-rate ~$32B ÷4" },
+      { name: "OpenAI", value: 4000, src: "공개 ARR ~$13B 기반" },
+      { name: "Anthropic", value: 2250, src: "공개 run-rate ~$9B ÷4" },
+    ]},
+    { q: "2026 Q1", data: [
+      { name: "NVIDIA", value: 81600, src: "NVIDIA FY27 Q1 매출 공시 $81.6B" },
+      { name: "Microsoft AI", value: 9250, src: "AI run-rate $37B ÷4" },
+      { name: "OpenAI", value: 5700, src: "S-1 Q1'26 매출 $5.7B 공시" },
+      { name: "Anthropic", value: 5750, src: "공개 run-rate ~$23B(3월) ÷4" },
+    ]},
+    { q: "2026 Q2E", data: [
+      { name: "NVIDIA", value: 91000, src: "NVIDIA FY27 Q2 가이던스 $91B" },
+      { name: "Microsoft AI", value: 9500, src: "AI run-rate $37B+ ÷4" },
+      { name: "OpenAI", value: 6500, src: "공개 ARR 기반(진행)" },
+      { name: "Anthropic", value: 11750, src: "공개 run-rate $47B(5월) ÷4" },
+    ]},
+  ];
+
   /* ============================================================
      STOCKS — listed AI companies. 실제 일별 주가는 매일 크롤링되어
      stocks.json 으로 제공됩니다(scripts/crawl-stocks.mjs · Stooq).
@@ -727,5 +762,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, COMPANY_ORDER, STARTUP_VERTICALS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, CAP_REL, QA_PAIRS, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, COMPANY_ORDER, STARTUP_VERTICALS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, CAP_REL, QA_PAIRS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();

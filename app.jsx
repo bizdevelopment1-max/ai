@@ -41,10 +41,12 @@ function App() {
   const dark = t.dark;
 
   // crawler output: news.json (refreshed daily ~07:00 by GitHub Action) merged over static ARTICLES
+  // 캐시버스터: GitHub Pages CDN(edge)은 URL 기준 캐시 → 분 단위 쿼리스트링으로 항상 최신 파일을 받게 함
+  const cb = () => `?t=${Math.floor(Date.now() / 60000)}`;   // 1분 단위 — 매일 갱신분 즉시 반영
   const [crawled, setCrawled] = uS(null);
   uE(() => {
     let alive = true;
-    fetch("news.json", { cache: "no-store" })
+    fetch("news.json" + cb(), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && Array.isArray(j.articles)) setCrawled(j.articles); })
       .catch(() => {});
@@ -77,7 +79,7 @@ function App() {
   const [insights, setInsights] = uS(null);
   uE(() => {
     let alive = true;
-    fetch("insights.json", { cache: "no-store" })
+    fetch("insights.json" + cb(), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && Array.isArray(j.cards) && j.cards.length) setInsights(j); })
       .catch(() => {});
@@ -88,7 +90,7 @@ function App() {
   const [stockData, setStockData] = uS(null);
   uE(() => {
     let alive = true;
-    fetch("stocks.json", { cache: "no-store" })
+    fetch("stocks.json" + cb(), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.stocks) setStockData({ ...j.stocks, __generatedAt: j.generatedAt }); })
       .catch(() => {});

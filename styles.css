@@ -1020,10 +1020,13 @@ a[href]:hover .rainbow-on-hover,
     background: rgba(0,0,0,.4); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
   }
 
-  .ct-head, .ct-row { grid-template-columns: 1.4fr .9fr .8fr; }
-  .ct-head span:nth-child(n+4), .ct-row > *:nth-child(n+4) { display: none; }
-  .report { grid-template-columns: 56px 1fr 90px; }
-  .report > *:nth-child(n+4) { display: none; }
+  /* 모바일: 표 컬럼을 숨기지 않고 가로 스크롤로 전체 표시(오른쪽 잘림 방지) */
+  .ct-head, .ct-row { grid-template-columns: 1.4fr 1fr 1fr 1fr .8fr 1.7fr; min-width: 720px; }
+  .ct-head span:nth-child(n+4), .ct-row > *:nth-child(n+4) { display: block; }
+  .ct-vgroup { min-width: 720px; }
+  .report-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .report { grid-template-columns: 56px 100px 1fr 120px 84px 40px 14px; min-width: 660px; }
+  .report > *:nth-child(n+4) { display: block; }
   .insight-grid { grid-template-columns: 1fr; }
   .vp-grid { grid-template-columns: 1fr; }
   .dyn-grid { grid-template-columns: 1fr; }
@@ -1057,8 +1060,7 @@ a[href]:hover .rainbow-on-hover,
   .cd-modal { padding: 18px 16px 16px; }
   .cd-stats { grid-template-columns: 1fr; }
   .insight-grid, .vp-grid, .biz-grid { grid-template-columns: 1fr; }
-  .ct-head, .ct-row { grid-template-columns: 1.5fr .9fr; }
-  .ct-head span:nth-child(n+3), .ct-row > *:nth-child(n+3) { display: none; }
+  /* 초소형 화면에서도 표는 가로 스크롤로 전체 컬럼 유지(컬럼 숨김 안 함) */
   .dyn-thead, .dyn-trow { grid-template-columns: 52px repeat(3, 1fr); }
 }
 
@@ -1545,8 +1547,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .md-read { color: var(--muted); font-weight: 600; flex: 1 1 100%; }
 
 @media (max-width: 760px) {
-  .pt-row { grid-template-columns: 1.1fr 1.2fr; }
-  .pt-row span:nth-child(2), .pt-row span:nth-child(4) { display: none; }  /* 모바일: 모델+단가만 */
+  /* 모바일: 가격표도 컬럼 숨김 없이 가로 스크롤로 전체 표시 */
+  .pt-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pt-row { grid-template-columns: 1.3fr 1.3fr 1.4fr 2fr; min-width: 560px; }
+  .pt-row span:nth-child(2), .pt-row span:nth-child(4) { display: block; }
   .pricing-tracker { padding: 12px 14px 4px; }
 }
 
@@ -1557,8 +1561,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .tk-table .tk-row { grid-template-columns: 0.5fr 1fr 0.9fr 2.4fr; }
 .tk-tier { font-size: 9.5px; font-weight: 900; font-style: normal; border: 1px solid; border-radius: 5px; padding: 1px 6px; justify-self: start; white-space: nowrap; }
 @media (max-width: 760px) {
-  .tk-table .tk-row { grid-template-columns: 0.5fr 1fr 0.9fr; }
-  .tk-row span:nth-child(2) { display: block !important; }  /* 모델 유지(일반 pt-row 규칙 무시) */
-  .tk-row span:nth-child(3) { display: block !important; }  /* 단가 유지 */
-  .tk-row span:nth-child(4) { display: none !important; }   /* 긴 원가영향 설명만 숨김 */
+  /* 모바일: 단말 원가영향까지 전체 컬럼 가로 스크롤 표시 */
+  .tk-table .tk-row { grid-template-columns: 0.5fr 1fr 0.9fr 2.4fr; min-width: 600px; }
+  .tk-row span:nth-child(2), .tk-row span:nth-child(3), .tk-row span:nth-child(4) { display: block !important; }
 }
