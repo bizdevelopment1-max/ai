@@ -49,21 +49,30 @@ const sourceWeight = (s) => (AUTHORITATIVE.some(a => String(s || "").toLowerCase
 const matchCount = (text, kw) => { const t = String(text).toLowerCase(); return kw.filter(k => t.includes(k.toLowerCase())).length; };
 
 // 개조식 변환: 마침표 제거(여러 문장은 ' · '로 연결) + 정중어/서술 어미 제거 → 명사형 종결
+// 긴 패턴 우선(진행형 '~하고 있습니다' 등을 먼저 잡아야 함)
 const GAEJO_ENDINGS = [
-  [/했습니다$/, ""], [/하였습니다$/, ""], [/하였다$/, ""], [/했다$/, ""],
-  [/됐습니다$/, "됨"], [/되었습니다$/, "됨"], [/됩니다$/, ""], [/되었다$/, "됨"], [/됐다$/, "됨"],
+  [/하고 있습니다$/, ""], [/하고 있다$/, ""], [/고 있습니다$/, ""], [/고 있다$/, ""],
+  [/되고 있습니다$/, "됨"], [/되고 있다$/, "됨"],
+  [/하였습니다$/, ""], [/했습니다$/, ""], [/하였다$/, ""], [/했다$/, ""],
+  [/되었습니다$/, "됨"], [/됐습니다$/, "됨"], [/됩니다$/, ""], [/되었다$/, "됨"], [/됐다$/, "됨"],
   [/입니다$/, ""], [/합니다$/, ""], [/습니다$/, ""], [/한다$/, ""], [/된다$/, "됨"], [/이다$/, ""],
 ];
 function gaejosik(s) {
   if (!s) return s;
-  const parts = String(s).replace(/\s+/g, " ").trim()
-    .split(/\.(?:\s+|$)/).map(x => x.trim()).filter(Boolean);
+  let main = String(s).replace(/\s+/g, " ").trim();
+  // 끝의 출처 표기(": WSJ", " - TechCrunch", "| Reuters")를 분리 후 · 로 재부착
+  let src = "";
+  const m = main.match(/\s*[:\-–—|]\s*([A-Za-z][\w .&'/-]{0,24})$/);
+  if (m) { src = m[1].trim(); main = main.slice(0, m.index).trim(); }
   const strip = (c) => {
     let x = c.trim();
     for (const [re, rep] of GAEJO_ENDINGS) { if (re.test(x)) { x = x.replace(re, rep); break; } }
     return x.replace(/[ ·\-—:,]+$/, "").trim();
   };
-  return parts.map(strip).filter(Boolean).join(" · ");
+  const parts = main.split(/\.(?:\s+|$)/).map(x => x.trim()).filter(Boolean).map(strip).filter(Boolean);
+  let out = parts.join(" · ");
+  if (src) out += (out ? " · " : "") + src;
+  return out;
 }
 
 async function main() {
