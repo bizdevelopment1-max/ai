@@ -1368,12 +1368,20 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .topline-kicker { font-size: 13.5px; font-weight: 800; color: var(--ink); letter-spacing: .02em; }
 .topline-sub { font-size: 11px; font-weight: 600; color: var(--muted); }
 .topline-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.tl-card { border: 1px solid var(--line); border-left: 3px solid var(--tl); border-radius: 10px; padding: 12px 14px; background: var(--panel); box-shadow: var(--shadow); transition: transform .18s ease, box-shadow .18s ease; }
-.tl-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-.tl-tag { display: inline-block; font-size: 10px; font-weight: 800; color: var(--tl); background: color-mix(in srgb, var(--tl) 13%, var(--panel)); border-radius: 5px; padding: 2px 8px; margin-bottom: 7px; }
+.tl-card { border: 1px solid var(--line); border-left: 3px solid var(--tl); border-radius: 10px; padding: 12px 14px; background: var(--panel); box-shadow: var(--shadow); transition: transform .18s ease, box-shadow .18s ease; cursor: pointer; position: relative; }
+.tl-card:hover, .tl-card.tl-open { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-left-width: 5px; }
+.tl-cardhead { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.tl-ico { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; color: var(--tl); background: color-mix(in srgb, var(--tl) 14%, var(--panel)); flex-shrink: 0; }
+.tl-tag { display: inline-block; font-size: 10.5px; font-weight: 800; color: var(--tl); letter-spacing: .01em; }
+.tl-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tl); margin-left: auto; box-shadow: 0 0 0 3px color-mix(in srgb, var(--tl) 18%, transparent); }
 .tl-now { font-size: 12px; font-weight: 600; color: var(--ink-2); line-height: 1.5; }
-.tl-dec { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.5; margin-top: 6px; }
+.tl-dec { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.5; margin-top: 6px;
+  max-height: 0; overflow: hidden; opacity: 0; margin-top: 0; transition: max-height .25s ease, opacity .2s ease, margin-top .2s ease; }
+.tl-card.tl-open .tl-dec { max-height: 200px; opacity: 1; margin-top: 6px; }
 .tl-arrow { color: var(--tl); font-weight: 800; margin-right: 5px; }
+.tl-link { margin-top: 9px; font-size: 11px; font-weight: 800; color: var(--tl); background: none; border: 1px solid color-mix(in srgb, var(--tl) 40%, var(--line)); border-radius: 6px; padding: 3px 9px; cursor: pointer; transition: all .14s; opacity: 0; max-height: 0; overflow: hidden; }
+.tl-card.tl-open .tl-link { opacity: 1; max-height: 40px; }
+.tl-link:hover { background: var(--tl); color: #fff; border-color: var(--tl); }
 @media (max-width: 760px) { .topline-grid { grid-template-columns: 1fr; } }
 
 .sb-group { font-size: 9.5px; font-weight: 800; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .09em; padding: 12px 14px 4px; }

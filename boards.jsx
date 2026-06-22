@@ -397,10 +397,13 @@ function ChartsBoard({ data, cats, theme, sectionRef }) {
       <div className="board-head">
         <span className="board-tab" style={{ background: "var(--ink)" }} />
         <div className="board-titles">
-          <h2>정량 분석 <span className="board-en">Company Quant · AI 기업별 지표</span></h2>
-          <p>기업별 밸류에이션 · 사용자 · 가격 · 매출 정량 비교 (AI 시장 규모·점유율은 상단 오버뷰 참조)</p>
+          <h2>정량 분석 <span className="board-en">Quant Hub · 시장·기업 지표</span></h2>
+          <p>핵심 KPI · AI 시장 규모·점유율·펀딩 · 기업별 밸류에이션·사용자·가격·매출 정량 비교</p>
         </div>
       </div>
+
+      <KpiStrip kpis={data.KPIS} />
+      <OverviewCharts data={data} cats={cats} theme={theme} />
 
       <div className="chart-grid">
         <div className="chart-card">
@@ -1190,23 +1193,39 @@ function SignalBoard({ data, theme, sectionRef }) {
 }
 
 // ---- Executive Top-line: 현상 → 의사결정 5초 브리핑 (Overview 최상단) ----
-function ExecToplines({ items }) {
+function ExecToplines({ items, onNav }) {
+  const [open, setOpen] = React.useState(0);   // 인터랙티브: 펼친 카드 인덱스
   if (!items || !items.length) return null;
   const TONE = { warn: "#D23B3B", signal: "#2D6BFF", revenue: "#16A34A", compete: "#C026D3" };
+  const ICON = { warn: "target", signal: "pulse", revenue: "chart", compete: "brain" };
+  const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "성능·신뢰성", native: "AI 네이티브", dynamics: "경쟁 다이내믹스" };
   return (
     <div className="topline">
       <div className="topline-head">
         <span className="topline-kicker">오늘의 톱라인</span>
-        <span className="topline-sub">현상 → 의사결정 · 온디바이스 AI 단말 사업 관점</span>
+        <span className="topline-sub">현상 → 의사결정 · 온디바이스 AI 단말 사업 관점 · 카드를 눌러 상세로 이동</span>
       </div>
       <div className="topline-grid">
-        {items.map((t, i) => (
-          <div className="tl-card" key={i} style={{ "--tl": TONE[t.tone] || "#2D6BFF" }}>
-            <span className="tl-tag">{t.tag}</span>
-            <p className="tl-now">{t.now}</p>
-            <p className="tl-dec"><span className="tl-arrow">→</span>{t.decision}</p>
-          </div>
-        ))}
+        {items.map((t, i) => {
+          const isOpen = open === i;
+          return (
+            <div className={"tl-card" + (isOpen ? " tl-open" : "")} key={i} style={{ "--tl": TONE[t.tone] || "#2D6BFF" }}
+              onMouseEnter={() => setOpen(i)} onClick={() => setOpen(i)}>
+              <div className="tl-cardhead">
+                <span className="tl-ico"><Icon name={ICON[t.tone] || "spark"} size={14} /></span>
+                <span className="tl-tag">{t.tag}</span>
+                <i className="tl-dot" />
+              </div>
+              <p className="tl-now">{t.now}</p>
+              <p className="tl-dec"><span className="tl-arrow">→</span>{t.decision}</p>
+              {t.nav && (
+                <button className="tl-link" onClick={e => { e.stopPropagation(); onNav && onNav(t.nav); }}>
+                  {NAVLABEL[t.nav] || "상세"} 보기 ›
+                </button>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

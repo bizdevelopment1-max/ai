@@ -215,7 +215,7 @@ function KpiStrip({ kpis }) {
               </button>
               <div className="kpi-label">{k.label}</div>
               <div className="kpi-row">
-                <AnimatedNumber key={"v" + (hoverNonce[ki] || 0)} className="kpi-val" value={k.value} active={inView} dur={1100} />
+                <span className="kpi-val">{k.value}</span>
                 {!isFold && <Trend v={k.delta} small animate />}
               </div>
               {!isFold && <MiniBar key={"b" + (hoverNonce[ki] || 0)} frac={k.fill} color="var(--accent)" />}

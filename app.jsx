@@ -122,10 +122,10 @@ function App() {
     if (!sc) return;
     const onScroll = () => {
       const y = sc.scrollTop + 80;
-      let cur = "overview";
+      let cur = "overview", best = -1;
       for (const id of Object.keys(refs)) {
         const el = refs[id].current;
-        if (el && el.offsetTop <= y) cur = id;
+        if (el && el.offsetTop <= y && el.offsetTop > best) { best = el.offsetTop; cur = id; }
       }
       setActive(cur);
     };
@@ -210,9 +210,7 @@ function App() {
               <div className="ov-head">
                 <h2 className="ov-title">Executive Summary</h2>
               </div>
-              <ExecToplines items={D.TOPLINE} />
-              <KpiStrip kpis={D.KPIS} />
-              <OverviewCharts data={D} cats={cats} theme={chartTheme} />
+              <ExecToplines items={D.TOPLINE} onNav={navTo} />
             </section>
 
             <ArticleFeed articles={articles} cats={cats} sectionRef={refs.articles} filter={feedFilter} onFilter={setFeedFilter} query={query} />
