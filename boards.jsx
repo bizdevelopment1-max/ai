@@ -39,6 +39,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
   const inView = useInView(sectionRef);
   const prog = useProgress(inView, 1000);
   const rows = companies.filter(c => c.cat === cat.id)
+    .filter(c => cat.id !== "startup" || c.rel)   // 스타트업은 단말 사업 관련성 태그가 있는 곳만 노출
     .filter(c => !query || (c.name + c.unit + c.note).toLowerCase().includes(query.toLowerCase()));
   const open = c => onSelect && onSelect(c);
   return (
@@ -48,7 +49,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
         <span className="board-tab" style={{ background: cat.accent }} />
         <div className="board-titles">
           <h2>{cat.ko} <span className="board-en">{cat.en}</span></h2>
-          <p>{cat.desc} · 업체명 클릭 시 상세 정보</p>
+          <p>{cat.id === "startup" ? "단말 사업 관련성(온디바이스 음성·미디어 / 어시스턴트 / 에이전트 UX / 오픈모델 소싱) 기준 선별 · 엔터프라이즈 검색·데이터·국방은 제외" : cat.desc} · 업체명 클릭 시 상세 정보</p>
         </div>
         <div className="board-count" style={{ color: cat.accent, background: cat.accentSoft }}>{rows.length} 社</div>
       </div>
@@ -74,7 +75,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
               <b>{c.name}</b>
               <Icon name="chevron" size={12} />
             </span>
-            <span className="ct-seg">{c.unit}</span>
+            <span className="ct-seg">{c.rel && <em className="ct-rel" style={{ color: cat.accent, borderColor: cat.accent }}>{c.rel}</em>}{c.unit}</span>
             <span className="num ct-valcell" title={c.valAsof ? `출처: '${c.valAsof} 기준` : ""}>
               <AnimatedNumber className="ct-val" value={c.valuation} />
               {c.valAsof && c.valAsof !== "—" && <em className="ct-asof">'{c.valAsof} 기준</em>}
@@ -986,6 +987,23 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
           <p>투자·인수·GPU/클라우드/데이터 <b>매출</b> 등 실제 '돈의 흐름'을 그래프로 표시 (초록=투자, 주황=매출, 파랑=파트너십) · <b>시사점:</b> 온디바이스 AI 기능의 과금 모델(구독 유료화·단말 번들·커머스 수수료) 설계 참조</p>
         </div>
       </div>
+      <div className="pricing-tracker">
+        <div className="pt-head"><h3>수익화 프라이싱 모델 — 누가 얼마에 파는가</h3><span>5종 과금 구조 · 온디바이스 AI 기능 과금 설계 참조</span></div>
+        <div className="pt-table">
+          <div className="pt-row pt-hrow"><span>모델</span><span>대표 업체</span><span>단가 구조</span><span>시사점</span></div>
+          {(window.DASH.PRICING_MODELS || []).map((p, i) => {
+            const ac = (catMap[p.tone] || {}).accent || "var(--accent)";
+            return (
+              <div className="pt-row" key={i}>
+                <span className="pt-model"><i style={{ background: ac }} />{p.model}</span>
+                <span className="pt-players">{p.players}</span>
+                <span className="pt-price">{p.price}</span>
+                <span className="pt-note">{p.note}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
       <KnowledgeGraph companies={companies} cats={cats} catMap={catMap} progress={bizProg} mode="bizmodel" />
       <div className="biz-grid">
         {models.map((m, i) => {
@@ -1035,6 +1053,13 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
   const allRevNames = revMonthly.length > 0 ? revMonthly[0].data.map(d => d.name) : [];
   const appColors = ["#1428A0", "#7A38D6", "#0E8F6E", "#D23B3B", "#F59E0B", "#0891B2", "#2D6BFF", "#C026D3"];
 
+  // 첫 달 → 최신 달 매출 변화율(Δ) — 추세 요약(뉴스 서술과 분리)
+  const revDeltas = revMonthly.length >= 2 ? allRevNames.map(name => {
+    const f = (revMonthly[0].data.find(d => d.name === name) || {}).value || 0;
+    const l = (revMonthly[revMonthly.length - 1].data.find(d => d.name === name) || {}).value || 0;
+    return { name, pct: f ? Math.round((l - f) / f * 100) : 0 };
+  }).sort((a, b) => b.pct - a.pct) : [];
+
   const buildRevenueSeries = () => {
     const names = selectedApp === "all" ? allRevNames.slice(0, 6) : [selectedApp];
     return names.map(name => ({
@@ -1057,7 +1082,7 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
           <h2>AI 월별 매출 추이 <span className="board-en">Monthly Revenue Trends</span></h2>
-          <p>공시 매출·ARR/run-rate 월 배분 기반 모델값 · 데이터 성격은 각 포인트 소스 참조</p>
+          <p>축적된 <b>매출 추세</b>(시계열·Δ) — 데일리 기사(오늘의 이벤트)와 역할 분리 · 공시·ARR/run-rate 월 배분 모델값</p>
         </div>
       </div>
 
@@ -1080,6 +1105,15 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
           <MonthlyLineChart series={buildRevenueSeries()} months={revMonths} colors={appColors} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" valuePrefix="$" companies={data.COMPANIES} />
         </div>
       </div>
+      {revDeltas.length > 0 && (
+        <div className="monthly-delta">
+          <b>핵심 변화 (Δ {revMonths[0]?.replace("2026-", "")}→{revMonths[revMonths.length - 1]?.replace("2026-", "")}월):</b>
+          {revDeltas.slice(0, 3).map((d, i) => (
+            <span className="md-item" key={i}>{d.name} <em className={d.pct >= 0 ? "up" : "down"}>{d.pct >= 0 ? "+" : ""}{d.pct}%</em></span>
+          ))}
+          <span className="md-read">— 성장 모멘텀은 Anthropic(매출 급증), 절대 규모 1위는 NVIDIA. 같은 사건을 뉴스에서 또 서술하지 않음.</span>
+        </div>
+      )}
      </AnimCtx.Provider>
     </section>
   );
