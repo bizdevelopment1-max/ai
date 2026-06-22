@@ -1420,3 +1420,16 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .pt-row span:nth-child(2), .pt-row span:nth-child(4) { display: none; }  /* 모바일: 모델+단가만 */
   .pricing-tracker { padding: 12px 14px 4px; }
 }
+
+/* ---- 스타트업 Tier 배지 · Monetization Tracker 티어 ---- */
+.ct-tier { display: inline-block; font-size: 9px; font-weight: 900; font-style: normal; border-radius: 4px; padding: 0 5px; margin-right: 5px; color: #fff; vertical-align: middle; }
+.ct-tier-T1 { background: #16A34A; }
+.ct-tier-T2 { background: #F59E0B; }
+.tk-table .tk-row { grid-template-columns: 0.5fr 1fr 0.9fr 2.4fr; }
+.tk-tier { font-size: 9.5px; font-weight: 900; font-style: normal; border: 1px solid; border-radius: 5px; padding: 1px 6px; justify-self: start; white-space: nowrap; }
+@media (max-width: 760px) {
+  .tk-table .tk-row { grid-template-columns: 0.5fr 1fr 0.9fr; }
+  .tk-row span:nth-child(2) { display: block !important; }  /* 모델 유지(일반 pt-row 규칙 무시) */
+  .tk-row span:nth-child(3) { display: block !important; }  /* 단가 유지 */
+  .tk-row span:nth-child(4) { display: none !important; }   /* 긴 원가영향 설명만 숨김 */
+}

@@ -109,7 +109,7 @@ window.DASH = (function () {
 
     // ── startup ──
     {
-      cat: "startup", name: "Perplexity", rel: "어시스턴트 경쟁자", domain: "perplexity.ai", unit: "AI 검색·에이전트 브라우저",
+      cat: "startup", name: "Perplexity", rel: "어시스턴트 경쟁자", tier: "T2", domain: "perplexity.ai", unit: "AI 검색·에이전트 브라우저",
       valuation: "$18B", valAsof: "26", metric: "ARR", value: "$450M+", metricAsof: "26.03",
       funding: "Series", trend: 50, trendBasis: "ARR 1개월 +50%",
       note: "AI 검색·답변 엔진 + Comet AI 브라우저. ARR $450M+(2026.03, 1개월 만에 +50%), 연 $656M 목표. 2026.03.23 Comet 전 세계 무료 전환($200/월→$0)으로 크롬(점유율 65%)과 정면 충돌. 출처 명시 답변으로 신뢰도 차별화.",
@@ -119,7 +119,7 @@ window.DASH = (function () {
       url: "https://www.perplexity.ai",
     },
     {
-      cat: "startup", name: "Mistral AI", rel: "오픈모델 소싱 후보", domain: "mistral.ai", unit: "유럽 파운데이션 모델",
+      cat: "startup", name: "Mistral AI", rel: "오픈모델 소싱 후보", tier: "T1", domain: "mistral.ai", unit: "유럽 파운데이션 모델",
       valuation: "$23B", valAsof: "26.06", metric: "라운드", value: "€3B 협의", metricAsof: "26.06",
       funding: "€20B 협의 중", trend: 100, trendBasis: "밸류 €11.7B→€20B (협의, 2배)",
       note: "프랑스 기반 AI 스타트업. 2026.06 밸류 €20B($23B) 신규 €3B 라운드 협의 중(정식 클로즈 미완료, 직전 €11.7B 대비 2배). 파리 데이터센터(13,800 NVIDIA 칩)·스웨덴 시설 건설. Le Chat·Mistral Large. 유럽 AI 주권의 상징.",
@@ -159,7 +159,7 @@ window.DASH = (function () {
       url: "https://scale.com",
     },
     {
-      cat: "startup", name: "Runway", rel: "온디바이스 음성·미디어", domain: "runwayml.com", unit: "비디오 생성 AI",
+      cat: "startup", name: "Runway", rel: "온디바이스 음성·미디어", tier: "T1", domain: "runwayml.com", unit: "비디오 생성 AI",
       valuation: "$4B", valAsof: "24.06", metric: "제품", value: "Gen-4", metricAsof: "26.05",
       funding: "Series D", trend: 25, trendBasis: "영상 생성 채택",
       note: "비디오 생성 AI 선도. 2026.05 Gen-4 출시 — 네이티브 오디오 생성·리얼리스틱 물리 엔진. Adobe Firefly에 Gen-4.5 최우선 배포 멀티이어 파트너십. 할리우드 제작 현장 도입 가속. 밸류 $4B(2024.06).",
@@ -169,7 +169,7 @@ window.DASH = (function () {
       url: "https://runwayml.com",
     },
     {
-      cat: "startup", name: "Stability AI", rel: "온디바이스 음성·미디어", domain: "stability.ai", unit: "생성 미디어(재건)",
+      cat: "startup", name: "Stability AI", rel: "온디바이스 음성·미디어", tier: "T1", domain: "stability.ai", unit: "생성 미디어(재건)",
       valuation: "$1B", valAsof: "23 피크", metric: "매출(추정)", value: "$190M", metricAsof: "26",
       funding: "구조조정·재건", trend: -10, trendBasis: "턴어라운드 케이스",
       note: "Stable Diffusion으로 이미지 생성을 대중화했으나 재정난·구조조정을 겪은 재건 케이스. 2026.05 Stable Audio 3.0(오픈웨이트)·Brand Studio 출시. 신임 CEO Prem Akkaraju(전 Weta)+Sean Parker·Eric Schmidt 이사회. 2026 추정 매출 $190M — 이미지에서 오디오·엔터프라이즈로 전환.",
@@ -179,7 +179,7 @@ window.DASH = (function () {
       url: "https://stability.ai",
     },
     {
-      cat: "startup", name: "ElevenLabs", rel: "온디바이스 음성·미디어", domain: "elevenlabs.io", unit: "AI 음성 합성",
+      cat: "startup", name: "ElevenLabs", rel: "온디바이스 음성·미디어", tier: "T1", domain: "elevenlabs.io", unit: "AI 음성 합성",
       valuation: "$11B", valAsof: "26.02", metric: "ARR", value: "$330M+", metricAsof: "26.01",
       funding: "Series D $500M", trend: 233, trendBasis: "밸류 $3.3B→$11B (3배+)",
       note: "AI 음성 생성·TTS 시장 선도. 2026.02 Series D $500M로 밸류 $11B(1년 전 $3.3B 대비 3배+), Sequoia 주도·NVIDIA 백업. ARR $330M+(2026.01). 팟캐스트·게임·영상 제작의 표준 음성 API.",
@@ -189,7 +189,7 @@ window.DASH = (function () {
       url: "https://elevenlabs.io",
     },
     {
-      cat: "startup", name: "Harvey", rel: "에이전트 UX 벤치마크", domain: "harvey.ai", unit: "법률 버티컬 AI",
+      cat: "startup", name: "Harvey", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "harvey.ai", unit: "법률 버티컬 AI",
       valuation: "$11B", valAsof: "26.03", metric: "ARR", value: "$190M", metricAsof: "26.01",
       funding: "Series C $200M", trend: 90, trendBasis: "ARR 5개월 $100M→$190M",
       note: "법률 전문 AI 에이전트 — 버티컬 AI 리더. 2026.03 Series C $200M로 밸류 $11B(Sequoia·GIC 주도). ARR $190M(5개월 만에 $100M→$190M, +90%). 전 세계 1,300개+ 법률 조직, 변호사 10만 명+ 사용. AmLaw 100 과반수 고객.",
@@ -209,7 +209,7 @@ window.DASH = (function () {
       url: "https://www.glean.com",
     },
     {
-      cat: "startup", name: "Sierra AI", rel: "에이전트 UX 벤치마크", domain: "sierra.ai", unit: "고객 서비스 AI 에이전트",
+      cat: "startup", name: "Sierra AI", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "sierra.ai", unit: "고객 서비스 AI 에이전트",
       valuation: "$10B", valAsof: "26.03", metric: "ARR", value: "$150M", metricAsof: "26.01",
       funding: "Sequoia 주도", trend: 100, trendBasis: "Revenue Multiple 67x",
       note: "고객 대면 AI 에이전트 플랫폼 — 기업 고객 서비스 전문. 밸류 $10B, ARR $150M. Revenue Multiple 67x로 AI 에이전트 섹터 최고 수준. (공동창업: Bret Taylor) Sequoia 투자.",
@@ -407,6 +407,15 @@ window.DASH = (function () {
   ];
 
   /* ---- AI Business Models ---- */
+  /* ---- AI Monetization Tracker — 모델별 토큰 단가 & 단말 원가 영향 ---- */
+  const TOKEN_PRICING = [
+    { tier: "Flagship", model: "GPT-5.5", io: "$5 / $30", cost: "클라우드 최고비용 — 핵심 기능만 선별 호출, 온디바이스 대체 시 절감 폭 가장 큼", tone: "native" },
+    { tier: "Flagship", model: "Claude Opus 4.8", io: "$5 / $25", cost: "고난도 에이전트·코딩용 — 프리미엄 기능 한정 적용", tone: "native" },
+    { tier: "Mid", model: "Claude Sonnet 4.6", io: "$3 / $15", cost: "일상 어시스턴트 기본값 후보 — 품질/원가 균형", tone: "native" },
+    { tier: "Mid", model: "GPT-5.4", io: "$2.50 / $15", cost: "범용 클라우드 폴백 — 비용/품질 균형점", tone: "native" },
+    { tier: "Economy", model: "Gemini Flash-Lite", io: "$0.25 / —", cost: "대량 요약·분류·번역 — 사실상 무료 수준, 온디바이스 무료화와 결합", tone: "bigtech" },
+  ];
+
   /* ---- 수익화 프라이싱 모델 트래커 (5종) — '누가 얼마에 파는가' ---- */
   const PRICING_MODELS = [
     { model: "순수 사용량 기반", players: "OpenAI · Anthropic", price: "토큰당 과금 $0.25~$75 / 1M", note: "API 파트너십 비용 예측 기준", tone: "native" },
@@ -653,5 +662,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, COMPANY_ORDER, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, KPIS, TOPLINE, INSIGHTS, CAP_REL, QA_PAIRS, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, COMPANY_ORDER, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, CAP_REL, QA_PAIRS, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();

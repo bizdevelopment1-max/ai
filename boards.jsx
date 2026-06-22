@@ -49,7 +49,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
         <span className="board-tab" style={{ background: cat.accent }} />
         <div className="board-titles">
           <h2>{cat.ko} <span className="board-en">{cat.en}</span></h2>
-          <p>{cat.id === "startup" ? "단말 사업 관련성(온디바이스 음성·미디어 / 어시스턴트 / 에이전트 UX / 오픈모델 소싱) 기준 선별 · 엔터프라이즈 검색·데이터·국방은 제외" : cat.desc} · 업체명 클릭 시 상세 정보</p>
+          <p>{cat.id === "startup" ? "3축 분류(배포: 온디바이스·하이브리드 / 밸류체인: 앱레이어↑ / 수익모델) 기준 선별 · T1=즉시 협업 검토(온디바이스·하이브리드) · T2=모니터링(클라우드·번들 가능) · 엔터프라이즈 검색·데이터·국방(T3)은 제외" : cat.desc} · 업체명 클릭 시 상세 정보</p>
         </div>
         <div className="board-count" style={{ color: cat.accent, background: cat.accentSoft }}>{rows.length} 社</div>
       </div>
@@ -75,7 +75,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
               <b>{c.name}</b>
               <Icon name="chevron" size={12} />
             </span>
-            <span className="ct-seg">{c.rel && <em className="ct-rel" style={{ color: cat.accent, borderColor: cat.accent }}>{c.rel}</em>}{c.unit}</span>
+            <span className="ct-seg">{c.tier && <em className={"ct-tier ct-tier-" + c.tier}>{c.tier}</em>}{c.rel && <em className="ct-rel" style={{ color: cat.accent, borderColor: cat.accent }}>{c.rel}</em>}{c.unit}</span>
             <span className="num ct-valcell" title={c.valAsof ? `출처: '${c.valAsof} 기준` : ""}>
               <AnimatedNumber className="ct-val" value={c.valuation} />
               {c.valAsof && c.valAsof !== "—" && <em className="ct-asof">'{c.valAsof} 기준</em>}
@@ -990,6 +990,25 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
           <p>투자·인수·GPU/클라우드/데이터 <b>매출</b> 등 실제 '돈의 흐름'을 그래프로 표시 (초록=투자, 주황=매출, 파랑=파트너십) · <b>시사점:</b> 온디바이스 AI 기능의 과금 모델(구독 유료화·단말 번들·커머스 수수료) 설계 참조</p>
         </div>
       </div>
+      <div className="pricing-tracker">
+        <div className="pt-head"><h3>AI Monetization Tracker — 토큰 단가 & 단말 원가 영향</h3><span>$ / 100만 토큰 (입력 / 출력) · 온디바이스 대체 시 절감 관점</span></div>
+        <div className="pt-table tk-table">
+          <div className="pt-row tk-row pt-hrow"><span>티어</span><span>모델</span><span>입력/출력 단가</span><span>단말 원가 영향</span></div>
+          {(window.DASH.TOKEN_PRICING || []).map((p, i) => {
+            const ac = (catMap[p.tone] || {}).accent || "var(--accent)";
+            const tierC = p.tier === "Flagship" ? "#D23B3B" : p.tier === "Mid" ? "#F59E0B" : "#16A34A";
+            return (
+              <div className="pt-row tk-row" key={i}>
+                <span className="tk-tier" style={{ color: tierC, borderColor: tierC }}>{p.tier}</span>
+                <span className="pt-model"><i style={{ background: ac }} />{p.model}</span>
+                <span className="pt-price">{p.io}</span>
+                <span className="pt-note">{p.cost}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="pricing-tracker">
         <div className="pt-head"><h3>수익화 프라이싱 모델 — 누가 얼마에 파는가</h3><span>5종 과금 구조 · 온디바이스 AI 기능 과금 설계 참조</span></div>
         <div className="pt-table">
