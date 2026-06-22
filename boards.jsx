@@ -496,7 +496,7 @@ function ReportsBoard({ reports, sectionRef, query }) {
         <span className="board-tab" style={{ background: "var(--ink)" }} />
         <div className="board-titles">
           <h2>리서치 리포트 <span className="board-en">AI Market Research</span></h2>
-          <p>증권사·시장기관 AI 리포트 정량 요약 · 클릭 시 원문 이동</p>
+          <p>증권사·시장기관 AI 리포트 정량 요약 · 클릭 시 원문 이동 · <b>시사점:</b> 단말 AI 로드맵·BOM·교체수요 가정의 외부 검증 레퍼런스</p>
         </div>
       </div>
       <div className="report-list">
@@ -960,7 +960,7 @@ function DynamicsBoard({ companies, cats, sectionRef }) {
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
           <h2>AI 경쟁 다이내믹스 <span className="board-en">Competitive Dynamics · Rivalry Map</span></h2>
-          <p>같은 시장을 두고 다투는 AI 기업 간 <b>경쟁 관계</b>만 인터랙티브 그래프로 표시 (붉은 선=경쟁)</p>
+          <p>같은 시장을 두고 다투는 AI 기업 간 <b>경쟁 관계</b>만 인터랙티브 그래프로 표시 (붉은 선=경쟁) · <b>시사점:</b> 기본 어시스턴트 파트너 선택과 자사 경쟁 노출 지점 파악</p>
         </div>
       </div>
       <KnowledgeGraph companies={companies} cats={cats} catMap={catMap} progress={dynProg} mode="dynamics" />
@@ -983,7 +983,7 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
           <h2>AI 비즈니스 모델 <span className="board-en">Money Flow · Who Pays Whom</span></h2>
-          <p>투자·인수·GPU/클라우드/데이터 <b>매출</b> 등 실제 '돈의 흐름'을 그래프로 표시 (초록=투자, 주황=매출, 파랑=파트너십 · 경쟁 관계 제외)</p>
+          <p>투자·인수·GPU/클라우드/데이터 <b>매출</b> 등 실제 '돈의 흐름'을 그래프로 표시 (초록=투자, 주황=매출, 파랑=파트너십) · <b>시사점:</b> 온디바이스 AI 기능의 과금 모델(구독 유료화·단말 번들·커머스 수수료) 설계 참조</p>
         </div>
       </div>
       <KnowledgeGraph companies={companies} cats={cats} catMap={catMap} progress={bizProg} mode="bizmodel" />
@@ -1155,4 +1155,27 @@ function SignalBoard({ data, theme, sectionRef }) {
   );
 }
 
-Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, DynamicsBoard, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard });
+// ---- Executive Top-line: 현상 → 의사결정 5초 브리핑 (Overview 최상단) ----
+function ExecToplines({ items }) {
+  if (!items || !items.length) return null;
+  const TONE = { warn: "#D23B3B", signal: "#2D6BFF", revenue: "#16A34A", compete: "#C026D3" };
+  return (
+    <div className="topline">
+      <div className="topline-head">
+        <span className="topline-kicker">오늘의 톱라인</span>
+        <span className="topline-sub">현상 → 의사결정 · 온디바이스 AI 단말 사업 관점</span>
+      </div>
+      <div className="topline-grid">
+        {items.map((t, i) => (
+          <div className="tl-card" key={i} style={{ "--tl": TONE[t.tone] || "#2D6BFF" }}>
+            <span className="tl-tag">{t.tag}</span>
+            <p className="tl-now">{t.now}</p>
+            <p className="tl-dec"><span className="tl-arrow">→</span>{t.decision}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, DynamicsBoard, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines });

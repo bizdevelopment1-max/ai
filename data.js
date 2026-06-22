@@ -416,8 +416,24 @@ window.DASH = (function () {
   ];
 
   /* ---- KPI Cards (6) ---- */
+  /* ---- Executive Top-line: 현상 → 의사결정 (온디바이스 AI 단말 사업 임원 관점, 사명 비표기) ---- */
+  const TOPLINE = [
+    { tag: "어시스턴트 전장", tone: "warn", nav: "bigtech",
+      now: "Gemini 앱 MAU 900M+ · Apple, Siri를 'Siri AI'로 재설계 · Perplexity Comet $200/월→전면 무료 전환",
+      decision: "폰의 '기본 비서' 자리가 단말 차별화의 핵심 전장 — 자사 기본 어시스턴트 노선(파트너 심화 vs 자체 vs 멀티)을 지금 확정해야 함" },
+    { tag: "온디바이스 스펙 경쟁", tone: "signal", nav: "bigtech",
+      now: "Morgan Stanley: 구형 iPhone 8.5억대가 메모리 한계로 온디바이스 AI 구동 곤란(고급 비서엔 12GB) · IDC: 생성형 AI 폰 2028년 70%",
+      decision: "AI 기능 = 하드웨어 스펙 = 프리미엄 전환·교체수요 동력 — 단 'AI 탑재=판매 증가'는 단정 금물(침투율과 실제 교체수요는 분리)" },
+    { tag: "수익화 분기", tone: "revenue", nav: "bizmodel",
+      now: "Perplexity는 구독 버리고 광고·에이전트 커머스로 · OpenAI는 구독+API지만 Q1 마진 -122% · 버티컬은 ARR 배수 67배",
+      decision: "무료로 푸는 온디바이스 AI 기능의 과금 노선(구독 유료화 vs 단말 가격 프리미엄 vs 커머스 수수료) 결정이 임박" },
+    { tag: "에이전트 UX", tone: "compete", nav: "signals",
+      now: "Computer Use·Deep Research·Comet이 탭 관리·구매 대행까지 자동화 · 그러나 자율 성공률 OSWorld 66%서 정체·구조화 과제 1/3 실패",
+      decision: "온디바이스 에이전트는 완전 자동화가 아니라 승인형·작업 로그·취소/복구 설계가 정답 — 자사 에이전트 UX 원칙으로 못박을 것" },
+  ];
+
   const KPIS = [
-    { label: "글로벌 AI 시장 (2025)", value: "$390.9B", delta: +40, sub: "Grand View Research 최신판 · 2026E $539.5B · 2030E $1,812B", fill: 0.74, src: "Grand View Research AI Market Report '26 최신판" },
+    { label: "글로벌 AI 시장 (2025)", value: "$390.9B", delta: +40, sub: "출처: Grand View Research(인프라+모델+앱) · 2026E $539.5B · 2030E $1,812B", fill: 0.74, src: "Grand View Research AI Market Report '26 최신판" },
     { label: "OpenAI 밸류 (2026.03)", value: "$852B", delta: +120, sub: "post-money · 총 조달 $122B 확정 · S-1 제출(공모 목표 미확정)", fill: 0.92, src: "Bloomberg/CNBC 2026.03.31" },
     { label: "Anthropic run-rate", value: "$47B", delta: +188, sub: "Series H 발표문 · 6주 만에 $30B→$47B · OpenAI ARR 추월", fill: 0.98, src: "Anthropic 공식 2026.05.28" },
     { label: "NVIDIA 매출 (FY27 1Q)", value: "$81.6B", delta: +85, sub: "+85% YoY · DC $75.2B(+92%) · Q2 가이던스 $91B", fill: 0.90, src: "NVIDIA IR 2026.05.20" },
@@ -628,5 +644,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, COMPANY_ORDER, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, INSIGHTS, CAP_REL, QA_PAIRS, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, COMPANY_ORDER, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, KPIS, TOPLINE, INSIGHTS, CAP_REL, QA_PAIRS, REVENUE_MONTHLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();

@@ -104,7 +104,7 @@ function App() {
   const scrollRef = uR(null);
   const refs = {
     overview: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    charts: uR(null), monthly: uR(null), insights: uR(null), signals: uR(null), dynamics: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
+    charts: uR(null), monthly: uR(null), signals: uR(null), dynamics: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
   };
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
@@ -205,35 +205,32 @@ function App() {
 
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
-            {/* Overview — market-level only */}
+            {/* ── 1. 개요 ── */}
             <section ref={refs.overview} data-screen-label="Overview">
               <div className="ov-head">
                 <h2 className="ov-title">Executive Summary</h2>
               </div>
+              <ExecToplines items={D.TOPLINE} />
               <KpiStrip kpis={D.KPIS} />
               <OverviewCharts data={D} cats={cats} theme={chartTheme} />
             </section>
 
             <ArticleFeed articles={articles} cats={cats} sectionRef={refs.articles} filter={feedFilter} onFilter={setFeedFilter} query={query} />
 
+            {/* ── 2. 기업 동향 ── */}
             <CompanyBoard cat={cats[0]} companies={D.COMPANIES} density={t.density} sectionRef={refs.native} query={query} onSelect={setSelected} />
             <CompanyBoard cat={cats[1]} companies={D.COMPANIES} density={t.density} sectionRef={refs.bigtech} query={query} onSelect={setSelected} />
             <CompanyBoard cat={cats[2]} companies={D.COMPANIES} density={t.density} sectionRef={refs.startup} query={query} onSelect={setSelected} />
 
-            <ChartsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.charts} />
-
-            <MonthlyTrendsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.monthly} />
-
-            <InsightsBoard insights={D.INSIGHTS} sectionRef={refs.insights} />
-
-            <SignalBoard data={D} theme={chartTheme} sectionRef={refs.signals} />
-
-            <DynamicsBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.dynamics} />
-
+            {/* ── 3. 심층 분석 (수익화 모델 최상단) ── */}
             <BizModelBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.bizmodel} theme={chartTheme} />
-
+            <DynamicsBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.dynamics} />
+            <SignalBoard data={D} theme={chartTheme} sectionRef={refs.signals} />
             <ReportsBoard reports={D.REPORTS} sectionRef={refs.reports} query={query} />
 
+            {/* ── 4. 정량 데이터 ── */}
+            <ChartsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.charts} />
+            <MonthlyTrendsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.monthly} />
             <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} sectionRef={refs.stocks} theme={chartTheme} />
 
             <footer className="foot">

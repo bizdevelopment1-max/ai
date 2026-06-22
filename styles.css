@@ -1359,3 +1359,22 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .sp-name { font-size: 14px; }
   .stock-readout { font-size: 11px; }
 }
+
+/* ============================================================
+   Executive Top-line (Overview 최상단 5초 브리핑) + 사이드바 그룹 라벨
+   ============================================================ */
+.topline { margin: 2px 0 16px; }
+.topline-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.topline-kicker { font-size: 13.5px; font-weight: 800; color: var(--ink); letter-spacing: .02em; }
+.topline-sub { font-size: 11px; font-weight: 600; color: var(--muted); }
+.topline-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.tl-card { border: 1px solid var(--line); border-left: 3px solid var(--tl); border-radius: 10px; padding: 12px 14px; background: var(--panel); box-shadow: var(--shadow); transition: transform .18s ease, box-shadow .18s ease; }
+.tl-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.tl-tag { display: inline-block; font-size: 10px; font-weight: 800; color: var(--tl); background: color-mix(in srgb, var(--tl) 13%, var(--panel)); border-radius: 5px; padding: 2px 8px; margin-bottom: 7px; }
+.tl-now { font-size: 12px; font-weight: 600; color: var(--ink-2); line-height: 1.5; }
+.tl-dec { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.5; margin-top: 6px; }
+.tl-arrow { color: var(--tl); font-weight: 800; margin-right: 5px; }
+@media (max-width: 760px) { .topline-grid { grid-template-columns: 1fr; } }
+
+.sb-group { font-size: 9.5px; font-weight: 800; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .09em; padding: 12px 14px 4px; }
+.sb-collapsed .sb-group { opacity: 0; height: 0; padding: 0; overflow: hidden; }

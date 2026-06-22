@@ -54,19 +54,18 @@ function Trend({ v, small, animate }) {
 
 // ---- Sidebar ------------------------------
 const NAV = [
-  { id: "overview", ko: "Executive Summary", en: "Executive Summary", icon: "grid" },
-  { id: "articles", ko: "데일리 기사", en: "Daily Articles", icon: "news" },
-  { id: "native", ko: "AI 네이티브", en: "AI Native", icon: "ai" },
-  { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", icon: "device" },
-  { id: "startup", ko: "AI 스타트업", en: "AI Startups", icon: "spark" },
-  { id: "charts", ko: "정량 분석", en: "Quant Charts", icon: "chart" },
-  { id: "monthly", ko: "월별 매출 추이", en: "Monthly Revenue", icon: "chart" },
-  { id: "insights", ko: "핵심 인사이트", en: "Insights", icon: "pulse" },
-  { id: "signals", ko: "성능·신뢰성 격차", en: "Capability–Reliability", icon: "target" },
-  { id: "dynamics", ko: "경쟁 다이내믹스", en: "Competitive Map", icon: "target" },
-  { id: "bizmodel", ko: "수익화 모델", en: "Biz Model", icon: "chart" },
-  { id: "reports", ko: "리서치 리포트", en: "Research", icon: "report" },
-  { id: "stocks", ko: "주가 차트", en: "Stock Prices", icon: "pulse" },
+  { id: "overview", ko: "Executive Summary", en: "Overview", icon: "grid", group: "개요" },
+  { id: "articles", ko: "데일리 기사", en: "Daily Articles", icon: "news", group: "개요" },
+  { id: "native", ko: "AI 네이티브", en: "AI Native", icon: "ai", group: "기업 동향" },
+  { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", icon: "device", group: "기업 동향" },
+  { id: "startup", ko: "AI 스타트업", en: "AI Startups", icon: "spark", group: "기업 동향" },
+  { id: "bizmodel", ko: "수익화 모델", en: "Monetization", icon: "palette", group: "심층 분석" },
+  { id: "dynamics", ko: "경쟁 다이내믹스", en: "Competitive Map", icon: "target", group: "심층 분석" },
+  { id: "signals", ko: "성능·신뢰성 격차", en: "Capability–Reliability", icon: "brain", group: "심층 분석" },
+  { id: "reports", ko: "리서치 리포트", en: "Research", icon: "report", group: "심층 분석" },
+  { id: "charts", ko: "정량 분석", en: "Quant Charts", icon: "chart", group: "정량 데이터" },
+  { id: "monthly", ko: "월별 매출 추이", en: "Monthly Revenue", icon: "pulse", group: "정량 데이터" },
+  { id: "stocks", ko: "주가 차트", en: "Stock Prices", icon: "up", group: "정량 데이터" },
 ];
 
 // gradient background for the sidebar, derived from a single brand color
@@ -100,12 +99,14 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
       </div>
 
       <nav className="sb-nav">
-        {NAV.map(n => {
+        {NAV.map((n, idx) => {
           const cat = isCat(n.id) ? (cats || []).find(c => c.id === n.id) : null;
           const subs = cat ? (companies || []).filter(c => c.cat === n.id) : [];
           const openS = openCat === n.id;
+          const showGroup = n.group && (idx === 0 || NAV[idx - 1].group !== n.group);
           return (
             <React.Fragment key={n.id}>
+              {showGroup && <div className="sb-group">{n.group}</div>}
               <button className={"sb-item" + (active === n.id ? " on" : "")} title={n.ko}
                 onClick={stop(() => { onNav(n.id); if (cat) setOpenCat(openS ? null : n.id); })}>
                 <span className="sb-ic"><Icon name={n.icon} size={17} /></span>
