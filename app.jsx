@@ -115,7 +115,7 @@ function App() {
   const scrollRef = uR(null);
   const refs = {
     overview: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    charts: uR(null), monthly: uR(null), signals: uR(null), dynamics: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
+    charts: uR(null), monthly: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
   };
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
@@ -222,6 +222,7 @@ function App() {
                 <h2 className="ov-title">Executive Summary</h2>
               </div>
               <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
+              <ESCompetitiveMap companies={D.COMPANIES} cats={cats} articles={articles} />
             </section>
 
             <ArticleFeed articles={articles} cats={cats} sectionRef={refs.articles} filter={feedFilter} onFilter={setFeedFilter} query={query} />
@@ -233,7 +234,6 @@ function App() {
 
             {/* ── 3. 심층 분석 (수익화 모델 최상단) ── */}
             <BizModelBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.bizmodel} theme={chartTheme} />
-            <DynamicsBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.dynamics} />
             <SignalBoard data={D} theme={chartTheme} sectionRef={refs.signals} />
             <ReportsBoard reports={D.REPORTS} sectionRef={refs.reports} query={query} />
 

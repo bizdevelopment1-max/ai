@@ -704,7 +704,7 @@ const MONEY_EDGES = [
   { from: "Cohere", to: "Amazon", type: "파트너십", label: "AWS·소버린 배포" },
 ];
 
-function KnowledgeGraph({ companies, cats, catMap, progress, mode }) {
+function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo }) {
   const canvasRef = React.useRef(null);
   const containerRef = React.useRef(null);
   const [hovered, setHovered] = React.useState(null);
@@ -935,6 +935,11 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode }) {
             <span className="kg-detail-val">{selCo.valuation}</span>
           </div>
           <p className="kg-detail-note">{selCo.note}</p>
+          {articleByCo && articleByCo[selCo.name] && (
+            <a className="kg-detail-article" href={articleByCo[selCo.name].url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>
+              <Icon name="news" size={12} /> 최신 기사: {articleByCo[selCo.name].title} ›
+            </a>
+          )}
           {selEdges.length > 0 && (
             <div className="kg-detail-edges">
               <em>관계 네트워크</em>
@@ -952,24 +957,40 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode }) {
   );
 }
 
-function DynamicsBoard({ companies, cats, sectionRef }) {
-  const inView = useInView(sectionRef);
-  const dynProg = useProgress(inView, 1400);
+// ---- Executive Summary 내 '경쟁 구도' — 최신 기사에 등장한 업체만, 노드→최신 기사 ----
+function ESCompetitiveMap({ companies, cats, articles }) {
+  const ref = React.useRef(null);
+  const inView = useInView(ref);
+  const prog = useProgress(inView, 1400);
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
 
+  // 최신 기사에 등장한 업체(co)만 추출 + 업체별 '가장 최근 기사' 매핑
+  const { list, articleByCo } = React.useMemo(() => {
+    const names = companies.map(c => c.name);
+    const matchName = (co) => names.find(n => n === co || co.startsWith(n.split(" (")[0]) || n.startsWith(co.split(" (")[0]));
+    const byName = {}; const activeSet = new Set();
+    (articles || []).forEach(a => {
+      if (!a.co) return;
+      const m = matchName(a.co);
+      if (!m) return;
+      activeSet.add(m);
+      if (!byName[m] || a.date > byName[m].date) byName[m] = { title: a.title, url: a.url, date: a.date };
+    });
+    const active = companies.filter(c => activeSet.has(c.name));
+    return { list: active.length >= 2 ? active : companies, articleByCo: byName };
+  }, [companies, articles]);
+
+  const graphKey = list.map(c => c.name).join("|");   // 기사 기반 목록이 바뀌면 그래프 재구성
   return (
-    <section className="board" ref={sectionRef} data-screen-label="Competitive Map">
+    <div className="es-compmap" ref={ref}>
      <AnimCtx.Provider value={inView}>
-      <div className="board-head">
-        <span className="board-tab" style={{ background: "var(--accent)" }} />
-        <div className="board-titles">
-          <h2>AI 경쟁 다이내믹스 <span className="board-en">Competitive Dynamics · Rivalry Map</span></h2>
-          <p>같은 시장을 두고 다투는 AI 기업 간 <b>경쟁 관계</b>만 인터랙티브 그래프로 표시 (붉은 선=경쟁) · <b>시사점:</b> 기본 어시스턴트 파트너 선택과 자사 경쟁 노출 지점 파악</p>
-        </div>
+      <div className="es-cm-head">
+        <span className="es-cm-kicker">경쟁 구도 <em>Competitive Dynamics</em></span>
+        <span className="es-cm-sub">최신 기사에 등장한 <b>{list.length}개 업체</b>만 표시 · 노드 클릭 → 상세·최신 기사 이동 · <b style={{ color: "#FF4D4D" }}>붉은 선=경쟁</b></span>
       </div>
-      <KnowledgeGraph companies={companies} cats={cats} catMap={catMap} progress={dynProg} mode="dynamics" />
+      <KnowledgeGraph key={graphKey} companies={list} cats={cats} catMap={catMap} progress={prog} mode="dynamics" articleByCo={articleByCo} />
      </AnimCtx.Provider>
-    </section>
+    </div>
   );
 }
 
@@ -1282,4 +1303,4 @@ function ExecToplines({ items, insights, onNav }) {
   );
 }
 
-Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, DynamicsBoard, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines });
+Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines });
