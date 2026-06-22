@@ -961,10 +961,12 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo }
             <span className="kg-detail-cat">{catMap[selCo.cat] ? catMap[selCo.cat].ko : selCo.cat}</span>
             <span className="kg-detail-val">{selCo.valuation}</span>
           </div>
-          <p className="kg-detail-note">{selCo.note}</p>
+          <p className="kg-detail-note">{hlKey(selCo.note)}</p>
           {articleByCo && articleByCo[selCo.name] && (
             <a className="kg-detail-article" href={articleByCo[selCo.name].url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>
-              <Icon name="news" size={12} /> 최신 기사: {articleByCo[selCo.name].title} ›
+              <span className="kg-da-tag"><Icon name="news" size={11} /> 최신 기사</span>
+              <span className="kg-da-title">{hlKey(articleByCo[selCo.name].title)}</span>
+              <span className="kg-da-go">›</span>
             </a>
           )}
           {selEdges.length > 0 && (
@@ -1012,8 +1014,7 @@ function ESCompetitiveMap({ companies, cats, articles }) {
     <div className="es-compmap" ref={ref}>
      <AnimCtx.Provider value={inView}>
       <div className="es-cm-head">
-        <span className="es-cm-kicker">경쟁 구도 <em>Competitive Dynamics</em></span>
-        <span className="es-cm-sub">최신 기사에 등장한 <b>{list.length}개 업체</b>만 표시 · 노드 클릭 → 상세·최신 기사 이동 · <b style={{ color: "#FF4D4D" }}>붉은 선=경쟁</b></span>
+        <span className="es-cm-kicker"><em>Competitive Dynamics</em></span>
       </div>
       <KnowledgeGraph key={graphKey} companies={list} cats={cats} catMap={catMap} progress={prog} mode="dynamics" articleByCo={articleByCo} />
      </AnimCtx.Provider>
@@ -1152,7 +1153,7 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
           <h2>AI 월별 매출 추이 <span className="board-en">Monthly Revenue Trends</span></h2>
-          <p>축적된 <b>매출 추세</b>(시계열·Δ) — 데일리 기사(오늘의 이벤트)와 역할 분리 · 공시·ARR/run-rate 월 배분 모델값</p>
+          <p>축적된 <b>매출 추세</b>(시계열·Δ) — 데일리 기사(오늘의 이벤트)와 역할 분리 · <b>분기 공시(10-Q/IR)·공개 ARR/run-rate</b> 기반 월 배분(내부 추정 제외)</p>
         </div>
       </div>
 
@@ -1171,7 +1172,7 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
 
       <div className="chart-grid">
         <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-          <div className="cc-head"><h3>AI 월별 매출 추이 (Reported / ARR / Run-rate / Estimate 혼재)</h3><span>$M · 공시 매출, ARR 배분, 런레이트, 내부 추정이 혼재됨 — 데이터 성격은 각 포인트 소스 참조</span></div>
+          <div className="cc-head"><h3>AI 월별 매출 추이 (분기 공시·공개 ARR/Run-rate 기반)</h3><span>$M · 분기 공시 매출(10-Q/IR)·공개 ARR·run-rate를 월 단위로 배분 — 데이터 성격은 각 포인트 소스 참조</span></div>
           <MonthlyLineChart series={buildRevenueSeries()} months={revMonths} colors={appColors} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" valuePrefix="$" companies={data.COMPANIES} />
         </div>
       </div>
@@ -1260,10 +1261,21 @@ function SignalBoard({ data, theme, sectionRef }) {
 }
 
 // 핵심 수치($·%·MAU·토큰단가 등)를 굵게+하이라이트 처리
+// 숫자/금액·핵심 키워드를 자동 강조(볼드+하이라이트). 숫자=강조색, 긍정 키워드=녹색, 리스크 키워드=노랑.
+const HL_NUM = /(\$[\d,.]+\s?[TBMK]?(?:\+|토큰)?|\d+\.?\d*%|\d+\.?\d*억\+?|[0-9]{2,}M\+?|OSWorld\s?\d+%?|\d+GB|\d{2,}만\+?|\d+위)/g;
+const HL_POS = /(온디바이스|무료|1위|신기록|급증|최고|선두|독점|표준|최초|역대)/;
+const HL_NEG = /(리스크|손실|소송|논란|우려|규제|적자|지연|실패|쇼크)/;
 function hlKey(text) {
-  const parts = String(text || "").split(/(\$[\d,.]+\s?[TBMK]?(?:\+|토큰)?|\d+\.?\d*%|\d+\.?\d*억\+?|[0-9]{2,}M\+?|OSWorld\s?\d+%?|12GB|900M\+?)/g);
-  return parts.map((p, i) => /^\$|%$|억\+?$|M\+?$|GB$|^OSWorld|^\d/.test(p) && /\d/.test(p)
-    ? <mark className="tl-hl" key={i}>{p}</mark> : p);
+  const segs = String(text || "").split(HL_NUM);
+  return segs.map((p, i) => {
+    if (/\d/.test(p) && /^\$|%$|억\+?$|M\+?$|GB$|^OSWorld|^\d|만\+?$|위$/.test(p)) return <mark className="tl-hl" key={i}>{p}</mark>;
+    // 키워드 강조
+    const words = p.split(/(온디바이스|무료|1위|신기록|급증|최고|선두|독점|표준|최초|역대|리스크|손실|소송|논란|우려|규제|적자|지연|실패|쇼크)/);
+    return words.map((w, j) =>
+      HL_POS.test(w) ? <b className="tl-kw tl-kw-pos" key={i + "-" + j}>{w}</b>
+      : HL_NEG.test(w) ? <b className="tl-kw tl-kw-neg" key={i + "-" + j}>{w}</b>
+      : <React.Fragment key={i + "-" + j}>{w}</React.Fragment>);
+  });
 }
 
 // ---- Executive Top-line: 현상 → 의사결정 5초 브리핑 (Overview 최상단) ----
@@ -1279,14 +1291,9 @@ function ExecToplines({ items, insights, onNav }) {
     ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, decision: c.soWhat, evidence: c.evidence || [], score: c.score, live: c.live, updatedAt: c.updatedAt }))
     : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, decision: t.decision, evidence: [], score: null, live: false }));
   if (!cards.length) return null;
-  const stamp = insights && insights.generatedAt ? insights.generatedAt.slice(0, 10) : null;
 
   return (
     <div className="topline">
-      <div className="topline-head">
-        <span className="topline-kicker">오늘의 톱라인</span>
-        <span className="topline-sub">현상 → 의사결정 · 온디바이스 AI 단말 사업 관점{stamp ? ` · 매일 자동 갱신 (${stamp})` : ""}</span>
-      </div>
       <div className="topline-grid">
         {cards.map((t, i) => {
           const isOpen = open === i;
@@ -1297,7 +1304,6 @@ function ExecToplines({ items, insights, onNav }) {
               <div className="tl-cardhead">
                 <span className="tl-ico"><Icon name={ICON[t.tone] || "spark"} size={16} /></span>
                 <span className="tl-tag">{t.tag}</span>
-                {t.live && <span className="tl-live">LIVE</span>}
                 <i className="tl-dot" />
               </div>
               <p className="tl-now">{hlKey(t.now)}</p>
@@ -1307,7 +1313,7 @@ function ExecToplines({ items, insights, onNav }) {
                   <em>{t.score}</em>
                 </div>
               )}
-              <p className="tl-dec"><span className="tl-arrow">→</span>{t.decision}</p>
+              <p className="tl-dec"><span className="tl-arrow">→</span>{hlKey(t.decision)}</p>
               {t.evidence && t.evidence.length > 0 && (
                 <div className="tl-ev">
                   {t.evidence.slice(0, 2).map((e, k) => (
