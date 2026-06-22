@@ -100,7 +100,8 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
       <nav className="sb-nav">
         {NAV.map((n, idx) => {
           const cat = isCat(n.id) ? (cats || []).find(c => c.id === n.id) : null;
-          const subs = cat ? (companies || []).filter(c => c.cat === n.id).filter(c => n.id !== "startup" || c.rel) : [];
+          const subs = cat ? (companies || []).filter(c => c.cat === n.id) : [];
+          const startupVerts = n.id === "startup" ? ((window.DASH && window.DASH.STARTUP_VERTICALS) || []) : null;
           const openS = openCat === n.id;
           const showGroup = n.group && (idx === 0 || NAV[idx - 1].group !== n.group);
           return (
@@ -118,7 +119,23 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
               </button>
               {cat && openS && (
                 <div className="sb-sub">
-                  {subs.map((c, i) => (
+                  {startupVerts ? startupVerts.map(v => {
+                    const grp = subs.filter(c => c.vertical === v.ko);
+                    if (!grp.length) return null;
+                    return (
+                      <React.Fragment key={v.id}>
+                        <div className="sb-sub-group">{v.ko}</div>
+                        {grp.map((c, i) => (
+                          <button key={c.name} className="sb-subitem" title={c.name + " 상세 보기"}
+                            onClick={stop(() => onSelectCompany && onSelectCompany(c))}>
+                            <span className="sb-sub-dot" style={{ background: cat.accent }} />
+                            <span className="sb-sub-name">{c.name}</span>
+                            <span className="sb-sub-val">{c.value}</span>
+                          </button>
+                        ))}
+                      </React.Fragment>
+                    );
+                  }) : subs.map((c, i) => (
                     <button key={i} className="sb-subitem" title={c.name + " 상세 보기"}
                       onClick={stop(() => onSelectCompany && onSelectCompany(c))}>
                       <span className="sb-sub-dot" style={{ background: cat.accent }} />

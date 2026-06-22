@@ -38,10 +38,66 @@ function CoLogo({ name, domain, accent }) {
 function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) {
   const inView = useInView(sectionRef);
   const prog = useProgress(inView, 1000);
+  const isStartup = cat.id === "startup";
+  const sizeOf = (c) => { const m = String(c.valuation).replace(/[$,+~\s]/g, "").match(/([\d.]+)\s*([TBM])?/i); if (!m) return 0; const v = parseFloat(m[1]); const u = (m[2] || "B").toUpperCase(); return u === "T" ? v * 1000 : u === "M" ? v / 1000 : v; };
   const rows = companies.filter(c => c.cat === cat.id)
-    .filter(c => cat.id !== "startup" || c.rel)   // 스타트업은 단말 사업 관련성 태그가 있는 곳만 노출
     .filter(c => !query || (c.name + c.unit + c.note).toLowerCase().includes(query.toLowerCase()));
   const open = c => onSelect && onSelect(c);
+
+  const Row = (c, i, total) => {
+    const local = staggerP(prog, i, total);
+    return (
+      <div className="ct-row" key={c.name}
+        style={{ "--accent": cat.accent, opacity: 0.1 + 0.9 * local, transform: `translateY(${(1 - local) * 12}px)` }}>
+        <span className="ct-name" role="button" tabIndex={0} title={c.name + " 상세 보기"}
+          onClick={() => open(c)}
+          onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(c); } }}>
+          <CoLogo name={c.name} domain={c.domain} accent={cat.accent} />
+          <b>{c.name}</b>
+          <Icon name="chevron" size={12} />
+        </span>
+        <span className="ct-seg">{c.tier && <em className={"ct-tier ct-tier-" + c.tier}>{c.tier}</em>}{c.rel && <em className="ct-rel" style={{ color: cat.accent, borderColor: cat.accent }}>{c.rel}</em>}{c.unit}</span>
+        <span className="num ct-valcell" title={c.valAsof ? `출처: '${c.valAsof} 기준` : ""}>
+          <AnimatedNumber className="ct-val" value={c.valuation} />
+          {c.valAsof && c.valAsof !== "—" && <em className="ct-asof">'{c.valAsof} 기준</em>}
+        </span>
+        <span className="num" title={c.metricAsof ? `출처: '${c.metricAsof} 기준` : ""}>
+          <em className="ct-metric">{c.metric}</em>
+          <AnimatedNumber className="ct-mval" value={c.value} />
+          {c.metricAsof && c.metricAsof !== "—" && <em className="ct-asof">'{c.metricAsof} 기준</em>}
+        </span>
+        <span className="num ct-trend" title={c.trendBasis || "YoY 또는 밸류 변화율"}>
+          <Trend v={c.trend} small animate />
+          <TrendBar v={c.trend} />
+        </span>
+        <span className="ct-note"><BoldSummary text={c.note} /></span>
+      </div>
+    );
+  };
+
+  // 스타트업은 a16z 기준 버티컬별로 그룹핑, 그룹 내 밸류 큰 순
+  const verticals = window.DASH.STARTUP_VERTICALS || [];
+  let body;
+  if (isStartup && verticals.length) {
+    let idx = 0;
+    body = verticals.map(v => {
+      const grp = rows.filter(c => c.vertical === v.ko).sort((a, b) => sizeOf(b) - sizeOf(a));
+      if (!grp.length) return null;
+      return (
+        <React.Fragment key={v.id}>
+          <div className="ct-vgroup" style={{ "--accent": cat.accent }}>
+            <span className="ct-vg-name"><Icon name="grid" size={13} /> {v.ko} <em>{v.en}</em></span>
+            <span className="ct-vg-desc">{v.desc}</span>
+            <span className="ct-vg-count">{grp.length}</span>
+          </div>
+          {grp.map(c => Row(c, idx++, rows.length))}
+        </React.Fragment>
+      );
+    });
+  } else {
+    body = rows.map((c, i) => Row(c, i, rows.length));
+  }
+
   return (
     <section className="board" ref={sectionRef} data-screen-label={cat.en}>
      <AnimCtx.Provider value={inView}>
@@ -49,7 +105,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
         <span className="board-tab" style={{ background: cat.accent }} />
         <div className="board-titles">
           <h2>{cat.ko} <span className="board-en">{cat.en}</span></h2>
-          <p>{cat.id === "startup" ? "3축 분류(배포: 온디바이스·하이브리드 / 밸류체인: 앱레이어↑ / 수익모델) 기준 선별 · T1=즉시 협업 검토(온디바이스·하이브리드) · T2=모니터링(클라우드·번들 가능) · 엔터프라이즈 검색·데이터·국방(T3)은 제외" : cat.desc} · 업체명 클릭 시 상세 정보</p>
+          <p>{isStartup ? "a16z Top 100 기준 5개 버티컬로 분류 — 생성 미디어 / 검색·어시스턴트 / 파운데이션 모델 / 버티컬·엔터프라이즈 에이전트 / 데이터·ML 인프라 · T1=온디바이스 직접 연관(즉시 협업 검토) · T2=하이브리드 모니터링" : cat.desc} · 업체명 클릭 시 상세 정보</p>
         </div>
         <div className="board-count" style={{ color: cat.accent, background: cat.accentSoft }}>{rows.length} 社</div>
       </div>
@@ -63,36 +119,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
           <span className="num">추이</span>
           <span>코멘트</span>
         </div>
-        {rows.map((c, i) => {
-          const local = staggerP(prog, i, rows.length);
-          return (
-          <div className="ct-row" key={i}
-            style={{ "--accent": cat.accent, opacity: 0.1 + 0.9 * local, transform: `translateY(${(1 - local) * 12}px)` }}>
-            <span className="ct-name" role="button" tabIndex={0} title={c.name + " 상세 보기"}
-              onClick={() => open(c)}
-              onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(c); } }}>
-              <CoLogo name={c.name} domain={c.domain} accent={cat.accent} />
-              <b>{c.name}</b>
-              <Icon name="chevron" size={12} />
-            </span>
-            <span className="ct-seg">{c.tier && <em className={"ct-tier ct-tier-" + c.tier}>{c.tier}</em>}{c.rel && <em className="ct-rel" style={{ color: cat.accent, borderColor: cat.accent }}>{c.rel}</em>}{c.unit}</span>
-            <span className="num ct-valcell" title={c.valAsof ? `출처: '${c.valAsof} 기준` : ""}>
-              <AnimatedNumber className="ct-val" value={c.valuation} />
-              {c.valAsof && c.valAsof !== "—" && <em className="ct-asof">'{c.valAsof} 기준</em>}
-            </span>
-            <span className="num" title={c.metricAsof ? `출처: '${c.metricAsof} 기준` : ""}>
-              <em className="ct-metric">{c.metric}</em>
-              <AnimatedNumber className="ct-mval" value={c.value} />
-              {c.metricAsof && c.metricAsof !== "—" && <em className="ct-asof">'{c.metricAsof} 기준</em>}
-            </span>
-            <span className="num ct-trend" title={c.trendBasis || "YoY 또는 밸류 변화율"}>
-              <Trend v={c.trend} small animate />
-              <TrendBar v={c.trend} />
-            </span>
-            <span className="ct-note"><BoldSummary text={c.note} /></span>
-          </div>
-          );
-        })}
+        {body}
       </div>
      </AnimCtx.Provider>
     </section>
