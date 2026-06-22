@@ -1284,21 +1284,23 @@ function SignalBoard({ data, theme, sectionRef }) {
   );
 }
 
-// 핵심 수치($·%·MAU·토큰단가 등)를 굵게+하이라이트 처리
-// 숫자/금액·핵심 키워드를 자동 강조(볼드+하이라이트). 숫자=강조색, 긍정 키워드=녹색, 리스크 키워드=노랑.
-const HL_NUM = /(\$[\d,.]+\s?[TBMK]?(?:\+|토큰)?|\d+\.?\d*%|\d+\.?\d*억\+?|[0-9]{2,}M\+?|OSWorld\s?\d+%?|\d+GB|\d{2,}만\+?|\d+위)/g;
-const HL_POS = /(온디바이스|무료|1위|신기록|급증|최고|선두|독점|표준|최초|역대)/;
-const HL_NEG = /(리스크|손실|소송|논란|우려|규제|적자|지연|실패|쇼크)/;
+// 핵심 수치·키워드 자동 강조(볼드+하이라이트). 숫자=강조색 / 긍정=녹색 / 리스크=노랑 / 전략어=보라.
+const HL_NUM = /(\$[\d,.]+\s?[TBMK]?(?:\+|토큰)?|\d+\.?\d*%|\d+\.?\d*억\+?|[0-9]{2,}M\+?|OSWorld\s?\d+%?|\d+GB|\d{2,}만\+?|\d+위|\d+배)/g;
+const KW_POS = ["무료", "1위", "신기록", "급증", "최고", "선두", "독점", "표준", "최초", "역대", "돌파", "추월"];
+const KW_NEG = ["리스크", "손실", "소송", "논란", "우려", "규제", "적자", "지연", "실패", "쇼크", "둔화", "정체"];
+const KW_KEY = ["온디바이스", "단말", "에이전트", "어시스턴트", "비서", "상장", "IPO", "프리미엄", "교체수요", "수익화", "구독"];
+const KW_RE = new RegExp("(" + [...KW_POS, ...KW_NEG, ...KW_KEY].join("|") + ")");
 function hlKey(text) {
   const segs = String(text || "").split(HL_NUM);
   return segs.map((p, i) => {
-    if (/\d/.test(p) && /^\$|%$|억\+?$|M\+?$|GB$|^OSWorld|^\d|만\+?$|위$/.test(p)) return <mark className="tl-hl" key={i}>{p}</mark>;
-    // 키워드 강조
-    const words = p.split(/(온디바이스|무료|1위|신기록|급증|최고|선두|독점|표준|최초|역대|리스크|손실|소송|논란|우려|규제|적자|지연|실패|쇼크)/);
-    return words.map((w, j) =>
-      HL_POS.test(w) ? <b className="tl-kw tl-kw-pos" key={i + "-" + j}>{w}</b>
-      : HL_NEG.test(w) ? <b className="tl-kw tl-kw-neg" key={i + "-" + j}>{w}</b>
-      : <React.Fragment key={i + "-" + j}>{w}</React.Fragment>);
+    if (/\d/.test(p) && /^\$|%$|억\+?$|M\+?$|GB$|^OSWorld|^\d|만\+?$|위$|배$/.test(p)) return <mark className="tl-hl" key={i}>{p}</mark>;
+    return p.split(KW_RE).map((w, j) => {
+      const k = i + "-" + j;
+      if (KW_POS.includes(w)) return <b className="tl-kw tl-kw-pos" key={k}>{w}</b>;
+      if (KW_NEG.includes(w)) return <b className="tl-kw tl-kw-neg" key={k}>{w}</b>;
+      if (KW_KEY.includes(w)) return <b className="tl-kw tl-kw-key" key={k}>{w}</b>;
+      return <React.Fragment key={k}>{w}</React.Fragment>;
+    });
   });
 }
 
@@ -1306,6 +1308,7 @@ function hlKey(text) {
 // insights.json(매일 규칙기반 갱신)이 있으면 그걸로, 없으면 정적 TOPLINE으로 폴백.
 function ExecToplines({ items, insights, onNav }) {
   const [open, setOpen] = React.useState(0);
+  const [sel, setSel] = React.useState(null);   // 클릭 시 색 반전(선택) 카드
   const TONE = { warn: "#D23B3B", signal: "#2D6BFF", revenue: "#16A34A", compete: "#C026D3" };
   const ICON = { warn: "target", signal: "pulse", revenue: "chart", compete: "brain" };
   const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "성능·신뢰성", native: "AI 네이티브", dynamics: "경쟁 다이내믹스" };
@@ -1321,10 +1324,11 @@ function ExecToplines({ items, insights, onNav }) {
       <div className="topline-grid">
         {cards.map((t, i) => {
           const isOpen = open === i;
+          const isSel = sel === i;
           const tone = TONE[t.tone] || "#2D6BFF";
           return (
-            <div className={"tl-card" + (isOpen ? " tl-open" : "")} key={i} style={{ "--tl": tone }}
-              onMouseEnter={() => setOpen(i)} onClick={() => setOpen(i)}>
+            <div className={"tl-card" + (isOpen ? " tl-open" : "") + (isSel ? " tl-sel" : "")} key={i} style={{ "--tl": tone }}
+              onMouseEnter={() => setOpen(i)} onClick={() => { setOpen(i); setSel(isSel ? null : i); }}>
               <div className="tl-cardhead">
                 <span className="tl-ico"><Icon name={ICON[t.tone] || "spark"} size={16} /></span>
                 <span className="tl-tag">{t.tag}</span>
