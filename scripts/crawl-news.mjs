@@ -198,7 +198,7 @@ async function resolveUrl(u) {
   } catch { return u; }
 }
 
-// Fetch publisher meta description / first paragraphs for real content (RSS desc는 빈약함).
+// Fetch publisher meta description + 본문 단락들 (RSS desc는 빈약 → 3줄 확보용으로 충분히 수집)
 async function fetchSnippet(url) {
   try {
     const ctl = AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined;
@@ -207,12 +207,13 @@ async function fetchSnippet(url) {
     const html = await res.text();
     const og = html.match(/<meta[^>]+(?:property|name)=["'](?:og:description|description|twitter:description)["'][^>]+content=["']([^"']+)["']/i)
       || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["'](?:og:description|description)["']/i);
-    let txt = og ? og[1] : "";
-    if (txt.length < 60) {
-      const ps = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)].map(m => decode(m[1])).filter(t => t.length > 50);
-      txt = (txt + " " + ps.slice(0, 2).join(" ")).trim();
-    }
-    return decode(txt).slice(0, 500);
+    let txt = og ? decode(og[1]) : "";
+    // 본문 단락 다수 수집(광고·네비 제외 위해 길이 필터) → og 설명에 이어붙여 문장 3개 이상 확보
+    const ps = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)]
+      .map(m => decode(m[1].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim())
+      .filter(t => t.length > 60 && /[.!?。]/.test(t));
+    if (ps.length) txt = (txt + " " + ps.slice(0, 5).join(" ")).trim();
+    return txt.slice(0, 900);
   } catch { return ""; }
 }
 
@@ -252,21 +253,24 @@ function to3lines(text, fallback, source) {
 }
 
 // No-API brief: 한글 제목(번역) + 본문(원문 메타+번역) 3줄 개조식. 번역 실패 시 영문 폴백(사용자 허용).
-async function freeKoBrief(a) {
+async function freeKoBrief(a, contentEn) {
   const titleKo = (await translateKo(a.title)) || a.title;
-  const realUrl = await resolveUrl(a.url);                   // Google News 리다이렉트 → 원문 URL
-  let content = a.descEn || "";
-  const snip = await fetchSnippet(realUrl);                  // 원문 페이지 og:description/본문
-  if (snip && snip.length > content.length) content = snip;
-  content = stripSourceTail(content, a.source);             // 영문 단계에서 매체명 꼬리 제거(번역 전)
+  const content = stripSourceTail(contentEn || a.descEn || "", a.source);
   const contentKo = (await translateKo(content)) || content;  // 번역 성공 시 한글, 실패 시 영문 폴백
-  return { title_ko: titleKo, summary: to3lines(contentKo, titleKo, a.source), url: realUrl };
+  return { title_ko: titleKo, summary: to3lines(contentKo, titleKo, a.source), url: a.url };
 }
 
-// Best-effort brief: Claude(있으면) → 실패/무키 시 keyless 번역. 항상 3줄형 요약 반환.
+// Best-effort brief: 본문 보강(공통) → Claude(있으면) → keyless. 항상 개조식 3줄 요약 반환.
 async function brief(a) {
-  if (KEY) { const s = await summarize(a); if (s) return s; }
-  return await freeKoBrief(a);
+  // 공통: 원문 URL 해석 + 본문 단락 수집으로 내용 보강(양 경로 모두 풍부한 입력 사용 → 3줄 확보)
+  const realUrl = await resolveUrl(a.url);
+  let content = a.descEn || "";
+  const snip = await fetchSnippet(realUrl);
+  if (snip && snip.length > content.length) content = snip;
+  content = stripSourceTail(content, a.source);
+  const rich = { ...a, descEn: content, url: realUrl };
+  if (KEY) { const s = await summarize(rich); if (s) return { ...s, url: realUrl }; }
+  return await freeKoBrief(rich, content);
 }
 
 // limited-concurrency map

@@ -662,9 +662,16 @@ a[href]:hover .rainbow-on-hover,
   outline: 2px solid transparent; outline-offset: -2px; cursor: pointer;
 }
 .art:hover { background: linear-gradient(115deg, var(--accent, #2A6FDB) 0%, color-mix(in srgb, var(--accent, #2A6FDB) 58%, #000) 60%, color-mix(in srgb, var(--accent, #2A6FDB) 40%, #000) 100%); }
-/* 클릭 선택 시 외곽선 박스 */
-.art-sel { outline-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent), var(--shadow); background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
-.art-sel .art-title { color: var(--accent); }
+/* 클릭 선택 시: 색상 반전(호버와 동일) + 외곽선 박스 */
+.art-sel { background: linear-gradient(115deg, var(--accent, #2A6FDB) 0%, color-mix(in srgb, var(--accent, #2A6FDB) 58%, #000) 60%, color-mix(in srgb, var(--accent, #2A6FDB) 40%, #000) 100%); outline-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent), var(--shadow-lg); }
+.art-sel .art-title { color: #fff; }
+.art-sel .art-src { color: #fff; }
+.art-sel .art-summary { color: rgba(255,255,255,.82); }
+.art-sel .art-catname { color: rgba(255,255,255,.7); }
+.art-sel .art-date { color: #fff; background: rgba(255,255,255,.18); border-color: transparent; }
+.art-sel .art-co { color: #fff !important; border-color: rgba(255,255,255,.6) !important; }
+.art-sel .art-del { opacity: 1; }
+.art-sel .num-hl { color: #FFE76A; background: none; }
 .art-src, .art-summary { transition: color .15s; }
 .art:hover .art-src { color: #fff; }
 .art:hover .art-summary { color: rgba(255,255,255,.82); }
