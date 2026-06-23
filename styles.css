@@ -297,18 +297,20 @@ a[href]:hover .rainbow-on-hover,
   text-transform: uppercase; letter-spacing: .04em;
 }
 .chatbot-drop-list { display: flex; flex-direction: column; }
-.chatbot-drop-item {
-  border: none; background: transparent; text-align: left; cursor: pointer;
-  padding: 9px 14px; font-size: 12.5px; font-weight: 500; color: var(--ink);
-  line-height: 1.4; font-family: var(--f); transition: background .1s;
+/* 카테고리 헤더(드롭다운 색상 구분) */
+.qa-cat-head {
+  display: flex; align-items: center; gap: 6px;
+  padding: 9px 14px 4px; font-size: 11px; font-weight: 800; letter-spacing: .02em;
+  position: sticky; top: 0; background: var(--panel); z-index: 1;
 }
-/* alternate row tints for readability (5-color cycle) */
-.chatbot-drop-item:nth-child(5n+1) { background: color-mix(in srgb, #2E6BFF 7%, var(--panel)); }
-.chatbot-drop-item:nth-child(5n+2) { background: color-mix(in srgb, #9B4DFF 7%, var(--panel)); }
-.chatbot-drop-item:nth-child(5n+3) { background: color-mix(in srgb, #00C2A8 8%, var(--panel)); }
-.chatbot-drop-item:nth-child(5n+4) { background: color-mix(in srgb, #FF3D9A 6%, var(--panel)); }
-.chatbot-drop-item:nth-child(5n+5) { background: color-mix(in srgb, #FFB02E 8%, var(--panel)); }
-.chatbot-drop-item:hover { background: color-mix(in srgb, var(--accent) 16%, var(--panel)); color: var(--accent); }
+.qa-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.chatbot-drop-item {
+  border: none; border-left: 3px solid var(--qa, transparent); text-align: left; cursor: pointer;
+  padding: 9px 14px; font-size: 12.5px; font-weight: 500; color: var(--ink);
+  line-height: 1.4; font-family: var(--f); transition: background .1s, color .1s;
+  background: color-mix(in srgb, var(--qa, var(--accent)) 6%, var(--panel));
+}
+.chatbot-drop-item:hover { background: color-mix(in srgb, var(--qa, var(--accent)) 20%, var(--panel)); color: var(--qa, var(--accent)); }
 .chatbot-drop-empty {
   padding: 14px; font-size: 12px; color: var(--muted); text-align: center;
 }
@@ -1465,7 +1467,19 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .tl-tag { display: inline-block; font-size: 14px; font-weight: 800; color: var(--tl); letter-spacing: .01em; }
 @keyframes tlPulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
 .tl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--tl); margin-left: auto; box-shadow: 0 0 0 3px color-mix(in srgb, var(--tl) 18%, transparent); }
-.tl-now { font-family: var(--f); font-size: 17px; font-weight: 750; color: var(--ink); line-height: 1.6; letter-spacing: -.1px; word-break: keep-all; }
+.tl-now { font-family: var(--f); font-size: 16.5px; font-weight: 750; color: var(--ink); line-height: 1.6; letter-spacing: -.1px; word-break: keep-all; }
+/* 현상 → 근본 원인 → Insight 단계 라벨 */
+.tl-lbl { display: inline-block; font-size: 9px; font-weight: 900; letter-spacing: .03em; padding: 1px 7px; border-radius: 5px; margin-right: 7px; vertical-align: middle; transform: translateY(-1px); }
+.tl-lbl-now { color: var(--tl); background: color-mix(in srgb, var(--tl) 15%, var(--panel)); }
+.tl-lbl-cause { color: var(--muted); background: var(--line-2); }
+.tl-lbl-ins { color: #fff; background: var(--tl); }
+.tl-cause { font-family: var(--f); font-size: 13.5px; font-weight: 600; color: var(--ink-2); line-height: 1.58; word-break: keep-all;
+  max-height: 0; overflow: hidden; opacity: 0; margin-top: 0; transition: max-height .3s ease, opacity .22s ease, margin-top .22s ease; }
+.tl-card.tl-open .tl-cause { max-height: 220px; opacity: 1; margin-top: 9px; }
+.tl-card.tl-sel .tl-lbl-now { color: #fff; background: rgba(255,255,255,.22); }
+.tl-card.tl-sel .tl-lbl-cause { color: #fff; background: rgba(255,255,255,.18); }
+.tl-card.tl-sel .tl-lbl-ins { color: var(--tl); background: #fff; }
+.tl-card.tl-sel .tl-cause { color: rgba(255,255,255,.92); }
 .tl-hl { background: color-mix(in srgb, var(--tl) 22%, transparent); color: var(--ink); font-weight: 900; border-radius: 4px; padding: 0 4px; }
 .tl-kw { font-weight: 900; border-radius: 5px; padding: 0 4px; }
 .tl-kw-pos { background: rgba(22,163,74,.20); color: #0E7C3A; }

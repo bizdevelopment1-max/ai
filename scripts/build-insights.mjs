@@ -14,24 +14,28 @@ const AXES = [
   {
     axis: "assistant_layer", label: "어시스턴트 레이어", tone: "warn", nav: "bigtech",
     kw: ["assistant", "비서", "siri", "gemini", "copilot", "comet", "perplexity", "챗봇", "검색", "어시스턴트"],
+    rootCause: "AI 비서가 단말의 입력·앱 트래픽·데이터를 좌우하는 'OS 위의 새 관문'이 됨 → 비서를 쥔 쪽이 단말 경험·수익 동선을 통제",
     soWhat: "폰의 '기본 비서' 자리가 단말 차별화의 핵심 전장 — 기본 어시스턴트 노선(파트너 심화 vs 자체 vs 멀티)을 지금 확정해야 함",
     fallback: "Gemini 앱 MAU 900M+ · Apple, Siri를 'Siri AI'로 재설계 · Perplexity Comet 전면 무료 전환",
   },
   {
     axis: "ondevice_spec", label: "온디바이스 스펙", tone: "signal", nav: "bigtech",
     kw: ["온디바이스", "on-device", "npu", "메모리", "memory", "soc", "칩", "chip", "ai pc", "노트북", "스마트폰", "폰", "snapdragon", "tops", "엣지", "edge", "blackwell"],
+    rootCause: "고급 AI 추론에 메모리·NPU가 필수 → AI 성능이 하드웨어 사양에 직접 종속되고 구형 단말은 구조적으로 배제됨",
     soWhat: "AI 기능 = 하드웨어 스펙 = 프리미엄 전환·교체수요 동력 — 메모리·NPU 사양 로드맵에 직결('AI 탑재=판매 증가' 단정은 금물)",
     fallback: "구형 단말은 메모리 한계로 온디바이스 AI 구동 곤란(고급 비서엔 12GB) · 생성형 AI 폰 2028년 70%(IDC)",
   },
   {
     axis: "monetization", label: "수익화", tone: "revenue", nav: "bizmodel",
     kw: ["구독", "arr", "매출", "가격", "단가", "무료", "수익", "마진", "토큰", "pricing", "valuation", "밸류", "ipo", "$", "billion", "투자", "funding"],
+    rootCause: "추론 단가가 3년 150배 급락 → 'AI 기능=무료' 압력이 커지며 '어디서 돈을 받는가'의 과금 모델 자체가 흔들림",
     soWhat: "온디바이스 AI 기능의 과금 노선(구독 유료화 vs 단말 가격 프리미엄 vs 커머스 수수료) 결정에 직접 영향 — API 단가 하락은 클라우드 기능 원가에 직결",
     fallback: "Perplexity 구독→광고·커머스 전환 · OpenAI Q1 마진 -122% · 버티컬 ARR 배수 67배 · API 단가 급락 지속",
   },
   {
     axis: "agent_reliability", label: "에이전트 신뢰성", tone: "compete", nav: "signals",
     kw: ["에이전트", "agent", "osworld", "신뢰성", "자율", "할루시", "hallucinat", "computer use", "벤치마크", "benchmark", "agentic"],
+    rootCause: "성능(capability)은 빠르게 오르지만 자율 신뢰성(reliability)이 못 따라감 → 완전 자동화 시 오작동·책임·복구 비용이 폭증",
     soWhat: "온디바이스 에이전트는 완전 자동화가 아니라 승인형·작업 로그·취소/복구 설계가 정답 — 자사 에이전트 UX 원칙으로 못박을 것",
     fallback: "Computer Use·Deep Research·Comet이 구매 대행까지 자동화 · 그러나 자율 성공률 OSWorld 66%서 정체·구조화 과제 1/3 실패",
   },
@@ -107,6 +111,7 @@ async function main() {
       return {
         axis: ax.axis, axisLabel: ax.label, tone: ax.tone, nav: ax.nav,
         headline: gaejosik(a.title),
+        rootCause: ax.rootCause,
         soWhat: ax.soWhat,
         evidence: [{ title: a.title, date: a.date, source: a.source, url: a.url }],
         score: Math.round(Math.min(p.score / maxScore, 1) * 100),
@@ -117,7 +122,7 @@ async function main() {
     // 폴백(매칭 기사 없음)
     return {
       axis: ax.axis, axisLabel: ax.label, tone: ax.tone, nav: ax.nav,
-      headline: gaejosik(ax.fallback), soWhat: ax.soWhat, evidence: [], score: 40, live: false,
+      headline: gaejosik(ax.fallback), rootCause: ax.rootCause, soWhat: ax.soWhat, evidence: [], score: 40, live: false,
       updatedAt: new Date().toISOString().slice(0, 10),
     };
   });

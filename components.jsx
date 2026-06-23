@@ -320,6 +320,7 @@ function AIChatbot({ onNav }) {
   const inputRef = useRef(null);
 
   const QA = window.DASH.QA_PAIRS || [];
+  const QA_CATS = window.DASH.QA_CATS || [];
 
   const QUICK_Q = [
     "LLM 시장 규모와 성장률은?",
@@ -485,10 +486,25 @@ function AIChatbot({ onNav }) {
         <div className="chatbot-drop">
           <div className="chatbot-drop-title">질문을 선택하세요 · 예시 {filtered.length}개</div>
           <div className="chatbot-drop-list">
-            {filtered.slice(0, 30).map((qa, i) => (
-              <button key={i} className="chatbot-drop-item" onClick={() => selectQ(qa)}>
-                {qa.q}
-              </button>
+            {QA_CATS.map(c => {
+              const items = filtered.filter(qa => (qa.cat || 0) === c.id);
+              if (!items.length) return null;
+              return (
+                <React.Fragment key={c.id}>
+                  <div className="qa-cat-head" style={{ color: c.color }}>
+                    <span className="qa-cat-dot" style={{ background: c.color }} />{c.name}
+                  </div>
+                  {items.map((qa, i) => (
+                    <button key={c.id + "-" + i} className="chatbot-drop-item" style={{ "--qa": c.color }} onClick={() => selectQ(qa)}>
+                      {qa.q}
+                    </button>
+                  ))}
+                </React.Fragment>
+              );
+            })}
+            {/* 카테고리 없는(레거시) 항목 */}
+            {filtered.filter(qa => !qa.cat).map((qa, i) => (
+              <button key={"x-" + i} className="chatbot-drop-item" onClick={() => selectQ(qa)}>{qa.q}</button>
             ))}
             {filtered.length === 0 && <div className="chatbot-drop-empty">일치하는 질문이 없습니다. Enter로 자연어 검색</div>}
           </div>

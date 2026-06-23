@@ -122,7 +122,10 @@ function App() {
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
 
-  const navTo = id => {
+  // 일부 Q&A는 통합·이동된 섹션을 가리킴: dynamics→overview(경쟁구도가 ES로 이동), insights→reports
+  const NAV_ALIAS = { dynamics: "overview", insights: "reports" };
+  const navTo = rawId => {
+    const id = NAV_ALIAS[rawId] || rawId;
     setActive(id);
     const el = refs[id] && refs[id].current;
     const sc = scrollRef.current;

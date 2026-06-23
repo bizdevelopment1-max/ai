@@ -1316,8 +1316,8 @@ function ExecToplines({ items, insights, onNav }) {
 
   // 데이터 정규화: insights 카드 → 공통 셰이프 / 폴백은 정적 TOPLINE
   const cards = (insights && insights.cards && insights.cards.length)
-    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, decision: c.soWhat, evidence: c.evidence || [], score: c.score, live: c.live, updatedAt: c.updatedAt }))
-    : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, decision: t.decision, evidence: [], score: null, live: false }));
+    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, evidence: c.evidence || [], score: c.score, live: c.live, updatedAt: c.updatedAt }))
+    : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, evidence: [], score: null, live: false }));
   if (!cards.length) return null;
 
   return (
@@ -1335,14 +1335,15 @@ function ExecToplines({ items, insights, onNav }) {
                 <span className="tl-tag">{t.tag}</span>
                 <i className="tl-dot" />
               </div>
-              <p className="tl-now">{hlKey(t.now)}</p>
+              <p className="tl-now"><span className="tl-lbl tl-lbl-now">현상</span>{hlKey(t.now)}</p>
               {t.score != null && (
                 <div className="tl-meter" title={`관련도 ${t.score}/100`}>
                   <span className="tl-meter-fill" style={{ width: t.score + "%", background: tone }} />
                   <em>{t.score}</em>
                 </div>
               )}
-              <p className="tl-dec"><span className="tl-arrow">→</span>{hlKey(t.decision)}</p>
+              {t.cause && <p className="tl-cause"><span className="tl-lbl tl-lbl-cause">근본 원인</span>{hlKey(t.cause)}</p>}
+              <p className="tl-dec"><span className="tl-lbl tl-lbl-ins">Insight</span>{hlKey(t.decision)}</p>
               {t.evidence && t.evidence.length > 0 && (
                 <div className="tl-ev">
                   {t.evidence.slice(0, 2).map((e, k) => (
