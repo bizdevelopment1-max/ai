@@ -56,7 +56,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
           <b>{c.name}</b>
           <Icon name="chevron" size={12} />
         </span>
-        <span className="ct-seg">{c.tier && <em className={"ct-tier ct-tier-" + c.tier}>{c.tier}</em>}{c.rel && <em className="ct-rel" style={{ color: cat.accent, borderColor: cat.accent }}>{c.rel}</em>}{c.unit}</span>
+        <span className="ct-seg">{c.rel && <em className="ct-rel" style={{ color: cat.accent, borderColor: cat.accent }}>{c.rel}</em>}{c.unit}</span>
         <span className="num ct-valcell" title={c.valAsof ? `출처: '${c.valAsof} 기준` : ""}>
           <AnimatedNumber className="ct-val" value={c.valuation} />
           {c.valAsof && c.valAsof !== "—" && <em className="ct-asof">'{c.valAsof} 기준</em>}
@@ -109,7 +109,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
         <span className="board-tab" style={{ background: cat.accent }} />
         <div className="board-titles">
           <h2>{cat.ko} <span className="board-en">{cat.en}</span></h2>
-          <p>{isStartup ? "6개 카테고리로 분류 — 에이전틱 AI·코딩 / 검색·어시스턴트 / 크리에이티브 도구 / 인프라·파운데이션 / 지역 AI 플랫폼 / 엔터프라이즈 AI(별도 소스: CB Insights) · T1=온디바이스 직접 연관 · T2=하이브리드 모니터링" : cat.desc} · 업체명 클릭 시 상세 정보</p>
+          <p>{isStartup ? "6개 카테고리로 분류 — 에이전틱 AI·코딩 / 검색·어시스턴트 / 크리에이티브 도구 / 인프라·파운데이션 / 지역 AI 플랫폼 / 엔터프라이즈 AI(별도 소스: CB Insights)" : cat.desc} · 업체명 클릭 시 상세 정보</p>
         </div>
         <div className="board-count" style={{ color: cat.accent, background: cat.accentSoft }}>{rows.length} 社</div>
       </div>
