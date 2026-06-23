@@ -261,6 +261,7 @@ async function freeKoBrief(a, contentEn) {
 }
 
 // Best-effort brief: 본문 보강(공통) → Claude(있으면) → keyless. 항상 개조식 3줄 요약 반환.
+// contentEn(보강된 원문)도 함께 반환 → news.json에 보존, 다른 PC의 Claude CLI가 재요약할 재료로 사용.
 async function brief(a) {
   // 공통: 원문 URL 해석 + 본문 단락 수집으로 내용 보강(양 경로 모두 풍부한 입력 사용 → 3줄 확보)
   const realUrl = await resolveUrl(a.url);
@@ -269,8 +270,10 @@ async function brief(a) {
   if (snip && snip.length > content.length) content = snip;
   content = stripSourceTail(content, a.source);
   const rich = { ...a, descEn: content, url: realUrl };
-  if (KEY) { const s = await summarize(rich); if (s) return { ...s, url: realUrl }; }
-  return await freeKoBrief(rich, content);
+  let s = null;
+  if (KEY) s = await summarize(rich);
+  if (!s) s = await freeKoBrief(rich, content);
+  return { ...s, url: realUrl, contentEn: content };
 }
 
 // limited-concurrency map
@@ -308,15 +311,20 @@ async function main() {
   const sumByUrl = new Map();
   toSummarize.forEach((a, k) => { if (sums[k]) sumByUrl.set(a.url, sums[k]); });
 
+  const lineCount = sm => String(sm || "").split("\n").map(l => l.trim()).filter(Boolean).length;
   const processed = raw.map(a => {
     const old = prevByUrl.get(a.url);
-    if (isKoreanSummary(old)) return old;                 // reuse — no duplicate work
+    if (isKoreanSummary(old) && lineCount(old.summary) >= 3) return old;   // 3줄 인사이트면 재사용
     const s = sumByUrl.get(a.url);
+    const summary = s ? s.summary : `· ${a.title}`;
     return {
       date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag,
       url: (s && s.url) ? s.url : a.url,                   // Google News 리다이렉트 대신 원문 URL
       title: s ? s.title_ko : a.title,                    // 한국어 번역 제목
-      summary: s ? s.summary : `· ${a.title}`,            // 출처 줄 없음 (출처는 상단 표기)
+      titleEn: a.title,                                   // 원문(영문) 제목 — CLI 재요약용
+      descEn: (s && s.contentEn) || a.descEn || "",       // 보강된 원문 — CLI 재요약용
+      summary,
+      needsLLM: lineCount(summary) < 3,                   // 3줄 미만이면 다른 PC Claude CLI가 보강
     };
   });
 
