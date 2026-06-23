@@ -216,10 +216,37 @@ async function fetchSnippet(url) {
   } catch { return ""; }
 }
 
-// 텍스트를 한국어 개조식 3줄로 분해
-function to3lines(text, fallback) {
-  let lines = String(text || "").split(/(?<=[.!?。…])\s+|·|\n|;/).map(s => s.trim())
-    .filter(s => s.length > 4).slice(0, 3);
+// 주요 매체명(영문·한글) — 요약 줄이 '매체명'으로 끝나는 것을 걸러내기 위함
+const PUBS = /(business insider|비즈니스\s*인사이더|reuters|로이터|bloomberg|블룸버그|techcrunch|테크크런치|the verge|버지|cnbc|wsj|wall street journal|월스트리트|financial times|the information|axios|engadget|ars technica|the guardian|가디언|venturebeat|벤처비트|forbes|포브스|wired|와이어드|cnet|new york times|뉴욕\s*타임스|associated press|ap통신|the new york times|9to5|fast company|패스트컴퍼니)/i;
+
+// 본문 끝에 붙은 매체명 꼬리 제거(" - Business Insider", " | 비즈니스 인사이더", 마지막 매체명 문장 등)
+function stripSourceTail(text, source) {
+  let t = String(text || "").trim();
+  if (source) {
+    const esc = String(source).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    t = t.replace(new RegExp("[\\-\\|·,–—]\\s*" + esc + "\\s*$", "i"), "").trim();
+  }
+  t = t.replace(/[\-\|·,–—]\s*[A-Za-z][\w .&'\-]{1,28}$/,(m)=> PUBS.test(m) ? "" : m).trim(); // 끝 영문 매체 꼬리
+  return t;
+}
+
+// 한 줄이 사실상 '매체명 attribution'인지 — 짧고 매체명이면 요약 줄에서 제외
+function isAttribution(line, source) {
+  const l = String(line || "").trim();
+  if (!l) return true;
+  if (source && l.toLowerCase() === String(source).toLowerCase()) return true;
+  if (l.length <= 16 && PUBS.test(l)) return true;                         // 짧은 매체명
+  if (/^[A-Za-z][A-Za-z .&'\-]{1,24}$/.test(l) && l.length <= 24) return true; // 한글 없는 짧은 영문(대개 매체·꼬리표)
+  return false;
+}
+
+// 텍스트를 한국어 개조식 줄(최대 3)로 분해 — 매체명/출처 줄은 제외하고 요약만
+function to3lines(text, fallback, source) {
+  const cleaned = stripSourceTail(text, source);
+  let lines = String(cleaned || "").split(/(?<=[.!?。…])\s+|·|\n|;/).map(s => s.trim())
+    .filter(s => s.length > 4)
+    .filter(s => !isAttribution(s, source))
+    .slice(0, 3);
   if (!lines.length) lines = [fallback];
   return lines.map(l => "· " + l.replace(/^[·\-•]\s*/, "")).join("\n");
 }
@@ -231,8 +258,9 @@ async function freeKoBrief(a) {
   let content = a.descEn || "";
   const snip = await fetchSnippet(realUrl);                  // 원문 페이지 og:description/본문
   if (snip && snip.length > content.length) content = snip;
+  content = stripSourceTail(content, a.source);             // 영문 단계에서 매체명 꼬리 제거(번역 전)
   const contentKo = (await translateKo(content)) || content;  // 번역 성공 시 한글, 실패 시 영문 폴백
-  return { title_ko: titleKo, summary: to3lines(contentKo, titleKo), url: realUrl };
+  return { title_ko: titleKo, summary: to3lines(contentKo, titleKo, a.source), url: realUrl };
 }
 
 // Best-effort brief: Claude(있으면) → 실패/무키 시 keyless 번역. 항상 3줄형 요약 반환.
