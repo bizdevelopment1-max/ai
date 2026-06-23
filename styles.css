@@ -1544,6 +1544,17 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .pt-table { display: flex; flex-direction: column; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; }
 .pt-row { display: grid; grid-template-columns: 1.3fr 1.3fr 1.4fr 2fr; gap: 8px; align-items: center; padding: 9px 12px; border-bottom: 1px solid var(--line-2); font-size: 12px; }
 .pt-row:last-child { border-bottom: none; }
+/* 프라이싱 모델 하단 시사점 캡션 */
+.pt-foot { margin: 10px 2px 2px; font-size: 12px; line-height: 1.6; color: var(--ink-2); word-break: keep-all;
+  border-left: 3px solid var(--accent); padding: 6px 0 6px 11px; background: color-mix(in srgb, var(--accent) 5%, transparent); border-radius: 0 6px 6px 0; }
+.pt-foot b { color: var(--ink); font-weight: 800; }
+/* 성능-신뢰성 격차 설명 패널 */
+.signal-explain { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+.sx-item { background: var(--panel-2); border: 1px solid var(--line); border-radius: 11px; padding: 13px 15px; }
+.sx-item em { display: block; font-style: normal; font-size: 11px; font-weight: 800; color: var(--accent); margin-bottom: 6px; letter-spacing: .02em; }
+.sx-item p { font-size: 12.5px; line-height: 1.6; color: var(--ink-2); word-break: keep-all; }
+.sx-item b { color: var(--ink); font-weight: 800; }
+@media (max-width: 760px) { .signal-explain { grid-template-columns: 1fr; } }
 .pt-hrow { font-size: 9.5px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; background: var(--panel-2); }
 .pt-row:not(.pt-hrow):hover { background: var(--panel-2); }
 .pt-model { display: flex; align-items: center; gap: 7px; font-weight: 800; color: var(--ink); }

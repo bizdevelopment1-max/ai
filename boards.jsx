@@ -75,13 +75,17 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
     );
   };
 
-  // 스타트업은 a16z 기준 버티컬별로 그룹핑, 그룹 내 밸류 큰 순
-  const verticals = window.DASH.STARTUP_VERTICALS || [];
+  // 카테고리별 그룹핑: 스타트업=a16z 버티컬(c.vertical=ko) / 빅테크=핵심지표 성격(c.group=id)
+  const groupCfg = cat.id === "startup"
+    ? { groups: window.DASH.STARTUP_VERTICALS || [], match: (c, g) => c.vertical === g.ko }
+    : cat.id === "bigtech"
+    ? { groups: window.DASH.BIGTECH_GROUPS || [], match: (c, g) => c.group === g.id }
+    : null;
   let body;
-  if (isStartup && verticals.length) {
+  if (groupCfg && groupCfg.groups.length) {
     let idx = 0;
-    body = verticals.map(v => {
-      const grp = rows.filter(c => c.vertical === v.ko).sort((a, b) => sizeOf(b) - sizeOf(a));
+    body = groupCfg.groups.map(v => {
+      const grp = rows.filter(c => groupCfg.match(c, v)).sort((a, b) => sizeOf(b) - sizeOf(a));
       if (!grp.length) return null;
       return (
         <React.Fragment key={v.id}>
@@ -473,8 +477,13 @@ function ChartsBoard({ data, cats, theme, sectionRef }) {
         </div>
 
         <div className="chart-card">
-          <div className="cc-head"><h3>AI 매출</h3><span title="OpenAI · Google · Microsoft · Anthropic 공시/추정 기준">$B · 연환산 · 공시 기준</span></div>
-          <HBarChart data={data.REVENUE} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="B" valuePrefix="$" />
+          <div className="cc-head"><h3>AI 매출 — SW·서비스</h3><span title="모델·클라우드·앱 매출">$B · 연환산/ARR/run-rate · 공시·추정</span></div>
+          <HBarChart data={data.REVENUE.filter(d => d.seg === "sw")} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="B" valuePrefix="$" />
+        </div>
+
+        <div className="chart-card">
+          <div className="cc-head"><h3>AI 매출 — HW(칩)</h3><span title="AI 가속기 하드웨어 매출 — 척도가 달라 SW와 분리">$B · 연매출 · 공시</span></div>
+          <HBarChart data={data.REVENUE.filter(d => d.seg === "hw")} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="B" valuePrefix="$" />
         </div>
 
       </div>
@@ -1098,7 +1107,9 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
             );
           })}
         </div>
+        <p className="pt-foot"><b>시사점:</b> 추론 단가가 무료에 수렴하면서 '구독' 단일 모델은 흔들리는 중 — 단말 제조사는 <b>구독 유료화·단말 가격 프리미엄·커머스 수수료·번들 크레딧</b>을 조합한 하이브리드 과금을 설계해야 한다. 성과 기반(outcome) 과금은 ROI 증명이 쉬운 버티컬부터 적용 가능.</p>
       </div>
+      <div className="es-cm-head" style={{ marginTop: 18 }}><span className="es-cm-kicker"><em>Competitive Dynamics · Money Flow</em></span></div>
       <KnowledgeGraph companies={companies} cats={cats} catMap={catMap} progress={bizProg} mode="bizmodel" />
       <div className="biz-grid">
         {models.map((m, i) => {
@@ -1278,6 +1289,20 @@ function SignalBoard({ data, theme, sectionRef }) {
         <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
           <div className="cc-head"><h3>Capability–Reliability Gap</h3><span>성능은 오르지만 자율 신뢰성은 지연 · Stanford HAI AI Index 2026</span></div>
           <CapRelChart data={data.CAP_REL} theme={theme} />
+        </div>
+      </div>
+      <div className="signal-explain">
+        <div className="sx-item">
+          <em>왜 이 지표를 넣었나</em>
+          <p><b>성능(capability)</b>은 벤치마크 점수, <b>신뢰성(reliability)</b>은 사람 개입 없이 끝까지 성공한 비율입니다. 'AI가 다 한다'는 마케팅과 달리 둘 사이엔 큰 격차가 있어, 단말에 에이전트를 넣을 때 <b>어디까지 맡길 수 있나</b>를 판단하는 기준선이 됩니다.</p>
+        </div>
+        <div className="sx-item">
+          <em>어떻게 보면 되나</em>
+          <p>두 선의 <b>벌어진 간격(격차)</b>이 곧 '자동화 시 실패·휴먼개입 비용'입니다. 격차가 클수록 완전 자동화는 위험 → <b>승인형(Human-in-the-Loop)</b>이 정답. 점이 오를수록 위임 범위를 넓힐 수 있습니다.</p>
+        </div>
+        <div className="sx-item">
+          <em>단말 관점 시사점</em>
+          <p>2026 H1 기준 성능 66 vs 신뢰성 45 — 구조화 과제의 <b>약 1/3은 여전히 실패</b>. 온디바이스 에이전트는 결제·보안 등 <b>고위험 작업에 사용자 확인·작업 로그·취소</b>를 기본 UX로 설계해야 합니다.</p>
         </div>
       </div>
      </AnimCtx.Provider>

@@ -334,9 +334,12 @@ function MonthlyLineChart({ series, months, colors, ink, muted, grid, unit, valu
             <text x={padL - 8} y={y(t) + 3} textAnchor="end" fontSize="9" fill={muted} style={{ fontVariantNumeric: "tabular-nums" }}>{pre}{t}{unit}</text>
           </g>
         ))}
-        {months.map((m, i) => (
-          <text key={i} x={x(i)} y={padT + ih + 16} textAnchor="middle" fontSize="8.5" fill={muted}>{m.replace("2026-", "")}</text>
-        ))}
+        {months.map((m, i) => {
+          // 가장자리 라벨이 잘리지 않도록 양끝 정렬 보정(5번째=마지막 포인트 오른쪽 넘침 방지)
+          const anchor = i === 0 ? "start" : i === months.length - 1 ? "end" : "middle";
+          const label = String(m).replace(/^20/, "'");   // '2025 Q2' → ''25 Q2'
+          return <text key={i} x={x(i)} y={padT + ih + 16} textAnchor={anchor} fontSize="8.5" fill={muted}>{label}</text>;
+        })}
         {series.map((s, si) => {
           const pts = s.values.map((v, i) => `${x(i)},${y(v)}`);
           const visiblePts = Math.floor(prog * pts.length) + 1;
@@ -349,7 +352,7 @@ function MonthlyLineChart({ series, months, colors, ink, muted, grid, unit, valu
                   <title>{s.name} {months[i]}: {pre}{v}{unit} — {s.srcs && s.srcs[i] || ""}</title>
                   <circle cx={x(i)} cy={y(v)} r="2.5" fill="#fff" stroke={colors[si % colors.length]} strokeWidth="1.5" />
                   <circle cx={x(i)} cy={y(v)} r="9" fill="transparent" style={{ cursor: "pointer" }}
-                    onMouseEnter={e => tip.show(e, <span><b style={{ color: colors[si % colors.length] }}>{s.name}</b> · {months[i].replace("2026-", "")}월 · <b>{pre}{v}{unit}</b>{s.srcs && s.srcs[i] ? <span><br /><em>{s.srcs[i]}</em></span> : null}</span>)}
+                    onMouseEnter={e => tip.show(e, <span><b style={{ color: colors[si % colors.length] }}>{s.name}</b> · {months[i]} · <b>{pre}{v}{unit}</b>{s.srcs && s.srcs[i] ? <span><br /><em>{s.srcs[i]}</em></span> : null}</span>)}
                     onMouseMove={tip.move} onMouseLeave={tip.hide} />
                 </g>
               ))}
