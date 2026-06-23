@@ -294,6 +294,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const [pendingDel, setPendingDel] = React.useState(null);  // 비밀번호 입력 대기 중인 기사 key
   const [pwInput, setPwInput] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
+  const [selKey, setSelKey] = React.useState(null);   // 클릭 선택된 기사(외곽선 박스)
   const askDelete = (a) => { setPendingDel(keyOf(a)); setPwInput(""); setPwErr(false); };
   const cancelDelete = () => { setPendingDel(null); setPwInput(""); setPwErr(false); };
   const confirmDelete = (a) => {
@@ -370,8 +371,10 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
         <div className="feed-list">
           {sorted.map((a, i) => {
             const c = catMap[a.cat] || {};
+            const isSel = selKey === keyOf(a);
             return (
-              <div className="art" key={keyOf(a)}>
+              <div className={"art" + (isSel ? " art-sel" : "")} key={keyOf(a)}
+                onClick={() => setSelKey(isSel ? null : keyOf(a))}>
                 <span className="art-cat" style={{ background: c.accent }} />
                 <div className="art-body">
                   <span className="art-meta">
@@ -380,7 +383,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     <span className="art-tag" style={{ color: c.accent, background: c.accentSoft }}>{a.tag}</span>
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
                   </span>
-                  <a className="art-title" href={a.url} target="_blank" rel="noopener">{a.title}</a>
+                  <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{a.title}</a>
                   {a.summary && <span className="art-summary"><BoldSummary text={a.summary} /></span>}
                 </div>
                 {pendingDel === keyOf(a) ? (
@@ -395,7 +398,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                   </div>
                 ) : (
                   <button className="art-del" title="이 기사 삭제(비밀번호 필요)" aria-label="기사 삭제"
-                    onClick={() => askDelete(a)}>
+                    onClick={e => { e.stopPropagation(); askDelete(a); }}>
                     <Icon name="x" size={13} sw={2.2} />
                   </button>
                 )}
@@ -742,6 +745,22 @@ const COMPETE_EDGES = [
   { from: "Glean", to: "Microsoft", type: "경쟁", label: "엔터프라이즈 검색 vs Copilot" },
   { from: "ElevenLabs", to: "OpenAI", type: "경쟁", label: "음성 AI 경쟁" },
   { from: "Harvey", to: "Microsoft", type: "경쟁", label: "법률 AI vs Copilot" },
+  // SpaceX(xAI·Grok·Cursor) 연관
+  { from: "SpaceX (xAI, Cursor)", to: "OpenAI", type: "경쟁", label: "Grok·Cursor vs GPT·Codex" },
+  { from: "SpaceX (xAI, Cursor)", to: "Anthropic", type: "경쟁", label: "Cursor vs Claude Code" },
+  { from: "SpaceX (xAI, Cursor)", to: "Google DeepMind", type: "경쟁", label: "Grok vs Gemini" },
+  // NVIDIA — 칩 경쟁(자체 실리콘) + 공급 허브
+  { from: "NVIDIA", to: "Google DeepMind", type: "경쟁", label: "GPU vs 자체 TPU" },
+  { from: "NVIDIA", to: "Amazon", type: "경쟁", label: "GPU vs Trainium" },
+  { from: "NVIDIA", to: "OpenAI", type: "매출", label: "GPU 공급 → 매출" },
+  { from: "NVIDIA", to: "Anthropic", type: "매출", label: "GPU 공급 → 매출" },
+  // Apple — 단말 비서 경쟁 + 모델 파트너십
+  { from: "Apple", to: "Google DeepMind", type: "파트너십", label: "Gemini 탑재 Siri" },
+  { from: "Apple", to: "OpenAI", type: "파트너십", label: "Siri ChatGPT 연동" },
+  { from: "Apple", to: "Anthropic", type: "파트너십", label: "Claude 아이폰 선택지" },
+  // 빅테크–모델 핵심 자본 관계
+  { from: "Microsoft", to: "OpenAI", type: "투자", label: "독점 파트너십·$13B 투자" },
+  { from: "Amazon", to: "Anthropic", type: "투자", label: "투자 $13B+·AWS 약정" },
 ];
 
 // 비즈니스 모델 전용 — 실제 '돈의 흐름'(투자·인수·매출·파트너십). 경쟁 관계는 제외
@@ -1019,35 +1038,42 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo }
   );
 }
 
-// ---- Executive Summary 내 '경쟁 구도' — 최신 기사에 등장한 업체만, 노드→최신 기사 ----
+// ---- Executive Summary 내 '경쟁 구도' — 관계(엣지)가 있는 업체만, 노드→최신 기사 ----
 function ESCompetitiveMap({ companies, cats, articles }) {
   const ref = React.useRef(null);
   const inView = useInView(ref);
   const prog = useProgress(inView, 1400);
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
 
-  // 최신 기사에 등장한 업체(co)만 추출 + 업체별 '가장 최근 기사' 매핑
+  // 연결 관계(COMPETE_EDGES)가 있는 업체만 노드로 표시 — 관계 없는 업체는 제외. + 업체별 최신 기사 매핑
   const { list, articleByCo } = React.useMemo(() => {
-    const names = companies.map(c => c.name);
+    const connected = new Set();
+    COMPETE_EDGES.forEach(e => { connected.add(e.from); connected.add(e.to); });
+    const list = companies.filter(c => connected.has(c.name));
+    const names = list.map(c => c.name);
     const matchName = (co) => names.find(n => n === co || co.startsWith(n.split(" (")[0]) || n.startsWith(co.split(" (")[0]));
-    const byName = {}; const activeSet = new Set();
+    const byName = {};
     (articles || []).forEach(a => {
       if (!a.co) return;
       const m = matchName(a.co);
       if (!m) return;
-      activeSet.add(m);
       if (!byName[m] || a.date > byName[m].date) byName[m] = { title: a.title, url: a.url, date: a.date };
     });
-    const active = companies.filter(c => activeSet.has(c.name));
-    return { list: active.length >= 2 ? active : companies, articleByCo: byName };
+    return { list, articleByCo: byName };
   }, [companies, articles]);
 
-  const graphKey = list.map(c => c.name).join("|");   // 기사 기반 목록이 바뀌면 그래프 재구성
+  const graphKey = list.map(c => c.name).join("|");   // 목록이 바뀌면 그래프 재구성
   return (
     <div className="es-compmap" ref={ref}>
      <AnimCtx.Provider value={inView}>
       <div className="es-cm-head">
         <span className="es-cm-kicker"><em>Competitive Dynamics</em></span>
+        <span className="es-cm-legend">
+          <i style={{ background: "#FF4D4D" }} />경쟁
+          <i style={{ background: "#2D6BFF" }} />파트너십
+          <i style={{ background: "#00C2A8" }} />투자
+          <i style={{ background: "#F59E0B" }} />공급
+        </span>
       </div>
       <KnowledgeGraph key={graphKey} companies={list} cats={cats} catMap={catMap} progress={prog} mode="dynamics" articleByCo={articleByCo} />
      </AnimCtx.Provider>

@@ -658,9 +658,13 @@ a[href]:hover .rainbow-on-hover,
 
 .art {
   display: flex; align-items: center; gap: 13px; padding: 11px 12px; border-radius: 8px;
-  transition: background .12s; position: relative;
+  transition: background .12s, box-shadow .15s, outline-color .15s; position: relative;
+  outline: 2px solid transparent; outline-offset: -2px; cursor: pointer;
 }
 .art:hover { background: linear-gradient(115deg, var(--accent, #2A6FDB) 0%, color-mix(in srgb, var(--accent, #2A6FDB) 58%, #000) 60%, color-mix(in srgb, var(--accent, #2A6FDB) 40%, #000) 100%); }
+/* 클릭 선택 시 외곽선 박스 */
+.art-sel { outline-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent), var(--shadow); background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+.art-sel .art-title { color: var(--accent); }
 .art-src, .art-summary { transition: color .15s; }
 .art:hover .art-src { color: #fff; }
 .art:hover .art-summary { color: rgba(255,255,255,.82); }
@@ -1215,6 +1219,9 @@ a[href]:hover .rainbow-on-hover,
 .es-compmap { margin: 20px 0 6px; }
 .es-cm-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
 .es-cm-kicker em { font-size: 18px; font-weight: 800; font-style: normal; color: var(--ink); letter-spacing: -.2px; }
+.es-cm-legend { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--muted); flex-wrap: wrap; }
+.es-cm-legend i { width: 14px; height: 3px; border-radius: 2px; margin-left: 8px; display: inline-block; }
+.es-cm-legend i:first-child { margin-left: 0; }
 .kg-detail-edges { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
 .kg-detail-edges em { display: block; width: 100%; font-size: 10px; font-style: normal; font-weight: 700; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: .5px; }
 .kg-edge-tag {
