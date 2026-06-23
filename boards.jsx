@@ -1189,33 +1189,31 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
 // 매출 추이는 공시/ARR·run-rate 기반 모델값이라 유지하되 성격을 명시한다.
 function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
   const inView = useInView(sectionRef);
+  const [seg, setSeg] = React.useState("ai");          // ai=AI 부문 / total=기업 전체 매출
   const [selectedApp, setSelectedApp] = React.useState("all");
+  React.useEffect(() => { setSelectedApp("all"); }, [seg]);
 
   const revMonthly = data.REVENUE_QUARTERLY || data.REVENUE_MONTHLY || [];
   const periodOf = m => m.q || m.month;
   const revMonths = revMonthly.map(periodOf);
-  const allRevNames = revMonthly.length > 0 ? revMonthly[0].data.map(d => d.name) : [];
+  const hasSeg = revMonthly.length > 0 && revMonthly[0].data.some(d => d.seg);
+  const segData = mi => (revMonthly[mi] ? revMonthly[mi].data : []).filter(d => !hasSeg || d.seg === seg);
+  const allRevNames = revMonthly.length > 0 ? segData(0).map(d => d.name) : [];
   const appColors = ["#1428A0", "#7A38D6", "#0E8F6E", "#D23B3B", "#F59E0B", "#0891B2", "#2D6BFF", "#C026D3"];
 
-  // 첫 달 → 최신 달 매출 변화율(Δ) — 추세 요약(뉴스 서술과 분리)
+  // 첫 분기 → 최신 분기 매출 변화율(Δ) — 추세 요약(뉴스 서술과 분리)
   const revDeltas = revMonthly.length >= 2 ? allRevNames.map(name => {
-    const f = (revMonthly[0].data.find(d => d.name === name) || {}).value || 0;
-    const l = (revMonthly[revMonthly.length - 1].data.find(d => d.name === name) || {}).value || 0;
+    const f = (segData(0).find(d => d.name === name) || {}).value || 0;
+    const l = (segData(revMonthly.length - 1).find(d => d.name === name) || {}).value || 0;
     return { name, pct: f ? Math.round((l - f) / f * 100) : 0 };
   }).sort((a, b) => b.pct - a.pct) : [];
 
   const buildRevenueSeries = () => {
-    const names = selectedApp === "all" ? allRevNames.slice(0, 6) : [selectedApp];
+    const names = selectedApp === "all" ? allRevNames.slice(0, 7) : [selectedApp];
     return names.map(name => ({
       name,
-      values: revMonths.map((_m, mi) => {
-        const d = revMonthly[mi].data.find(r => r.name === name);
-        return d ? d.value : 0;
-      }),
-      srcs: revMonths.map((_m, mi) => {
-        const d = revMonthly[mi].data.find(r => r.name === name);
-        return d ? d.src : "";
-      }),
+      values: revMonths.map((_m, mi) => { const d = segData(mi).find(r => r.name === name); return d ? d.value : 0; }),
+      srcs: revMonths.map((_m, mi) => { const d = segData(mi).find(r => r.name === name); return d ? d.src : ""; }),
     }));
   };
 
@@ -1226,9 +1224,16 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
           <h2>AI 분기별 매출 추이 <span className="board-en">Quarterly Revenue Trends</span></h2>
-          <p>축적된 <b>매출 추세</b>(분기 시계열·Δ) — 데일리 기사(오늘의 이벤트)와 역할 분리 · <b>분기 공시(NVIDIA)·공개 ARR/run-rate÷4</b> 환산(내부 추정 제외, NVIDIA는 회계분기)</p>
+          <p>분기 공시 기반 매출 추세 · <b>AI 부문</b>(NVIDIA DC·MS AI·클라우드·OpenAI·Anthropic) vs <b>전체 매출</b> 전환 · Google·Amazon은 AI 매출 비공개라 <b>클라우드 부문</b>으로 대체(AI 인프라 근사)</p>
         </div>
       </div>
+
+      {hasSeg && (
+        <div className="seg-toggle">
+          <button className={seg === "ai" ? "seg-btn on" : "seg-btn"} onClick={() => setSeg("ai")}>AI 부문 매출</button>
+          <button className={seg === "total" ? "seg-btn on" : "seg-btn"} onClick={() => setSeg("total")}>기업 전체 매출</button>
+        </div>
+      )}
 
       <div className="monthly-app-filter">
         <button className={selectedApp === "all" ? "monthly-btn on" : "monthly-btn"} onClick={() => setSelectedApp("all")}>전체</button>
@@ -1245,7 +1250,7 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
 
       <div className="chart-grid">
         <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-          <div className="cc-head"><h3>AI 분기별 매출 추이 (분기 공시·공개 ARR/Run-rate 기반)</h3><span>$M · 분기 공시 매출(NVIDIA)·공개 ARR·run-rate÷4 환산 — 데이터 성격은 각 포인트 소스 참조</span></div>
+          <div className="cc-head"><h3>{seg === "ai" ? "AI 부문 분기 매출" : "기업 전체 분기 매출"} (공시 기반)</h3><span>$M · {seg === "ai" ? "NVIDIA DC·MS AI run-rate÷4·Google Cloud·AWS·OpenAI·Anthropic" : "각 사 분기 총매출 공시"} — 포인트별 소스 참조</span></div>
           <MonthlyLineChart series={buildRevenueSeries()} months={revMonths} colors={appColors} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" valuePrefix="$" companies={data.COMPANIES} />
         </div>
       </div>
@@ -1255,7 +1260,7 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
           {revDeltas.slice(0, 3).map((d, i) => (
             <span className="md-item" key={i}>{d.name} <em className={d.pct >= 0 ? "up" : "down"}>{d.pct >= 0 ? "+" : ""}{d.pct}%</em></span>
           ))}
-          <span className="md-read">— 성장 모멘텀은 Anthropic(매출 급증), 절대 규모 1위는 NVIDIA. 같은 사건을 뉴스에서 또 서술하지 않음.</span>
+          <span className="md-read">— {seg === "ai" ? "AI 부문: 성장률 1위 Anthropic·절대 규모 1위 NVIDIA(DC). 클라우드(AWS·Google Cloud)는 AI 비중 큰 근사 지표." : "전체 매출: 절대 규모 Amazon·Alphabet, 성장률은 Meta·Microsoft."}</span>
         </div>
       )}
      </AnimCtx.Provider>

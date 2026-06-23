@@ -1570,6 +1570,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .pt-price { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
 .pt-note { color: var(--muted); font-weight: 600; }
 
+.seg-toggle { display: inline-flex; gap: 0; margin: 4px 20px 2px; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: var(--panel-2); }
+.seg-btn { border: none; background: transparent; color: var(--muted); font-size: 12.5px; font-weight: 800; padding: 7px 14px; cursor: pointer; font-family: var(--f); transition: background .15s, color .15s; }
+.seg-btn.on { background: var(--accent); color: #fff; }
+.seg-btn:not(.on):hover { color: var(--ink); background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .monthly-delta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 10px 20px 16px; font-size: 12px; color: var(--ink-2); }
 .monthly-delta > b { color: var(--ink); font-weight: 800; }
 .md-item { font-weight: 700; color: var(--ink); }
