@@ -204,7 +204,8 @@ function App() {
   const latestArticleDate = articles.reduce((m, a) => (a.date > m ? a.date : m), "");
   const articleCount = articles.filter(a => a.date === latestArticleDate).length;
   const now = new Date();
-  const renderTime = `${now.getMonth() + 1}/${now.getDate()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  const p2 = n => String(n).padStart(2, "0");
+  const renderTime = `${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())} ${p2(now.getHours())}:${p2(now.getMinutes())}`;
 
   return (
     <div className={"app d-" + t.density}>
@@ -249,7 +250,7 @@ function App() {
 
             <footer className="foot">
               <span>AI Intelligence Dashboard</span>
-              <span className="foot-update">자료 기준일: 2026-06-17 · 최종 팩트체크: 2026-06-17 · 렌더링: {renderTime}</span>
+              <span className="foot-update">최종 업데이트: {renderTime}</span>
               <span>원출처: Bloomberg · TechCrunch · The Information · Pitchbook · Crunchbase · 각 기업 공식 발표</span>
             </footer>
           </div>

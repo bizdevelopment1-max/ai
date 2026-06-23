@@ -607,7 +607,6 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
   const accent = (catMap[sel.cat] || {}).accent || theme.accent;
   const real = (stockData && stockData[sel.ticker]) || null;
   const mcap = sel.private ? sel.mcap : (real && real.marketCap);
-  const updated = stockData && stockData.__generatedAt;
   return (
     <section className="board" ref={sectionRef} data-screen-label="Stock Prices">
      <AnimCtx.Provider value={inView}>
@@ -686,7 +685,7 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
             )}
           </div>
         )}
-        {updated && <p className="stock-updated">데이터 갱신: {String(updated).slice(0, 10)} · 출처 Stooq · 시총=종가×발행주식수(근사)</p>}
+        <p className="stock-updated">출처: 일별 자동 크롤링(Stooq 등) · 시총 = 종가 × 발행주식수(근사)</p>
       </div>
      </AnimCtx.Provider>
     </section>
