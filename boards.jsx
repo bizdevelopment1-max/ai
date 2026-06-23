@@ -1087,6 +1087,10 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
   const bizProg = useProgress(inView, 1400);
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
   const models = window.DASH.BIZ_MODELS || [];
+  // 돈의 흐름(MONEY_EDGES)에 등장하는 업체만 노드로 — 경쟁 관계는 제외, 자금/매출/파트너십만
+  const moneyConnected = new Set();
+  MONEY_EDGES.forEach(e => { moneyConnected.add(e.from); moneyConnected.add(e.to); });
+  const moneyCos = companies.filter(c => moneyConnected.has(c.name));
 
   return (
     <section className="board" ref={sectionRef} data-screen-label="Biz Model">
@@ -1135,8 +1139,15 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
         </div>
         <p className="pt-foot"><b>시사점:</b> 추론 단가가 무료에 수렴하면서 '구독' 단일 모델은 흔들리는 중 — 단말 제조사는 <b>구독 유료화·단말 가격 프리미엄·커머스 수수료·번들 크레딧</b>을 조합한 하이브리드 과금을 설계해야 한다. 성과 기반(outcome) 과금은 ROI 증명이 쉬운 버티컬부터 적용 가능.</p>
       </div>
-      <div className="es-cm-head" style={{ marginTop: 18 }}><span className="es-cm-kicker"><em>Competitive Dynamics · Money Flow</em></span></div>
-      <KnowledgeGraph companies={companies} cats={cats} catMap={catMap} progress={bizProg} mode="bizmodel" />
+      <div className="es-cm-head" style={{ marginTop: 18 }}>
+        <span className="es-cm-kicker"><em>Money Flow · 돈의 흐름</em></span>
+        <span className="es-cm-legend">
+          <i style={{ background: "#00C2A8" }} />투자
+          <i style={{ background: "#F59E0B" }} />매출
+          <i style={{ background: "#2D6BFF" }} />파트너십
+        </span>
+      </div>
+      <KnowledgeGraph companies={moneyCos} cats={cats} catMap={catMap} progress={bizProg} mode="bizmodel" />
       <div className="biz-grid">
         {models.map((m, i) => {
           const local = staggerP(bizProg, i, models.length);
