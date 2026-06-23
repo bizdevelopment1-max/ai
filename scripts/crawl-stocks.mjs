@@ -18,7 +18,7 @@ const TICKERS = [
   { t: "META", y: "META", s: "meta.us", shares: 2.53 },
   // SpaceX (SPCX) — try the real listed ticker first; if no public feed carries it yet,
   // fall back to a clearly-labeled scenario series from the 2026-06-12 listing date.
-  { t: "SPCX", y: "SPCX", s: "spcx.us", shares: 0, scenario: { start: "2026-06-12", ipo: 135, last: 191.82, shares: 2.6 } },
+  { t: "SPCX", y: "SPCX", s: "spcx.us", shares: 13.05, scenario: { start: "2026-06-12", ipo: 135, last: 165.78, shares: 13.05 } },
 ];
 
 const YEARS = 5;
@@ -232,18 +232,42 @@ function scenarioSeries(c) {
   });
 }
 
+// 신규 크롤과 기존 데이터를 '날짜 합집합'으로 병합 — 데이터가 절대 과거로 후퇴하지 않게(단조 최신화).
+// 같은 날짜는 신규 크롤 값을 우선. 마지막 포인트로 lastPrice/asOf/시총 재계산.
+function mergeSeries(t, prevObj, freshObj) {
+  const sharesOf = () => { const c = TICKERS.find(x => x.t === t); return c ? (c.shares || (c.scenario && c.scenario.shares) || 0) : 0; };
+  if (prevObj && freshObj) {
+    const byDate = {};
+    for (const p of (prevObj.points || [])) byDate[p.d] = p.p;
+    for (const p of (freshObj.points || [])) byDate[p.d] = p.p;
+    const cut = cutoffDate();
+    const points = Object.entries(byDate).map(([d, p]) => ({ d, p: round2(p) }))
+      .filter(p => new Date(p.d) >= cut)               // 5년 범위로 제한(무한 증가 방지)
+      .sort((a, b) => (a.d < b.d ? -1 : 1));
+    const last = points[points.length - 1];
+    const sh = sharesOf();
+    const cap = sh ? fmtCap(last.p * sh) + (freshObj.scenario ? " (시나리오)" : "") : (freshObj.marketCap || prevObj.marketCap || "");
+    return { ...freshObj, points, asOf: last.d, lastPrice: last.p, marketCap: cap };
+  }
+  return freshObj || prevObj;
+}
+
 async function main() {
   const sess = await yahooSession();
   console.log(`Yahoo session: ${sess ? (sess.crumb ? "cookie+crumb" : "cookie only") : "none"}`);
   const results = (await Promise.all(TICKERS.map((c) => crawlOne(c, sess)))).filter(Boolean);
-  const stocks = Object.fromEntries(results);
+  const fresh = Object.fromEntries(results);
 
   let prev = {};
   try { prev = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
-  const final = Object.keys(stocks).length ? stocks : prev;
+
+  const tickers = new Set([...Object.keys(fresh), ...Object.keys(prev)]);
+  const final = {};
+  for (const t of tickers) final[t] = mergeSeries(t, prev[t], fresh[t]);
 
   await writeFile("stocks.json", JSON.stringify({ generatedAt: new Date().toISOString(), stocks: final }) + "\n");
-  console.log(`Wrote stocks.json with ${Object.keys(final).length} tickers.`);
+  const dates = Object.entries(final).map(([t, v]) => `${t}:${v.asOf}`).join(" ");
+  console.log(`Wrote stocks.json (${Object.keys(final).length} tickers, merged·monotonic) — ${dates}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(0); });
