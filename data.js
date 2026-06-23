@@ -45,7 +45,7 @@ window.DASH = (function () {
       url: "https://deepmind.google",
     },
     {
-      cat: "native", name: "DeepSeek", domain: "deepseek.com", unit: "오픈 파운데이션 모델(중국)",
+      cat: "startup", name: "DeepSeek", vertical: "지역 AI 플랫폼", domain: "deepseek.com", unit: "오픈 파운데이션 모델(중국)",
       valuation: "$50B+", valAsof: "26.06", metric: "밸류에이션", value: "$52B~$59B", metricAsof: "26.06",
       funding: "첫 외부 라운드 완료 $7.4B", trend: 50, trendBasis: "효율 혁신·첫 외부 투자 완료",
       note: "DeepSeek-V3, R1 — 중국 최대 AI 연구소. 2026.06.16 첫 외부 투자 라운드 완료(CNY 50B+ ≈ $7.4B 조달, 밸류 $50B+ 확정 — $52B~$59B 범위의 하단부). 주요 투자자는 Tencent·CATL·창업자 Liang(약 40% 자체 출자)이며 국가 AI 펀드(CAIIF)도 참여 — 단 외부 투자자는 5년 락업·의결권 없음, 국가 펀드만 의결권 보유. R1·V3가 GPT-4급 성능을 약 1/10 비용으로 구현해 'AI 비용 혁명(Sputnik Moment)' 촉발. 단, 국유 펀드 투자로 지정학적 리스크 존재.",
@@ -119,7 +119,7 @@ window.DASH = (function () {
       url: "https://www.perplexity.ai",
     },
     {
-      cat: "startup", name: "Mistral AI", vertical: "파운데이션 모델", rel: "오픈모델 소싱 후보", tier: "T1", domain: "mistral.ai", unit: "유럽 파운데이션 모델",
+      cat: "startup", name: "Mistral AI", vertical: "인프라·파운데이션", rel: "오픈모델 소싱 후보", tier: "T1", domain: "mistral.ai", unit: "유럽 파운데이션 모델",
       valuation: "$20B", valAsof: "26.06", metric: "ARR", value: "$400M+", metricAsof: "26.02",
       funding: "$3.5B 라운드(클로즈)", trend: 71, trendBasis: "밸류 $12.8B(€11.7B)→$20B · ARR 20배↑",
       note: "프랑스 기반 AI 스타트업. 2026.06 신규 $3.5B 라운드를 밸류 $20B로 클로즈(직전 $12.8B(€11.7B) 대비 약 2배) — 유럽 최고가 사기업 중 하나. ARR $400M+(2026.02, 전년比 20배)·연말 $1B ARR 목표. 2026.03 $830M 부채로 파리 데이터센터(NVIDIA 칩 13,800개) 구축. Le Chat·Mistral Large. 유럽 AI 주권의 상징.",
@@ -129,7 +129,7 @@ window.DASH = (function () {
       url: "https://mistral.ai",
     },
     {
-      cat: "startup", name: "Cohere", vertical: "파운데이션 모델", domain: "cohere.com", unit: "엔터프라이즈·소버린 LLM",
+      cat: "startup", name: "Cohere", vertical: "엔터프라이즈 AI", domain: "cohere.com", unit: "엔터프라이즈·소버린 LLM",
       valuation: "$5.5B", valAsof: "25.07", metric: "ARR", value: "$240M", metricAsof: "25(2026 갱신 대기)",
       funding: "Series D · IPO 준비", trend: 50, trendBasis: "전 분기 QoQ 50%+",
       note: "기업용·소버린 AI 특화. 표기 수치는 2025년 기준(ARR $240M·밸류 $5.5B, 2025.07) — 2026 최신 공식 수치 미확인으로 업데이트 대기. 2026.05 Command A+ 오픈소스·North Mini Code 출시. Oracle·Salesforce·SAP 파트너십, IPO 준비.",
@@ -139,7 +139,7 @@ window.DASH = (function () {
       url: "https://cohere.com",
     },
     {
-      cat: "startup", name: "Databricks", vertical: "데이터·ML 인프라", domain: "databricks.com", unit: "데이터+AI 플랫폼",
+      cat: "startup", name: "Databricks", vertical: "인프라·파운데이션", domain: "databricks.com", unit: "데이터+AI 플랫폼",
       valuation: "$134B", valAsof: "26.02", metric: "ARR", value: "$5.4B", metricAsof: "26.06",
       funding: "Series L · $175B 협의", trend: 116, trendBasis: "밸류 $62B→$134B",
       note: "데이터 레이크하우스 + AI 통합 플랫폼. 2026.02 Series L $5B로 밸류 $134B 확정(JPMorgan·Goldman·카타르). ARR 런레이트 $5.4B 돌파, 밸류 $175B 라운드 협의. CEO Ghodsi 'IPO는 2027년 목표'. 최고가치 미상장 소프트웨어 기업.",
@@ -149,7 +149,7 @@ window.DASH = (function () {
       url: "https://databricks.com",
     },
     {
-      cat: "startup", name: "Scale AI", vertical: "데이터·ML 인프라", domain: "scale.com", unit: "AI 데이터·평가·국방",
+      cat: "startup", name: "Scale AI", vertical: "인프라·파운데이션", domain: "scale.com", unit: "AI 데이터·평가·국방",
       valuation: "$14B", valAsof: "24.05", metric: "국방 계약", value: "$500M", metricAsof: "26.05",
       funding: "Series F", trend: 30, trendBasis: "국방 계약 5배 확대",
       note: "AI 학습 데이터·RLHF·모델 평가 플랫폼. 2026.05 미 국방부 $500M OTA 계약(8개월 만에 $100M→$500M, 5배). 컴퓨터 비전·GenAI 의사결정 지원·군사 계획 도구. 데이터 품질·평가가 모델 경쟁의 핵심 변수.",
@@ -159,7 +159,7 @@ window.DASH = (function () {
       url: "https://scale.com",
     },
     {
-      cat: "startup", name: "Runway", vertical: "생성 미디어", rel: "온디바이스 음성·미디어", tier: "T1", domain: "runwayml.com", unit: "비디오 생성 AI",
+      cat: "startup", name: "Runway", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T1", domain: "runwayml.com", unit: "비디오 생성 AI",
       valuation: "$4B", valAsof: "24.06", metric: "제품", value: "Gen-4", metricAsof: "26.05",
       funding: "Series D", trend: 25, trendBasis: "영상 생성 채택",
       note: "비디오 생성 AI 선도. 2026.05 Gen-4 출시 — 네이티브 오디오 생성·리얼리스틱 물리 엔진. Adobe Firefly에 Gen-4.5 최우선 배포 멀티이어 파트너십. 할리우드 제작 현장 도입 가속. 밸류 $4B(2024.06).",
@@ -169,7 +169,7 @@ window.DASH = (function () {
       url: "https://runwayml.com",
     },
     {
-      cat: "startup", name: "Stability AI", vertical: "생성 미디어", rel: "온디바이스 음성·미디어", tier: "T1", domain: "stability.ai", unit: "생성 미디어(재건)",
+      cat: "startup", name: "Stability AI", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T1", domain: "stability.ai", unit: "생성 미디어(재건)",
       valuation: "$1B", valAsof: "23 피크", metric: "매출(추정)", value: "$190M", metricAsof: "26",
       funding: "구조조정·재건", trend: -10, trendBasis: "턴어라운드 케이스",
       note: "Stable Diffusion으로 이미지 생성을 대중화했으나 재정난·구조조정을 겪은 재건 케이스. 2026.05 Stable Audio 3.0(오픈웨이트)·Brand Studio 출시. 신임 CEO Prem Akkaraju(전 Weta)+Sean Parker·Eric Schmidt 이사회. 2026 추정 매출 $190M — 이미지에서 오디오·엔터프라이즈로 전환.",
@@ -179,7 +179,7 @@ window.DASH = (function () {
       url: "https://stability.ai",
     },
     {
-      cat: "startup", name: "ElevenLabs", vertical: "생성 미디어", rel: "온디바이스 음성·미디어", tier: "T1", domain: "elevenlabs.io", unit: "AI 음성 합성",
+      cat: "startup", name: "ElevenLabs", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T1", domain: "elevenlabs.io", unit: "AI 음성 합성",
       valuation: "$11B", valAsof: "26.02", metric: "ARR", value: "$330M+", metricAsof: "26.01",
       funding: "Series D $500M", trend: 233, trendBasis: "밸류 $3.3B→$11B (3배+)",
       note: "AI 음성 생성·TTS 시장 선도. 2026.02 Series D $500M로 밸류 $11B(1년 전 $3.3B 대비 3배+), Sequoia 주도·NVIDIA 백업. ARR $330M+(2026.01). 팟캐스트·게임·영상 제작의 표준 음성 API.",
@@ -189,7 +189,7 @@ window.DASH = (function () {
       url: "https://elevenlabs.io",
     },
     {
-      cat: "startup", name: "Harvey", vertical: "버티컬·엔터프라이즈 에이전트", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "harvey.ai", unit: "법률 버티컬 AI",
+      cat: "startup", name: "Harvey", vertical: "엔터프라이즈 AI", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "harvey.ai", unit: "법률 버티컬 AI",
       valuation: "$11B", valAsof: "26.03", metric: "ARR", value: "$190M", metricAsof: "26.01",
       funding: "Series C $200M", trend: 90, trendBasis: "ARR 5개월 $100M→$190M",
       note: "법률 전문 AI 에이전트 — 버티컬 AI 리더. 2026.03 Series C $200M로 밸류 $11B(Sequoia·GIC 주도). ARR $190M(5개월 만에 $100M→$190M, +90%). 전 세계 1,300개+ 법률 조직, 변호사 10만 명+ 사용. AmLaw 100 과반수 고객.",
@@ -199,7 +199,7 @@ window.DASH = (function () {
       url: "https://www.harvey.ai",
     },
     {
-      cat: "startup", name: "Glean", vertical: "버티컬·엔터프라이즈 에이전트", domain: "glean.com", unit: "엔터프라이즈 AI 검색",
+      cat: "startup", name: "Glean", vertical: "엔터프라이즈 AI", domain: "glean.com", unit: "엔터프라이즈 AI 검색",
       valuation: "$7.2B", valAsof: "26.02", metric: "ARR", value: "$200M+", metricAsof: "26.01",
       funding: "Series F", trend: 80, trendBasis: "엔터프라이즈 표준화",
       note: "기업 내부 데이터 연결 AI 검색·지식 에이전트. 밸류 $7.2B, ARR $200M+. 대형 기업 IT·운영 부서의 AI 표준 도구로 부상. 'The Agentic List 2026' 선정.",
@@ -209,7 +209,7 @@ window.DASH = (function () {
       url: "https://www.glean.com",
     },
     {
-      cat: "startup", name: "Sierra AI", vertical: "버티컬·엔터프라이즈 에이전트", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "sierra.ai", unit: "고객 서비스 AI 에이전트",
+      cat: "startup", name: "Sierra AI", vertical: "엔터프라이즈 AI", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "sierra.ai", unit: "고객 서비스 AI 에이전트",
       valuation: "$10B", valAsof: "26.03", metric: "ARR", value: "$150M", metricAsof: "26.01",
       funding: "Sequoia 주도", trend: 100, trendBasis: "Revenue Multiple 67x",
       note: "고객 대면 AI 에이전트 플랫폼 — 기업 고객 서비스 전문. 밸류 $10B, ARR $150M. Revenue Multiple 67x로 AI 에이전트 섹터 최고 수준. (공동창업: Bret Taylor) Sequoia 투자.",
@@ -219,7 +219,7 @@ window.DASH = (function () {
       url: "https://sierra.ai",
     },
     {
-      cat: "startup", name: "Midjourney", vertical: "생성 미디어", rel: "온디바이스 음성·미디어", tier: "T1", domain: "midjourney.com", unit: "이미지·영상 생성 AI",
+      cat: "startup", name: "Midjourney", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T1", domain: "midjourney.com", unit: "이미지·영상 생성 AI",
       valuation: "비상장(무외부투자)", valAsof: "—", metric: "매출(추정)", value: "$300M+", metricAsof: "24",
       funding: "외부투자 없음(부트스트랩)", trend: 20, trendBasis: "이미지→영상 확장",
       note: "외부 투자 없이 흑자 운영하는 이미지 생성 AI 대표주자. Discord 기반에서 자체 웹·V7 모델로 전환, 2025년 영상 생성에 진입. 추정 매출 $300M+(2024)로 부트스트랩 수익화의 모범 사례. a16z 컨슈머 톱100 이미지 부문 상위권.",
@@ -229,7 +229,7 @@ window.DASH = (function () {
       url: "https://www.midjourney.com",
     },
     {
-      cat: "startup", name: "Suno", vertical: "생성 미디어", rel: "온디바이스 음성·미디어", tier: "T1", domain: "suno.com", unit: "AI 음악 생성",
+      cat: "startup", name: "Suno", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T1", domain: "suno.com", unit: "AI 음악 생성",
       valuation: "$500M", valAsof: "24.05", metric: "라운드", value: "$125M", metricAsof: "24.05",
       funding: "Series B", trend: 60, trendBasis: "사용자·후속 라운드 확대",
       note: "텍스트→음악 생성 선도. 2024.05 Series B $125M(밸류 $500M) 확정. 가사·장르만 입력하면 완성곡을 만드는 생성 음악 시장 1위권. 음반업계 저작권 소송 리스크 병존(후속 대형 라운드는 보도되었으나 밸류 미확정).",
@@ -239,7 +239,7 @@ window.DASH = (function () {
       url: "https://suno.com",
     },
     {
-      cat: "startup", name: "Hugging Face", vertical: "데이터·ML 인프라", domain: "huggingface.co", unit: "오픈 모델 허브·MLOps",
+      cat: "startup", name: "Hugging Face", vertical: "인프라·파운데이션", domain: "huggingface.co", unit: "오픈 모델 허브·MLOps",
       valuation: "$4.5B", valAsof: "23.08", metric: "등록 모델", value: "100만+", metricAsof: "25",
       funding: "Series D", trend: 30, trendBasis: "모델·데이터셋 폭증",
       note: "오픈소스 AI의 깃허브 — 모델·데이터셋·스페이스 허브. 2023.08 Series D로 밸류 $4.5B(Google·NVIDIA·Salesforce 등 참여). 등록 모델 100만+·데이터셋 20만+. 온디바이스용 경량·오픈 모델 배포의 사실상 표준 채널.",
@@ -249,7 +249,7 @@ window.DASH = (function () {
       url: "https://huggingface.co",
     },
     {
-      cat: "startup", name: "Synthesia", vertical: "생성 미디어", rel: "온디바이스 음성·미디어", tier: "T2", domain: "synthesia.io", unit: "AI 아바타·영상 생성",
+      cat: "startup", name: "Synthesia", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T2", domain: "synthesia.io", unit: "AI 아바타·영상 생성",
       valuation: "$2.1B", valAsof: "25.01", metric: "ARR", value: "$100M+", metricAsof: "25",
       funding: "Series D", trend: 50, trendBasis: "엔터프라이즈 영상 채택",
       note: "텍스트→AI 아바타 영상 생성 플랫폼. 2025.01 Series D로 밸류 $2.1B. 사내 교육·마케팅 영상 자동 제작으로 엔터프라이즈 표준화. 다국어 더빙·립싱크 강점.",
@@ -259,7 +259,7 @@ window.DASH = (function () {
       url: "https://www.synthesia.io",
     },
     {
-      cat: "startup", name: "Abridge", vertical: "버티컬·엔터프라이즈 에이전트", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "abridge.com", unit: "의료 음성 AI(임상 기록)",
+      cat: "startup", name: "Abridge", vertical: "엔터프라이즈 AI", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "abridge.com", unit: "의료 음성 AI(임상 기록)",
       valuation: "$2.75B", valAsof: "25.02", metric: "라운드", value: "$250M", metricAsof: "25.02",
       funding: "Series D", trend: 80, trendBasis: "병원 도입 급증",
       note: "의사-환자 대화를 실시간으로 임상 노트로 변환하는 의료 음성 AI. 2025.02 Series D로 밸류 $2.75B. 미국 대형 병원 네트워크 도입 확대 — 의료 행정 부담 절감 대표 사례.",
@@ -269,7 +269,7 @@ window.DASH = (function () {
       url: "https://www.abridge.com",
     },
     {
-      cat: "startup", name: "Together AI", vertical: "데이터·ML 인프라", domain: "together.ai", unit: "오픈모델 추론·학습 클라우드",
+      cat: "startup", name: "Together AI", vertical: "인프라·파운데이션", domain: "together.ai", unit: "오픈모델 추론·학습 클라우드",
       valuation: "$3.3B", valAsof: "25.02", metric: "라운드", value: "$305M", metricAsof: "25.02",
       funding: "Series B", trend: 70, trendBasis: "오픈모델 추론 수요",
       note: "오픈소스 모델 학습·추론에 특화된 GPU 클라우드. 2025.02 Series B로 밸류 $3.3B(General Catalyst·NVIDIA 등). 오픈 모델을 저비용으로 서빙 — 온디바이스를 보완하는 클라우드 추론 후방 인프라.",
@@ -277,6 +277,66 @@ window.DASH = (function () {
       direction: "엔터프라이즈 전용 클러스터·파인튜닝 서비스 확대.",
       sources: ["Series B 밸류 $3.3B (2025.02)", "General Catalyst·NVIDIA 투자", "오픈모델 추론 클라우드"],
       url: "https://www.together.ai",
+    },
+    {
+      cat: "startup", name: "Cursor", vertical: "에이전틱 AI·코딩", domain: "cursor.com", unit: "AI 코딩 에이전트(IDE)",
+      valuation: "$60B", valAsof: "26.06", metric: "ARR", value: "$2B+", metricAsof: "26.06",
+      funding: "SpaceX 인수 합의", trend: 100, trendBasis: "밸류 $29.3B→$60B · ARR $2B+",
+      note: "AI 코딩 에이전트(Anysphere). 2026.06.16 SpaceX가 $60B 전액 주식 인수 합의(3분기 클로징 예정). 창업 3년 만에 ARR $2B+, 기업 고객 60%(Stripe·Adobe·NVIDIA). 코드베이스 전체 이해·버그 수정·리팩토링 자동화로 개발 워크플로우 깊이 침투.",
+      vp: "IDE에 깊이 통합된 코딩 에이전트 — 단순 자동완성을 넘어 코드베이스 단위 작업.",
+      direction: "SpaceX·xAI 생태계 편입 후 Grok 연계·엔터프라이즈 확장.",
+      sources: ["SpaceX $60B 인수 합의 (CNBC '26.06.16)", "ARR $2B+·기업고객 60%", "밸류 $29.3B→$60B"],
+      url: "https://cursor.com",
+    },
+    {
+      cat: "startup", name: "Lovable", vertical: "에이전틱 AI·코딩", domain: "lovable.dev", unit: "바이브 코딩(앱 생성)",
+      valuation: "$6.6B", valAsof: "25.12", metric: "ARR", value: "$500M", metricAsof: "26",
+      funding: "Series B $330M", trend: 150, trendBasis: "ARR $200M→$500M",
+      note: "자연어로 웹앱을 만드는 '바이브 코딩' 대표주자. 2025.12 Series B $330M로 밸류 $6.6B. ARR $200M(2025)→$500M(2026)로 12개월 만에 $1M→$200M 돌파 후 급성장. 비개발자도 프롬프트로 앱 제작.",
+      vp: "코드를 몰라도 자연어로 동작하는 앱을 생성 — 소프트웨어 제작 진입장벽 제거.",
+      direction: "엔터프라이즈·협업 기능 확장, 코딩 에이전트와 경쟁/공존.",
+      sources: ["Series B $330M·밸류 $6.6B (CNBC '25.12)", "ARR $500M (2026)", "직전 $1.8B (2025)"],
+      url: "https://lovable.dev",
+    },
+    {
+      cat: "startup", name: "Replit", vertical: "에이전틱 AI·코딩", domain: "replit.com", unit: "클라우드 IDE·AI 에이전트",
+      valuation: "$9B", valAsof: "26.01", metric: "ARR 목표", value: "$1B", metricAsof: "26",
+      funding: "~$400M 라운드 협의", trend: 120, trendBasis: "밸류 3배↑·$1B ARR 목표",
+      note: "클라우드 기반 코딩 플랫폼+AI 에이전트. 2026.01 ~$400M 라운드로 밸류 약 $9B(직전 대비 약 3배) 협의. Replit Agent로 자연어→앱 배포 자동화, ARR 수억$ 규모로 $1B 목표.",
+      vp: "브라우저에서 코딩·배포·호스팅을 한 번에 + AI 에이전트로 자동화.",
+      direction: "엔터프라이즈·교육 시장 + 에이전트 자율 개발 고도화.",
+      sources: ["~$400M 라운드·밸류 $9B 협의 (Bloomberg '26.01)", "$1B ARR 목표", "Replit Agent 자율 개발"],
+      url: "https://replit.com",
+    },
+    {
+      cat: "startup", name: "Kling AI", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T2", domain: "klingai.com", unit: "AI 영상 생성(중국)",
+      valuation: "$20B", valAsof: "26", metric: "ARR", value: "$240M~$500M", metricAsof: "25.12",
+      funding: "Kuaishou 스핀오프 제안", trend: 140, trendBasis: "ARR $100M→$240M+(3월→12월)",
+      note: "중국 Kuaishou의 AI 영상 생성. Kuaishou가 약 $20B 밸류·$2B 조달 스핀오프 제안 평가 중. ARR $240M(2025.12, 3월 $100M서 급증)·일부 보도 $500M. 글로벌 AI 영상 생성 랭킹 상위권(Runway·MiniMax와 경쟁).",
+      vp: "고품질 텍스트→영상 생성 + Kuaishou 유통. 중국 크리에이터 생태계 장악.",
+      direction: "스핀오프로 독립 자본 조달 + 글로벌 확장.",
+      sources: ["Kuaishou 스핀오프 ~$20B 제안 (The Information '26)", "ARR $240M (2025.12)", "글로벌 AI 영상 상위권"],
+      url: "https://klingai.com",
+    },
+    {
+      cat: "startup", name: "Hailuo (MiniMax)", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T2", domain: "hailuoai.com", unit: "AI 영상·멀티모달(중국)",
+      valuation: "$13.7B", valAsof: "26", metric: "밸류", value: "$13.7B", metricAsof: "26",
+      funding: "멀티모달 성장", trend: 120, trendBasis: "약 3년 만에 $13.7B",
+      note: "중국 MiniMax의 AI 영상 생성 제품(Hailuo). 모회사 MiniMax는 텍스트·음성·영상 멀티모달 전략으로 약 3년 만에 밸류 $13.7B 도달. Hailuo는 Kling과 함께 크리에이터용 AI 영상 생성 1위권 경쟁.",
+      vp: "텍스트·음성·영상을 아우르는 멀티모달 + 저비용 고품질 영상.",
+      direction: "멀티모달 통합 + 글로벌 크리에이터·API 확장.",
+      sources: ["MiniMax 밸류 $13.7B (2026)", "Hailuo·Kling 글로벌 AI 영상 상위권", "멀티모달(텍스트·음성·영상)"],
+      url: "https://hailuoai.com",
+    },
+    {
+      cat: "startup", name: "Writer", vertical: "엔터프라이즈 AI", domain: "writer.com", unit: "엔터프라이즈 생성 AI",
+      valuation: "$1.9B", valAsof: "24.11", metric: "라운드", value: "$200M", metricAsof: "24.11",
+      funding: "Series C", trend: 40, trendBasis: "엔터프라이즈 에이전트 채택",
+      note: "엔터프라이즈 전용 생성 AI 플랫폼. 2024.11 Series C $200M로 밸류 $1.9B. 자체 모델(Palmyra)+에이전트로 기업 콘텐츠·워크플로우 자동화. Fortune 500 다수 고객, 규제 산업 컴플라이언스 강점.",
+      vp: "기업 브랜드·규정에 맞춘 자체 모델 기반 생성 AI — 데이터 거버넌스 강점.",
+      direction: "에이전틱 엔터프라이즈 워크플로우로 확장.",
+      sources: ["Series C $200M·밸류 $1.9B (TechCrunch '24.11)", "자체 모델 Palmyra", "Fortune 500 고객"],
+      url: "https://writer.com",
     },
     {
       cat: "native", name: "SpaceX (xAI, Cursor)", domain: "x.ai", unit: "AI 생태계(xAI·Grok·Cursor)",
@@ -304,11 +364,12 @@ window.DASH = (function () {
 
   /* ---- 스타트업 버티컬 분류 (a16z Top 100 기준 — 온디바이스 단말 관점 우선순위 정렬) ---- */
   const STARTUP_VERTICALS = [
-    { id: "media", ko: "생성 미디어", en: "Generative Media", desc: "음성·영상·이미지·음악 — 온디바이스 생성 기능과 직접 연결" },
+    { id: "coding", ko: "에이전틱 AI·코딩", en: "Agentic & Coding", desc: "코드 생성·자율 에이전트 — 개발 워크플로우 깊은 통합" },
     { id: "assistant", ko: "검색·어시스턴트", en: "Search & Assistant", desc: "AI 검색·답변·에이전트 브라우저 — 단말 어시스턴트 경쟁축" },
-    { id: "foundation", ko: "파운데이션 모델", en: "Foundation Models", desc: "오픈·소버린 모델 — 외부 모델 소싱·온프레미스 후보" },
-    { id: "agent", ko: "버티컬·엔터프라이즈 에이전트", en: "Vertical & Enterprise Agents", desc: "법률·CS·사내검색 등 도메인 특화 에이전트 — UX·신뢰성 벤치마크" },
-    { id: "infra", ko: "데이터·ML 인프라", en: "Data & ML Infra", desc: "데이터·평가·모델 허브 — 모델 경쟁의 후방 가치사슬" },
+    { id: "creative", ko: "크리에이티브 도구", en: "Creative Tools", desc: "영상·음악·이미지·음성 생성 — 온디바이스 생성 기능과 직접 연결" },
+    { id: "infra", ko: "인프라·파운데이션", en: "Infra & Foundation", desc: "오픈·소버린 모델·데이터·평가·모델 허브 — 모델 경쟁의 후방 가치사슬" },
+    { id: "regional", ko: "지역 AI 플랫폼", en: "Regional Ecosystems", desc: "중국 등 지역 생태계 — 비용 효율·지정학 변수" },
+    { id: "enterprise", ko: "엔터프라이즈 AI", en: "Enterprise AI", desc: "법률·CS·헬스케어·사내검색 등 도메인 특화(별도 소스: CB Insights)" },
   ];
 
   /* ---- 빅테크 그룹(핵심지표 성격별) ---- */
@@ -329,7 +390,7 @@ window.DASH = (function () {
     { date: "2026-05-20", co: "Google DeepMind", cat: "bigtech", source: "Google", title: "Google I/O 2026 — Gemini 3.1 Pro + Deep Research Max, ARC-AGI-2 77.1%", summary: "· Gemini 3.1 Pro ARC-AGI-2 77.1%, SWE-Bench Verified 80.6%\n· Deep Research Max — 자율 리서치 에이전트, MCP 지원\n· 100만 토큰 컨텍스트, 검색·워크스페이스 전면 통합\n· Google AI Ultra 구독자 우선 배포", tag: "Product", url: "https://blog.google/technology/ai/" },
     { date: "2026-05-19", co: "Google DeepMind", cat: "bigtech", source: "Google DeepMind / 9to5Google", title: "Gemini 3.5 Flash 출시 — 'Flash 속도로 Pro급 추론', 앱 기본 모델로", summary: "· 'Pro-level reasoning at Flash-class latency' — 중급가로 에이전트·코딩 처리\n· 출시 즉시 Gemini 앱·검색 AI Mode 기본 모델로 전환\n· 에이전트(MCP Atlas·Toolathlon)·멀티모달서 Pro급 상회, ARC-AGI-2는 72.1%\n· Gemini 앱 MAU 900M+ 공개($84.75B 증자 슬라이드)·AI 개발자 구독 $100/월", tag: "Product", url: "https://deepmind.google/models/gemini/flash/" },
     { date: "2026-01-06", co: "SpaceX (xAI, Cursor)", cat: "native", source: "TechCrunch / NYT / The Guardian", title: "xAI, Series E $20B 완료 — 밸류 $230B+, Grok 딥페이크 논란 동시 직면", summary: "· Series E $20B 완료(NVIDIA·Cisco·카타르 국부펀드·Fidelity)\n· 누적 총 조달액 $42B+(PitchBook) · 밸류 $230B+ 추정\n· Grok+X 합산 도달 600M+(독립 제품 MAU와는 구분 — 대부분 X 사용자)\n· Grok 미성년 딥페이크 자동 생성 논란 → 다수 정부 조사 개시", tag: "Funding", url: "https://www.theguardian.com/technology/2026/jan/06/elon-musk-xai-investment-grok-backlash" },
-    { date: "2026-06-16", co: "DeepSeek", cat: "native", source: "TrendForce / TechStartups", title: "DeepSeek, 첫 외부 펀딩 완료 — $7.4B 조달·밸류 $50B+ 확정", summary: "· 첫 외부 라운드 완료(CNY 50B+ ≈ $7.4B), 밸류 $50B+ 확정($52B~$59B 하단부)\n· 주요 투자자: Tencent·CATL·창업자 Liang(약 40% 자체 출자) · 국가 AI 펀드(CAIIF)도 참여\n· 외부 투자자 5년 락업·의결권 없음 — 국가 펀드만 의결권 보유(거버넌스 리스크)\n· R1·V3로 GPT-4급을 1/10 비용 구현 — 'Sputnik Moment'", tag: "Funding", url: "https://techstartups.com/2026/06/16/deepseek-funding/" },
+    { date: "2026-06-16", co: "DeepSeek", cat: "startup", source: "TrendForce / TechStartups", title: "DeepSeek, 첫 외부 펀딩 완료 — $7.4B 조달·밸류 $50B+ 확정", summary: "· 첫 외부 라운드 완료(CNY 50B+ ≈ $7.4B), 밸류 $50B+ 확정($52B~$59B 하단부)\n· 주요 투자자: Tencent·CATL·창업자 Liang(약 40% 자체 출자) · 국가 AI 펀드(CAIIF)도 참여\n· 외부 투자자 5년 락업·의결권 없음 — 국가 펀드만 의결권 보유(거버넌스 리스크)\n· R1·V3로 GPT-4급을 1/10 비용 구현 — 'Sputnik Moment'", tag: "Funding", url: "https://techstartups.com/2026/06/16/deepseek-funding/" },
     { date: "2026-05-28", co: "Anthropic", cat: "native", source: "Anthropic / Reuters", title: "Anthropic, Series H $65B·밸류 $965B — run-rate 매출 $47B로 OpenAI 추월", summary: "· Series H $65B 조달·$965B post-money(직전 2026.02 $380B)\n· 발표문서 run-rate 매출이 '이달 $47B 돌파' 명시 — 4월 $30B에서 6주 만에 급증\n· OpenAI 연환산 $25B을 2배 가까이 추월 — 최대 경쟁 역학 변화\n· Claude Code 단독 $2.5B+ ARR 돌파", tag: "Funding", url: "https://www.anthropic.com/news" },
     { date: "2026-06-17", co: "Anthropic", cat: "native", source: "Anthropic / The Information", title: "Anthropic, IPO 기밀 제출 + 서울 오피스 개설 — 한국 AI 생태계 파트너십", summary: "· 2026.06.01 밸류 $965B로 IPO 기밀 제출 — AI 최대어 상장 경쟁 가세\n· 06.17 서울 오피스 개설 + 한국 AI 생태계 파트너십 발표\n· 단말·제조 등 한국 산업 적용 확대 신호\n· OpenAI(2026.09 목표)와 상장 레이스 본격화", tag: "IPO", url: "https://www.anthropic.com/news" },
     { date: "2026-06-12", co: "SpaceX (xAI, Cursor)", cat: "native", source: "CNBC / TechCrunch", title: "SpaceX, SPCX로 나스닥 데뷔 — 공모가 $135·$75B 조달 '사상 최대 IPO'", summary: "· 2026.06.12 나스닥 상장(티커 SPCX) — 공모가 $135, $75B 조달로 역대 최대 IPO\n· 첫날 +19% $161 마감 · 시총 $2.1T 돌파\n· 4일 뒤 06.16 Cursor(Anysphere) $60B 전액 주식 인수 합의(3분기 클로징 예정)\n· xAI(Grok)는 머스크가 'AI는 처음에 잘못 지어졌다' 자평 — 거버넌스 리스크 병존", tag: "IPO", url: "https://www.cnbc.com/2026/06/16/spacex-spcx-cursor-acquisition-ipo.html" },
@@ -416,7 +477,7 @@ window.DASH = (function () {
     { name: "OpenAI", value: 840, cat: "native", src: "2026.02 $730B pre + $110B 신규(post ~$840B)" },
     { name: "SpaceX (xAI, Cursor)", value: 230, cat: "native", src: "xAI Series E '26.1 밸류 $230B+ · Cursor 인수 $60B" },
     { name: "Databricks", value: 134, cat: "startup", src: "Series L '26.2 $134B ($175B 협의)" },
-    { name: "DeepSeek", value: 55, cat: "native", src: "Reuters '26.5 $52B~59B" },
+    { name: "DeepSeek", value: 55, cat: "startup", src: "Reuters '26.5 $52B~59B" },
     { name: "Mistral AI", value: 20, cat: "startup", src: "$3.5B 라운드·밸류 $20B 클로즈 (2026.06)" },
     { name: "Perplexity", value: 18, cat: "startup", src: "'26 추정 $18B" },
     { name: "Scale AI", value: 14, cat: "startup", src: "Forbes '24.05 $14B" },
@@ -442,7 +503,7 @@ window.DASH = (function () {
     { name: "Meta AI(제품 MAU)", value: 1200, cat: "bigtech", src: "Meta AI 제품 1.2B (Q1 2026 IR, 앱군 Family DAP 35억과 구분)" },
     { name: "X+Grok(합산 도달)", value: 600, cat: "native", src: "xAI Series E — X+Grok combined reach ~600M (Grok 단독 아님)" },
     { name: "GitHub Copilot", value: 200, cat: "bigtech", src: "Microsoft '26.4 (Copilot 좌석 2,000만 별도)" },
-    { name: "DeepSeek", value: 150, cat: "native", src: "[업계 추정] '26.4" },
+    { name: "DeepSeek", value: 150, cat: "startup", src: "[업계 추정] '26.4" },
     { name: "Perplexity", value: 100, cat: "startup", src: "Perplexity 공식 '26.3" },
     { name: "Claude", value: 90, cat: "native", src: "[업계 추정] Anthropic '26.5" },
   ];
