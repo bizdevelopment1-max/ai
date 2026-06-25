@@ -342,12 +342,22 @@ async function main() {
   // accumulate: this run + older prev not re-seen, de-duped by URL, newest first, capped
   // 하단 '출처:' 줄은 어떤 항목에서도 노출되지 않도록 제거(출처는 상단에 표기)
   const stripSrc = s => String(s || "").split("\n").filter(l => !/출처\s*[:：]/.test(l)).join("\n").trim();
+  // 제목=요약(1줄 에코) 또는 본문 없는 깨진 항목 탐지 → 노출 제외(원문 url이 이미지/에셋이면 본문 수집 실패한 쓰레기)
+  const norm = s => String(s || "").replace(/^[·\-•]\s*/, "").replace(/^(독점|단독|속보|Exclusive|Breaking)\s*[:：]\s*/i, "").replace(/\s+/g, " ").trim();
+  const isTitleEcho = a => {
+    const lines = String(a.summary || "").split("\n").map(l => l.trim()).filter(Boolean);
+    if (lines.length >= 2) return false;                 // 2줄 이상이면 정상 취급
+    const sm = norm(lines[0]), t = norm(a.title), te = norm(a.titleEn);
+    return !sm || sm === t || sm === te || sm.includes(t) || (te && sm.includes(te));
+  };
+  const isAssetUrl = u => /googleusercontent\.com|=w\d+|\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(String(u || ""));
   const curUrls = new Set(raw.map(a => a.url));
   const dseen = new Set();
   const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
     .map(a => ({ ...a, summary: stripSrc(a.summary) }))
     .filter(a => a.title && a.summary)                   // 요약은 한글 우선(번역), 불가 시 영문 폴백 허용
+    .filter(a => !isTitleEcho(a) && !isAssetUrl(a.url))   // 제목=요약 에코·이미지 url 깨진 항목 제외
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .slice(0, 100);
 
