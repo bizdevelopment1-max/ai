@@ -252,6 +252,14 @@ function to3lines(text, fallback, source) {
   return lines.map(l => "· " + l.replace(/^[·\-•]\s*/, "")).join("\n");
 }
 
+// 제목 정리: '독점:'/'Exclusive:' 등 라벨과 끝의 매체명 꼬리를 제거(제목=요약 중복 방지)
+function cleanTitle(t, source) {
+  let s = String(t || "").trim();
+  s = s.replace(/^\s*(독점|단독|속보|Exclusive|Breaking|Opinion|Analysis|Update)\s*[:：]\s*/i, "");
+  s = stripSourceTail(s, source);
+  return s.trim() || String(t || "").trim();
+}
+
 // No-API brief: 한글 제목(번역) + 본문(원문 메타+번역) 3줄 개조식. 번역 실패 시 영문 폴백(사용자 허용).
 async function freeKoBrief(a, contentEn) {
   const titleKo = (await translateKo(a.title)) || a.title;
@@ -304,23 +312,26 @@ async function main() {
   let prev = [];
   try { prev = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   const prevByUrl = new Map(prev.map(a => [a.url, a]));
+  // 영문 원제목(titleEn)으로도 매칭 — URL이 리다이렉트/이미지로 바뀌어도 수동 보정 요약을 보존
+  const prevByTitleEn = new Map(prev.filter(a => a.titleEn).map(a => [a.titleEn, a]));
+  const findOld = a => prevByUrl.get(a.url) || prevByTitleEn.get(a.title);
 
   // only call the API for genuinely new URLs (or prior entries that lack a good Korean summary)
-  const toSummarize = raw.filter(a => !isKoreanSummary(prevByUrl.get(a.url)));
+  const toSummarize = raw.filter(a => !isKoreanSummary(findOld(a)));
   const sums = await pool(toSummarize, 4, brief);   // Claude→keyless 번역 폴백
   const sumByUrl = new Map();
   toSummarize.forEach((a, k) => { if (sums[k]) sumByUrl.set(a.url, sums[k]); });
 
   const lineCount = sm => String(sm || "").split("\n").map(l => l.trim()).filter(Boolean).length;
   const processed = raw.map(a => {
-    const old = prevByUrl.get(a.url);
-    if (isKoreanSummary(old) && lineCount(old.summary) >= 3) return old;   // 3줄 인사이트면 재사용
+    const old = findOld(a);
+    if (isKoreanSummary(old) && lineCount(old.summary) >= 3) return old;   // 3줄 인사이트(수동 보정 포함)면 재사용
     const s = sumByUrl.get(a.url);
     const summary = s ? s.summary : `· ${a.title}`;
     return {
       date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag,
       url: (s && s.url) ? s.url : a.url,                   // Google News 리다이렉트 대신 원문 URL
-      title: s ? s.title_ko : a.title,                    // 한국어 번역 제목
+      title: cleanTitle(s ? s.title_ko : a.title, a.source), // 한국어 번역 제목(라벨·매체꼬리 제거)
       titleEn: a.title,                                   // 원문(영문) 제목 — CLI 재요약용
       descEn: (s && s.contentEn) || a.descEn || "",       // 보강된 원문 — CLI 재요약용
       summary,

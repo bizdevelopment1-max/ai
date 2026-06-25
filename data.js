@@ -210,12 +210,12 @@ window.DASH = (function () {
     },
     {
       cat: "startup", name: "Sierra AI", vertical: "엔터프라이즈 AI", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "sierra.ai", unit: "고객 서비스 AI 에이전트",
-      valuation: "$10B", valAsof: "26.03", metric: "ARR", value: "$150M", metricAsof: "26.01",
-      funding: "Sequoia 주도", trend: 100, trendBasis: "Revenue Multiple 67x",
-      note: "고객 대면 AI 에이전트 플랫폼 — 기업 고객 서비스 전문. 밸류 $10B, ARR $150M. Revenue Multiple 67x로 AI 에이전트 섹터 최고 수준. (공동창업: Bret Taylor) Sequoia 투자.",
+      valuation: "$15B+", valAsof: "26.05", metric: "ARR", value: "$150M", metricAsof: "26.05",
+      funding: "$950M(Tiger Global·GV)", trend: 110, trendBasis: "밸류 $10B→$15B+ · 8분기 만에 ARR $150M",
+      note: "고객 대면 AI 에이전트 플랫폼 — 기업 고객 서비스 전문. 2026.05 $950M 라운드(Tiger Global·GV)로 밸류 $15B+(직전 $10B). 출시(2024.02) 8분기 만에 ARR $150M 돌파 — 엔터프라이즈 AI 패권 경쟁 가열. (공동창업: Bret Taylor) Sequoia 투자.",
       vp: "기업 브랜드 맞춤형 고객 응대 에이전트로 콜센터·CS 비용 구조 재편.",
       direction: "산업별 CS 에이전트 템플릿 확장. 성과 기반 과금 실험.",
-      sources: ["밸류 $10B, ARR $150M (ValueAdd VC '26)", "Revenue Multiple 67x"],
+      sources: ["$950M 라운드·밸류 $15B+ (TechCrunch '26.05.04)", "8분기 만에 ARR $150M"],
       url: "https://sierra.ai",
     },
     {
@@ -404,6 +404,9 @@ window.DASH = (function () {
     { date: "2025-04-05", co: "Meta AI", cat: "bigtech", source: "Meta / NDTV", title: "Meta, Llama 4 발표 — Scout·Maverick 오픈소스, Behemoth 2T MoE 예고", summary: "· Llama 4 Scout·Maverick 오픈소스 즉시 공개 · Llama Guard 4 보안툴 동시\n· Behemoth 2T 총 파라미터·288B 활성 MoE — 업계 최대 규모 예고\n· Meta AI 어시스턴트 WhatsApp·IG·Messenger 통합 월 30억+ — 오픈소스로 표준 장악", tag: "Product", url: "https://www.ndtv.com/world-news/meta-launches-llama-4-all-about-the-latest-open-source-ai-model-8100928" },
 
     // ── AI Startup ──
+    { date: "2026-06-15", co: "Glean", cat: "startup", source: "Crunchbase News / TechCrunch", title: "Glean, Series F $150M — 밸류 $7.2B, 9개월 만에 또 라운드", summary: "· Series F $150M·밸류 $7.2B — 직전 Series E($260M·$4.6B) 9개월 만에 재차 조달\n· 사내 SaaS·문서 권한 기반 통합 검색 + 업무 에이전트로 ARR $200M+\n· 단말 관점: 기업 업무 에이전트가 사내 데이터 허브로 — B2B 단말의 기본 AI 레이어 경쟁", tag: "Funding", url: "https://news.crunchbase.com/venture/ai-powered-work-assistant-glean-valuation-jumps/" },
+    { date: "2026-05-14", co: "Cerebras", cat: "startup", source: "TechCrunch / CNBC", title: "Cerebras, 2026 첫 대형 IPO — $4.8B 조달·시총 $95B, 상장 첫날 +108%", summary: "· 나스닥 데뷔 — $4.8B 조달·밸류 $48.8B 책정 후 첫날 +108%·시총 $95B 마감\n· 웨이퍼스케일 엔진(WSE-3)로 추론 GPU 대비 최대 15배 속도 — OpenAI·G42·AWS 고객\n· 단말 관점: NVIDIA 외 추론 가속 대안 부상 — AI 인프라 단가·공급 다변화 신호", tag: "IPO", url: "https://techcrunch.com/2026/05/14/cerebras-raises-5-5b-kicking-off-2026s-ipo-season-with-a-bang/" },
+    { date: "2026-05-04", co: "Sierra AI", cat: "startup", source: "TechCrunch / Bloomberg", title: "Sierra AI, $950M 조달 — 밸류 $15B+로 점프, 엔터프라이즈 AI 패권 경쟁", summary: "· $950M 라운드(Tiger Global·GV)·밸류 $15B+ — 직전 $10B서 상향\n· 출시(2024.02) 8분기 만에 ARR $150M 돌파 · Bret Taylor 공동창업\n· 단말 관점: 고객 응대 에이전트가 CS 전면 대체 — 기업 단말·콜센터 운영 구조 재편", tag: "Funding", url: "https://techcrunch.com/2026/05/04/sierra-raises-950m-as-the-race-to-own-enterprise-ai-gets-serious/" },
     { date: "2026-06-09", co: "Perplexity", cat: "startup", source: "CNBC / Yahoo Finance", title: "Perplexity, 2028년 IPO 목표 공식화 — OpenAI·Anthropic 상장과 무관하게 추진", summary: "· CEO Aravind Srinivas, 경쟁사 상장 반응과 무관하게 2028년 IPO 추진 공식화\n· 밸류 ~$21B·ARR $500M(2026.04, +335% YoY)·MAU 1억+·기업고객 2만+\n· 단말 관점: AI 검색·에이전트가 단말 기본 브라우징 진입점 노려 — 비서·검색 통합 압박", tag: "IPO", url: "https://www.cnbc.com/2026/06/09/perplexity-ipo-2028-as-anthropic-openai-prepare-listings.html" },
     { date: "2026-06-04", co: "Supabase", cat: "startup", source: "CNBC / TechCrunch", title: "Supabase, Series F $500M — 밸류 $10.5B, '바이브 코딩'이 DB 폭증 견인", summary: "· Series F $500M·밸류 $10.5B(GIC 주도) — 8개월 만에 밸류 2배\n· DB 생성 600% YoY 급증·연초 이후 Claude Code가 최대 기여자 · 누적 조달 $1B+\n· 단말 관점: AI 에이전트가 백엔드·DB를 자동 생성 — 앱 개발 후단 인프라까지 자동화 확산", tag: "Funding", url: "https://www.cnbc.com/2026/06/04/database-startup-supabase-raises-500-million-10point5-billion-valuation.html" },
     { date: "2026-06-03", co: "Suno", cat: "startup", source: "Variety / TechCrunch", title: "Suno, Series D $400M — 밸류 $5.4B로 2배 급등, 소송 속 AI 음악 1위", summary: "· Series D $400M·밸류 $5.4B(Bond Capital 주도) — 2025.11 $2.45B서 2배\n· 구독자 2M+·ARR $300M · WMG는 합의·라이선스, UMG·Sony는 소송 진행\n· 단말 관점: 텍스트→완성곡 생성이 단말 오디오 창작 표준 후보 — 저작권 라이선스가 상용화 관건", tag: "Funding", url: "https://variety.com/2026/digital/news/ai-music-suno-funding-round-400-million-5-4-billion-valuation-1236765727/" },
@@ -418,8 +421,6 @@ window.DASH = (function () {
     { date: "2026-05-03", co: "Runway", cat: "startup", source: "Gadgets360 / Heise", title: "Runway Gen-4 출시 — 네이티브 오디오 생성, Adobe Firefly 독점 파트너십", summary: "· Gen-4 출시 — 텍스트·이미지→영상 + 네이티브 오디오·리얼리스틱 물리 엔진\n· TikTok/Reels 수직형 템플릿·하이브리드 파이프라인 API\n· Adobe Firefly에 Gen-4.5 최우선 배포 멀티이어 파트너십", tag: "Product", url: "https://www.vo3ai.com/blog/runway-gen-4-just-dropped-5-surprising-upgrades-ai-video-makers-need-to-know-2026-05-03" },
     { date: "2026-02-04", co: "ElevenLabs", cat: "startup", source: "CNBC / Reuters", title: "ElevenLabs, 밸류 $11B — AI 음성 생성 시장 1위 굳히기", summary: "· Series D $500M·밸류 $11B(전년比 3배+)·ARR $330M+(Sequoia 주도·NVIDIA 백업)\n· 텍스트→음성 API로 콘텐츠 제작 표준 도구\n· IPO 옵션 검토 중", tag: "Funding", url: "https://www.cnbc.com/2026/02/04/nvidia-backed-ai-startup-elevenlabs-11-billion-valuation.html" },
     { date: "2026-03-25", co: "Harvey", cat: "startup", source: "CNBC / Bloomberg", title: "Harvey AI, $200M 라운드 — 법률 버티컬 AI $11B 밸류 달성", summary: "· Series C $200M·밸류 $11B(Sequoia·GIC) · ARR $190M(5개월 +90%)\n· 변호사 10만 명+·AmLaw 100 과반수 고객\n· 법률 버티컬 AI 리더 — 전문서비스로 확장", tag: "Funding", url: "https://agentmarketcap.ai/blog/2026/04/06/harvey-200m-11b-valuation-legal-ai-vertical-agent-template" },
-    { date: "2026-03-12", co: "Glean", cat: "startup", source: "Forbes / IBL News", title: "Glean, 엔터프라이즈 AI 검색 ARR $200M+ — 'The Agentic List 2026' 선정", summary: "· 밸류 $7.2B·ARR $200M+ — 'The Agentic List 2026' 선정\n· 사내 SaaS·문서 권한 기반 통합 검색 + 업무 에이전트\n· 대기업 IT·운영의 AI 표준 도구 — 검색→업무 자동화로 확장", tag: "Funding", url: "https://www.glean.com" },
-    { date: "2026-02-18", co: "Sierra AI", cat: "startup", source: "ValueAdd VC / The Information", title: "Sierra AI, 밸류 $10B — 고객 서비스 에이전트 ARR 배수 67x 최고치", summary: "· 밸류 $10B·ARR $150M · Revenue Multiple 67x(AI 에이전트 섹터 최고)\n· 기업 브랜드 맞춤형 고객 응대 에이전트로 CS 비용 재편\n· Bret Taylor 공동창업·Sequoia 투자", tag: "Funding", url: "https://sierra.ai" },
     { date: "2026-02-12", co: "Replit", cat: "startup", source: "Bloomberg / TechCrunch", title: "Replit, ~$400M 라운드 협의 — 밸류 $9B로 약 3배 점프, 코딩 에이전트 본격화", summary: "· ~$400M 신규 라운드로 밸류 약 $9B 협의 — 직전 대비 약 3배 상향\n· Replit Agent로 자연어→앱 빌드·배포 자동화 · ARR $1B 목표 제시\n· 단말 관점: 비개발자도 앱을 만드는 에이전트형 개발 — 단말 앱 생태계 진입장벽 붕괴 신호", tag: "Funding", url: "https://replit.com" },
     { date: "2025-12-15", co: "Lovable", cat: "startup", source: "CNBC / TechCrunch", title: "Lovable, Series B $330M — 밸류 $6.6B, '바이브 코딩' 대장주 부상", summary: "· Series B $330M·밸류 $6.6B — 직전 $1.8B서 급등\n· ARR $200M→$500M(12개월 만에 $1M→$200M 돌파 후 가속)\n· 단말 관점: 프롬프트만으로 동작하는 앱 생성 — 소프트웨어 제작 대중화가 단말 콘텐츠 공급 폭증으로 연결", tag: "Funding", url: "https://lovable.dev" },
     { date: "2026-03-18", co: "Kling AI", cat: "startup", source: "The Information / Bloomberg", title: "Kuaishou, Kling AI 스핀오프 검토 — 밸류 ~$20B·$2B 조달 평가", summary: "· 모회사 Kuaishou가 Kling AI 분사·약 $20B 밸류·$2B 조달 검토\n· ARR $100M(3월)→$240M+(12월) 급증 · 일부 보도 $500M 추정\n· 단말 관점: 고품질 텍스트→영상 생성이 모바일 크리에이터 도구로 직결 — 온디바이스 미디어 수요 견인", tag: "Funding", url: "https://klingai.com" },
@@ -499,7 +500,7 @@ window.DASH = (function () {
     { name: "Scale AI", value: 14, cat: "startup", src: "Forbes '24.05 $14B" },
     { name: "ElevenLabs", value: 11, cat: "startup", src: "CNBC '26.2 Series D $11B" },
     { name: "Harvey", value: 11, cat: "startup", src: "'26.3 Series C $11B" },
-    { name: "Sierra AI", value: 10, cat: "startup", src: "ValueAdd VC '26 $10B" },
+    { name: "Sierra AI", value: 15, cat: "startup", src: "$950M 라운드 '26.05 밸류 $15B+" },
     { name: "Glean", value: 7.2, cat: "startup", src: "'26 $7.2B" },
   ];
 
