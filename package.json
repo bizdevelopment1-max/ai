@@ -1,0 +1,25 @@
+{
+  "name": "ai-dashboard",
+  "version": "1.0.0",
+  "description": "AI news, stocks, and insights dashboard with automated updates",
+  "main": "app.jsx",
+  "type": "module",
+  "scripts": {
+    "test:automation": "node scripts/test-automation.mjs",
+    "update:news": "node scripts/update-ha-thai.mjs",
+    "generate:insights": "node scripts/generate-insights.mjs",
+    "crawl:news": "node scripts/crawl-news.mjs",
+    "crawl:stocks": "node scripts/crawl-stocks.mjs"
+  },
+  "keywords": [
+    "ai",
+    "news",
+    "stocks",
+    "dashboard"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0"
+  }
+}
