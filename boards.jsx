@@ -515,6 +515,24 @@ function ReportsBoard({ reports, sectionRef, query }) {
   );
 }
 
+// 선택 종목의 실제 마지막 종가 날짜(asOf) 기준 신선도 — 거래일(월~금) 기준 지연 산출
+function stockFreshness(asOf) {
+  if (!asOf) return null;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const d = new Date(asOf + "T00:00:00"); d.setHours(0, 0, 0, 0);
+  if (isNaN(d.getTime())) return null;
+  let behind = 0; const cur = new Date(d);
+  while (cur < today) {                       // asOf 다음날부터 오늘까지 거래일 수
+    cur.setDate(cur.getDate() + 1);
+    const wd = cur.getDay();
+    if (wd !== 0 && wd !== 6) behind += 1;
+  }
+  // behind 0: 당일 종가 · 1: 당일 종가 집계 전 → 둘 다 최신으로 간주
+  const ok = behind <= 1;
+  const lag = Math.max(0, behind - 1);
+  return { ok, lag, label: ok ? "✓ 최신 종가 반영" : `⚠ ${lag}거래일 지연` };
+}
+
 // ---- Stock board: listed AI companies, daily price, 1Y/5Y, inflection notes ----
 function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
   const inView = useInView(sectionRef);
@@ -526,6 +544,9 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
   const real = (stockData && stockData[sel.ticker]) || null;
   const mcap = sel.private ? sel.mcap : (real && real.marketCap);
   const updated = stockData && stockData.__generatedAt;
+  // 실제 차트에 찍힌 마지막 점의 날짜를 권위 있는 '최신일'로 사용(asOf가 없으면 points 말단에서 보강)
+  const latestDay = real && (real.asOf || (real.points && real.points.length ? real.points[real.points.length - 1].d : null));
+  const fresh = stockFreshness(latestDay);
   return (
     <section className="board" ref={sectionRef} data-screen-label="Stock Prices">
      <AnimCtx.Provider value={inView}>
@@ -604,7 +625,24 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
             )}
           </div>
         )}
-        {updated && <p className="stock-updated">데이터 갱신: {String(updated).slice(0, 10)} · 출처 Stooq · 시총=종가×발행주식수(근사)</p>}
+        {(latestDay || updated) && (
+          <p className="stock-updated">
+            {latestDay && (
+              <>최신 종가 기준일 <b>{latestDay}</b>
+                {fresh && (
+                  <span style={{
+                    marginLeft: 6, padding: "1px 7px", borderRadius: 999, fontSize: "0.85em", fontWeight: 700,
+                    color: fresh.ok ? "#0E8F6E" : "#C2410C",
+                    background: fresh.ok ? "rgba(14,143,110,0.12)" : "rgba(194,65,12,0.12)",
+                  }}>{fresh.label}</span>
+                )}
+                {" · "}
+              </>
+            )}
+            {updated && <>데이터 점검 {String(updated).slice(0, 10)} · </>}
+            출처 Stooq · 시총=종가×발행주식수(근사)
+          </p>
+        )}
       </div>
      </AnimCtx.Provider>
     </section>
