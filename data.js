@@ -218,6 +218,26 @@ window.DASH = (function () {
       sources: ["Series E $950M·밸류 $15.8B (Axios '26.5.4 Tiger Global·GV)", "ARR $150M (8분기)·총 조달 $1B+", "Fortune 50의 40%+ 고객화"],
       url: "https://sierra.ai",
     },
+    {
+      cat: "startup", name: "Baseten", domain: "baseten.co", unit: "ML 추론·모델 서빙",
+      valuation: "$13B", valAsof: "26.06", metric: "주요 고객", value: "Runway·Perplexity 외", metricAsof: "26",
+      funding: "Series F (2026.06)", trend: 80, trendBasis: "AI 추론 인프라 수요 폭증",
+      note: "ML 모델 서빙·추론 인프라 전문 스타트업. 2026.06 Series F로 밸류 $13B 달성. Runway·Perplexity·Mistral 등 주요 AI 기업의 프로덕션 추론 인프라로 채택. 커스텀 모델 배포·A/B 테스트·실시간 스케일링 전문. NVIDIA GPU 위에서 추론 효율을 극대화하는 미들웨어 포지션.",
+      vp: "AI 기업이 GPU 클러스터 없이 즉시 프로덕션 배포 가능 — 추론 효율·비용 최적화 전문.",
+      direction: "멀티클라우드 서빙 + 모델 최적화 + 에이전트 파이프라인 인프라 확장.",
+      sources: ["Series F·밸류 $13B (TechCrunch·Axios '26.06)", "Runway·Perplexity 고객 채택 (2026)"],
+      url: "https://www.baseten.co",
+    },
+    {
+      cat: "startup", name: "Groq", domain: "groq.com", unit: "LPU 추론 칩·클라우드",
+      valuation: "$2.8B+", valAsof: "24.08", metric: "추론 속도", value: "1,000+ tokens/sec", metricAsof: "26",
+      funding: "Series D $640M~$650M+", trend: 60, trendBasis: "LPU 추론 속도 업계 최상위",
+      note: "LPU(Language Processing Unit) 전용 추론 칩 + GroqCloud API. 2024.08 Series D $640M·밸류 $2.8B, 2026 신규 $650M 라운드로 후속 조달 지속. Llama·Mistral·Gemma 등 오픈 모델 추론 1,000+ tokens/sec로 업계 최상위. NVIDIA GPU 대비 추론 지연(latency)을 획기적으로 낮춘 전용 칩 설계 — 에이전트 실시간 대화·음성 AI에 최적화.",
+      vp: "NVIDIA 없이 최고속 LLM 추론 — LPU 전용 아키텍처로 추론 지연 최소화.",
+      direction: "추론 전용 칩 양산 + GroqCloud 확장 + 실시간 에이전트 수요 공략.",
+      sources: ["Series D $640M·밸류 $2.8B (2024.08)", "2026 신규 $650M 라운드 (Bloomberg '26.6)", "Llama-3 추론 1,000+ tokens/sec (Groq 공개 벤치마크)"],
+      url: "https://groq.com",
+    },
   ];
 
   /* ---- Articles (per-company, newest first) — co: 기업명(필터용) ---- */
@@ -249,6 +269,10 @@ window.DASH = (function () {
     { date: "2026-03-25", co: "Harvey", cat: "startup", source: "CNBC / Bloomberg", title: "Harvey AI, $200M 라운드 — 법률 버티컬 AI $11B 밸류 달성", summary: "· Harvey $200M Series C, 밸류 $11B(Sequoia·GIC)\n· ARR $190M(5개월 만에 $100M→$190M, +90%)\n· 변호사 10만 명+, AmLaw 100 과반수 고객\n· 버티컬 AI 에이전트 섹터 지표 기업으로 부상", tag: "Funding", url: "https://agentmarketcap.ai/blog/2026/04/06/harvey-200m-11b-valuation-legal-ai-vertical-agent-template" },
     { date: "2026-03-12", co: "Glean", cat: "startup", source: "Forbes / IBL News", title: "Glean, 엔터프라이즈 AI 검색 ARR $200M+ — 'The Agentic List 2026' 선정", summary: "· 밸류 $7.2B · ARR $200M+\n· 사내 SaaS·문서 권한 기반 통합 검색 + 업무 에이전트\n· 대형 기업 IT·운영의 AI 표준 도구로 부상\n· 검색에서 업무 자동화 에이전트로 확장", tag: "Funding", url: "https://www.glean.com" },
     { date: "2026-05-04", co: "Sierra AI", cat: "startup", source: "Axios / The Information", title: "Sierra AI, Series E $950M — 밸류 $15.8B, 고객 서비스 에이전트 선두", summary: "· Series E $950M 완료(Tiger Global·GV 주도) · 밸류 $15.8B\n· ARR $150M — 창업 2024.02 이후 8분기 만에 달성\n· Fortune 50의 40%+ 고객화 · 총 조달 $1B+\n· Bret Taylor(전 Salesforce 공동 CEO) 공동창업 브랜드 신뢰가 레버", tag: "Funding", url: "https://sierra.ai" },
+    { date: "2026-06-23", co: "Baseten", cat: "startup", source: "TechCrunch / Axios", title: "Baseten, Series F $13B 밸류 달성 — AI 추론 인프라 '숨은 강자'", summary: "· 2026.06 Series F로 밸류 $13B 달성 — AI 추론·모델 서빙 인프라 전문\n· Runway·Perplexity 등 주요 AI 기업의 프로덕션 추론 인프라 채택\n· NVIDIA GPU 위 추론 효율 극대화 미들웨어 포지션 확립\n· AI 에이전트 파이프라인·실시간 스케일링 수요로 급성장", tag: "Funding", url: "https://techcrunch.com" },
+    { date: "2026-06-24", co: "Groq", cat: "startup", source: "Bloomberg / The Information", title: "Groq, 신규 $650M 라운드 — LPU 추론 칩으로 NVIDIA 대안 부상", summary: "· 신규 $650M 라운드로 추론 전용 LPU 인프라 확장 지속\n· Llama·Mistral·Gemma 추론 1,000+ tokens/sec — 업계 최상위 속도\n· NVIDIA GPU 대비 추론 지연 최소화 — 에이전트·음성 AI 고객 확대\n· GroqCloud API로 개발자·엔터프라이즈 고객 급증", tag: "Funding", url: "https://groq.com" },
+    { date: "2026-06-20", co: "", cat: "bigtech", source: "Wall Street Journal / The Information", title: "Oracle, AI·클라우드 부문 구조조정 — 인력 재편, 컴퓨트 투자 집중", summary: "· Oracle AI·클라우드 부문 대규모 구조조정 — SW 개발 인력 감축·GPU 인프라 투자 유지\n· 하이퍼스케일러(AWS·Azure·GCP)와 경쟁 심화에 비용 구조 재편\n· AI 시대 기존 엔터프라이즈 SW 기업의 전환 비용·인력 재배치 사례\n· Qualcomm·Modular AI 협업: 온디바이스 추론 최적화 파트너십 체결", tag: "Layoffs", url: "https://www.wsj.com" },
+    { date: "2026-06-22", co: "Anthropic", cat: "native", source: "Reuters / Micron IR", title: "Micron × Anthropic HBM 파트너십 — AI 메모리 병목 해소 공략", summary: "· Micron이 Anthropic과 HBM(고대역폭 메모리) 전략 공급 파트너십 체결\n· Claude 훈련·추론용 HBM4 우선 공급 — NVIDIA·SK하이닉스 의존도 분산\n· AI 모델 대형화로 메모리 대역폭이 GPU만큼 핵심 병목으로 부상\n· Reflection AI×SpaceX 컴퓨트 협력, Patronus AI 평가 플랫폼 부상도 동기간 신호", tag: "Partnership", url: "https://www.micron.com" },
 
     // ── 시장·산업·디바이스(온디바이스 AI 관점) ──
     { date: "2025-03-11", co: "OpenAI", cat: "native", source: "OpenAI", title: "OpenAI, 에이전트 구축 도구 공개 — Responses API·Computer Use·Agents SDK", summary: "· 에이전트를 '사용자를 대신해 독립적으로 작업을 수행하는 시스템'으로 정의 · Responses API·Web/File Search·Computer Use·Agents SDK 공개\n· Computer Use 모델 성공률 WebVoyager 87%·WebArena 58.1%·OSWorld 38.1% — OpenAI도 실수 가능성·휴먼 감독 필요성 명시\n· 모바일 에이전트 UX 시사점: 완전 자동화보다 사용자 승인형·작업 로그·취소/복구·민감 작업 차단이 핵심", tag: "Agent", url: "https://openai.com/index/new-tools-for-building-agents/" },
@@ -279,6 +303,12 @@ window.DASH = (function () {
       bullets: ["2027년 말까지 agentic AI 프로젝트 40%+ 중단 가능 — 비용·불명확한 가치·리스크", "2028년 기업 SW 33%에 agentic AI 포함 · 일상 업무 의사결정 15% 에이전트 자율 수행 전망", "'에이전트 대세' 단정 금물 — agent washing·실패율·승인형 실행·거버넌스 리스크 병기"] },
     { house: "Bridgewater (Reuters)", type: "Securities", date: "2026-02-23", title: "빅테크 2026 AI 인프라 투자 ~$650B 전망 (2025 ~$410B)", figure: "$650B 투자", rating: "Report", url: "https://www.reuters.com/business/big-tech-invest-about-650-billion-ai-2026-bridgewater-says-2026-02-23/",
       bullets: ["Alphabet·Amazon·Meta·Microsoft 등 AI 인프라 투자 2025 ~$410B → 2026 ~$650B", "클라우드 AI 비용·컴퓨트 부족·메모리 수요가 모바일·PC BOM과 서비스 원가에 직접 영향", "온디바이스 AI는 프라이버시 전략이자 클라우드 비용·공급망 리스크를 줄이는 원가 전략"] },
+    { house: "Goldman Sachs Research", type: "Securities", date: "2026-05-20", title: "GenAI ROI 경고 — 기업 7%만 의미있는 수익, CapEx와 수익화 격차 확대", figure: "7% 의미 ROI", rating: "Caution", url: "https://www.goldmansachs.com/insights/",
+      bullets: ["엔터프라이즈 기업 중 GenAI에서 의미 있는 EBIT 임팩트를 보고한 비율 7%(McKinsey 공동 집계)", "빅테크 AI CapEx 2026 $320B+에 달하나 수익화 검증은 초기 단계", "Goldman Sachs: '현재 AI 지출 수준을 정당화할 ROI 증거 부족'", "대부분 기업은 파일럿 단계 — pilot→scale→EBIT 임팩트 경로 미검증"] },
+    { house: "JPMorgan Research", type: "Securities", date: "2026-04-30", title: "빅테크 AI CapEx 2026 $320B+ — '수익화 시간표' 불확실", figure: "$320B+ CapEx", rating: "Report", url: "https://www.jpmorgan.com/insights/research/artificial-intelligence",
+      bullets: ["Alphabet·Amazon·Meta·Microsoft 4개사 합산 AI CapEx 2026E $320B+", "전년 $240B 대비 +33%, 2027E $380B+ 전망(JPMorgan 추정)", "컴퓨트·전력·데이터센터 투자가 동시에 급증 — 수요가 공급을 초과", "핵심 리스크: CapEx가 실제 수익으로 전환되는 시간표 불확실"] },
+    { house: "Sequoia Capital", type: "VC Thesis", date: "2025-09-01", title: "Services: The New Software — AI 에이전트, $4.6T 서비스 시장 진입", figure: "$4.6T 서비스 시장", rating: "Report", url: "https://www.sequoiacap.com/article/ai-services-the-new-software/",
+      bullets: ["Sequoia thesis: AI 에이전트가 '소프트웨어 툴'을 넘어 $4.6T 글로벌 서비스 산업(법률·회계·의료·CS)을 직접 대체", "전통 SaaS는 업무를 '지원'하지만 AI 에이전트는 업무 자체를 '실행' — 과금이 좌석→성과 기반으로 전환", "Harvey(법률)·Sierra(CS)·Abridge(의료) 등 버티컬 에이전트가 이 구조의 선두 사례", "AI 서비스 기업의 ARR 배수는 기존 소프트웨어보다 10~100x 높을 수 있다는 전망"] },
   ];
 
   /* ---- Market Growth (global AI market size $B) — Grand View Research 최신판 ----
@@ -316,6 +346,7 @@ window.DASH = (function () {
     { name: "Mistral AI", value: 23, cat: "startup", src: "Bloomberg '26.6 €20B(≈$23.2B) 협의" },
     { name: "Perplexity", value: 23, cat: "startup", src: "Series E-6 '26.1 $22.6B~23B" },
     { name: "Sierra AI", value: 16, cat: "startup", src: "Axios '26.5 $15.8B (Series E $950M)" },
+    { name: "Baseten", value: 13, cat: "startup", src: "TechCrunch·Axios '26.6 Series F $13B" },
     { name: "ElevenLabs", value: 11, cat: "startup", src: "CNBC '26.2 Series D $11B" },
     { name: "Harvey", value: 11, cat: "startup", src: "'26.3 Series C $11B" },
     { name: "Glean", value: 7.2, cat: "startup", src: "'26 $7.2B" },
@@ -423,9 +454,10 @@ window.DASH = (function () {
     { title: "오픈소스 vs 클로즈드 — 전략 분기", desc: "Meta Llama·Mistral·DeepSeek 등 오픈 가중치 모델이 도입을 가속하며 클로즈드 모델과 성능 격차 축소 · EU AI Act 규제 환경에서 오픈소스 선호도 상승", icon: "chart", src: "Mistral·Meta·DeepSeek 공식, EU AI Act" },
     { title: "Physical AI — AI가 현실 세계로", desc: "Tesla Optimus Gen 3 제한 생산(2026 여름), Figure AI 공장 배포, Waymo 밸류 $126B · 골드만삭스: 2026년 인간형 로봇 5~10만 대 출하·휴머노이드 TAM 2035E $38B(구 $6B서 6배↑, 단가 $4~6만으로 하락) · 물리적 AI 전체(자율주행 포함)는 별도 추정 2035E $1.15T — scope 구분", icon: "chip", src: "Goldman Sachs '26, Pomegra '26" },
     { title: "AI 전력 수요 쇼크 — 데이터센터가 전력망을 흔들다", desc: "IEA: 데이터센터 전력 소비 460 TWh는 2022년 수치(2024년은 ~415~490 TWh로 조정) → 2030E ~945 TWh로 수렴(전망 범위는 출처마다 상이) · 미국 비중 2023년 4.4% → 2028년 6.7~12%(EIA) · 전력 확충이 반도체보다 핵심 병목", icon: "spark", src: "IEA Energy & AI '25, EIA '26" },
-    { title: "GenAI ROI — $1 투자 → $3.70 회수", desc: "성숙 AI 기업 평균 ROI $4.60/$1(Accenture), 파일럿 단계 $1.20/$1 · 개발자 생산성 +26~40% · 회수기간: 고객서비스 4.1개월·마케팅 6.7개월·엔지니어링 9.3개월 · 단 전사 ROI 체감은 29%에 그침", icon: "chart", src: "Accenture '26, McKinsey '26, Futurum '26" },
+    { title: "GenAI ROI — $1 투자 → $3.70 회수, 단 7%만 의미 있는 수익", desc: "성숙 AI 기업 평균 ROI $4.60/$1(Accenture), 파일럿 단계 $1.20/$1 · 개발자 생산성 +26~40% · 회수기간: 고객서비스 4.1개월·마케팅 6.7개월·엔지니어링 9.3개월 · 단 전사 ROI 체감은 29%에 그침 — McKinsey·Goldman Sachs: 의미 있는 EBIT 임팩트를 실제로 보고한 기업은 7%에 그침 — CapEx $320B+와 체감 ROI의 격차가 투자자 핵심 질문으로 부상", icon: "chart", src: "Accenture '26, McKinsey '26, Goldman Sachs '26.5, Futurum '26" },
     { title: "AI 고용 충격 — 3억 명 노출, '고용 없는 성장'", desc: "Goldman Sachs: 전 세계 3억 명 일자리가 AI에 노출, 2026년 2,500만 대체 → 2030년 2.7억 · 행정(26%)·고객서비스(20%)가 취약 · 다만 신직종 창출로 순 고용 효과는 중립~플러스 전망", icon: "pulse", src: "Goldman Sachs Research '26.01" },
     { title: "NVIDIA, AI PC용 Arm CPU 진입 — 노트북 시장 공략", desc: "NVIDIA가 MediaTek와 공동 개발한 Arm 기반 PC SoC 'N1·N1X'(Blackwell GPU 통합)로 AI PC 노트북·데스크톱에 진입(2026 예상) · Apple M·Qualcomm Snapdragon X와 경쟁 · AI PC는 2026년 신규 PC 출하의 40%+(Canalys), 2027년 과반 전망 · CES 2025 GB10 데스크톱(Project DIGITS)도 공개", icon: "chip", src: "Canalys '26, NVIDIA CES 2025, 업계 보도" },
+    { title: "Sequoia '서비스가 새 소프트웨어' — AI 에이전트, $4.6T 시장 직접 진입", desc: "Sequoia Capital: AI 에이전트가 '업무 지원 소프트웨어'를 넘어 $4.6T 글로벌 서비스 시장(법률·회계·의료·CS 등)을 직접 대체하는 '서비스 레이어'로 진입 · 전통 SaaS는 업무를 지원하지만 AI 에이전트는 업무 자체를 실행 — 과금 모델 좌석→성과 기반으로 전환 · Harvey($11B)·Sierra($15.8B)·Abridge 등 버티컬 에이전트가 선두 주자 — 단말 관점: 온디바이스 에이전트가 서비스 대행까지 수행하면 단말이 '서비스 수수료' 수익원으로 직결", icon: "spark", src: "Sequoia Capital 'Services: The New Software' '25.09" },
   ];
 
   /* ---- Widget 1: Capability vs Reliability Gap ----
