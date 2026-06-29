@@ -565,7 +565,7 @@ a[href]:hover .rainbow-on-hover,
 /* ---------- company table ---------- */
 .ctable { display: flex; flex-direction: column; }
 .ct-head, .ct-row {
-  display: grid; grid-template-columns: 1.5fr 1fr 1.05fr 1.1fr .8fr 1.75fr;
+  display: grid; grid-template-columns: 1.5fr .8fr .9fr .95fr .8fr 2.35fr;
   align-items: center; gap: 14px; padding: 0 20px;
 }
 .ct-head > *, .ct-row > * { min-width: 0; }
@@ -1034,7 +1034,7 @@ a[href]:hover .rainbow-on-hover,
   }
 
   /* 모바일: 표 컬럼을 숨기지 않고 가로 스크롤로 전체 표시(오른쪽 잘림 방지) */
-  .ct-head, .ct-row { grid-template-columns: 1.4fr 1fr 1fr 1fr .8fr 1.7fr; min-width: 720px; }
+  .ct-head, .ct-row { grid-template-columns: 1.4fr .8fr .85fr .85fr .8fr 2.2fr; min-width: 720px; }
   .ct-head span:nth-child(n+4), .ct-row > *:nth-child(n+4) { display: block; }
   .ct-vgroup { min-width: 720px; }
   .report-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
