@@ -265,7 +265,8 @@ function hlNums(text, keyBase) {
 // Render a feed summary as up to 3 개조식 lines (제목 한글 + 3줄 요약 정책).
 function BoldSummary({ text }) {
   if (!text) return null;
-  const clean = String(text).replace(/<[^>]+>/g, "");          // strip stray HTML (e.g. <font color>)
+  const clean = String(text).replace(/<[^>]+>/g, "")           // strip stray HTML (e.g. <font color>)
+    .replace(/2026[.\-](\d{1,2})[.\-](\d{1,2})/g, (_, m, d) => `${+m}/${+d}`);
   const lines = clean.split(/\n+/).map(l => l.trim()).filter(Boolean).slice(0, 3);   // 최대 3줄
   if (lines.length <= 1) return <>{hlNums(clean, "s")}</>;
   return lines.map((line, i) => (
