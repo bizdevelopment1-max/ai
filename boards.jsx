@@ -270,7 +270,7 @@ function BoldSummary({ text }) {
   const lines = clean.split(/\n+/).map(l => l.trim()).filter(Boolean).slice(0, 3);   // 최대 3줄
   if (lines.length <= 1) return <>{hlNums(clean, "s")}</>;
   return lines.map((line, i) => (
-    <span className="art-sum-line" key={i}>{hlNums(line.replace(/^[·\-•]\s*/, ""), "l" + i)}</span>
+    <span className="art-sum-line" key={i}>{hlNums(line.replace(/^[·\-•]\s*/, "").replace(/[.。]+\s*$/, ""), "l" + i)}</span>
   ));
 }
 

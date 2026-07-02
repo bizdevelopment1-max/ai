@@ -128,7 +128,7 @@ async function pull(src, limit) {
 // ---- Claude summarization: 3-line Korean brief, device-maker lens ----
 const SYS = "당신은 글로벌 스마트폰·온디바이스 AI 기기 제조사의 전략 분석가입니다. 영문 AI 뉴스를 한국어로 요약합니다. 특정 기업명(삼성, MX, 사업부 등)은 절대 언급하지 않습니다. 과장 없이 사실에 근거해 작성합니다.";
 function userPrompt(a) {
-  return `다음 영문 AI 뉴스를 한국어로 정리하세요.\n\n제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}\n\n출력(JSON):\n- title_ko: 위 영문 제목을 자연스러운 한국어로 번역(30자 내외, 직역 아닌 의역 허용).\n- summary: 주요 내용을 정확히 3줄, 한국어 개조식으로 요약. 각 줄은 "· "로 시작하고 명사형 종결("~함/~음/~임")로 끝냅니다. 1줄=핵심 사실, 2줄=수치·배경, 3줄=온디바이스 AI·AI 에이전트·스마트폰/노트북 단말 전략 관점의 시사점.\n\n금지: 출처/매체명을 본문에 적지 마세요. 특정 회사명(삼성·MX·사업부 등)을 시사점에 적지 마세요.`;
+  return `다음 영문 AI 뉴스를 한국어로 정리하세요.\n\n제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}\n\n출력(JSON):\n- title_ko: 위 영문 제목을 자연스러운 한국어로 번역(30자 내외, 직역 아닌 의역 허용).\n- summary: 주요 내용을 정확히 3줄, 한국어 개조식으로 요약. 각 줄은 "· "로 시작하고 명사형 종결("~함/~음/~임")로 끝냅니다. 마침표(.)로 끝내지 마세요. 1줄=핵심 사실, 2줄=수치·배경, 3줄=온디바이스 AI·AI 에이전트·스마트폰/노트북 단말 전략 관점의 시사점.\n\n금지: 출처/매체명을 본문에 적지 마세요. 특정 회사명(삼성·MX·사업부 등)을 시사점에 적지 마세요.`;
 }
 
 async function summarize(a) {
@@ -162,7 +162,7 @@ async function summarize(a) {
     if (!block) throw new Error("no text");
     const parsed = JSON.parse(block.text);
     if (!parsed.title_ko || !parsed.summary) throw new Error("bad json");
-    return { title_ko: decode(parsed.title_ko), summary: decode(parsed.summary.replace(/\\n/g, "\n")) };
+    return { title_ko: nounize(decode(parsed.title_ko)), summary: nounizeSummary(decode(parsed.summary.replace(/\\n/g, "\n"))) };
   } catch (e) {
     console.warn(`[sum:${a.co}] ${e.message}`);
     return null;
@@ -217,6 +217,27 @@ async function fetchSnippet(url) {
   } catch { return ""; }
 }
 
+// 개조식 정규화: 존댓말·평서형 종결 → 명사형("~함/~음/~임"), 끝 마침표 제거
+const NOUN_END = [
+  [/합니다$/, "함"], [/입니다$/, "임"], [/됩니다$/, "됨"], [/갑니다$/, "감"], [/옵니다$/, "옴"],
+  [/있습니다$/, "있음"], [/없습니다$/, "없음"], [/([가-힣])습니다$/, "$1음"],
+  [/한다$/, "함"], [/이다$/, "임"], [/된다$/, "됨"], [/있다$/, "있음"], [/없다$/, "없음"],
+  [/했다$/, "했음"], [/였다$/, "였음"], [/왔다$/, "왔음"], [/([가-힣])었다$/, "$1었음"], [/([가-힣])았다$/, "$1았음"],
+];
+function nounize(line) {
+  let l = String(line || "").trim().replace(/[.。]+\s*$/, "");
+  // 문장 중간의 존댓말 종결도 명사형으로("~했습니다. ~" → "~했음 — ~")
+  l = l.replace(/([가-힣])(?:습니다|ㅂ니다)[.。]\s+/g, "$1음 — ").replace(/합니다[.。]\s+/g, "함 — ")
+       .replace(/([가-힣])다[.。]\s+(?=[가-힣A-Za-z])/g, "$1다 — ");
+  for (const [re, to] of NOUN_END) { if (re.test(l)) { l = l.replace(re, to); break; } }
+  return l.replace(/[.。]+\s*$/, "").trim();
+}
+const nounizeSummary = sm => String(sm || "").split("\n").map(l => l.trim()).filter(Boolean)
+  .map(l => "· " + nounize(l.replace(/^[·\-•]\s*/, ""))).join("\n");
+
+// 화면 노출 금지어 — 제목·요약에 포함되면 해당 기사 제외
+const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
+
 // 주요 매체명(영문·한글) — 요약 줄이 '매체명'으로 끝나는 것을 걸러내기 위함
 const PUBS = /(business insider|비즈니스\s*인사이더|reuters|로이터|bloomberg|블룸버그|techcrunch|테크크런치|the verge|버지|cnbc|wsj|wall street journal|월스트리트|financial times|the information|axios|engadget|ars technica|the guardian|가디언|venturebeat|벤처비트|forbes|포브스|wired|와이어드|cnet|new york times|뉴욕\s*타임스|associated press|ap통신|the new york times|9to5|fast company|패스트컴퍼니)/i;
 
@@ -249,7 +270,7 @@ function to3lines(text, fallback, source) {
     .filter(s => !isAttribution(s, source))
     .slice(0, 3);
   if (!lines.length) lines = [fallback];
-  return lines.map(l => "· " + l.replace(/^[·\-•]\s*/, "")).join("\n");
+  return lines.map(l => "· " + nounize(l.replace(/^[·\-•]\s*/, ""))).join("\n");
 }
 
 // 제목 정리: '독점:'/'Exclusive:' 등 라벨과 끝의 매체명 꼬리를 제거(제목=요약 중복 방지)
@@ -257,6 +278,7 @@ function cleanTitle(t, source) {
   let s = String(t || "").trim();
   s = s.replace(/^\s*(독점|단독|속보|Exclusive|Breaking|Opinion|Analysis|Update)\s*[:：]\s*/i, "");
   s = stripSourceTail(s, source);
+  s = nounize(s);                                       // 제목도 개조식·마침표 제거
   return s.trim() || String(t || "").trim();
 }
 
@@ -355,9 +377,10 @@ async function main() {
   const dseen = new Set();
   const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
-    .map(a => ({ ...a, summary: stripSrc(a.summary) }))
+    .map(a => ({ ...a, title: nounize(a.title), summary: nounizeSummary(stripSrc(a.summary)) }))  // 개조식·마침표 제거(기존 항목 포함)
     .filter(a => a.title && a.summary)                   // 요약은 한글 우선(번역), 불가 시 영문 폴백 허용
     .filter(a => !isTitleEcho(a) && !isAssetUrl(a.url))   // 제목=요약 에코·이미지 url 깨진 항목 제외
+    .filter(a => !BANNED.test((a.title || "") + " " + (a.summary || "")))  // 화면 노출 금지어 포함 기사 제외
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .slice(0, 100);
 
