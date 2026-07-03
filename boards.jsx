@@ -1379,7 +1379,7 @@ function ExecToplines({ items, insights, onNav }) {
   const [sel, setSel] = React.useState(null);   // 클릭 시 색 반전(선택) 카드
   const TONE = { warn: "#D23B3B", signal: "#2D6BFF", revenue: "#16A34A", compete: "#C026D3" };
   const ICON = { warn: "target", signal: "pulse", revenue: "chart", compete: "brain" };
-  const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "성능·신뢰성", native: "AI 네이티브", dynamics: "경쟁 다이내믹스" };
+  const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "성능·신뢰성", native: "AI 네이티브", dynamics: "경쟁 다이내믹스", overview: "경쟁 구도" };
 
   // 데이터 정규화: insights 카드 → 공통 셰이프 / 폴백은 정적 TOPLINE
   const cards = (insights && insights.cards && insights.cards.length)

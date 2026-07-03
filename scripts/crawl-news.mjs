@@ -56,7 +56,9 @@ const COMPANIES = [
 const TOPICS = [
   { co: "AI 에이전트", cat: "native", tag: "AI 에이전트", n: 3, q: '("AI agent" OR "agentic AI" OR "AI agents")' },
   { co: "", cat: "bigtech", tag: "AI 노트북", topic: true, n: 3, q: '("AI PC" OR "AI laptop" OR "Copilot+ PC" OR "on-device AI" OR "NPU laptop")' },
-  { co: "", cat: "bigtech", tag: "AI 폰", topic: true, n: 3, q: '("AI smartphone" OR "AI phone" OR "Galaxy AI" OR "Apple Intelligence" OR "on-device AI" phone)' },
+  { co: "", cat: "bigtech", tag: "AI 폰", topic: true, n: 3, q: '("AI smartphone" OR "AI phone" OR "Pixel AI" OR "Apple Intelligence" OR "on-device AI" phone)' },
+  // 경쟁 단말·칩 진영(중국 제조사·모바일 실리콘) — 단말 사업 경쟁 관점 핵심 스트림
+  { co: "", cat: "bigtech", tag: "경쟁 단말", topic: true, n: 3, q: '("Xiaomi" OR "Honor" OR "OPPO" OR "vivo" OR "Snapdragon" OR "Dimensity") AI smartphone' },
 ];
 
 // device-topic 기사를 제목 기준으로 실제 업체에 재분류(매칭 없으면 업체 미지정). 토픽은 tag로만 남김.
@@ -126,7 +128,7 @@ async function pull(src, limit) {
 }
 
 // ---- Claude summarization: 3-line Korean brief, device-maker lens ----
-const SYS = "당신은 글로벌 스마트폰·온디바이스 AI 기기 제조사의 전략 분석가입니다. 영문 AI 뉴스를 한국어로 요약합니다. 특정 기업명(삼성, MX, 사업부 등)은 절대 언급하지 않습니다. 과장 없이 사실에 근거해 작성합니다.";
+const SYS = "당신은 글로벌 스마트폰·온디바이스 AI 기기 제조사의 전략 분석가입니다. 경쟁 제조사·모델사·칩사의 움직임이 자사 단말 사업에 주는 시사점 관점에서 영문 AI 뉴스를 한국어로 요약합니다. 자사·소속 기업명(삼성, MX, Galaxy, 사업부 등)은 절대 언급하지 않습니다. 과장 없이 사실에 근거해 작성합니다.";
 function userPrompt(a) {
   return `다음 영문 AI 뉴스를 한국어로 정리하세요.\n\n제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}\n\n출력(JSON):\n- title_ko: 위 영문 제목을 자연스러운 한국어로 번역(30자 내외, 직역 아닌 의역 허용).\n- summary: 주요 내용을 정확히 3줄, 한국어 개조식으로 요약. 각 줄은 "· "로 시작하고 명사형 종결("~함/~음/~임")로 끝냅니다. 마침표(.)로 끝내지 마세요. 1줄=핵심 사실, 2줄=수치·배경, 3줄=온디바이스 AI·AI 에이전트·스마트폰/노트북 단말 전략 관점의 시사점.\n\n금지: 출처/매체명을 본문에 적지 마세요. 특정 회사명(삼성·MX·사업부 등)을 시사점에 적지 마세요.`;
 }
@@ -380,11 +382,16 @@ async function main() {
     .map(a => ({ ...a, title: nounize(a.title), summary: nounizeSummary(stripSrc(a.summary)) }))  // 개조식·마침표 제거(기존 항목 포함)
     .filter(a => a.title && a.summary)                   // 요약은 한글 우선(번역), 불가 시 영문 폴백 허용
     .filter(a => !isTitleEcho(a) && !isAssetUrl(a.url))   // 제목=요약 에코·이미지 url 깨진 항목 제외
-    .filter(a => !BANNED.test((a.title || "") + " " + (a.summary || "")))  // 화면 노출 금지어 포함 기사 제외
+    .filter(a => {                                        // 화면 노출 금지어 포함 기사 제외(드롭 로그 남김)
+      const hit = BANNED.test((a.title || "") + " " + (a.summary || ""));
+      if (hit) console.log(`[policy] dropped banned-term article: ${String(a.title).slice(0, 60)}`);
+      return !hit;
+    })
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .slice(0, 100);
 
-  const out = raw.length ? final : prev;   // network failure → keep prev untouched
+  // network failure → keep prev, but still enforce the banned-term policy on it
+  const out = raw.length ? final : prev.filter(a => !BANNED.test((a.title || "") + " " + (a.summary || "")));
   await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: out.length, articles: out }, null, 2) + "\n");
   console.log(`Wrote news.json with ${out.length} articles (${sums.filter(Boolean).length} new Korean summaries).`);
 }

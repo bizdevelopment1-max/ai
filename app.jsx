@@ -66,12 +66,15 @@ function App() {
     return { ...a, co: hit ? hit[1] : "" };   // 매칭되는 업체로, 없으면 업체 미지정(드롭다운 미노출)
   };
   // 데일리 기사: 제목+요약이 있으면 표시(크롤러가 한글 번역 우선, 번역 불가 시 영문 폴백)
+  // 화면 노출 금지어 최종 방어선 — 크롤 데이터에 섞여 들어와도 렌더 전 차단
+  const BANNED_RE = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
   const articles = useMemo(() => {
     const base = (D.ARTICLES || []).map(reclassCo);
     if (!crawled || !crawled.length) return base;
     const seen = new Set(base.map(a => (a.co || "") + "|" + a.title));
     const extra = crawled.map(reclassCo)
-      .filter(a => a && a.title && a.summary && !seen.has((a.co || "") + "|" + a.title));
+      .filter(a => a && a.title && a.summary && !seen.has((a.co || "") + "|" + a.title))
+      .filter(a => !BANNED_RE.test((a.title || "") + " " + (a.summary || "")));
     return [...extra, ...base];
   }, [crawled]);
 

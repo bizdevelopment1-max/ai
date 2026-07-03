@@ -1,10 +1,12 @@
 name: Daily AI News & Stocks Crawl
 
-# Refreshes news.json (per-company Korean news) and stocks.json (real daily
-# prices + market cap). Scheduled to finish before 07:00 KST (UTC+9).
+# Refreshes news.json (per-company Korean news), stocks.json (real daily
+# prices + market cap) and insights.json (rule-based toplines).
+# Runs twice a day — morning & evening KST (UTC+9).
 on:
   schedule:
-    - cron: "30 21 * * *"   # 06:30 KST — agents run before the 07:00 KST update
+    - cron: "30 21 * * *"   # 06:30 KST — 아침 업데이트(07:00 KST 이전 완료)
+    - cron: "30 10 * * *"   # 19:30 KST — 저녁 업데이트
   workflow_dispatch: {}      # manual run
   push:
     branches: [main]

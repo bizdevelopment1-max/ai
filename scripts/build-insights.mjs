@@ -39,7 +39,24 @@ const AXES = [
     soWhat: "온디바이스 에이전트는 완전 자동화가 아니라 승인형·작업 로그·취소/복구 설계가 정답 — 자사 에이전트 UX 원칙으로 못박을 것",
     fallback: "Computer Use·Deep Research·Comet이 구매 대행까지 자동화 · 그러나 자율 성공률 OSWorld 66%서 정체·구조화 과제 1/3 실패",
   },
+  {
+    axis: "rival_devices", label: "경쟁 단말 동향", tone: "compete", nav: "bigtech",
+    kw: ["iphone", "아이폰", "siri", "apple intelligence", "pixel", "픽셀", "hyperos", "xiaomi", "honor", "oppo", "vivo", "snapdragon", "dimensity", "ray-ban", "quest", "glasses", "스마트글라스", "웨어러블", "vision pro", "경쟁 단말"],
+    rootCause: "경쟁 진영이 자체 모델·파트너십·전용 실리콘으로 단말 AI 경험을 선점 → 기본 비서·킬러 UX 표준을 먼저 굳히는 쪽이 교체수요를 흡수",
+    soWhat: "경쟁 단말의 모델 탑재·비서 개편·실리콘 로드맵을 분기 단위로 추적 — 차별화 포인트(에이전트·카메라·기기 연속성)를 상대 로드맵 대비로 검증",
+    fallback: "Apple, Siri를 외부 모델로 재설계(Gemini 탑재) · 중국 제조사 온디바이스 AI 고속 추격 · 스마트글라스 등 신규 폼팩터 확전",
+  },
+  {
+    axis: "model_partnership", label: "모델 파트너십·수직통합", tone: "signal", nav: "overview",
+    kw: ["파트너십", "partnership", "제휴", "탑재", "bedrock", "azure", "독점", "수직통합", "자체 칩", "asic", "커스텀", "인수", "m&a", "acquisition", "계약", "공급", "합병"],
+    rootCause: "모델–클라우드–칩–단말이 지분·독점 계약으로 수직 결합 → 특정 모델 의존은 공급·가격·규제 리스크로 직결",
+    soWhat: "단말 탑재 모델은 멀티소싱(2개사+)과 교체 가능한 추상화 레이어가 안전 — 특정 모델사 독점 종속 계약은 회피",
+    fallback: "Qualcomm, Modular 인수로 소프트웨어 스택 확보 · Apple 멀티 AI Extensions로 모델 선택 개방 · 모델–칩 수직통합 가속",
+  },
 ];
+
+// 화면 노출 금지어 — 포함 기사는 인사이트 입력에서 제외
+const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
 
 const AUTHORITATIVE = ["reuters", "bloomberg", "cnbc", "the information", "wsj", "ft", "financial times", "techcrunch", "the verge", "nvidia", "anthropic", "openai", "morgan stanley", "idc", "gartner", "stanford"];
 
@@ -82,6 +99,7 @@ function gaejosik(s) {
 async function main() {
   let articles = [];
   try { articles = (JSON.parse(await readFile("news.json", "utf8")).articles || []); } catch { articles = []; }
+  articles = articles.filter(a => !BANNED.test(`${a.title || ""} ${a.summary || ""}`));
 
   // 각 (기사,축) 점수 계산
   const scored = [];
@@ -129,7 +147,7 @@ async function main() {
 
   const out = { generatedAt: new Date().toISOString(), engine: "rules", cards };
   await writeFile("insights.json", JSON.stringify(out) + "\n");
-  console.log(`Wrote insights.json — ${cards.filter(c => c.live).length}/4 live cards (engine: rules)`);
+  console.log(`Wrote insights.json — ${cards.filter(c => c.live).length}/${AXES.length} live cards (engine: rules)`);
   cards.forEach(c => console.log(`  [${c.axisLabel}] score ${c.score}${c.live ? "" : " (fallback)"}: ${c.headline.slice(0, 50)}`));
 }
 
