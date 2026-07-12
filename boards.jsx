@@ -1269,15 +1269,16 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
 }
 
 // ---- Signals board: capability-reliability gap · adoption funnel · fact-check layer ----
-function CapRelChart({ data, theme }) {
+// 범용 2계열(%) 추이 차트 — 예: GPU vs 커스텀 실리콘 비중. keyA/keyB로 값 필드를 지정.
+function ShareTrendChart({ data, theme, keyA, keyB, labelA, labelB, colorA = "#2D6BFF", colorB = "#16A34A" }) {
   const W = 520, H = 210, padL = 36, padR = 14, padT = 18, padB = 30;
   const iw = W - padL - padR, ih = H - padT - padB;
   const n = data.length;
   const x = i => padL + (iw * i) / (n - 1 || 1);
   const y = v => padT + ih - (ih * v) / 100;
-  const capPts = data.map((d, i) => `${x(i)},${y(d.cap)}`).join(" ");
-  const relPts = data.map((d, i) => `${x(i)},${y(d.rel)}`).join(" ");
-  const gapArea = `${data.map((d, i) => `${x(i)},${y(d.cap)}`).join(" ")} ${[...data].reverse().map((d, i) => `${x(n - 1 - i)},${y(d.rel)}`).join(" ")}`;
+  const aPts = data.map((d, i) => `${x(i)},${y(d[keyA])}`).join(" ");
+  const bPts = data.map((d, i) => `${x(i)},${y(d[keyB])}`).join(" ");
+  const gapArea = `${data.map((d, i) => `${x(i)},${y(d[keyA])}`).join(" ")} ${[...data].reverse().map((d, i) => `${x(n - 1 - i)},${y(d[keyB])}`).join(" ")}`;
   const [tip, setTip] = React.useState(null);
   return (
     <div style={{ position: "relative" }} onMouseLeave={() => setTip(null)}>
@@ -1288,28 +1289,60 @@ function CapRelChart({ data, theme }) {
             <text x={padL - 6} y={y(t) + 3} textAnchor="end" fontSize="9" fill={theme.muted}>{t}</text>
           </g>
         ))}
-        <polygon points={gapArea} fill="#F59E0B" opacity="0.14" />
-        <polyline points={capPts} fill="none" stroke="#2D6BFF" strokeWidth="2.6" strokeLinejoin="round" />
-        <polyline points={relPts} fill="none" stroke="#16A34A" strokeWidth="2.6" strokeLinejoin="round" strokeDasharray="5 3" />
+        <polygon points={gapArea} fill={colorA} opacity="0.08" />
+        <polyline points={aPts} fill="none" stroke={colorA} strokeWidth="2.6" strokeLinejoin="round" />
+        <polyline points={bPts} fill="none" stroke={colorB} strokeWidth="2.6" strokeLinejoin="round" strokeDasharray="5 3" />
         {data.map((d, i) => (
           <g key={i}>
             <text x={x(i)} y={H - 16} textAnchor="middle" fontSize="8.5" fill={theme.muted}>{d.period}</text>
-            <circle cx={x(i)} cy={y(d.cap)} r="3" fill="#fff" stroke="#2D6BFF" strokeWidth="1.6" />
-            <circle cx={x(i)} cy={y(d.rel)} r="3" fill="#fff" stroke="#16A34A" strokeWidth="1.6" />
+            <circle cx={x(i)} cy={y(d[keyA])} r="3" fill="#fff" stroke={colorA} strokeWidth="1.6" />
+            <circle cx={x(i)} cy={y(d[keyB])} r="3" fill="#fff" stroke={colorB} strokeWidth="1.6" />
             <rect x={x(i) - 16} y={padT} width="32" height={ih} fill="transparent" style={{ cursor: "pointer" }}
               onMouseEnter={e => setTip({ x: e.clientX, y: e.clientY, d })} onMouseMove={e => setTip(t => t ? { ...t, x: e.clientX, y: e.clientY } : t)} />
-            <text x={x(i)} y={y(d.cap) - 7} textAnchor="middle" fontSize="8.5" fontWeight="800" fill="#2D6BFF">{d.cap}</text>
-            <text x={x(i)} y={y(d.rel) + 13} textAnchor="middle" fontSize="8.5" fontWeight="800" fill="#16A34A">{d.rel}</text>
+            <text x={x(i)} y={y(d[keyA]) - 7} textAnchor="middle" fontSize="8.5" fontWeight="800" fill={colorA}>{d[keyA]}</text>
+            <text x={x(i)} y={y(d[keyB]) + 13} textAnchor="middle" fontSize="8.5" fontWeight="800" fill={colorB}>{d[keyB]}</text>
           </g>
         ))}
       </svg>
       <div className="caprel-legend">
-        <span><i style={{ background: "#2D6BFF" }} /> 성능(capability)</span>
-        <span><i style={{ background: "#16A34A" }} /> 신뢰성(자율 성공률)</span>
-        <span><i style={{ background: "#F59E0B" }} /> 격차(gap)</span>
+        <span><i style={{ background: colorA }} /> {labelA}</span>
+        <span><i style={{ background: colorB }} /> {labelB}</span>
       </div>
       {tip && <div className="chart-tip" style={{ left: Math.min(tip.x + 16, window.innerWidth - 260), top: tip.y + 18 }}>
-        <b>{tip.d.period}</b> · 성능 {tip.d.cap} / 신뢰성 {tip.d.rel} (격차 {tip.d.cap - tip.d.rel}p)<br /><em>{tip.d.note} — {tip.d.src}</em>
+        <b>{tip.d.period}</b> · {labelA} {tip.d[keyA]}% / {labelB} {tip.d[keyB]}%<br /><em>{tip.d.note} — {tip.d.src}</em>
+      </div>}
+    </div>
+  );
+}
+
+// 단일 계열(%) 추이 차트 — 예: 광통신(CPO) 데이터센터 침투율
+function PenetrationChart({ data, theme, unit = "%" }) {
+  const W = 520, H = 210, padL = 30, padR = 14, padT = 18, padB = 30;
+  const iw = W - padL - padR, ih = H - padT - padB;
+  const n = data.length;
+  const maxV = Math.max(...data.map(d => d.pen), 10);
+  const x = i => padL + (iw * i) / (n - 1 || 1);
+  const y = v => padT + ih - (ih * v) / (maxV * 1.15);
+  const pts = data.map((d, i) => `${x(i)},${y(d.pen)}`).join(" ");
+  const areaPts = `${padL},${padT + ih} ${pts} ${padL + iw},${padT + ih}`;
+  const [tip, setTip] = React.useState(null);
+  return (
+    <div style={{ position: "relative" }} onMouseLeave={() => setTip(null)}>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: "block", overflow: "visible" }}>
+        <polygon points={areaPts} fill="#7A38D6" opacity="0.12" />
+        <polyline points={pts} fill="none" stroke="#7A38D6" strokeWidth="2.6" strokeLinejoin="round" />
+        {data.map((d, i) => (
+          <g key={i}>
+            <text x={x(i)} y={H - 16} textAnchor="middle" fontSize="8.5" fill={theme.muted}>{d.year}</text>
+            <circle cx={x(i)} cy={y(d.pen)} r="3" fill="#fff" stroke="#7A38D6" strokeWidth="1.6" />
+            <rect x={x(i) - 16} y={padT} width="32" height={ih} fill="transparent" style={{ cursor: "pointer" }}
+              onMouseEnter={e => setTip({ x: e.clientX, y: e.clientY, d })} onMouseMove={e => setTip(t => t ? { ...t, x: e.clientX, y: e.clientY } : t)} />
+            <text x={x(i)} y={y(d.pen) - 9} textAnchor="middle" fontSize="9" fontWeight="800" fill="#7A38D6">{d.pen}{unit}</text>
+          </g>
+        ))}
+      </svg>
+      {tip && <div className="chart-tip" style={{ left: Math.min(tip.x + 16, window.innerWidth - 260), top: tip.y + 18 }}>
+        <b>{tip.d.year}</b> · 침투율 {tip.d.pen}{unit}<br /><em>{tip.d.note} — {tip.d.src}</em>
       </div>}
     </div>
   );
@@ -1317,34 +1350,61 @@ function CapRelChart({ data, theme }) {
 
 function SignalBoard({ data, theme, sectionRef }) {
   const inView = useInView(sectionRef);
+  const strat = data.INFRA_STRATEGY || { hyperscaler: [], aiNative: [] };
   return (
-    <section className="board" ref={sectionRef} data-screen-label="Capability vs Reliability">
+    <section className="board" ref={sectionRef} data-screen-label="Infra & Future Tech">
      <AnimCtx.Provider value={inView}>
       <div className="board-head">
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
-          <h2>AI 성능 vs 신뢰성 격차 <span className="board-en">Capability–Reliability Gap</span></h2>
-          <p>'AI 대세' 단정 대신 — 벤치마크 성능은 오르지만 자율 신뢰성(실제 성공률)은 지연</p>
+          <h2>AI 인프라 & 미래 기술 <span className="board-en">Infra & Future Tech</span></h2>
+          <p>하이퍼스케일러 CapEx·메모리·칩 믹스·광통신 — 경쟁 로드맵을 좌우하는 인프라 변수</p>
         </div>
       </div>
       <div className="chart-grid">
-        <div className="chart-card wide" style={{ gridColumn: "1 / -1" }}>
-          <div className="cc-head"><h3>Capability–Reliability Gap</h3><span>성능은 오르지만 자율 신뢰성은 지연 · Stanford HAI AI Index 2026</span></div>
-          <CapRelChart data={data.CAP_REL} theme={theme} />
+        <div className="chart-card">
+          <div className="cc-head"><h3>하이퍼스케일러 데이터센터 CapEx</h3><span>$B · Big 5 합산 · Moody's / 각사 공시</span></div>
+          <MarketGrowthChart data={data.DC_CAPEX} accent={theme.accent} ink={theme.ink} grid={theme.grid} muted={theme.muted} />
+        </div>
+        <div className="chart-card">
+          <div className="cc-head"><h3>HBM(고대역폭메모리) 시장 규모</h3><span>$B · AI 가속기 공급망 최대 병목 · Gartner / BofA</span></div>
+          <MarketGrowthChart data={data.HBM_MARKET} accent="#F59E0B" ink={theme.ink} grid={theme.grid} muted={theme.muted} />
+        </div>
+        <div className="chart-card">
+          <div className="cc-head"><h3>AI 가속기 칩 믹스 변화</h3><span>GPU 범용 vs 커스텀 실리콘 비중(%)</span></div>
+          <ShareTrendChart data={data.CHIP_MIX} theme={theme} keyA="gpu" keyB="custom" labelA="GPU(범용)" labelB="커스텀 실리콘" colorA="#2D6BFF" colorB="#16A34A" />
+        </div>
+        <div className="chart-card">
+          <div className="cc-head"><h3>광통신(CPO) 데이터센터 침투율</h3><span>% · 차세대 인터커넥트 전환 · IDTechEx</span></div>
+          <PenetrationChart data={data.OPTICAL_TREND} theme={theme} />
+        </div>
+      </div>
+      <div className="infra-strategy">
+        <div className="is-col">
+          <em>하이퍼스케일러 — 자체 칩 + 인프라 임대 병행</em>
+          {strat.hyperscaler.map((s, i) => (
+            <div className="is-item" key={i}><b>{s.name}</b><span className="is-move">{s.move}</span><p>{s.note}</p></div>
+          ))}
+        </div>
+        <div className="is-col">
+          <em>AI 네이티브 — 멀티소싱·소프트웨어 레이어로 종속 탈피</em>
+          {strat.aiNative.map((s, i) => (
+            <div className="is-item" key={i}><b>{s.name}</b><span className="is-move">{s.move}</span><p>{s.note}</p></div>
+          ))}
         </div>
       </div>
       <div className="signal-explain">
         <div className="sx-item">
           <em>왜 이 지표를 넣었나</em>
-          <p><b>성능(capability)</b>은 벤치마크 점수, <b>신뢰성(reliability)</b>은 사람 개입 없이 끝까지 성공한 비율입니다. 'AI가 다 한다'는 마케팅과 달리 둘 사이엔 큰 격차가 있어, 단말에 에이전트를 넣을 때 <b>어디까지 맡길 수 있나</b>를 판단하는 기준선이 됩니다.</p>
+          <p>CapEx·메모리·칩·광통신은 <b>모델 성능이 아니라 인프라 공급</b>이 경쟁 속도를 좌우한다는 신호입니다. HBM·GPU가 병목이면 아무리 좋은 모델도 배포가 지연됩니다.</p>
         </div>
         <div className="sx-item">
           <em>어떻게 보면 되나</em>
-          <p>두 선의 <b>벌어진 간격(격차)</b>이 곧 '자동화 시 실패·휴먼개입 비용'입니다. 격차가 클수록 완전 자동화는 위험 → <b>승인형(Human-in-the-Loop)</b>이 정답. 점이 오를수록 위임 범위를 넓힐 수 있습니다.</p>
+          <p>CapEx·HBM 곡선이 가파를수록 <b>공급 부족·단가 상승</b> 리스크가 커집니다. 칩 믹스에서 커스텀 실리콘 비중 확대는 <b>GPU 단일 의존 완화</b>, 광통신 침투율은 <b>전력 병목의 다음 해법</b>을 뜻합니다.</p>
         </div>
         <div className="sx-item">
           <em>단말 관점 시사점</em>
-          <p>2026 H1 기준 성능 66 vs 신뢰성 45 — 구조화 과제의 <b>약 1/3은 여전히 실패</b>. 온디바이스 에이전트는 결제·보안 등 <b>고위험 작업에 사용자 확인·작업 로그·취소</b>를 기본 UX로 설계해야 합니다.</p>
+          <p>인프라 병목·전환 시점은 <b>온디바이스 AI 로드맵의 외생 변수</b>입니다. 메모리·전력 제약이 클라우드 AI 단가에 반영되는 시점, 광통신 상용화로 지연시간이 줄어드는 시점을 <b>분기 단위로 추적</b>해야 합니다.</p>
         </div>
       </div>
      </AnimCtx.Provider>
@@ -1379,7 +1439,7 @@ function ExecToplines({ items, insights, onNav }) {
   const [sel, setSel] = React.useState(null);   // 클릭 시 색 반전(선택) 카드
   const TONE = { warn: "#D23B3B", signal: "#2D6BFF", revenue: "#16A34A", compete: "#C026D3" };
   const ICON = { warn: "target", signal: "pulse", revenue: "chart", compete: "brain" };
-  const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "성능·신뢰성", native: "AI 네이티브", dynamics: "경쟁 다이내믹스", overview: "경쟁 구도" };
+  const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "인프라·미래기술", native: "AI 네이티브", dynamics: "경쟁 다이내믹스", overview: "경쟁 구도" };
 
   // 데이터 정규화: insights 카드 → 공통 셰이프 / 폴백은 정적 TOPLINE
   const cards = (insights && insights.cards && insights.cards.length)

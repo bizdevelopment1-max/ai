@@ -676,16 +676,51 @@ window.DASH = (function () {
     { title: "NVIDIA, AI PC용 Arm CPU 진입 — 노트북 시장 공략", desc: "NVIDIA가 MediaTek와 공동 개발한 Arm 기반 PC SoC 'N1·N1X'(Blackwell GPU 통합)로 AI PC 노트북·데스크톱에 진입(2026 예상). Apple M·Qualcomm Snapdragon X와 경쟁. AI PC는 2026년 신규 PC 출하의 40%+(Canalys), 2027년 과반 전망. CES 2025 GB10 데스크톱(Project DIGITS)도 공개", icon: "chip", src: "Canalys '26, NVIDIA CES 2025, 업계 보도" },
   ];
 
-  /* ---- Widget 1: Capability vs Reliability Gap ----
-     AI 성능(capability)은 빠르게 오르지만 신뢰성(reliability, 구조화 과제 성공률)은 뒤처짐.
-     cap=벤치마크 성능, rel=실제 자율 성공률(나머지는 실패·휴먼 개입). 출처: Stanford HAI AI Index 2026 등. */
-  const CAP_REL = [
-    { period: "2024 H1", cap: 12, rel: 9, note: "에이전트 OSWorld ~12% · 실사용 성공률 한 자릿수", src: "Stanford HAI AI Index 2026" },
-    { period: "2024 H2", cap: 28, rel: 18, note: "도구사용 LLM 급성장 · 신뢰성은 지연", src: "Stanford HAI AI Index 2026" },
-    { period: "2025 H1", cap: 42, rel: 27, note: "Computer Use 등장 · OSWorld 38.1%(OpenAI)", src: "OpenAI / HAI '26" },
-    { period: "2025 H2", cap: 55, rel: 38, note: "WebArena 58% · 구조화 과제 ~1/3 실패 지속", src: "OpenAI / HAI '26" },
-    { period: "2026 H1", cap: 66, rel: 45, note: "OSWorld ~66% 도달 · 그러나 ~1/3 여전히 실패", src: "Stanford HAI AI Index 2026" },
+  /* ---- 하이퍼스케일러 AI 데이터센터 CapEx (Big 5 합산, $B) ---- */
+  const DC_CAPEX = [
+    { year: "2024", size: 225, growth: 39, src: "Big 5(MS·Google·Amazon·Meta·Oracle) 공시 합산 추정" },
+    { year: "2025", size: 440, growth: 96, src: "Big 5 합산 추정 — 2026년 대비 +36% 증가분의 역산치(Introl)" },
+    { year: "2026E", size: 725, growth: 65, src: "Big 5 컨센서스 — Amazon $200B·Alphabet $175~185B·Meta $115~135B·MS $120B+·Oracle $50B" },
+    { year: "2027E", size: 950, growth: 31, src: "Moody's — 2027년 $1T 근접 전망" },
   ];
+
+  /* ---- HBM(고대역폭메모리) 시장 규모 — AI 가속기 공급망 최대 병목($B) ---- */
+  const HBM_MARKET = [
+    { year: "2025", size: 33, growth: 133, src: "Gartner 인용 — 전년比 +130%+ 성장" },
+    { year: "2026E", size: 55, growth: 67, src: "BofA 추정 — 전년比 +58%, 공급 대부분 선계약 완료" },
+    { year: "2027E", size: 86, growth: 56, src: "Gartner — 2025~2027 CAGR 60.5%" },
+  ];
+
+  /* ---- AI 가속기 칩 믹스 — GPU 범용 vs 하이퍼스케일러 커스텀 실리콘(%) ---- */
+  const CHIP_MIX = [
+    { period: "2024", gpu: 95, custom: 5, note: "커스텀 실리콘 초기 단계 — GPU 절대 우위", src: "업계 추정" },
+    { period: "2025", gpu: 88, custom: 12, note: "TPU·Trainium·MTIA 본격 양산 확대", src: "업계 추정" },
+    { period: "2026E", gpu: 80, custom: 20, note: "커스텀 ASIC 출하 성장률이 GPU의 약 3배", src: "TechTimes '26.05" },
+    { period: "2027E", gpu: 72, custom: 28, note: "OpenAI·Anthropic도 자체 칩 프로그램 합류(Broadcom 설계)", src: "업계 추정" },
+  ];
+
+  /* ---- 광통신(Co-Packaged Optics) 데이터센터 침투율(%) — 차세대 인터커넥트 전환 ---- */
+  const OPTICAL_TREND = [
+    { year: "2025", pen: 2, note: "상용화 초기 — NVIDIA Quantum-X·Broadcom 포트폴리오 발표 단계", src: "IDTechEx" },
+    { year: "2026", pen: 10, note: "전환점(inflection point) — NVIDIA·Broadcom 양강 경쟁 본격화", src: "IDTechEx '26" },
+    { year: "2028E", pen: 22, note: "5년 내 AI 데이터센터 인터커넥트 대부분이 광통신으로 전환 전망", src: "SemiEngineering" },
+    { year: "2030E", pen: 35, note: "전력효율 최대 3.5배 개선 — 소비전력이 GPU 확장의 새 병목으로", src: "IDTechEx — CAGR 34.7%" },
+  ];
+
+  /* ---- 하이퍼스케일러 vs AI 네이티브 — 인프라 전략 방향 분기 ---- */
+  const INFRA_STRATEGY = {
+    hyperscaler: [
+      { name: "Google", move: "TPU v7(Ironwood) 자체 설계 + Broadcom 공동 개발", note: "Gemini 수직계열화 + Anthropic에 5GW 컴퓨트 별도 공급 — 자사·파트너 양쪽에 인프라 임대" },
+      { name: "Amazon", move: "Trainium 3 자체 칩 + Bedrock 멀티모델 중립 플랫폼", note: "Anthropic에 컴퓨트 $100B+ 약정 — 특정 모델 종속 없이 인프라 임대료로 수익화" },
+      { name: "Microsoft", move: "Maia 200 자체 칩 + Azure Fairwater 데이터센터", note: "OpenAI 독점 관계 종료 후에도 인프라 파트너십 유지 — 멀티모델 확장 병행" },
+      { name: "Meta", move: "MTIA 자체 칩 + Llama 오픈소스 배포", note: "CapEx $1,150~1,350억 최대 규모 집행에도 Zuckerberg 'AI 에이전트 성과 지연' 인정" },
+    ],
+    aiNative: [
+      { name: "OpenAI", move: "Broadcom 공동 커스텀 ASIC 'Jalapeño' — 첫 자체 추론칩", note: "Microsoft·Oracle·CoreWeave 멀티클라우드 확보 병행 — 특정 인프라 종속 탈피 시도" },
+      { name: "Anthropic", move: "자체 칩 없음 — Amazon Trainium + Google TPU 이중 소싱", note: "두 하이퍼스케일러 자본·컴퓨트를 동시 확보해 공급 병목 리스크 분산" },
+      { name: "Qualcomm(도전자)", move: "Modular 인수로 소프트웨어 스택 확보(CUDA 비의존 실행)", note: "칩 자체보다 '어떤 실리콘에서도 AI 구동' 소프트웨어 레이어로 진입 — 칩–모델 종속 구도에 균열" },
+    ],
+  };
 
 
   /* ---- Q&A 카테고리(드롭다운 색상 구분) ---- */
@@ -941,5 +976,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, COMPANY_ORDER, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, CAP_REL, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, COMPANY_ORDER, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_SHARES, attachStockEvents };
 })();

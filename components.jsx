@@ -28,6 +28,7 @@ function Icon({ name, size = 16, sw = 1.6 }) {
     menu: "M3 6h18M3 12h18M3 18h18",
     palette: "M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.6 0-.4-.1-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16c3.3 0 6-2.7 6-6 0-5.5-4.5-9.7-10-9.7z",
     brain: "M12 2a7 7 0 0 0-5.2 2.3A6.5 6.5 0 0 0 3 10c0 2.1 1 4 2.5 5.3V20a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-2h1v2a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-4.7A6.5 6.5 0 0 0 21 10a6.5 6.5 0 0 0-3.8-5.7A7 7 0 0 0 12 2zM9 10h6M12 7v6M9 13h6",
+    server: "M3 4h18v6H3zM3 14h18v6H3zM7 7h.01M7 17h.01M12 7h4M12 17h4",
   };
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -60,7 +61,7 @@ const NAV = [
   { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", icon: "device", group: "기업 동향" },
   { id: "startup", ko: "AI 스타트업", en: "AI Startups", icon: "spark", group: "기업 동향" },
   { id: "bizmodel", ko: "수익화 모델", en: "Monetization", icon: "palette", group: "심층 분석" },
-  { id: "signals", ko: "성능·신뢰성 격차", en: "Capability–Reliability", icon: "brain", group: "심층 분석" },
+  { id: "signals", ko: "인프라·미래기술", en: "Infra & Future Tech", icon: "server", group: "심층 분석" },
   { id: "reports", ko: "리서치 리포트", en: "Research", icon: "report", group: "심층 분석" },
   { id: "charts", ko: "정량 분석", en: "Quant Charts", icon: "chart", group: "정량 데이터" },
   { id: "monthly", ko: "분기별 매출 추이", en: "Quarterly Revenue", icon: "pulse", group: "정량 데이터" },
