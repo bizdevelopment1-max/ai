@@ -874,13 +874,27 @@ window.DASH = (function () {
   ];
 
   /* ============================================================
+     STOCK_GROUPS — AI 밸류체인 카테고리(칩·메모리·하이퍼스케일러·
+     데이터센터·온디바이스·AI 네이티브). STOCKS[].group 이 이 id를 참조합니다.
+     ============================================================ */
+  const STOCK_GROUPS = [
+    { id: "chip", ko: "AI 칩", en: "AI Chips", accent: "#C026D3" },
+    { id: "memory", ko: "메모리", en: "Memory", accent: "#EA580C" },
+    { id: "hyperscaler", ko: "하이퍼스케일러", en: "Hyperscalers", accent: "#1428A0" },
+    { id: "datacenter", ko: "데이터센터·뉴클라우드", en: "Data Center / Neocloud", accent: "#0891B2" },
+    { id: "device", ko: "온디바이스", en: "On-device", accent: "#16A34A" },
+    { id: "native", ko: "AI 네이티브", en: "AI Native", accent: "#7A38D6" },
+  ];
+
+  /* ============================================================
      STOCKS — listed AI companies. 실제 일별 주가는 매일 크롤링되어
      stocks.json 으로 제공됩니다(scripts/crawl-stocks.mjs · Stooq).
-     여기에는 메타데이터 + 변곡점 설명(에디토리얼)만 둡니다.
+     group = AI 밸류체인 카테고리(STOCK_GROUPS 참조). 여기에는 메타데이터 +
+     변곡점 설명(에디토리얼)만 둡니다.
      ============================================================ */
   const STOCKS = [
     {
-      ticker: "NVDA", name: "NVIDIA", group: "infra", domain: "nvidia.com", cat: "bigtech",
+      ticker: "NVDA", name: "NVIDIA", group: "chip", domain: "nvidia.com", cat: "bigtech",
       events: [
         { date: "2023-05-25", dir: "up", label: "FY24 가이던스 서프라이즈", reason: "왜 올랐나: 데이터센터 GPU 수요가 예상을 압도해 다음 분기 매출 가이던스를 시장 추정치보다 50%+ 높게 제시. ChatGPT發 AI 학습 붐의 '유일한 삽·곡괭이' 공급자로 부각되며 하루 +24%, 단숨에 AI 대장주로 등극." },
         { date: "2024-06-07", dir: "up", label: "10:1 주식분할", reason: "왜 올랐나: 10:1 액면분할로 주당 가격을 낮춰 소매·옵션 접근성 확대. 분할 자체는 가치를 바꾸지 않지만 수급 기대와 H100/H200 수요 지속이 겹쳐 사상 최고가 경신." },
@@ -891,7 +905,34 @@ window.DASH = (function () {
       ],
     },
     {
-      ticker: "MSFT", name: "Microsoft", group: "infra", domain: "microsoft.com", cat: "bigtech",
+      ticker: "AMD", name: "AMD", group: "chip", domain: "amd.com", cat: "bigtech",
+      events: [],
+      note: "AMD(나스닥, 반도체). MI300/MI350 시리즈 AI 가속기로 NVIDIA 대항마 포지셔닝 — 데이터센터 GPU 2위 사업자.",
+    },
+    {
+      ticker: "AVGO", name: "Broadcom", group: "chip", domain: "broadcom.com", cat: "bigtech",
+      events: [],
+      note: "Broadcom(나스닥, 반도체·네트워킹). Google TPU 등 커스텀 AI ASIC 공동설계·고속 네트워킹 칩으로 AI 인프라 핵심 공급사.",
+    },
+    {
+      ticker: "TSM", name: "TSMC", group: "chip", domain: "tsmc.com", cat: "bigtech",
+      events: [],
+      note: "TSMC(뉴욕 ADR, 파운드리). NVIDIA·AMD·Apple 등 최선단 AI 칩 위탁생산 — 첨단 공정 사실상 독점적 지위.",
+    },
+    {
+      ticker: "MU", name: "Micron", group: "memory", domain: "micron.com", cat: "bigtech",
+      events: [],
+      note: "Micron(나스닥, 메모리). HBM(고대역폭메모리) 3대 공급사 중 하나로 AI 가속기 필수 부품 제공.",
+    },
+    {
+      ticker: "SKHY", name: "SK hynix", group: "memory", domain: "skhynix.com", cat: "bigtech",
+      events: [
+        { date: "2026-07-10", dir: "up", label: "나스닥 ADR 상장 데뷔 +13%", reason: "공모가 $149로 $26.5B 조달(외국기업 사상 최대 미국 주식 공모) — 한국거래소(000660) 상장 유지한 채 나스닥에 예탁증권(ADR) 동시 상장. 첫날 +13% $168.01 마감 — HBM 공급 부족 장기화 기대가 상승을 견인." },
+      ],
+      note: "SK hynix(나스닥 ADR, 2026-07-10 상장). HBM 시장 선도업체 — 상장 초기라 일별 시세 데이터가 아직 얇을 수 있습니다.",
+    },
+    {
+      ticker: "MSFT", name: "Microsoft", group: "hyperscaler", domain: "microsoft.com", cat: "bigtech",
       events: [
         { date: "2023-01-23", dir: "up", label: "OpenAI $10B 투자", reason: "왜 올랐나: OpenAI에 최대 $10B 투자 발표로 GPT를 Azure에 독점 연결. 경쟁사가 모델을 짓는 동안 '기존 고객에게 바로 AI를 파는' 선점 기대가 재평가를 견인." },
         { date: "2024-01-25", dir: "up", label: "시총 $3T 돌파", reason: "왜 올랐나: M365 Copilot의 기업 유료 좌석이 빠르게 늘며 기존 오피스 번들에 AI를 '추가 과금'하는 수익 모델 입증. 사상 첫 시총 $3T 돌파." },
@@ -900,7 +941,7 @@ window.DASH = (function () {
       ],
     },
     {
-      ticker: "AMZN", name: "Amazon", group: "infra", domain: "amazon.com", cat: "bigtech",
+      ticker: "AMZN", name: "Amazon", group: "hyperscaler", domain: "amazon.com", cat: "bigtech",
       events: [
         { date: "2022-06-06", dir: "up", label: "20:1 주식분할", reason: "왜 올랐나: 20:1 액면분할로 소매 접근성 확대. 분할 전후 수급 기대가 단기 상승 요인." },
         { date: "2023-11-15", dir: "up", label: "Bedrock·Anthropic 베팅", reason: "왜 올랐나: AWS Bedrock 멀티모델 호스팅 + Anthropic 투자로 'AI 인프라 중립 공급자' 포지션 확립. 어느 모델이 이기든 클라우드 수요를 흡수한다는 논리가 재평가를 견인." },
@@ -917,7 +958,7 @@ window.DASH = (function () {
       ],
     },
     {
-      ticker: "GOOGL", name: "Alphabet (Google)", domain: "abc.xyz", cat: "bigtech",
+      ticker: "GOOGL", name: "Alphabet (Google)", group: "hyperscaler", domain: "abc.xyz", cat: "bigtech",
       events: [
         { date: "2023-02-08", dir: "down", label: "Bard 시연 오류 -7%", reason: "왜 빠졌나: 첫 Bard 데모에서 사실 오류가 노출되며 하루 -7%. ChatGPT發 'AI 검색이 구글 광고 본업을 잠식한다'는 공포가 확산." },
         { date: "2024-05-14", dir: "up", label: "Gemini 전면 통합", reason: "왜 올랐나: I/O에서 Gemini를 검색·워크스페이스·안드로이드에 통합 발표. 자체 모델+TPU+수십억 유통망의 풀스택 반격이 부각되며 AI 열위 우려 완화." },
@@ -926,7 +967,7 @@ window.DASH = (function () {
       ],
     },
     {
-      ticker: "META", name: "Meta", domain: "meta.com", cat: "bigtech",
+      ticker: "META", name: "Meta", group: "hyperscaler", domain: "meta.com", cat: "bigtech",
       events: [
         { date: "2022-02-03", dir: "down", label: "실적 쇼크 -26%", reason: "왜 빠졌나: 이용자 정체와 메타버스(Reality Labs) 적자 확대로 하루 -26%. 당시 미국 기업 사상 최대 일일 시총 손실(약 $2,300억)." },
         { date: "2022-11-04", dir: "down", label: "바닥·'효율의 해'", reason: "왜 바닥인가: 대규모 감원과 '효율의 해(Year of Efficiency)' 선언 직전 저점. 비용 절감 기대가 이후 강한 반등의 출발점이 됨." },
@@ -935,7 +976,22 @@ window.DASH = (function () {
       ],
     },
     {
-      ticker: "SPCX", name: "SpaceX (xAI, Cursor)", domain: "spacex.com", cat: "native",
+      ticker: "ORCL", name: "Oracle", group: "hyperscaler", domain: "oracle.com", cat: "bigtech",
+      events: [],
+      note: "Oracle(뉴욕, 클라우드 인프라). Stargate 등 초대형 AI 데이터센터 프로젝트로 하이퍼스케일러 경쟁에 본격 진입.",
+    },
+    {
+      ticker: "CRWV", name: "CoreWeave", group: "datacenter", domain: "coreweave.com", cat: "startup",
+      events: [],
+      note: "CoreWeave(나스닥, AI 클라우드/뉴클라우드). GPU 전문 클라우드로 빅테크 외 AI 컴퓨트 공급망의 신흥 축.",
+    },
+    {
+      ticker: "APLD", name: "Applied Digital", group: "datacenter", domain: "applieddigital.com", cat: "startup",
+      events: [],
+      note: "Applied Digital(나스닥, 데이터센터). 하이퍼스케일러 대상 AI 데이터센터 장기 임대(리스) 모델로 성장.",
+    },
+    {
+      ticker: "SPCX", name: "SpaceX (xAI, Cursor)", group: "native", domain: "spacex.com", cat: "native",
       events: [
         { date: "2026-06-12", dir: "up", label: "나스닥 상장 데뷔 +19%", reason: "공모가 $135로 조달 $75B → 그린슈(초과배정) 행사로 최종 $85.7B을 거둔 사상 최대 IPO. 첫날 +19% $161 마감·시총 $2.1T 돌파 — 'AI+우주' 통합 스토리에 수요 폭주가 상승을 견인." },
         { date: "2026-06-16", dir: "up", label: "Cursor 인수 + 목표주가 상향", reason: "AI 코딩 에이전트 Cursor(Anysphere) $60B 전액 주식 인수 합의에 더해, Oppenheimer가 목표주가를 $190→$250(+32%)·아웃퍼폼으로 상향. 시총 ~$2.51T로 Amazon·Microsoft를 제치고 미 시총 4위권 진입 — 코딩 AI 시장 진입 기대가 상승을 견인." },
@@ -976,5 +1032,5 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, COMPANY_ORDER, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, COMPANIES, COMPANY_ORDER, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

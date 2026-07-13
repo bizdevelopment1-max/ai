@@ -55,6 +55,7 @@ html, body, #root { height: 100%; overflow-x: hidden; }
 }
 .sidebar, .sidebar *, .topbar, .topbar *, .board-head,
 button, .sb-item, .stock-tabs, .stock-tab, .feed-filters, .feed-filters *,
+.stock-group-filters, .stock-group-filters *,
 .monthly-app-filter, .monthly-btn, .stock-range, .fc-clear, .art-del,
 .tweak-panel, .tweak-panel *, .chatbot-drop-item {
   -webkit-user-select: none; user-select: none;
@@ -1317,7 +1318,16 @@ a[href]:hover .rainbow-on-hover,
 .stock-range button:hover { border-color: var(--accent); color: var(--ink); }
 .stock-range button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-.stock-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 20px 4px; }
+.stock-group-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 20px 0; }
+.stock-group-filters button {
+  font-family: var(--f); font-size: 11.5px; font-weight: 700; color: var(--muted);
+  background: var(--panel); border: 2px solid var(--line); border-radius: 8px; padding: 5px 11px; cursor: pointer;
+  transition: all .15s;
+}
+.stock-group-filters button:hover { border-color: var(--accent); color: var(--ink); transform: translateY(-2px); }
+.stock-group-filters button.on { font-weight: 800; }
+
+.stock-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px 4px; }
 .stock-tab {
   display: flex; align-items: center; gap: 7px; font-family: var(--f);
   background: var(--panel); border: 2px solid var(--line); border-radius: 11px;
@@ -1384,6 +1394,8 @@ a[href]:hover .rainbow-on-hover,
   .stock-readout { flex-wrap: wrap; row-gap: 2px; }
   .stock-tabs { gap: 6px; }
   .stock-tab em { display: none; }                 /* keep tabs compact, ticker stays */
+  .stock-group-filters { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+  .stock-group-filters button { flex-shrink: 0; }
   .cc-head, .cc-head span { white-space: normal; word-break: keep-all; }
   /* 보드 헤더: 제목/부제는 각각 한 줄(전체 폭 차지), 필터는 아래 줄로 */
   .board-head { flex-wrap: wrap; }
