@@ -10,12 +10,28 @@
 import { writeFile, readFile } from "node:fs/promises";
 
 const TICKERS = [
-  { t: "NVDA", y: "NVDA", s: "nvda.us", shares: 24.4 },
+  // ── 하이퍼스케일러 ──
   { t: "MSFT", y: "MSFT", s: "msft.us", shares: 7.43 },
   { t: "AMZN", y: "AMZN", s: "amzn.us", shares: 10.6 },
-  { t: "AAPL", y: "AAPL", s: "aapl.us", shares: 14.8 },
   { t: "GOOGL", y: "GOOGL", s: "googl.us", shares: 12.2 },
   { t: "META", y: "META", s: "meta.us", shares: 2.53 },
+  { t: "ORCL", y: "ORCL", s: "orcl.us" },
+  // ── AI 칩 ──
+  { t: "NVDA", y: "NVDA", s: "nvda.us", shares: 24.4 },
+  { t: "AMD", y: "AMD", s: "amd.us" },
+  { t: "AVGO", y: "AVGO", s: "avgo.us" },
+  { t: "TSM", y: "TSM", s: "tsm.us" },
+  // ── 메모리 ──
+  { t: "MU", y: "MU", s: "mu.us" },
+  // SK hynix ADR — 2026-07-10 나스닥 신규 상장(한국거래소 000660 동시 상장). 상장 초기라 데이터가
+  // 얇을 수 있어 매일 크롤 시 자동으로 채워짐(단조 최신화 병합 로직).
+  { t: "SKHY", y: "SKHY", s: "skhy.us" },
+  // ── 데이터센터·뉴클라우드 ──
+  { t: "CRWV", y: "CRWV", s: "crwv.us" },
+  { t: "APLD", y: "APLD", s: "apld.us" },
+  // ── 온디바이스 ──
+  { t: "AAPL", y: "AAPL", s: "aapl.us", shares: 14.8 },
+  // ── AI 네이티브 ──
   // SpaceX (SPCX) — try the real listed ticker first; if no public feed carries it yet,
   // fall back to a clearly-labeled scenario series from the 2026-06-12 listing date.
   { t: "SPCX", y: "SPCX", s: "spcx.us", shares: 13.05, scenario: { start: "2026-06-12", ipo: 135, last: 165.78, shares: 13.05 } },

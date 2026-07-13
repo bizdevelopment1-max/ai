@@ -599,15 +599,19 @@ function ReportsBoard({ reports, sectionRef, query }) {
 }
 
 // ---- Stock board: listed AI companies, daily price, 1Y/5Y, inflection notes ----
-function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
+function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
   const inView = useInView(sectionRef);
   const catMap = Object.fromEntries((cats || []).map(c => [c.id, c]));
+  const groupMap = Object.fromEntries((groups || []).map(g => [g.id, g]));
   const [ticker, setTicker] = React.useState((stocks[0] || {}).ticker);
   const [years, setYears] = React.useState(1);
+  const [groupFilter, setGroupFilter] = React.useState("all");
   const sel = stocks.find(s => s.ticker === ticker) || stocks[0];
-  const accent = (catMap[sel.cat] || {}).accent || theme.accent;
+  const selGroup = groupMap[sel.group];
+  const accent = (selGroup || catMap[sel.cat] || {}).accent || theme.accent;
   const real = (stockData && stockData[sel.ticker]) || null;
   const mcap = sel.private ? sel.mcap : (real && real.marketCap);
+  const visibleStocks = groupFilter === "all" ? stocks : stocks.filter(s => s.group === groupFilter);
   return (
     <section className="board" ref={sectionRef} data-screen-label="Stock Prices">
      <AnimCtx.Provider value={inView}>
@@ -625,13 +629,28 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
         )}
       </div>
 
+      <div className="stock-group-filters">
+        <button className={groupFilter === "all" ? "on" : ""} onClick={() => setGroupFilter("all")}>전체</button>
+        {(groups || []).map(g => (
+          <button key={g.id} className={groupFilter === g.id ? "on" : ""}
+            style={groupFilter === g.id ? { borderColor: g.accent, color: g.accent, background: g.accentSoft } : null}
+            onClick={() => {
+              setGroupFilter(g.id);
+              if (sel.group !== g.id) { const first = stocks.find(s => s.group === g.id); if (first) setTicker(first.ticker); }
+            }}>
+            {g.ko}
+          </button>
+        ))}
+      </div>
+
       <div className="stock-tabs">
-        {stocks.map(s => {
-          const ac = (catMap[s.cat] || {}).accent || theme.accent;
+        {visibleStocks.map(s => {
+          const ac = (groupMap[s.group] || catMap[s.cat] || {}).accent || theme.accent;
+          const acSoft = (groupMap[s.group] || catMap[s.cat] || {}).accentSoft;
           const on = s.ticker === ticker;
           return (
             <button key={s.ticker} className={"stock-tab" + (on ? " on" : "")}
-              style={on ? { borderColor: ac, color: ac, background: (catMap[s.cat] || {}).accentSoft } : null}
+              style={on ? { borderColor: ac, color: ac, background: acSoft } : null}
               onClick={() => setTicker(s.ticker)}>
               <img src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
               <b>{s.ticker}</b>
@@ -645,7 +664,7 @@ function StockBoard({ stocks, stockData, cats, sectionRef, theme }) {
         <div className="stock-panel-head">
           <span className="sp-name">{sel.name}</span>
           <span className="sp-tk">{sel.ticker}</span>
-          <span className="sp-cat" style={{ color: accent, background: (catMap[sel.cat] || {}).accentSoft }}>{(catMap[sel.cat] || {}).ko}</span>
+          <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{(selGroup || {}).ko}</span>
           {mcap && <span className="sp-mcap">시가총액 <b>{mcap}</b></span>}
           {real && real.scenario && <span className="sp-scenario">시나리오(실시세 피드 미반영)</span>}
         </div>

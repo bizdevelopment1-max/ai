@@ -107,6 +107,12 @@ function App() {
     accentSoft: softTint(c.id === "native" ? t.colNative : c.id === "bigtech" ? t.colBigtech : t.colStartup, dark),
   })), [t.colNative, t.colBigtech, t.colStartup, dark]);
 
+  // AI 밸류체인 주가 카테고리(칩·메모리·하이퍼스케일러 등) — 고정 accent + 다크모드 soft tint
+  const stockGroups = useMemo(() => (D.STOCK_GROUPS || []).map(g => ({
+    ...g,
+    accentSoft: softTint(g.accent, dark),
+  })), [dark]);
+
   // sidebar brand: explicit cycle overrides tweak default
   const brand = brandIdx === 0
     ? { name: (BRANDS.find(b => b.bg === t.sidebar) || BRANDS[0]).name, bg: t.sidebar }
@@ -249,7 +255,7 @@ function App() {
             {/* ── 4. 정량 데이터 ── */}
             <ChartsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.charts} />
             <MonthlyTrendsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.monthly} />
-            <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} sectionRef={refs.stocks} theme={chartTheme} />
+            <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} sectionRef={refs.stocks} theme={chartTheme} />
 
             <footer className="foot">
               <span>AI Intelligence Dashboard</span>
