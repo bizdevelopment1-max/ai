@@ -1630,3 +1630,94 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .tk-table .tk-row { grid-template-columns: 0.5fr 1fr 0.9fr 2.4fr; min-width: 600px; }
   .tk-row span:nth-child(2), .tk-row span:nth-child(3), .tk-row span:nth-child(4) { display: block !important; }
 }
+
+/* ============================================================
+   Morning Briefing (Signal → Insight → Action)
+   ============================================================ */
+.brief-days { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; -webkit-user-select: none; user-select: none; }
+.brief-days button {
+  font-family: var(--f); font-size: 11.5px; font-weight: 700; color: var(--muted);
+  background: var(--panel); border: 2px solid var(--line); border-radius: 8px; padding: 5px 11px; cursor: pointer; transition: all .15s;
+}
+.brief-days button:hover { border-color: var(--accent); color: var(--ink); }
+.brief-days button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.brief-headline { display: flex; align-items: center; gap: 8px; padding: 14px 20px 0; font-family: var(--f); color: var(--ink); }
+.brief-headline b { font-size: 15.5px; font-weight: 800; word-break: keep-all; }
+.brief-date { font-size: 11px; font-weight: 700; color: var(--muted); margin-left: auto; }
+
+.brief-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 12px 20px 20px; }
+.brief-card {
+  background: var(--panel); border: 1px solid var(--line); border-left: 4px solid #2D6BFF; border-radius: 13px;
+  padding: 14px 16px; transition: transform .15s, box-shadow .15s;
+}
+.brief-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.brief-card.urgent { border-left-color: #D23B3B; background: color-mix(in srgb, #D23B3B 3%, var(--panel)); }
+
+.brief-labels { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.brief-label {
+  font-family: var(--f); font-size: 10px; font-weight: 800; letter-spacing: .02em;
+  color: var(--lc, #2D6BFF); background: color-mix(in srgb, var(--lc, #2D6BFF) 13%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--lc, #2D6BFF) 35%, transparent); border-radius: 6px; padding: 2px 8px;
+}
+.brief-score { font-family: var(--fm, var(--f)); font-size: 11px; font-weight: 800; color: var(--muted); margin-left: auto; }
+.brief-score.hot { color: #D23B3B; }
+
+.brief-row { font-family: var(--f); font-size: 13.5px; font-weight: 600; color: var(--ink-2); line-height: 1.6; word-break: keep-all; margin: 7px 0 0; }
+.brief-k { display: inline-block; font-size: 9px; font-weight: 900; letter-spacing: .04em; padding: 1px 7px; border-radius: 5px; margin-right: 7px; vertical-align: middle; transform: translateY(-1px); }
+.brief-k.sig { color: #2D6BFF; background: color-mix(in srgb, #2D6BFF 14%, var(--panel)); }
+.brief-k.ins { color: #fff; background: #7A38D6; }
+.brief-k.act { color: #fff; background: #16A34A; }
+
+.brief-axes { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.brief-axis { font-family: var(--f); font-size: 10.5px; font-weight: 700; color: var(--muted); background: var(--line-2); border-radius: 6px; padding: 2px 8px; }
+.brief-axis b { color: var(--ink); font-weight: 800; }
+.brief-ev { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 9px; }
+
+/* ============================================================
+   Startup Radar + Scorecard + 기회 메모
+   ============================================================ */
+.radar-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 14px 20px 6px; }
+.radar-card {
+  background: var(--panel); border: 1px solid var(--line); border-left: 4px solid #0E8F6E; border-radius: 13px;
+  padding: 14px 16px; cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.radar-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.radar-card.sel { border-color: #0E8F6E; box-shadow: 0 2px 12px color-mix(in srgb, #0E8F6E 22%, transparent); }
+.radar-card.urgent { border-left-color: #D23B3B; }
+
+.radar-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.radar-head img { width: 18px; height: 18px; border-radius: 5px; }
+.radar-head b { font-family: var(--f); font-size: 14.5px; font-weight: 800; color: var(--ink); }
+.radar-meta { font-family: var(--f); font-size: 11px; font-weight: 600; color: var(--muted); }
+
+.radar-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 14px; margin: 9px 0 2px; }
+.radar-bar-row { display: flex; align-items: center; gap: 7px; font-family: var(--f); }
+.radar-bar-k { font-size: 10.5px; font-weight: 700; color: var(--muted); width: 64px; flex-shrink: 0; }
+.radar-bar-track { flex: 1; height: 6px; border-radius: 3px; background: var(--line-2); overflow: hidden; }
+.radar-bar-track i { display: block; height: 100%; border-radius: 3px; background: #0E8F6E; }
+.radar-bar-row b { font-size: 11px; font-weight: 800; color: var(--ink); width: 12px; text-align: right; }
+
+.radar-why { font-family: var(--f); font-size: 13px; font-weight: 600; color: var(--ink-2); line-height: 1.58; word-break: keep-all; margin: 8px 0 0; }
+.radar-part { font-family: var(--f); font-size: 13px; font-weight: 600; color: var(--ink-2); line-height: 1.6; word-break: keep-all; margin: 8px 0 0; padding-top: 8px; border-top: 1px dashed var(--line); }
+
+.memo-card { margin: 12px 20px 20px; background: color-mix(in srgb, #7A38D6 4%, var(--panel)); border: 1px solid color-mix(in srgb, #7A38D6 25%, var(--line)); border-radius: 13px; padding: 15px 17px; }
+.memo-head { display: flex; align-items: center; gap: 8px; font-family: var(--f); color: var(--ink); margin-bottom: 4px; }
+.memo-head b { font-size: 14px; font-weight: 800; word-break: keep-all; }
+.memo-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+.memo-cols em { display: block; font-style: normal; font-family: var(--f); font-size: 10.5px; font-weight: 900; letter-spacing: .04em; color: var(--muted); margin-bottom: 4px; }
+.memo-cols ul { margin: 0; padding-left: 16px; }
+.memo-cols li { font-family: var(--f); font-size: 12.5px; font-weight: 600; color: var(--ink-2); line-height: 1.55; word-break: keep-all; margin-bottom: 3px; }
+
+/* ES 톱라인 Action 줄 (Signal → Insight → Action) */
+.tl-act { font-family: var(--f); font-size: 13.5px; font-weight: 700; color: var(--ink); line-height: 1.6; word-break: keep-all; margin-top: 9px; }
+.tl-lbl-act { color: #fff; background: #16A34A; }
+.tl-card.tl-sel .tl-lbl-act { color: #16A34A; background: #fff; }
+
+@media (max-width: 760px) {
+  .brief-grid, .radar-grid, .memo-cols { grid-template-columns: 1fr; }
+  .brief-days { flex: 1 1 100%; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+  .brief-days button { flex-shrink: 0; }
+  .brief-headline { flex-wrap: wrap; }
+  .brief-date { margin-left: 0; flex-basis: 100%; }
+}

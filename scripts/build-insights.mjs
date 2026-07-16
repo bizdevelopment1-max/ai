@@ -16,6 +16,7 @@ const AXES = [
     kw: ["assistant", "비서", "siri", "gemini", "copilot", "comet", "perplexity", "챗봇", "검색", "어시스턴트"],
     rootCause: "AI 비서가 단말의 입력·앱 트래픽·데이터를 좌우하는 'OS 위의 새 관문'이 됨 → 비서를 쥔 쪽이 단말 경험·수익 동선을 통제",
     soWhat: "폰의 '기본 비서' 자리가 단말 차별화의 핵심 전장 — 기본 어시스턴트 노선(파트너 심화 vs 자체 vs 멀티)을 지금 확정해야 함",
+    action: "기본 어시스턴트 노선(파트너 심화 vs 자체 vs 멀티) 의사결정 안건화 — 후보 업체 제휴 조건 비교표 작성",
     fallback: "Gemini 앱 MAU 900M+ · Apple, Siri를 'Siri AI'로 재설계 · Perplexity Comet 전면 무료 전환",
   },
   {
@@ -23,6 +24,7 @@ const AXES = [
     kw: ["온디바이스", "on-device", "npu", "메모리", "memory", "soc", "칩", "chip", "ai pc", "노트북", "스마트폰", "폰", "snapdragon", "tops", "엣지", "edge", "blackwell"],
     rootCause: "고급 AI 추론에 메모리·NPU가 필수 → AI 성능이 하드웨어 사양에 직접 종속되고 구형 단말은 구조적으로 배제됨",
     soWhat: "AI 기능 = 하드웨어 스펙 = 프리미엄 전환·교체수요 동력 — 메모리·NPU 사양 로드맵에 직결('AI 탑재=판매 증가' 단정은 금물)",
+    action: "차기 플래그십 메모리·NPU 스펙을 AI 로드맵 역산으로 확정 — 부품 장기 공급 계약 조기 협상",
     fallback: "구형 단말은 메모리 한계로 온디바이스 AI 구동 곤란(고급 비서엔 12GB) · 생성형 AI 폰 2028년 70%(IDC)",
   },
   {
@@ -30,6 +32,7 @@ const AXES = [
     kw: ["구독", "arr", "매출", "가격", "단가", "무료", "수익", "마진", "토큰", "pricing", "valuation", "밸류", "ipo", "$", "billion", "투자", "funding"],
     rootCause: "추론 단가가 3년 150배 급락 → 'AI 기능=무료' 압력이 커지며 '어디서 돈을 받는가'의 과금 모델 자체가 흔들림",
     soWhat: "온디바이스 AI 기능의 과금 노선(구독 유료화 vs 단말 가격 프리미엄 vs 커머스 수수료) 결정에 직접 영향 — API 단가 하락은 클라우드 기능 원가에 직결",
+    action: "AI 기능 과금 노선(구독 vs 단말 프리미엄 vs 커머스) 시나리오별 손익 시뮬레이션 착수",
     fallback: "Perplexity 구독→광고·커머스 전환 · OpenAI Q1 마진 -122% · 버티컬 ARR 배수 67배 · API 단가 급락 지속",
   },
   {
@@ -37,6 +40,7 @@ const AXES = [
     kw: ["에이전트", "agent", "osworld", "신뢰성", "자율", "할루시", "hallucinat", "computer use", "벤치마크", "benchmark", "agentic"],
     rootCause: "성능(capability)은 빠르게 오르지만 자율 신뢰성(reliability)이 못 따라감 → 완전 자동화 시 오작동·책임·복구 비용이 폭증",
     soWhat: "온디바이스 에이전트는 완전 자동화가 아니라 승인형·작업 로그·취소/복구 설계가 정답 — 자사 에이전트 UX 원칙으로 못박을 것",
+    action: "자사 에이전트 UX 원칙(승인형·작업 로그·취소/복구) 설계 가이드로 문서화·전파",
     fallback: "Computer Use·Deep Research·Comet이 구매 대행까지 자동화 · 그러나 자율 성공률 OSWorld 66%서 정체·구조화 과제 1/3 실패",
   },
   {
@@ -44,6 +48,7 @@ const AXES = [
     kw: ["iphone", "아이폰", "siri", "apple intelligence", "pixel", "픽셀", "hyperos", "xiaomi", "honor", "oppo", "vivo", "snapdragon", "dimensity", "ray-ban", "quest", "glasses", "스마트글라스", "웨어러블", "vision pro", "경쟁 단말"],
     rootCause: "경쟁 진영이 자체 모델·파트너십·전용 실리콘으로 단말 AI 경험을 선점 → 기본 비서·킬러 UX 표준을 먼저 굳히는 쪽이 교체수요를 흡수",
     soWhat: "경쟁 단말의 모델 탑재·비서 개편·실리콘 로드맵을 분기 단위로 추적 — 차별화 포인트(에이전트·카메라·기기 연속성)를 상대 로드맵 대비로 검증",
+    action: "경쟁 단말 AI 기능 격차 분기 리포트 체계화 — 차별화 포인트 상대 로드맵 대비 검증",
     fallback: "Apple, Siri를 외부 모델로 재설계(Gemini 탑재) · 중국 제조사 온디바이스 AI 고속 추격 · 스마트글라스 등 신규 폼팩터 확전",
   },
   {
@@ -51,6 +56,7 @@ const AXES = [
     kw: ["파트너십", "partnership", "제휴", "탑재", "bedrock", "azure", "독점", "수직통합", "자체 칩", "asic", "커스텀", "인수", "m&a", "acquisition", "계약", "공급", "합병"],
     rootCause: "모델–클라우드–칩–단말이 지분·독점 계약으로 수직 결합 → 특정 모델 의존은 공급·가격·규제 리스크로 직결",
     soWhat: "단말 탑재 모델은 멀티소싱(2개사+)과 교체 가능한 추상화 레이어가 안전 — 특정 모델사 독점 종속 계약은 회피",
+    action: "모델 멀티소싱(2개사+) 계약 구조와 교체 가능한 추상화 레이어 요구사항 확정",
     fallback: "Qualcomm, Modular 인수로 소프트웨어 스택 확보 · Apple 멀티 AI Extensions로 모델 선택 개방 · 모델–칩 수직통합 가속",
   },
 ];
@@ -131,6 +137,7 @@ async function main() {
         headline: gaejosik(a.title),
         rootCause: ax.rootCause,
         soWhat: ax.soWhat,
+        action: ax.action,
         evidence: [{ title: a.title, date: a.date, source: a.source, url: a.url }],
         score: Math.round(Math.min(p.score / maxScore, 1) * 100),
         live: true,
@@ -140,7 +147,7 @@ async function main() {
     // 폴백(매칭 기사 없음)
     return {
       axis: ax.axis, axisLabel: ax.label, tone: ax.tone, nav: ax.nav,
-      headline: gaejosik(ax.fallback), rootCause: ax.rootCause, soWhat: ax.soWhat, evidence: [], score: 40, live: false,
+      headline: gaejosik(ax.fallback), rootCause: ax.rootCause, soWhat: ax.soWhat, action: ax.action, evidence: [], score: 40, live: false,
       updatedAt: new Date().toISOString().slice(0, 10),
     };
   });

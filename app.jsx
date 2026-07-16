@@ -89,6 +89,22 @@ function App() {
     return () => { alive = false; };
   }, []);
 
+  // 매일 자동 생성되는 모닝 브리핑(briefing.json) + 주간 스타트업 레이더(radar.json)
+  const [briefing, setBriefing] = uS(null);
+  const [radar, setRadar] = uS(null);
+  uE(() => {
+    let alive = true;
+    fetch("briefing.json" + cb(), { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && Array.isArray(j.days) && j.days.length) setBriefing(j); })
+      .catch(() => {});
+    fetch("radar.json" + cb(), { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && Array.isArray(j.picks) && j.picks.length) setRadar(j); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
   // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
   const [stockData, setStockData] = uS(null);
   uE(() => {
@@ -125,8 +141,8 @@ function App() {
   // section refs
   const scrollRef = uR(null);
   const refs = {
-    overview: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    charts: uR(null), monthly: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
+    overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
+    radar: uR(null), charts: uR(null), monthly: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
   };
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
@@ -240,12 +256,15 @@ function App() {
               <ESCompetitiveMap companies={D.COMPANIES} cats={cats} articles={articles} />
             </section>
 
+            <BriefingBoard briefing={briefing} sectionRef={refs.briefing} />
+
             <ArticleFeed articles={articles} cats={cats} sectionRef={refs.articles} filter={feedFilter} onFilter={setFeedFilter} query={query} />
 
             {/* ── 2. 기업 동향 ── */}
             <CompanyBoard cat={cats[0]} companies={D.COMPANIES} density={t.density} sectionRef={refs.native} query={query} onSelect={setSelected} />
             <CompanyBoard cat={cats[1]} companies={D.COMPANIES} density={t.density} sectionRef={refs.bigtech} query={query} onSelect={setSelected} />
             <CompanyBoard cat={cats[2]} companies={D.COMPANIES} density={t.density} sectionRef={refs.startup} query={query} onSelect={setSelected} />
+            <RadarBoard radar={radar} sectionRef={refs.radar} />
 
             {/* ── 3. 심층 분석 (수익화 모델 최상단) ── */}
             <BizModelBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.bizmodel} theme={chartTheme} />

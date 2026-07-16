@@ -1452,6 +1452,153 @@ function hlKey(text) {
 }
 
 // ---- Executive Top-line: 현상 → 의사결정 5초 브리핑 (Overview 최상단) ----
+// ---- Morning Briefing: 매일 Signal → Insight → Action 카드 + 날짜 아카이브 ----
+function BriefingBoard({ briefing, sectionRef }) {
+  const inView = useInView(sectionRef);
+  const days = (briefing && briefing.days) || [];
+  const [dayIdx, setDayIdx] = React.useState(0);
+  if (!days.length) return null;
+  const day = days[Math.min(dayIdx, days.length - 1)];
+  const LABEL_COLOR = { "파트너십 기회": "#16A34A", "인수 후보": "#C026D3", "경쟁 위협": "#D23B3B", "시장 신호": "#2D6BFF", "공급망": "#EA580C", "규제": "#7A38D6", "모니터링": "#8A93A4" };
+  return (
+    <section className="board" ref={sectionRef} data-screen-label="Morning Briefing">
+     <AnimCtx.Provider value={inView}>
+      <div className="board-head" style={{ "--accent": "#2D6BFF" }}>
+        <span className="board-tab" style={{ background: "#2D6BFF" }} />
+        <div className="board-titles">
+          <h2>모닝 브리핑 <span className="board-en">AI Morning Briefing · Signal → Insight → Action</span></h2>
+          <p>글로벌 외신 기반 매일 자동 생성 · 신사업 기회 스코어(전략 정합성·시장 성장성·실행 가능성·경쟁 우위, 각 1~5) · 12점+ 즉시 검토</p>
+        </div>
+        <div className="brief-days">
+          {days.slice(0, 7).map((d, i) => (
+            <button key={d.date} className={i === dayIdx ? "on" : ""} onClick={() => setDayIdx(i)}>
+              {i === 0 ? "오늘" : d.date.slice(5).replace("-", "/")}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="brief-headline">
+        <Icon name="sun" size={16} /> <b>{day.headline}</b>
+        <span className="brief-date">{day.date}{day.engine === "rules" ? " · 자동 요약" : ""}</span>
+      </div>
+
+      <div className="brief-grid">
+        {(day.items || []).map((it, i) => (
+          <div key={i} className={"brief-card" + (it.urgent ? " urgent" : "")}>
+            <div className="brief-labels">
+              {(it.labels || []).map(l => (
+                <span key={l} className="brief-label" style={{ "--lc": LABEL_COLOR[l] || "#2D6BFF" }}>{l}</span>
+              ))}
+              <span className={"brief-score" + (it.urgent ? " hot" : "")} title="전략 정합성·시장 성장성·실행 가능성·경쟁 우위 합계">
+                {it.total}/20{it.urgent ? " ★" : ""}
+              </span>
+            </div>
+            <p className="brief-row"><span className="brief-k sig">Signal</span><BoldSummary text={it.signal} /></p>
+            <p className="brief-row"><span className="brief-k ins">Insight</span><BoldSummary text={it.insight} /></p>
+            <p className="brief-row"><span className="brief-k act">Action</span><BoldSummary text={it.action} /></p>
+            <div className="brief-axes">
+              {[["정합성", it.scores.fit], ["성장성", it.scores.growth], ["실행", it.scores.exec], ["우위", it.scores.edge]].map(([k, v]) => (
+                <span key={k} className="brief-axis">{k} <b>{v}</b></span>
+              ))}
+            </div>
+            {(it.evidence || []).length > 0 && (
+              <div className="brief-ev">
+                {it.evidence.map((e, k) => (
+                  <a key={k} href={e.url} target="_blank" rel="noopener" className="tl-ev-chip">
+                    <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${e.date.slice(5)}` : ""}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+     </AnimCtx.Provider>
+    </section>
+  );
+}
+
+// ---- Startup Radar: 주간 큐레이션 + 4축 스코어카드 + 월간 기회 메모 ----
+function RadarBoard({ radar, sectionRef }) {
+  const inView = useInView(sectionRef);
+  const picks = (radar && radar.picks) || [];
+  const memos = (radar && radar.memos) || [];
+  const [sel, setSel] = React.useState(0);
+  if (!picks.length) return null;
+  const AXES = [["attach", "서비스 부착"], ["enterprise", "기업 확장성"], ["partner", "파트너십 용이"], ["acquire", "인수 용이"]];
+  const LABEL_COLOR = { "파트너십 기회": "#16A34A", "인수 후보": "#C026D3", "모니터링": "#8A93A4" };
+  const memo = memos[0];
+  return (
+    <section className="board" ref={sectionRef} data-screen-label="Startup Radar">
+     <AnimCtx.Provider value={inView}>
+      <div className="board-head" style={{ "--accent": "#0E8F6E" }}>
+        <span className="board-tab" style={{ background: "#0E8F6E" }} />
+        <div className="board-titles">
+          <h2>스타트업 레이더 <span className="board-en">Weekly Startup Radar · 파트너십·인수 스코어카드</span></h2>
+          <p>글로벌 스타트업(한국·중국 제외) 주간 큐레이션 · 4축 자동 스코어(서비스 부착·기업 확장성·파트너십 용이·인수 용이, 각 1~5) · 12점+ 즉시 검토{radar.weekOf ? ` · 기준 주: ${radar.weekOf}` : ""}</p>
+        </div>
+      </div>
+
+      <div className="radar-grid">
+        {picks.map((p, i) => (
+          <div key={p.name} className={"radar-card" + (i === sel ? " sel" : "") + (p.urgent ? " urgent" : "")} onClick={() => setSel(i)}>
+            <div className="radar-head">
+              <img src={`https://www.google.com/s2/favicons?domain=${p.domain}&sz=32`} alt="" loading="lazy" />
+              <b>{p.name}</b>
+              <span className="radar-meta">{p.region} · {p.vertical}</span>
+              <span className={"brief-score" + (p.urgent ? " hot" : "")}>{p.total}/20{p.urgent ? " ★" : ""}</span>
+            </div>
+            <div className="brief-labels">
+              {(p.labels || []).map(l => (
+                <span key={l} className="brief-label" style={{ "--lc": LABEL_COLOR[l] || "#2D6BFF" }}>{l}</span>
+              ))}
+            </div>
+            <div className="radar-bars">
+              {AXES.map(([k, ko]) => (
+                <div key={k} className="radar-bar-row" title={`${ko} ${p.scores[k]}/5`}>
+                  <span className="radar-bar-k">{ko}</span>
+                  <span className="radar-bar-track"><i style={{ width: (p.scores[k] / 5) * 100 + "%" }} /></span>
+                  <b>{p.scores[k]}</b>
+                </div>
+              ))}
+            </div>
+            <p className="radar-why"><BoldSummary text={p.why} /></p>
+            {i === sel && <p className="radar-part"><span className="brief-k act">협력·인수 관점</span><BoldSummary text={p.partnership} /></p>}
+            {(p.evidence || []).length > 0 && (
+              <div className="brief-ev">
+                {p.evidence.map((e, k) => (
+                  <a key={k} href={e.url} target="_blank" rel="noopener" className="tl-ev-chip" onClick={ev => ev.stopPropagation()}>
+                    <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${e.date.slice(5)}` : ""}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {memo && (
+        <div className="memo-card">
+          <div className="memo-head">
+            <Icon name="report" size={15} />
+            <b>월간 기회 메모 초안 — {memo.title}</b>
+            <span className="brief-date">{memo.month}</span>
+          </div>
+          <p className="brief-row"><span className="brief-k sig">논지</span><BoldSummary text={memo.thesis} /></p>
+          <p className="brief-row"><span className="brief-k ins">사업 구조</span><BoldSummary text={memo.structure} /></p>
+          {(memo.targets || []).length > 0 && <p className="brief-row"><span className="brief-k act">우선 대상</span>{memo.targets.join(" · ")}</p>}
+          <div className="memo-cols">
+            <div><em>리스크</em><ul>{(memo.risks || []).map((r, i) => <li key={i}>{r}</li>)}</ul></div>
+            <div><em>다음 30일</em><ul>{(memo.next || []).map((r, i) => <li key={i}>{r}</li>)}</ul></div>
+          </div>
+        </div>
+      )}
+     </AnimCtx.Provider>
+    </section>
+  );
+}
+
 // insights.json(매일 규칙기반 갱신)이 있으면 그걸로, 없으면 정적 TOPLINE으로 폴백.
 function ExecToplines({ items, insights, onNav }) {
   const [open, setOpen] = React.useState(0);
@@ -1462,8 +1609,8 @@ function ExecToplines({ items, insights, onNav }) {
 
   // 데이터 정규화: insights 카드 → 공통 셰이프 / 폴백은 정적 TOPLINE
   const cards = (insights && insights.cards && insights.cards.length)
-    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, evidence: c.evidence || [], score: c.score, live: c.live, updatedAt: c.updatedAt }))
-    : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, evidence: [], score: null, live: false }));
+    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, action: c.action, evidence: c.evidence || [], score: c.score, live: c.live, updatedAt: c.updatedAt }))
+    : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, action: t.action, evidence: [], score: null, live: false }));
   if (!cards.length) return null;
 
   return (
@@ -1481,7 +1628,7 @@ function ExecToplines({ items, insights, onNav }) {
                 <span className="tl-tag">{t.tag}</span>
                 <i className="tl-dot" />
               </div>
-              <p className="tl-now"><span className="tl-lbl tl-lbl-now">현상</span>{hlKey(t.now)}</p>
+              <p className="tl-now"><span className="tl-lbl tl-lbl-now">Signal</span>{hlKey(t.now)}</p>
               {t.score != null && (
                 <div className="tl-meter" title={`관련도 ${t.score}/100`}>
                   <span className="tl-meter-fill" style={{ width: t.score + "%", background: tone }} />
@@ -1490,6 +1637,7 @@ function ExecToplines({ items, insights, onNav }) {
               )}
               {t.cause && <p className="tl-cause"><span className="tl-lbl tl-lbl-cause">근본 원인</span>{hlKey(t.cause)}</p>}
               <p className="tl-dec"><span className="tl-lbl tl-lbl-ins">Insight</span>{hlKey(t.decision)}</p>
+              {t.action && isOpen && <p className="tl-act"><span className="tl-lbl tl-lbl-act">Action</span>{hlKey(t.action)}</p>}
               {t.evidence && t.evidence.length > 0 && (
                 <div className="tl-ev">
                   {t.evidence.slice(0, 2).map((e, k) => (
@@ -1512,4 +1660,4 @@ function ExecToplines({ items, insights, onNav }) {
   );
 }
 
-Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines });
+Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines, BriefingBoard, RadarBoard });
