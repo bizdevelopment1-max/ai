@@ -56,10 +56,12 @@ function Trend({ v, small, animate }) {
 // ---- Sidebar ------------------------------
 const NAV = [
   { id: "overview", ko: "Executive Summary", en: "Overview", icon: "grid", group: "개요" },
+  { id: "briefing", ko: "모닝 브리핑", en: "Morning Briefing", icon: "sun", group: "개요" },
   { id: "articles", ko: "데일리 기사", en: "Daily Articles", icon: "news", group: "개요" },
   { id: "native", ko: "AI 네이티브", en: "AI Native", icon: "ai", group: "기업 동향" },
   { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", icon: "device", group: "기업 동향" },
   { id: "startup", ko: "AI 스타트업", en: "AI Startups", icon: "spark", group: "기업 동향" },
+  { id: "radar", ko: "스타트업 레이더", en: "Startup Radar", icon: "target", group: "기업 동향" },
   { id: "bizmodel", ko: "수익화 모델", en: "Monetization", icon: "palette", group: "심층 분석" },
   { id: "signals", ko: "인프라·미래기술", en: "Infra & Future Tech", icon: "server", group: "심층 분석" },
   { id: "reports", ko: "리서치 리포트", en: "Research", icon: "report", group: "심층 분석" },
