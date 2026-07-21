@@ -1721,3 +1721,87 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .brief-headline { flex-wrap: wrap; }
   .brief-date { margin-left: 0; flex-basis: 100%; }
 }
+
+/* ============================================================
+   IB Research Briefing 1-pager (navy/gold) + 기관 리서치 피드
+   ============================================================ */
+.ib-board { overflow: hidden; }
+.ib-page { --ibnavy: #0a1628; --ibnavy2: #0e2040; --ibnavy3: #15304f; --ibgold: #c9a84c; --ibgold2: #e0c068; }
+.ib-topbar { background: var(--ibnavy); color: #fff; padding: 20px 24px 16px; display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.ib-eyebrow { font-family: var(--f); font-size: 11px; font-weight: 900; letter-spacing: .12em; color: var(--ibgold); text-transform: uppercase; margin-bottom: 7px; }
+.ib-title { font-family: var(--f); font-size: 20px; font-weight: 800; line-height: 1.35; color: #fff; word-break: keep-all; margin: 0; }
+.ib-meta { display: flex; flex-direction: column; gap: 2px; font-family: var(--f); font-size: 11.5px; color: #a8b8cc; text-align: right; }
+.ib-meta b { color: var(--ibgold2); margin-right: 5px; }
+.ib-seedtag { color: #ffb84d; font-weight: 700; }
+.ib-thesis { background: var(--ibnavy2); padding: 12px 24px; border-left: 5px solid var(--ibgold); }
+.ib-thesis-label { font-family: var(--f); font-size: 10px; font-weight: 900; letter-spacing: .1em; color: var(--ibgold); text-transform: uppercase; margin-bottom: 5px; }
+.ib-thesis-text { font-family: var(--f); font-size: 14.5px; color: #e8eef5; line-height: 1.55; word-break: keep-all; }
+.ib-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 16px; background: var(--bg); }
+.ib-col { display: flex; flex-direction: column; gap: 14px; }
+.ib-card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 15px 16px 13px; }
+.ib-card.ib-soft { background: color-mix(in srgb, var(--ibgold) 5%, var(--panel)); }
+.ib-h { font-family: var(--f); font-size: 12px; font-weight: 900; letter-spacing: .06em; color: var(--ink); text-transform: uppercase; border-bottom: 2px solid var(--ibgold); padding-bottom: 7px; margin: 0 0 11px; }
+.ib-insight { display: flex; gap: 11px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.ib-insight:last-child { border-bottom: 0; }
+.ib-num { flex-shrink: 0; width: 23px; height: 23px; background: var(--ibnavy); color: var(--ibgold); font-family: var(--f); font-size: 12px; font-weight: 900; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+.ib-insight h4 { font-family: var(--f); font-size: 13.5px; font-weight: 700; color: var(--ink); margin: 0 0 4px; line-height: 1.35; word-break: keep-all; }
+.ib-insight p { font-family: var(--f); font-size: 12.5px; color: var(--ink-2); line-height: 1.62; word-break: keep-all; margin: 0; }
+.ib-metric-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.ib-metric { background: var(--ibnavy); border-radius: 6px; padding: 10px 8px; text-align: center; }
+.ib-mk { font-family: var(--f); font-size: 17px; font-weight: 900; color: var(--ibgold); line-height: 1.1; margin-bottom: 4px; }
+.ib-mt { font-family: var(--f); font-size: 10px; color: #b8cce0; line-height: 1.35; word-break: keep-all; }
+.ib-tablewrap { overflow-x: auto; }
+.ib-table { width: 100%; border-collapse: collapse; font-family: var(--f); font-size: 12px; }
+.ib-table th { background: var(--ibnavy); color: var(--ibgold); font-weight: 700; padding: 6px 9px; text-align: left; font-size: 10.5px; letter-spacing: .04em; white-space: nowrap; }
+.ib-table td { padding: 6px 9px; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; line-height: 1.5; word-break: keep-all; }
+.ib-table tr:last-child td { border-bottom: 0; }
+.ib-imp { list-style: none; margin: 0; padding: 0; }
+.ib-imp li { font-family: var(--f); font-size: 12.5px; color: var(--ink-2); padding: 7px 0; border-bottom: 1px solid var(--line); line-height: 1.6; word-break: keep-all; }
+.ib-imp li:last-child { border-bottom: 0; }
+.ib-pill { display: inline-block; background: var(--ibnavy); color: var(--ibgold); font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; margin-right: 7px; letter-spacing: .03em; white-space: nowrap; }
+.ib-bottom { background: var(--ibnavy); padding: 14px 24px; }
+.ib-bottom h3 { font-family: var(--f); font-size: 11.5px; font-weight: 900; letter-spacing: .08em; color: var(--ibgold); margin: 0 0 7px; text-transform: uppercase; }
+.ib-bottom p { font-family: var(--f); font-size: 13px; color: #d8e4f0; line-height: 1.65; word-break: keep-all; margin: 0; }
+.ib-foot { background: var(--ibnavy3); padding: 8px 24px; font-family: var(--f); font-size: 10.5px; color: #8899aa; line-height: 1.6; word-break: keep-all; }
+
+.ib-feed { padding: 14px 20px 18px; }
+.ib-feed-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.ib-feed-head h3 { font-family: var(--f); font-size: 14px; font-weight: 800; color: var(--ink); margin: 0; word-break: keep-all; }
+.ib-feed-head h3 em { display: block; font-style: normal; font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+.ib-feed-head button { font-family: var(--f); font-size: 11.5px; font-weight: 700; color: var(--muted); background: var(--panel); border: 2px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+.ib-feed-head button:hover { border-color: var(--ibgold); color: var(--ink); }
+.ib-feed-row { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; margin-bottom: 6px; text-decoration: none; color: var(--ink-2); background: var(--panel); transition: border-color .15s, transform .15s; }
+.ib-feed-row:hover { border-color: var(--ibgold); transform: translateX(2px); }
+.ib-house { flex-shrink: 0; font-family: var(--f); font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.ib-house.sec { color: #0a1628; background: #e0c068; }
+.ib-house.mkt { color: #fff; background: #15304f; }
+.ib-feed-title { font-family: var(--f); font-size: 12.5px; font-weight: 600; line-height: 1.45; word-break: keep-all; flex: 1; }
+.ib-feed-title em { font-style: normal; color: var(--muted); font-weight: 500; }
+.ib-feed-meta { flex-shrink: 0; font-family: var(--f); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+
+/* 기업 테이블 라이브 최신 기사 칩 */
+.ct-live { display: flex; align-items: center; gap: 5px; font-family: var(--f); font-size: 11px; font-weight: 700; color: var(--accent); text-decoration: none; margin-bottom: 4px; }
+.ct-live:hover { text-decoration: underline; }
+.ct-live em { font-style: normal; font-size: 9.5px; font-weight: 800; color: var(--muted); background: var(--line-2); border-radius: 5px; padding: 1px 6px; }
+
+/* 데이터 감사 패널 */
+.audit-wrap { padding: 4px 20px 0; }
+.audit-chip { display: inline-flex; align-items: center; gap: 7px; font-family: var(--f); font-size: 11.5px; font-weight: 700; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 6px 12px; cursor: pointer; }
+.audit-chip:hover { color: var(--ink); border-color: var(--accent); }
+.audit-chip i, .audit-row i { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.audit-panel { margin-top: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 11px; padding: 10px 14px; }
+.audit-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--line); font-family: var(--f); flex-wrap: wrap; }
+.audit-row:last-of-type { border-bottom: 0; }
+.audit-row i { transform: translateY(-1px); }
+.audit-row b { font-size: 12px; color: var(--ink); }
+.audit-meta { font-size: 11px; color: var(--muted); }
+.audit-issues { font-size: 11px; color: #EA580C; flex-basis: 100%; padding-left: 16px; }
+.audit-note { font-family: var(--f); font-size: 10.5px; color: var(--muted); margin: 8px 0 0; }
+
+@media (max-width: 760px) {
+  .ib-grid { grid-template-columns: 1fr; }
+  .ib-meta { text-align: left; }
+  .ib-metric-row { grid-template-columns: repeat(2, 1fr); }
+  .ib-feed-row { flex-wrap: wrap; }
+  .ib-feed-meta { flex-basis: 100%; padding-left: 2px; }
+}
