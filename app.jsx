@@ -92,6 +92,28 @@ function App() {
   // 매일 자동 생성되는 모닝 브리핑(briefing.json) + 주간 스타트업 레이더(radar.json)
   const [briefing, setBriefing] = uS(null);
   const [radar, setRadar] = uS(null);
+  // 증권사 리서치(research.json)·기업 라이브(companies.json)·데이터 감사(audit.json)
+  const [research, setResearch] = uS(null);
+  const [coLive, setCoLive] = uS(null);
+  const [audit, setAudit] = uS(null);
+  uE(() => {
+    let alive = true;
+    fetch("research.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && (j.onepager || (j.feed || []).length)) setResearch(j); }).catch(() => {});
+    fetch("companies.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
+    fetch("audit.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  // COMPANIES에 라이브 데이터(최신 기사·언급량·실시세 시총) 병합
+  const companiesLive = useMemo(() => (D.COMPANIES || []).map(c => {
+    const lv = coLive && coLive[c.name];
+    if (!lv) return c;
+    const merged = { ...c, live: lv };
+    if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); }
+    return merged;
+  }), [coLive]);
   uE(() => {
     let alive = true;
     fetch("briefing.json" + cb(), { cache: "no-store" })
@@ -141,7 +163,7 @@ function App() {
   // section refs
   const scrollRef = uR(null);
   const refs = {
-    overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
+    ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
     radar: uR(null), charts: uR(null), monthly: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null),
   };
 
@@ -247,6 +269,9 @@ function App() {
 
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
+            {/* ── 0. 증권사 인사이트(IB Research 1페이저 + 기관 피드) ── */}
+            <IBInsightBoard research={research} sectionRef={refs.ib} />
+
             {/* ── 1. 개요 ── */}
             <section ref={refs.overview} data-screen-label="Overview">
               <div className="ov-head">
@@ -261,9 +286,9 @@ function App() {
             <ArticleFeed articles={articles} cats={cats} sectionRef={refs.articles} filter={feedFilter} onFilter={setFeedFilter} query={query} />
 
             {/* ── 2. 기업 동향 ── */}
-            <CompanyBoard cat={cats[0]} companies={D.COMPANIES} density={t.density} sectionRef={refs.native} query={query} onSelect={setSelected} />
-            <CompanyBoard cat={cats[1]} companies={D.COMPANIES} density={t.density} sectionRef={refs.bigtech} query={query} onSelect={setSelected} />
-            <CompanyBoard cat={cats[2]} companies={D.COMPANIES} density={t.density} sectionRef={refs.startup} query={query} onSelect={setSelected} />
+            <CompanyBoard cat={cats[0]} companies={companiesLive} density={t.density} sectionRef={refs.native} query={query} onSelect={setSelected} />
+            <CompanyBoard cat={cats[1]} companies={companiesLive} density={t.density} sectionRef={refs.bigtech} query={query} onSelect={setSelected} />
+            <CompanyBoard cat={cats[2]} companies={companiesLive} density={t.density} sectionRef={refs.startup} query={query} onSelect={setSelected} />
             <RadarBoard radar={radar} sectionRef={refs.radar} />
 
             {/* ── 3. 심층 분석 (수익화 모델 최상단) ── */}
@@ -275,6 +300,8 @@ function App() {
             <ChartsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.charts} />
             <MonthlyTrendsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.monthly} />
             <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} sectionRef={refs.stocks} theme={chartTheme} />
+
+            <AuditPanel audit={audit} />
 
             <footer className="foot">
               <span>AI Intelligence Dashboard</span>
@@ -293,6 +320,34 @@ function App() {
 }
 
 // soft tint of a hex color for chips/backgrounds
+// ---- 데이터 감사 패널: audit-agent.mjs 산출물(audit.json) 표시 ----
+function AuditPanel({ audit }) {
+  const [open, setOpen] = uS(false);
+  if (!audit) return null;
+  const C = { ok: "#16A34A", warn: "#EA580C", fail: "#D23B3B" };
+  return (
+    <div className="audit-wrap">
+      <button className="audit-chip" onClick={() => setOpen(o => !o)} title="데이터 파이프라인 감사 상태">
+        <i style={{ background: C[audit.overall] || "#8A93A4" }} />
+        데이터 감사 {audit.overall === "ok" ? "정상" : audit.overall === "warn" ? "주의" : "실패"} · {audit.summary}
+      </button>
+      {open && (
+        <div className="audit-panel">
+          {audit.checks.map(c => (
+            <div className="audit-row" key={c.file}>
+              <i style={{ background: C[c.status] || "#8A93A4" }} />
+              <b>{c.tab}</b>
+              <span className="audit-meta">{c.items}건 · {c.ageDays}일 전{c.engine ? ` · ${c.engine}` : ""}</span>
+              {c.issues.length > 0 && <span className="audit-issues">{c.issues.join(" / ")}</span>}
+            </div>
+          ))}
+          <p className="audit-note">감사 에이전트(audit-agent.mjs)가 매 크롤 후 자동 검사 — 신선도·커버리지·엔진·중복·금지어</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function softTint(hex, dark) {
   const n = hex.replace("#", "");
   const r = parseInt(n.slice(0, 2), 16), g = parseInt(n.slice(2, 4), 16), b = parseInt(n.slice(4, 6), 16);

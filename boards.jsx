@@ -70,7 +70,14 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
           <Trend v={c.trend} small animate />
           <TrendBar v={c.trend} />
         </span>
-        <span className="ct-note"><BoldSummary text={c.note} /></span>
+        <span className="ct-note">
+          {c.live && c.live.latest && (
+            <a className="ct-live" href={c.live.latest.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>
+              <Icon name="news" size={10} /> {c.live.latest.date && c.live.latest.date.slice(5)} {String(c.live.latest.title).slice(0, 46)}{String(c.live.latest.title).length > 46 ? "…" : ""}
+              {c.live.mentions7 > 0 && <em>7일 {c.live.mentions7}건</em>}
+            </a>
+          )}
+          <BoldSummary text={c.note} /></span>
       </div>
     );
   };
@@ -1452,6 +1459,111 @@ function hlKey(text) {
 }
 
 // ---- Executive Top-line: 현상 → 의사결정 5초 브리핑 (Overview 최상단) ----
+// ---- IB Research Briefing: 증권사 인사이트 1페이저(네이비/골드) + 기관 리서치 피드 ----
+function IBInsightBoard({ research, sectionRef }) {
+  const inView = useInView(sectionRef);
+  const op = research && research.onepager;
+  const feed = (research && research.feed) || [];
+  const [showAll, setShowAll] = React.useState(false);
+  if (!op && !feed.length) return null;
+  const feedRows = showAll ? feed.slice(0, 20) : feed.slice(0, 8);
+  return (
+    <section className="board ib-board" ref={sectionRef} data-screen-label="IB Research">
+     <AnimCtx.Provider value={inView}>
+      {op && (
+        <div className="ib-page">
+          <div className="ib-topbar">
+            <div>
+              <div className="ib-eyebrow">IB Research Briefing</div>
+              <h2 className="ib-title">{op.title}</h2>
+            </div>
+            <div className="ib-meta">
+              <span><b>Source</b> {op.sourceLine}</span>
+              <span><b>Date</b> {op.date}</span>
+              <span><b>Scope</b> {op.scope}</span>
+              {op.engine === "seed" && <span className="ib-seedtag">첫 자동 갱신 대기</span>}
+            </div>
+          </div>
+          <div className="ib-thesis">
+            <div className="ib-thesis-label">One-line Thesis</div>
+            <div className="ib-thesis-text">{op.thesis}</div>
+          </div>
+          <div className="ib-grid">
+            <div className="ib-col">
+              <div className="ib-card">
+                <h3 className="ib-h">1. 핵심 인사이트</h3>
+                {(op.insights || []).map((ins, i) => (
+                  <div className="ib-insight" key={i}>
+                    <span className="ib-num">{i + 1}</span>
+                    <div>
+                      <h4>{ins.title}</h4>
+                      <p>{ins.body}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="ib-col">
+              {(op.metrics || []).length > 0 && (
+                <div className="ib-card ib-soft">
+                  <h3 className="ib-h">2. 핵심 지표</h3>
+                  <div className="ib-metric-row">
+                    {op.metrics.slice(0, 4).map((m, i) => (
+                      <div className="ib-metric" key={i}><div className="ib-mk">{m.k}</div><div className="ib-mt">{m.t}</div></div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {(op.areas || []).length > 0 && (
+                <div className="ib-card">
+                  <h3 className="ib-h">3. 영역별 분석</h3>
+                  <div className="ib-tablewrap">
+                    <table className="ib-table">
+                      <thead><tr><th>영역</th><th>핵심 변화</th><th>승자 조건</th></tr></thead>
+                      <tbody>{op.areas.map((a, i) => (<tr key={i}><td>{a.area}</td><td>{a.change}</td><td>{a.winner}</td></tr>))}</tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+              {(op.implications || []).length > 0 && (
+                <div className="ib-card">
+                  <h3 className="ib-h">4. 투자·전략 시사점</h3>
+                  <ul className="ib-imp">
+                    {op.implications.map((im, i) => (<li key={i}><span className="ib-pill">{im.pill}</span>{im.text}</li>))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="ib-bottom">
+            <h3>최종 결론</h3>
+            <p>{op.conclusion}</p>
+          </div>
+          {op.watch && <div className="ib-foot">Watch: {op.watch}</div>}
+        </div>
+      )}
+
+      {feed.length > 0 && (
+        <div className="ib-feed">
+          <div className="ib-feed-head">
+            <h3>증권사·기관 리서치 피드 <em>매일 자동 크롤링 · Morgan Stanley·Goldman Sachs·JPMorgan·UBS·TrendForce·IDC·Gartner 등</em></h3>
+            {feed.length > 8 && <button onClick={() => setShowAll(s => !s)}>{showAll ? "접기" : `전체 ${Math.min(feed.length, 20)}건`}</button>}
+          </div>
+          {feedRows.map((f, i) => (
+            <a className="ib-feed-row" key={f.url || i} href={f.url} target="_blank" rel="noopener">
+              <span className={"ib-house " + (f.type === "Securities" ? "sec" : "mkt")}>{f.house}</span>
+              <span className="ib-feed-title">{f.titleKo || f.title}{f.sum && <em> — {f.sum}</em>}</span>
+              <span className="ib-feed-meta">{f.source} · {f.date && f.date.slice(5)}</span>
+              <Icon name="ext" size={11} />
+            </a>
+          ))}
+        </div>
+      )}
+     </AnimCtx.Provider>
+    </section>
+  );
+}
+
 // ---- Morning Briefing: 매일 Signal → Insight → Action 카드 + 날짜 아카이브 ----
 function BriefingBoard({ briefing, sectionRef }) {
   const inView = useInView(sectionRef);
@@ -1660,4 +1772,4 @@ function ExecToplines({ items, insights, onNav }) {
   );
 }
 
-Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines, BriefingBoard, RadarBoard });
+Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });

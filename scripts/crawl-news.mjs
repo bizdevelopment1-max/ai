@@ -59,7 +59,48 @@ const TOPICS = [
   { co: "", cat: "bigtech", tag: "AI 폰", topic: true, n: 3, q: '("AI smartphone" OR "AI phone" OR "Pixel AI" OR "Apple Intelligence" OR "on-device AI" phone)' },
   // 경쟁 단말·칩 진영(중국 제조사·모바일 실리콘) — 단말 사업 경쟁 관점 핵심 스트림
   { co: "", cat: "bigtech", tag: "경쟁 단말", topic: true, n: 3, q: '("Xiaomi" OR "Honor" OR "OPPO" OR "vivo" OR "Snapdragon" OR "Dimensity") AI smartphone' },
+  // 탭별 전용 스트림: 인프라(Signal 탭)·수익화(BizModel 탭)·규제
+  { co: "", cat: "bigtech", tag: "Infra", topic: true, n: 3, q: '(HBM OR "data center" OR "AI infrastructure" OR "co-packaged optics" OR hyperscaler OR capex) AI' },
+  { co: "", cat: "native", tag: "수익화", topic: true, n: 2, q: '("AI pricing" OR "AI subscription" OR "AI revenue" OR "API pricing" OR "AI monetization")' },
+  { co: "", cat: "native", tag: "규제", topic: true, n: 2, q: '("AI regulation" OR "AI export control" OR "AI Act" OR "chip export controls")' },
 ];
+
+// ---- 직접 퍼블리셔 RSS 피드(구글뉴스 비경유 — 소스 다변화, 단일 게이트웨이 리스크 제거) ----
+const DIRECT_FEEDS = [
+  { source: "TechCrunch", url: "https://techcrunch.com/category/artificial-intelligence/feed/" },
+  { source: "The Verge", url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", atom: true },
+  { source: "Ars Technica", url: "https://feeds.arstechnica.com/arstechnica/technology-lab" },
+  { source: "VentureBeat", url: "https://venturebeat.com/category/ai/feed/" },
+  { source: "MIT Tech Review", url: "https://www.technologyreview.com/feed/" },
+  { source: "IEEE Spectrum", url: "https://spectrum.ieee.org/feeds/topic/artificial-intelligence.rss" },
+];
+const AI_RE = /\bAI\b|artificial intelligence|\bLLM\b|GPT|Claude|Gemini|agentic|chatbot|machine learning|foundation model|inference|GPU|HBM|data center/i;
+
+async function pullDirect(feed, limit = 2) {
+  try {
+    const res = await fetch(feed.url, { headers: { "User-Agent": UA, Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml" } });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const xml = await res.text();
+    const blockRe = feed.atom ? /<entry>([\s\S]*?)<\/entry>/g : /<item>([\s\S]*?)<\/item>/g;
+    const out = []; let m;
+    while ((m = blockRe.exec(xml)) && out.length < limit) {
+      const it = m[1];
+      const title = decode(tag(it, "title"));
+      if (!title || !AI_RE.test(title)) continue;
+      let link = decode(tag(it, "link"));
+      if (feed.atom && (!link || !/^http/.test(link))) { const lm = it.match(/<link[^>]*href="([^"]+)"/i); link = lm ? decode(lm[1]) : ""; }
+      if (!link) continue;
+      const pub = tag(it, "pubDate") || tag(it, "published") || tag(it, "updated");
+      const d = pub ? new Date(decode(pub)) : new Date();
+      const date = isNaN(d) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
+      if ((Date.now() - new Date(date + "T00:00:00Z").getTime()) / 86400000 > 7) continue;   // 최근 7일만
+      const desc = decode(tag(it, "description") || tag(it, "summary")).slice(0, 240);
+      out.push({ date, co: deviceCo(title), cat: "bigtech", source: feed.source, title, descEn: desc, url: link, tag: "글로벌" });
+    }
+    console.log(`[news:rss:${feed.source}] ${out.length} item(s)`);
+    return out;
+  } catch (e) { console.warn(`[news:rss:${feed.source}] ${e.message}`); return []; }
+}
 
 // device-topic 기사를 제목 기준으로 실제 업체에 재분류(매칭 없으면 업체 미지정). 토픽은 tag로만 남김.
 const DEVICE_CO = [
@@ -327,10 +368,11 @@ async function main() {
   console.log(`Crawling authoritative English AI news… (LLM summaries: ${KEY ? "on" : "OFF — set ANTHROPIC_API_KEY"})`);
   const companyItems = (await Promise.all(COMPANIES.map(c => pull(c, 1)))).flat();
   const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
+  const directItems = (await Promise.all(DIRECT_FEEDS.map(f => pullDirect(f, 2)))).flat();
 
   // de-dupe this run by URL
   const seen = new Set();
-  const raw = [...companyItems, ...topicItems].filter(a => a.url && !seen.has(a.url) && seen.add(a.url));
+  const raw = [...companyItems, ...topicItems, ...directItems].filter(a => a.url && !seen.has(a.url) && seen.add(a.url));
 
   // previously stored articles — reuse their summaries so we never re-crawl/re-summarize duplicates
   let prev = [];

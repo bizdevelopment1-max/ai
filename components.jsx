@@ -55,6 +55,7 @@ function Trend({ v, small, animate }) {
 
 // ---- Sidebar ------------------------------
 const NAV = [
+  { id: "ib", ko: "증권사 인사이트", en: "IB Research", icon: "report", group: "개요" },
   { id: "overview", ko: "Executive Summary", en: "Overview", icon: "grid", group: "개요" },
   { id: "briefing", ko: "모닝 브리핑", en: "Morning Briefing", icon: "sun", group: "개요" },
   { id: "articles", ko: "데일리 기사", en: "Daily Articles", icon: "news", group: "개요" },

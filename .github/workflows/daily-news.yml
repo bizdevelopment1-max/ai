@@ -56,11 +56,22 @@ jobs:
       - name: Build daily insights (rule-based, deterministic — no API key)
         run: node scripts/build-insights.mjs
 
+      - name: Crawl IB research (증권사 1페이저 + 기관 피드)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/crawl-research.mjs
+
+      - name: Build live company data (mentions + market caps)
+        run: node scripts/crawl-companies.mjs
+
+      - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
+        run: node scripts/audit-agent.mjs
+
       - name: Commit refreshed data
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json insights.json briefing.json radar.json
+          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json audit.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else
