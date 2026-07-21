@@ -423,7 +423,7 @@ async function main() {
   const curUrls = new Set(raw.map(a => a.url));
   const dseen = new Set();
   const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
-    .filter(a => !BANNED_SRC.test(`${a.title || ""} ${a.summary || ""}`))
+    .filter(a => !BANNED_SRC.test(JSON.stringify(a)))
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
     .map(a => ({ ...a, title: nounize(a.title), summary: nounizeSummary(stripSrc(a.summary)) }))  // 개조식·마침표 제거(기존 항목 포함)
     .filter(a => a.title && a.summary)                   // 요약은 한글 우선(번역), 불가 시 영문 폴백 허용
