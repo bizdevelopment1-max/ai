@@ -103,7 +103,8 @@ async function main() {
   let prev = null;
   try { prev = JSON.parse(await readFile("startups.json", "utf8")); } catch {}
   const age = prev && prev.weekOf ? (Date.now() - new Date(prev.weekOf + "T00:00:00Z").getTime()) / 86400000 : 99;
-  const need = age >= 6.5 || !prev || prev.engine === "rules" || Object.keys(prev.items || {}).length < startups.length;
+  const ruleRemnants = Object.values(prev && prev.items || {}).filter(i => i.investNote && i.investNote.includes("동향 추적 지속")).length;
+  const need = age >= 6.5 || !prev || prev.engine === "rules" || ruleRemnants > 5 || Object.keys(prev.items || {}).length < startups.length;
 
   if (!need) { console.log(`[startups] fresh (weekOf ${prev.weekOf}, engine ${prev.engine}) — skip`); return; }
 
