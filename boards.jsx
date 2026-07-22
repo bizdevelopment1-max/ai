@@ -1526,12 +1526,41 @@ function hlKey(text) {
 
 // ---- Executive Top-line: 현상 → 의사결정 5초 브리핑 (Overview 최상단) ----
 // ---- IB Research Briefing: 증권사 인사이트 1페이저(네이비/골드) + 기관 리서치 피드 ----
-function IBInsightBoard({ research, sectionRef }) {
+function IBInsightBoard({ research, reports, sectionRef }) {
   const inView = useInView(sectionRef);
   const op = research && research.onepager;
-  const feed = (research && research.feed) || [];
+  // 삭제된 리포트/피드(비밀번호 000) — localStorage 영구 보존
+  const R_LS = "aiDashDeletedReports";
+  const [delR, setDelR] = React.useState(() => { try { return JSON.parse(localStorage.getItem(R_LS) || "{}"); } catch { return {}; } });
+  const [rPending, setRPending] = React.useState(null);
+  const [rPw, setRPw] = React.useState("");
+  const [rPwErr, setRPwErr] = React.useState(false);
+  const rKey = r => r.url || r.title;
+  const cancelR = () => { setRPending(null); setRPw(""); setRPwErr(false); };
+  const confirmR = (k) => {
+    if (rPw !== "000") { setRPwErr(true); return; }
+    setDelR(d => { const n = { ...d, [k]: 1 }; try { localStorage.setItem(R_LS, JSON.stringify(n)); } catch {} return n; });
+    cancelR();
+  };
+  const DelBtn = ({ item }) => (rPending === rKey(item) ? (
+    <span className="art-del-pw" onClick={e => { e.preventDefault(); e.stopPropagation(); }}>
+      <input type="password" inputMode="numeric" className={"art-pw-input" + (rPwErr ? " err" : "")} placeholder="비밀번호" value={rPw} autoFocus
+        onChange={e => { setRPw(e.target.value); setRPwErr(false); }}
+        onKeyDown={e => { if (e.key === "Enter") confirmR(rKey(item)); else if (e.key === "Escape") cancelR(); }} />
+      <button className="art-pw-ok" onClick={e => { e.preventDefault(); confirmR(rKey(item)); }}>삭제</button>
+      <button className="art-pw-cancel" onClick={e => { e.preventDefault(); cancelR(); }}><Icon name="x" size={12} sw={2.2} /></button>
+      {rPwErr && <span className="art-pw-err">비밀번호가 틀렸습니다.</span>}
+    </span>
+  ) : (
+    <button className="ct-del" title="삭제(비밀번호 필요)"
+      onClick={e => { e.preventDefault(); e.stopPropagation(); setRPending(rKey(item)); setRPw(""); setRPwErr(false); }}>
+      <Icon name="x" size={12} sw={2.2} />
+    </button>
+  ));
+  const feed = ((research && research.feed) || []).filter(f => !delR[rKey(f)]);
+  const reps = (reports || []).filter(r => !delR[rKey(r)]);
   const [showAll, setShowAll] = React.useState(false);
-  if (!op && !feed.length) return null;
+  if (!op && !feed.length && !reps.length) return null;
   const feedRows = showAll ? feed.slice(0, 20) : feed.slice(0, 8);
   return (
     <section className="board ib-board" ref={sectionRef} data-screen-label="IB Research">
@@ -1621,6 +1650,24 @@ function IBInsightBoard({ research, sectionRef }) {
               <span className="ib-feed-title">{f.titleKo || f.title}{f.sum && <em> — {f.sum}</em>}</span>
               <span className="ib-feed-meta">{f.source} · {f.date && f.date.slice(5)}</span>
               <Icon name="ext" size={11} />
+              <DelBtn item={f} />
+            </a>
+          ))}
+        </div>
+      )}
+
+      {reps.length > 0 && (
+        <div className="ib-feed ib-reports">
+          <div className="ib-feed-head">
+            <h3>리서치 리포트 정량 요약 <em>증권사·시장기관 리포트 — 클릭 시 원문 · ✕로 삭제(비밀번호)</em></h3>
+          </div>
+          {reps.map((r, i) => (
+            <a className="ib-feed-row" key={rKey(r)} href={r.url} target="_blank" rel="noopener">
+              <span className={"ib-house " + (r.type === "Securities" ? "sec" : "mkt")}>{r.house}</span>
+              <span className="ib-feed-title">{r.title}{r.bullets && r.bullets[0] && <em> — {r.bullets[0]}</em>}</span>
+              <span className="ib-feed-meta">{r.figure} · {r.date && r.date.slice(2, 7).replace("-", ".")}</span>
+              <Icon name="ext" size={11} />
+              <DelBtn item={r} />
             </a>
           ))}
         </div>
@@ -1644,7 +1691,7 @@ function BriefingBoard({ briefing, sectionRef }) {
       <div className="board-head" style={{ "--accent": "#2D6BFF" }}>
         <span className="board-tab" style={{ background: "#2D6BFF" }} />
         <div className="board-titles">
-          <h2>모닝 브리핑 <span className="board-en">AI Morning Briefing · Signal → Insight → Action</span></h2>
+          <h2>모닝 브리핑 <span className="board-en">Weekly Synthesis · Signal → Insight → Action</span></h2>
           <p>글로벌 외신 기반 매일 자동 생성 · 신사업 기회 스코어(전략 정합성·시장 성장성·실행 가능성·경쟁 우위, 각 1~5) · 12점+ 즉시 검토</p>
         </div>
         <div className="brief-days">
@@ -1660,6 +1707,14 @@ function BriefingBoard({ briefing, sectionRef }) {
         <Icon name="sun" size={16} /> <b>{day.headline}</b>
         <span className="brief-date">{day.date}{day.engine === "rules" ? " · 자동 요약" : ""}</span>
       </div>
+
+      {(day.stats || []).length > 0 && (
+        <div className="brief-stats">
+          {day.stats.map((s, i) => (
+            <div className="ib-metric" key={i}><div className="ib-mk">{s.k}</div><div className="ib-mt">{s.t}</div></div>
+          ))}
+        </div>
+      )}
 
       <div className="brief-grid">
         {(day.items || []).map((it, i) => (
@@ -1779,61 +1834,74 @@ function RadarBoard({ radar, sectionRef }) {
 
 // insights.json(매일 규칙기반 갱신)이 있으면 그걸로, 없으면 정적 TOPLINE으로 폴백.
 function ExecToplines({ items, insights, onNav }) {
-  const [open, setOpen] = React.useState(0);
-  const [sel, setSel] = React.useState(null);   // 클릭 시 색 반전(선택) 카드
   const TONE = { warn: "#D23B3B", signal: "#2D6BFF", revenue: "#16A34A", compete: "#C026D3" };
   const ICON = { warn: "target", signal: "pulse", revenue: "chart", compete: "brain" };
-  const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "인프라·미래기술", native: "AI 네이티브", dynamics: "경쟁 다이내믹스", overview: "경쟁 구도" };
-
-  // 데이터 정규화: insights 카드 → 공통 셰이프 / 폴백은 정적 TOPLINE
-  const cards = (insights && insights.cards && insights.cards.length)
-    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, action: c.action, evidence: c.evidence || [], score: c.score, live: c.live, updatedAt: c.updatedAt }))
-    : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, action: t.action, evidence: [], score: null, live: false }));
+  const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "인프라·미래기술", native: "AI 네이티브", overview: "경쟁 구도", ib: "증권사 인사이트" };
+  // 삭제(비밀번호 000) — 축 태그 기준, localStorage 영구 보존
+  const LS = "aiDashDeletedES";
+  const [delEs, setDelEs] = React.useState(() => { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch { return {}; } });
+  const [pend, setPend] = React.useState(null);
+  const [pw, setPw] = React.useState("");
+  const [pwErr, setPwErr] = React.useState(false);
+  const confirmDel = (k) => {
+    if (pw !== "000") { setPwErr(true); return; }
+    setDelEs(d => { const n = { ...d, [k]: 1 }; try { localStorage.setItem(LS, JSON.stringify(n)); } catch {} return n; });
+    setPend(null); setPw(""); setPwErr(false);
+  };
+  const cards = ((insights && insights.cards && insights.cards.length)
+    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, action: c.action, evidence: c.evidence || [], score: c.score, updatedAt: c.updatedAt }))
+    : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, action: t.action, evidence: [], score: null })))
+    .filter(c => !delEs[c.tag]);
   if (!cards.length) return null;
-
   return (
-    <div className="topline">
-      <div className="topline-grid">
-        {cards.map((t, i) => {
-          const isOpen = open === i;
-          const isSel = sel === i;
-          const tone = TONE[t.tone] || "#2D6BFF";
-          return (
-            <div className={"tl-card" + (isOpen ? " tl-open" : "") + (isSel ? " tl-sel" : "")} key={i} style={{ "--tl": tone }}
-              onMouseEnter={() => setOpen(i)} onClick={() => { setOpen(i); setSel(isSel ? null : i); }}>
-              <div className="tl-cardhead">
-                <span className="tl-ico"><Icon name={ICON[t.tone] || "spark"} size={16} /></span>
-                <span className="tl-tag">{t.tag}</span>
-                <i className="tl-dot" />
-              </div>
-              <p className="tl-now"><span className="tl-lbl tl-lbl-now">Signal</span>{hlKey(t.now)}</p>
+    <div className="es-info">
+      <div className="es-info-head">
+        <span className="es-col-h es-col-axis">전략 축</span>
+        <span className="es-col-h">Signal <em>관측된 사실</em></span>
+        <span className="es-col-h">Insight <em>왜 중요한가</em></span>
+        <span className="es-col-h">Action <em>다음 실행</em></span>
+      </div>
+      {cards.map((t, i) => {
+        const tone = TONE[t.tone] || "#2D6BFF";
+        return (
+          <div className="es-row" key={t.tag} style={{ "--tl": tone }}>
+            <div className="es-axis">
+              <span className="es-axis-ico"><Icon name={ICON[t.tone] || "spark"} size={15} /></span>
+              <b>{t.tag}</b>
               {t.score != null && (
-                <div className="tl-meter" title={`관련도 ${t.score}/100`}>
-                  <span className="tl-meter-fill" style={{ width: t.score + "%", background: tone }} />
-                  <em>{t.score}</em>
-                </div>
+                <span className="es-meter" title={`관련도 ${t.score}/100`}><i style={{ width: t.score + "%" }} /></span>
               )}
-              {t.cause && <p className="tl-cause"><span className="tl-lbl tl-lbl-cause">근본 원인</span>{hlKey(t.cause)}</p>}
-              <p className="tl-dec"><span className="tl-lbl tl-lbl-ins">Insight</span>{hlKey(t.decision)}</p>
-              {t.action && isOpen && <p className="tl-act"><span className="tl-lbl tl-lbl-act">Action</span>{hlKey(t.action)}</p>}
-              {t.evidence && t.evidence.length > 0 && (
-                <div className="tl-ev">
-                  {t.evidence.slice(0, 2).map((e, k) => (
-                    <a className="tl-ev-chip" key={k} href={e.url} target="_blank" rel="noopener" onClick={ev => ev.stopPropagation()}>
-                      <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${e.date.slice(5)}` : ""}
-                    </a>
-                  ))}
-                </div>
-              )}
-              {t.nav && (
-                <button className="tl-link" onClick={e => { e.stopPropagation(); onNav && onNav(t.nav); }}>
-                  {NAVLABEL[t.nav] || "상세"} 보기 ›
+              {pend === t.tag ? (
+                <span className="art-del-pw" onClick={e => e.stopPropagation()}>
+                  <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
+                    onChange={e => { setPw(e.target.value); setPwErr(false); }}
+                    onKeyDown={e => { if (e.key === "Enter") confirmDel(t.tag); else if (e.key === "Escape") { setPend(null); setPw(""); setPwErr(false); } }} />
+                  <button className="art-pw-ok" onClick={() => confirmDel(t.tag)}>삭제</button>
+                  <button className="art-pw-cancel" onClick={() => { setPend(null); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+                  {pwErr && <span className="art-pw-err">비밀번호 오류</span>}
+                </span>
+              ) : (
+                <button className="ct-del" title="이 축 삭제(비밀번호 필요)" onClick={() => { setPend(t.tag); setPw(""); setPwErr(false); }}>
+                  <Icon name="x" size={12} sw={2.2} />
                 </button>
               )}
             </div>
-          );
-        })}
-      </div>
+            <div className="es-cell es-sig">{hlKey(t.now)}
+              {t.evidence.slice(0, 1).map((e, k) => (
+                <a className="tl-ev-chip" key={k} href={e.url} target="_blank" rel="noopener">
+                  <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${e.date.slice(5)}` : ""}
+                </a>
+              ))}
+            </div>
+            <span className="es-arr">→</span>
+            <div className="es-cell es-ins">{hlKey(t.decision)}</div>
+            <span className="es-arr">→</span>
+            <div className="es-cell es-act">{hlKey(t.action || "")}
+              {t.nav && <button className="tl-link" onClick={() => onNav && onNav(t.nav)}>{NAVLABEL[t.nav] || "상세"} ›</button>}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

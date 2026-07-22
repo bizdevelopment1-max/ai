@@ -176,7 +176,7 @@ function App() {
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
 
   // 일부 Q&A는 통합·이동된 섹션을 가리킴: dynamics→overview(경쟁구도가 ES로 이동), insights→reports
-  const NAV_ALIAS = { dynamics: "overview", insights: "reports" };
+  const NAV_ALIAS = { dynamics: "overview", insights: "ib", reports: "ib" };
   const navTo = rawId => {
     const id = NAV_ALIAS[rawId] || rawId;
     setActive(id);
@@ -276,7 +276,7 @@ function App() {
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
             {/* ── 0. 증권사 인사이트(IB Research 1페이저 + 기관 피드) ── */}
-            <IBInsightBoard research={research} sectionRef={refs.ib} />
+            <IBInsightBoard research={research} reports={D.REPORTS} sectionRef={refs.ib} />
 
             {/* ── 1. 개요 ── */}
             <section ref={refs.overview} data-screen-label="Overview">
@@ -300,7 +300,6 @@ function App() {
             {/* ── 3. 심층 분석 (수익화 모델 최상단) ── */}
             <BizModelBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.bizmodel} theme={chartTheme} />
             <SignalBoard data={D} theme={chartTheme} sectionRef={refs.signals} />
-            <ReportsBoard reports={D.REPORTS} sectionRef={refs.reports} query={query} />
 
             {/* ── 4. 정량 데이터 ── */}
             <ChartsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.charts} />

@@ -182,7 +182,7 @@ async function summarizeBatch(arts) {
     const chunk = arts.slice(i, i + 10);
     const user = `다음 영문 AI 뉴스들을 한국어로 정리해 JSON으로 출력하세요.\n\n` +
       chunk.map((a, k) => `[${k}] 제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}`).join("\n\n") +
-      `\n\n각 항목을 rows 배열로: {idx, title_ko(자연스러운 한국어 번역 30자 내외), summary(정확히 3줄 개조식 — 각 줄 "· " 시작·명사형 종결, 1줄=핵심 사실·2줄=수치/배경·3줄=온디바이스 AI·단말 전략 시사점)}.\n금지: 출처/매체명, 특정 회사명(삼성·MX 등)을 시사점에 쓰지 마세요.`;
+      `\n\n각 항목을 rows 배열로: {idx, title_ko(자연스러운 한국어 번역 30자 내외), summary(4~5줄 개조식, 각 줄 "· " 시작·명사형 종결·마침표 금지 — 1줄=핵심 사실 상세, 2줄=구체 수치·규모·가격, 3줄=배경·맥락(누가·왜 지금), 4줄=경쟁·시장 파급, 5줄=온디바이스 AI·단말 전략 시사점)}.\n금지: 출처/매체명, 특정 회사명(삼성·MX 등)을 시사점에 쓰지 마세요.`;
     const r = await llmJSON({
       system: SYS, user, maxTokens: 2600,
       schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, title_ko: { type: "string" }, summary: { type: "string" } }, required: ["idx", "title_ko", "summary"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
