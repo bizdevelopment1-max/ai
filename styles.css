@@ -1805,3 +1805,12 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .ib-feed-row { flex-wrap: wrap; }
   .ib-feed-meta { flex-basis: 100%; padding-left: 2px; }
 }
+
+/* 스타트업 전략 라인(투자·협력) + 행 삭제 버튼 */
+.ct-strat { display: block; margin-bottom: 5px; font-family: var(--f); font-size: 11.5px; line-height: 1.55; }
+.ct-strat-label { font-style: normal; font-size: 9.5px; font-weight: 800; color: #0E8F6E; background: color-mix(in srgb, #0E8F6E 12%, var(--panel)); border: 1px solid color-mix(in srgb, #0E8F6E 35%, transparent); border-radius: 5px; padding: 1px 6px; margin-right: 5px; }
+.ct-strat-score { font-style: normal; font-size: 9.5px; font-weight: 800; color: var(--muted); background: var(--line-2); border-radius: 5px; padding: 1px 6px; margin-right: 6px; }
+.ct-strat-txt { color: var(--ink-2); font-weight: 600; word-break: keep-all; }
+.ct-strat-txt b { color: var(--ink); font-weight: 800; }
+.ct-del { float: right; margin-left: 8px; background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px; border-radius: 5px; }
+.ct-del:hover { color: #D23B3B; background: color-mix(in srgb, #D23B3B 10%, transparent); }

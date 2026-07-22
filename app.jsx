@@ -96,6 +96,7 @@ function App() {
   const [research, setResearch] = uS(null);
   const [coLive, setCoLive] = uS(null);
   const [audit, setAudit] = uS(null);
+  const [startupsX, setStartupsX] = uS(null);
   uE(() => {
     let alive = true;
     fetch("research.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
@@ -104,16 +105,21 @@ function App() {
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
     fetch("audit.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
+    fetch("startups.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && j.items) setStartupsX(j.items); }).catch(() => {});
     return () => { alive = false; };
   }, []);
   // COMPANIES에 라이브 데이터(최신 기사·언급량·실시세 시총) 병합
   const companiesLive = useMemo(() => (D.COMPANIES || []).map(c => {
+    const strat = startupsX && startupsX[c.name];
     const lv = coLive && coLive[c.name];
-    if (!lv) return c;
+    if (!lv && !strat) return c;
+    if (!lv) return { ...c, strategy: strat };
     const merged = { ...c, live: lv };
     if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); }
+    if (strat) merged.strategy = strat;
     return merged;
-  }), [coLive]);
+  }), [coLive, startupsX]);
   uE(() => {
     let alive = true;
     fetch("briefing.json" + cb(), { cache: "no-store" })

@@ -38,9 +38,21 @@ function CoLogo({ name, domain, accent }) {
 function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) {
   const inView = useInView(sectionRef);
   const prog = useProgress(inView, 1000);
+  // 스타트업 행 삭제(비밀번호 000) — localStorage 영구 보존
+  const CO_LS = "aiDashDeletedCompanies";
+  const [delCos, setDelCos] = React.useState(() => { try { return JSON.parse(localStorage.getItem(CO_LS) || "{}"); } catch { return {}; } });
+  const [coPending, setCoPending] = React.useState(null);
+  const [coPw, setCoPw] = React.useState("");
+  const [coPwErr, setCoPwErr] = React.useState(false);
+  const confirmCoDel = (name) => {
+    if (coPw !== "000") { setCoPwErr(true); return; }
+    setDelCos(d => { const n = { ...d, [name]: 1 }; try { localStorage.setItem(CO_LS, JSON.stringify(n)); } catch {} return n; });
+    setCoPending(null); setCoPw(""); setCoPwErr(false);
+  };
   const isStartup = cat.id === "startup";
   const sizeOf = (c) => { const m = String(c.valuation).replace(/[$,+~\s]/g, "").match(/([\d.]+)\s*([TBM])?/i); if (!m) return 0; const v = parseFloat(m[1]); const u = (m[2] || "B").toUpperCase(); return u === "T" ? v * 1000 : u === "M" ? v / 1000 : v; };
   const rows = companies.filter(c => c.cat === cat.id)
+    .filter(c => !delCos[c.name])
     .filter(c => !query || (c.name + c.unit + c.note).toLowerCase().includes(query.toLowerCase()));
   const open = c => onSelect && onSelect(c);
 
@@ -71,6 +83,27 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
           <TrendBar v={c.trend} />
         </span>
         <span className="ct-note">
+          {isStartup && (coPending === c.name ? (
+            <span className="art-del-pw" onClick={e => e.stopPropagation()}>
+              <input type="password" inputMode="numeric" className={"art-pw-input" + (coPwErr ? " err" : "")} placeholder="비밀번호" value={coPw} autoFocus
+                onChange={e => { setCoPw(e.target.value); setCoPwErr(false); }}
+                onKeyDown={e => { if (e.key === "Enter") confirmCoDel(c.name); else if (e.key === "Escape") { setCoPending(null); setCoPw(""); setCoPwErr(false); } }} />
+              <button className="art-pw-ok" onClick={() => confirmCoDel(c.name)}>삭제</button>
+              <button className="art-pw-cancel" onClick={() => { setCoPending(null); setCoPw(""); setCoPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+              {coPwErr && <span className="art-pw-err">비밀번호가 틀렸습니다.</span>}
+            </span>
+          ) : (
+            <button className="ct-del" title="이 스타트업 삭제(비밀번호 필요)" onClick={e => { e.stopPropagation(); setCoPending(c.name); setCoPw(""); setCoPwErr(false); }}>
+              <Icon name="x" size={12} sw={2.2} />
+            </button>
+          ))}
+          {c.strategy && (
+            <span className="ct-strat">
+              <em className="ct-strat-label">{c.strategy.label}</em>
+              <em className="ct-strat-score" title="투자 매력도(1~5) — 주간 LLM 평가">투자 {c.strategy.invest}/5</em>
+              <span className="ct-strat-txt"><b>투자:</b> {c.strategy.investNote} <b>협력:</b> {c.strategy.collab}</span>
+            </span>
+          )}
           {c.live && c.live.latest && (
             <a className="ct-live" href={c.live.latest.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>
               <Icon name="news" size={10} /> {c.live.latest.date && c.live.latest.date.slice(5)} {String(c.live.latest.title).slice(0, 46)}{String(c.live.latest.title).length > 46 ? "…" : ""}
