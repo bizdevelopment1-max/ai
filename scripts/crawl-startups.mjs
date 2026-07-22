@@ -67,8 +67,8 @@ async function llmStrategies(startups, newsByName) {
     const chunk = startups.slice(i, i + 10);
     const list = chunk.map((s, k) => `[${k}] ${s.name} (${s.vertical || s.unit})${newsByName[s.name] ? ` — 최신: ${newsByName[s.name].title}` : ""}`).join("\n");
     const r = await llmJSON({
-      system: "당신은 글로벌 스마트폰·온디바이스 AI 기기 제조사의 신사업·투자 전략 분석가입니다. 특정 기업명(삼성, 갤럭시, MX 등)은 절대 언급하지 않습니다. 한국어 개조식. JSON으로 출력.",
-      user: `다음 AI 스타트업들을 단말 제조사 신사업 관점에서 평가해 rows 배열로 출력하세요.\n\n${list}\n\n각 항목 {idx, invest(투자 매력도 1~5 — 시장 성장성·기술 희소성·밸류 부담 종합), investNote(투자 가능성 평가 1문장), collab(협력 포인트 — 단말·서비스 접목 각도 1~2문장), label(${JSON.stringify(LABELS)} 중 1개)}. 근거 없는 수치 생성 금지.`,
+      system: "당신은 글로벌 스마트폰 제조사 무선사업부(스마트폰·태블릿·웨어러블·XR 단말과 그 위의 서비스)의 신사업·투자 전략 분석가입니다. 평가 관점: ①온디바이스 AI 탑재 가능성 ②단말 서비스(카메라·음성·비서·헬스) 접목 ③B2B 단말 채널 시너지 ④신규 폼팩터(웨어러블·XR·로봇) 옵션 ⑤투자/인수 실익(밸류 부담 대비). 특정 기업명(삼성, 갤럭시, MX 등)은 출력에 절대 쓰지 않습니다. 한국어 개조식. JSON으로 출력.",
+      user: `다음 AI 스타트업들을 단말 제조사 신사업 관점에서 평가해 rows 배열로 출력하세요.\n\n${list}\n\n각 항목 {idx, invest(투자 매력도 1~5 — 시장 성장성·기술 희소성·밸류 부담 종합), investNote(투자/인수 실익 평가 1문장 — 지분투자·인수·제휴 중 권장 경로 포함), collab(협력 포인트 — 온디바이스 탑재·단말 서비스·B2B·신규 폼팩터 중 가장 유효한 접목 각도 1~2문장), label(${JSON.stringify(LABELS)} 중 1개)}. 근거 없는 수치 생성 금지.`,
       maxTokens: 2800,
       schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, invest: { type: "integer" }, investNote: { type: "string" }, collab: { type: "string" }, label: { type: "string" } }, required: ["idx", "invest", "investNote", "collab", "label"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
     });

@@ -1814,3 +1814,17 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ct-strat-txt b { color: var(--ink); font-weight: 800; }
 .ct-del { float: right; margin-left: 8px; background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px; border-radius: 5px; }
 .ct-del:hover { color: #D23B3B; background: color-mix(in srgb, #D23B3B 10%, transparent); }
+
+/* 빅테크 머니 플로우 도식 */
+.btf-wrap { padding: 12px 20px 0; }
+.btf-h { font-family: var(--f); font-size: 13.5px; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
+.btf-h em { font-style: normal; font-size: 11px; font-weight: 600; color: var(--muted); margin-left: 6px; }
+.btf-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.btf-card { background: var(--panel); border: 1px solid var(--line); border-radius: 11px; padding: 11px 13px; }
+.btf-name { font-family: var(--f); font-size: 12.5px; font-weight: 800; color: var(--ink); }
+.btf-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 7px 0 5px; }
+.btf-step { font-family: var(--f); font-size: 11px; font-weight: 700; color: var(--ink-2); background: var(--line-2); border-radius: 6px; padding: 3px 8px; word-break: keep-all; }
+.btf-step.last { color: #fff; background: #1428A0; }
+.btf-arr { color: var(--muted); font-size: 11px; }
+.btf-note { font-family: var(--f); font-size: 11px; color: var(--muted); margin: 0; line-height: 1.5; word-break: keep-all; }
+@media (max-width: 760px) { .btf-grid { grid-template-columns: 1fr; } }
