@@ -12,6 +12,7 @@
    Requires ANTHROPIC_API_KEY (repo secret). Degrades gracefully if absent.
    ============================================================ */
 import { writeFile, readFile } from "node:fs/promises";
+import { llmJSON, llmAvailable } from "./llm.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const KEY = process.env.ANTHROPIC_API_KEY || "";
@@ -174,179 +175,26 @@ function userPrompt(a) {
   return `다음 영문 AI 뉴스를 한국어로 정리하세요.\n\n제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}\n\n출력(JSON):\n- title_ko: 위 영문 제목을 자연스러운 한국어로 번역(30자 내외, 직역 아닌 의역 허용).\n- summary: 주요 내용을 정확히 3줄, 한국어 개조식으로 요약. 각 줄은 "· "로 시작하고 명사형 종결("~함/~음/~임")로 끝냅니다. 마침표(.)로 끝내지 마세요. 1줄=핵심 사실, 2줄=수치·배경, 3줄=온디바이스 AI·AI 에이전트·스마트폰/노트북 단말 전략 관점의 시사점.\n\n금지: 출처/매체명을 본문에 적지 마세요. 특정 회사명(삼성·MX·사업부 등)을 시사점에 적지 마세요.`;
 }
 
-async function summarize(a) {
-  if (!KEY) return null;
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": KEY, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 600,
-        system: SYS,
-        messages: [{ role: "user", content: userPrompt(a) }],
-        output_config: {
-          format: {
-            type: "json_schema",
-            schema: {
-              type: "object",
-              properties: { title_ko: { type: "string" }, summary: { type: "string" } },
-              required: ["title_ko", "summary"],
-              additionalProperties: false,
-            },
-          },
-        },
-      }),
+// 배치 요약: 10건/1콜(GitHub Models 무료 쿼터 보호). 실패 청크는 영문 폴백.
+async function summarizeBatch(arts) {
+  const out = new Array(arts.length).fill(null);
+  for (let i = 0; i < arts.length; i += 10) {
+    const chunk = arts.slice(i, i + 10);
+    const user = `다음 영문 AI 뉴스들을 한국어로 정리해 JSON으로 출력하세요.\n\n` +
+      chunk.map((a, k) => `[${k}] 제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}`).join("\n\n") +
+      `\n\n각 항목을 rows 배열로: {idx, title_ko(자연스러운 한국어 번역 30자 내외), summary(정확히 3줄 개조식 — 각 줄 "· " 시작·명사형 종결, 1줄=핵심 사실·2줄=수치/배경·3줄=온디바이스 AI·단말 전략 시사점)}.\n금지: 출처/매체명, 특정 회사명(삼성·MX 등)을 시사점에 쓰지 마세요.`;
+    const r = await llmJSON({
+      system: SYS, user, maxTokens: 2600,
+      schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, title_ko: { type: "string" }, summary: { type: "string" } }, required: ["idx", "title_ko", "summary"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
     });
-    if (!res.ok) throw new Error("HTTP " + res.status + " " + (await res.text()).slice(0, 120));
-    const j = await res.json();
-    if (j.stop_reason === "refusal") throw new Error("refusal");
-    const block = (j.content || []).find(b => b.type === "text");
-    if (!block) throw new Error("no text");
-    const parsed = JSON.parse(block.text);
-    if (!parsed.title_ko || !parsed.summary) throw new Error("bad json");
-    return { title_ko: nounize(decode(parsed.title_ko)), summary: nounizeSummary(decode(parsed.summary.replace(/\\n/g, "\n"))) };
-  } catch (e) {
-    console.warn(`[sum:${a.co}] ${e.message}`);
-    return null;
+    if (r && r.data && Array.isArray(r.data.rows)) {
+      for (const row of r.data.rows) {
+        const t = chunk[row.idx];
+        if (t && row.title_ko && row.summary) out[i + row.idx] = { title_ko: decode(row.title_ko), summary: decode(String(row.summary).replace(/\\n/g, "\n")) };
+      }
+    }
   }
-}
-
-// ---- Keyless Korean translation (no API key): Google Translate gtx endpoint ----
-async function translateKo(text) {
-  const t = String(text || "").trim();
-  if (!t) return "";
-  try {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ko&dt=t&q=${encodeURIComponent(t.slice(0, 1800))}`;
-    const res = await fetch(url, { headers: { "User-Agent": UA } });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const j = await res.json();
-    return (j[0] || []).map(seg => seg[0]).join("").trim();
-  } catch { return ""; }
-}
-
-// Resolve a Google News redirect link to the real publisher article URL.
-async function resolveUrl(u) {
-  if (!/news\.google\.com/.test(u)) return u;
-  try {
-    const ctl = AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined;
-    const res = await fetch(u, { headers: { "User-Agent": UA }, redirect: "follow", signal: ctl });
-    if (res.url && !/news\.google\.com/.test(res.url)) return res.url;   // followed to publisher
-    const html = await res.text();
-    // Google News interstitial embeds the target URL — pull the first non-Google https URL.
-    const m = html.match(/data-n-au="(https?:\/\/[^"]+)"/)
-      || html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["'](https?:\/\/(?!news\.google)[^"']+)["']/i)
-      || html.match(/href=["'](https?:\/\/(?!news\.google\.com|accounts\.google|policies\.google|support\.google|gstatic)[^"']+)["']/i);
-    return m ? m[1] : u;
-  } catch { return u; }
-}
-
-// Fetch publisher meta description + 본문 단락들 (RSS desc는 빈약 → 3줄 확보용으로 충분히 수집)
-async function fetchSnippet(url) {
-  try {
-    const ctl = AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined;
-    const res = await fetch(url, { headers: { "User-Agent": UA }, redirect: "follow", signal: ctl });
-    if (!res.ok) return "";
-    const html = await res.text();
-    const og = html.match(/<meta[^>]+(?:property|name)=["'](?:og:description|description|twitter:description)["'][^>]+content=["']([^"']+)["']/i)
-      || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["'](?:og:description|description)["']/i);
-    let txt = og ? decode(og[1]) : "";
-    // 본문 단락 다수 수집(광고·네비 제외 위해 길이 필터) → og 설명에 이어붙여 문장 3개 이상 확보
-    const ps = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)]
-      .map(m => decode(m[1].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim())
-      .filter(t => t.length > 60 && /[.!?。]/.test(t));
-    if (ps.length) txt = (txt + " " + ps.slice(0, 5).join(" ")).trim();
-    return txt.slice(0, 900);
-  } catch { return ""; }
-}
-
-// 개조식 정규화: 존댓말·평서형 종결 → 명사형("~함/~음/~임"), 끝 마침표 제거
-const NOUN_END = [
-  [/합니다$/, "함"], [/입니다$/, "임"], [/됩니다$/, "됨"], [/갑니다$/, "감"], [/옵니다$/, "옴"],
-  [/있습니다$/, "있음"], [/없습니다$/, "없음"], [/([가-힣])습니다$/, "$1음"],
-  [/한다$/, "함"], [/이다$/, "임"], [/된다$/, "됨"], [/있다$/, "있음"], [/없다$/, "없음"],
-  [/했다$/, "했음"], [/였다$/, "였음"], [/왔다$/, "왔음"], [/([가-힣])었다$/, "$1었음"], [/([가-힣])았다$/, "$1았음"],
-];
-function nounize(line) {
-  let l = String(line || "").trim().replace(/[.。]+\s*$/, "");
-  // 문장 중간의 존댓말 종결도 명사형으로("~했습니다. ~" → "~했음 — ~")
-  l = l.replace(/([가-힣])(?:습니다|ㅂ니다)[.。]\s+/g, "$1음 — ").replace(/합니다[.。]\s+/g, "함 — ")
-       .replace(/([가-힣])다[.。]\s+(?=[가-힣A-Za-z])/g, "$1다 — ");
-  for (const [re, to] of NOUN_END) { if (re.test(l)) { l = l.replace(re, to); break; } }
-  return l.replace(/[.。]+\s*$/, "").trim();
-}
-const nounizeSummary = sm => String(sm || "").split("\n").map(l => l.trim()).filter(Boolean)
-  .map(l => "· " + nounize(l.replace(/^[·\-•]\s*/, ""))).join("\n");
-
-// 화면 노출 금지어 — 제목·요약에 포함되면 해당 기사 제외
-const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
-
-// 주요 매체명(영문·한글) — 요약 줄이 '매체명'으로 끝나는 것을 걸러내기 위함
-const PUBS = /(business insider|비즈니스\s*인사이더|reuters|로이터|bloomberg|블룸버그|techcrunch|테크크런치|the verge|버지|cnbc|wsj|wall street journal|월스트리트|financial times|the information|axios|engadget|ars technica|the guardian|가디언|venturebeat|벤처비트|forbes|포브스|wired|와이어드|cnet|new york times|뉴욕\s*타임스|associated press|ap통신|the new york times|9to5|fast company|패스트컴퍼니)/i;
-
-// 본문 끝에 붙은 매체명 꼬리 제거(" - Business Insider", " | 비즈니스 인사이더", 마지막 매체명 문장 등)
-function stripSourceTail(text, source) {
-  let t = String(text || "").trim();
-  if (source) {
-    const esc = String(source).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    t = t.replace(new RegExp("[\\-\\|·,–—]\\s*" + esc + "\\s*$", "i"), "").trim();
-  }
-  t = t.replace(/[\-\|·,–—]\s*[A-Za-z][\w .&'\-]{1,28}$/,(m)=> PUBS.test(m) ? "" : m).trim(); // 끝 영문 매체 꼬리
-  return t;
-}
-
-// 한 줄이 사실상 '매체명 attribution'인지 — 짧고 매체명이면 요약 줄에서 제외
-function isAttribution(line, source) {
-  const l = String(line || "").trim();
-  if (!l) return true;
-  if (source && l.toLowerCase() === String(source).toLowerCase()) return true;
-  if (l.length <= 16 && PUBS.test(l)) return true;                         // 짧은 매체명
-  if (/^[A-Za-z][A-Za-z .&'\-]{1,24}$/.test(l) && l.length <= 24) return true; // 한글 없는 짧은 영문(대개 매체·꼬리표)
-  return false;
-}
-
-// 텍스트를 한국어 개조식 줄(최대 3)로 분해 — 매체명/출처 줄은 제외하고 요약만
-function to3lines(text, fallback, source) {
-  const cleaned = stripSourceTail(text, source);
-  let lines = String(cleaned || "").split(/(?<=[.!?。…])\s+|·|\n|;/).map(s => s.trim())
-    .filter(s => s.length > 4)
-    .filter(s => !isAttribution(s, source))
-    .slice(0, 3);
-  if (!lines.length) lines = [fallback];
-  return lines.map(l => "· " + nounize(l.replace(/^[·\-•]\s*/, ""))).join("\n");
-}
-
-// 제목 정리: '독점:'/'Exclusive:' 등 라벨과 끝의 매체명 꼬리를 제거(제목=요약 중복 방지)
-function cleanTitle(t, source) {
-  let s = String(t || "").trim();
-  s = s.replace(/^\s*(독점|단독|속보|Exclusive|Breaking|Opinion|Analysis|Update)\s*[:：]\s*/i, "");
-  s = stripSourceTail(s, source);
-  s = nounize(s);                                       // 제목도 개조식·마침표 제거
-  return s.trim() || String(t || "").trim();
-}
-
-// No-API brief: 한글 제목(번역) + 본문(원문 메타+번역) 3줄 개조식. 번역 실패 시 영문 폴백(사용자 허용).
-async function freeKoBrief(a, contentEn) {
-  const titleKo = (await translateKo(a.title)) || a.title;
-  const content = stripSourceTail(contentEn || a.descEn || "", a.source);
-  const contentKo = (await translateKo(content)) || content;  // 번역 성공 시 한글, 실패 시 영문 폴백
-  return { title_ko: titleKo, summary: to3lines(contentKo, titleKo, a.source), url: a.url };
-}
-
-// Best-effort brief: 본문 보강(공통) → Claude(있으면) → keyless. 항상 개조식 3줄 요약 반환.
-// contentEn(보강된 원문)도 함께 반환 → news.json에 보존, 다른 PC의 Claude CLI가 재요약할 재료로 사용.
-async function brief(a) {
-  // 공통: 원문 URL 해석 + 본문 단락 수집으로 내용 보강(양 경로 모두 풍부한 입력 사용 → 3줄 확보)
-  const realUrl = await resolveUrl(a.url);
-  let content = a.descEn || "";
-  const snip = await fetchSnippet(realUrl);
-  if (snip && snip.length > content.length) content = snip;
-  content = stripSourceTail(content, a.source);
-  const rich = { ...a, descEn: content, url: realUrl };
-  let s = null;
-  if (KEY) s = await summarize(rich);
-  if (!s) s = await freeKoBrief(rich, content);
-  return { ...s, url: realUrl, contentEn: content };
+  return out;
 }
 
 // limited-concurrency map
@@ -365,7 +213,7 @@ const isKoreanSummary = a => a && /[가-힣]/.test(a.title || "") && a.summary &
   && !/출처\s*[:：]/.test(a.summary);
 
 async function main() {
-  console.log(`Crawling authoritative English AI news… (LLM summaries: ${KEY ? "on" : "OFF — set ANTHROPIC_API_KEY"})`);
+  console.log(`Crawling authoritative English AI news… (LLM: ${llmAvailable() || "OFF — rules only"})`);
   const companyItems = (await Promise.all(COMPANIES.map(c => pull(c, 1)))).flat();
   const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
   const directItems = (await Promise.all(DIRECT_FEEDS.map(f => pullDirect(f, 2)))).flat();

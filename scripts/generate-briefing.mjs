@@ -15,6 +15,7 @@
    - 사명(삼성/MX/Galaxy) 미출력 — '글로벌 단말 제조사' 관점만.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
+import { llmJSON } from "./llm.mjs";
 
 const KEY = process.env.ANTHROPIC_API_KEY || "";
 const MODEL = "claude-opus-4-8";
@@ -64,57 +65,33 @@ headline: 오늘 브리핑 전체를 관통하는 한 줄(25자 내외).
 }
 
 async function llmBriefing(cands) {
-  if (!KEY || !cands.length) return null;
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": KEY, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({
-        model: MODEL, max_tokens: 3000, system: SYS,
-        messages: [{ role: "user", content: briefPrompt(cands) }],
-        output_config: {
-          format: {
-            type: "json_schema",
-            schema: {
-              type: "object",
-              properties: {
-                headline: { type: "string" },
-                items: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      signal: { type: "string" }, insight: { type: "string" }, action: { type: "string" },
-                      labels: { type: "array", items: { type: "string" } },
-                      scores: {
-                        type: "object",
-                        properties: { fit: { type: "integer" }, growth: { type: "integer" }, exec: { type: "integer" }, edge: { type: "integer" } },
-                        required: ["fit", "growth", "exec", "edge"], additionalProperties: false,
-                      },
-                      evidenceIdx: { type: "array", items: { type: "integer" } },
-                    },
-                    required: ["signal", "insight", "action", "labels", "scores", "evidenceIdx"],
-                    additionalProperties: false,
-                  },
-                },
-              },
-              required: ["headline", "items"], additionalProperties: false,
+  if (!cands.length) return null;
+  const r = await llmJSON({
+    system: SYS, user: briefPrompt(cands), maxTokens: 3000,
+    schema: {
+      type: "object",
+      properties: {
+        headline: { type: "string" },
+        items: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              signal: { type: "string" }, insight: { type: "string" }, action: { type: "string" },
+              labels: { type: "array", items: { type: "string" } },
+              scores: { type: "object", properties: { fit: { type: "integer" }, growth: { type: "integer" }, exec: { type: "integer" }, edge: { type: "integer" } }, required: ["fit", "growth", "exec", "edge"], additionalProperties: false },
+              evidenceIdx: { type: "array", items: { type: "integer" } },
             },
+            required: ["signal", "insight", "action", "labels", "scores", "evidenceIdx"],
+            additionalProperties: false,
           },
         },
-      }),
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status + " " + (await res.text()).slice(0, 120));
-    const j = await res.json();
-    if (j.stop_reason === "refusal") throw new Error("refusal");
-    const block = (j.content || []).find(b => b.type === "text");
-    const parsed = JSON.parse(block.text);
-    if (!parsed.items || !parsed.items.length) throw new Error("empty items");
-    return { engine: "llm", headline: scrub(parsed.headline), items: parsed.items.slice(0, MAX_ITEMS).map(it => finishItem(it, cands)) };
-  } catch (e) {
-    console.warn(`[briefing:llm] ${e.message} → rules fallback`);
-    return null;
-  }
+      },
+      required: ["headline", "items"], additionalProperties: false,
+    },
+  });
+  if (!r || !r.data.items || !r.data.items.length) { console.warn("[briefing:llm] unavailable → rules fallback"); return null; }
+  return { engine: r.engine, headline: scrub(r.data.headline), items: r.data.items.slice(0, MAX_ITEMS).map(it => finishItem(it, cands)) };
 }
 
 function finishItem(it, cands) {
