@@ -14,6 +14,7 @@
    - 사명(삼성/MX/Galaxy) 미출력 — '글로벌 단말 제조사' 관점만.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
+import { llmJSON } from "./llm.mjs";
 
 const KEY = process.env.ANTHROPIC_API_KEY || "";
 const MODEL = "claude-opus-4-8";
@@ -92,53 +93,30 @@ ${news}
 }
 
 async function llmRadar(articles) {
-  if (!KEY) return null;
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": KEY, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({
-        model: MODEL, max_tokens: 2500, system: SYS,
-        messages: [{ role: "user", content: radarPrompt(articles) }],
-        output_config: {
-          format: {
-            type: "json_schema",
-            schema: {
-              type: "object",
-              properties: {
-                picks: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      poolIdx: { type: "integer" }, why: { type: "string" }, partnership: { type: "string" },
-                      scores: {
-                        type: "object",
-                        properties: { attach: { type: "integer" }, enterprise: { type: "integer" }, partner: { type: "integer" }, acquire: { type: "integer" } },
-                        required: ["attach", "enterprise", "partner", "acquire"], additionalProperties: false,
-                      },
-                    },
-                    required: ["poolIdx", "why", "partnership", "scores"], additionalProperties: false,
-                  },
-                },
-              },
-              required: ["picks"], additionalProperties: false,
+  const r = await llmJSON({
+    system: SYS, user: radarPrompt(articles), maxTokens: 2500,
+    schema: {
+      type: "object",
+      properties: {
+        picks: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              poolIdx: { type: "integer" }, why: { type: "string" }, partnership: { type: "string" },
+              scores: { type: "object", properties: { attach: { type: "integer" }, enterprise: { type: "integer" }, partner: { type: "integer" }, acquire: { type: "integer" } }, required: ["attach", "enterprise", "partner", "acquire"], additionalProperties: false },
             },
+            required: ["poolIdx", "why", "partnership", "scores"], additionalProperties: false,
           },
         },
-      }),
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status + " " + (await res.text()).slice(0, 120));
-    const j = await res.json();
-    if (j.stop_reason === "refusal") throw new Error("refusal");
-    const parsed = JSON.parse((j.content || []).find(b => b.type === "text").text);
-    const picks = (parsed.picks || []).map(p => finishPick(p, articles)).filter(Boolean).slice(0, 5);
-    if (picks.length < 3) throw new Error("too few picks");
-    return { engine: "llm", picks };
-  } catch (e) {
-    console.warn(`[radar:llm] ${e.message} → rules fallback`);
-    return null;
-  }
+      },
+      required: ["picks"], additionalProperties: false,
+    },
+  });
+  if (!r) { console.warn("[radar:llm] unavailable → rules fallback"); return null; }
+  const picks = (r.data.picks || []).map(p => finishPick(p, articles)).filter(Boolean).slice(0, 5);
+  if (picks.length < 3) { console.warn("[radar:llm] too few picks → rules fallback"); return null; }
+  return { engine: r.engine, picks };
 }
 
 function finishPick(p, articles) {
@@ -209,46 +187,29 @@ ${news}
 }
 
 async function llmMemo(picks, articles) {
-  if (!KEY || !picks.length) return null;
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": KEY, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({
-        model: MODEL, max_tokens: 1500, system: MEMO_SYS,
-        messages: [{ role: "user", content: memoPrompt(picks, articles) }],
-        output_config: {
-          format: {
-            type: "json_schema",
-            schema: {
-              type: "object",
-              properties: {
-                title: { type: "string" }, thesis: { type: "string" }, structure: { type: "string" },
-                targets: { type: "array", items: { type: "string" } },
-                risks: { type: "array", items: { type: "string" } },
-                next: { type: "array", items: { type: "string" } },
-              },
-              required: ["title", "thesis", "structure", "targets", "risks", "next"], additionalProperties: false,
-            },
-          },
-        },
-      }),
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const j = await res.json();
-    if (j.stop_reason === "refusal") throw new Error("refusal");
-    const m = JSON.parse((j.content || []).find(b => b.type === "text").text);
-    return {
-      month: monthOf(), createdAt: TODAY, engine: "llm",
-      title: scrub(m.title), thesis: scrub(m.thesis), structure: scrub(m.structure),
-      targets: (m.targets || []).map(scrub).slice(0, 3),
-      risks: (m.risks || []).map(scrub).slice(0, 3),
-      next: (m.next || []).map(scrub).slice(0, 3),
-    };
-  } catch (e) {
-    console.warn(`[memo:llm] ${e.message} → rules fallback`);
-    return null;
-  }
+  if (!picks.length) return null;
+  const r = await llmJSON({
+    system: MEMO_SYS, user: memoPrompt(picks, articles), maxTokens: 1500,
+    schema: {
+      type: "object",
+      properties: {
+        title: { type: "string" }, thesis: { type: "string" }, structure: { type: "string" },
+        targets: { type: "array", items: { type: "string" } },
+        risks: { type: "array", items: { type: "string" } },
+        next: { type: "array", items: { type: "string" } },
+      },
+      required: ["title", "thesis", "structure", "targets", "risks", "next"], additionalProperties: false,
+    },
+  });
+  if (!r) { console.warn("[memo:llm] unavailable → rules fallback"); return null; }
+  const m = r.data;
+  return {
+    month: monthOf(), createdAt: TODAY, engine: r.engine,
+    title: scrub(m.title), thesis: scrub(m.thesis), structure: scrub(m.structure),
+    targets: (m.targets || []).map(scrub).slice(0, 3),
+    risks: (m.risks || []).map(scrub).slice(0, 3),
+    next: (m.next || []).map(scrub).slice(0, 3),
+  };
 }
 
 function ruleMemo(picks) {
@@ -277,7 +238,7 @@ async function main() {
   if (needWeekly(prev) || engine === "rules") {
     const r = (await llmRadar(articles)) || ruleRadar(articles);
     // LLM 실패 시 기존 LLM 결과가 있으면 유지(품질 후퇴 방지)
-    if (r.engine === "llm" || !(picks.length && engine === "llm")) { picks = r.picks; engine = r.engine; weekOf = TODAY; }
+    if (r.engine !== "rules" || !(picks.length && engine !== "rules")) { picks = r.picks; engine = r.engine; weekOf = TODAY; }
   }
 
   let memos = (prev && prev.memos || []).slice(0, 6);

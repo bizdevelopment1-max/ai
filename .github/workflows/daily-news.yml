@@ -6,7 +6,9 @@ name: Daily AI News & Stocks Crawl
 on:
   schedule:
     - cron: "30 21 * * *"   # 06:30 KST — 아침 업데이트(07:00 KST 이전 완료)
+    - cron: "30 3 * * *"    # 12:30 KST — 점심 업데이트
     - cron: "30 10 * * *"   # 19:30 KST — 저녁 업데이트
+    - cron: "30 15 * * *"   # 00:30 KST — 심야 업데이트
   workflow_dispatch: {}      # manual run
   push:
     branches: [main]
@@ -16,6 +18,7 @@ on:
 
 permissions:
   contents: write
+  models: read     # GitHub Models — 별도 키 없이 GITHUB_TOKEN으로 LLM 호출
 
 concurrency:
   group: daily-news
@@ -38,6 +41,7 @@ jobs:
       - name: Crawl authoritative English news → Korean briefs
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/crawl-news.mjs
 
       - name: Crawl real stock prices + market cap
@@ -46,11 +50,13 @@ jobs:
       - name: Generate AI Morning Briefing (Signal → Insight → Action)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/generate-briefing.mjs
 
       - name: Generate Startup Radar + scorecards + monthly opportunity memo
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/startup-radar.mjs
 
       - name: Build daily insights (rule-based, deterministic — no API key)
@@ -59,6 +65,7 @@ jobs:
       - name: Crawl IB research (증권사 1페이저 + 기관 피드)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/crawl-research.mjs
 
       - name: Build live company data (mentions + market caps)

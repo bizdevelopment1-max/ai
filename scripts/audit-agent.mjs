@@ -46,7 +46,7 @@ async function auditOne(rule) {
 
   if (rule.engine) {
     try { res.engine = rule.engine(d); } catch {}
-    if (res.engine === "rules") res.issues.push("규칙 폴백으로 생성됨(LLM 미사용 — ANTHROPIC_API_KEY 확인)");
+    if (res.engine === "rules") res.issues.push("규칙 폴백으로 생성됨(LLM 미사용 — GitHub Models 권한/쿼터 또는 ANTHROPIC_API_KEY 확인)");
     if (res.engine === "seed") res.issues.push("시드 데이터 표시 중(첫 LLM 갱신 대기)");
   }
 

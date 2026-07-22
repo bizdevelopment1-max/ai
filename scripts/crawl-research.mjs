@@ -12,6 +12,7 @@
            키 없으면 기존 1페이저 유지(품질 후퇴 방지) + 피드만 갱신.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
+import { llmJSON } from "./llm.mjs";
 
 const KEY = process.env.ANTHROPIC_API_KEY || "";
 const MODEL = "claude-opus-4-8";
@@ -68,24 +69,15 @@ async function pullHouse(h) {
 
 // ---- 피드 한국어 요약(LLM, 선택) ----------------------------------------
 async function koSummarize(items) {
-  if (!KEY || !items.length) return items;
-  try {
-    const list = items.map((a, i) => `[${i}] ${a.house}: ${a.title} — ${a.desc}`).join("\n");
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": KEY, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({
-        model: MODEL, max_tokens: 2000,
-        system: "영문 리서치 뉴스 제목을 한국어로 번역·요약합니다. 개조식 명사형 종결. 기사에 없는 수치 생성 금지.",
-        messages: [{ role: "user", content: `각 항목을 {idx, ko(한국어 제목 30자 내외), sum(핵심 1줄 요약)}로 정리:\n${list}` }],
-        output_config: { format: { type: "json_schema", schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, ko: { type: "string" }, sum: { type: "string" } }, required: ["idx", "ko", "sum"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false } } },
-      }),
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const j = await res.json();
-    const rows = JSON.parse((j.content || []).find(b => b.type === "text").text).rows || [];
-    for (const r of rows) if (items[r.idx]) { items[r.idx].titleKo = r.ko; items[r.idx].sum = r.sum; }
-  } catch (e) { console.warn(`[research:ko] ${e.message}`); }
+  if (!items.length) return items;
+  const list = items.map((a, i) => `[${i}] ${a.house}: ${a.title} — ${a.desc}`).join("\n");
+  const r = await llmJSON({
+    system: "영문 리서치 뉴스 제목을 한국어로 번역·요약합니다. 개조식 명사형 종결. 기사에 없는 수치 생성 금지. JSON으로 출력.",
+    user: `각 항목을 rows 배열의 {idx, ko(한국어 제목 30자 내외), sum(핵심 1줄 요약)}로 정리:\n${list}`,
+    maxTokens: 2000,
+    schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, ko: { type: "string" }, sum: { type: "string" } }, required: ["idx", "ko", "sum"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
+  });
+  if (r) for (const row of r.data.rows || []) if (items[row.idx]) { items[row.idx].titleKo = row.ko; items[row.idx].sum = row.sum; }
   return items;
 }
 
@@ -106,35 +98,17 @@ const OP_SCHEMA = {
 };
 
 async function llmOnepager(feed, articles) {
-  if (!KEY) return null;
-  try {
-    const fl = feed.map(f => `- [${f.house}] (${f.date}) ${f.title} — ${f.desc || ""}`).join("\n");
-    const nl = articles.slice(0, 12).map(a => `- (${a.date}) ${a.title}: ${(a.summary || "").split("\n")[0]}`).join("\n");
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": KEY, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({
-        model: MODEL, max_tokens: 3500,
-        system: "당신은 IB 리서치 브리핑을 작성하는 애널리스트입니다. 한국어로, 근거 기반으로만 작성합니다. 절대 규칙: 입력에 없는 수치·전망을 만들지 마세요. 수치가 부족하면 정성 서술로 대체하세요.",
-        messages: [{ role: "user", content: `아래 증권사·시장기관 리서치 뉴스와 산업 뉴스에서 이번 주 가장 중요한 리서치 테마 1개를 골라 'IB 리서치 브리핑 1페이저'를 작성하세요.
-
-[리서치 피드]
-${fl}
-
-[산업 뉴스]
-${nl}
-
-필드: title(브리핑 제목, 2줄 이내) / sourceLine(근거 기관·자료 요약, 예: "Goldman Sachs·TrendForce 종합") / scope(커버 영역) / thesis(한 줄 논지) / insights(핵심 인사이트 4~6개, 각 title+body 3~4문장) / metrics(핵심 지표 타일 4개, k=수치·t=설명 — 입력에 있는 수치만) / areas(영역별 분석 4~6행: area·change·winner) / implications(투자·전략 시사점 4~5개: pill(2~6자 태그)+text) / conclusion(최종 결론 2~3문장) / watch(주의·검증 필요 사항 1~2문장)` }],
-        output_config: { format: { type: "json_schema", schema: OP_SCHEMA } },
-      }),
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status + " " + (await res.text()).slice(0, 100));
-    const j = await res.json();
-    if (j.stop_reason === "refusal") throw new Error("refusal");
-    const op = JSON.parse((j.content || []).find(b => b.type === "text").text);
-    if (!op.insights || op.insights.length < 3) throw new Error("thin onepager");
-    return { ...op, date: TODAY, engine: "llm" };
-  } catch (e) { console.warn(`[research:onepager] ${e.message} → 기존 1페이저 유지`); return null; }
+  const fl = feed.map(f => `- [${f.house}] (${f.date}) ${f.title} — ${f.desc || ""}`).join("\n");
+  const nl = articles.slice(0, 12).map(a => `- (${a.date}) ${a.title}: ${(a.summary || "").split("\n")[0]}`).join("\n");
+  const r = await llmJSON({
+    system: "당신은 IB 리서치 브리핑을 작성하는 애널리스트입니다. 한국어로, 근거 기반으로만 작성합니다. 절대 규칙: 입력에 없는 수치·전망을 만들지 마세요. 수치가 부족하면 정성 서술로 대체하세요. JSON으로 출력합니다.",
+    user: `아래 증권사·시장기관 리서치 뉴스와 산업 뉴스에서 이번 주 가장 중요한 리서치 테마 1개를 골라 'IB 리서치 브리핑 1페이저'를 작성하세요.\n\n[리서치 피드]\n${fl}\n\n[산업 뉴스]\n${nl}\n\n필드: title(브리핑 제목, 2줄 이내) / sourceLine(근거 기관·자료 요약) / scope(커버 영역) / thesis(한 줄 논지) / insights(핵심 인사이트 4~6개, 각 title+body 3~4문장) / metrics(핵심 지표 타일 4개, k=수치·t=설명 — 입력에 있는 수치만) / areas(영역별 분석 4~6행: area·change·winner) / implications(투자·전략 시사점 4~5개: pill(2~6자 태그)+text) / conclusion(최종 결론 2~3문장) / watch(주의·검증 필요 사항 1~2문장)`,
+    maxTokens: 3500, schema: OP_SCHEMA,
+  });
+  if (!r) { console.warn("[research:onepager] LLM unavailable → 기존 1페이저 유지"); return null; }
+  const op = r.data;
+  if (!op.insights || op.insights.length < 3) { console.warn("[research:onepager] thin → 기존 유지"); return null; }
+  return { ...op, date: TODAY, engine: r.engine };
 }
 
 async function main() {
