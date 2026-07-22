@@ -78,10 +78,6 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
           <AnimatedNumber className="ct-mval" value={c.value} />
           {c.metricAsof && c.metricAsof !== "—" && <em className="ct-asof">'{c.metricAsof} 기준</em>}
         </span>
-        <span className="num ct-trend" title={c.trendBasis || "YoY 또는 밸류 변화율"}>
-          <Trend v={c.trend} small animate />
-          <TrendBar v={c.trend} />
-        </span>
         <span className="ct-note">
           {isStartup && (coPending === c.name ? (
             <span className="art-del-pw" onClick={e => e.stopPropagation()}>
@@ -160,7 +156,6 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
           <span>세그먼트</span>
           <span className="num">밸류에이션</span>
           <span className="num">핵심지표</span>
-          <span className="num">추이</span>
           <span>코멘트</span>
         </div>
         {body}
@@ -206,10 +201,6 @@ function CompanyDetail({ company, cats, articles, onClose }) {
               <span>{c.unit}</span>
             </div>
           </div>
-          <div className="cd-trend">
-            <Trend v={c.trend} animate />
-            <TrendBar v={c.trend} />
-          </div>
         </div>
 
         <div className="cd-stats">
@@ -226,10 +217,6 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           <div className="cd-stat">
             <em>펀딩 단계</em>
             <b>{c.funding}</b>
-          </div>
-          <div className="cd-stat">
-            <em>분기 추이</em>
-            <b><Trend v={c.trend} animate /></b>
           </div>
         </div>
 
@@ -1868,9 +1855,6 @@ function ExecToplines({ items, insights, onNav }) {
             <div className="es-axis">
               <span className="es-axis-ico"><Icon name={ICON[t.tone] || "spark"} size={15} /></span>
               <b>{t.tag}</b>
-              {t.score != null && (
-                <span className="es-meter" title={`관련도 ${t.score}/100`}><i style={{ width: t.score + "%" }} /></span>
-              )}
               {pend === t.tag ? (
                 <span className="art-del-pw" onClick={e => e.stopPropagation()}>
                   <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
