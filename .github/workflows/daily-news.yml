@@ -71,6 +71,12 @@ jobs:
       - name: Build live company data (mentions + market caps)
         run: node scripts/crawl-companies.mjs
 
+      - name: Crawl startup strategies (투자·협력 관점, 주간)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/crawl-startups.mjs
+
       - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
         run: node scripts/audit-agent.mjs
 
@@ -78,7 +84,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json audit.json
+          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json audit.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

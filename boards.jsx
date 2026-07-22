@@ -38,9 +38,21 @@ function CoLogo({ name, domain, accent }) {
 function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) {
   const inView = useInView(sectionRef);
   const prog = useProgress(inView, 1000);
+  // 스타트업 행 삭제(비밀번호 000) — localStorage 영구 보존
+  const CO_LS = "aiDashDeletedCompanies";
+  const [delCos, setDelCos] = React.useState(() => { try { return JSON.parse(localStorage.getItem(CO_LS) || "{}"); } catch { return {}; } });
+  const [coPending, setCoPending] = React.useState(null);
+  const [coPw, setCoPw] = React.useState("");
+  const [coPwErr, setCoPwErr] = React.useState(false);
+  const confirmCoDel = (name) => {
+    if (coPw !== "000") { setCoPwErr(true); return; }
+    setDelCos(d => { const n = { ...d, [name]: 1 }; try { localStorage.setItem(CO_LS, JSON.stringify(n)); } catch {} return n; });
+    setCoPending(null); setCoPw(""); setCoPwErr(false);
+  };
   const isStartup = cat.id === "startup";
   const sizeOf = (c) => { const m = String(c.valuation).replace(/[$,+~\s]/g, "").match(/([\d.]+)\s*([TBM])?/i); if (!m) return 0; const v = parseFloat(m[1]); const u = (m[2] || "B").toUpperCase(); return u === "T" ? v * 1000 : u === "M" ? v / 1000 : v; };
   const rows = companies.filter(c => c.cat === cat.id)
+    .filter(c => !delCos[c.name])
     .filter(c => !query || (c.name + c.unit + c.note).toLowerCase().includes(query.toLowerCase()));
   const open = c => onSelect && onSelect(c);
 
@@ -71,6 +83,27 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
           <TrendBar v={c.trend} />
         </span>
         <span className="ct-note">
+          {isStartup && (coPending === c.name ? (
+            <span className="art-del-pw" onClick={e => e.stopPropagation()}>
+              <input type="password" inputMode="numeric" className={"art-pw-input" + (coPwErr ? " err" : "")} placeholder="비밀번호" value={coPw} autoFocus
+                onChange={e => { setCoPw(e.target.value); setCoPwErr(false); }}
+                onKeyDown={e => { if (e.key === "Enter") confirmCoDel(c.name); else if (e.key === "Escape") { setCoPending(null); setCoPw(""); setCoPwErr(false); } }} />
+              <button className="art-pw-ok" onClick={() => confirmCoDel(c.name)}>삭제</button>
+              <button className="art-pw-cancel" onClick={() => { setCoPending(null); setCoPw(""); setCoPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+              {coPwErr && <span className="art-pw-err">비밀번호가 틀렸습니다.</span>}
+            </span>
+          ) : (
+            <button className="ct-del" title="이 스타트업 삭제(비밀번호 필요)" onClick={e => { e.stopPropagation(); setCoPending(c.name); setCoPw(""); setCoPwErr(false); }}>
+              <Icon name="x" size={12} sw={2.2} />
+            </button>
+          ))}
+          {c.strategy && (
+            <span className="ct-strat">
+              <em className="ct-strat-label">{c.strategy.label}</em>
+              <em className="ct-strat-score" title="투자 매력도(1~5) — 주간 LLM 평가">투자 {c.strategy.invest}/5</em>
+              <span className="ct-strat-txt"><b>투자:</b> {c.strategy.investNote} <b>협력:</b> {c.strategy.collab}</span>
+            </span>
+          )}
           {c.live && c.live.latest && (
             <a className="ct-live" href={c.live.latest.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>
               <Icon name="news" size={10} /> {c.live.latest.date && c.live.latest.date.slice(5)} {String(c.live.latest.title).slice(0, 46)}{String(c.live.latest.title).length > 46 ? "…" : ""}
@@ -1108,6 +1141,35 @@ function ESCompetitiveMap({ companies, cats, articles }) {
 }
 
 // ---- Biz Model Board (monetization / revenue model per company) ----
+const BIGTECH_FLOWS = [
+  { name: "Microsoft", flow: ["기업 사용자", "M365·Copilot 구독($30/월)", "Azure AI 클라우드 과금", "AI 런레이트 $37B"], note: "오피스 번들 락인 → 좌석당 추가 과금 + 클라우드 종량제" },
+  { name: "Google", flow: ["소비자·광고주", "검색·유튜브 광고", "Gemini 구독 + Cloud 과금", "광고가 AI 투자 재원"], note: "광고 본업이 AI 개발비를 조달 — AI로 광고 타기팅 강화 순환" },
+  { name: "Apple", flow: ["단말 구매자", "프리미엄 하드웨어 마진", "서비스 구독(iCloud+ 등)", "AI는 단말 판매 촉진"], note: "AI 직접 과금 없이 교체수요·서비스 ARPU로 회수" },
+  { name: "Amazon", flow: ["기업 고객", "AWS Bedrock 모델 호스팅", "컴퓨트·스토리지 종량제", "멀티모델 중립 수수료"], note: "어느 모델이 이겨도 클라우드 사용량으로 수익화" },
+  { name: "NVIDIA", flow: ["하이퍼스케일러", "GPU·랙 판매($1.8억/랙)", "CUDA 생태계 락인", "컴퓨트 레이어 75% 점유"], note: "AI 골드러시의 '삽' — CapEx 사이클 최대 수혜" },
+  { name: "Meta", flow: ["소비자 30억", "Llama 무료 배포", "AI 광고 최적화·전환율", "광고 매출로 회수"], note: "오픈소스로 생태계 장악 — 수익화는 본업(광고) 강화로" },
+];
+function BigtechFlowGrid() {
+  return (
+    <div className="btf-grid">
+      {BIGTECH_FLOWS.map(f => (
+        <div className="btf-card" key={f.name}>
+          <b className="btf-name">{f.name}</b>
+          <div className="btf-flow">
+            {f.flow.map((s, i) => (
+              <React.Fragment key={i}>
+                <span className={"btf-step" + (i === f.flow.length - 1 ? " last" : "")}>{s}</span>
+                {i < f.flow.length - 1 && <span className="btf-arr">→</span>}
+              </React.Fragment>
+            ))}
+          </div>
+          <p className="btf-note">{f.note}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function BizModelBoard({ companies, cats, sectionRef, theme }) {
   const inView = useInView(sectionRef);
   const bizProg = useProgress(inView, 1400);
@@ -1127,6 +1189,10 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
           <h2>AI 비즈니스 모델 <span className="board-en">Money Flow · Who Pays Whom</span></h2>
           <p>투자·인수·GPU/클라우드/데이터 <b>매출</b> 등 실제 '돈의 흐름'을 그래프로 표시 (초록=투자, 주황=매출, 파랑=파트너십) · <b>시사점:</b> 온디바이스 AI 기능의 과금 모델(구독 유료화·단말 번들·커머스 수수료) 설계 참조</p>
         </div>
+      <div className="btf-wrap">
+        <h3 className="btf-h">빅테크 머니 플로우 <em>누가 → 무엇에 → 어떻게 지불하나</em></h3>
+        <BigtechFlowGrid />
+      </div>
       </div>
       <div className="pricing-tracker">
         <div className="pt-head"><h3>AI Monetization Tracker — 토큰 단가 & 단말 원가 영향</h3><span>$ / 100만 토큰 (입력 / 출력) · 온디바이스 대체 시 절감 관점</span></div>
