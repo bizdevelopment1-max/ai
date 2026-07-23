@@ -1900,3 +1900,15 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .feed-more { display: block; width: 100%; margin: 10px 0 2px; font-family: var(--f); font-size: 12.5px; font-weight: 700; color: var(--muted); background: var(--panel); border: 2px solid var(--line); border-radius: 10px; padding: 9px; cursor: pointer; transition: all .15s; }
 .feed-more:hover { border-color: var(--accent); color: var(--ink); }
 .feed-more em { font-style: normal; font-weight: 600; color: var(--muted); margin-left: 6px; }
+
+/* ✕ 삭제·숨김 버튼: 기본 숨김 → 카드/행 hover 시 반투명, 버튼 hover 시 불투명 */
+.mkt-card .ct-del, .mkt-card .mkt-hide, .ct-row .ct-del, .es-row .ct-del,
+.ib-feed-row .ct-del, .art .art-del {
+  opacity: 0; transition: opacity .15s, color .15s, background .15s;
+}
+.mkt-card:hover .ct-del, .mkt-card:hover .mkt-hide, .ct-row:hover .ct-del, .es-row:hover .ct-del,
+.ib-feed-row:hover .ct-del, .art:hover .art-del { opacity: .45; }
+.mkt-card .ct-del:hover, .mkt-card .mkt-hide:hover, .ct-row .ct-del:hover, .es-row .ct-del:hover,
+.ib-feed-row .ct-del:hover, .art .art-del:hover { opacity: 1; }
+/* 비번 입력 UI가 뜬 상태에선 항상 보이게 */
+.art-del-pw { opacity: 1 !important; }

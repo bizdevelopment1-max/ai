@@ -244,7 +244,8 @@ async function main() {
     const old = findOld(a);
     if (isKoreanSummary(old) && lineCount(old.summary) >= 3) return old;   // 3줄 인사이트(수동 보정 포함)면 재사용
     const s = sumByUrl.get(a.url);
-    const summary = s ? s.summary : `· ${a.title}`;
+    // LLM 요약 실패 시에도 피드에 요약이 보이도록 — 원문 설명(descEn)을 폴백으로 사용
+    const summary = s ? s.summary : (a.descEn ? `· ${a.descEn.slice(0, 200)}` : `· ${a.title}`);
     return {
       date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag,
       url: (s && s.url) ? s.url : a.url,                   // Google News 리다이렉트 대신 원문 URL
