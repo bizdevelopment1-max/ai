@@ -20,7 +20,7 @@ import { llmJSON } from "./llm.mjs";
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
 const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/gi;
-const scrub = s => String(s || "").replace(BANNED, "글로벌 제조사").trim();
+const scrub = s => String(s || "").replace(BANNED, "글로벌 제조사").trim().replace(/[.。]+$/, "").replace(/\.\s+/g, " · ");
 const EXCLUDED = /deepseek|kling|kuaishou|hailuo|minimax|zhipu|moonshot|01\.?ai|baichuan|stepfun|sensetime|iflytek|baidu|alibaba|tencent|bytedance|naver|kakao|upstage|wrtn|hyperclova/i;
 const LABELS_L = ["파트너십 기회", "전략 제휴", "탑재 후보", "모니터링"];
 const LABELS_S = ["인수 후보", "투자 검토", "기술 감시", "모니터링"];
@@ -88,8 +88,8 @@ async function latest(name) {
 async function enrichLarge(rows) {
   const list = rows.map((s, i) => `[${i}] ${s.name} (${s.vertical}, ${s.val}) — BM: ${s.bm}${s.latest ? ` / 최신: ${s.latest.title}` : ""}`).join("\n");
   const r = await llmJSON({
-    system: "당신은 글로벌 스마트폰 제조사 무선사업부의 신사업 전략 분석가입니다. 대형 AI 업체를 '비즈니스 모델·수익 구조·파트너십' 관점에서 평가합니다. 특정 기업명(삼성·갤럭시·MX)은 출력 금지. 한국어 개조식. JSON.",
-    user: `다음 대형 AI 업체를 단말 제조사 파트너십 관점에서 평가해 rows로 출력:\n${list}\n\n각 {idx, revenue(수익 구조·규모 1문장), partnership(파트너십 각도 1~2문장 — 탑재/제휴/공동개발 중 권장), label(${JSON.stringify(LABELS_L)} 중 1개)}. 근거 없는 수치 생성 금지.`,
+    system: "당신은 글로벌 스마트폰 제조사 무선사업부의 신사업 전략 분석가입니다. 대형 AI 업체를 '비즈니스 모델·수익 구조·파트너십' 관점에서 평가합니다. 특정 기업명(삼성·갤럭시·MX)은 출력 금지. 반드시 한국어 개조식(명사형 종결)으로만 작성하고 영어 문장·마침표를 쓰지 마세요. JSON.",
+    user: `다음 대형 AI 업체를 단말 제조사 파트너십 관점에서 평가해 rows로 출력:\n${list}\n\n각 {idx, revenue(수익 구조·규모 — 한국어 개조식 1구, 마침표 금지), partnership(파트너십 각도 — 한국어 개조식 1~2구, 탑재/제휴/공동개발 중 권장, 마침표 금지), label(${JSON.stringify(LABELS_L)} 중 1개)}. 근거 없는 수치 생성 금지.`,
     maxTokens: 2600,
     schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, revenue: { type: "string" }, partnership: { type: "string" }, label: { type: "string" } }, required: ["idx", "revenue", "partnership", "label"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
   });
@@ -101,8 +101,8 @@ async function enrichLarge(rows) {
 async function enrichSmall(rows) {
   const list = rows.map((s, i) => `[${i}] ${s.name} (${s.vertical}, ${s.funding}) — ${s.ov}${s.latest ? ` / 최신: ${s.latest.title}` : ""}`).join("\n");
   const r = await llmJSON({
-    system: "당신은 글로벌 스마트폰 제조사 무선사업부의 신사업·투자 전략 분석가입니다. 초기·중소 AI 업체를 '인수·투자' 관점에서 평가합니다. 특정 기업명(삼성·갤럭시·MX)은 출력 금지. 한국어 개조식. JSON.",
-    user: `다음 초기·중소 AI 업체를 단말 제조사 인수/투자 관점에서 평가해 rows로 출력:\n${list}\n\n각 {idx, acqAngle(인수/투자 각도 1~2문장 — 온디바이스·단말서비스·신폼팩터 접목 각도와 권장 경로), label(${JSON.stringify(LABELS_S)} 중 1개)}. 근거 없는 수치 생성 금지.`,
+    system: "당신은 글로벌 스마트폰 제조사 무선사업부의 신사업·투자 전략 분석가입니다. 초기·중소 AI 업체를 '인수·투자' 관점에서 평가합니다. 특정 기업명(삼성·갤럭시·MX)은 출력 금지. 반드시 한국어 개조식(명사형 종결)으로만 작성하고 영어 문장·마침표를 쓰지 마세요. JSON.",
+    user: `다음 초기·중소 AI 업체를 단말 제조사 인수/투자 관점에서 평가해 rows로 출력:\n${list}\n\n각 {idx, acqAngle(인수/투자 각도 — 한국어 개조식 1~2구, 온디바이스·단말서비스·신폼팩터 접목 각도와 권장 경로, 마침표 금지), label(${JSON.stringify(LABELS_S)} 중 1개)}. 근거 없는 수치 생성 금지.`,
     maxTokens: 2600,
     schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, acqAngle: { type: "string" }, label: { type: "string" } }, required: ["idx", "acqAngle", "label"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
   });
