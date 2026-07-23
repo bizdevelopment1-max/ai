@@ -1370,6 +1370,8 @@ a[href]:hover .rainbow-on-hover,
 .sp-scenario { font-size: 10px; font-weight: 800; color: #D97706; border: 1px solid #D97706; border-radius: 5px; padding: 1px 7px; }
 
 .stock-chart { margin-top: 6px; }
+/* 차트 폭 상한 — 대화면에서 과도하게 커지지 않게(보기 좋게) */
+.stock-chart svg { max-width: 880px; margin: 0 auto; }
 .stock-empty { padding: 40px; text-align: center; color: var(--muted); font-size: 13px; }
 .stock-readout {
   display: flex; align-items: baseline; gap: 12px; padding: 4px 2px 8px; flex-wrap: wrap;
@@ -1626,11 +1628,12 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .isg-tools button:hover { border-color: var(--accent); color: var(--ink); }
 
 /* 상단 분포 미니 바(도식) */
-.isg-distribution { display: flex; align-items: flex-end; gap: 10px; padding: 10px 4px 14px; }
-.isg-dist-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.isg-dist-count { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
-.isg-dist-bar { width: 60%; max-width: 46px; border-radius: 4px 4px 0 0; transition: height .5s ease; }
-.isg-dist-label { font-size: 10px; font-weight: 700; color: var(--muted); text-align: center; word-break: keep-all; }
+/* 상단 분포 = 한눈에 파악하는 인포그래픽 히어로 */
+.isg-distribution { display: flex; align-items: flex-end; gap: 12px; padding: 14px 6px 18px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 4px; }
+.isg-dist-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.isg-dist-count { font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+.isg-dist-bar { width: 66%; max-width: 54px; min-height: 8px; border-radius: 5px 5px 0 0; transition: height .5s ease; }
+.isg-dist-label { font-size: 10.5px; font-weight: 800; color: var(--ink-2); text-align: center; word-break: keep-all; }
 
 /* 카테고리 밴드 */
 .isg-band { margin-top: 12px; }
@@ -1639,14 +1642,16 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .isg-band-head b { font-size: 13px; font-weight: 800; color: var(--ink); }
 .isg-band-head em { font-style: normal; font-size: 11px; color: var(--muted); font-weight: 600; }
 .isg-band-n { margin-left: auto; font-size: 11px; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
-.isg-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
-.isg-card { position: relative; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; }
-.isg-quant { display: inline-block; font-size: 11px; font-weight: 800; padding: 1px 8px; border: 1.5px solid; border-radius: 6px; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
-.isg-signal { font-size: 12.5px; line-height: 1.55; color: var(--ink-2); word-break: keep-all; }
-.isg-meta { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
-.isg-meta a { font-size: 10.5px; font-weight: 700; color: var(--muted); text-decoration: none; }
-.isg-meta a:hover { color: var(--accent); text-decoration: underline; }
-.isg-date { font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.isg-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
+.isg-card { position: relative; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.isg-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; padding-right: 18px; }
+.isg-quant { font-size: 12px; font-weight: 900; padding: 1px 8px; border: 1.5px solid; border-radius: 6px; font-variant-numeric: tabular-nums; flex: none; }
+.isg-src { font-size: 10px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.isg-src a { color: var(--muted); text-decoration: none; font-weight: 700; }
+.isg-src a:hover { color: var(--accent); text-decoration: underline; }
+/* 리드 = 핵심(볼드, 최대 2줄) · 상세 = 보조(muted, 최대 2줄) — 워딩 축약 */
+.isg-lead { font-size: 12.5px; font-weight: 700; line-height: 1.45; color: var(--ink); word-break: keep-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.isg-detail { font-size: 11px; line-height: 1.45; color: var(--muted); word-break: keep-all; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .isg-card .ct-del { position: absolute; top: 8px; right: 8px; float: none; margin: 0; }
 @media (max-width: 760px) { .isg-cards { grid-template-columns: 1fr; } .isg-dist-label { font-size: 9px; } }
 

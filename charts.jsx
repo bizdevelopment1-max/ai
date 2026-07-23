@@ -316,7 +316,7 @@ function MonthlyLineChart({ series, months, colors, ink, muted, grid, unit, valu
   const tip = useTip();
   const prog = useProgress(inView, 2100, 0, nonce);
 
-  const W = 520, H = 210, padL = 46, padR = 16, padT = 26, padB = 24;
+  const W = 520, H = 184, padL = 46, padR = 16, padT = 22, padB = 24;
   const iw = W - padL - padR, ih = H - padT - padB;
   const allVals = series.flatMap(s => s.values);
   const ticks = niceTicks(Math.max(...allVals, 1) * 1.12, 4);
@@ -392,7 +392,7 @@ function StockChart({ stock, rawPoints, years, marketCap, asOf, accent, ink, mut
 
   const series = window.DASH.attachStockEvents(rawPoints, stock.events, years) || { points: [], events: [] };
   const pts = series.points;
-  const W = 760, H = 320, padL = 54, padR = 18, padT = 22, padB = 30;
+  const W = 760, H = 268, padL = 54, padR = 18, padT = 20, padB = 28;
   const iw = W - padL - padR, ih = H - padT - padB;
   if (!pts || pts.length < 2) {
     return <div ref={ref} className="stock-empty">실시간 주가 데이터를 매일 크롤링합니다. 자동 갱신을 기다리는 중입니다.</div>;
@@ -553,7 +553,7 @@ function GroupTrendChart({ groups, stocks, stockData, years, theme }) {
     return { g, line, count: members.length, tickers: members.map(m => m.ticker) };
   }).filter(s => s.count > 0 && s.line.some(v => v != null));
 
-  const W = 760, H = 340, padL = 46, padR = 14, padT = 18, padB = 30;
+  const W = 760, H = 292, padL = 46, padR = 14, padT = 16, padB = 28;
   const iw = W - padL - padR, ih = H - padT - padB;
   let lo = Infinity, hi = -Infinity;
   series.forEach(s => s.line.forEach(v => { if (v != null) { if (v < lo) lo = v; if (v > hi) hi = v; } }));

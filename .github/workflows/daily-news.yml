@@ -83,6 +83,9 @@ jobs:
       - name: Accumulate AI infra & future-tech signals (기사 기반 누적)
         run: node scripts/crawl-infra.mjs
 
+      - name: Accumulate AI monetization (business-model) signals (기사 기반 누적)
+        run: node scripts/crawl-bizmodel.mjs
+
       - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
         run: node scripts/audit-agent.mjs
 
@@ -90,7 +93,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json audit.json
+          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json audit.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else
