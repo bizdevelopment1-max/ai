@@ -24,6 +24,7 @@ const RULES = [
   { file: "startups.json", tab: "스타트업 분석", maxAge: 8.5, minItems: 10, items: d => [...(d.large || []), ...(d.small || [])], engine: d => d.engine, banned: true },
   { file: "companies.json", tab: "기업 동향", maxAge: 1.5, minItems: 10, items: d => Object.keys(d.companies || {}), banned: false },
   { file: "market.json", tab: "AI 신사업 시장", maxAge: 30, minItems: 15, items: d => d.items, banned: false },
+  { file: "infra.json", tab: "인프라·미래기술 시그널", maxAge: 3, minItems: 5, items: d => d.items, urls: d => (d.items || []).map(i => i.url), banned: true },
   { file: "stocks.json", tab: "주가 차트", maxAge: 4, minItems: 10, items: d => Object.keys(d.stocks || {}), banned: false,
     extra: d => Object.entries(d.stocks || {}).filter(([, v]) => !v.points || v.points.length < 2).map(([t]) => `${t}: 시세 데이터 없음/부족`) },
 ];

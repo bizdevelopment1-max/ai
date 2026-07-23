@@ -1453,6 +1453,111 @@ function PenetrationChart({ data, theme, unit = "%" }) {
   );
 }
 
+// ---- 인프라·미래기술 시그널 인포그래픽: 기사 기반 누적(lazy-load), MECE 5축, X 삭제 ----
+function InfraSignalsInfographic() {
+  const ref = React.useRef(null);
+  const inView = useInView(ref);
+  const [data, setData] = React.useState(null);
+  const [loaded, setLoaded] = React.useState(false);
+  React.useEffect(() => {
+    if (!inView || loaded) return;
+    setLoaded(true);
+    fetch("infra.json?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (j && j.items) setData(j); })
+      .catch(() => {});
+  }, [inView, loaded]);
+
+  // 삭제(비밀번호)·localStorage 영구 보존 — 기사 누적이라 삭제 항목은 다시 안 나오게
+  const DEL_LS = "aiDashDeletedInfra";
+  const [del, setDel] = React.useState(() => { try { return JSON.parse(localStorage.getItem(DEL_LS) || "{}"); } catch { return {}; } });
+  const [pend, setPend] = React.useState(null);
+  const [pw, setPw] = React.useState("");
+  const [pwErr, setPwErr] = React.useState(false);
+  const confirmDel = (id) => { if (pw !== "000") { setPwErr(true); return; } setDel(d => { const x = { ...d, [id]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); setPend(null); setPw(""); setPwErr(false); };
+  const resetAll = () => { setDel({}); try { localStorage.removeItem(DEL_LS); } catch {} };
+
+  const groups = (data && data.groups) || [];
+  const items = ((data && data.items) || []).filter(it => !del[it.id]);
+  const countOf = id => items.filter(it => it.group === id).length;
+  const maxC = Math.max(1, ...groups.map(g => countOf(g.id)));
+
+  return (
+    <div className="infra-signals" ref={ref}>
+      <div className="infra-sig-head">
+        <div className="isg-titles">
+          <h3>인프라·미래기술 시그널 <em>기사 기반 자동 누적 · 매일 갱신</em></h3>
+          <p>매일 크롤된 기사에서 컴퓨트·메모리·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로 누적 도식화 · 정량 수치는 플레인 텍스트 · ✕로 삭제(비밀번호)</p>
+        </div>
+        <div className="isg-tools">
+          <span className="isg-total">누적 <b>{items.length}</b></span>
+          <button onClick={resetAll} title="삭제 초기화(다시 누적 반영)">초기화</button>
+        </div>
+      </div>
+
+      {!data ? (
+        <div className="mkt-loading">{loaded ? "인프라 시그널을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+      ) : items.length === 0 ? (
+        <div className="mkt-loading">표시할 시그널이 없습니다 · 초기화로 되돌릴 수 있습니다</div>
+      ) : (
+        <React.Fragment>
+          {/* 상단 도식: 카테고리별 시그널 분포(미니 바) */}
+          <div className="isg-distribution">
+            {groups.map(g => {
+              const c = countOf(g.id);
+              return (
+                <div className="isg-dist-col" key={g.id} title={g.desc}>
+                  <span className="isg-dist-count" style={{ color: g.accent }}>{c}</span>
+                  <span className="isg-dist-bar" style={{ height: (14 + (46 * c) / maxC) + "px", background: g.accent }} />
+                  <span className="isg-dist-label">{g.ko}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* 카테고리별 시그널 밴드(누적) */}
+          {groups.map(g => {
+            const rows = items.filter(it => it.group === g.id);
+            if (!rows.length) return null;
+            return (
+              <div className="isg-band" key={g.id}>
+                <div className="isg-band-head" style={{ "--gc": g.accent }}>
+                  <span className="isg-band-dot" style={{ background: g.accent }} />
+                  <b>{g.ko}</b><em>{g.desc}</em><span className="isg-band-n">{rows.length}</span>
+                </div>
+                <div className="isg-cards">
+                  {rows.map(it => (
+                    <div className="isg-card" key={it.id}>
+                      {it.quant && <span className="isg-quant" style={{ color: g.accent, borderColor: g.accent }}>{it.quant}</span>}
+                      <p className="isg-signal">{hlKey(it.signal)}</p>
+                      <div className="isg-meta">
+                        <a href={it.url} target="_blank" rel="noopener">{it.source || "출처"}</a>
+                        <span className="isg-date">{it.date}</span>
+                      </div>
+                      {pend === it.id ? (
+                        <div className="art-del-pw" onClick={e => e.stopPropagation()}>
+                          <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
+                            onChange={e => { setPw(e.target.value); setPwErr(false); }}
+                            onKeyDown={e => { if (e.key === "Enter") confirmDel(it.id); else if (e.key === "Escape") { setPend(null); setPw(""); setPwErr(false); } }} />
+                          <button className="art-pw-ok" onClick={() => confirmDel(it.id)}>삭제</button>
+                          <button className="art-pw-cancel" onClick={() => { setPend(null); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+                          {pwErr && <span className="art-pw-err">비밀번호가 틀렸습니다.</span>}
+                        </div>
+                      ) : (
+                        <button className="ct-del" title="삭제(비밀번호)" onClick={() => { setPend(it.id); setPw(""); setPwErr(false); }}><Icon name="x" size={11} sw={2.2} /></button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
 function SignalBoard({ data, theme, sectionRef }) {
   const inView = useInView(sectionRef);
   const strat = data.INFRA_STRATEGY || { hyperscaler: [], aiNative: [] };
@@ -1512,6 +1617,7 @@ function SignalBoard({ data, theme, sectionRef }) {
           <p>인프라 병목·전환 시점은 <b>온디바이스 AI 로드맵의 외생 변수</b>입니다. 메모리·전력 제약이 클라우드 AI 단가에 반영되는 시점, 광통신 상용화로 지연시간이 줄어드는 시점을 <b>분기 단위로 추적</b>해야 합니다.</p>
         </div>
       </div>
+      <InfraSignalsInfographic />
      </AnimCtx.Provider>
     </section>
   );
