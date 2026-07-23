@@ -77,6 +77,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/crawl-startups.mjs
 
+      - name: Refresh AI new-business market signals (주간)
+        run: node scripts/crawl-markets.mjs
+
       - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
         run: node scripts/audit-agent.mjs
 
@@ -84,7 +87,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json audit.json
+          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json audit.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

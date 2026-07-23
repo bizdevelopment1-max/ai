@@ -68,6 +68,7 @@ const NAV = [
   { id: "charts", ko: "정량 분석", en: "Quant Charts", icon: "chart", group: "정량 데이터" },
   { id: "monthly", ko: "분기별 매출 추이", en: "Quarterly Revenue", icon: "pulse", group: "정량 데이터" },
   { id: "stocks", ko: "주가 차트", en: "Stock Prices", icon: "up", group: "정량 데이터" },
+  { id: "market", ko: "AI 신사업 시장", en: "New-Biz Markets", icon: "target", group: "정량 데이터" },
 ];
 
 // gradient background for the sidebar, derived from a single brand color
