@@ -21,7 +21,7 @@ const RULES = [
   { file: "insights.json", tab: "Executive Summary", maxAge: 1.5, minItems: 4, items: d => d.cards, engine: d => d.engine, banned: true },
   { file: "research.json", tab: "증권사 인사이트", maxAge: 2.5, minItems: 5, items: d => d.feed, engine: d => (d.onepager || {}).engine, banned: false, extra: d => (!d.onepager ? ["1페이저 없음"] : []) },
   { file: "radar.json", tab: "스타트업 레이더", maxAge: 8.5, minItems: 3, items: d => d.picks, engine: d => d.engine, banned: true, extra: d => (!(d.memos || []).length ? ["기회 메모 없음"] : []) },
-  { file: "startups.json", tab: "스타트업 전략", maxAge: 8.5, minItems: 10, items: d => Object.keys(d.items || {}), engine: d => d.engine, banned: true },
+  { file: "startups.json", tab: "스타트업 분석", maxAge: 8.5, minItems: 10, items: d => [...(d.large || []), ...(d.small || [])], engine: d => d.engine, banned: true },
   { file: "companies.json", tab: "기업 동향", maxAge: 1.5, minItems: 10, items: d => Object.keys(d.companies || {}), banned: false },
   { file: "market.json", tab: "AI 신사업 시장", maxAge: 30, minItems: 15, items: d => d.items, banned: false },
   { file: "stocks.json", tab: "주가 차트", maxAge: 4, minItems: 10, items: d => Object.keys(d.stocks || {}), banned: false,

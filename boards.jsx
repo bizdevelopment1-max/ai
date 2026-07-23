@@ -93,13 +93,6 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
               <Icon name="x" size={12} sw={2.2} />
             </button>
           ))}
-          {c.strategy && (
-            <span className="ct-strat">
-              <em className="ct-strat-label">{c.strategy.label}</em>
-              <em className="ct-strat-score" title="투자 매력도(1~5) — 주간 LLM 평가">투자 {c.strategy.invest}/5</em>
-              <span className="ct-strat-txt"><b>투자:</b> {c.strategy.investNote} <b>협력:</b> {c.strategy.collab}</span>
-            </span>
-          )}
           {c.live && c.live.latest && (
             <a className="ct-live" href={c.live.latest.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>
               <Icon name="news" size={10} /> {c.live.latest.date && c.live.latest.date.slice(5)} {String(c.live.latest.title).slice(0, 46)}{String(c.live.latest.title).length > 46 ? "…" : ""}
@@ -2003,4 +1996,114 @@ function MarketBoard({ sectionRef }) {
   );
 }
 
-Object.assign(window, { BoldSummary, MarketBoard, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+
+// ---- 스타트업 분석 보드(2계층·lazy-load): 대형=파트너십 / 소형=인수·투자 ----
+function StartupScopeBoard({ sectionRef }) {
+  const inView = useInView(sectionRef);
+  const [data, setData] = React.useState(null);
+  const [loaded, setLoaded] = React.useState(false);
+  const [tier, setTier] = React.useState("large");
+  React.useEffect(() => {
+    if (!inView || loaded) return;
+    setLoaded(true);
+    fetch("startups.json?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (j && (j.large || j.small)) setData(j); })
+      .catch(() => {});
+  }, [inView, loaded]);
+
+  const DEL_LS = "aiDashDeletedStartups";
+  const [del, setDel] = React.useState(() => { try { return JSON.parse(localStorage.getItem(DEL_LS) || "{}"); } catch { return {}; } });
+  const [pend, setPend] = React.useState(null);
+  const [pw, setPw] = React.useState("");
+  const [pwErr, setPwErr] = React.useState(false);
+  const confirmDel = (n) => { if (pw !== "000") { setPwErr(true); return; } setDel(d => { const x = { ...d, [n]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); setPend(null); setPw(""); setPwErr(false); };
+  const reset = () => { setDel({}); try { localStorage.removeItem(DEL_LS); } catch {} };
+  const LC = { "파트너십 기회": "#16A34A", "전략 제휴": "#2D6BFF", "탑재 후보": "#0891B2", "인수 후보": "#C026D3", "투자 검토": "#16A34A", "기술 감시": "#EA580C", "모니터링": "#8A93A4" };
+
+  const DelUI = ({ name }) => (pend === name ? (
+    <span className="art-del-pw" onClick={e => e.stopPropagation()}>
+      <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
+        onChange={e => { setPw(e.target.value); setPwErr(false); }}
+        onKeyDown={e => { if (e.key === "Enter") confirmDel(name); else if (e.key === "Escape") { setPend(null); setPw(""); setPwErr(false); } }} />
+      <button className="art-pw-ok" onClick={() => confirmDel(name)}>삭제</button>
+      <button className="art-pw-cancel" onClick={() => { setPend(null); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+      {pwErr && <span className="art-pw-err">비밀번호가 틀렸습니다.</span>}
+    </span>
+  ) : (
+    <button className="ct-del" title="삭제(비번 000)" onClick={() => { setPend(name); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+  ));
+  const Ev = ({ it }) => (it.latest && it.latest.url ? (
+    <a className="mkt-latest" href={it.latest.url} target="_blank" rel="noopener"><Icon name="news" size={10} /> 최신 {it.latest.date && it.latest.date.slice(5)} · {String(it.latest.title).slice(0, 48)}</a>
+  ) : null);
+
+  const large = ((data && data.large) || []).filter(s => !del[s.name]);
+  const small = ((data && data.small) || []).filter(s => !del[s.name]);
+
+  return (
+    <section className="board" ref={sectionRef} data-screen-label="Startup Analysis">
+     <AnimCtx.Provider value={inView}>
+      <div className="board-head" style={{ "--accent": "#0E8F6E" }}>
+        <span className="board-tab" style={{ background: "#0E8F6E" }} />
+        <div className="board-titles">
+          <h2>스타트업 분석 <span className="board-en">Startup Scope · 대형=파트너십 / 소형=인수·투자</span></h2>
+          <p>글로벌 AI 스타트업(한국·중국 제외)을 규모별 MECE 2계층으로 분석 · 대형은 비즈니스 모델·수익 구조·파트너십, 소형은 개요·펀딩·인수/투자 관점 · 주간 자동 갱신 · ✕ 삭제(비번 000)</p>
+        </div>
+        <div className="mkt-tools">
+          <button className={tier === "large" ? "on" : ""} onClick={() => setTier("large")}>대형 {large.length}</button>
+          <button className={tier === "small" ? "on" : ""} onClick={() => setTier("small")}>소형·초기 {small.length}</button>
+          {Object.keys(del).length > 0 && <button onClick={reset} title="삭제 초기화">초기화</button>}
+        </div>
+      </div>
+
+      {!data ? (
+        <div className="mkt-loading">{loaded ? "스타트업 분석을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+      ) : tier === "large" ? (
+        <div className="mkt-group">
+          <div className="mkt-group-head"><b>대형 업체 — 파트너십 관점</b><em>비즈니스 모델·수익 구조를 참고해 탑재·제휴·공동개발 각도 분석</em></div>
+          <div className="mkt-grid">
+            {large.map(s => (
+              <div className="mkt-card" key={s.name}>
+                <div className="mkt-card-head">
+                  <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
+                  <b className="mkt-name">{s.name}</b>
+                  <span className="su-meta">{s.vertical} · {s.val}</span>
+                  <DelUI name={s.name} />
+                </div>
+                <span className="brief-label" style={{ "--lc": LC[s.label] || "#2D6BFF" }}>{s.label}</span>
+                <p className="su-row"><span className="brief-k sig">비즈니스 모델</span>{s.businessModel}</p>
+                <p className="su-row"><span className="brief-k ins">수익</span>{s.revenue}</p>
+                <p className="su-row"><span className="brief-k act">파트너십</span>{s.partnership}</p>
+                <Ev it={s} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="mkt-group">
+          <div className="mkt-group-head"><b>소형·초기 업체 — 인수·투자 관점</b><em>업체 개요·펀딩/밸류(정량)를 근거로 인수·전략 투자 각도 분석</em></div>
+          <div className="mkt-grid">
+            {small.map(s => (
+              <div className="mkt-card" key={s.name}>
+                <div className="mkt-card-head">
+                  <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
+                  <b className="mkt-name">{s.name}</b>
+                  <span className="su-meta">{s.vertical} · {s.stage}</span>
+                  <DelUI name={s.name} />
+                </div>
+                <span className="brief-label" style={{ "--lc": LC[s.label] || "#2D6BFF" }}>{s.label}</span>
+                <p className="su-row"><span className="brief-k sig">개요</span>{s.overview}</p>
+                <p className="su-row"><span className="brief-k ins">펀딩</span>{s.funding}</p>
+                <p className="su-row"><span className="brief-k act">인수·투자</span>{s.acqAngle}</p>
+                <Ev it={s} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+     </AnimCtx.Provider>
+    </section>
+  );
+}
+
+Object.assign(window, { BoldSummary, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });

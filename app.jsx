@@ -96,7 +96,6 @@ function App() {
   const [research, setResearch] = uS(null);
   const [coLive, setCoLive] = uS(null);
   const [audit, setAudit] = uS(null);
-  const [startupsX, setStartupsX] = uS(null);
   uE(() => {
     let alive = true;
     fetch("research.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
@@ -105,21 +104,16 @@ function App() {
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
     fetch("audit.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
-    fetch("startups.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && j.items) setStartupsX(j.items); }).catch(() => {});
     return () => { alive = false; };
   }, []);
   // COMPANIES에 라이브 데이터(최신 기사·언급량·실시세 시총) 병합
   const companiesLive = useMemo(() => (D.COMPANIES || []).map(c => {
-    const strat = startupsX && startupsX[c.name];
     const lv = coLive && coLive[c.name];
-    if (!lv && !strat) return c;
-    if (!lv) return { ...c, strategy: strat };
+    if (!lv) return c;
     const merged = { ...c, live: lv };
     if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); }
-    if (strat) merged.strategy = strat;
     return merged;
-  }), [coLive, startupsX]);
+  }), [coLive]);
   uE(() => {
     let alive = true;
     fetch("briefing.json" + cb(), { cache: "no-store" })
@@ -170,7 +164,7 @@ function App() {
   const scrollRef = uR(null);
   const refs = {
     ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    radar: uR(null), charts: uR(null), monthly: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null), market: uR(null),
+    sanalysis: uR(null), radar: uR(null), charts: uR(null), monthly: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null), market: uR(null),
   };
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
@@ -295,6 +289,7 @@ function App() {
             <CompanyBoard cat={cats[0]} companies={companiesLive} density={t.density} sectionRef={refs.native} query={query} onSelect={setSelected} />
             <CompanyBoard cat={cats[1]} companies={companiesLive} density={t.density} sectionRef={refs.bigtech} query={query} onSelect={setSelected} />
             <CompanyBoard cat={cats[2]} companies={companiesLive} density={t.density} sectionRef={refs.startup} query={query} onSelect={setSelected} />
+            <StartupScopeBoard sectionRef={refs.sanalysis} />
             <RadarBoard radar={radar} sectionRef={refs.radar} />
 
             {/* ── 3. 심층 분석 (수익화 모델 최상단) ── */}
