@@ -640,6 +640,7 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
   const [ticker, setTicker] = React.useState((stocks[0] || {}).ticker);
   const [years, setYears] = React.useState(1);
   const [groupFilter, setGroupFilter] = React.useState("all");
+  const [view, setView] = React.useState("single");
   const sel = stocks.find(s => s.ticker === ticker) || stocks[0];
   const selGroup = groupMap[sel.group];
   const accent = (selGroup || catMap[sel.cat] || {}).accent || theme.accent;
@@ -653,9 +654,9 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
         <span className="board-tab" style={{ background: accent }} />
         <div className="board-titles">
           <h2>주가 차트 <span className="board-en">Listed AI Stocks · 실시간 일별 주가</span></h2>
-          <p>상장 AI 기업 실제 일별 종가(매일 자동 크롤링) · 시가총액 표시 · 마우스 호버 시 종가 · 변곡점(●)에 상승/하락 사유</p>
+          <p>상장 AI 기업 실제 일별 종가(매일 자동 크롤링) · 밸류체인 업종별 그룹 트렌드 비교 · 마우스 호버 시 종가 · 변곡점(●)에 상승/하락 사유</p>
         </div>
-        {!sel.private && (
+        {(view === "group" || !sel.private) && (
           <div className="stock-range">
             <button className={years === 1 ? "on" : ""} onClick={() => setYears(1)}>1년</button>
             <button className={years === 5 ? "on" : ""} onClick={() => setYears(5)}>5년</button>
@@ -663,6 +664,22 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
         )}
       </div>
 
+      <div className="stock-view-toggle">
+        <button className={view === "single" ? "on" : ""} onClick={() => setView("single")}>개별 종목</button>
+        <button className={view === "group" ? "on" : ""} onClick={() => setView("group")}>밸류체인 그룹 트렌드</button>
+      </div>
+
+      {view === "group" ? (
+        <div className="stock-panel" style={{ "--accent": accent }}>
+          <div className="stock-panel-head">
+            <span className="sp-name">밸류체인 업종별 상대 추이</span>
+            <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{years}년 · 시작=100</span>
+          </div>
+          <GroupTrendChart groups={groups} stocks={stocks} stockData={stockData} years={years} theme={theme} />
+          <p className="stock-updated">출처: 일별 자동 크롤링(Stooq 등) · 그룹 = 구성 종목 종가를 기간 시작 100으로 재환산 후 평균</p>
+        </div>
+      ) : (
+      <React.Fragment>
       <div className="stock-group-filters">
         <button className={groupFilter === "all" ? "on" : ""} onClick={() => setGroupFilter("all")}>전체</button>
         {(groups || []).map(g => (
@@ -741,6 +758,8 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
         )}
         <p className="stock-updated">출처: 일별 자동 크롤링(Stooq 등) · 시총 = 종가 × 발행주식수(근사)</p>
       </div>
+      </React.Fragment>
+      )}
      </AnimCtx.Provider>
     </section>
   );
