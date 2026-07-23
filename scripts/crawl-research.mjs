@@ -123,8 +123,8 @@ async function main() {
   // 이전 피드와 병합(30일 보존), 최신순
   const prevFeed = (prev.feed || []).filter(a => !seen.has(a.url) && seen.add(a.url));
   let feed = [...fresh, ...prevFeed]
-    .filter(a => (Date.now() - new Date(a.date).getTime()) / 86400000 < 30)
-    .sort((x, y) => (x.date < y.date ? 1 : -1)).slice(0, 40);
+    .filter(a => (Date.now() - new Date(a.date).getTime()) / 86400000 < 120)   // 누적 보존 확대
+    .sort((x, y) => (x.date < y.date ? 1 : -1)).slice(0, 150);
   const needKo = feed.filter(a => !a.titleKo);
   await koSummarize(needKo);
 
@@ -135,7 +135,7 @@ async function main() {
   if (opAge >= 6.5 || !onepager) {
     const op = await llmOnepager(feed, articles);
     if (op) {
-      if (onepager) archive = [onepager, ...archive].slice(0, 4);
+      if (onepager) archive = [onepager, ...archive].slice(0, 12);   // 과거 1페이저 누적
       onepager = op;
     }
   }
