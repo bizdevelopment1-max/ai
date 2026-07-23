@@ -23,7 +23,7 @@ const RULES = [
   { file: "radar.json", tab: "스타트업 레이더", maxAge: 8.5, minItems: 3, items: d => d.picks, engine: d => d.engine, banned: true, extra: d => (!(d.memos || []).length ? ["기회 메모 없음"] : []) },
   { file: "startups.json", tab: "스타트업 분석", maxAge: 8.5, minItems: 10, items: d => [...(d.large || []), ...(d.small || [])], engine: d => d.engine, banned: true },
   { file: "companies.json", tab: "기업 동향", maxAge: 1.5, minItems: 10, items: d => Object.keys(d.companies || {}), banned: false },
-  { file: "market.json", tab: "AI 신사업 시장", maxAge: 30, minItems: 15, items: d => d.items, banned: false },
+  { file: "market.json", tab: "AI 신사업 시장", maxAge: 30, minItems: 15, items: d => d.items, banned: true },
   { file: "infra.json", tab: "인프라·미래기술 시그널", maxAge: 3, minItems: 5, items: d => d.items, urls: d => (d.items || []).map(i => i.url), banned: true },
   { file: "stocks.json", tab: "주가 차트", maxAge: 4, minItems: 10, items: d => Object.keys(d.stocks || {}), banned: false,
     extra: d => Object.entries(d.stocks || {}).filter(([, v]) => !v.points || v.points.length < 2).map(([t]) => `${t}: 시세 데이터 없음/부족`) },
@@ -62,8 +62,10 @@ async function auditOne(rule) {
   }
 
   if (rule.banned) {
-    const text = JSON.stringify(items).slice(0, 200000);
-    if (BANNED.test(text)) { res.status = "fail"; res.issues.push("금지어 노출(삼성/MX/갤럭시) — 즉시 수정 필요"); }
+    // 전체 문서(그룹 설명·시드 메타데이터 포함)를 검사 — items 외 정적 텍스트도 커버
+    const text = JSON.stringify(d).slice(0, 400000);
+    const hit = text.match(BANNED);
+    if (hit) { res.status = "fail"; res.issues.push(`금지어 노출(${hit[0]}) — 즉시 수정 필요(크롤 결과·시드 데이터 포함 전수 검사)`); }
   }
   if (rule.extra) { try { for (const iss of rule.extra(d)) { res.issues.push(iss); if (res.status === "ok") res.status = "warn"; } } catch {} }
   return res;
