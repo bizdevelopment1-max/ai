@@ -880,8 +880,10 @@ window.DASH = (function () {
   const STOCK_GROUPS = [
     { id: "chip", ko: "AI 칩", en: "AI Chips", accent: "#C026D3" },
     { id: "memory", ko: "메모리", en: "Memory", accent: "#EA580C" },
+    { id: "network", ko: "네트워킹·광통신", en: "Networking / Optical", accent: "#0D9488" },
     { id: "hyperscaler", ko: "하이퍼스케일러", en: "Hyperscalers", accent: "#1428A0" },
     { id: "datacenter", ko: "데이터센터·뉴클라우드", en: "Data Center / Neocloud", accent: "#0891B2" },
+    { id: "software", ko: "AI 소프트웨어·플랫폼", en: "AI Software / Platform", accent: "#DB2777" },
     { id: "device", ko: "온디바이스", en: "On-device", accent: "#16A34A" },
     { id: "native", ko: "AI 네이티브", en: "AI Native", accent: "#7A38D6" },
   ];
@@ -920,6 +922,26 @@ window.DASH = (function () {
       note: "TSMC(뉴욕 ADR, 파운드리). NVIDIA·AMD·Apple 등 최선단 AI 칩 위탁생산 — 첨단 공정 사실상 독점적 지위.",
     },
     {
+      ticker: "QCOM", name: "Qualcomm", group: "chip", domain: "qualcomm.com", cat: "bigtech",
+      events: [],
+      note: "Qualcomm(나스닥, 팹리스). 스냅드래곤 NPU로 온디바이스 생성형 AI를 주도 — 단말·PC·자동차向 엣지 AI 추론 칩 공급.",
+    },
+    {
+      ticker: "ARM", name: "Arm Holdings", group: "chip", domain: "arm.com", cat: "bigtech",
+      events: [],
+      note: "Arm Holdings(나스닥 ADR, IP). 사실상 모든 모바일 AP·다수 AI 가속기의 명령어셋(IP) 로열티 사업 — 데이터센터·엣지 CPU 코어 확장.",
+    },
+    {
+      ticker: "MRVL", name: "Marvell", group: "chip", domain: "marvell.com", cat: "bigtech",
+      events: [],
+      note: "Marvell(나스닥, 팹리스). 커스텀 AI ASIC·고속 인터커넥트(광 DSP)로 데이터센터 AI 인프라 핵심 설계사.",
+    },
+    {
+      ticker: "INTC", name: "Intel", group: "chip", domain: "intel.com", cat: "bigtech",
+      events: [],
+      note: "Intel(나스닥, IDM). Gaudi AI 가속기·파운드리(IFS) 재건으로 AI 반도체 경쟁 재진입 시도 — 턴어라운드 국면.",
+    },
+    {
       ticker: "MU", name: "Micron", group: "memory", domain: "micron.com", cat: "bigtech",
       events: [],
       note: "Micron(나스닥, 메모리). HBM(고대역폭메모리) 3대 공급사 중 하나로 AI 가속기 필수 부품 제공.",
@@ -930,6 +952,16 @@ window.DASH = (function () {
         { date: "2026-07-10", dir: "up", label: "나스닥 ADR 상장 데뷔 +13%", reason: "공모가 $149로 $26.5B 조달(외국기업 사상 최대 미국 주식 공모) — 한국거래소(000660) 상장 유지한 채 나스닥에 예탁증권(ADR) 동시 상장. 첫날 +13% $168.01 마감 — HBM 공급 부족 장기화 기대가 상승을 견인." },
       ],
       note: "SK hynix(나스닥 ADR, 2026-07-10 상장). HBM 시장 선도업체 — 상장 초기라 일별 시세 데이터가 아직 얇을 수 있습니다.",
+    },
+    {
+      ticker: "ANET", name: "Arista Networks", group: "network", domain: "arista.com", cat: "bigtech",
+      events: [],
+      note: "Arista Networks(뉴욕, 데이터센터 스위칭). 하이퍼스케일러 AI 클러스터의 고속 이더넷 백본 — GPU 간 대역폭 수요의 직접 수혜.",
+    },
+    {
+      ticker: "CIEN", name: "Ciena", group: "network", domain: "ciena.com", cat: "bigtech",
+      events: [],
+      note: "Ciena(뉴욕, 광통신). 데이터센터 간(DCI) 광전송·코히어런트 광학으로 AI 트래픽 폭증에 따른 광네트워크 증설 수혜.",
     },
     {
       ticker: "MSFT", name: "Microsoft", group: "hyperscaler", domain: "microsoft.com", cat: "bigtech",
@@ -989,6 +1021,26 @@ window.DASH = (function () {
       ticker: "APLD", name: "Applied Digital", group: "datacenter", domain: "applieddigital.com", cat: "startup",
       events: [],
       note: "Applied Digital(나스닥, 데이터센터). 하이퍼스케일러 대상 AI 데이터센터 장기 임대(리스) 모델로 성장.",
+    },
+    {
+      ticker: "VRT", name: "Vertiv", group: "datacenter", domain: "vertiv.com", cat: "bigtech",
+      events: [],
+      note: "Vertiv(뉴욕, 인프라 장비). AI 데이터센터 전력·냉각(액침·수랭) 핵심 공급사 — 랙당 전력밀도 급증의 직접 수혜.",
+    },
+    {
+      ticker: "NBIS", name: "Nebius", group: "datacenter", domain: "nebius.com", cat: "startup",
+      events: [],
+      note: "Nebius(나스닥, AI 클라우드/뉴클라우드). GPU 전용 클라우드·풀스택 AI 인프라로 하이퍼스케일러 외 컴퓨트 공급의 신흥 축.",
+    },
+    {
+      ticker: "PLTR", name: "Palantir", group: "software", domain: "palantir.com", cat: "bigtech",
+      events: [],
+      note: "Palantir(나스닥, AI 소프트웨어). AIP(AI 플랫폼)로 기업·정부의 실무 워크플로에 LLM을 연결 — AI 애플리케이션 수익화 선두주자.",
+    },
+    {
+      ticker: "NOW", name: "ServiceNow", group: "software", domain: "servicenow.com", cat: "bigtech",
+      events: [],
+      note: "ServiceNow(뉴욕, 엔터프라이즈 SaaS). Now Assist 생성형 AI를 워크플로 전반에 내장 — 좌석당 AI 추가 과금 모델.",
     },
     {
       ticker: "SPCX", name: "SpaceX (xAI, Cursor)", group: "native", domain: "spacex.com", cat: "native",

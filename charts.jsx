@@ -500,4 +500,146 @@ function StockChart({ stock, rawPoints, years, marketCap, asOf, accent, ink, mut
   );
 }
 
-Object.assign(window, { MarketGrowthChart, HBarChart, DonutChart, MonthlyLineChart, StockChart });
+// ---- Group trend: value-chain sector comparison (rebased to 100) ----
+// One line per STOCK_GROUP. Each group line = average of its member stocks'
+// prices, each rebased to 100 at the start of the selected window. Lets you
+// read how whole value-chain sectors (chips / memory / hyperscalers …) trend
+// against each other instead of one ticker at a time.
+function GroupTrendChart({ groups, stocks, stockData, years, theme }) {
+  const [ref, inView] = useEyeLevel();
+  const prog = useProgress(inView, 1400, 0);
+  const tip = useTip();
+  const svgRef = useRefC(null);
+  const [hover, setHover] = useStateC(null);
+  const DAY = 86400000;
+
+  // clean + sort each ticker's daily series
+  const byTicker = {};
+  (stocks || []).forEach(s => {
+    const raw = stockData && stockData[s.ticker];
+    if (!raw || !raw.points) return;
+    const arr = raw.points
+      .filter(p => p && p.d && typeof p.p === "number")
+      .map(p => ({ t: Date.parse(p.d + "T00:00:00Z"), p: p.p }))
+      .sort((a, b) => a.t - b.t);
+    if (arr.length >= 2) byTicker[s.ticker] = arr;
+  });
+
+  let lastT = -Infinity, firstT = Infinity;
+  Object.values(byTicker).forEach(arr => {
+    if (arr[arr.length - 1].t > lastT) lastT = arr[arr.length - 1].t;
+    if (arr[0].t < firstT) firstT = arr[0].t;
+  });
+  if (!isFinite(lastT)) {
+    return <div ref={ref} className="stock-empty">밸류체인 그룹 트렌드 데이터를 매일 크롤링합니다. 자동 갱신을 기다리는 중입니다.</div>;
+  }
+  const startT = Math.max(firstT, years ? lastT - years * 365 * DAY : firstT);
+  const N = 120;
+  const sampleTs = Array.from({ length: N }, (_, i) => startT + ((lastT - startT) * i) / (N - 1));
+  const valAt = (arr, t) => { let v = null; for (let i = 0; i < arr.length; i++) { if (arr[i].t <= t) v = arr[i].p; else break; } return v; };
+
+  const series = (groups || []).map(g => {
+    const members = (stocks || []).filter(s => s.group === g.id && byTicker[s.ticker]);
+    const memNorm = members.map(m => {
+      const arr = byTicker[m.ticker];
+      let base = valAt(arr, startT);
+      if (base == null) { const f = arr.find(p => p.t >= startT); base = f ? f.p : arr[0].p; }
+      return sampleTs.map(t => { const v = valAt(arr, t); return (v == null || !base) ? null : (v / base) * 100; });
+    });
+    const line = sampleTs.map((_, i) => {
+      const vals = memNorm.map(a => a[i]).filter(v => v != null);
+      return vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : null;
+    });
+    return { g, line, count: members.length, tickers: members.map(m => m.ticker) };
+  }).filter(s => s.count > 0 && s.line.some(v => v != null));
+
+  const W = 760, H = 340, padL = 46, padR = 14, padT = 18, padB = 30;
+  const iw = W - padL - padR, ih = H - padT - padB;
+  let lo = Infinity, hi = -Infinity;
+  series.forEach(s => s.line.forEach(v => { if (v != null) { if (v < lo) lo = v; if (v > hi) hi = v; } }));
+  if (!isFinite(lo)) { lo = 80; hi = 120; }
+  const padY = (hi - lo) * 0.08 || 5;
+  lo = Math.max(0, lo - padY); hi = hi + padY;
+  const x = i => padL + (iw * i) / (N - 1);
+  const y = v => padT + ih - (ih * (v - lo)) / (hi - lo || 1);
+  const ticks = niceTicks(hi, 5).filter(t => t >= lo - 0.001 && t <= hi + 0.001);
+  const visN = Math.max(2, Math.floor(prog * (N - 1)) + 1);
+
+  const onMove = (ev) => {
+    const svg = svgRef.current; if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const px = ((ev.clientX - rect.left) / rect.width) * W;
+    let i = Math.round(((px - padL) / iw) * (N - 1));
+    i = Math.max(0, Math.min(N - 1, i));
+    setHover(i);
+  };
+  const hi2 = hover != null ? hover : N - 1;
+  const fmtMonth = t => { const d = new Date(t); const mm = String(d.getUTCMonth() + 1).padStart(2, "0"); return `${String(d.getUTCFullYear()).slice(2)}.${mm}`; };
+
+  return (
+    <div ref={ref} className="stock-chart" style={{ position: "relative" }} onMouseLeave={() => setHover(null)}>
+      <div className="gt-readout">
+        <span className="gt-asof">{fmtMonth(sampleTs[hi2])} 기준 · 기간 시작 = 100 재환산</span>
+      </div>
+      <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: "block", cursor: "crosshair" }} onMouseMove={onMove}>
+        {ticks.map((t, i) => (
+          <g key={i}>
+            <line x1={padL} x2={padL + iw} y1={y(t)} y2={y(t)} stroke={theme.grid} strokeWidth="1" />
+            <text x={padL - 8} y={y(t) + 3} textAnchor="end" fontSize="10" fill={theme.muted} style={{ fontVariantNumeric: "tabular-nums" }}>{t}</text>
+          </g>
+        ))}
+        {/* 100 baseline */}
+        {100 >= lo && 100 <= hi && (
+          <line x1={padL} x2={padL + iw} y1={y(100)} y2={y(100)} stroke={theme.muted} strokeWidth="1" strokeDasharray="2 3" opacity="0.5" />
+        )}
+        {[0, 0.25, 0.5, 0.75, 1].map((f, i) => {
+          const idx = Math.round(f * (N - 1));
+          return <text key={i} x={x(idx)} y={padT + ih + 18} textAnchor="middle" fontSize="9.5" fill={theme.muted}>{fmtMonth(sampleTs[idx])}</text>;
+        })}
+        {series.map((s, k) => {
+          const segs = [];
+          let cur = [];
+          s.line.slice(0, visN).forEach((v, i) => {
+            if (v == null) { if (cur.length) { segs.push(cur); cur = []; } }
+            else cur.push(`${x(i)},${y(v)}`);
+          });
+          if (cur.length) segs.push(cur);
+          return segs.map((pl, j) => (
+            <polyline key={k + "-" + j} points={pl.join(" ")} fill="none" stroke={s.g.accent}
+              strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" opacity="0.92" />
+          ));
+        })}
+        {/* end labels */}
+        {series.map((s, k) => {
+          const v = s.line[visN - 1]; if (v == null) return null;
+          return <circle key={"d" + k} cx={x(visN - 1)} cy={y(v)} r="3" fill={s.g.accent} />;
+        })}
+        {hover != null && (
+          <g pointerEvents="none">
+            <line x1={x(hover)} x2={x(hover)} y1={padT} y2={padT + ih} stroke={theme.muted} strokeWidth="1" strokeDasharray="3 3" opacity="0.55" />
+            {series.map((s, k) => { const v = s.line[hover]; return v == null ? null : <circle key={k} cx={x(hover)} cy={y(v)} r="3.6" fill="#fff" stroke={s.g.accent} strokeWidth="2" />; })}
+          </g>
+        )}
+      </svg>
+      <div className="gt-legend">
+        {series.slice().sort((a, b) => (b.line[hi2] || 0) - (a.line[hi2] || 0)).map((s, k) => {
+          const v = s.line[hi2];
+          const chg = v != null ? v - 100 : null;
+          return (
+            <div key={k} className="gt-leg-item"
+              onMouseEnter={e => tip.show(e, <span><b style={{ color: s.g.accent }}>{s.g.ko}</b><br />{s.tickers.join(" · ")}<br /><em>구성 {s.count}종목 · 기간 시작 대비 {chg == null ? "—" : (chg >= 0 ? "+" : "") + chg.toFixed(1) + "%"}</em></span>)}
+              onMouseMove={tip.move} onMouseLeave={tip.hide}>
+              <span className="gt-swatch" style={{ background: s.g.accent }} />
+              <span className="gt-leg-name">{s.g.ko}</span>
+              <span className={"gt-leg-chg " + (chg != null && chg >= 0 ? "pos" : "neg")}>{chg == null ? "—" : (chg >= 0 ? "+" : "") + chg.toFixed(1) + "%"}</span>
+            </div>
+          );
+        })}
+      </div>
+      <p className="stock-note">각 그룹 = 구성 종목의 종가를 기간 시작 100으로 재환산해 평균낸 상대 추이 · 밸류체인 업종별 상대 강도 비교용(절대 주가 아님)</p>
+      {tip.node}
+    </div>
+  );
+}
+
+Object.assign(window, { MarketGrowthChart, HBarChart, DonutChart, MonthlyLineChart, StockChart, GroupTrendChart });

@@ -640,6 +640,7 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
   const [ticker, setTicker] = React.useState((stocks[0] || {}).ticker);
   const [years, setYears] = React.useState(1);
   const [groupFilter, setGroupFilter] = React.useState("all");
+  const [view, setView] = React.useState("single");
   const sel = stocks.find(s => s.ticker === ticker) || stocks[0];
   const selGroup = groupMap[sel.group];
   const accent = (selGroup || catMap[sel.cat] || {}).accent || theme.accent;
@@ -653,9 +654,9 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
         <span className="board-tab" style={{ background: accent }} />
         <div className="board-titles">
           <h2>주가 차트 <span className="board-en">Listed AI Stocks · 실시간 일별 주가</span></h2>
-          <p>상장 AI 기업 실제 일별 종가(매일 자동 크롤링) · 시가총액 표시 · 마우스 호버 시 종가 · 변곡점(●)에 상승/하락 사유</p>
+          <p>상장 AI 기업 실제 일별 종가(매일 자동 크롤링) · 밸류체인 업종별 그룹 트렌드 비교 · 마우스 호버 시 종가 · 변곡점(●)에 상승/하락 사유</p>
         </div>
-        {!sel.private && (
+        {(view === "group" || !sel.private) && (
           <div className="stock-range">
             <button className={years === 1 ? "on" : ""} onClick={() => setYears(1)}>1년</button>
             <button className={years === 5 ? "on" : ""} onClick={() => setYears(5)}>5년</button>
@@ -663,6 +664,22 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
         )}
       </div>
 
+      <div className="stock-view-toggle">
+        <button className={view === "single" ? "on" : ""} onClick={() => setView("single")}>개별 종목</button>
+        <button className={view === "group" ? "on" : ""} onClick={() => setView("group")}>밸류체인 그룹 트렌드</button>
+      </div>
+
+      {view === "group" ? (
+        <div className="stock-panel" style={{ "--accent": accent }}>
+          <div className="stock-panel-head">
+            <span className="sp-name">밸류체인 업종별 상대 추이</span>
+            <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{years}년 · 시작=100</span>
+          </div>
+          <GroupTrendChart groups={groups} stocks={stocks} stockData={stockData} years={years} theme={theme} />
+          <p className="stock-updated">출처: 일별 자동 크롤링(Stooq 등) · 그룹 = 구성 종목 종가를 기간 시작 100으로 재환산 후 평균</p>
+        </div>
+      ) : (
+      <React.Fragment>
       <div className="stock-group-filters">
         <button className={groupFilter === "all" ? "on" : ""} onClick={() => setGroupFilter("all")}>전체</button>
         {(groups || []).map(g => (
@@ -741,6 +758,8 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
         )}
         <p className="stock-updated">출처: 일별 자동 크롤링(Stooq 등) · 시총 = 종가 × 발행주식수(근사)</p>
       </div>
+      </React.Fragment>
+      )}
      </AnimCtx.Provider>
     </section>
   );
@@ -1181,7 +1200,7 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
           <h2>AI 비즈니스 모델 <span className="board-en">Money Flow · Who Pays Whom</span></h2>
-          <p>투자·인수·GPU/클라우드/데이터 <b>매출</b> 등 실제 '돈의 흐름'을 그래프로 표시 (초록=투자, 주황=매출, 파랑=파트너십) · <b>시사점:</b> 온디바이스 AI 기능의 과금 모델(구독 유료화·단말 번들·커머스 수수료) 설계 참조</p>
+          <p>투자·인수·GPU/클라우드/데이터 <b>매출</b> 등 실제 '돈의 흐름'을 도식화 · 초록=투자 · 주황=매출 · 파랑=파트너십</p>
         </div>
       <div className="btf-wrap">
         <h3 className="btf-h">빅테크 머니 플로우 <em>누가 → 무엇에 → 어떻게 지불하나</em></h3>
@@ -1913,7 +1932,7 @@ function MarketBoard({ sectionRef }) {
       .catch(() => {});
   }, [inView, loaded]);
 
-  // 삭제(비번 000)·숨김 상태 — localStorage 영구 보존
+  // 삭제(비밀번호)·숨김 상태 — localStorage 영구 보존
   const DEL_LS = "aiDashDeletedMarkets", HIDE_LS = "aiDashHiddenMarkets";
   const [del, setDel] = React.useState(() => { try { return JSON.parse(localStorage.getItem(DEL_LS) || "{}"); } catch { return {}; } });
   const [hidden, setHidden] = React.useState(() => { try { return JSON.parse(localStorage.getItem(HIDE_LS) || "{}"); } catch { return {}; } });
@@ -1933,7 +1952,7 @@ function MarketBoard({ sectionRef }) {
         <span className="board-tab" style={{ background: "#0891B2" }} />
         <div className="board-titles">
           <h2>AI 신사업 시장 <span className="board-en">AI New-Business Market Map · 휴대폰 사업 관점</span></h2>
-          <p>단말 사업이 확장 가능한 AI 신사업 버티컬을 MECE 6개 축으로 정리 · 시장 규모·미래 예측·CAGR·출처·발표일·링크(플레인 텍스트) · 주간 자동 갱신 · ✕로 삭제(비번 000)·숨김</p>
+          <p>단말 사업이 확장 가능한 AI 신사업 버티컬을 MECE 6개 축으로 정리 · 시장 규모·미래 예측·CAGR·출처·발표일·링크(플레인 텍스트) · 주간 자동 갱신 · ✕로 삭제(비밀번호)·숨김</p>
         </div>
         <div className="mkt-tools">
           <button className={showHidden ? "on" : ""} onClick={() => setShowHidden(s => !s)} title="숨긴 항목 표시/재표시">숨김 {Object.keys(hidden).length}</button>
@@ -1960,7 +1979,7 @@ function MarketBoard({ sectionRef }) {
                           <Icon name={hidden[it.id] ? "dot" : "collapse"} size={12} sw={2} />
                         </button>
                         {pend === it.id ? null : (
-                          <button className="ct-del" title="삭제(비번 000)" onClick={() => { setPend(it.id); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+                          <button className="ct-del" title="삭제(비밀번호)" onClick={() => { setPend(it.id); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
                         )}
                       </span>
                     </div>
@@ -2045,7 +2064,7 @@ function StartupScopeBoard({ sectionRef }) {
       {pwErr && <span className="art-pw-err">비밀번호가 틀렸습니다.</span>}
     </span>
   ) : (
-    <button className="ct-del" title="삭제(비번 000)" onClick={() => { setPend(name); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+    <button className="ct-del" title="삭제(비밀번호)" onClick={() => { setPend(name); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
   ));
   const Ev = ({ it }) => (it.latest && it.latest.url ? (
     <a className="mkt-latest" href={it.latest.url} target="_blank" rel="noopener"><Icon name="news" size={10} /> 최신 {it.latest.date && it.latest.date.slice(5)} · {String(it.latest.title).slice(0, 48)}</a>
@@ -2061,7 +2080,7 @@ function StartupScopeBoard({ sectionRef }) {
         <span className="board-tab" style={{ background: "#0E8F6E" }} />
         <div className="board-titles">
           <h2>스타트업 분석 <span className="board-en">Startup Analysis · 대형=파트너십 / 소형=인수·투자 (레이더 통합)</span></h2>
-          <p>글로벌 AI 스타트업(한국·중국 제외)을 규모별 MECE 2계층으로 분석 · 대형은 비즈니스 모델·수익 구조·파트너십, 소형은 개요·펀딩·인수/투자 관점 · 주간 자동 갱신 · ✕ 삭제(비번 000)</p>
+          <p>글로벌 AI 스타트업(한국·중국 제외)을 규모별 MECE 2계층으로 분석 · 대형은 비즈니스 모델·수익 구조·파트너십, 소형은 개요·펀딩·인수/투자 관점 · 주간 자동 갱신 · ✕ 삭제(비밀번호)</p>
         </div>
         <div className="mkt-tools">
           <button className={tier === "large" ? "on" : ""} onClick={() => setTier("large")}>대형 {large.length}</button>

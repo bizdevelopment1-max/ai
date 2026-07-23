@@ -1327,6 +1327,27 @@ a[href]:hover .rainbow-on-hover,
 .stock-group-filters button:hover { border-color: var(--accent); color: var(--ink); transform: translateY(-2px); }
 .stock-group-filters button.on { font-weight: 800; }
 
+/* 개별 종목 / 밸류체인 그룹 트렌드 뷰 전환 */
+.stock-view-toggle { display: flex; gap: 6px; padding: 12px 20px 0; }
+.stock-view-toggle button {
+  font-family: var(--f); font-size: 12px; font-weight: 700; color: var(--muted);
+  background: var(--panel); border: 2px solid var(--line); border-radius: 9px; padding: 6px 14px; cursor: pointer;
+  transition: all .15s;
+}
+.stock-view-toggle button:hover { border-color: var(--accent); color: var(--ink); }
+.stock-view-toggle button.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 800; }
+
+/* 그룹 트렌드 차트 범례·판독 */
+.gt-readout { display: flex; align-items: center; gap: 10px; margin: 2px 0 6px; }
+.gt-asof { font-size: 11.5px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.gt-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 12px 4px 2px; }
+.gt-leg-item { display: flex; align-items: center; gap: 7px; cursor: default; }
+.gt-swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.gt-leg-name { font-size: 12px; font-weight: 700; color: var(--ink); }
+.gt-leg-chg { font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.gt-leg-chg.pos { color: #0E8F6E; }
+.gt-leg-chg.neg { color: #D23B3B; }
+
 .stock-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px 4px; }
 .stock-tab {
   display: flex; align-items: center; gap: 7px; font-family: var(--f);

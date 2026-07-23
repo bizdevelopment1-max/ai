@@ -21,14 +21,26 @@ const TICKERS = [
   { t: "AMD", y: "AMD", s: "amd.us" },
   { t: "AVGO", y: "AVGO", s: "avgo.us" },
   { t: "TSM", y: "TSM", s: "tsm.us" },
+  { t: "QCOM", y: "QCOM", s: "qcom.us" },
+  { t: "ARM", y: "ARM", s: "arm.us" },
+  { t: "MRVL", y: "MRVL", s: "mrvl.us" },
+  { t: "INTC", y: "INTC", s: "intc.us" },
   // ── 메모리 ──
   { t: "MU", y: "MU", s: "mu.us" },
   // SK hynix ADR — 2026-07-10 나스닥 신규 상장(한국거래소 000660 동시 상장). 상장 초기라 데이터가
   // 얇을 수 있어 매일 크롤 시 자동으로 채워짐(단조 최신화 병합 로직).
   { t: "SKHY", y: "SKHY", s: "skhy.us" },
+  // ── 네트워킹·광통신 ──
+  { t: "ANET", y: "ANET", s: "anet.us" },
+  { t: "CIEN", y: "CIEN", s: "cien.us" },
   // ── 데이터센터·뉴클라우드 ──
   { t: "CRWV", y: "CRWV", s: "crwv.us" },
   { t: "APLD", y: "APLD", s: "apld.us" },
+  { t: "VRT", y: "VRT", s: "vrt.us" },
+  { t: "NBIS", y: "NBIS", s: "nbis.us" },
+  // ── AI 소프트웨어·플랫폼 ──
+  { t: "PLTR", y: "PLTR", s: "pltr.us" },
+  { t: "NOW", y: "NOW", s: "now.us" },
   // ── 온디바이스 ──
   { t: "AAPL", y: "AAPL", s: "aapl.us", shares: 14.8 },
   // ── AI 네이티브 ──
