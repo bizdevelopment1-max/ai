@@ -119,7 +119,10 @@ async function main() {
   try { prev = JSON.parse(await readFile("startups.json", "utf8")); } catch {}
   const age = prev && prev.weekOf ? (Date.now() - new Date(prev.weekOf + "T00:00:00Z").getTime()) / 86400000 : 99;
   const staleShape = !prev || !Array.isArray(prev.large);   // 구 스키마면 강제 갱신
-  if (age < 6.5 && !staleShape && prev.engine !== "rules") { console.log(`[startups] fresh (${prev.weekOf}, ${prev.engine}) — skip`); return; }
+  // 영어 문장(연속 알파벳 15자+ 포함)이 남아 있으면 강제 재생성 — 한글 개조식으로 교체
+  const hasEnglish = prev && [...(prev.large || []), ...(prev.small || [])].some(x =>
+    /[A-Za-z]{4,}\s+[A-Za-z]{4,}\s+[A-Za-z]{4,}/.test(`${x.partnership || ""} ${x.acqAngle || ""} ${x.revenue || ""} ${x.overview || ""}`));
+  if (age < 6.5 && !staleShape && prev.engine !== "rules" && !hasEnglish) { console.log(`[startups] fresh (${prev.weekOf}, ${prev.engine}) — skip`); return; }
 
   for (const s of [...large, ...small]) { const n = await latest(s.name); if (n) s.latest = n; }
   console.log(`[startups] large ${large.length} · small ${small.length}, latest news attached`);
