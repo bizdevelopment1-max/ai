@@ -95,7 +95,7 @@ async function pullDirect(feed, limit = 2) {
       const d = pub ? new Date(decode(pub)) : new Date();
       const date = isNaN(d) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
       if ((Date.now() - new Date(date + "T00:00:00Z").getTime()) / 86400000 > 7) continue;   // 최근 7일만
-      const desc = decode(tag(it, "description") || tag(it, "summary")).slice(0, 240);
+      const desc = cleanDesc(decode(tag(it, "description") || tag(it, "summary"))).slice(0, 240);
       out.push({ date, co: deviceCo(title), cat: "bigtech", source: feed.source, title, descEn: desc, url: link, tag: "글로벌" });
     }
     console.log(`[news:rss:${feed.source}] ${out.length} item(s)`);
@@ -117,10 +117,32 @@ const deviceCo = (title) => { const h = DEVICE_CO.find(([re]) => re.test(title |
 function decode(s) {
   return String(s || "")
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")                                // kill CSS blocks (leaked into feed)
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")                             // kill inline JS blocks
     .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ")  // entities FIRST
     .replace(/<[^>]+>/g, " ")                                                 // then strip tags (kills <font ...>)
+    .replace(/\{[^{}]*\}/g, " ")                                              // leftover CSS rule bodies { … }
     .replace(/\s+/g, " ").trim();
+}
+
+// Residue cleaner for article DESCRIPTIONS only (never titles). Publisher RSS feeds (MIT TR /
+// IEEE 등) sometimes append their stylesheet or nav chrome as plain text after the real prose.
+// Strategy: cut the description at the first CSS/JS junk marker (prose comes first, chrome after),
+// then remove nav-keyword runs and trailing punctuation fragments.
+const JUNK_MARK = /(\{|\}|!important|no-repeat|widget__|::?(?:before|after)|\.fa-|@media|font-family|rgba?\(|\d+px;|cssRules)/i;
+function cleanDesc(t) {
+  let s = String(t || "");
+  const at = s.search(JUNK_MARK);
+  if (at >= 20) s = s.slice(0, at);                              // keep the clean lead, drop the chrome tail
+  else if (at !== -1) s = s.replace(new RegExp(JUNK_MARK.source + "[\\s\\S]*$", "i"), " "); // junk very early → drop from marker on
+  s = s.replace(/https?:\/\/\S+/g, " ")                          // stray urls
+    // remove runs of 2+ consecutive nav keywords ("주요 주제 뉴스레터 이벤트 오디오 …")
+    // (JS \b is ASCII-only, so match keyword + optional trailing space instead)
+    .replace(/(?:(?:주요\s*주제|뉴스레터|이벤트|오디오|다운로드|구독|메뉴|검색|로그인|회원가입|더보기)\s*){2,}/g, " ")
+    .replace(/\s+/g, " ").trim()
+    .replace(/[\s'"()\-–—:;,·]+$/,"").trim();                    // trailing partial fragment ("제안 ')")
+  return s;
 }
 const tag = (xml, name) => { const m = xml.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`, "i")); return m ? m[1] : ""; };
 const attr = (xml, name, a) => { const m = xml.match(new RegExp(`<${name}[^>]*\\b${a}="([^"]*)"`, "i")); return m ? m[1] : ""; };
@@ -131,6 +153,50 @@ function parseItems(xml) {
   const items = []; const re = /<item>([\s\S]*?)<\/item>/g; let m;
   while ((m = re.exec(xml))) items.push(m[1]);
   return items;
+}
+
+// ---- 개조식 정규화 · 매체 꼬리 제거 · 금지어 ---------------------------------
+// 존댓말·평서형 종결 → 명사형("~함/~음/~임"), 끝 마침표 제거
+const NOUN_END = [
+  [/합니다$/, "함"], [/입니다$/, "임"], [/됩니다$/, "됨"], [/갑니다$/, "감"], [/옵니다$/, "옴"],
+  [/있습니다$/, "있음"], [/없습니다$/, "없음"], [/([가-힣])습니다$/, "$1음"],
+  [/한다$/, "함"], [/이다$/, "임"], [/된다$/, "됨"], [/있다$/, "있음"], [/없다$/, "없음"],
+  [/했다$/, "했음"], [/였다$/, "였음"], [/왔다$/, "왔음"], [/([가-힣])었다$/, "$1었음"], [/([가-힣])았다$/, "$1았음"],
+];
+function nounize(line) {
+  let l = String(line || "").trim().replace(/[.。]+\s*$/, "");
+  l = l.replace(/([가-힣])(?:습니다|ㅂ니다)[.。]\s+/g, "$1음 — ").replace(/합니다[.。]\s+/g, "함 — ")
+       .replace(/([가-힣])다[.。]\s+(?=[가-힣A-Za-z])/g, "$1다 — ");
+  for (const [re, to] of NOUN_END) { if (re.test(l)) { l = l.replace(re, to); break; } }
+  return l.replace(/[.。]+\s*$/, "").trim();
+}
+const nounizeSummary = sm => String(sm || "").split("\n").map(l => l.trim()).filter(Boolean)
+  .map(l => "· " + nounize(l.replace(/^[·\-•]\s*/, ""))).join("\n");
+
+// 화면 노출 금지어 — 제목·요약에 포함되면 해당 기사 제외
+const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
+
+// 주요 매체명(영문·한글) — 요약/제목 끝의 매체 꼬리 제거용
+const PUBS = /(business insider|비즈니스\s*인사이더|reuters|로이터|bloomberg|블룸버그|techcrunch|테크크런치|the verge|버지|cnbc|wsj|wall street journal|월스트리트|financial times|the information|axios|engadget|ars technica|the guardian|가디언|venturebeat|벤처비트|forbes|포브스|wired|와이어드|cnet|new york times|뉴욕\s*타임스|associated press|ap통신|mit tech review|technology review|ieee spectrum|9to5|fast company|패스트컴퍼니)/i;
+
+// 본문/제목 끝에 붙은 매체명 꼬리 제거(" - Business Insider", " | 비즈니스 인사이더" 등)
+function stripSourceTail(text, source) {
+  let t = String(text || "").trim();
+  if (source) {
+    const esc = String(source).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    t = t.replace(new RegExp("[\\-\\|·,–—]\\s*" + esc + "\\s*$", "i"), "").trim();
+  }
+  t = t.replace(/[\-\|·,–—]\s*[A-Za-z][\w .&'\-]{1,28}$/, (m) => PUBS.test(m) ? "" : m).trim();
+  return t;
+}
+
+// 제목 정리: '독점:'/'Exclusive:' 등 라벨과 끝의 매체명 꼬리 제거(제목=요약 중복 방지) + 개조식
+function cleanTitle(t, source) {
+  let s = String(t || "").trim();
+  s = s.replace(/^\s*(독점|단독|속보|Exclusive|Breaking|Opinion|Analysis|Update)\s*[:：]\s*/i, "");
+  s = stripSourceTail(s, source);
+  s = nounize(s);
+  return s.trim() || String(t || "").trim();
 }
 
 async function fetchRss(query) {
@@ -153,7 +219,7 @@ async function pull(src, limit) {
       const host = hostOf(srcUrl);
       if (!host || !allowed(host)) continue;                 // authoritative English only
       const title = rawTitle.replace(/ - [^-]*$/, "").trim() || rawTitle;
-      const desc = decode(tag(it, "description")).slice(0, 240);
+      const desc = cleanDesc(decode(tag(it, "description"))).slice(0, 240);
       const pub = tag(it, "pubDate");
       const d = pub ? new Date(pub) : new Date();
       const date = isNaN(d) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
@@ -233,9 +299,10 @@ async function main() {
   const prevByTitleEn = new Map(prev.filter(a => a.titleEn).map(a => [a.titleEn, a]));
   const findOld = a => prevByUrl.get(a.url) || prevByTitleEn.get(a.title);
 
-  // only call the API for genuinely new URLs (or prior entries that lack a good Korean summary)
+  // only summarize genuinely new URLs (or prior entries lacking a good Korean summary)
+  // 키 없는 GitHub Models(llm.mjs 공급자 체인)로 배치 요약 — 실패 시 원문 폴백
   const toSummarize = raw.filter(a => !isKoreanSummary(findOld(a)));
-  const sums = await pool(toSummarize, 4, brief);   // Claude→keyless 번역 폴백
+  const sums = await summarizeBatch(toSummarize);
   const sumByUrl = new Map();
   toSummarize.forEach((a, k) => { if (sums[k]) sumByUrl.set(a.url, sums[k]); });
 
@@ -244,8 +311,9 @@ async function main() {
     const old = findOld(a);
     if (isKoreanSummary(old) && lineCount(old.summary) >= 3) return old;   // 3줄 인사이트(수동 보정 포함)면 재사용
     const s = sumByUrl.get(a.url);
-    // LLM 요약 실패 시에도 피드에 요약이 보이도록 — 원문 설명(descEn)을 폴백으로 사용
-    const summary = s ? s.summary : (a.descEn ? `· ${a.descEn.slice(0, 200)}` : `· ${a.title}`);
+    // LLM 요약 실패 시에도 피드에 요약이 보이도록 — 정제한 원문 설명(descEn)을 폴백으로 사용
+    const cleanFallback = cleanDesc(a.descEn || "");
+    const summary = s ? s.summary : (cleanFallback ? `· ${cleanFallback.slice(0, 200)}` : `· ${a.title}`);
     return {
       date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag,
       url: (s && s.url) ? s.url : a.url,                   // Google News 리다이렉트 대신 원문 URL
