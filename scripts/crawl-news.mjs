@@ -282,7 +282,7 @@ async function main() {
       return !hit;
     })
     .sort((x, y) => (x.date < y.date ? 1 : -1))
-    .slice(0, 100);
+    .slice(0, 500);   // 계속 누적(과거 기사 유지) — UI가 페이지네이션으로 초기 렌더 경량화
 
   // network failure → keep prev, but still enforce the banned-term policy on it
   const out = raw.length ? final : prev.filter(a => !BANNED.test((a.title || "") + " " + (a.summary || "")));

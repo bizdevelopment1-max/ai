@@ -1895,3 +1895,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .su-meta { font-family: var(--f); font-size: 10.5px; font-weight: 600; color: var(--muted); flex: 1; word-break: keep-all; }
 .su-row { font-family: var(--f); font-size: 12px; font-weight: 600; color: var(--ink-2); line-height: 1.55; word-break: keep-all; margin: 6px 0 0; }
 .mkt-card .brief-label { display: inline-block; margin: 6px 0 2px; }
+
+/* 데일리 기사 누적 — 더 보기(초기 렌더 경량화) */
+.feed-more { display: block; width: 100%; margin: 10px 0 2px; font-family: var(--f); font-size: 12.5px; font-weight: 700; color: var(--muted); background: var(--panel); border: 2px solid var(--line); border-radius: 10px; padding: 9px; cursor: pointer; transition: all .15s; }
+.feed-more:hover { border-color: var(--accent); color: var(--ink); }
+.feed-more em { font-style: normal; font-weight: 600; color: var(--muted); margin-left: 6px; }

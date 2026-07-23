@@ -356,6 +356,10 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
 
   const sorted = [...filtered].sort((a, b) => pubOf(b).localeCompare(pubOf(a)));
   const activeCat = filter !== "all" ? catMap[filter] : null;
+  // 누적 기사가 늘어도 초기 렌더를 가볍게 — 30개씩 페이지네이션(필터 변경 시 리셋)
+  const [visN, setVisN] = React.useState(30);
+  React.useEffect(() => { setVisN(30); }, [filter, co, query]);
+  const shown = sorted.slice(0, visN);
 
   return (
     <section className="board feed" ref={sectionRef} data-screen-label="Daily Articles">
@@ -390,7 +394,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
       <div className="feed-body">
         {sorted.length === 0 && <div className="feed-empty">표시할 기사가 없습니다.</div>}
         <div className="feed-list">
-          {sorted.map((a, i) => {
+          {shown.map((a, i) => {
             const c = catMap[a.cat] || {};
             const isSel = selKey === keyOf(a);
             return (
@@ -427,6 +431,11 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
             );
           })}
         </div>
+        {visN < sorted.length && (
+          <button className="feed-more" onClick={() => setVisN(n => n + 30)}>
+            더 보기 <em>{shown.length} / {sorted.length}건 (누적)</em>
+          </button>
+        )}
       </div>
     </section>
   );

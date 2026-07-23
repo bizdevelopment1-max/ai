@@ -21,7 +21,7 @@ const KEY = process.env.ANTHROPIC_API_KEY || "";
 const MODEL = "claude-opus-4-8";
 const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/gi;
 const TODAY = new Date().toISOString().slice(0, 10);
-const MAX_DAYS = 14;          // 아카이브 보존 일수
+const MAX_DAYS = 60;          // 아카이브 보존 일수(누적)
 const MAX_ITEMS = 6;          // 하루 브리핑 카드 수
 
 const LABELS = ["파트너십 기회", "인수 후보", "경쟁 위협", "시장 신호", "공급망", "규제"];
