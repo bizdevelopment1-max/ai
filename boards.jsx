@@ -1890,4 +1890,117 @@ function ExecToplines({ items, insights, onNav }) {
   );
 }
 
-Object.assign(window, { BoldSummary, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+
+// ---- AI 신사업 시장 보드: lazy-load(inView 시에만 fetch), MECE 그룹, 플레인 텍스트, 삭제/숨김 ----
+function MarketBoard({ sectionRef }) {
+  const inView = useInView(sectionRef);
+  const [data, setData] = React.useState(null);
+  const [loaded, setLoaded] = React.useState(false);
+  // 화면에 들어올 때 1회만 market.json 로드 — 초기 페이지 로드에 영향 없음
+  React.useEffect(() => {
+    if (!inView || loaded) return;
+    setLoaded(true);
+    fetch("market.json?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (j && j.items) setData(j); })
+      .catch(() => {});
+  }, [inView, loaded]);
+
+  // 삭제(비번 000)·숨김 상태 — localStorage 영구 보존
+  const DEL_LS = "aiDashDeletedMarkets", HIDE_LS = "aiDashHiddenMarkets";
+  const [del, setDel] = React.useState(() => { try { return JSON.parse(localStorage.getItem(DEL_LS) || "{}"); } catch { return {}; } });
+  const [hidden, setHidden] = React.useState(() => { try { return JSON.parse(localStorage.getItem(HIDE_LS) || "{}"); } catch { return {}; } });
+  const [pend, setPend] = React.useState(null);
+  const [pw, setPw] = React.useState("");
+  const [pwErr, setPwErr] = React.useState(false);
+  const [showHidden, setShowHidden] = React.useState(false);
+  const saveDel = n => { setDel(d => { const x = { ...d, [n]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); };
+  const confirmDel = (id) => { if (pw !== "000") { setPwErr(true); return; } saveDel(id); setPend(null); setPw(""); setPwErr(false); };
+  const toggleHide = (id) => setHidden(h => { const x = { ...h }; if (x[id]) delete x[id]; else x[id] = 1; try { localStorage.setItem(HIDE_LS, JSON.stringify(x)); } catch {} return x; });
+  const resetAll = () => { setDel({}); setHidden({}); try { localStorage.removeItem(DEL_LS); localStorage.removeItem(HIDE_LS); } catch {} };
+
+  return (
+    <section className="board" ref={sectionRef} data-screen-label="AI New Business Markets">
+     <AnimCtx.Provider value={inView}>
+      <div className="board-head">
+        <span className="board-tab" style={{ background: "#0891B2" }} />
+        <div className="board-titles">
+          <h2>AI 신사업 시장 <span className="board-en">AI New-Business Market Map · 휴대폰 사업 관점</span></h2>
+          <p>단말 사업이 확장 가능한 AI 신사업 버티컬을 MECE 6개 축으로 정리 · 시장 규모·미래 예측·CAGR·출처·발표일·링크(플레인 텍스트) · 주간 자동 갱신 · ✕로 삭제(비번 000)·숨김</p>
+        </div>
+        <div className="mkt-tools">
+          <button className={showHidden ? "on" : ""} onClick={() => setShowHidden(s => !s)} title="숨긴 항목 표시/재표시">숨김 {Object.keys(hidden).length}</button>
+          <button onClick={resetAll} title="삭제·숨김 초기화(다시 크롤링 반영)">초기화</button>
+        </div>
+      </div>
+
+      {!data ? (
+        <div className="mkt-loading">{loaded ? "시장 데이터를 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+      ) : (
+        (data.groups || []).map(g => {
+          const rows = (data.items || []).filter(it => it.group === g.id && !del[it.id] && (showHidden || !hidden[it.id]));
+          if (!rows.length) return null;
+          return (
+            <div className="mkt-group" key={g.id}>
+              <div className="mkt-group-head"><b>{g.ko}</b><em>{g.desc}</em></div>
+              <div className="mkt-grid">
+                {rows.map(it => (
+                  <div className={"mkt-card" + (hidden[it.id] ? " hid" : "")} key={it.id}>
+                    <div className="mkt-card-head">
+                      <b className="mkt-name">{it.name}</b>
+                      <span className="mkt-actions">
+                        <button className="mkt-hide" title={hidden[it.id] ? "다시 표시" : "숨김"} onClick={() => toggleHide(it.id)}>
+                          <Icon name={hidden[it.id] ? "dot" : "collapse"} size={12} sw={2} />
+                        </button>
+                        {pend === it.id ? null : (
+                          <button className="ct-del" title="삭제(비번 000)" onClick={() => { setPend(it.id); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+                        )}
+                      </span>
+                    </div>
+                    {pend === it.id && (
+                      <div className="art-del-pw" onClick={e => e.stopPropagation()}>
+                        <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
+                          onChange={e => { setPw(e.target.value); setPwErr(false); }}
+                          onKeyDown={e => { if (e.key === "Enter") confirmDel(it.id); else if (e.key === "Escape") { setPend(null); setPw(""); setPwErr(false); } }} />
+                        <button className="art-pw-ok" onClick={() => confirmDel(it.id)}>삭제</button>
+                        <button className="art-pw-cancel" onClick={() => { setPend(null); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
+                        {pwErr && <span className="art-pw-err">비밀번호가 틀렸습니다.</span>}
+                      </div>
+                    )}
+                    <p className="mkt-def">{it.def}</p>
+                    <div className="mkt-nums">
+                      <span className="mkt-num"><em>현재</em>{it.size}</span>
+                      <span className="mkt-arr">→</span>
+                      <span className="mkt-num fut"><em>예측</em>{it.forecast}</span>
+                      {it.cagr && it.cagr !== "—" && <span className="mkt-cagr">CAGR {it.cagr}</span>}
+                    </div>
+                    <div className="mkt-src">
+                      <span>{it.source}{it.date && it.date !== "—" ? ` · ${it.date}` : ""}</span>
+                      {it.url && <a href={it.url} target="_blank" rel="noopener">원문 <Icon name="ext" size={10} /></a>}
+                    </div>
+                    {(it.extra || []).length > 0 && (
+                      <ul className="mkt-extra">
+                        {it.extra.map((e, k) => (
+                          <li key={k}>{e.url ? <a href={e.url} target="_blank" rel="noopener">{e.t}</a> : e.t}</li>
+                        ))}
+                      </ul>
+                    )}
+                    {it.latest && it.latest.url && (
+                      <a className="mkt-latest" href={it.latest.url} target="_blank" rel="noopener">
+                        <Icon name="news" size={10} /> 최신 {it.latest.date && it.latest.date.slice(5)} · {String(it.latest.title).slice(0, 50)}
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      )}
+      <p className="mkt-foot">각 조사기관마다 세그먼트 정의·기준연도가 상이해 수치 편차가 큼 — 복수 기관 자료를 교차검증해 CAGR 추세 중심으로 활용 권장</p>
+     </AnimCtx.Provider>
+    </section>
+  );
+}
+
+Object.assign(window, { BoldSummary, MarketBoard, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });

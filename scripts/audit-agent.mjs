@@ -23,6 +23,7 @@ const RULES = [
   { file: "radar.json", tab: "스타트업 레이더", maxAge: 8.5, minItems: 3, items: d => d.picks, engine: d => d.engine, banned: true, extra: d => (!(d.memos || []).length ? ["기회 메모 없음"] : []) },
   { file: "startups.json", tab: "스타트업 전략", maxAge: 8.5, minItems: 10, items: d => Object.keys(d.items || {}), engine: d => d.engine, banned: true },
   { file: "companies.json", tab: "기업 동향", maxAge: 1.5, minItems: 10, items: d => Object.keys(d.companies || {}), banned: false },
+  { file: "market.json", tab: "AI 신사업 시장", maxAge: 30, minItems: 15, items: d => d.items, banned: false },
   { file: "stocks.json", tab: "주가 차트", maxAge: 4, minItems: 10, items: d => Object.keys(d.stocks || {}), banned: false,
     extra: d => Object.entries(d.stocks || {}).filter(([, v]) => !v.points || v.points.length < 2).map(([t]) => `${t}: 시세 데이터 없음/부족`) },
 ];

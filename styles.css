@@ -1852,3 +1852,40 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .es-info .ct-del { float: none; margin-left: auto; }
 .brief-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px 20px 0; }
 @media (max-width: 760px) { .brief-stats { grid-template-columns: repeat(2, 1fr); } }
+
+/* ============================================================
+   AI 신사업 시장 (MECE 버티컬 맵) — lazy-load
+   ============================================================ */
+.mkt-tools { display: flex; gap: 6px; margin-left: auto; }
+.mkt-tools button { font-family: var(--f); font-size: 11px; font-weight: 700; color: var(--muted); background: var(--panel); border: 2px solid var(--line); border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+.mkt-tools button:hover, .mkt-tools button.on { border-color: #0891B2; color: var(--ink); }
+.mkt-loading { padding: 30px 20px; text-align: center; font-family: var(--f); font-size: 13px; color: var(--muted); }
+.mkt-group { padding: 6px 20px 4px; }
+.mkt-group-head { padding: 10px 0 8px; border-bottom: 2px solid var(--line); margin-bottom: 12px; }
+.mkt-group-head b { font-family: var(--f); font-size: 14px; font-weight: 800; color: var(--ink); }
+.mkt-group-head em { font-style: normal; font-size: 11.5px; font-weight: 600; color: var(--muted); margin-left: 8px; word-break: keep-all; }
+.mkt-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 8px; }
+.mkt-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px; transition: box-shadow .15s; }
+.mkt-card:hover { box-shadow: var(--shadow-lg); }
+.mkt-card.hid { opacity: .5; }
+.mkt-card-head { display: flex; align-items: center; gap: 8px; }
+.mkt-name { font-family: var(--f); font-size: 13.5px; font-weight: 800; color: var(--ink); flex: 1; word-break: keep-all; }
+.mkt-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.mkt-hide { background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px; border-radius: 5px; }
+.mkt-hide:hover { color: #0891B2; background: color-mix(in srgb, #0891B2 10%, transparent); }
+.mkt-def { font-family: var(--f); font-size: 12px; font-weight: 600; color: var(--ink-2); line-height: 1.55; word-break: keep-all; margin: 6px 0 9px; }
+.mkt-nums { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.mkt-num { font-family: var(--f); font-size: 12.5px; font-weight: 800; color: var(--ink); }
+.mkt-num em { display: block; font-style: normal; font-size: 9px; font-weight: 800; letter-spacing: .04em; color: var(--muted); text-transform: uppercase; margin-bottom: 1px; }
+.mkt-num.fut { color: #0891B2; }
+.mkt-arr { color: var(--muted); }
+.mkt-cagr { font-family: var(--f); font-size: 10.5px; font-weight: 800; color: #16A34A; background: color-mix(in srgb, #16A34A 12%, var(--panel)); border-radius: 6px; padding: 2px 8px; margin-left: auto; }
+.mkt-src { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: var(--f); font-size: 11px; color: var(--muted); padding-top: 7px; border-top: 1px solid var(--line); }
+.mkt-src a { display: inline-flex; align-items: center; gap: 3px; color: #0891B2; text-decoration: none; font-weight: 700; }
+.mkt-src a:hover { text-decoration: underline; }
+.mkt-extra { margin: 7px 0 0; padding-left: 15px; }
+.mkt-extra li { font-family: var(--f); font-size: 10.5px; color: var(--muted); line-height: 1.5; word-break: keep-all; margin-bottom: 2px; }
+.mkt-extra a { color: var(--muted); text-decoration: underline; }
+.mkt-latest { display: flex; align-items: center; gap: 5px; font-family: var(--f); font-size: 10.5px; font-weight: 700; color: #0891B2; text-decoration: none; margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--line); word-break: keep-all; }
+.mkt-foot { font-family: var(--f); font-size: 10.5px; color: var(--muted); padding: 8px 20px 16px; line-height: 1.5; word-break: keep-all; }
+@media (max-width: 760px) { .mkt-grid { grid-template-columns: 1fr; } }
