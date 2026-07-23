@@ -8,7 +8,7 @@ const GROUPS = [
   { id: "assistant", ko: "AI 어시스턴트·에이전트·언어", desc: "비서·에이전트·번역·전사 — 단말 기본 UX와 서비스 접점" },
   { id: "wearxr", ko: "웨어러블·XR·신규 폼팩터", desc: "워치·링·글라스·가상피팅 — 폰 이후 폼팩터 확장" },
   { id: "creative", ko: "생성형 콘텐츠·크리에이티브", desc: "이미지·영상·사진편집·게이밍 — 카메라·미디어 기능과 결합" },
-  { id: "service", ko: "서비스 플랫폼(헬스·홈·핀테크·에듀)", desc: "삼성헬스·SmartThings·월렛·탭 생태계 확장" },
+  { id: "service", ko: "서비스 플랫폼(헬스·홈·핀테크·에듀)", desc: "헬스·홈(IoT)·월렛·웨어러블 서비스 생태계 확장" },
   { id: "trust", ko: "보안·신뢰·디지털ID", desc: "Knox·딥페이크 탐지·모바일 지갑 — 신뢰 기반 수익화" },
 ];
 
@@ -85,7 +85,7 @@ const V = [
     extra: [{ t: "스마트폰이 디바이스 기준 최대·최고성장 세그먼트 CAGR 47.4% (Straits Research)", url: "https://www.grandviewresearch.com/industry-analysis/cloud-gaming-market" }] },
 
   // ── service ──
-  { g: "service", name: "AI 헬스케어 진단", def: "워치 헬스 센서 데이터 기반 AI 진단·조기경보 — 삼성헬스 생태계 확장",
+  { g: "service", name: "AI 헬스케어 진단", def: "워치 헬스 센서 데이터 기반 AI 진단·조기경보 — 웨어러블 헬스 생태계 확장",
     size: "—", forecast: "2,265.6억 달러 (2030)", cagr: "47.1%", src: "The Business Research Company", date: "'26.1", url: "https://www.thebusinessresearchcompany.com/report/artificial-intelligence-in-healthcare-diagnosis-global-market-report",
     extra: [{ t: "2025년 19.7억 → 2030년 54.4억 달러, CAGR 22.46% (The Research Insights '25.5)", url: "" }] },
   { g: "service", name: "AI 스마트홈", def: "SmartThings 연동 AI 가전·홈 자동화 허브 — 폰이 컨트롤 센터",

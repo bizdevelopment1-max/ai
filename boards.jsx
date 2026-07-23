@@ -1695,7 +1695,10 @@ function IBInsightBoard({ research, reports, sectionRef }) {
               <span><b>Source</b> {op.sourceLine}</span>
               <span><b>Date</b> {op.date}</span>
               <span><b>Scope</b> {op.scope}</span>
-              {op.engine === "seed" && <span className="ib-seedtag">첫 자동 갱신 대기</span>}
+              {op.engine === "seed"
+                ? <span className="ib-seedtag" title="초기 입력값(시드) 표시 중 — LLM 자동 생성 갱신 대기">시드(초기값) · LLM 갱신 대기</span>
+                : (op.engine === "llm" || op.engine === "llm-gh") ? <span className="ib-engtag">LLM 자동 생성</span>
+                : op.engine === "rules" ? <span className="ib-engtag rules">규칙 기반</span> : null}
             </div>
           </div>
           <div className="ib-thesis">
@@ -1967,13 +1970,26 @@ function ExecToplines({ items, insights, onNav }) {
     setDelEs(d => { const n = { ...d, [k]: 1 }; try { localStorage.setItem(LS, JSON.stringify(n)); } catch {} return n; });
     setPend(null); setPw(""); setPwErr(false);
   };
-  const cards = ((insights && insights.cards && insights.cards.length)
-    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, action: c.action, evidence: c.evidence || [], score: c.score, updatedAt: c.updatedAt }))
+  const usingLive = !!(insights && insights.cards && insights.cards.length);
+  const cards = (usingLive
+    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, action: c.action, evidence: c.evidence || [], score: c.score, scoreBasis: c.scoreBasis, live: c.live, updatedAt: c.updatedAt }))
     : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, action: t.action, evidence: [], score: null })))
     .filter(c => !delEs[c.tag]);
   if (!cards.length) return null;
+  // 엔진 provenance 배지 — 사용자가 자동/규칙/시드 생성 여부를 즉시 판별
+  const eng = (insights && insights.engine) || (usingLive ? "rules" : "seed");
+  const ENGINE_BADGE = {
+    "llm": { ko: "LLM 자동 생성", cls: "llm" }, "llm-gh": { ko: "LLM 자동 생성", cls: "llm" },
+    "rules": { ko: "규칙 기반 자동", cls: "rules" }, "seed": { ko: "시드(초기값)", cls: "seed" },
+  };
+  const eb = ENGINE_BADGE[eng] || ENGINE_BADGE.rules;
   return (
     <div className="es-info">
+      <div className="es-meta-bar">
+        <span className={"es-engine " + eb.cls} title="생성 방식: LLM=완전 자동 생성 · 규칙=키워드 규칙 매핑 · 시드=초기 입력값(자동 갱신 대기)">{eb.ko}</span>
+        <span className="es-score-legend" title="상대 중요도 0~100 = 최신성 × 출처신뢰도 × 주제적합도 (당일 최고 카드 = 100)">점수 = 상대 중요도 0~100</span>
+        {insights && insights.generatedAt && <span className="es-gen">갱신 {String(insights.generatedAt).slice(0, 10)}</span>}
+      </div>
       <div className="es-info-head">
         <span className="es-col-h es-col-axis">전략 축</span>
         <span className="es-col-h">Signal <em>관측된 사실</em></span>
@@ -1987,6 +2003,9 @@ function ExecToplines({ items, insights, onNav }) {
             <div className="es-axis">
               <span className="es-axis-ico"><Icon name={ICON[t.tone] || "spark"} size={15} /></span>
               <b>{t.tag}</b>
+              {typeof t.score === "number"
+                ? <span className="es-score" style={{ "--tl": tone }} title={t.scoreBasis || "상대 중요도 0~100"}>{t.score}</span>
+                : (t.live === false && <span className="es-score base" title={t.scoreBasis || "근거 기사 매칭 대기 — 큐레이션 기준선"}>기준선</span>)}
               {pend === t.tag ? (
                 <span className="art-del-pw" onClick={e => e.stopPropagation()}>
                   <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus

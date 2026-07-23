@@ -91,9 +91,7 @@ async function pullDirect(feed, limit = 2) {
       let link = decode(tag(it, "link"));
       if (feed.atom && (!link || !/^http/.test(link))) { const lm = it.match(/<link[^>]*href="([^"]+)"/i); link = lm ? decode(lm[1]) : ""; }
       if (!link) continue;
-      const pub = tag(it, "pubDate") || tag(it, "published") || tag(it, "updated");
-      const d = pub ? new Date(decode(pub)) : new Date();
-      const date = isNaN(d) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
+      const date = pubDateOf(tag(it, "pubDate") || tag(it, "published") || tag(it, "updated"));
       if ((Date.now() - new Date(date + "T00:00:00Z").getTime()) / 86400000 > 7) continue;   // 최근 7일만
       const desc = cleanDesc(decode(tag(it, "description") || tag(it, "summary"))).slice(0, 240);
       out.push({ date, co: deviceCo(title), cat: "bigtech", source: feed.source, title, descEn: desc, url: link, tag: "글로벌" });
@@ -145,6 +143,21 @@ function cleanDesc(t) {
   return s;
 }
 const tag = (xml, name) => { const m = xml.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`, "i")); return m ? m[1] : ""; };
+
+// 게재일 파싱 — 원문에 표기된 '현지 달력 날짜'를 그대로 사용(UTC 변환에 따른 하루 오차 방지).
+// RFC822("Fri, 12 Jun 2026 21:00:00 -0400")·ISO("2026-07-20T12:43:00-04:00") 모두 표기된 날짜를 직접 추출.
+const MON = { jan: "01", feb: "02", mar: "03", apr: "04", may: "05", jun: "06", jul: "07", aug: "08", sep: "09", oct: "10", nov: "11", dec: "12" };
+function pubDateOf(raw) {
+  const s = decode(raw || "").trim();
+  const today = () => new Date().toISOString().slice(0, 10);
+  if (!s) return today();
+  let m = s.match(/(\d{4})-(\d{2})-(\d{2})/);                     // ISO 8601 — 표기된 날짜부(오프셋 로컬)
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  m = s.match(/(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})/);            // RFC822 — "12 Jun 2026" 리터럴 날짜
+  if (m) { const mo = MON[m[2].slice(0, 3).toLowerCase()]; if (mo) return `${m[3]}-${mo}-${String(m[1]).padStart(2, "0")}`; }
+  const d = new Date(s);                                          // 폴백
+  return isNaN(d) ? today() : d.toISOString().slice(0, 10);
+}
 const attr = (xml, name, a) => { const m = xml.match(new RegExp(`<${name}[^>]*\\b${a}="([^"]*)"`, "i")); return m ? m[1] : ""; };
 function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } }
 function allowed(host) { return ALLOW.some(d => host === d || host.endsWith("." + d)); }
@@ -220,9 +233,7 @@ async function pull(src, limit) {
       if (!host || !allowed(host)) continue;                 // authoritative English only
       const title = rawTitle.replace(/ - [^-]*$/, "").trim() || rawTitle;
       const desc = cleanDesc(decode(tag(it, "description"))).slice(0, 240);
-      const pub = tag(it, "pubDate");
-      const d = pub ? new Date(pub) : new Date();
-      const date = isNaN(d) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
+      const date = pubDateOf(tag(it, "pubDate"));
       const co = src.topic ? deviceCo(title) : src.co;
       out.push({ date, co, cat: src.cat, source: srcName || host, title, descEn: desc, url: link, tag: src.tag || "최신" });
       if (out.length >= limit) break;
