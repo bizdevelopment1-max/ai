@@ -99,7 +99,12 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
               {c.live.mentions7 > 0 && <em>7일 {c.live.mentions7}건</em>}
             </a>
           )}
-          <BoldSummary text={c.note} /></span>
+          {isStartup && c.strategy ? (
+            <span className="ct-strat">
+              <em className="ct-strat-label" style={{ color: c.strategy.tier === "large" ? "#2D6BFF" : "#C026D3" }}>{c.strategy.tier === "large" ? "대형·파트너십" : "소형·인수/투자"} · {c.strategy.label}</em>
+              <span className="ct-strat-txt"><b>개요:</b> {c.strategy.overview} <b>인사이트:</b> {c.strategy.insight}</span>
+            </span>
+          ) : <BoldSummary text={c.note} />}</span>
       </div>
     );
   };
@@ -2055,7 +2060,7 @@ function StartupScopeBoard({ sectionRef }) {
       <div className="board-head" style={{ "--accent": "#0E8F6E" }}>
         <span className="board-tab" style={{ background: "#0E8F6E" }} />
         <div className="board-titles">
-          <h2>스타트업 분석 <span className="board-en">Startup Scope · 대형=파트너십 / 소형=인수·투자</span></h2>
+          <h2>스타트업 분석 <span className="board-en">Startup Analysis · 대형=파트너십 / 소형=인수·투자 (레이더 통합)</span></h2>
           <p>글로벌 AI 스타트업(한국·중국 제외)을 규모별 MECE 2계층으로 분석 · 대형은 비즈니스 모델·수익 구조·파트너십, 소형은 개요·펀딩·인수/투자 관점 · 주간 자동 갱신 · ✕ 삭제(비번 000)</p>
         </div>
         <div className="mkt-tools">
