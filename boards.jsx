@@ -1284,6 +1284,9 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
           );
         })}
       </div>
+      <SignalInfographic file="bizmodel.json" delKey="aiDashDeletedBiz"
+        title="AI 수익화 모델 시그널"
+        sub="매일 크롤된 기사에서 '돈 버는 방식'을 구독·사용량(API)·광고/커머스·하드웨어/번들·성과기반·엔터프라이즈 6개 MECE 유형으로 누적 도식화 · 핵심 리드 + 상세 · 정량 수치는 플레인 텍스트 · ✕로 삭제(비밀번호)" />
      </AnimCtx.Provider>
     </section>
   );
@@ -1453,8 +1456,21 @@ function PenetrationChart({ data, theme, unit = "%" }) {
   );
 }
 
-// ---- 인프라·미래기술 시그널 인포그래픽: 기사 기반 누적(lazy-load), MECE 5축, X 삭제 ----
-function InfraSignalsInfographic() {
+// 시그널을 '핵심 리드 + 상세'로 분리 — 인포그래픽 카드의 워딩을 줄여 한눈에 파악.
+// 첫 문장 경계(· / 마침표 / 대시)에서 리드를 끊고 나머지는 상세로.
+function splitSignal(s) {
+  const t = String(s || "").replace(/\s+/g, " ").trim();
+  const cands = [t.indexOf(" · "), t.indexOf("· "), t.search(/[.。]\s/), t.indexOf(" — "), t.indexOf(" – ")].filter(i => i > 8);
+  const idx = cands.length ? Math.min(...cands) : -1;
+  const clean = x => String(x).replace(/^[\s·—–.,]+/, "").replace(/[.。·,\s]+$/, "").trim();
+  if (idx > 0) return { lead: clean(t.slice(0, idx)), detail: clean(t.slice(idx)) };
+  if (t.length > 72) return { lead: clean(t.slice(0, 66)) + "…", detail: clean(t) };
+  return { lead: clean(t), detail: "" };
+}
+
+// ---- 기사 기반 누적 시그널 인포그래픽(범용): lazy-load, MECE 축, 리드+상세, X 삭제 ----
+// file(json)·delKey(localStorage)·title·sub 를 받아 인프라/수익화 등 여러 보드에서 재사용.
+function SignalInfographic({ file, delKey, title, sub }) {
   const ref = React.useRef(null);
   const inView = useInView(ref);
   const [data, setData] = React.useState(null);
@@ -1462,14 +1478,14 @@ function InfraSignalsInfographic() {
   React.useEffect(() => {
     if (!inView || loaded) return;
     setLoaded(true);
-    fetch("infra.json?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" })
+    fetch(file + "?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (j && j.items) setData(j); })
       .catch(() => {});
   }, [inView, loaded]);
 
   // 삭제(비밀번호)·localStorage 영구 보존 — 기사 누적이라 삭제 항목은 다시 안 나오게
-  const DEL_LS = "aiDashDeletedInfra";
+  const DEL_LS = delKey;
   const [del, setDel] = React.useState(() => { try { return JSON.parse(localStorage.getItem(DEL_LS) || "{}"); } catch { return {}; } });
   const [pend, setPend] = React.useState(null);
   const [pw, setPw] = React.useState("");
@@ -1486,8 +1502,8 @@ function InfraSignalsInfographic() {
     <div className="infra-signals" ref={ref}>
       <div className="infra-sig-head">
         <div className="isg-titles">
-          <h3>인프라·미래기술 시그널 <em>기사 기반 자동 누적 · 매일 갱신</em></h3>
-          <p>매일 크롤된 기사에서 컴퓨트·메모리·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로 누적 도식화 · 정량 수치는 플레인 텍스트 · ✕로 삭제(비밀번호)</p>
+          <h3>{title} <em>기사 기반 자동 누적 · 매일 갱신</em></h3>
+          <p>{sub}</p>
         </div>
         <div className="isg-tools">
           <span className="isg-total">누적 <b>{items.length}</b></span>
@@ -1496,7 +1512,7 @@ function InfraSignalsInfographic() {
       </div>
 
       {!data ? (
-        <div className="mkt-loading">{loaded ? "인프라 시그널을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+        <div className="mkt-loading">{loaded ? "시그널을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
       ) : items.length === 0 ? (
         <div className="mkt-loading">표시할 시그널이 없습니다 · 초기화로 되돌릴 수 있습니다</div>
       ) : (
@@ -1526,14 +1542,16 @@ function InfraSignalsInfographic() {
                   <b>{g.ko}</b><em>{g.desc}</em><span className="isg-band-n">{rows.length}</span>
                 </div>
                 <div className="isg-cards">
-                  {rows.map(it => (
+                  {rows.map(it => {
+                    const sp = splitSignal(it.signal);
+                    return (
                     <div className="isg-card" key={it.id}>
-                      {it.quant && <span className="isg-quant" style={{ color: g.accent, borderColor: g.accent }}>{it.quant}</span>}
-                      <p className="isg-signal">{hlKey(it.signal)}</p>
-                      <div className="isg-meta">
-                        <a href={it.url} target="_blank" rel="noopener">{it.source || "출처"}</a>
-                        <span className="isg-date">{it.date}</span>
+                      <div className="isg-card-top">
+                        {it.quant && <span className="isg-quant" style={{ color: g.accent, borderColor: g.accent, background: "color-mix(in srgb, " + g.accent + " 9%, transparent)" }}>{it.quant}</span>}
+                        <span className="isg-src"><a href={it.url} target="_blank" rel="noopener">{it.source || "출처"}</a> · {String(it.date || "").slice(5)}</span>
                       </div>
+                      <p className="isg-lead">{hlKey(sp.lead)}</p>
+                      {sp.detail && <p className="isg-detail" title={it.signal}>{sp.detail}</p>}
                       {pend === it.id ? (
                         <div className="art-del-pw" onClick={e => e.stopPropagation()}>
                           <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
@@ -1547,7 +1565,8 @@ function InfraSignalsInfographic() {
                         <button className="ct-del" title="삭제(비밀번호)" onClick={() => { setPend(it.id); setPw(""); setPwErr(false); }}><Icon name="x" size={11} sw={2.2} /></button>
                       )}
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             );
@@ -1617,7 +1636,9 @@ function SignalBoard({ data, theme, sectionRef }) {
           <p>인프라 병목·전환 시점은 <b>온디바이스 AI 로드맵의 외생 변수</b>입니다. 메모리·전력 제약이 클라우드 AI 단가에 반영되는 시점, 광통신 상용화로 지연시간이 줄어드는 시점을 <b>분기 단위로 추적</b>해야 합니다.</p>
         </div>
       </div>
-      <InfraSignalsInfographic />
+      <SignalInfographic file="infra.json" delKey="aiDashDeletedInfra"
+        title="인프라·미래기술 시그널"
+        sub="매일 크롤된 기사에서 컴퓨트·메모리·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로 누적 도식화 · 핵심 리드 + 상세 · 정량 수치는 플레인 텍스트 · ✕로 삭제(비밀번호)" />
      </AnimCtx.Provider>
     </section>
   );
