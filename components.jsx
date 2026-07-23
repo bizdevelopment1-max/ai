@@ -62,6 +62,7 @@ const NAV = [
   { id: "native", ko: "AI 네이티브", en: "AI Native", icon: "ai", group: "기업 동향" },
   { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", icon: "device", group: "기업 동향" },
   { id: "startup", ko: "AI 스타트업", en: "AI Startups", icon: "spark", group: "기업 동향" },
+  { id: "sanalysis", ko: "스타트업 분석", en: "Startup Scope", icon: "brain", group: "기업 동향" },
   { id: "radar", ko: "스타트업 레이더", en: "Startup Radar", icon: "target", group: "기업 동향" },
   { id: "bizmodel", ko: "수익화 모델", en: "Monetization", icon: "palette", group: "심층 분석" },
   { id: "signals", ko: "인프라·미래기술", en: "Infra & Future Tech", icon: "server", group: "심층 분석" },
