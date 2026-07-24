@@ -27,6 +27,7 @@ concurrency:
 jobs:
   crawl:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -88,6 +89,9 @@ jobs:
       - name: Accumulate AI monetization (business-model) signals (기사 기반 누적)
         run: node scripts/crawl-bizmodel.mjs
 
+      - name: Verify evidence, provenance and cumulative history
+        run: node scripts/verify-pipeline.mjs
+
       - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
         run: node scripts/audit-agent.mjs
 
@@ -95,7 +99,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json audit.json
+          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

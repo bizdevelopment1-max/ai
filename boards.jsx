@@ -641,6 +641,14 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
   const [years, setYears] = React.useState(1);
   const [groupFilter, setGroupFilter] = React.useState("all");
   const [view, setView] = React.useState("single");
+  const ranges = [
+    { value: 1 / 12, label: "1개월" },
+    { value: 0.5, label: "6개월" },
+    { value: 1, label: "1년" },
+    { value: 5, label: "5년" },
+    { value: 0, label: "전체" },
+  ];
+  const rangeLabel = (ranges.find(r => r.value === years) || ranges[2]).label;
   const sel = stocks.find(s => s.ticker === ticker) || stocks[0];
   const selGroup = groupMap[sel.group];
   const accent = (selGroup || catMap[sel.cat] || {}).accent || theme.accent;
@@ -658,8 +666,9 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
         </div>
         {(view === "group" || !sel.private) && (
           <div className="stock-range">
-            <button className={years === 1 ? "on" : ""} onClick={() => setYears(1)}>1년</button>
-            <button className={years === 5 ? "on" : ""} onClick={() => setYears(5)}>5년</button>
+            {ranges.map(r => (
+              <button key={r.label} className={years === r.value ? "on" : ""} onClick={() => setYears(r.value)}>{r.label}</button>
+            ))}
           </div>
         )}
       </div>
@@ -673,10 +682,10 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
         <div className="stock-panel" style={{ "--accent": accent }}>
           <div className="stock-panel-head">
             <span className="sp-name">밸류체인 업종별 상대 추이</span>
-            <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{years}년 · 시작=100</span>
+            <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{rangeLabel} · 시작=100</span>
           </div>
           <GroupTrendChart groups={groups} stocks={stocks} stockData={stockData} years={years} theme={theme} />
-          <p className="stock-updated">출처: 일별 자동 크롤링(Stooq 등) · 그룹 = 구성 종목 종가를 기간 시작 100으로 재환산 후 평균</p>
+          <p className="stock-updated">출처: Yahoo Finance 우선, Stooq·Nasdaq·StockAnalysis 교차 폴백 · 그룹 = 구성 종목 종가를 기간 시작 100으로 재환산 후 평균</p>
         </div>
       ) : (
       <React.Fragment>
@@ -718,6 +727,7 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
           <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{(selGroup || {}).ko}</span>
           {mcap && <span className="sp-mcap">시가총액 <b>{mcap}</b></span>}
           {real && real.scenario && <span className="sp-scenario">시나리오(실시세 피드 미반영)</span>}
+          {real && !real.scenario && <span className="sp-source">데이터 {String(real.source || "public feed").replace("yahoo-api", "Yahoo Finance").replace("yahoo-web", "Yahoo Finance")}</span>}
         </div>
 
         {sel.private ? (
@@ -756,7 +766,7 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
             )}
           </div>
         )}
-        <p className="stock-updated">출처: 일별 자동 크롤링(Stooq 등) · 시총 = 종가 × 발행주식수(근사)</p>
+        <p className="stock-updated">Yahoo Finance 차트 UX를 참고한 기간 선택·크로스헤어 · 시세는 Yahoo 우선 다중 공개 소스 · 시총 = 종가 × 발행주식수(근사)</p>
       </div>
       </React.Fragment>
       )}

@@ -279,9 +279,9 @@ async function pull(src, limit) {
 }
 
 // ---- Claude summarization: 3-line Korean brief, device-maker lens ----
-const SYS = "당신은 글로벌 스마트폰·온디바이스 AI 기기 제조사의 전략 분석가입니다. 경쟁 제조사·모델사·칩사의 움직임이 자사 단말 사업에 주는 시사점 관점에서 영문 AI 뉴스를 한국어로 요약합니다. 자사·소속 기업명(삼성, MX, Galaxy, 사업부 등)은 절대 언급하지 않습니다. 과장 없이 사실에 근거해 작성합니다.";
+const SYS = "당신은 근거 중심 AI 산업 리서치 편집자입니다. 제공된 제목과 내용에 명시된 사실만 번역·요약하고, 없는 수치·회사·인과관계·전망을 절대 추가하지 않습니다. 사실과 해석을 분리하며 불확실하면 생략합니다. 자사·소속 기업명(삼성, MX, Galaxy, 사업부 등)은 언급하지 않습니다.";
 function userPrompt(a) {
-  return `다음 영문 AI 뉴스를 한국어로 정리하세요.\n\n제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}\n\n출력(JSON):\n- title_ko: 위 영문 제목을 자연스러운 한국어로 번역(30자 내외, 직역 아닌 의역 허용).\n- summary: 주요 내용을 정확히 3줄, 한국어 개조식으로 요약. 각 줄은 "· "로 시작하고 명사형 종결("~함/~음/~임")로 끝냅니다. 마침표(.)로 끝내지 마세요. 1줄=핵심 사실, 2줄=수치·배경, 3줄=온디바이스 AI·AI 에이전트·스마트폰/노트북 단말 전략 관점의 시사점.\n\n금지: 출처/매체명을 본문에 적지 마세요. 특정 회사명(삼성·MX·사업부 등)을 시사점에 적지 마세요.`;
+  return `다음 영문 AI 뉴스를 한국어로 정리하세요.\n\n제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}\n\n출력(JSON):\n- title_ko: 제목의 고유명사와 의미를 보존한 자연스러운 한국어 번역(30자 내외)\n- summary: 정확히 3줄. 1줄=제목·내용에 명시된 핵심 사실, 2줄=제공된 경우에만 수치·배경, 3줄="[해석] "으로 시작하는 단말·에이전트 전략 시사점. 각 줄은 "· "로 시작\n\n금지: 입력에 없는 수치·인과관계·회사·전망 추가, 과장, 출처명 반복. 내용이 제목뿐이면 제목에서 확인되는 사실 외에는 쓰지 마세요.`;
 }
 
 // 배치 요약: 10건/1콜(GitHub Models 무료 쿼터 보호). 실패 청크는 영문 폴백.
@@ -291,7 +291,7 @@ async function summarizeBatch(arts) {
     const chunk = arts.slice(i, i + 10);
     const user = `다음 영문 AI 뉴스들을 한국어로 정리해 JSON으로 출력하세요.\n\n` +
       chunk.map((a, k) => `[${k}] 제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}`).join("\n\n") +
-      `\n\n각 항목을 rows 배열로: {idx, title_ko(자연스러운 한국어 번역 30자 내외), summary(4~5줄 개조식, 각 줄 "· " 시작·명사형 종결·마침표 금지 — 1줄=핵심 사실 상세, 2줄=구체 수치·규모·가격, 3줄=배경·맥락(누가·왜 지금), 4줄=경쟁·시장 파급, 5줄=온디바이스 AI·단말 전략 시사점)}.\n금지: 출처/매체명, 특정 회사명(삼성·MX 등)을 시사점에 쓰지 마세요.`;
+      `\n\n각 항목을 rows 배열로: {idx, title_ko(고유명사와 의미를 보존한 한국어 번역 30자 내외), summary(정확히 3줄 — 1줄=입력에 명시된 핵심 사실, 2줄=입력에 있는 경우에만 수치·배경, 3줄="· [해석] "으로 시작하는 단말·에이전트 전략 시사점)}.\n모든 줄은 "· "로 시작하세요. 입력에 없는 수치·인과관계·회사·전망은 절대 추가하지 마세요. 내용이 제목뿐이면 제목에서 확인되는 사실 외에는 쓰지 마세요.`;
     const r = await llmJSON({
       system: SYS, user, maxTokens: 2600,
       schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, title_ko: { type: "string" }, summary: { type: "string" } }, required: ["idx", "title_ko", "summary"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
@@ -419,9 +419,12 @@ async function main() {
   }
 
   // network failure → keep prev, but still enforce the banned-term policy on it
-  const out = raw.length ? final : prev.filter(a => !BANNED.test((a.title || "") + " " + (a.summary || "")));
+  if (!raw.length) {
+    throw new Error("No new candidates were collected from any news source; keeping the previous bundle unchanged.");
+  }
+  const out = final;
   await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: out.length, articles: out }, null, 2) + "\n");
   console.log(`Wrote news.json with ${out.length} articles (${sums.filter(Boolean).length} new Korean summaries).`);
 }
 
-main().catch((e) => { console.error(e); process.exit(0); });
+main().catch((e) => { console.error(e); process.exit(1); });

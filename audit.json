@@ -1,1 +1,151 @@
-{"generatedAt":"2026-07-24T11:01:43.249Z","overall":"ok","summary":"11개 탭 감사 — 정상 11 · 주의 0 · 실패 0","checks":[{"file":"news.json","tab":"데일리 기사","status":"ok","issues":[],"ageDays":0,"items":98},{"file":"briefing.json","tab":"모닝 브리핑","status":"ok","issues":[],"ageDays":0,"items":6,"engine":"llm-gh"},{"file":"insights.json","tab":"Executive Summary","status":"ok","issues":["규칙 폴백으로 생성됨(LLM 미사용 — GitHub Models 권한/쿼터 또는 ANTHROPIC_API_KEY 확인)"],"ageDays":0,"items":6,"engine":"rules"},{"file":"research.json","tab":"증권사 인사이트","status":"ok","issues":["시드 데이터 표시 중(첫 LLM 갱신 대기)"],"ageDays":0,"items":35,"engine":"seed"},{"file":"radar.json","tab":"스타트업 레이더","status":"ok","issues":[],"ageDays":0,"items":4,"engine":"llm-gh"},{"file":"startups.json","tab":"스타트업 분석","status":"ok","issues":[],"ageDays":1.2,"items":29,"engine":"llm-gh"},{"file":"companies.json","tab":"기업 동향","status":"ok","issues":[],"ageDays":0,"items":35},{"file":"market.json","tab":"AI 신사업 시장","status":"ok","issues":[],"ageDays":1.2,"items":41},{"file":"infra.json","tab":"인프라·미래기술 시그널","status":"ok","issues":[],"ageDays":0,"items":103},{"file":"bizmodel.json","tab":"AI 수익화 모델 시그널","status":"ok","issues":[],"ageDays":0,"items":21},{"file":"stocks.json","tab":"주가 차트","status":"ok","issues":[],"ageDays":0,"items":25}]}
+{
+  "generatedAt": "2026-07-24T22:42:53.169Z",
+  "overall": "ok",
+  "summary": "18개 검사 · 정상 18 · 주의 0 · 실패 0",
+  "checks": [
+    {
+      "file": "news.json",
+      "tab": "데일리 기사",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": 71
+    },
+    {
+      "file": "briefing.json",
+      "tab": "모닝 브리핑",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0.5,
+      "items": 6
+    },
+    {
+      "file": "insights.json",
+      "tab": "Executive Summary",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0.5,
+      "items": 6
+    },
+    {
+      "file": "research.json",
+      "tab": "증권사 인사이트",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0.5,
+      "items": 35
+    },
+    {
+      "file": "radar.json",
+      "tab": "스타트업 레이더",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0.5,
+      "items": 4
+    },
+    {
+      "file": "startups.json",
+      "tab": "스타트업 분석",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 1.7,
+      "items": 29
+    },
+    {
+      "file": "companies.json",
+      "tab": "기업 동향",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0.5,
+      "items": 35
+    },
+    {
+      "file": "market.json",
+      "tab": "AI 신사업 시장",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 1.7,
+      "items": 41
+    },
+    {
+      "file": "infra.json",
+      "tab": "인프라·미래기술",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0.5,
+      "items": 103
+    },
+    {
+      "file": "bizmodel.json",
+      "tab": "수익화 모델",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0.5,
+      "items": 21
+    },
+    {
+      "file": "stocks.json",
+      "tab": "주가 차트",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": 25
+    },
+    {
+      "file": "history.json",
+      "tab": "누적 데이터",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": 71
+    },
+    {
+      "file": "quality.json",
+      "tab": "뉴스 수집",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": "71건"
+    },
+    {
+      "file": "quality.json",
+      "tab": "원문 스니펫 근거",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": "49/71건"
+    },
+    {
+      "file": "quality.json",
+      "tab": "브리핑 근거 연결",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": "4건"
+    },
+    {
+      "file": "quality.json",
+      "tab": "인사이트 근거 연결",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": "3건"
+    },
+    {
+      "file": "quality.json",
+      "tab": "주가 최신성",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": "25/25종목"
+    },
+    {
+      "file": "quality.json",
+      "tab": "뉴스 번들 최신성",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": "0.0일"
+    }
+  ]
+}

@@ -285,6 +285,7 @@ async function main() {
   console.log(`Yahoo session: ${sess ? (sess.crumb ? "cookie+crumb" : "cookie only") : "none"}`);
   const results = (await Promise.all(TICKERS.map((c) => crawlOne(c, sess)))).filter(Boolean);
   const fresh = Object.fromEntries(results);
+  if (!results.length) throw new Error("All stock data providers failed; keeping the previous bundle unchanged.");
 
   let prev = {};
   try { prev = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
@@ -293,9 +294,18 @@ async function main() {
   const final = {};
   for (const t of tickers) final[t] = mergeSeries(t, prev[t], fresh[t]);
 
-  await writeFile("stocks.json", JSON.stringify({ generatedAt: new Date().toISOString(), stocks: final }) + "\n");
+  const sourceHealth = {
+    targetCount: TICKERS.length,
+    freshCount: results.length,
+    failedTickers: TICKERS.map(c => c.t).filter(t => !fresh[t]),
+    sources: Object.values(fresh).reduce((acc, row) => {
+      acc[row.source || "unknown"] = (acc[row.source || "unknown"] || 0) + 1;
+      return acc;
+    }, {}),
+  };
+  await writeFile("stocks.json", JSON.stringify({ generatedAt: new Date().toISOString(), sourceHealth, stocks: final }) + "\n");
   const dates = Object.entries(final).map(([t, v]) => `${t}:${v.asOf}`).join(" ");
   console.log(`Wrote stocks.json (${Object.keys(final).length} tickers, merged·monotonic) — ${dates}`);
 }
 
-main().catch((e) => { console.error(e); process.exit(0); });
+main().catch((e) => { console.error(e); process.exit(1); });

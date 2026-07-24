@@ -1368,6 +1368,7 @@ a[href]:hover .rainbow-on-hover,
 .sp-mcap { font-size: 11.5px; color: var(--muted); font-weight: 600; }
 .sp-mcap b { color: var(--ink); font-weight: 800; }
 .sp-scenario { font-size: 10px; font-weight: 800; color: #D97706; border: 1px solid #D97706; border-radius: 5px; padding: 1px 7px; }
+.sp-source { margin-left: auto; font-size: 10px; font-weight: 700; color: var(--muted); }
 
 .stock-chart { margin-top: 6px; }
 /* 차트 폭 상한 — 대화면에서 과도하게 커지지 않게(보기 좋게) */
@@ -1989,3 +1990,25 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ib-feed-row .ct-del:hover, .art .art-del:hover, .isg-card .ct-del:hover { opacity: 1; }
 /* 비번 입력 UI가 뜬 상태에선 항상 보이게 */
 .art-del-pw { opacity: 1 !important; }
+.audit-trust {
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+.audit-trust > b { font-size: 12px; color: var(--ink); }
+.audit-trust > p { margin: 6px 0 10px; font-size: 11px; line-height: 1.6; color: var(--muted); }
+.audit-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
+.audit-metrics span {
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+}
+.audit-metrics b { display: block; margin-top: 2px; font-size: 14px; color: var(--ink); }
+@media (max-width: 640px) {
+  .audit-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

@@ -3,9 +3,9 @@ name: Daily Ha Thai & AI News Update
 # Updates Ha Thai article summary and adds latest related AI news to news.json
 # Scheduled for 11:40 KST (02:40 UTC)
 on:
-  schedule:
-    - cron: "40 2 * * *"    # 11:40 KST
-  workflow_dispatch: {}      # manual run
+  # Manual recovery only. The primary pipeline already refreshes four times
+  # daily; a second schedule caused concurrent writes to the same JSON files.
+  workflow_dispatch: {}
 
 permissions:
   contents: write

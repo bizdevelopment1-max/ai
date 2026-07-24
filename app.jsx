@@ -95,6 +95,7 @@ function App() {
   const [research, setResearch] = uS(null);
   const [coLive, setCoLive] = uS(null);
   const [audit, setAudit] = uS(null);
+  const [quality, setQuality] = uS(null);
   const [startupsX, setStartupsX] = uS(null);
   uE(() => {
     let alive = true;
@@ -104,6 +105,8 @@ function App() {
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
     fetch("audit.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
+    fetch("quality.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && j.checks) setQuality(j); }).catch(() => {});
     fetch("startups.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && (j.large || j.small)) {
         const m = {};
@@ -305,7 +308,7 @@ function App() {
             <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} sectionRef={refs.stocks} theme={chartTheme} />
             <MarketBoard sectionRef={refs.market} />
 
-            <AuditPanel audit={audit} />
+            <AuditPanel audit={audit} quality={quality} />
 
             <footer className="foot">
               <span>AI Intelligence Dashboard</span>
@@ -325,7 +328,7 @@ function App() {
 
 // soft tint of a hex color for chips/backgrounds
 // ---- 데이터 감사 패널: audit-agent.mjs 산출물(audit.json) 표시 ----
-function AuditPanel({ audit }) {
+function AuditPanel({ audit, quality }) {
   const [open, setOpen] = uS(false);
   if (!audit) return null;
   const C = { ok: "#16A34A", warn: "#EA580C", fail: "#D23B3B" };
@@ -333,19 +336,31 @@ function AuditPanel({ audit }) {
     <div className="audit-wrap">
       <button className="audit-chip" onClick={() => setOpen(o => !o)} title="데이터 파이프라인 감사 상태">
         <i style={{ background: C[audit.overall] || "#8A93A4" }} />
-        데이터 감사 {audit.overall === "ok" ? "정상" : audit.overall === "warn" ? "주의" : "실패"} · {audit.summary}
+        데이터 신뢰센터 {audit.overall === "ok" ? "정상" : audit.overall === "warn" ? "주의" : "실패"} · {audit.summary}
       </button>
       {open && (
         <div className="audit-panel">
+          {quality && (
+            <div className="audit-trust">
+              <b>근거 검증 정책</b>
+              <p>{quality.policy}</p>
+              <div className="audit-metrics">
+                <span>현재 기사 <b>{quality.metrics.currentArticles}</b></span>
+                <span>누적 기사 <b>{quality.metrics.accumulatedArticles}</b></span>
+                <span>원문 근거 <b>{quality.metrics.sourceBackedArticles}</b></span>
+                <span>최신 주가 <b>{quality.metrics.freshStocks}/{quality.metrics.totalStocks}</b></span>
+              </div>
+            </div>
+          )}
           {audit.checks.map(c => (
-            <div className="audit-row" key={c.file}>
+            <div className="audit-row" key={`${c.file}-${c.tab}`}>
               <i style={{ background: C[c.status] || "#8A93A4" }} />
               <b>{c.tab}</b>
               <span className="audit-meta">{c.items}건 · {c.ageDays}일 전{c.engine ? ` · ${c.engine}` : ""}</span>
               {c.issues.length > 0 && <span className="audit-issues">{c.issues.join(" / ")}</span>}
             </div>
           ))}
-          <p className="audit-note">감사 에이전트(audit-agent.mjs)가 매 크롤 후 자동 검사 — 신선도·커버리지·엔진·중복·금지어</p>
+          <p className="audit-note">매 수집 후 최신성·커버리지·출처 연결·수치 근거를 자동 검사하며, 핵심 검증 실패 시 배포하지 않습니다.</p>
         </div>
       )}
     </div>
