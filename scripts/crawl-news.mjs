@@ -364,6 +364,24 @@ async function main() {
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .slice(0, 500);   // 계속 누적(과거 기사 유지) — UI가 페이지네이션으로 초기 렌더 경량화
 
+  // 자가 치유: 이월돼(재크롤 안 됨) 아직 영문/폴백으로 남은 기사도 GitHub Models로 재번역해 한글화.
+  // (한 번에 다 못 하면 다음 실행이 이어서 처리 → 회차를 거치며 전부 한글로 수렴)
+  const needKo = final.filter(a => !isKoreanSummary(a) && (a.descEn || a.titleEn)).slice(0, 40);
+  if (needKo.length) {
+    const s2 = await summarizeBatch(needKo.map(a => ({ title: a.titleEn || a.title, descEn: a.descEn || "" })));
+    let healed = 0;
+    needKo.forEach((a, k) => {
+      const r = s2[k];
+      if (r && r.title_ko && r.summary && /[가-힣]/.test(r.summary) && lineCount(r.summary) >= 2) {
+        a.title = nounize(cleanTitle(r.title_ko, a.source));
+        a.summary = nounizeSummary(stripSrc(r.summary));
+        a.needsLLM = lineCount(a.summary) < 3;
+        healed++;
+      }
+    });
+    console.log(`[self-heal] 이월 영문 기사 재번역 ${healed}/${needKo.length}건`);
+  }
+
   // network failure → keep prev, but still enforce the banned-term policy on it
   const out = raw.length ? final : prev.filter(a => !BANNED.test((a.title || "") + " " + (a.summary || "")));
   await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: out.length, articles: out }, null, 2) + "\n");

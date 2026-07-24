@@ -38,34 +38,13 @@ jobs:
         with:
           node-version: "20"
 
+      # 영어→한국어 요약·번역은 crawl-news.mjs 안에서 키 없는 GitHub Models로 수행(품질 양호).
+      # (이전 로컬 opus-mt/m2m100 번역은 CPU에서 단어 샐러드 수준의 저품질 출력이라 비활성화)
       - name: Crawl authoritative English news → Korean briefs
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/crawl-news.mjs
-
-      # ── 무료·오프라인 영어→한국어 번역 + 추출식 요약(API 키 불필요) ──
-      # crawl-news 이후에도 영어로 남은 요약을 로컬 모델(Helsinki opus-mt-en-ko)로 번역·요약.
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Cache HuggingFace models (러너 재사용 — 재다운로드 방지)
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/huggingface
-          key: hf-en-ko-v2
-
-      - name: Install local translation/summarization deps (CPU)
-        run: |
-          python -m pip install --upgrade pip
-          pip install torch --index-url https://download.pytorch.org/whl/cpu
-          pip install -r scripts/requirements.txt
-          python -c "import nltk; nltk.download('punkt', quiet=True); nltk.download('punkt_tab', quiet=True)" || true
-
-      - name: Translate remaining English summaries → Korean (무료·오프라인)
-        run: python scripts/translate_summarize.py
 
       - name: Crawl real stock prices + market cap
         run: node scripts/crawl-stocks.mjs
