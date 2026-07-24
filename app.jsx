@@ -40,16 +40,17 @@ function App() {
   const D = window.DASH;
   const dark = t.dark;
 
-  // crawler output: news.json (refreshed daily ~07:00 by GitHub Action) merged over static ARTICLES
+  // crawler output: news.json (refreshed daily by GitHub Action). No static-news fallback:
+  // if provenance cannot be loaded, the feed stays empty rather than showing unverified claims.
   // 캐시버스터: GitHub Pages CDN(edge)은 URL 기준 캐시 → 분 단위 쿼리스트링으로 항상 최신 파일을 받게 함
   const cb = () => `?t=${Math.floor(Date.now() / 60000)}`;   // 1분 단위 — 매일 갱신분 즉시 반영
-  const [crawled, setCrawled] = uS(null);
+  const [crawled, setCrawled] = uS([]);
   uE(() => {
     let alive = true;
     fetch("news.json" + cb(), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && Array.isArray(j.articles)) setCrawled(j.articles); })
-      .catch(() => {});
+      .then(j => { if (alive) setCrawled(j && Array.isArray(j.articles) ? j.articles : []); })
+      .catch(() => { if (alive) setCrawled([]); });
     return () => { alive = false; };
   }, []);
   // device-topic articles (co "AI 노트북"/"AI 폰")을 제목 기준으로 실제 업체에 재분류, 매칭 없으면 co 제거
@@ -65,30 +66,26 @@ function App() {
     const hit = DEVICE_CO_MAP.find(([re]) => re.test(a.title || ""));
     return { ...a, co: hit ? hit[1] : "" };   // 매칭되는 업체로, 없으면 업체 미지정(드롭다운 미노출)
   };
-  // 근거 검증을 통과한 자동 수집 기사만 표시. 검증 전 정적 큐레이션은
-  // 네트워크 초기 로드 실패 시에만 임시 폴백으로 사용한다.
+  // 근거 검증을 통과한 자동 수집 기사만 표시한다.
   // 화면 노출 금지어 최종 방어선 — 크롤 데이터에 섞여 들어와도 렌더 전 차단
   const BANNED_RE = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
   const articles = useMemo(() => {
-    const base = (D.ARTICLES || []).map(reclassCo);
-    if (!crawled || !crawled.length) return base;
-    const extra = crawled.map(reclassCo)
+    return crawled.map(reclassCo)
       .filter(a => a && a.title && a.summary && a.summaryVersion === 2 && a.provenance?.status === "source-backed")
       .filter(a => !BANNED_RE.test((a.title || "") + " " + (a.summary || "")));
-    return extra;
   }, [crawled]);
 
-  // 매일 갱신되는 '오늘의 톱라인' 인사이트(insights.json, 규칙 기반). 없으면 정적 TOPLINE 폴백.
-  const [insights, setInsights] = uS(null);
+  // 매일 갱신되는 '오늘의 톱라인' 인사이트. 근거 데이터가 없으면 빈 상태를 유지한다.
+  const [insights, setInsights] = uS({ cards: [], engine: "rules" });
   uE(() => {
     let alive = true;
     fetch("insights.json" + cb(), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => {
         const cards = (j && j.cards || []).filter(card => card.provenance?.status === "evidence-linked");
-        if (alive && j) setInsights({ ...j, cards });
+        if (alive) setInsights({ ...(j || {}), cards });
       })
-      .catch(() => {});
+      .catch(() => { if (alive) setInsights({ cards: [], engine: "rules" }); });
     return () => { alive = false; };
   }, []);
 
