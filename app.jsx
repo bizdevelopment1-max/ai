@@ -169,7 +169,7 @@ function App() {
   const scrollRef = uR(null);
   const refs = {
     ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    sanalysis: uR(null), charts: uR(null), monthly: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null), market: uR(null),
+    sanalysis: uR(null), charts: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null), market: uR(null),
   };
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
@@ -302,7 +302,6 @@ function App() {
 
             {/* ── 4. 정량 데이터 ── */}
             <ChartsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.charts} />
-            <MonthlyTrendsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.monthly} />
             <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} sectionRef={refs.stocks} theme={chartTheme} />
             <MarketBoard sectionRef={refs.market} />
 
