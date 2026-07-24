@@ -18,6 +18,23 @@ const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Geck
 const KEY = process.env.ANTHROPIC_API_KEY || "";
 const MODEL = "claude-opus-4-8";
 
+// 네트워크 복원력: 타임아웃 + 지수 백오프 재시도(소스 확대에 따른 일시적 실패 흡수)
+async function fetchText(url, opts = {}, tries = 3) {
+  for (let i = 0; i < tries; i++) {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 12000);
+      const res = await fetch(url, { ...opts, signal: ctrl.signal });
+      clearTimeout(t);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return await res.text();
+    } catch (e) {
+      if (i === tries - 1) throw e;
+      await new Promise(r => setTimeout(r, 400 * Math.pow(2, i)));   // 0.4s → 0.8s → 1.6s
+    }
+  }
+}
+
 // Authoritative English outlets (publisher homepage hostnames). Anything not here is dropped.
 const ALLOW = [
   "reuters.com", "bloomberg.com", "cnbc.com", "techcrunch.com", "theverge.com", "wsj.com",
@@ -26,6 +43,10 @@ const ALLOW = [
   "fortune.com", "cnet.com", "zdnet.com", "semafor.com", "theregister.com", "technologyreview.com",
   "spectrum.ieee.org", "androidauthority.com", "9to5google.com", "9to5mac.com", "macrumors.com",
   "tomshardware.com", "anandtech.com", "nikkei.com", "restofworld.org", "platformer.news",
+  // ── 추가 소스(권위 영문 매체 확대) ──
+  "the-decoder.com", "sifted.eu", "asia.nikkei.com", "scmp.com", "qz.com", "infoq.com",
+  "datacenterdynamics.com", "hpcwire.com", "semianalysis.com", "eetimes.com", "huggingface.co",
+  "aibusiness.com", "analyticsindiamag.com", "siliconangle.com", "innovationorigins.com",
 ];
 
 // co must match data.js COMPANIES names exactly (for per-company filtering in the feed).
@@ -64,6 +85,12 @@ const TOPICS = [
   { co: "", cat: "bigtech", tag: "Infra", topic: true, n: 3, q: '(HBM OR "data center" OR "AI infrastructure" OR "co-packaged optics" OR hyperscaler OR capex) AI' },
   { co: "", cat: "native", tag: "수익화", topic: true, n: 2, q: '("AI pricing" OR "AI subscription" OR "AI revenue" OR "API pricing" OR "AI monetization")' },
   { co: "", cat: "native", tag: "규제", topic: true, n: 2, q: '("AI regulation" OR "AI export control" OR "AI Act" OR "chip export controls")' },
+  // ── 신규 스트림(신사업·경쟁 관점 확대) ──
+  { co: "", cat: "bigtech", tag: "로보틱스", topic: true, n: 2, q: '("humanoid robot" OR "physical AI" OR "Figure AI" OR "1X robot" OR "robotics foundation model")' },
+  { co: "", cat: "bigtech", tag: "AI 반도체", topic: true, n: 2, q: '("AI accelerator" OR "custom silicon" OR "AI ASIC" OR TSMC OR Blackwell OR "HBM memory") AI chip' },
+  { co: "", cat: "native", tag: "오픈소스", topic: true, n: 2, q: '("open-weight model" OR "open source LLM" OR "open model release" OR "Llama" OR "sovereign AI")' },
+  { co: "", cat: "native", tag: "엔터프라이즈", topic: true, n: 2, q: '("enterprise AI adoption" OR "AI ROI" OR "AI agent enterprise" OR "AI productivity")' },
+  { co: "", cat: "bigtech", tag: "웨어러블·XR", topic: true, n: 2, q: '("smart glasses" OR "AI wearable" OR "AI earbuds" OR "mixed reality AI" OR "AR glasses AI")' },
 ];
 
 // ---- 직접 퍼블리셔 RSS 피드(구글뉴스 비경유 — 소스 다변화, 단일 게이트웨이 리스크 제거) ----
@@ -74,14 +101,21 @@ const DIRECT_FEEDS = [
   { source: "VentureBeat", url: "https://venturebeat.com/category/ai/feed/" },
   { source: "MIT Tech Review", url: "https://www.technologyreview.com/feed/" },
   { source: "IEEE Spectrum", url: "https://spectrum.ieee.org/feeds/topic/artificial-intelligence.rss" },
+  // ── 추가 직접 RSS(소스 다변화·복원력) ──
+  { source: "The Decoder", url: "https://the-decoder.com/feed/" },
+  { source: "ZDNet", url: "https://www.zdnet.com/topic/artificial-intelligence/rss.xml" },
+  { source: "The Register", url: "https://www.theregister.com/headlines.atom", atom: true },
+  { source: "Hugging Face", url: "https://huggingface.co/blog/feed.xml", atom: true },
+  { source: "Wired", url: "https://www.wired.com/feed/tag/ai/latest/rss" },
+  { source: "Engadget", url: "https://www.engadget.com/rss.xml" },
+  { source: "SiliconANGLE", url: "https://siliconangle.com/category/ai/feed/" },
+  { source: "AI Business", url: "https://aibusiness.com/rss.xml" },
 ];
 const AI_RE = /\bAI\b|artificial intelligence|\bLLM\b|GPT|Claude|Gemini|agentic|chatbot|machine learning|foundation model|inference|GPU|HBM|data center/i;
 
 async function pullDirect(feed, limit = 2) {
   try {
-    const res = await fetch(feed.url, { headers: { "User-Agent": UA, Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml" } });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const xml = await res.text();
+    const xml = await fetchText(feed.url, { headers: { "User-Agent": UA, Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml" } });
     const blockRe = feed.atom ? /<entry>([\s\S]*?)<\/entry>/g : /<item>([\s\S]*?)<\/item>/g;
     const out = []; let m;
     while ((m = blockRe.exec(xml)) && out.length < limit) {
@@ -214,9 +248,7 @@ function cleanTitle(t, source) {
 
 async function fetchRss(query) {
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query + " when:14d")}&hl=en-US&gl=US&ceid=US:en`;
-  const res = await fetch(url, { headers: { "User-Agent": UA } });
-  if (!res.ok) throw new Error("HTTP " + res.status);
-  return res.text();
+  return fetchText(url, { headers: { "User-Agent": UA } });
 }
 
 // pull authoritative English items for one query
@@ -350,9 +382,13 @@ async function main() {
   const isAssetUrl = u => /googleusercontent\.com|=w\d+|\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(String(u || ""));
   const curUrls = new Set(raw.map(a => a.url));
   const dseen = new Set();
+  // 제목 정규화 키 — 같은 사건을 여러 소스가 다룬 근사 중복 제거(소스 확대 시 유용)
+  const tkey = a => String(a.titleEn || a.title || "").toLowerCase().replace(/[^a-z0-9가-힣]/g, "").slice(0, 48);
+  const tseen = new Set();
   const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
     .filter(a => !BANNED_SRC.test(JSON.stringify(a)))
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
+    .filter(a => { const k = tkey(a); if (!k || tseen.has(k)) return !k; tseen.add(k); return true; })  // 제목 근사 중복 제거
     .map(a => ({ ...a, title: nounize(a.title), summary: nounizeSummary(stripSrc(a.summary)) }))  // 개조식·마침표 제거(기존 항목 포함)
     .filter(a => a.title && a.summary)                   // 요약은 한글 우선(번역), 불가 시 영문 폴백 허용
     .filter(a => !isTitleEcho(a) && !isAssetUrl(a.url))   // 제목=요약 에코·이미지 url 깨진 항목 제외
