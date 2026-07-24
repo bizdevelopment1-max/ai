@@ -6,6 +6,8 @@ const required = [
   ".github/workflows/daily-news-update.yml",
   "scripts/crawl-news.mjs",
   "scripts/crawl-stocks.mjs",
+  "scripts/crawl-markets.mjs",
+  "scripts/market-db.mjs",
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
   "scripts/audit-agent.mjs",
@@ -26,6 +28,20 @@ for (const file of required) {
     failed = true;
     console.error(`  실패  ${file}: ${error.message}`);
   }
+}
+
+try {
+  const market = JSON.parse(await readFile("market.json", "utf8"));
+  const records = market.records || [];
+  const ids = new Set(records.map(record => record.id));
+  const linked = records.filter(record => /^https?:\/\//.test(record.sourceUrl || ""));
+  if (market.database?.mode !== "append-only" || records.length < 3 || ids.size !== records.length || linked.length !== records.length) {
+    throw new Error("append-only market database requires unique, source-linked records");
+  }
+  console.log(`  정상  market.json 누적 정량 DB ${records.length}건`);
+} catch (error) {
+  failed = true;
+  console.error(`  실패  market.json 누적 정량 DB: ${error.message}`);
 }
 
 const major = Number(process.versions.node.split(".")[0]);

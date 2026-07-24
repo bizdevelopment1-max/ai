@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-24T23:08:37.973Z",
+  "generatedAt": "2026-07-24T23:32:47.925Z",
   "overall": "warn",
   "policy": "원문 제목·스니펫과 연결된 공개 URL만 근거로 인정하며, 근거가 약한 항목은 제한 또는 참고용으로 표시합니다.",
-  "summary": "검증 10개 · 정상 9 · 주의 1 · 실패 0",
+  "summary": "검증 12개 · 정상 11 · 주의 1 · 실패 0",
   "checks": [
     {
       "id": "news-coverage",
@@ -63,6 +63,18 @@
       "label": "시장 데이터 원문 링크",
       "status": "warn",
       "value": "29/41건"
+    },
+    {
+      "id": "market-db-source",
+      "label": "신사업 정량 DB 원문 링크",
+      "status": "ok",
+      "value": "41/41건"
+    },
+    {
+      "id": "consumer-survey-coverage",
+      "label": "소비자 조사 레코드",
+      "status": "ok",
+      "value": "5건"
     }
   ],
   "metrics": {
@@ -75,7 +87,9 @@
     "linkedInfra": 95,
     "linkedBizmodel": 22,
     "linkedResearch": 37,
-    "linkedMarket": 29
+    "linkedMarket": 29,
+    "linkedMarketRecords": 41,
+    "consumerSurveyRecords": 5
   },
   "sources": {
     "news": {

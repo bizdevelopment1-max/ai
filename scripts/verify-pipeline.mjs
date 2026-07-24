@@ -127,6 +127,11 @@ if (research.onepager) research.onepager = { ...research.onepager, provenance: d
 startups.large = (startups.large || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
 startups.small = (startups.small || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
 market.items = (market.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
+market.records = (market.records || []).map(record => ({
+  ...record,
+  sourceUrl: canonicalUrl(record.sourceUrl),
+  provenance: directSourceStatus({ url: record.sourceUrl }),
+}));
 infra.items = (infra.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
 bizmodel.items = (bizmodel.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
 
@@ -144,6 +149,8 @@ const linkedInfra = (infra.items || []).filter(item => item.provenance?.status =
 const linkedBizmodel = (bizmodel.items || []).filter(item => item.provenance?.status === "evidence-linked").length;
 const linkedResearch = (research.feed || []).filter(item => item.provenance?.status !== "reference-only").length;
 const linkedMarket = (market.items || []).filter(item => item.provenance?.status !== "reference-only").length;
+const linkedMarketRecords = (market.records || []).filter(record => record.provenance?.status !== "reference-only").length;
+const consumerSurveyRecords = (market.records || []).filter(record => record.type === "consumer-survey" && record.provenance?.status !== "reference-only").length;
 
 const checks = [
   { id: "news-coverage", label: "뉴스 수집", status: currentArticles.length >= 20 ? "ok" : "fail", value: `${currentArticles.length}건` },
@@ -156,6 +163,8 @@ const checks = [
   { id: "bizmodel-evidence", label: "수익화 시그널 근거", status: linkedBizmodel >= Math.max(3, (bizmodel.items || []).length * 0.5) ? "ok" : "warn", value: `${linkedBizmodel}/${(bizmodel.items || []).length}건` },
   { id: "research-source", label: "리서치 원문 링크", status: linkedResearch >= Math.max(3, (research.feed || []).length * 0.5) ? "ok" : "warn", value: `${linkedResearch}/${(research.feed || []).length}건` },
   { id: "market-source", label: "시장 데이터 원문 링크", status: linkedMarket >= Math.max(10, (market.items || []).length * 0.8) ? "ok" : "warn", value: `${linkedMarket}/${(market.items || []).length}건` },
+  { id: "market-db-source", label: "신사업 정량 DB 원문 링크", status: linkedMarketRecords >= Math.max(3, (market.records || []).length * 0.95) ? "ok" : "warn", value: `${linkedMarketRecords}/${(market.records || []).length}건` },
+  { id: "consumer-survey-coverage", label: "소비자 조사 레코드", status: consumerSurveyRecords >= 2 ? "ok" : "warn", value: `${consumerSurveyRecords}건` },
 ];
 
 const fails = checks.filter(c => c.status === "fail").length;
@@ -178,6 +187,8 @@ const quality = {
     linkedBizmodel,
     linkedResearch,
     linkedMarket,
+    linkedMarketRecords,
+    consumerSurveyRecords,
   },
   sources: { news: sourceCountsNews, stocks: sourceCounts },
   notices: [

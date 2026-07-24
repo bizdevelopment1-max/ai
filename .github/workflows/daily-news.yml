@@ -83,7 +83,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/run-with-retry.mjs scripts/crawl-startups.mjs
 
-      - name: Refresh AI new-business market signals (주간)
+      - name: Append AI market, shipment and consumer-survey records (daily)
         run: node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
 
       - name: Accumulate AI infra & future-tech signals (기사 기반 누적)

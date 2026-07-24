@@ -1938,6 +1938,36 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-tools button { font-family: var(--f); font-size: 11px; font-weight: 700; color: var(--muted); background: var(--panel); border: 2px solid var(--line); border-radius: 8px; padding: 5px 10px; cursor: pointer; }
 .mkt-tools button:hover, .mkt-tools button.on { border-color: #0891B2; color: var(--ink); }
 .mkt-loading { padding: 30px 20px; text-align: center; font-family: var(--f); font-size: 13px; color: var(--muted); }
+.mkt-db-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 6px 20px 14px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--line); }
+.mkt-db-summary > div { min-width: 0; padding: 12px 14px; background: var(--panel); }
+.mkt-db-summary em { display: block; font-family: var(--f); font-style: normal; font-size: 10px; font-weight: 800; letter-spacing: .02em; color: var(--muted); }
+.mkt-db-summary b { display: block; margin-top: 3px; font-family: var(--mono); font-size: 19px; font-weight: 800; color: #0891B2; }
+.mkt-db-summary span { display: block; margin-top: 3px; font-family: var(--f); font-size: 10.5px; font-weight: 600; color: var(--ink-2); line-height: 1.35; word-break: keep-all; }
+.mkt-db-head { display: flex; align-items: flex-end; gap: 16px; margin: 0 20px 10px; padding: 12px 0 9px; border-bottom: 2px solid var(--line); }
+.mkt-db-head > div:first-child { flex: 1; min-width: 0; }
+.mkt-db-head h3 { margin: 0; font-family: var(--f); font-size: 14px; font-weight: 800; color: var(--ink); }
+.mkt-db-head p { margin: 4px 0 0; font-family: var(--f); font-size: 11px; font-weight: 600; color: var(--muted); line-height: 1.45; word-break: keep-all; }
+.mkt-record-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 20px 18px; }
+.mkt-record { min-width: 0; display: flex; flex-direction: column; padding: 13px 14px; border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, #0891B2 4%, var(--panel)); }
+.mkt-record:hover { border-color: color-mix(in srgb, #0891B2 45%, var(--line)); box-shadow: var(--shadow-lg); }
+.mkt-record-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mkt-record-type { display: inline-flex; align-items: center; border-radius: 99px; padding: 3px 7px; font-family: var(--f); font-size: 9.5px; font-weight: 800; color: #0369A1; background: color-mix(in srgb, #0EA5E9 13%, var(--panel)); }
+.mkt-record-type.type-consumer-survey { color: #7C3AED; background: color-mix(in srgb, #8B5CF6 13%, var(--panel)); }
+.mkt-record-type.type-shipment { color: #047857; background: color-mix(in srgb, #10B981 13%, var(--panel)); }
+.mkt-record-top time { font-family: var(--mono); font-size: 10px; color: var(--muted); white-space: nowrap; }
+.mkt-record-title { display: inline-flex; align-items: flex-start; gap: 4px; margin-top: 8px; font-family: var(--f); font-size: 13px; font-weight: 800; line-height: 1.4; color: var(--ink); text-decoration: none; word-break: keep-all; }
+.mkt-record-title:hover { color: #0891B2; text-decoration: underline; }
+.mkt-record-title svg { flex: 0 0 auto; margin-top: 3px; }
+.mkt-record-values { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+.mkt-record-values span { display: inline-flex; flex-direction: column; gap: 2px; max-width: 100%; padding: 5px 7px; border: 1px solid color-mix(in srgb, #0891B2 20%, var(--line)); border-radius: 7px; font-family: var(--mono); font-size: 11px; font-weight: 800; color: var(--ink); background: var(--panel); }
+.mkt-record-values em { overflow: hidden; text-overflow: ellipsis; font-family: var(--f); font-style: normal; font-size: 8.5px; font-weight: 800; color: var(--muted); white-space: nowrap; }
+.mkt-record-scope, .mkt-record-evidence { margin: 8px 0 0; font-family: var(--f); font-size: 10.5px; font-weight: 600; line-height: 1.45; color: var(--ink-2); word-break: keep-all; }
+.mkt-record-evidence { color: var(--muted); }
+.mkt-record-source { display: inline-flex; align-items: center; gap: 4px; margin-top: auto; padding-top: 10px; font-family: var(--f); font-size: 10.5px; font-weight: 800; color: #0891B2; text-decoration: none; }
+.mkt-record-source:hover { text-decoration: underline; }
+.mkt-baseline-head { display: flex; align-items: baseline; gap: 9px; margin: 0 20px 2px; padding-top: 7px; border-top: 1px solid var(--line); }
+.mkt-baseline-head b { font-family: var(--f); font-size: 13px; font-weight: 800; color: var(--ink); }
+.mkt-baseline-head em { font-family: var(--f); font-style: normal; font-size: 10.5px; font-weight: 600; color: var(--muted); word-break: keep-all; }
 .mkt-group { padding: 6px 20px 4px; }
 .mkt-group-head { padding: 10px 0 8px; border-bottom: 2px solid var(--line); margin-bottom: 12px; }
 .mkt-group-head b { font-family: var(--f); font-size: 14px; font-weight: 800; color: var(--ink); }
@@ -1966,7 +1996,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-extra a { color: var(--muted); text-decoration: underline; }
 .mkt-latest { display: flex; align-items: center; gap: 5px; font-family: var(--f); font-size: 10.5px; font-weight: 700; color: #0891B2; text-decoration: none; margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--line); word-break: keep-all; }
 .mkt-foot { font-family: var(--f); font-size: 10.5px; color: var(--muted); padding: 8px 20px 16px; line-height: 1.5; word-break: keep-all; }
-@media (max-width: 760px) { .mkt-grid { grid-template-columns: 1fr; } }
+@media (max-width: 920px) { .mkt-record-grid { grid-template-columns: repeat(2, 1fr); } .mkt-db-summary { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 760px) { .mkt-grid, .mkt-record-grid { grid-template-columns: 1fr; } .mkt-db-head { align-items: flex-start; flex-direction: column; } .mkt-db-head .mkt-tools { margin-left: 0; } }
 
 /* 스타트업 분석 카드(2계층) — mkt-* 재사용 + 전용 */
 .su-fav { width: 17px; height: 17px; border-radius: 4px; flex-shrink: 0; }

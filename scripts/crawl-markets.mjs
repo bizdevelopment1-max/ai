@@ -1,66 +1,136 @@
 #!/usr/bin/env node
-/* ============================================================
-   crawl-markets.mjs — AI 신사업 버티컬 시장 최신 시그널 갱신
-   입력: market.json(seed-markets.mjs가 생성한 베이스라인)
-   동작: 각 버티컬마다 Google News에서 "<name> market size forecast"
-         최신 기사 1건을 크롤해 freshness 시그널(latest)로 덧붙임.
-         베이스라인 수치(size/forecast/cagr/source/url)는 보존 —
-         시장 리포트는 연 단위라 죽지 않게 유지, 최신 링크만 갱신.
-   주 1회 갱신(주말 또는 7일 경과 시). 사이트는 이 파일을 lazy-load.
-   ============================================================ */
+/*
+ * Append-only market intelligence crawler.
+ * Keeps the existing six-axis market map intact, then adds only new,
+ * source-linked quantitative observations to market.json.records.
+ */
 import { readFile, writeFile } from "node:fs/promises";
+import { appendRecords, ensureMarketDatabase, hasSurveyEvidence } from "./market-db.mjs";
 
-const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
-const TODAY = new Date().toISOString().slice(0, 10);
-const decode = s => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+const UA = "Mozilla/5.0 (compatible; AI-Intelligence-Market-DB/1.0)";
+const now = () => new Date().toISOString();
+const today = () => now().slice(0, 10);
+const decode = raw => String(raw || "")
+  .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
   .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'")
   .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-const tagOf = (xml, n) => { const m = xml.match(new RegExp(`<${n}[^>]*>([\\s\\S]*?)</${n}>`, "i")); return m ? m[1] : ""; };
+const tag = (xml, name) => (xml.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`, "i")) || [])[1] || "";
+const cleanTitle = title => decode(title).replace(/\s+-\s+[^-]{2,}$/, "").trim();
 
-// 한국어 버티컬명 → 영문 검색 키워드
-const EN = {
-  "생성형 AI폰": "generative AI phone", "온디바이스 멀티모달 AI": "on-device multimodal AI",
-  "엣지 AI 반도체": "edge AI chip", "AI PC / AI 컴퓨팅": "AI PC", "AI 카메라·이미지센서": "AI camera image sensor",
-  "플렉시블·폴더블 OLED": "foldable OLED display", "5G RedCap": "5G RedCap", "모바일 AI(온디바이스 통칭)": "mobile AI",
-  "AI 에이전트": "AI agents", "AI 음성 어시스턴트": "voice assistant AI", "AI 컴패니언 앱": "AI companion app",
-  "대화형 AI·챗봇": "conversational AI chatbot", "AI 통역·번역": "AI translation", "AI 노트·전사": "AI transcription",
-  "웨어러블 AI": "wearable AI", "AR·스마트글라스": "smart glasses AR", "AR 가상피팅": "virtual try-on AR",
-  "생성형 AI 콘텐츠 제작": "generative AI content", "AI 사진 편집 앱": "AI photo editing", "AI 게이밍": "AI in games",
-  "클라우드 게이밍(모바일)": "cloud gaming mobile", "AI 헬스케어 진단": "AI healthcare diagnosis",
-  "AI 스마트홈": "AI smart home", "AI 핀테크·모바일 결제": "AI fintech mobile payment", "AI 에듀테크": "AI education edtech",
-  "노코드·로우코드 AI 앱개발": "no-code AI app development", "AI 시스템·모바일 보안": "AI security market",
-  "딥페이크 탐지": "deepfake detection", "디지털ID·모바일지갑": "digital ID wallet",
+const QUERIES = [
+  { id: "ai-phone", group: "core", verticalId: "core-0", topic: "생성형 AI폰 시장·출하", query: "generative AI smartphone market size forecast shipments" },
+  { id: "device-ai", group: "core", verticalId: "core-1", topic: "온디바이스 AI·AI PC", query: "on-device AI AI PC market size forecast" },
+  { id: "agents", group: "assistant", verticalId: "assistant-0", topic: "AI 에이전트·어시스턴트", query: "AI agent consumer adoption market size survey" },
+  { id: "consumer-phone", group: "assistant", verticalId: "assistant-0", topic: "AI 스마트폰 소비자 조사", query: "generative AI smartphone consumer survey respondents adoption" },
+  { id: "wearables", group: "wearxr", verticalId: "wearxr-1", topic: "스마트글라스·웨어러블", query: "smart glasses wearable AI consumer survey shipments forecast" },
+  { id: "creative", group: "creative", verticalId: "creative-0", topic: "생성형 콘텐츠·카메라", query: "generative AI content creation consumer survey market size" },
+  { id: "service", group: "service", verticalId: "service-0", topic: "AI 서비스 플랫폼", query: "AI healthcare smart home fintech consumer survey market size" },
+  { id: "trust", group: "trust", verticalId: "trust-0", topic: "AI 신뢰·보안 소비자 조사", query: "AI privacy trust consumer survey respondents" },
+];
+
+const quantified = text => {
+  const found = [
+    ...String(text || "").matchAll(/(?:US\$|USD|\$)\s?\d[\d,.]*(?:\s?(?:trillion|billion|million|trn|bn|mn|T|B|M))?/gi),
+    ...String(text || "").matchAll(/\b\d+(?:\.\d+)?%/g),
+    ...String(text || "").matchAll(/\b\d[\d,.]*(?:\s?(?:million|billion|bn|mn|thousand|m|b))\s+(?:users|consumers|respondents|shipments|units|adults|people)/gi),
+  ].map(match => match[0].replace(/\s+/g, " ").trim());
+  return [...new Set(found)].slice(0, 4);
 };
 
-async function latest(name) {
-  try {
-    const q = `${EN[name] || name} market size forecast when:30d`;
-    const res = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`, { headers: { "User-Agent": UA } });
-    if (!res.ok) return null;
-    const xml = await res.text();
-    const m = /<item>([\s\S]*?)<\/item>/.exec(xml);
-    if (!m) return null;
-    const it = m[1];
-    const d = new Date(tagOf(it, "pubDate"));
-    return { title: decode(tagOf(it, "title")).replace(/ - [^-]*$/, "").trim(), url: decode(tagOf(it, "link")), source: decode(tagOf(it, "source")) || "Google News", date: isNaN(d) ? TODAY : d.toISOString().slice(0, 10) };
-  } catch { return null; }
+const kindOf = record => hasSurveyEvidence(record)
+  ? "consumer-survey"
+  : /\b(?:shipments?|units?)\b/i.test(`${record.title || ""} ${record.evidence || ""}`) ? "shipment" : "market-observation";
+
+async function rss(query) {
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(`${query} when:14d`)}&hl=en-US&gl=US&ceid=US:en`;
+  const response = await fetch(url, { headers: { "User-Agent": UA } });
+  if (!response.ok) throw new Error(`Google News RSS ${response.status} for ${query}`);
+  const xml = await response.text();
+  return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].slice(0, 8).map(match => {
+    const item = match[1];
+    const published = new Date(tag(item, "pubDate"));
+    return {
+      title: cleanTitle(tag(item, "title")),
+      sourceUrl: decode(tag(item, "link")),
+      sourceName: decode(tag(item, "source")) || "Google News",
+      publishedAt: Number.isNaN(published.getTime()) ? today() : published.toISOString().slice(0, 10),
+      evidence: decode(tag(item, "description")),
+    };
+  }).filter(item => item.title && item.sourceUrl);
 }
 
 async function main() {
   let data;
-  try { data = JSON.parse(await readFile("market.json", "utf8")); } catch { throw new Error("market.json is missing or invalid; run seed-markets.mjs before refreshing signals"); }
-  const age = data.freshAt ? (Date.now() - new Date(data.freshAt).getTime()) / 86400000 : 99;
-  if (age < 6.5) { console.log(`[market] fresh signals (${data.freshAt}) — skip`); return; }
-
-  let hit = 0;
-  for (const it of data.items) {
-    const n = await latest(it.name);
-    if (n) { it.latest = n; hit++; }
+  try {
+    data = JSON.parse(await readFile("market.json", "utf8"));
+  } catch {
+    throw new Error("market.json is missing or invalid; run seed-markets.mjs before refreshing signals");
   }
-  data.freshAt = new Date().toISOString();
-  data.generatedAt = new Date().toISOString();
-  await writeFile("market.json", JSON.stringify(data, null, 1) + "\n");
-  console.log(`Wrote market.json — refreshed latest signals for ${hit}/${data.items.length} verticals`);
+
+  const startedAt = now();
+  const migration = ensureMarketDatabase(data, startedAt);
+  const ageHours = data.database?.lastCrawledAt ? (Date.now() - Date.parse(data.database.lastCrawledAt)) / 3_600_000 : 999;
+  if (ageHours < 20) {
+    if (migration.changed) {
+      data.generatedAt = startedAt;
+      await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
+    }
+    console.log(`[market-db] crawl is fresh (${ageHours.toFixed(1)}h); preserved ${data.records.length} append-only records`);
+    return;
+  }
+
+  let fetched = 0;
+  let failures = 0;
+  const candidates = [];
+  const latestByVertical = new Map();
+  for (const config of QUERIES) {
+    try {
+      const rows = await rss(config.query);
+      fetched += rows.length;
+      for (const row of rows) {
+        const combined = `${row.title} ${row.evidence}`;
+        const values = quantified(combined).map((value, index) => ({ label: index === 0 ? "공개 수치" : "추가 수치", value }));
+        if (!values.length) continue;
+        const record = {
+          type: kindOf(row),
+          group: config.group,
+          verticalId: config.verticalId,
+          topic: config.topic,
+          title: row.title,
+          metricLabel: config.topic,
+          values,
+          scope: "검색 결과의 제목·공개 스니펫 범위. 원문에서 정의·표본·기준연도를 재확인해야 합니다.",
+          sourceName: row.sourceName,
+          sourceUrl: row.sourceUrl,
+          publishedAt: row.publishedAt,
+          evidence: row.evidence.slice(0, 900),
+          origin: "rss-quantitative-crawl",
+        };
+        candidates.push(record);
+        if (!latestByVertical.has(config.verticalId)) latestByVertical.set(config.verticalId, row);
+      }
+    } catch (error) {
+      failures++;
+      console.error(`[market-db] ${config.id}: ${error.message}`);
+    }
+  }
+
+  if (!fetched && failures === QUERIES.length) throw new Error("All market-data sources failed; refusing to mark the database refreshed");
+  const added = appendRecords(data, candidates, startedAt);
+  for (const item of data.items || []) {
+    const latest = latestByVertical.get(item.id);
+    if (latest) item.latest = { title: latest.title, url: latest.sourceUrl, source: latest.sourceName, date: latest.publishedAt };
+  }
+  data.database = {
+    ...(data.database || {}),
+    recordCount: data.records.length,
+    lastCrawledAt: startedAt,
+    lastCrawl: { queries: QUERIES.length, rssRows: fetched, appended: added, failures },
+  };
+  data.freshAt = startedAt;
+  data.generatedAt = startedAt;
+  await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
+  console.log(`[market-db] appended ${added} source-linked records; retained ${data.records.length}; RSS rows ${fetched}/${QUERIES.length} queries`);
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main().catch(error => { console.error(error); process.exit(1); });
