@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-24T22:56:46.868Z",
-  "overall": "ok",
+  "generatedAt": "2026-07-24T23:01:25.409Z",
+  "overall": "warn",
   "policy": "원문 제목·스니펫과 연결된 공개 URL만 근거로 인정하며, 근거가 약한 항목은 제한 또는 참고용으로 표시합니다.",
-  "summary": "검증 6개 · 정상 6 · 주의 0 · 실패 0",
+  "summary": "검증 10개 · 정상 9 · 주의 1 · 실패 0",
   "checks": [
     {
       "id": "news-coverage",
@@ -39,6 +39,30 @@
       "label": "뉴스 번들 최신성",
       "status": "ok",
       "value": "0.0일"
+    },
+    {
+      "id": "infra-evidence",
+      "label": "인프라 시그널 근거",
+      "status": "ok",
+      "value": "94/108건"
+    },
+    {
+      "id": "bizmodel-evidence",
+      "label": "수익화 시그널 근거",
+      "status": "ok",
+      "value": "22/24건"
+    },
+    {
+      "id": "research-source",
+      "label": "리서치 원문 링크",
+      "status": "ok",
+      "value": "37/37건"
+    },
+    {
+      "id": "market-source",
+      "label": "시장 데이터 원문 링크",
+      "status": "warn",
+      "value": "29/41건"
     }
   ],
   "metrics": {
@@ -47,7 +71,11 @@
     "sourceBackedArticles": 89,
     "limitedArticles": 26,
     "freshStocks": 25,
-    "totalStocks": 25
+    "totalStocks": 25,
+    "linkedInfra": 94,
+    "linkedBizmodel": 22,
+    "linkedResearch": 37,
+    "linkedMarket": 29
   },
   "sources": {
     "news": {
@@ -98,6 +126,7 @@
   "notices": [
     "AI 요약은 원문 전체가 아니라 공개 제목·스니펫 범위에서 검증됩니다.",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
-    "근거 없는 레이더 후보는 reference-only로 분리됩니다."
+    "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
+    "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다."
   ]
 }
