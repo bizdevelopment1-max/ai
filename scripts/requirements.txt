@@ -1,0 +1,7 @@
+# 무료·오프라인 영어→한국어 번역 + 추출식 요약 (translate_summarize.py)
+# torch는 워크플로에서 CPU 전용 휠로 별도 설치(용량↓): pip install torch --index-url https://download.pytorch.org/whl/cpu
+transformers>=4.40,<5
+sentencepiece>=0.1.99
+sacremoses>=0.1.1
+sumy>=0.11.0
+nltk>=3.8
