@@ -73,18 +73,56 @@ def main():
     # 지연 임포트 — 미설치/다운로드 실패 시 기존 동작 보존
     try:
         import torch
-        from transformers import MarianMTModel, MarianTokenizer
+        import transformers  # noqa: F401  (설치 여부 확인)
     except Exception as e:
         print("[translate] transformers/torch 없음 — skip:", e)
         return
 
-    MODEL = "Helsinki-NLP/opus-mt-en-ko"
-    try:
-        tok = MarianTokenizer.from_pretrained(MODEL)
-        model = MarianMTModel.from_pretrained(MODEL)
-        model.eval()
-    except Exception as e:
-        print("[translate] opus-mt-en-ko 로드 실패 — skip:", e)
+    # 다중 후보 로더 — 경량 OPUS-MT-TC(en→ko) 우선, 실패 시 다국어 m2m100(확실히 존재)로 폴백.
+    # (구 'opus-mt-en-ko' 바이링궐 모델은 HF에 없어 404 → tc-big / m2m100 사용)
+    def load_translator():
+        # 1) Helsinki OPUS-MT-TC big en→ko (MarianMT, 경량·빠름)
+        try:
+            from transformers import MarianMTModel, MarianTokenizer
+            m = "Helsinki-NLP/opus-mt-tc-big-en-ko"
+            tk = MarianTokenizer.from_pretrained(m)
+            md = MarianMTModel.from_pretrained(m)
+            md.eval()
+
+            def tr(text):
+                b = tk([text], return_tensors="pt", truncation=True, max_length=512, padding=True)
+                with torch.no_grad():
+                    g = md.generate(**b, max_length=256, num_beams=2)
+                return tk.decode(g[0], skip_special_tokens=True).strip()
+
+            print("[translate] 모델 로드 성공: opus-mt-tc-big-en-ko")
+            return tr
+        except Exception as e:
+            print("[translate] opus-mt-tc-big-en-ko 실패 → m2m100 시도:", str(e)[:140])
+        # 2) facebook/m2m100_418M (다국어, ko 지원, 확실히 존재)
+        try:
+            from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
+            m = "facebook/m2m100_418M"
+            tk = M2M100Tokenizer.from_pretrained(m)
+            md = M2M100ForConditionalGeneration.from_pretrained(m)
+            md.eval()
+            ko_id = tk.get_lang_id("ko")
+
+            def tr(text):
+                tk.src_lang = "en"
+                b = tk([text], return_tensors="pt", truncation=True, max_length=512)
+                with torch.no_grad():
+                    g = md.generate(**b, forced_bos_token_id=ko_id, max_length=256, num_beams=2)
+                return tk.batch_decode(g, skip_special_tokens=True)[0].strip()
+
+            print("[translate] 모델 로드 성공: m2m100_418M")
+            return tr
+        except Exception as e:
+            print("[translate] m2m100_418M 로드 실패 — skip:", str(e)[:140])
+        return None
+
+    tr = load_translator()
+    if tr is None:
         return
 
     # 선택: sumy LexRank(추출 랭킹). 없으면 문장 슬라이스로 폴백
@@ -107,10 +145,10 @@ def main():
             s = s.strip()
             if not s:
                 continue
-            batch = tok([s], return_tensors="pt", truncation=True, max_length=512, padding=True)
-            with torch.no_grad():
-                gen = model.generate(**batch, max_length=256, num_beams=2)
-            out.append(tok.decode(gen[0], skip_special_tokens=True).strip())
+            try:
+                out.append(tr(s))
+            except Exception:
+                pass
         return " ".join([o for o in out if o])
 
     def extract(ko_text, n=3):

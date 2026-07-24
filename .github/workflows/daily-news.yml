@@ -55,7 +55,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
-          key: hf-opus-mt-en-ko-v1
+          key: hf-en-ko-v2
 
       - name: Install local translation/summarization deps (CPU)
         run: |
