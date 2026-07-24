@@ -157,4 +157,4 @@ async function main() {
   today.items.forEach(it => console.log(`  [${it.labels.join("·") || "시장 신호"}] ${it.total}/20${it.urgent ? " ★즉시검토" : ""}: ${it.signal.slice(0, 60)}`));
 }
 
-main().catch(e => { console.error(e); process.exit(0); });
+main().catch(e => { console.error(e); process.exit(1); });

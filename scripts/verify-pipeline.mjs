@@ -48,6 +48,11 @@ const stocks = await readJson("stocks.json", { stocks: {} });
 const briefing = await readJson("briefing.json", { days: [] });
 const insights = await readJson("insights.json", { cards: [] });
 const radar = await readJson("radar.json", { picks: [] });
+const research = await readJson("research.json", { feed: [] });
+const startups = await readJson("startups.json", { large: [], small: [] });
+const market = await readJson("market.json", { items: [] });
+const infra = await readJson("infra.json", { items: [] });
+const bizmodel = await readJson("bizmodel.json", { items: [] });
 const priorHistory = await readJson("history.json", { articles: [], runs: [] });
 
 const articleIssues = [];
@@ -105,11 +110,25 @@ const verifyEvidenceList = evidence => {
   };
 };
 
+const directSourceStatus = item => {
+  const url = canonicalUrl(item?.url || item?.latest?.url);
+  if (url && evidenceUrls.has(url)) return { status: "evidence-linked", evidenceCount: 1, checkedAt: now.toISOString() };
+  if (url && validHttp(url)) return { status: "source-linked", evidenceCount: 1, checkedAt: now.toISOString() };
+  return { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() };
+};
+
 for (const day of briefing.days || []) {
   day.items = (day.items || []).map(item => ({ ...item, provenance: verifyEvidenceList(item.evidence) }));
 }
 insights.cards = (insights.cards || []).map(card => ({ ...card, provenance: verifyEvidenceList(card.evidence) }));
 radar.picks = (radar.picks || []).map(pick => ({ ...pick, provenance: verifyEvidenceList(pick.evidence) }));
+research.feed = (research.feed || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
+if (research.onepager) research.onepager = { ...research.onepager, provenance: directSourceStatus(research.onepager) };
+startups.large = (startups.large || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
+startups.small = (startups.small || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
+market.items = (market.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
+infra.items = (infra.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
+bizmodel.items = (bizmodel.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
 
 const stockRows = Object.values(stocks.stocks || {});
 const stockFresh = stockRows.filter(s => ageDays(`${s.asOf}T23:59:59Z`) <= 4).length;
@@ -121,6 +140,10 @@ for (const a of currentArticles) sourceCountsNews[a.source || "unknown"] = (sour
 const linkedBriefs = (briefing.days?.[0]?.items || []).filter(x => x.provenance?.status === "evidence-linked").length;
 const linkedInsights = (insights.cards || []).filter(x => x.provenance?.status === "evidence-linked").length;
 const backedArticles = currentArticles.filter(a => a.provenance.status === "source-backed").length;
+const linkedInfra = (infra.items || []).filter(item => item.provenance?.status === "evidence-linked").length;
+const linkedBizmodel = (bizmodel.items || []).filter(item => item.provenance?.status === "evidence-linked").length;
+const linkedResearch = (research.feed || []).filter(item => item.provenance?.status !== "reference-only").length;
+const linkedMarket = (market.items || []).filter(item => item.provenance?.status !== "reference-only").length;
 
 const checks = [
   { id: "news-coverage", label: "뉴스 수집", status: currentArticles.length >= 20 ? "ok" : "fail", value: `${currentArticles.length}건` },
@@ -129,6 +152,10 @@ const checks = [
   { id: "insight-evidence", label: "인사이트 근거 연결", status: linkedInsights > 0 ? "ok" : "warn", value: `${linkedInsights}건` },
   { id: "stock-freshness", label: "주가 최신성", status: stockFresh >= Math.max(8, stockRows.length * 0.7) ? "ok" : "fail", value: `${stockFresh}/${stockRows.length}종목` },
   { id: "news-freshness", label: "뉴스 번들 최신성", status: ageDays(news.generatedAt) <= 2 ? "ok" : "fail", value: `${ageDays(news.generatedAt).toFixed(1)}일` },
+  { id: "infra-evidence", label: "인프라 시그널 근거", status: linkedInfra >= Math.max(3, (infra.items || []).length * 0.5) ? "ok" : "warn", value: `${linkedInfra}/${(infra.items || []).length}건` },
+  { id: "bizmodel-evidence", label: "수익화 시그널 근거", status: linkedBizmodel >= Math.max(3, (bizmodel.items || []).length * 0.5) ? "ok" : "warn", value: `${linkedBizmodel}/${(bizmodel.items || []).length}건` },
+  { id: "research-source", label: "리서치 원문 링크", status: linkedResearch >= Math.max(3, (research.feed || []).length * 0.5) ? "ok" : "warn", value: `${linkedResearch}/${(research.feed || []).length}건` },
+  { id: "market-source", label: "시장 데이터 원문 링크", status: linkedMarket >= Math.max(10, (market.items || []).length * 0.8) ? "ok" : "warn", value: `${linkedMarket}/${(market.items || []).length}건` },
 ];
 
 const fails = checks.filter(c => c.status === "fail").length;
@@ -147,12 +174,17 @@ const quality = {
     limitedArticles: articleIssues.length,
     freshStocks: stockFresh,
     totalStocks: stockRows.length,
+    linkedInfra,
+    linkedBizmodel,
+    linkedResearch,
+    linkedMarket,
   },
   sources: { news: sourceCountsNews, stocks: sourceCounts },
   notices: [
     "AI 요약은 원문 전체가 아니라 공개 제목·스니펫 범위에서 검증됩니다.",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
+    "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다.",
   ],
 };
 
@@ -175,6 +207,11 @@ await Promise.all([
   writeFile("briefing.json", JSON.stringify(briefing) + "\n"),
   writeFile("insights.json", JSON.stringify(insights) + "\n"),
   writeFile("radar.json", JSON.stringify(radar) + "\n"),
+  writeFile("research.json", JSON.stringify(research) + "\n"),
+  writeFile("startups.json", JSON.stringify(startups) + "\n"),
+  writeFile("market.json", JSON.stringify(market) + "\n"),
+  writeFile("infra.json", JSON.stringify(infra) + "\n"),
+  writeFile("bizmodel.json", JSON.stringify(bizmodel) + "\n"),
   writeFile("history.json", JSON.stringify({ generatedAt: now.toISOString(), articles: historyArticles, runs }, null, 2) + "\n"),
   writeFile("quality.json", JSON.stringify(quality, null, 2) + "\n"),
 ]);

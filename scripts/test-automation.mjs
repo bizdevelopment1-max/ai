@@ -6,6 +6,7 @@ const required = [
   ".github/workflows/daily-news-update.yml",
   "scripts/crawl-news.mjs",
   "scripts/crawl-stocks.mjs",
+  "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
   "scripts/audit-agent.mjs",
   "news.json",
@@ -43,6 +44,20 @@ const llm = process.env.ANTHROPIC_API_KEY
 console.log(`  정보  요약 엔진: ${llm}`);
 console.log("  정보  기본 파이프라인: 매일 06:30 · 12:30 · 19:30 · 00:30 KST");
 console.log("  정보  보조 업데이트: 수동 복구 전용(동시 쓰기 방지)");
+
+const pipelineScripts = [
+  "scripts/crawl-news.mjs", "scripts/crawl-stocks.mjs", "scripts/crawl-research.mjs",
+  "scripts/crawl-startups.mjs", "scripts/crawl-markets.mjs", "scripts/crawl-infra.mjs",
+  "scripts/crawl-bizmodel.mjs", "scripts/generate-briefing.mjs", "scripts/startup-radar.mjs",
+  "scripts/build-insights.mjs", "scripts/crawl-companies.mjs",
+];
+for (const file of pipelineScripts) {
+  const source = await readFile(file, "utf8");
+  if (/process\.exit\(0\)/.test(source)) {
+    failed = true;
+    console.error(`  실패  ${file}: 오류를 성공으로 종료하는 코드가 남아 있음`);
+  }
+}
 
 if (failed) process.exit(1);
 console.log("자동화 구성 정상");

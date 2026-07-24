@@ -145,4 +145,4 @@ async function main() {
   console.log(`Wrote research.json — onepager: ${onepager ? onepager.date + "/" + onepager.engine : "none"}, feed ${feed.length} item(s)`);
 }
 
-main().catch(e => { console.error(e); process.exit(0); });
+main().catch(e => { console.error(e); process.exit(1); });

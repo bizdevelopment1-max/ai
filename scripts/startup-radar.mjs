@@ -253,4 +253,4 @@ async function main() {
   picks.forEach(p => console.log(`  ${p.name} ${p.total}/20 [${p.labels.join("·")}]${p.urgent ? " ★즉시검토" : ""}`));
 }
 
-main().catch(e => { console.error(e); process.exit(0); });
+main().catch(e => { console.error(e); process.exit(1); });

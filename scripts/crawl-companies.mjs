@@ -61,4 +61,4 @@ async function main() {
   console.log(`Wrote companies.json — ${Object.keys(companies).length} companies (live mentions + market caps)`);
 }
 
-main().catch(e => { console.error(e); process.exit(0); });
+main().catch(e => { console.error(e); process.exit(1); });

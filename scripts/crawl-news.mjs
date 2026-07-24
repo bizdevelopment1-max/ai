@@ -317,7 +317,8 @@ async function pool(items, n, fn) {
 }
 
 // 한국어 제목 + 한국어 개조식 다줄(최소 2줄, 보통 3줄) 요약을 갖춘 항목만 유효로 간주
-const isKoreanSummary = a => a && /[가-힣]/.test(a.title || "") && a.summary && /[가-힣]/.test(a.summary)
+const SUMMARY_VERSION = 2;
+const isKoreanSummary = a => a && a.summaryVersion === SUMMARY_VERSION && /[가-힣]/.test(a.title || "") && a.summary && /[가-힣]/.test(a.summary)
   && a.summary.split("\n").map(l => l.trim()).filter(Boolean).length >= 2
   && !/출처\s*[:：]/.test(a.summary);
 
@@ -364,6 +365,7 @@ async function main() {
       titleEn: a.title,                                   // 원문(영문) 제목 — CLI 재요약용
       descEn: (s && s.contentEn) || a.descEn || "",       // 보강된 원문 — CLI 재요약용
       summary,
+      summaryVersion: s ? SUMMARY_VERSION : 0,
       needsLLM: lineCount(summary) < 3,                   // 3줄 미만이면 다른 PC Claude CLI가 보강
     };
   });
@@ -411,6 +413,7 @@ async function main() {
       if (r && r.title_ko && r.summary && /[가-힣]/.test(r.summary) && lineCount(r.summary) >= 2) {
         a.title = nounize(cleanTitle(r.title_ko, a.source));
         a.summary = nounizeSummary(stripSrc(r.summary));
+        a.summaryVersion = SUMMARY_VERSION;
         a.needsLLM = lineCount(a.summary) < 3;
         healed++;
       }

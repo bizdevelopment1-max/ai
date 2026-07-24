@@ -1504,7 +1504,7 @@ function SignalInfographic({ file, delKey, title, sub }) {
   const resetAll = () => { setDel({}); try { localStorage.removeItem(DEL_LS); } catch {} };
 
   const groups = (data && data.groups) || [];
-  const items = ((data && data.items) || []).filter(it => !del[it.id]);
+  const items = ((data && data.items) || []).filter(it => it.provenance?.status === "evidence-linked" && !del[it.id]);
   const countOf = id => items.filter(it => it.group === id).length;
   const maxC = Math.max(1, ...groups.map(g => countOf(g.id)));
 
@@ -1678,7 +1678,7 @@ function hlKey(text) {
 // ---- IB Research Briefing: 증권사 인사이트 1페이저(네이비/골드) + 기관 리서치 피드 ----
 function IBInsightBoard({ research, reports, sectionRef }) {
   const inView = useInView(sectionRef);
-  const op = research && research.onepager;
+  const op = research && research.onepager && research.onepager.provenance?.status === "source-linked" ? research.onepager : null;
   // 삭제된 리포트/피드(비밀번호 000) — localStorage 영구 보존
   const R_LS = "aiDashDeletedReports";
   const [delR, setDelR] = React.useState(() => { try { return JSON.parse(localStorage.getItem(R_LS) || "{}"); } catch { return {}; } });
@@ -1707,7 +1707,7 @@ function IBInsightBoard({ research, reports, sectionRef }) {
       <Icon name="x" size={12} sw={2.2} />
     </button>
   ));
-  const feed = ((research && research.feed) || []).filter(f => !delR[rKey(f)]);
+  const feed = ((research && research.feed) || []).filter(f => f.provenance?.status !== "reference-only" && !delR[rKey(f)]);
   const reps = (reports || []).filter(r => !delR[rKey(r)]);
   const [showAll, setShowAll] = React.useState(false);
   if (!op && !feed.length && !reps.length) return null;
@@ -2001,7 +2001,7 @@ function ExecToplines({ items, insights, onNav }) {
     setDelEs(d => { const n = { ...d, [k]: 1 }; try { localStorage.setItem(LS, JSON.stringify(n)); } catch {} return n; });
     setPend(null); setPw(""); setPwErr(false);
   };
-  const usingLive = !!(insights && insights.cards && insights.cards.length);
+  const usingLive = !!insights;
   const cards = (usingLive
     ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, action: c.action, evidence: c.evidence || [], score: c.score, scoreBasis: c.scoreBasis, live: c.live, updatedAt: c.updatedAt }))
     : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, action: t.action, evidence: [], score: null })))
@@ -2120,7 +2120,7 @@ function MarketBoard({ sectionRef }) {
         <div className="mkt-loading">{loaded ? "시장 데이터를 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
       ) : (
         (data.groups || []).map(g => {
-          const rows = (data.items || []).filter(it => it.group === g.id && !del[it.id] && (showHidden || !hidden[it.id]));
+          const rows = (data.items || []).filter(it => it.group === g.id && it.provenance?.status !== "reference-only" && !del[it.id] && (showHidden || !hidden[it.id]));
           if (!rows.length) return null;
           return (
             <div className="mkt-group" key={g.id}>
@@ -2226,8 +2226,8 @@ function StartupScopeBoard({ sectionRef }) {
     <a className="mkt-latest" href={it.latest.url} target="_blank" rel="noopener"><Icon name="news" size={10} /> 최신 {it.latest.date && it.latest.date.slice(5)} · {String(it.latest.title).slice(0, 48)}</a>
   ) : null);
 
-  const large = ((data && data.large) || []).filter(s => !del[s.name]);
-  const small = ((data && data.small) || []).filter(s => !del[s.name]);
+  const large = ((data && data.large) || []).filter(s => s.provenance?.status !== "reference-only" && !del[s.name]);
+  const small = ((data && data.small) || []).filter(s => s.provenance?.status !== "reference-only" && !del[s.name]);
 
   return (
     <section className="board" ref={sectionRef} data-screen-label="Startup Analysis">
@@ -2247,6 +2247,8 @@ function StartupScopeBoard({ sectionRef }) {
 
       {!data ? (
         <div className="mkt-loading">{loaded ? "스타트업 분석을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+      ) : !(large.length || small.length) ? (
+        <div className="mkt-loading">원문 근거를 연결하는 중입니다 · 근거 없는 투자·인수 후보는 표시하지 않습니다</div>
       ) : tier === "large" ? (
         <div className="mkt-group">
           <div className="mkt-group-head"><b>대형 업체 — 파트너십 관점</b><em>비즈니스 모델·수익 구조를 참고해 탑재·제휴·공동개발 각도 분석</em></div>

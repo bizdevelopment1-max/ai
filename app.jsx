@@ -65,17 +65,17 @@ function App() {
     const hit = DEVICE_CO_MAP.find(([re]) => re.test(a.title || ""));
     return { ...a, co: hit ? hit[1] : "" };   // 매칭되는 업체로, 없으면 업체 미지정(드롭다운 미노출)
   };
-  // 데일리 기사: 제목+요약이 있으면 표시(크롤러가 한글 번역 우선, 번역 불가 시 영문 폴백)
+  // 근거 검증을 통과한 자동 수집 기사만 표시. 검증 전 정적 큐레이션은
+  // 네트워크 초기 로드 실패 시에만 임시 폴백으로 사용한다.
   // 화면 노출 금지어 최종 방어선 — 크롤 데이터에 섞여 들어와도 렌더 전 차단
   const BANNED_RE = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
   const articles = useMemo(() => {
     const base = (D.ARTICLES || []).map(reclassCo);
     if (!crawled || !crawled.length) return base;
-    const seen = new Set(base.map(a => (a.co || "") + "|" + a.title));
     const extra = crawled.map(reclassCo)
-      .filter(a => a && a.title && a.summary && !seen.has((a.co || "") + "|" + a.title))
+      .filter(a => a && a.title && a.summary && a.summaryVersion === 2 && a.provenance?.status === "source-backed")
       .filter(a => !BANNED_RE.test((a.title || "") + " " + (a.summary || "")));
-    return [...extra, ...base];
+    return extra;
   }, [crawled]);
 
   // 매일 갱신되는 '오늘의 톱라인' 인사이트(insights.json, 규칙 기반). 없으면 정적 TOPLINE 폴백.
@@ -84,7 +84,10 @@ function App() {
     let alive = true;
     fetch("insights.json" + cb(), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && Array.isArray(j.cards) && j.cards.length) setInsights(j); })
+      .then(j => {
+        const cards = (j && j.cards || []).filter(card => card.provenance?.status === "evidence-linked");
+        if (alive && j) setInsights({ ...j, cards });
+      })
       .catch(() => {});
     return () => { alive = false; };
   }, []);
@@ -100,7 +103,11 @@ function App() {
   uE(() => {
     let alive = true;
     fetch("research.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && (j.onepager || (j.feed || []).length)) setResearch(j); }).catch(() => {});
+      .then(j => {
+        const feed = (j && j.feed || []).filter(item => item.provenance?.status !== "reference-only");
+        const onepager = j && j.onepager?.provenance?.status === "source-linked" ? j.onepager : null;
+        if (alive && (onepager || feed.length)) setResearch({ ...j, onepager, feed });
+      }).catch(() => {});
     fetch("companies.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
     fetch("audit.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
@@ -110,8 +117,8 @@ function App() {
     fetch("startups.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && (j.large || j.small)) {
         const m = {};
-        (j.large || []).forEach(x => { m[x.name] = { overview: x.businessModel, insight: x.partnership, label: x.label, tier: "large" }; });
-        (j.small || []).forEach(x => { m[x.name] = { overview: x.overview, insight: x.acqAngle, label: x.label, tier: "small" }; });
+        (j.large || []).filter(x => x.provenance?.status !== "reference-only").forEach(x => { m[x.name] = { overview: x.businessModel, insight: x.partnership, label: x.label, tier: "large" }; });
+        (j.small || []).filter(x => x.provenance?.status !== "reference-only").forEach(x => { m[x.name] = { overview: x.overview, insight: x.acqAngle, label: x.label, tier: "small" }; });
         setStartupsX(m);
       } }).catch(() => {});
     return () => { alive = false; };
@@ -130,7 +137,10 @@ function App() {
     let alive = true;
     fetch("briefing.json" + cb(), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && Array.isArray(j.days) && j.days.length) setBriefing(j); })
+      .then(j => {
+        const days = (j && j.days || []).map(day => ({ ...day, items: (day.items || []).filter(item => item.provenance?.status === "evidence-linked") })).filter(day => day.items.length);
+        if (alive && days.length) setBriefing({ ...j, days });
+      })
       .catch(() => {});
     return () => { alive = false; };
   }, []);
@@ -278,7 +288,7 @@ function App() {
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
             {/* ── 0. 증권사 인사이트(IB Research 1페이저 + 기관 피드) ── */}
-            <IBInsightBoard research={research} reports={D.REPORTS} sectionRef={refs.ib} />
+            <IBInsightBoard research={research} reports={[]} sectionRef={refs.ib} />
 
             {/* ── 1. 개요 ── */}
             <section ref={refs.overview} data-screen-label="Overview">

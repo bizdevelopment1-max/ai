@@ -27,7 +27,9 @@ concurrency:
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+    env:
+      RETRY_ATTEMPTS: 3
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -45,22 +47,22 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/crawl-news.mjs
+        run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
 
       - name: Crawl real stock prices + market cap
-        run: node scripts/crawl-stocks.mjs
+        run: node scripts/run-with-retry.mjs scripts/crawl-stocks.mjs
 
       - name: Generate AI Morning Briefing (Signal → Insight → Action)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/generate-briefing.mjs
+        run: node scripts/run-with-retry.mjs scripts/generate-briefing.mjs
 
       - name: Generate Startup Radar + scorecards + monthly opportunity memo
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/startup-radar.mjs
+        run: node scripts/run-with-retry.mjs scripts/startup-radar.mjs
 
       - name: Build daily insights (rule-based, deterministic — no API key)
         run: node scripts/build-insights.mjs
@@ -69,7 +71,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/crawl-research.mjs
+        run: node scripts/run-with-retry.mjs scripts/crawl-research.mjs
 
       - name: Build live company data (mentions + market caps)
         run: node scripts/crawl-companies.mjs
@@ -78,16 +80,16 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/crawl-startups.mjs
+        run: node scripts/run-with-retry.mjs scripts/crawl-startups.mjs
 
       - name: Refresh AI new-business market signals (주간)
-        run: node scripts/crawl-markets.mjs
+        run: node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
 
       - name: Accumulate AI infra & future-tech signals (기사 기반 누적)
-        run: node scripts/crawl-infra.mjs
+        run: node scripts/run-with-retry.mjs scripts/crawl-infra.mjs
 
       - name: Accumulate AI monetization (business-model) signals (기사 기반 누적)
-        run: node scripts/crawl-bizmodel.mjs
+        run: node scripts/run-with-retry.mjs scripts/crawl-bizmodel.mjs
 
       - name: Verify evidence, provenance and cumulative history
         run: node scripts/verify-pipeline.mjs

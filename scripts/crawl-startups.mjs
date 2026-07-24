@@ -135,4 +135,4 @@ async function main() {
   console.log(`Wrote startups.json — large ${large.length} · small ${small.length} (engine: ${engine})`);
 }
 
-main().catch(e => { console.error(e); process.exit(0); });
+main().catch(e => { console.error(e); process.exit(1); });

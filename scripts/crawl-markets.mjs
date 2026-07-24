@@ -48,7 +48,7 @@ async function latest(name) {
 
 async function main() {
   let data;
-  try { data = JSON.parse(await readFile("market.json", "utf8")); } catch { console.log("[market] no market.json — run seed-markets.mjs first"); return; }
+  try { data = JSON.parse(await readFile("market.json", "utf8")); } catch { throw new Error("market.json is missing or invalid; run seed-markets.mjs before refreshing signals"); }
   const age = data.freshAt ? (Date.now() - new Date(data.freshAt).getTime()) / 86400000 : 99;
   if (age < 6.5) { console.log(`[market] fresh signals (${data.freshAt}) — skip`); return; }
 
@@ -63,4 +63,4 @@ async function main() {
   console.log(`Wrote market.json — refreshed latest signals for ${hit}/${data.items.length} verticals`);
 }
 
-main().catch(e => { console.error(e); process.exit(0); });
+main().catch(e => { console.error(e); process.exit(1); });

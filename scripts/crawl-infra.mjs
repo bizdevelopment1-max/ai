@@ -77,4 +77,4 @@ async function main() {
   console.log(`Wrote infra.json — ${items.length} signals (+${added} new) [${per}]`);
 }
 
-main().catch(e => { console.error(e); process.exit(0); });
+main().catch(e => { console.error(e); process.exit(1); });
