@@ -154,6 +154,21 @@ try {
     throw new Error("every visible research row must have a Korean title and exactly three source-bound Korean bullet lines");
   }
   console.log(`  정상  노출 리서치 ${visibleResearch.length}건 · 한글 제목·3줄 개조식 검증`);
+
+  const boards = await readFile("boards.jsx", "utf8");
+  const displayTexts = visible.flatMap(record => {
+    const loc = record.localization || {};
+    return [loc.title, ...(loc.summaryLines || [])].filter(Boolean);
+  });
+  const terminalProse = /(?:다|[。])(?:["”’']?\s*)$/;
+  const sentencePeriod = /(^|[^0-9])\.(?=\s|["”’']?$)/;
+  if (!/function bulletText\(/.test(boards)
+    || !/bulletText\(op\.thesis\)/.test(boards)
+    || !/bulletText\(op\.conclusion\)/.test(boards)
+    || displayTexts.some(text => terminalProse.test(text) || sentencePeriod.test(text))) {
+    throw new Error("display copy must use compact bullet phrasing without sentence-final dots or -다 endings");
+  }
+  console.log(`  정상  노출 원문 번역 ${displayTexts.length}줄 · 개조식·마침표·다체 종결 검증`);
 } catch (error) {
   failed = true;
   console.error(`  실패  전체 피드 번역·폴백: ${error.message}`);

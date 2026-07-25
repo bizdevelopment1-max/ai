@@ -43,11 +43,64 @@ KOREAN_CHAR = re.compile(r"[가-힣ㄱ-ㅎㅏ-ㅣ]")
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?。！？])\s+|\s*[;；]\s+|\s+—\s+|\s+–\s+")
 CLAUSE_SPLIT = re.compile(r"\s*,\s+|\s*:\s+")
 
+# Korean display copy is intentionally terse: factual source fragments remain
+# unchanged in sourceLines, while the presentation copy uses bullet-style
+# endings without sentence-final full stops or the declarative -다 style.
+BULLET_ENDINGS = (
+    (re.compile(r"있지 않습니다$"), "있지 않음"),
+    (re.compile(r"않습니다$"), "않음"),
+    (re.compile(r"것으로 보(?:입니다|인다)$"), "것으로 전망"),
+    (re.compile(r"보(?:입니다|인다)$"), "보임"),
+    (re.compile(r"됩니다$"), "됨"),
+    (re.compile(r"입니다$"), "임"),
+    (re.compile(r"합니다$"), "함"),
+    (re.compile(r"습니다$"), "음"),
+    (re.compile(r"않는다$"), "않음"),
+    (re.compile(r"된다$"), "됨"),
+    (re.compile(r"한다$"), "함"),
+    (re.compile(r"이다$"), "임"),
+    (re.compile(r"있다$"), "있음"),
+    (re.compile(r"없다$"), "없음"),
+    (re.compile(r"본다$"), "판단"),
+    (re.compile(r"과제다$"), "과제"),
+    (re.compile(r"전제다$"), "전제"),
+    (re.compile(r"됐다$"), "됨"),
+    (re.compile(r"다$"), "음"),
+)
+
 
 def clean(value: object) -> str:
     value = html.unescape(str(value or ""))
     value = re.sub(r"<[^>]+>", " ", value)
     return re.sub(r"\s+", " ", value).strip()
+
+
+def bulletize_korean(value: object) -> str:
+    """Convert display-only Korean prose to compact bullet phrasing.
+
+    This function never changes source fragments. It only removes sentence
+    punctuation and converts a terminal Korean declarative ending into a
+    non-sentence form such as 함, 됨, 임, or 음.
+    """
+    text = clean(value)
+    text = re.sub(r"\b(\d{4})\.(\d{1,2})\.(\d{1,2})\b", r"\1-\2-\3", text)
+    text = text.replace("。", " · ")
+    # Keep decimal/model-version dots, but replace sentence punctuation.
+    text = re.sub(r"([^0-9])\.(?=\s+)", r"\1 ·", text)
+    text = re.sub(r"([^0-9])\.(?=[\"”’']?\s*$)", r"\1", text)
+    parts = []
+    # A compact middle dot can be a decimal separator (for example 10·9%),
+    # while a spaced middle dot is the presentation separator between points.
+    for raw in re.split(r"\s+·\s+", text):
+        part = raw.strip(" \t\n·。.!?\"'”’")
+        if not part:
+            continue
+        for pattern, replacement in BULLET_ENDINGS:
+            if pattern.search(part):
+                part = pattern.sub(replacement, part)
+                break
+        parts.append(part)
+    return " · ".join(parts)
 
 
 def has_korean(value: str) -> bool:
@@ -165,12 +218,12 @@ def new_localization(item: dict, title: str, excerpt: str, language: str) -> dic
     # A successful translation is cached until its source changes. A fallback
     # is deliberately retried on the next scheduled run so a transient
     # translation outage does not become permanent English display.
-    if previous.get("version") == 7 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
+    if previous.get("version") == 12 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
         if item.get("house"):
             item["displayEligible"] = item.get("sourceContent", {}).get("status") == "content-extracted"
         return previous
     return {
-        "version": 7,
+        "version": 12,
         "sourceHash": digest,
         "sourceLines": canonical_fragments(title, raw_excerpt, item.get("source", ""), item.get("date", "")),
         "checkedAt": datetime.now(timezone.utc).isoformat(),
@@ -208,6 +261,8 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
             else:
                 ko_title = translations[(title, code)]
                 ko_lines = [translations[(line, code)] for line in lines]
+            ko_title = bulletize_korean(ko_title)
+            ko_lines = [bulletize_korean(line) for line in ko_lines]
             if not ko_lines:
                 raise ValueError("no-distinct-source-lines")
             if len({clean(line).casefold() for line in ko_lines}) != len(ko_lines):
@@ -244,7 +299,12 @@ def read_json(path: Path, fallback: dict) -> dict:
 
 
 def write_json(path: Path, value: dict) -> None:
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # verify-pipeline keeps research.json compact, so preserve that stable
+    # layout instead of creating a formatting-only churn on every translation.
+    if path == RESEARCH_PATH:
+        path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+    else:
+        path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> None:

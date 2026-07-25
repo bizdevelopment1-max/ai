@@ -102,7 +102,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
           {isStartup && c.strategy ? (
             <span className="ct-strat">
               <em className="ct-strat-label" style={{ color: c.strategy.tier === "large" ? "#2D6BFF" : "#C026D3" }}>{c.strategy.tier === "large" ? "대형·파트너십" : "소형·인수/투자"} · {c.strategy.label}</em>
-              <span className="ct-strat-txt"><b>개요:</b> {c.strategy.overview} <b>인사이트:</b> {c.strategy.insight}</span>
+              <span className="ct-strat-txt"><b>개요:</b> {bulletText(c.strategy.overview)} <b>인사이트:</b> {bulletText(c.strategy.insight)}</span>
             </span>
           ) : <BoldSummary text={c.note} />}</span>
       </div>
@@ -220,7 +220,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
 
         <div className="cd-section">
           <h4>개요</h4>
-          <p>{c.note}</p>
+          <p>{bulletText(c.note)}</p>
         </div>
 
         {c.vp && (
@@ -282,6 +282,30 @@ function CompanyDetail({ company, cats, articles, onClose }) {
 // currencies, company names and AI infrastructure keywords.
 const BRIEF_KEYWORDS = /((?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년)|AI(?:\s*(?:서버|인프라|에이전트|모델|칩|수요|지출))?|인공지능|생성\s*AI|HBM|DRAM|NAND|SSD|GPU|NPU|ARM|x86|CapEx|데이터\s*센터|클라우드|Morgan Stanley|Goldman Sachs|JPMorgan|Bank of America|Citi|Citigroup|TrendForce|IDC|Gartner|OpenAI|Anthropic|NVIDIA|Google|Microsoft|Amazon|Meta|Apple))/gi;
 const NUMBER_TOKEN = /^(?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년))$/i;
+const BULLET_ENDINGS = [
+  [/있지 않습니다$/, "있지 않음"], [/않습니다$/, "않음"], [/됩니다$/, "됨"],
+  [/것으로 보(?:입니다|인다)$/, "것으로 전망"], [/보(?:입니다|인다)$/, "보임"],
+  [/입니다$/, "임"], [/합니다$/, "함"], [/습니다$/, "음"],
+  [/않는다$/, "않음"], [/된다$/, "됨"], [/한다$/, "함"], [/이다$/, "임"],
+  [/있다$/, "있음"], [/없다$/, "없음"], [/본다$/, "판단"], [/과제다$/, "과제"],
+  [/전제다$/, "전제"], [/됐다$/, "됨"], [/다$/, "음"],
+];
+// Display copy uses concise, non-sentence Korean. Source text and hashes stay
+// untouched in the data set, so this is a visual writing rule only.
+function bulletText(value) {
+  const compact = String(value || "")
+    .replace(/\b(\d{4})\.(\d{1,2})\.(\d{1,2})\b/g, "$1-$2-$3")
+    .replace(/。/g, " · ")
+    .replace(/([^0-9])\.(?=\s+)/g, "$1 ·")
+    .replace(/([^0-9])\.(?=["”']?\s*$)/g, "$1");
+  return compact.split(/\s+·\s+/).map(part => {
+    let out = part.trim().replace(/[。.!?"”']+$/, "");
+    for (const [ending, replacement] of BULLET_ENDINGS) {
+      if (ending.test(out)) { out = out.replace(ending, replacement); break; }
+    }
+    return out;
+  }).filter(Boolean).join(" · ");
+}
 function hlBrief(text, keyBase) {
   BRIEF_KEYWORDS.lastIndex = 0;
   const parts = String(text).split(BRIEF_KEYWORDS);
@@ -297,12 +321,14 @@ function hlBrief(text, keyBase) {
 // Render a feed summary as up to 3 개조식 lines (제목 한글 + 3줄 요약 정책).
 function BoldSummary({ text }) {
   if (!text) return null;
-  const clean = String(text).replace(/<[^>]+>/g, "")           // strip stray HTML (e.g. <font color>)
-    .replace(/2026[.\-](\d{1,2})[.\-](\d{1,2})/g, (_, m, d) => `${+m}/${+d}`);
+  const clean = bulletText(
+    String(text).replace(/<[^>]+>/g, "") // strip stray HTML (e.g. <font color>)
+      .replace(/2026[.\-](\d{1,2})[.\-](\d{1,2})/g, (_, m, d) => `${+m}/${+d}`)
+  );
   const lines = clean.split(/\n+/).map(l => l.trim()).filter(Boolean).slice(0, 3);   // 최대 3줄
   if (lines.length <= 1) return <span className="art-sum-line">{hlBrief(clean, "s")}</span>;
   return lines.map((line, i) => (
-    <span className="art-sum-line" key={i}>{hlBrief(line.replace(/^[·\-•]\s*/, "").replace(/[.。]+\s*$/, ""), "l" + i)}</span>
+    <span className="art-sum-line" key={i}>{hlBrief(bulletText(line.replace(/^[·\-•]\s*/, "")), "l" + i)}</span>
   ));
 }
 
@@ -1691,7 +1717,7 @@ const KW_NEG = ["리스크", "손실", "소송", "논란", "우려", "규제", "
 const KW_KEY = ["온디바이스", "단말", "에이전트", "어시스턴트", "비서", "상장", "IPO", "프리미엄", "교체수요", "수익화", "구독"];
 const KW_RE = new RegExp("(" + [...KW_POS, ...KW_NEG, ...KW_KEY].join("|") + ")");
 function hlKey(text) {
-  const segs = String(text || "").split(HL_NUM);
+  const segs = bulletText(text).split(HL_NUM);
   return segs.map((p, i) => {
     if (/\d/.test(p) && /^\$|%$|억\+?$|M\+?$|GB$|^OSWorld|^\d|만\+?$|위$|배$/.test(p)) return <mark className="tl-hl" key={i}>{p}</mark>;
     return p.split(KW_RE).map((w, j) => {
@@ -1756,8 +1782,8 @@ function IBInsightBoard({ research, reports, sectionRef }) {
             </div>
             <div className="ib-meta">
               {op.sourceUrl
-                ? <a className="ib-source-link" href={op.sourceUrl} target="_blank" rel="noopener"><b>Source</b> {op.sourceLine}</a>
-                : <span><b>Source</b> {op.sourceLine}</span>}
+                ? <a className="ib-source-link" href={op.sourceUrl} target="_blank" rel="noopener"><b>Source</b> {bulletText(op.sourceLine)}</a>
+                : <span><b>Source</b> {bulletText(op.sourceLine)}</span>}
               <span><b>Date</b> {op.date}</span>
               <span><b>Scope</b> {op.scope}</span>
               {op.sourceAccess && <span className="ib-source-restricted">{op.sourceAccess}</span>}
@@ -1770,13 +1796,13 @@ function IBInsightBoard({ research, reports, sectionRef }) {
           </div>
           <div className="ib-thesis">
             <div className="ib-thesis-label">One-line Thesis</div>
-            <div className="ib-thesis-text">{op.thesis}</div>
+            <div className="ib-thesis-text">{bulletText(op.thesis)}</div>
           </div>
           {(op.summaryLines || []).length ? (
             <div className="ib-summary">
               <h3>3줄 핵심</h3>
               <ol>
-                {op.summaryLines.slice(0, 3).map((line, i) => <li key={i}>{line}</li>)}
+                {op.summaryLines.slice(0, 3).map((line, i) => <li key={i}>{bulletText(line)}</li>)}
               </ol>
             </div>
           ) : <div className="ib-grid">
@@ -1788,7 +1814,7 @@ function IBInsightBoard({ research, reports, sectionRef }) {
                     <span className="ib-num">{i + 1}</span>
                     <div>
                       <h4>{ins.title}</h4>
-                      <p>{ins.body}</p>
+                      <p>{bulletText(ins.body)}</p>
                     </div>
                   </div>
                 ))}
@@ -1820,7 +1846,7 @@ function IBInsightBoard({ research, reports, sectionRef }) {
                 <div className="ib-card">
                   <h3 className="ib-h">4. 투자·전략 시사점</h3>
                   <ul className="ib-imp">
-                    {op.implications.map((im, i) => (<li key={i}><span className="ib-pill">{im.pill}</span>{im.text}</li>))}
+                    {op.implications.map((im, i) => (<li key={i}><span className="ib-pill">{im.pill}</span>{bulletText(im.text)}</li>))}
                   </ul>
                 </div>
               )}
@@ -1828,9 +1854,9 @@ function IBInsightBoard({ research, reports, sectionRef }) {
           </div>}
           <div className="ib-bottom">
             <h3>최종 결론</h3>
-            <p>{op.conclusion}</p>
+            <p>{bulletText(op.conclusion)}</p>
           </div>
-          {op.watch && <div className="ib-foot">Watch: {op.watch}</div>}
+          {op.watch && <div className="ib-foot">확인 항목: {bulletText(op.watch)}</div>}
         </div>
       )}
 

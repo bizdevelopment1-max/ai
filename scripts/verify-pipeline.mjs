@@ -164,7 +164,7 @@ function validLocalization(input, title, excerpt) {
     && typeof loc.title === "string" && Array.isArray(loc.summaryLines) && loc.summaryLines.length >= 1 && loc.summaryLines.length <= 3;
   if ((accepted || fallback) && sourceBound && hashMatches) return { ...loc, sourceLines };
   const lines = sourceLines.length >= 1 ? sourceLines.slice(0, 3) : fallbackLines(title, excerpt, input?.source, input?.date);
-  return { version: 7, status: "fallback-english", displayLanguage: "en", title: cleanLocalizationText(title), summaryLines: lines, sourceLines: lines, sourceHash: localizationHash(title, excerpt), checkedAt: now.toISOString(), method: "verification-fallback", issues: ["localization-verification-failed"] };
+  return { version: 12, status: "fallback-english", displayLanguage: "en", title: cleanLocalizationText(title), summaryLines: lines, sourceLines: lines, sourceHash: localizationHash(title, excerpt), checkedAt: now.toISOString(), method: "verification-fallback", issues: ["localization-verification-failed"] };
 }
 const derivedSourceStatus = item => item?.sourceSummaryMode === "source-content-extractive"
   ? directSourceStatus(item)
