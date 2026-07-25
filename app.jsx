@@ -111,11 +111,12 @@ function App() {
     const hit = DEVICE_CO_MAP.find(([re]) => re.test(a.title || ""));
     return { ...a, co: hit ? hit[1] : "" };   // 매칭되는 업체로, 없으면 업체 미지정(드롭다운 미노출)
   };
-  // 검증된 원문 발췌만 표시한다. 노출 제외 정책은 config/news-policy.json에서
-  // 수집 단계에 적용되어, 프론트엔드에 중복된 숨김 규칙을 두지 않는다.
+  // 검증된 원문 페이지 발췌만 표시한다. news.json은 최신분과 과거분을
+  // 누적 보존하므로, 화면은 같은 원문 기반 형식을 모두 표시한다.
   const articles = useMemo(() => {
     return crawled.map(reclassCo)
-      .filter(a => a && a.title && a.summary && a.summaryMode === "source-excerpt" && a.provenance?.status === "source-backed");
+      .filter(a => a && a.title && a.summary && a.displayEligible !== false
+        && a.summaryMode === "source-content-extractive" && a.provenance?.status === "source-backed");
   }, [crawled]);
 
   // 매일 갱신되는 '오늘의 톱라인' 인사이트. 근거 데이터가 없으면 빈 상태를 유지한다.

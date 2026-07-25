@@ -399,9 +399,10 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
         <span className="board-tab" style={{ background: "var(--ink)" }} />
         <div className="board-titles">
           <h2>데일리 기사 피드 <span className="board-en">Daily Articles · 업체별 외신 큐레이션</span></h2>
-          <p>한글 제목·원문 기반 3줄 브리핑을 표시합니다 · 번역 품질 미달 시 영문 원문으로 자동 전환 · ✕로 불필요한 기사 삭제</p>
+          <p>최신·과거 기사를 원문 링크와 함께 누적 표시합니다 · 한글 제목·원문 기반 3줄 브리핑 · ✕로 불필요한 기사 삭제</p>
         </div>
         <div className="feed-filters">
+          <span className="feed-total" aria-live="polite">누적 {sorted.length}건</span>
           <button className={filter === "all" ? "on" : ""} onClick={() => onFilter("all")}>전체</button>
           {cats.map(c => (
             <button key={c.id} className={filter === c.id ? "on" : ""} onClick={() => onFilter(c.id)}

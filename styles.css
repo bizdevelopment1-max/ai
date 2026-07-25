@@ -658,6 +658,10 @@ a[href]:hover .rainbow-on-hover,
 
 /* ---------- article feed ---------- */
 .feed-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.feed-total {
+  align-self: center; font-size: 11px; font-weight: 800; color: var(--accent); white-space: nowrap;
+  padding: 4px 8px; border-radius: 7px; background: color-mix(in srgb, var(--accent) 9%, var(--panel));
+}
 .feed-filters button {
   font-family: var(--f); font-size: 12px; font-weight: 600; padding: 6px 12px;
   border-radius: 20px; border: 1px solid var(--line); background: var(--panel); color: var(--ink-2); cursor: pointer;

@@ -78,6 +78,22 @@ try {
 }
 
 try {
+  const [app, news] = await Promise.all([
+    readFile("app.jsx", "utf8"),
+    readFile("news.json", "utf8").then(JSON.parse),
+  ]);
+  const visibleNews = (news.articles || []).filter(article => article.displayEligible !== false
+    && article.summaryMode === "source-content-extractive" && article.provenance?.status === "source-backed");
+  if (!/a\.summaryMode === "source-content-extractive"/.test(app) || /a\.summaryMode === "source-excerpt"/.test(app) || visibleNews.length < 10) {
+    throw new Error("the article UI must display cumulative source-content-extractive records");
+  }
+  console.log(`  정상  기사 UI 누적 원문 피드 ${visibleNews.length}건 표시 규칙 검증`);
+} catch (error) {
+  failed = true;
+  console.error(`  실패  기사 UI 누적 표시: ${error.message}`);
+}
+
+try {
   const market = JSON.parse(await readFile("market.json", "utf8"));
   const records = market.records || [];
   const ids = new Set(records.map(record => record.id));
