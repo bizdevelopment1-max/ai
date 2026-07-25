@@ -278,9 +278,10 @@ function CompanyDetail({ company, cats, articles, onClose }) {
 }
 
 // ---- Source briefing emphasis -------------------------------------------
-// Highlight only recognisable source terms (facts remain unchanged): figures,
-// currencies, company names and AI infrastructure keywords.
-const BRIEF_KEYWORDS = /((?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년)|AI(?:\s*(?:서버|인프라|에이전트|모델|칩|수요|지출))?|인공지능|생성\s*AI|HBM|DRAM|NAND|SSD|GPU|NPU|ARM|x86|CapEx|데이터\s*센터|클라우드|Morgan Stanley|Goldman Sachs|JPMorgan|Bank of America|Citi|Citigroup|TrendForce|IDC|Gartner|OpenAI|Anthropic|NVIDIA|Google|Microsoft|Amazon|Meta|Apple))/gi;
+// Highlight only complete, recognisable source terms (facts remain unchanged).
+// A bare "AI" is deliberately excluded: it must never colour a fragment in
+// ordinary English words such as "pair" or "training".
+const BRIEF_KEYWORDS = /((?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년)|AI\s*(?:서버|인프라|에이전트|모델|칩|수요|지출)|인공지능|생성\s*AI|HBM|DRAM|NAND|SSD|GPU|NPU|ARM|x86|CapEx|데이터\s*센터|클라우드|Morgan Stanley|Goldman Sachs|JPMorgan|Bank of America|Citi|Citigroup|TrendForce|IDC|Gartner|OpenAI|Anthropic|NVIDIA|Google|Microsoft|Amazon|Meta|Apple))/gi;
 const NUMBER_TOKEN = /^(?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년))$/i;
 const BULLET_ENDINGS = [
   [/있지 않습니다$/, "있지 않음"], [/않습니다$/, "않음"], [/됩니다$/, "됨"],

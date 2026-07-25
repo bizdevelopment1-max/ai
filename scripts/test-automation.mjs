@@ -174,6 +174,28 @@ try {
   console.error(`  실패  전체 피드 번역·폴백: ${error.message}`);
 }
 
+try {
+  const [boardsSource, stylesSource] = await Promise.all([
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+  ]);
+  const keywordDeclaration = boardsSource.match(/const BRIEF_KEYWORDS = (\/.+\/gi);/);
+  if (!keywordDeclaration) throw new Error("BRIEF_KEYWORDS declaration missing");
+  const keywords = Function(`return ${keywordDeclaration[1]}`)();
+  const matches = (text) => [...text.matchAll(keywords)].map((match) => match[0]);
+  const falsePositive = ["pair", "training"].some((word) => matches(word).length > 0);
+  const expectedTerms = matches("OpenAI와 AI 서버");
+  const termRule = stylesSource.match(/\.term-hl\s*\{[\s\S]*?\n\}/)?.[0] || "";
+  if (falsePositive || !expectedTerms.includes("OpenAI") || !expectedTerms.includes("AI 서버")
+    || !/rgba\(255,212,0/.test(termRule) || /background:\s*color-mix/.test(termRule)) {
+    throw new Error("keyword emphasis must use complete terms with a yellow underline only");
+  }
+  console.log("  OK  complete-term matching, AI substring exclusion, yellow underline emphasis");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  keyword emphasis: ${error.message}`);
+}
+
 const major = Number(process.versions.node.split(".")[0]);
 if (major < 20) {
   failed = true;

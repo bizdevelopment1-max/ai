@@ -102,13 +102,13 @@ body {
   background: linear-gradient(transparent 60%, rgba(255,212,0,.42) 60%, rgba(255,212,0,.42) 95%, transparent 95%);
 }
 .term-hl {
-  color: color-mix(in srgb, var(--accent) 84%, #172554); font-weight: 800; padding: 0 2px; border-radius: 3px;
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: #1D4ED8; font-weight: 800; padding: 0 1px; border-radius: 2px;
+  background: linear-gradient(transparent 60%, rgba(255,212,0,.52) 60%, rgba(255,212,0,.52) 95%, transparent 95%);
 }
 [data-theme="dark"] .num-hl { background: linear-gradient(transparent 60%, rgba(255,212,0,.2) 60%, rgba(255,212,0,.2) 95%, transparent 95%); }
-[data-theme="dark"] .term-hl { color: #B8A7FF; background: rgba(139,116,255,.16); }
+[data-theme="dark"] .term-hl { color: #9FC0FF; background: linear-gradient(transparent 60%, rgba(255,212,0,.30) 60%, rgba(255,212,0,.30) 95%, transparent 95%); }
 .ct-row:hover .num-hl, .art:hover .num-hl { color: #FFE76A; background: none; }
-.ct-row:hover .term-hl, .art:hover .term-hl { color: #D8D0FF; background: none; }
+.ct-row:hover .term-hl, .art:hover .term-hl { color: #FFF4A3; background: linear-gradient(transparent 60%, rgba(255,212,0,.58) 60%, rgba(255,212,0,.58) 95%, transparent 95%); }
 a { color: inherit; text-decoration: none; transition: color .2s; }
 a:hover { color: var(--accent); }
 b, strong { font-weight: 700; }
