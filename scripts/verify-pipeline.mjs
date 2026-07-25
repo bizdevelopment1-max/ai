@@ -133,6 +133,16 @@ insights.cards = (insights.cards || []).map(card => ({ ...card, provenance: veri
 radar.picks = (radar.picks || []).map(pick => ({ ...pick, provenance: verifyEvidenceList(pick.evidence) }));
 research.feed = (research.feed || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
 if (research.onepager) research.onepager = { ...research.onepager, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString(), issues: ["generated-or-legacy-synthesis-not-publishable"] } };
+research.pinned = (research.pinned || []).map(brief => {
+  const valid = brief?.provenance?.status === "user-provided-source"
+    && typeof brief.sourceLine === "string" && brief.sourceLine.length > 8
+    && Array.isArray(brief.summaryLines) && brief.summaryLines.length === 3
+    && brief.summaryLines.every(line => typeof line === "string" && line.trim().length >= 20)
+    && Array.isArray(brief.sourcePages) && brief.sourcePages.length > 0;
+  return valid
+    ? { ...brief, provenance: { ...brief.provenance, checkedAt: now.toISOString() } }
+    : { ...brief, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString(), issues: ["invalid-curated-source-summary"] } };
+});
 startups.large = (startups.large || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
 startups.small = (startups.small || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
 market.items = (market.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));

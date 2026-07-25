@@ -112,7 +112,16 @@ async function main() {
 
   // 1) 기관별 피드 크롤
   const raw = (await Promise.all(HOUSES.map(pullHouse))).flat();
-  const seen = new Set(); const fresh = raw.filter(a => a.url && !seen.has(a.url) && seen.add(a.url));
+  // Keep a reviewed Korean title/summary if Google News returns the same
+  // source again on a later crawl. The original title and link remain stored.
+  const reviewedByUrl = new Map((prev.feed || [])
+    .filter(item => item.url && (item.titleKo || item.sum))
+    .map(item => [item.url, item]));
+  const seen = new Set();
+  const fresh = raw.filter(a => a.url && !seen.has(a.url) && seen.add(a.url)).map(item => {
+    const reviewed = reviewedByUrl.get(item.url);
+    return reviewed ? { ...item, titleKo: reviewed.titleKo, sum: reviewed.sum } : item;
+  });
   // 이전 피드와 병합(30일 보존), 최신순
   const prevFeed = (prev.feed || []).filter(a => !seen.has(a.url) && seen.add(a.url));
   let feed = [...fresh, ...prevFeed]
@@ -133,7 +142,10 @@ async function main() {
     }
   }
 
-  const out = { generatedAt: new Date().toISOString(), onepager, archive, feed };
+  // Curated source summaries are explicitly supplied and checked outside the
+  // RSS job. Keep them intact when the automated feed refreshes.
+  const pinned = prev.pinned || [];
+  const out = { generatedAt: new Date().toISOString(), pinned, onepager, archive, feed };
   await writeFile("research.json", JSON.stringify(out) + "\n");
   console.log(`Wrote research.json — onepager: ${onepager ? onepager.date + "/" + onepager.engine : "none"}, feed ${feed.length} item(s)`);
 }

@@ -88,6 +88,18 @@ try {
   console.error(`  실패  market.json 누적 정량 DB: ${error.message}`);
 }
 
+try {
+  const research = JSON.parse(await readFile("research.json", "utf8"));
+  const pinned = (research.pinned || []).filter(brief => brief.provenance?.status === "user-provided-source");
+  if (!pinned.length || !pinned.every(brief => Array.isArray(brief.summaryLines) && brief.summaryLines.length === 3 && brief.sourceLine && brief.sourcePages?.length)) {
+    throw new Error("curated research briefs require a source reference, source pages, and exactly three Korean key lines");
+  }
+  console.log(`  정상  증권사·기관 리서치 한국어 3줄 핵심 ${pinned.length}건`);
+} catch (error) {
+  failed = true;
+  console.error(`  실패  증권사·기관 리서치 3줄 핵심: ${error.message}`);
+}
+
 const major = Number(process.versions.node.split(".")[0]);
 if (major < 20) {
   failed = true;

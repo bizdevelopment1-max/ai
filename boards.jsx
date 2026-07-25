@@ -1680,7 +1680,9 @@ function hlKey(text) {
 // ---- IB Research Briefing: 증권사 인사이트 1페이저(네이비/골드) + 기관 리서치 피드 ----
 function IBInsightBoard({ research, reports, sectionRef }) {
   const inView = useInView(sectionRef);
-  const op = research && research.onepager && research.onepager.provenance?.status === "source-linked" ? research.onepager : null;
+  const publishableBrief = brief => ["source-linked", "user-provided-source"].includes(brief?.provenance?.status);
+  const op = ((research && research.pinned) || []).find(publishableBrief)
+    || (research && publishableBrief(research.onepager) ? research.onepager : null);
   // 삭제된 리포트/피드(비밀번호 000) — localStorage 영구 보존
   const R_LS = "aiDashDeletedReports";
   const [delR, setDelR] = React.useState(() => { try { return JSON.parse(localStorage.getItem(R_LS) || "{}"); } catch { return {}; } });
@@ -1725,9 +1727,13 @@ function IBInsightBoard({ research, reports, sectionRef }) {
               <h2 className="ib-title">{op.title}</h2>
             </div>
             <div className="ib-meta">
-              <span><b>Source</b> {op.sourceLine}</span>
+              {op.sourceUrl
+                ? <a className="ib-source-link" href={op.sourceUrl} target="_blank" rel="noopener"><b>Source</b> {op.sourceLine}</a>
+                : <span><b>Source</b> {op.sourceLine}</span>}
               <span><b>Date</b> {op.date}</span>
               <span><b>Scope</b> {op.scope}</span>
+              {op.sourceAccess && <span className="ib-source-restricted">{op.sourceAccess}</span>}
+              {op.translationLabel && <span className="ib-translation">{op.translationLabel}</span>}
               {op.engine === "seed"
                 ? <span className="ib-seedtag" title="초기 입력값(시드) 표시 중 — LLM 자동 생성 갱신 대기">시드(초기값) · LLM 갱신 대기</span>
                 : (op.engine === "llm" || op.engine === "llm-gh") ? <span className="ib-engtag">LLM 자동 생성</span>
@@ -1738,7 +1744,14 @@ function IBInsightBoard({ research, reports, sectionRef }) {
             <div className="ib-thesis-label">One-line Thesis</div>
             <div className="ib-thesis-text">{op.thesis}</div>
           </div>
-          <div className="ib-grid">
+          {(op.summaryLines || []).length ? (
+            <div className="ib-summary">
+              <h3>3줄 핵심</h3>
+              <ol>
+                {op.summaryLines.slice(0, 3).map((line, i) => <li key={i}>{line}</li>)}
+              </ol>
+            </div>
+          ) : <div className="ib-grid">
             <div className="ib-col">
               <div className="ib-card">
                 <h3 className="ib-h">1. 핵심 인사이트</h3>
@@ -1784,7 +1797,7 @@ function IBInsightBoard({ research, reports, sectionRef }) {
                 </div>
               )}
             </div>
-          </div>
+          </div>}
           <div className="ib-bottom">
             <h3>최종 결론</h3>
             <p>{op.conclusion}</p>
@@ -2120,7 +2133,7 @@ function MarketBoard({ sectionRef }) {
             <div><em>소비자 조사</em><b>{consumerRecords.length}</b><span>표본·국가·조사 시점은 원문 확인</span></div>
             <div><em>클릭 가능한 원문</em><b>{sourceCount}</b><span>모든 공개 수치에 링크 필수</span></div>
             <div><em>마지막 수집</em><b>{data.database?.lastCrawledAt ? String(data.database.lastCrawledAt).slice(0, 10) : "기준선"}</b><span>{data.database?.mode === "append-only" ? "append-only" : "source-linked"}</span></div>
-          </div>
+          </div>}
 
           <div className="mkt-db-head">
             <div>
