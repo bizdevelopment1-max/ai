@@ -447,7 +447,7 @@ a[href]:hover .rainbow-on-hover,
 
 /* ---------- main scroll ---------- */
 .main { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
-.main-inner { max-width: 1320px; margin: 0 auto; padding: 22px 26px 60px; display: flex; flex-direction: column; gap: 26px; }
+.main-inner { width: 100%; max-width: none; margin: 0; padding: 22px 26px 60px; display: flex; flex-direction: column; gap: 26px; }
 
 /* Deep boards mount only near the reading position. The gate keeps a stable
    destination for sidebar links while avoiding the first-load cost of every
@@ -719,7 +719,9 @@ a[href]:hover .rainbow-on-hover,
 .art-insight-role { display: inline-block; margin: 0 6px 0 0; padding: 1px 5px; border-radius: 4px; color: color-mix(in srgb, var(--accent) 82%, var(--ink)); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); font-size: 9px; font-style: normal; font-weight: 850; letter-spacing: .01em; line-height: 1.35; vertical-align: 1px; }
 .art:hover .art-insight-role, .art-sel .art-insight-role { color: #fff; background: rgba(255,255,255,.18); }
 .d-compact .art-summary { display: none; }
-.feed-list { display: flex; flex-direction: column; gap: 2px; padding-top: 4px; }
+.feed-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-top: 4px; }
+.feed-list .art { min-width: 0; align-items: stretch; border: 1px solid transparent; }
+.feed-list .art:hover, .feed-list .art-sel { border-color: color-mix(in srgb, var(--accent, #2A6FDB) 38%, transparent); }
 .art-date {
   font-size: 10.5px; color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums;
   white-space: nowrap; padding: 1px 7px; border-radius: 5px; background: var(--panel-2); border: 1px solid var(--line-2);
@@ -1081,6 +1083,7 @@ a[href]:hover .rainbow-on-hover,
   .dyn-dim-label { font-size: 9px; padding: 6px 4px; }
   .dyn-cell { font-size: 10px; padding: 6px 4px; }
   .main-inner { padding: 14px 12px 40px; }
+  .feed-list { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .tb-title { display: none; }            /* free the full row for the chatbot */
