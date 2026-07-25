@@ -49,9 +49,10 @@ const baselineRecord = (item, collectedAt) => ({
   provenance: { status: "source-linked", evidenceCount: 1, checkedAt: collectedAt },
 });
 
-// The first three survey rows are source-linked reference records. They are
-// intentionally retained forever; later crawler observations are appended.
-const CURATED_SURVEYS = [
+// User-provided research is added only after a public source URL and the
+// metric definition are checked. These rows are append-only reference records;
+// later crawler observations are appended without replacing them.
+const CURATED_SOURCE_RECORDS = [
   {
     id: "survey:counterpoint-genai-smartphone-2025",
     type: "consumer-survey",
@@ -109,6 +110,205 @@ const CURATED_SURVEYS = [
     evidence: "무작위 표집 기반 American Trends Panel의 공개 조사. 제품 수요가 아닌 소비자 신뢰·수용성 지표임.",
     origin: "curated-source-record",
   },
+  {
+    id: "survey:flipkart-counterpoint-india-ai-phone-2026",
+    type: "consumer-survey",
+    group: "core",
+    verticalId: "core-0",
+    title: "인도 스마트폰 구매자의 AI 기능 구매 영향 조사",
+    metricLabel: "AI 기능의 구매결정 영향과 생성형 AI 기기 채택",
+    values: [
+      { label: "AI 기능이 구매결정에 영향", value: "89%" },
+      { label: "생성형 AI 기기 채택", value: "30%" },
+      { label: "관측 가격대", value: "₹15,000~₹20,000" },
+    ],
+    scope: "인도 스마트폰 구매자 · 표본 수 미공개 · 국가 한정 조사",
+    sourceName: "Flipkart × Counterpoint Research",
+    sourceUrl: "https://stories.flipkart.com/announcement/ai-performance-and-affordability-emerge-as-key-drivers-of-smartphone-buying-in-india-counterpoint-research-x-flipkart-report",
+    publishedAt: "2026-04-29",
+    evidence: "Smartphone Insights Report 2026의 인도 조사 결과. 신흥시장 지표이므로 글로벌 구매의사로 일반화하지 않음.",
+    origin: "curated-user-research-primary",
+    sourceRegion: "India",
+    sourceLanguage: "English",
+  },
+  {
+    id: "survey:emarketer-cnet-us-ai-wtp-2025",
+    type: "consumer-survey",
+    group: "core",
+    verticalId: "core-0",
+    title: "미국 스마트폰 사용자의 AI 기능 추가 지불의사 조사",
+    metricLabel: "스마트폰 AI 기능 추가 요금 비의향",
+    values: [
+      { label: "추가 요금 비의향", value: "50%" },
+      { label: "2024년 9월 비의향", value: "45%" },
+    ],
+    scope: "미국 스마트폰 사용자 · CNET 2025년 5월 조사 · 표본·방법론 미공개",
+    sourceName: "eMarketer (CNET 조사 재인용)",
+    sourceUrl: "https://www.emarketer.com/content/consumers-unwilling-pay-ai-features-1",
+    publishedAt: "2025-07-29",
+    evidence: "eMarketer의 2차 인용 수치. 원 설문의 표본과 방법론이 공개되지 않아 지불의사 방향성 지표로만 사용.",
+    origin: "curated-user-research-secondary",
+    sourceRegion: "United States",
+    sourceLanguage: "English",
+  },
+  {
+    id: "survey:capgemini-genai-shopping-control-2026",
+    type: "consumer-survey",
+    group: "assistant",
+    verticalId: "assistant-8",
+    title: "생성형 AI 쇼핑 도구 활용·통제 요구 조사",
+    metricLabel: "쇼핑 AI 사용과 행동·데이터 통제 조건",
+    values: [
+      { label: "2025년 GenAI 쇼핑 도구 사용", value: "25%" },
+      { label: "AI 비서 행동 규칙 요구", value: "76%" },
+      { label: "GenAI 데이터 활용 우려", value: "71%" },
+    ],
+    scope: "글로벌 소비자 12,000명 · 2025년 10월 조사",
+    sourceName: "Capgemini Research Institute",
+    sourceUrl: "https://www.capgemini.com/insights/research-library/what-matters-to-todays-consumer-2026/",
+    publishedAt: "2026-01",
+    evidence: "AI 쇼핑 도구의 채택보다 행동 범위·개인정보 통제가 수용성 조건이라는 공개 조사 결과.",
+    origin: "curated-user-research-primary",
+    sourceRegion: "Global",
+    sourceLanguage: "English",
+  },
+  {
+    id: "shipment:counterpoint-foldable-2026-book-type",
+    type: "shipment",
+    group: "core",
+    verticalId: "core-5",
+    title: "폴더블 스마트폰 출하·북타입 비중 전망",
+    metricLabel: "2026년 글로벌 폴더블 출하 성장과 폼팩터 믹스",
+    values: [
+      { label: "2026년 출하 성장", value: "+20% YoY" },
+      { label: "북타입 비중 (2026)", value: "65%" },
+      { label: "북타입 비중 (2025)", value: "52%" },
+    ],
+    scope: "글로벌 폴더블 스마트폰 출하 · Counterpoint Forecast",
+    sourceName: "Counterpoint Research",
+    sourceUrl: "https://counterpointresearch.com/en/insights/Book-Type-Devices-to-Reach-of-Global-Foldable-Smartphone-Shipments-in-2026",
+    publishedAt: "2026-03-18",
+    evidence: "북타입 비중은 2025년 52%에서 2026년 65%로 확대 전망. 출하 성장률은 시장 전망치임.",
+    origin: "curated-user-research-primary",
+    sourceRegion: "Global",
+    sourceLanguage: "English",
+  },
+  {
+    id: "survey:omdia-foldable-consumer-interest-2025",
+    type: "consumer-survey",
+    group: "core",
+    verticalId: "core-5",
+    title: "폴더블 스마트폰 인지도·관심 제약 조사",
+    metricLabel: "폴더블 인지도와 예산·니즈 적합성",
+    values: [
+      { label: "폴더블 인지도", value: "96%" },
+      { label: "관심 없음", value: "약 40%" },
+      { label: "관심 있으나 예산·니즈 불일치", value: "3분의 1 초과" },
+    ],
+    scope: "5개 글로벌 시장 소비자 5,000명 · 첨단 스마트폰 기술 조사",
+    sourceName: "Omdia",
+    sourceUrl: "https://omdia.tech.informa.com/blogs/2025/sep/foldable-smartphones-are-moving-into-a-pivotal-2026",
+    publishedAt: "2025-09",
+    evidence: "인지도는 높지만 관심·가격 적합성은 별개라는 소비자 조사. 출하량이나 구매의향으로 해석하지 않음.",
+    origin: "curated-user-research-primary",
+    sourceRegion: "Global",
+    sourceLanguage: "English",
+  },
+  {
+    id: "shipment:counterpoint-satellite-smartphone-2030",
+    type: "shipment",
+    group: "core",
+    verticalId: "core-41",
+    title: "위성 연결 스마트폰 출하·브랜드 비중 전망",
+    metricLabel: "위성 연결 스마트폰의 2025년 브랜드 비중과 2030년 침투율",
+    values: [
+      { label: "Apple 출하 비중 (2025)", value: "71.6%" },
+      { label: "Samsung 출하 비중 (2025)", value: "15.9%" },
+      { label: "글로벌 출하 침투율 (2030F)", value: "46%" },
+    ],
+    scope: "글로벌 위성 연결 지원 스마트폰 출하 · 2025년 실적 및 2030년 전망",
+    sourceName: "Counterpoint Research",
+    sourceUrl: "https://counterpointresearch.com/en/insights/Smartphones-With-Satellite-Connectivity-to-Reach-46-Percent-of-Global-Shipments-by-2030",
+    publishedAt: "2026-04-28",
+    evidence: "브랜드 비중은 위성 연결 지원 스마트폰 출하에 한정. 46%는 2030년 전체 스마트폰 출하 대비 전망치.",
+    origin: "curated-user-research-primary",
+    sourceRegion: "Global",
+    sourceLanguage: "English",
+  },
+  {
+    id: "market:trendforce-direct-to-cell-2026",
+    type: "market-estimate",
+    group: "core",
+    verticalId: "core-41",
+    title: "Direct-to-Cell 위성 연결 시장 규모 전망",
+    metricLabel: "스마트폰 직접 위성 연결 시장 규모와 성장률",
+    values: [
+      { label: "시장 규모 (2026F)", value: "76억 달러" },
+      { label: "전년 대비 성장률", value: "약 49%" },
+    ],
+    scope: "글로벌 Direct-to-Cell 시장 · 스마트폰·통신사업자·공급망 포함",
+    sourceName: "TrendForce",
+    sourceUrl: "https://www.trendforce.com/presscenter/news/20260427-13020.html",
+    publishedAt: "2026-04-27",
+    evidence: "3GPP Release 17·18 기반 직접 위성 연결 시장 전망. D2D 서비스 매출과 동일 정의가 아님.",
+    origin: "curated-user-research-primary",
+    sourceRegion: "Global",
+    sourceLanguage: "English",
+  },
+  {
+    id: "market:omdia-smartphone-d2d-2030",
+    type: "market-estimate",
+    group: "core",
+    verticalId: "core-41",
+    title: "스마트폰 위성 D2D 서비스 매출·이용자 전망",
+    metricLabel: "위성 Direct-to-Device 서비스의 2030년 매출과 월간 활성 이용자",
+    values: [
+      { label: "서비스 매출 (2030F)", value: "119.9억 달러" },
+      { label: "월간 활성 이용자 (2030F)", value: "4억 1,100만 명" },
+      { label: "매출 연평균 성장률", value: "49.4%" },
+    ],
+    scope: "글로벌 스마트폰 위성 D2D 서비스 · 서비스 매출 기준",
+    sourceName: "Omdia",
+    sourceUrl: "https://omdia.tech.informa.com/pr/2026/mar/smartphone-satellite-direct-to-device-service-revenue-to-approach12-billion-dollars-by-2030",
+    publishedAt: "2026-03-02",
+    evidence: "서비스 매출·이용자 전망으로, 하드웨어와 서비스를 포함한 D2D 시장 규모와 직접 비교하지 않음.",
+    origin: "curated-user-research-primary",
+    sourceRegion: "Global",
+    sourceLanguage: "English",
+  },
+];
+
+const CURATED_VERTICALS = [
+  {
+    id: "core-41",
+    group: "core",
+    name: "스마트폰 위성 연결(D2D)",
+    def: "스마트폰이 지상망이 닿지 않는 곳에서도 위성과 직접 연결되는 통신·서비스 레이어",
+    size: "50.3억 달러 (2026, D2D 연결 전체)",
+    forecast: "138.0억 달러 (2031)",
+    cagr: "22.37%",
+    source: "Mordor Intelligence",
+    date: "2026-03-18",
+    url: "https://www.mordorintelligence.com/industry-reports/direct-to-device-satellite-connectivity-market",
+    extra: [
+      { t: "D2D 서비스 매출은 Omdia 기준 2030년 119.9억 달러 전망 — 정의 차이로 직접 비교 금지", url: "https://omdia.tech.informa.com/pr/2026/mar/smartphone-satellite-direct-to-device-service-revenue-to-approach12-billion-dollars-by-2030" },
+    ],
+  },
+  {
+    id: "wearxr-42",
+    group: "wearxr",
+    name: "AI 스마트링",
+    def: "수면·활동·건강 데이터를 상시 분석하는 링형 웨어러블 AI 폼팩터",
+    size: "15.8억 달러 (2026)",
+    forecast: "36.0억 달러 (2030)",
+    cagr: "22.9%",
+    source: "Research and Markets",
+    date: "2026",
+    url: "https://www.researchandmarkets.com/reports/6226716/ai-ring-global-market-report",
+    extra: [
+      { t: "시장 정의·추정치는 AI 링 세그먼트에 한정 — 전체 웨어러블 시장과 직접 합산 금지", url: "https://www.thebusinessresearchcompany.com/report/artificial-intelligence-ai-ring-market-report" },
+    ],
+  },
 ];
 
 export function appendRecords(data, candidates = [], collectedAt = isoNow()) {
@@ -145,6 +345,15 @@ export function ensureMarketDatabase(data, collectedAt = isoNow()) {
     migratedAt: data.database?.migratedAt || collectedAt,
   };
   data.records = Array.isArray(data.records) ? data.records : [];
+  data.items = Array.isArray(data.items) ? data.items : [];
+
+  const existingVerticals = new Set(data.items.map(item => item.id));
+  for (const vertical of CURATED_VERTICALS) {
+    if (existingVerticals.has(vertical.id)) continue;
+    data.items.push(vertical);
+    existingVerticals.add(vertical.id);
+    changed = true;
+  }
 
   // Correct an older crawler classification without removing or replacing any
   // record. Its source, values, and provenance remain append-only history.
@@ -163,11 +372,11 @@ export function ensureMarketDatabase(data, collectedAt = isoNow()) {
     existingBaseline.add(record.id);
     changed = true;
   }
-  const addedSurveys = appendRecords(data, CURATED_SURVEYS, collectedAt);
-  if (addedSurveys) changed = true;
+  const addedCuratedRecords = appendRecords(data, CURATED_SOURCE_RECORDS, collectedAt);
+  if (addedCuratedRecords) changed = true;
   data.database.recordCount = data.records.length;
   data.database.lastValidatedAt = collectedAt;
-  return { changed, addedSurveys };
+  return { changed, addedCuratedRecords };
 }
 
 export const sourceLinked = record => hasSource(record) && record.provenance?.status !== "reference-only";

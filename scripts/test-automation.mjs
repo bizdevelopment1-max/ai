@@ -98,7 +98,21 @@ try {
   const records = market.records || [];
   const ids = new Set(records.map(record => record.id));
   const linked = records.filter(record => /^https?:\/\//.test(record.sourceUrl || ""));
-  if (market.database?.mode !== "append-only" || records.length < 3 || ids.size !== records.length || linked.length !== records.length) {
+  const userResearchIds = [
+    "survey:flipkart-counterpoint-india-ai-phone-2026",
+    "survey:emarketer-cnet-us-ai-wtp-2025",
+    "survey:capgemini-genai-shopping-control-2026",
+    "shipment:counterpoint-foldable-2026-book-type",
+    "survey:omdia-foldable-consumer-interest-2025",
+    "shipment:counterpoint-satellite-smartphone-2030",
+    "market:trendforce-direct-to-cell-2026",
+    "market:omdia-smartphone-d2d-2030",
+  ];
+  const hasUserResearch = userResearchIds.every(id => records.some(record => record.id === id
+    && /^https?:\/\//.test(record.sourceUrl || "") && Array.isArray(record.values) && record.values.length));
+  const hasNewVerticals = ["core-41", "wearxr-42"].every(id => (market.items || []).some(item => item.id === id && /^https?:\/\//.test(item.url || "")));
+  if (market.database?.mode !== "append-only" || records.length < 3 || ids.size !== records.length || linked.length !== records.length
+    || !hasUserResearch || !hasNewVerticals) {
     throw new Error("append-only market database requires unique, source-linked records");
   }
   console.log(`  정상  market.json 누적 정량 DB ${records.length}건`);
