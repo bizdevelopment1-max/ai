@@ -172,6 +172,24 @@ const derivedSourceStatus = item => item?.sourceSummaryMode === "source-content-
   ? directSourceStatus(item)
   : { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() };
 
+const startupSourceStatus = item => {
+  const latestUrl = canonicalUrl(item?.latest?.url || item?.url);
+  const history = (item?.history || []).filter(entry => validHttp(entry?.url));
+  if (latestUrl && validHttp(latestUrl)) {
+    return {
+      status: "source-linked",
+      evidenceCount: 1,
+      evidenceType: item?.latest?.sourceContent?.status === "content-extracted" ? "publisher-page-latest" : "publisher-link-latest",
+      historyCount: history.length,
+      checkedAt: now.toISOString(),
+    };
+  }
+  if (history.length) {
+    return { status: "source-linked", evidenceCount: history.length, evidenceType: "historical-publisher-links", historyCount: history.length, checkedAt: now.toISOString() };
+  }
+  return { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() };
+};
+
 for (const day of briefing.days || []) {
   day.items = (day.items || []).map(item => ({ ...item, provenance: verifyEvidenceList(item.evidence) }));
 }
@@ -198,8 +216,8 @@ research.pinned = (research.pinned || []).map(brief => {
     ? { ...brief, provenance: { ...brief.provenance, checkedAt: now.toISOString() } }
     : { ...brief, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString(), issues: ["invalid-curated-source-summary"] } };
 });
-startups.large = (startups.large || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
-startups.small = (startups.small || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
+startups.large = (startups.large || []).map(item => ({ ...item, provenance: startupSourceStatus(item) }));
+startups.small = (startups.small || []).map(item => ({ ...item, provenance: startupSourceStatus(item) }));
 market.items = (market.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
 market.records = (market.records || []).map(record => {
   const excluded = isExcludedText(`${record.title || ""} ${record.evidence || ""} ${record.sourceName || ""}`);

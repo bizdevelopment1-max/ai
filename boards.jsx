@@ -2263,9 +2263,24 @@ function StartupScopeBoard({ sectionRef }) {
   ) : (
     <button className="ct-del" title="삭제(비밀번호)" onClick={() => { setPend(name); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
   ));
-  const Ev = ({ it }) => (it.latest && it.latest.url ? (
-    <a className="mkt-latest" href={it.latest.url} target="_blank" rel="noopener"><Icon name="news" size={10} /> 최신 {it.latest.date && it.latest.date.slice(5)} · {String(it.latest.title).slice(0, 48)}</a>
-  ) : null);
+  const SourceHistory = ({ it }) => {
+    const seen = new Set();
+    const entries = [it.latest, ...(it.history || [])]
+      .filter(entry => /^https?:\/\//.test(String(entry?.url || "")))
+      .filter(entry => {
+        const key = String(entry.url).replace(/[?#].*$/, "");
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
+      .slice(0, 4);
+    return entries.map((entry, index) => (
+      <a className="mkt-latest" key={`${entry.url}-${index}`} href={entry.url} target="_blank" rel="noopener">
+        <Icon name="news" size={10} /> {entry.url === it.latest?.url ? "최신" : "과거"} {entry.date && entry.date.slice(5)} · {String(entry.title).slice(0, 56)}
+      </a>
+    ));
+  };
 
   const large = ((data && data.large) || []).filter(s => s.provenance?.status !== "reference-only" && !del[s.name]);
   const small = ((data && data.small) || []).filter(s => s.provenance?.status !== "reference-only" && !del[s.name]);
@@ -2306,7 +2321,7 @@ function StartupScopeBoard({ sectionRef }) {
                 <p className="su-row"><span className="brief-k sig">비즈니스 모델</span>{s.businessModel}</p>
                 <p className="su-row"><span className="brief-k ins">수익</span>{s.revenue}</p>
                 <p className="su-row"><span className="brief-k act">파트너십</span>{s.partnership}</p>
-                <Ev it={s} />
+                <SourceHistory it={s} />
               </div>
             ))}
           </div>
@@ -2327,7 +2342,7 @@ function StartupScopeBoard({ sectionRef }) {
                 <p className="su-row"><span className="brief-k sig">개요</span>{s.overview}</p>
                 <p className="su-row"><span className="brief-k ins">펀딩</span>{s.funding}</p>
                 <p className="su-row"><span className="brief-k act">인수·투자</span>{s.acqAngle}</p>
-                <Ev it={s} />
+                <SourceHistory it={s} />
               </div>
             ))}
           </div>

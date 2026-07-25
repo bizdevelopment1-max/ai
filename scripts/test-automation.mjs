@@ -168,6 +168,24 @@ try {
 }
 
 try {
+  const [startups, boards] = await Promise.all([
+    readFile("startups.json", "utf8").then(JSON.parse),
+    readFile("boards.jsx", "utf8"),
+  ]);
+  const rows = [...(startups.large || []), ...(startups.small || [])];
+  const visible = rows.filter(row => row.provenance?.status === "source-linked");
+  const historyRows = rows.filter(row => Array.isArray(row.history) && row.history.some(entry => /^https?:\/\//.test(entry?.url || "")));
+  if (rows.length < 8 || visible.length < 8 || historyRows.length < 8
+    || !/const SourceHistory\s*=/.test(boards) || !/\[it\.latest, \.\.\.\(it\.history \|\| \[\]\)\]/.test(boards)) {
+    throw new Error("startup analysis requires source-linked current rows and cumulative source history");
+  }
+  console.log(`  OK  startup analysis ${visible.length} source-linked rows · ${historyRows.length} cumulative history rows`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  startup cumulative analysis: ${error.message}`);
+}
+
+try {
   const research = JSON.parse(await readFile("research.json", "utf8"));
   const pinned = (research.pinned || []).filter(brief => brief.provenance?.status === "user-provided-source");
   if (!pinned.length || !pinned.every(brief => Array.isArray(brief.summaryLines) && brief.summaryLines.length === 3 && brief.sourceLine && brief.sourcePages?.length)) {

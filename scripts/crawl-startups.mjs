@@ -18,9 +18,11 @@ import { readFile, writeFile } from "node:fs/promises";
 import { llmJSON } from "./llm.mjs";
 import { rotatingLocales, googleNewsUrl } from "./global-sources.mjs";
 import { isExcludedText } from "./news-policy.mjs";
+import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
+const FORCE_REFRESH = /^(1|true|yes)$/i.test(String(process.env.STARTUP_REFRESH_FORCE || ""));
 const scrub = s => String(s || "").trim().replace(/[.。]+$/, "").replace(/\.\s+/g, " · ");
 const EXCLUDED = /deepseek|kling|kuaishou|hailuo|minimax|zhipu|moonshot|01\.?ai|baichuan|stepfun|sensetime|iflytek|baidu|alibaba|tencent|bytedance|naver|kakao|upstage|wrtn|hyperclova/i;
 const LABELS_L = ["파트너십 기회", "전략 제휴", "탑재 후보", "모니터링"];
@@ -70,6 +72,61 @@ const decode = s => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
   .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'")
   .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 const tagOf = (xml, n) => { const m = xml.match(new RegExp(`<${n}[^>]*>([\\s\\S]*?)</${n}>`, "i")); return m ? m[1] : ""; };
+
+const validHttp = value => /^https?:\/\//i.test(String(value || ""));
+const sourceSnapshot = record => {
+  if (!record || !validHttp(record.url)) return null;
+  const content = record.sourceContent || {};
+  return {
+    title: String(record.title || "").trim(),
+    url: record.url,
+    ...(record.rssUrl ? { rssUrl: record.rssUrl } : {}),
+    source: String(record.source || "Google News").trim(),
+    date: String(record.date || TODAY).slice(0, 10),
+    ...(isContentBacked(record) ? {
+      sourceSummaryMode: record.summaryMode,
+      sourceLinesEn: (record.summaryLinesEn || []).slice(0, 3),
+      sourceContent: {
+        status: "content-extracted",
+        canonicalUrl: content.canonicalUrl || record.url,
+        contentHash: content.contentHash || "",
+        retrievedAt: content.retrievedAt || new Date().toISOString(),
+      },
+    } : {}),
+  };
+};
+
+async function enrichLatestSources(rows) {
+  const targets = rows.filter(row => validHttp(row?.latest?.url)).map(row => ({
+    url: row.latest.url, title: row.latest.title, source: row.latest.source, date: row.latest.date,
+  }));
+  if (!targets.length) return;
+  const enriched = await enrichSourceBatch(targets, 3);
+  let index = 0;
+  for (const row of rows) {
+    if (!validHttp(row?.latest?.url)) continue;
+    const snapshot = sourceSnapshot(enriched[index++]);
+    if (snapshot) row.latest = { ...row.latest, ...snapshot };
+  }
+}
+
+function retainSourceHistory(rows, previousRows) {
+  const previousByName = new Map((previousRows || []).map(row => [row.name, row]));
+  for (const row of rows) {
+    const prior = previousByName.get(row.name);
+    const candidates = [sourceSnapshot(row.latest), ...(prior?.history || []), sourceSnapshot(prior?.latest)].filter(Boolean);
+    const seen = new Set();
+    row.history = candidates
+      .filter(item => {
+        const key = String(item.url || `${item.title}|${item.date}`).replace(/[#?].*$/, "");
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
+      .slice(0, 12);
+  }
+}
 
 async function latest(name, locale) {
   try {
@@ -127,7 +184,7 @@ async function main() {
   // 영어 문장(연속 알파벳 15자+ 포함)이 남아 있으면 강제 재생성 — 한글 개조식으로 교체
   const hasEnglish = prev && [...(prev.large || []), ...(prev.small || [])].some(x =>
     /[A-Za-z]{4,}\s+[A-Za-z]{4,}\s+[A-Za-z]{4,}/.test(`${x.partnership || ""} ${x.acqAngle || ""} ${x.revenue || ""} ${x.overview || ""}`));
-  if (age < 6.5 && !staleShape && prev.engine !== "rules" && !hasEnglish) { console.log(`[startups] fresh (${prev.weekOf}, ${prev.engine}) — skip`); return; }
+  if (!FORCE_REFRESH && age < 6.5 && !staleShape && prev.engine !== "rules" && !hasEnglish) { console.log(`[startups] fresh (${prev.weekOf}, ${prev.engine}) — skip`); return; }
 
   const locales = rotatingLocales();
   for (const [index, s] of [...large, ...small].entries()) {
@@ -135,10 +192,14 @@ async function main() {
     if (n && !isExcludedText(`${n.title} ${n.source}`)) s.latest = n;
   }
   console.log(`[startups] large ${large.length} · small ${small.length}, globally localized latest signals attached`);
+  await enrichLatestSources([...large, ...small]);
 
   const e1 = await enrichLarge(large);
   const e2 = await enrichSmall(small);
   const engine = e1 || e2 || "rules";
+
+  retainSourceHistory(large, prev?.large);
+  retainSourceHistory(small, prev?.small);
 
   const out = { generatedAt: new Date().toISOString(), weekOf: TODAY, engine, large, small };
   await writeFile("startups.json", JSON.stringify(out) + "\n");
