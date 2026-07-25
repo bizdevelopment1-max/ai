@@ -7,6 +7,7 @@
  * non-zero when the publishable bundle is critically incomplete.
  */
 import { readFile, writeFile } from "node:fs/promises";
+import { isExcludedText } from "./news-policy.mjs";
 
 const DAY = 86_400_000;
 const now = new Date();
@@ -135,11 +136,16 @@ if (research.onepager) research.onepager = { ...research.onepager, provenance: {
 startups.large = (startups.large || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
 startups.small = (startups.small || []).map(item => ({ ...item, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() } }));
 market.items = (market.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
-market.records = (market.records || []).map(record => ({
-  ...record,
-  sourceUrl: canonicalUrl(record.sourceUrl),
-  provenance: directSourceStatus({ url: record.sourceUrl }),
-}));
+market.records = (market.records || []).map(record => {
+  const excluded = isExcludedText(`${record.title || ""} ${record.evidence || ""} ${record.sourceName || ""}`);
+  return {
+    ...record,
+    sourceUrl: canonicalUrl(record.sourceUrl),
+    provenance: excluded
+      ? { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString(), issues: ["configured-display-exclusion"] }
+      : directSourceStatus({ url: record.sourceUrl }),
+  };
+});
 infra.items = (infra.items || []).map(item => ({ ...item, provenance: derivedSourceStatus(item) }));
 bizmodel.items = (bizmodel.items || []).map(item => ({ ...item, provenance: derivedSourceStatus(item) }));
 

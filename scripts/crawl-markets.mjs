@@ -7,6 +7,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { appendRecords, ensureMarketDatabase, hasSurveyEvidence } from "./market-db.mjs";
 import { googleNewsUrl, rotatingLocales } from "./global-sources.mjs";
+import { isExcludedText } from "./news-policy.mjs";
 
 const UA = "Mozilla/5.0 (compatible; AI-Intelligence-Market-DB/1.0)";
 const now = () => new Date().toISOString();
@@ -96,6 +97,7 @@ async function main() {
         fetched += rows.length;
         for (const row of rows) {
           const combined = `${row.title} ${row.evidence}`;
+          if (isExcludedText(`${combined} ${row.sourceName}`)) continue;
           const values = quantified(combined).map((value, index) => ({ label: index === 0 ? "공개 수치" : "추가 수치", value }));
           if (!values.length) continue;
           const record = {
