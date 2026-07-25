@@ -26,11 +26,45 @@ const COLOR_PRESETS = [
   { sidebar: "#10131C", colNative: "#7A38D6", colBigtech: "#1428A0", colStartup: "#0E8F6E" },
 ];
 
+// Keep deep, chart-heavy boards out of the initial render. The wrapper stays
+// in the document, so sidebar navigation always has a stable scroll target.
+function LazySection({ id, active, sectionRef, height = 420, children }) {
+  const innerRef = uR(null);
+  const [ready, setReady] = uS(false);
+
+  uE(() => {
+    if (active === id) setReady(true);
+  }, [active, id]);
+
+  uE(() => {
+    const target = sectionRef && sectionRef.current;
+    if (!target || ready) return;
+    if (!window.IntersectionObserver) { setReady(true); return; }
+    const root = target.closest(".main");
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      setReady(true);
+      observer.disconnect();
+    }, { root, rootMargin: "900px 0px", threshold: 0.01 });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [ready, sectionRef]);
+
+  return (
+    <div ref={sectionRef} className={"board-gate" + (ready ? " is-ready" : " is-pending")}
+      style={{ "--gate-height": `${height}px` }} aria-busy={!ready}>
+      {ready
+        ? React.cloneElement(children, { sectionRef: innerRef })
+        : <div className="board-gate-placeholder" aria-label="Loading section"><span /></div>}
+    </div>
+  );
+}
+
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [brandIdx, setBrandIdx] = uS(0);
   const [colorIdx, setColorIdx] = uS(0);
-  const [active, setActive] = uS("overview");
+  const [active, setActive] = uS("ib");
   const [query, setQuery] = uS("");
   const [feedFilter, setFeedFilter] = uS("all");
   const [selected, setSelected] = uS(null);
@@ -225,17 +259,23 @@ function App() {
   uE(() => {
     const sc = scrollRef.current;
     if (!sc) return;
+    let frame = 0;
     const onScroll = () => {
-      const y = sc.scrollTop + 80;
-      let cur = "overview", best = -1;
-      for (const id of Object.keys(refs)) {
-        const el = refs[id].current;
-        if (el && el.offsetTop <= y && el.offsetTop > best) { best = el.offsetTop; cur = id; }
-      }
-      setActive(cur);
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        const y = sc.scrollTop + 80;
+        let cur = "ib", best = -1;
+        for (const id of Object.keys(refs)) {
+          const el = refs[id].current;
+          if (el && el.offsetTop <= y && el.offsetTop > best) { best = el.offsetTop; cur = id; }
+        }
+        setActive(previous => previous === cur ? previous : cur);
+        frame = 0;
+      });
     };
     sc.addEventListener("scroll", onScroll, { passive: true });
-    return () => sc.removeEventListener("scroll", onScroll);
+    onScroll();
+    return () => { sc.removeEventListener("scroll", onScroll); cancelAnimationFrame(frame); };
   }, []);
 
   // board fold/unfold: click a board header (not its buttons) to collapse the card
@@ -299,9 +339,15 @@ function App() {
   return (
     <div className={"app d-" + t.density}>
       <Sidebar
-        active={active} onNav={id => { navTo(id); }} brand={brand}
+        active={active} onNav={id => {
+          navTo(id);
+          if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) setSidebarOpen(false);
+        }} brand={brand}
         onLogo={() => navTo("overview")} onBgClick={onSidebarBg} collapsed={collapsed}
-        articleCount={articleCount} companies={D.COMPANIES} cats={cats} onSelectCompany={c => { setSelected(c); }}
+        articleCount={articleCount} companies={D.COMPANIES} cats={cats} onSelectCompany={c => {
+          setSelected(c);
+          if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) setSidebarOpen(false);
+        }}
         open={sidebarOpen} onToggle={() => setSidebarOpen(o => !o)}
       />
 
@@ -323,26 +369,50 @@ function App() {
               <ESCompetitiveMap companies={D.COMPANIES} cats={cats} articles={articles} />
             </section>
 
-            <BriefingBoard briefing={briefing} sectionRef={refs.briefing} />
+            <LazySection id="briefing" active={active} sectionRef={refs.briefing} height={560}>
+              <BriefingBoard briefing={briefing} />
+            </LazySection>
 
-            <ArticleFeed articles={articles} cats={cats} sectionRef={refs.articles} filter={feedFilter} onFilter={setFeedFilter} query={query} />
+            <LazySection id="articles" active={active} sectionRef={refs.articles} height={840}>
+              <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
+            </LazySection>
 
             {/* ── 2. 기업 동향 ── */}
-            <CompanyBoard cat={cats[0]} companies={companiesLive} density={t.density} sectionRef={refs.native} query={query} onSelect={setSelected} />
-            <CompanyBoard cat={cats[1]} companies={companiesLive} density={t.density} sectionRef={refs.bigtech} query={query} onSelect={setSelected} />
-            <CompanyBoard cat={cats[2]} companies={companiesLive} density={t.density} sectionRef={refs.startup} query={query} onSelect={setSelected} />
-            <StartupScopeBoard sectionRef={refs.sanalysis} />
+            <LazySection id="native" active={active} sectionRef={refs.native} height={740}>
+              <CompanyBoard cat={cats[0]} companies={companiesLive} density={t.density} query={query} onSelect={setSelected} />
+            </LazySection>
+            <LazySection id="bigtech" active={active} sectionRef={refs.bigtech} height={740}>
+              <CompanyBoard cat={cats[1]} companies={companiesLive} density={t.density} query={query} onSelect={setSelected} />
+            </LazySection>
+            <LazySection id="startup" active={active} sectionRef={refs.startup} height={740}>
+              <CompanyBoard cat={cats[2]} companies={companiesLive} density={t.density} query={query} onSelect={setSelected} />
+            </LazySection>
+            <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
+              <StartupScopeBoard />
+            </LazySection>
 
             {/* ── 3. 심층 분석 (수익화 모델 최상단) ── */}
-            <BizModelBoard companies={D.COMPANIES} cats={cats} sectionRef={refs.bizmodel} theme={chartTheme} />
-            <SignalBoard data={D} theme={chartTheme} sectionRef={refs.signals} />
+            <LazySection id="bizmodel" active={active} sectionRef={refs.bizmodel} height={900}>
+              <BizModelBoard companies={D.COMPANIES} cats={cats} theme={chartTheme} />
+            </LazySection>
+            <LazySection id="signals" active={active} sectionRef={refs.signals} height={900}>
+              <SignalBoard data={D} theme={chartTheme} />
+            </LazySection>
 
             {/* ── 4. 정량 데이터 ── */}
-            <ChartsBoard data={D} cats={cats} theme={chartTheme} sectionRef={refs.charts} />
-            <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} sectionRef={refs.stocks} theme={chartTheme} />
-            <MarketBoard sectionRef={refs.market} />
+            <LazySection id="charts" active={active} sectionRef={refs.charts} height={980}>
+              <ChartsBoard data={D} cats={cats} theme={chartTheme} />
+            </LazySection>
+            <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
+              <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} />
+            </LazySection>
+            <LazySection id="market" active={active} sectionRef={refs.market} height={780}>
+              <MarketBoard />
+            </LazySection>
 
-            <AuditPanel audit={audit} quality={quality} llmHealth={llmHealth} collectionHealth={collectionHealth} sectionRef={refs.audit} />
+            <LazySection id="audit" active={active} sectionRef={refs.audit} height={520}>
+              <AuditPanel audit={audit} quality={quality} llmHealth={llmHealth} collectionHealth={collectionHealth} />
+            </LazySection>
 
             <footer className="foot">
               <span>AI Intelligence Dashboard</span>

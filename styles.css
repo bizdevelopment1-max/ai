@@ -134,6 +134,7 @@ a[href]:hover .rainbow-on-hover,
   display: flex; flex-direction: column;
   transition: background .35s ease, width .32s cubic-bezier(.4,0,.2,1);
   position: relative; z-index: 5; cursor: pointer;
+  min-height: 0; overflow-y: auto; overscroll-behavior: contain;
 }
 .sb-head { padding: 18px 16px 12px; position: relative; }
 .sb-fold-hint {
@@ -441,6 +442,17 @@ a[href]:hover .rainbow-on-hover,
 /* ---------- main scroll ---------- */
 .main { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
 .main-inner { max-width: 1320px; margin: 0 auto; padding: 22px 26px 60px; display: flex; flex-direction: column; gap: 26px; }
+
+/* Deep boards mount only near the reading position. The gate keeps a stable
+   destination for sidebar links while avoiding the first-load cost of every
+   chart and card at once. */
+.board-gate { min-width: 0; scroll-margin-top: 14px; }
+.board-gate.is-pending { min-height: var(--gate-height, 420px); contain: layout style paint; }
+.board-gate-placeholder {
+  min-height: var(--gate-height, 420px); border: 1px solid var(--line);
+  border-radius: var(--radius); background: var(--panel);
+}
+.board-gate-placeholder span { display: block; width: 96px; height: 6px; margin: 22px; border-radius: 99px; background: var(--line-2); }
 
 /* ---------- overview ---------- */
 .ov-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 4px; }
