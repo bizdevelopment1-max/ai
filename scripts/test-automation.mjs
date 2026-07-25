@@ -70,6 +70,24 @@ try {
 }
 
 try {
+  const boards = await readFile("boards.jsx", "utf8");
+  const removedBriefUi = [
+    'className="ib-meta"',
+    'className="ib-summary"',
+    'className="ib-bottom"',
+    'className="ib-foot"',
+    "매일 자동 크롤링 · 한글 제목·원문 기반 3줄 브리핑",
+  ];
+  if (removedBriefUi.some(text => boards.includes(text))) {
+    throw new Error("removed research briefing copy is still rendered");
+  }
+  console.log("  OK  removed research briefing copy is not rendered");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  research briefing cleanup: ${error.message}`);
+}
+
+try {
   const policy = JSON.parse(await readFile("config/global-source-policy.json", "utf8"));
   if (!Array.isArray(policy.locales) || policy.locales.length < 5 || !policy.locales.every(locale => locale.id && locale.region && locale.language && locale.hl && locale.gl && locale.ceid)) {
     throw new Error("global source policy needs at least five complete regional locale definitions");
@@ -192,7 +210,7 @@ try {
   const sentencePeriod = /(^|[^0-9])\.(?=\s|["”’']?$)/;
   if (!/function bulletText\(/.test(boards)
     || !/bulletText\(op\.thesis\)/.test(boards)
-    || !/bulletText\(op\.conclusion\)/.test(boards)
+    || /bulletText\(op\.(?:conclusion|watch)\)/.test(boards)
     || displayTexts.some(text => terminalProse.test(text) || sentencePeriod.test(text))) {
     throw new Error("display copy must use compact bullet phrasing without sentence-final dots or -다 endings");
   }

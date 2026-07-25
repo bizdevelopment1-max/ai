@@ -1819,90 +1819,18 @@ function IBInsightBoard({ research, reports, sectionRef }) {
               <div className="ib-eyebrow">IB Research Briefing</div>
               <h2 className="ib-title">{op.title}</h2>
             </div>
-            <div className="ib-meta">
-              {op.sourceUrl
-                ? <a className="ib-source-link" href={op.sourceUrl} target="_blank" rel="noopener"><b>Source</b> {bulletText(op.sourceLine)}</a>
-                : <span><b>Source</b> {bulletText(op.sourceLine)}</span>}
-              <span><b>Date</b> {op.date}</span>
-              <span><b>Scope</b> {op.scope}</span>
-              {op.sourceAccess && <span className="ib-source-restricted">{op.sourceAccess}</span>}
-              {op.translationLabel && <span className="ib-translation">{op.translationLabel}</span>}
-              {op.engine === "seed"
-                ? <span className="ib-seedtag" title="초기 입력값(시드) 표시 중 — LLM 자동 생성 갱신 대기">시드(초기값) · LLM 갱신 대기</span>
-                : (op.engine === "llm" || op.engine === "llm-gh") ? <span className="ib-engtag">LLM 자동 생성</span>
-                : op.engine === "rules" ? <span className="ib-engtag rules">규칙 기반</span> : null}
-            </div>
           </div>
           <div className="ib-thesis">
             <div className="ib-thesis-label">One-line Thesis</div>
             <div className="ib-thesis-text">{bulletText(op.thesis)}</div>
           </div>
-          {(op.summaryLines || []).length ? (
-            <div className="ib-summary">
-              <h3>3줄 핵심</h3>
-              <ol>
-                {op.summaryLines.slice(0, 3).map((line, i) => <li key={i}>{bulletText(line)}</li>)}
-              </ol>
-            </div>
-          ) : <div className="ib-grid">
-            <div className="ib-col">
-              <div className="ib-card">
-                <h3 className="ib-h">1. 핵심 인사이트</h3>
-                {(op.insights || []).map((ins, i) => (
-                  <div className="ib-insight" key={i}>
-                    <span className="ib-num">{i + 1}</span>
-                    <div>
-                      <h4>{ins.title}</h4>
-                      <p>{bulletText(ins.body)}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="ib-col">
-              {(op.metrics || []).length > 0 && (
-                <div className="ib-card ib-soft">
-                  <h3 className="ib-h">2. 핵심 지표</h3>
-                  <div className="ib-metric-row">
-                    {op.metrics.slice(0, 4).map((m, i) => (
-                      <div className="ib-metric" key={i}><div className="ib-mk">{m.k}</div><div className="ib-mt">{m.t}</div></div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {(op.areas || []).length > 0 && (
-                <div className="ib-card">
-                  <h3 className="ib-h">3. 영역별 분석</h3>
-                  <div className="ib-tablewrap">
-                    <table className="ib-table">
-                      <thead><tr><th>영역</th><th>핵심 변화</th><th>승자 조건</th></tr></thead>
-                      <tbody>{op.areas.map((a, i) => (<tr key={i}><td>{a.area}</td><td>{a.change}</td><td>{a.winner}</td></tr>))}</tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-              {(op.implications || []).length > 0 && (
-                <div className="ib-card">
-                  <h3 className="ib-h">4. 투자·전략 시사점</h3>
-                  <ul className="ib-imp">
-                    {op.implications.map((im, i) => (<li key={i}><span className="ib-pill">{im.pill}</span>{bulletText(im.text)}</li>))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>}
-          <div className="ib-bottom">
-            <h3>최종 결론</h3>
-            <p>{bulletText(op.conclusion)}</p>
-          </div>
-          {op.watch && <div className="ib-foot">확인 항목: {bulletText(op.watch)}</div>}
         </div>
       )}
 
       {feed.length > 0 && (
         <div className="ib-feed">
           <div className="ib-feed-head">
-            <h3>증권사·기관 리서치 피드 <em>매일 자동 크롤링 · 한글 제목·원문 기반 3줄 브리핑 · Morgan Stanley·Goldman Sachs·JPMorgan·UBS·TrendForce·IDC·Gartner 등</em></h3>
+            <h3>증권사·기관 리서치 피드</h3>
             {feed.length > 8 && <button onClick={() => setShowAll(s => !s)}>{showAll ? "접기" : `전체 ${Math.min(feed.length, 20)}건`}</button>}
           </div>
           {feedRows.map((f, i) => {
