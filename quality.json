@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T05:12:09.734Z",
+  "generatedAt": "2026-07-25T05:14:10.123Z",
   "overall": "warn",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 16개 · 정상 13 · 주의 3 · 실패 0",
@@ -14,19 +14,19 @@
       "id": "source-backed",
       "label": "원문 스니펫 근거",
       "status": "ok",
-      "value": "73/82건"
+      "value": "75/82건"
     },
     {
       "id": "source-content-mode",
       "label": "원문 본문 추출",
       "status": "ok",
-      "value": "72/82건"
+      "value": "74/82건"
     },
     {
       "id": "feed-localization",
       "label": "기사 한국어 표시·영문 폴백",
       "status": "ok",
-      "value": "한국어 81 · 영문 폴백 1"
+      "value": "한국어 80 · 영문 폴백 2"
     },
     {
       "id": "collection-health",
@@ -62,13 +62,13 @@
       "id": "infra-evidence",
       "label": "인프라 시그널 근거",
       "status": "warn",
-      "value": "24/103건"
+      "value": "28/106건"
     },
     {
       "id": "bizmodel-evidence",
       "label": "수익화 시그널 근거",
       "status": "warn",
-      "value": "2/23건"
+      "value": "4/25건"
     },
     {
       "id": "research-source",
@@ -80,7 +80,7 @@
       "id": "research-localization",
       "label": "리서치 3줄 표시",
       "status": "ok",
-      "value": "한국어 52 · 영문 폴백 3"
+      "value": "한국어 53 · 영문 폴백 2"
     },
     {
       "id": "market-source",
@@ -103,20 +103,20 @@
   ],
   "metrics": {
     "currentArticles": 82,
-    "accumulatedArticles": 153,
-    "sourceBackedArticles": 73,
-    "sourceExcerptArticles": 72,
-    "localizedArticles": 81,
-    "localizedFallbackArticles": 1,
-    "limitedArticles": 9,
-    "limitedRate": 0.10975609756097561,
+    "accumulatedArticles": 155,
+    "sourceBackedArticles": 75,
+    "sourceExcerptArticles": 74,
+    "localizedArticles": 80,
+    "localizedFallbackArticles": 2,
+    "limitedArticles": 7,
+    "limitedRate": 0.08536585365853659,
     "freshStocks": 25,
     "totalStocks": 25,
-    "linkedInfra": 24,
-    "linkedBizmodel": 2,
+    "linkedInfra": 28,
+    "linkedBizmodel": 4,
     "linkedResearch": 55,
-    "localizedResearch": 52,
-    "localizedFallbackResearch": 3,
+    "localizedResearch": 53,
+    "localizedFallbackResearch": 2,
     "linkedMarket": 29,
     "linkedMarketRecords": 44,
     "consumerSurveyRecords": 5
@@ -129,12 +129,12 @@
       "ZDNet": 4,
       "The Decoder": 4,
       "The Verge": 5,
-      "The Register": 2,
+      "The Register": 3,
       "MIT Tech Review": 3,
       "SiliconANGLE": 2,
-      "AI Business": 1,
+      "WSJ": 1,
       "Ars Technica": 2,
-      "WSJ": 2,
+      "AI Business": 1,
       "CNBC": 5,
       "IEEE Spectrum": 2,
       "Android Authority": 1,
@@ -151,8 +151,8 @@
       "Axios": 1,
       "TrendForce": 2,
       "WIRED": 1,
-      "GlobeNewswire": 1,
       "The Guardian": 1,
+      "GlobeNewswire": 1,
       "Goldman Sachs": 1,
       "Seoul Economic Daily": 1,
       "Morgan Stanley": 1
@@ -162,7 +162,7 @@
     }
   },
   "collection": {
-    "generatedAt": "2026-07-25T05:09:06.513Z",
+    "generatedAt": "2026-07-25T05:13:01.364Z",
     "mode": "source-content-extractive",
     "policyVersion": 2,
     "streams": {
@@ -183,7 +183,7 @@
   },
   "notices": [
     "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",
-    "검증 제한 기사 비율: 11.0% (9/82)",
+    "검증 제한 기사 비율: 8.5% (7/82)",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
     "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다."
