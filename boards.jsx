@@ -2227,7 +2227,7 @@ function MarketBoard({ sectionRef }) {
             <div><em>소비자 조사</em><b>{consumerRecords.length}</b><span>표본·국가·조사 시점은 원문 확인</span></div>
             <div><em>클릭 가능한 원문</em><b>{sourceCount}</b><span>모든 공개 수치에 링크 필수</span></div>
             <div><em>마지막 수집</em><b>{data.database?.lastCrawledAt ? String(data.database.lastCrawledAt).slice(0, 10) : "기준선"}</b><span>{data.database?.mode === "append-only" ? "append-only" : "source-linked"}</span></div>
-          </div>}
+          </div>
 
           <div className="mkt-db-head">
             <div>

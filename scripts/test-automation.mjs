@@ -56,6 +56,20 @@ try {
 }
 
 try {
+  const boards = await readFile("boards.jsx", "utf8");
+  const marketSummaryStart = boards.indexOf('<div className="mkt-db-summary">');
+  const marketSummaryEnd = boards.indexOf('<div className="mkt-db-head">', marketSummaryStart);
+  const marketSummary = marketSummaryStart >= 0 && marketSummaryEnd > marketSummaryStart
+    ? boards.slice(marketSummaryStart, marketSummaryEnd).trimEnd() : "";
+  const marketSummaryClosesCleanly = marketSummary.endsWith("</div>") && !/}\s*<\/div>$/.test(marketSummary);
+  if (!marketSummaryClosesCleanly) throw new Error("market summary has a stray closing-brace character in rendered markup");
+  console.log("  OK  market summary markup has no stray closing-brace character");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  rendered board markup: ${error.message}`);
+}
+
+try {
   const policy = JSON.parse(await readFile("config/global-source-policy.json", "utf8"));
   if (!Array.isArray(policy.locales) || policy.locales.length < 5 || !policy.locales.every(locale => locale.id && locale.region && locale.language && locale.hl && locale.gl && locale.ceid)) {
     throw new Error("global source policy needs at least five complete regional locale definitions");
