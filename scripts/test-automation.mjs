@@ -343,8 +343,11 @@ try {
   const boardContract = /record\.provenance\?\.status === "source-backed"/.test(boards)
     && /sourceQuantifiedLines/.test(boards)
     && /검색 제목·스니펫은 화면에서 제외/.test(boards);
+  const noForecastPlaceholder = /const hasForecast = numericValue\(it\.forecast\)/.test(boards)
+    && /hasCurrent && hasForecast && <span className="mkt-arr">→<\/span>/.test(boards)
+    && /hasForecast && <span className="mkt-num fut">/.test(boards);
   if (market.database?.mode !== "append-only" || records.length < 3 || ids.size !== records.length || linked.length !== records.length
-    || !hasUserResearch || !hasNewVerticals || !sourceBoundCards || !boardContract) {
+    || !hasUserResearch || !hasNewVerticals || !sourceBoundCards || !boardContract || !noForecastPlaceholder) {
     throw new Error("append-only market database requires publisher-page-backed display records and retained source links");
   }
   console.log(`  정상  market.json 누적 정량 DB ${records.length}건`);

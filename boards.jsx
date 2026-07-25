@@ -2423,16 +2423,24 @@ function MarketBoard({ sectionRef }) {
               <div className="mkt-group" key={g.id}>
                 <div className="mkt-group-head"><b>{g.ko}</b><em>{g.desc}</em></div>
                 <div className="mkt-grid">
-                  {rows.map(it => (
+                  {rows.map(it => {
+                    // Never show a placeholder as a future market forecast.
+                    // A current value and a future value are independently
+                    // optional because some sources publish only one of them.
+                    const numericValue = value => /\d/.test(String(value || "")) && !/^(?:—|-|n\/a|na)$/i.test(String(value || "").trim());
+                    const hasCurrent = numericValue(it.size);
+                    const hasForecast = numericValue(it.forecast);
+                    const hasCagr = numericValue(it.cagr);
+                    return (
                     <div className="mkt-card" key={it.id}>
                       <div className="mkt-card-head"><b className="mkt-name">{it.name}</b></div>
                       <p className="mkt-def">{it.def}</p>
-                      <div className="mkt-nums">
-                        <span className="mkt-num"><em>현재</em>{it.size}</span>
-                        <span className="mkt-arr">→</span>
-                        <span className="mkt-num fut"><em>예측</em>{it.forecast}</span>
-                        {it.cagr && it.cagr !== "—" && <span className="mkt-cagr">CAGR {it.cagr}</span>}
-                      </div>
+                      {(hasCurrent || hasForecast || hasCagr) && <div className="mkt-nums">
+                        {hasCurrent && <span className="mkt-num"><em>현재</em>{it.size}</span>}
+                        {hasCurrent && hasForecast && <span className="mkt-arr">→</span>}
+                        {hasForecast && <span className="mkt-num fut"><em>예측</em>{it.forecast}</span>}
+                        {hasCagr && <span className="mkt-cagr">CAGR {it.cagr}</span>}
+                      </div>}
                       <div className="mkt-src">
                         <span>{it.source}{it.date && it.date !== "—" ? ` · ${it.date}` : ""}</span>
                         {it.url && <a href={it.url} target="_blank" rel="noopener">원문 <Icon name="ext" size={10} /></a>}
@@ -2440,7 +2448,8 @@ function MarketBoard({ sectionRef }) {
                       {(it.extra || []).length > 0 && <ul className="mkt-extra">{it.extra.map((e, k) => <li key={k}>{e.url ? <a href={e.url} target="_blank" rel="noopener">{e.t}</a> : e.t}</li>)}</ul>}
                       {it.latest && it.latest.url && <a className="mkt-latest" href={it.latest.url} target="_blank" rel="noopener"><Icon name="news" size={10} /> 최신 {it.latest.date && it.latest.date.slice(5)} · {String(it.latest.title).slice(0, 50)}</a>}
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             );
