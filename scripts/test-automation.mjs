@@ -88,6 +88,20 @@ try {
 }
 
 try {
+  const styles = await readFile("styles.css", "utf8");
+  const compactLeftWideRight = styles.includes("grid-template-columns: 1.05fr .72fr .55fr .68fr 4.4fr;");
+  const leftCellsWrap = styles.includes("white-space: normal; overflow-wrap: anywhere; line-height: 1.28;");
+  const notesWrap = styles.includes("line-height: 1.55; overflow-wrap: anywhere; text-wrap: pretty;");
+  if (!compactLeftWideRight || !leftCellsWrap || !notesWrap) {
+    throw new Error("company table must keep compact left columns and a wide, readable comment column");
+  }
+  console.log("  OK  company table uses compact left columns and wrapped readable comments");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  company table readability: ${error.message}`);
+}
+
+try {
   const policy = JSON.parse(await readFile("config/global-source-policy.json", "utf8"));
   if (!Array.isArray(policy.locales) || policy.locales.length < 5 || !policy.locales.every(locale => locale.id && locale.region && locale.language && locale.hl && locale.gl && locale.ceid)) {
     throw new Error("global source policy needs at least five complete regional locale definitions");
