@@ -1352,8 +1352,7 @@ function BizModelBoard({ companies, cats, sectionRef, theme, articles }) {
         })}
       </div>
       <SignalInfographic file="bizmodel.json" delKey="aiDashDeletedBiz" articles={articles}
-        title="AI 수익화 모델 시그널"
-        sub="매일 크롤된 기사에서 '돈 버는 방식'을 구독·사용량(API)·광고/커머스·하드웨어/번들·성과기반·엔터프라이즈 6개 MECE 유형으로 누적 도식화 · 핵심 리드 + 상세 · 정량 수치는 플레인 텍스트 · ✕로 삭제(비밀번호)" />
+        title="AI 수익화 모델 시그널" />
      </AnimCtx.Provider>
     </section>
   );
@@ -1607,7 +1606,7 @@ function SignalInfographic({ file, delKey, title, sub, articles }) {
       <div className="infra-sig-head">
         <div className="isg-titles">
           <h3>{title} <em>기사 기반 자동 누적 · 매일 갱신</em></h3>
-          <p>{sub}</p>
+          {sub && <p>{sub}</p>}
         </div>
         <div className="isg-tools">
           <span className="isg-total">누적 <b>{items.length}</b></span>
@@ -1742,8 +1741,7 @@ function SignalBoard({ data, theme, sectionRef, articles }) {
         </div>
       </div>
       <SignalInfographic file="infra.json" delKey="aiDashDeletedInfra" articles={articles}
-        title="인프라·미래기술 시그널"
-        sub="매일 크롤된 기사에서 컴퓨트·메모리·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로 누적 도식화 · 핵심 리드 + 상세 · 정량 수치는 플레인 텍스트 · ✕로 삭제(비밀번호)" />
+        title="인프라·미래기술 시그널" />
      </AnimCtx.Provider>
     </section>
   );

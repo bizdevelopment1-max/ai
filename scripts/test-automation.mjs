@@ -159,6 +159,21 @@ try {
 }
 
 try {
+  const boards = await readFile("boards.jsx", "utf8");
+  const removedSignalIntros = [
+    "매일 크롤된 기사에서 '돈 버는 방식'을 구독·사용량(API)",
+    "매일 크롤된 기사에서 컴퓨트·메모리·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로",
+  ];
+  if (removedSignalIntros.some(text => boards.includes(text)) || !/\{sub && <p>\{sub\}<\/p>\}/.test(boards)) {
+    throw new Error("removed signal-board guidance must not leave empty explanatory copy");
+  }
+  console.log("  OK  removed monetization and infrastructure signal-board guidance copy");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  signal-board guidance cleanup: ${error.message}`);
+}
+
+try {
   const market = JSON.parse(await readFile("market.json", "utf8"));
   const records = market.records || [];
   const ids = new Set(records.map(record => record.id));
