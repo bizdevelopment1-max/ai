@@ -85,6 +85,9 @@ def bulletize_korean(value: object) -> str:
     text = clean(value)
     text = re.sub(r"\b(\d{4})\.(\d{1,2})\.(\d{1,2})\b", r"\1-\2-\3", text)
     text = text.replace("。", " · ")
+    # English fallbacks can contain abbreviations such as U.S.  Treat their
+    # internal dots as separators too, while retaining decimal figures.
+    text = re.sub(r"(?<=[A-Za-z])\.(?=[A-Za-z])", "·", text)
     # Keep decimal/model-version dots, but replace sentence punctuation.
     text = re.sub(r"([^0-9])\.(?=\s+)", r"\1 ·", text)
     text = re.sub(r"([^0-9])\.(?=[\"”’']?\s*$)", r"\1", text)
@@ -218,12 +221,12 @@ def new_localization(item: dict, title: str, excerpt: str, language: str) -> dic
     # A successful translation is cached until its source changes. A fallback
     # is deliberately retried on the next scheduled run so a transient
     # translation outage does not become permanent English display.
-    if previous.get("version") == 12 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
+    if previous.get("version") == 13 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
         if item.get("house"):
             item["displayEligible"] = item.get("sourceContent", {}).get("status") == "content-extracted"
         return previous
     return {
-        "version": 12,
+        "version": 13,
         "sourceHash": digest,
         "sourceLines": canonical_fragments(title, raw_excerpt, item.get("source", ""), item.get("date", "")),
         "checkedAt": datetime.now(timezone.utc).isoformat(),
@@ -280,7 +283,14 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
             else:
                 raise ValueError("korean-quality-gate-failed")
         except Exception as exc:
-            item["localization"] = {**loc, "status": "fallback-english", "displayLanguage": "en", "title": title, "summaryLines": lines, "provider": "public-source-translation", "issues": [str(exc)[:120]]}
+            # An English fallback remains source-verbatim in meaning, while its
+            # presentation follows the same compact bullet rule as Korean:
+            # no sentence-final dots and no prose-style line endings.
+            # This avoids a transient translation failure breaking the whole
+            # scheduled pipeline or making one card visually inconsistent.
+            fallback_title = bulletize_korean(title)
+            fallback_lines = [bulletize_korean(line) for line in lines]
+            item["localization"] = {**loc, "status": "fallback-english", "displayLanguage": "en", "title": fallback_title, "summaryLines": fallback_lines, "provider": "public-source-translation", "issues": [str(exc)[:120]]}
             # Do not put an English fallback into the research briefing. The
             # original record and its source text remain in the expanding DB,
             # and the next scheduled run retries the source-bound translation.
