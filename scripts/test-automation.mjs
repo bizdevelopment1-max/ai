@@ -339,6 +339,27 @@ try {
 }
 
 try {
+  const [boards, styles] = await Promise.all([
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+  ]);
+  const quantifiedInsightCards = (boards.match(/className="chart-card has-chart-insight"/g) || []).length === 5
+    && boards.includes("function QuantChartInsight")
+    && boards.includes("fundingPairTotal")
+    && boards.includes("swTopThreeTotal")
+    && boards.includes("직접 합산 제외")
+    && styles.includes(".quant-chart-insight ul")
+    && styles.includes(".quant-chart-insight mark");
+  if (!quantifiedInsightCards) {
+    throw new Error("every funding, user, price and revenue chart needs source-series bullet insights with visible key-number emphasis");
+  }
+  console.log("  OK  five quant charts include source-series bullet insights");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  quant-chart insight coverage: ${error.message}`);
+}
+
+try {
   const boards = await readFile("boards.jsx", "utf8");
   const removedSignalIntros = [
     "매일 크롤된 기사에서 '돈 버는 방식'을 구독·사용량(API)",

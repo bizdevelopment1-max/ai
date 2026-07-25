@@ -566,10 +566,43 @@ function InsightsBoard({ insights, sectionRef }) {
   );
 }
 
+function QuantChartInsight({ lines }) {
+  return (
+    <div className="quant-chart-insight">
+      <span>ANALYSIS · 동일 차트 수치</span>
+      <ul>{lines.filter(Boolean).map((line, index) => <li key={index}>{line}</li>)}</ul>
+    </div>
+  );
+}
+
 // ---- Charts section --------------------------------------------
 function ChartsBoard({ data, cats, theme, sectionRef }) {
   const inView = useInView(sectionRef);
   const catColor = id => (cats.find(c => c.id === id) || {}).accent || theme.ink;
+  const money = value => value == null ? "—" : `$${Number(value).toLocaleString("en-US", { maximumFractionDigits: 1 })}B`;
+  const unitM = value => value == null ? "—" : `${Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}M`;
+  const sum = rows => rows.reduce((total, row) => total + (Number(row.value) || 0), 0);
+  const top = rows => [...rows].sort((a, b) => b.value - a.value);
+  const ratio = (part, total) => total > 0 ? Math.round(part / total * 100) : null;
+
+  const fundingRows = top(data.FUNDING || []);
+  const fundingPair = fundingRows.slice(0, 2);
+  const fundingPairTotal = sum(fundingPair);
+  const fundingTotal = sum(fundingRows);
+  const fundingGap = fundingPair[0] && fundingPair[1] ? fundingPair[0].value - fundingPair[1].value : null;
+  const userRows = top(data.USERS || []);
+  const chatgpt = (data.USERS || []).find(row => row.name.startsWith("ChatGPT"));
+  const gemini = (data.USERS || []).find(row => row.name.startsWith("Gemini"));
+  const enterprise = (data.BAND_PRICE || []).find(row => row.name.startsWith("Enterprise"));
+  const pro = (data.BAND_PRICE || []).find(row => row.name.startsWith("Pro"));
+  const api = (data.BAND_PRICE || []).find(row => row.name.startsWith("API"));
+  const swRows = top((data.REVENUE || []).filter(row => row.seg === "sw"));
+  const swTopThree = swRows.slice(0, 3);
+  const swTopThreeTotal = sum(swTopThree);
+  const swTotal = sum(swRows);
+  const hw = (data.REVENUE || []).find(row => row.seg === "hw");
+  const priceMultiple = enterprise?.value && pro?.value ? (enterprise.value / pro.value).toFixed(1) : null;
+
   return (
     <section className="board" ref={sectionRef} data-screen-label="Quant Charts">
      <AnimCtx.Provider value={inView}>
@@ -585,29 +618,49 @@ function ChartsBoard({ data, cats, theme, sectionRef }) {
       <OverviewCharts data={data} cats={cats} theme={theme} />
 
       <div className="chart-grid">
-        <div className="chart-card">
+        <div className="chart-card has-chart-insight">
           <div className="cc-head"><h3>AI 펀딩 현황</h3><span title="Crunchbase · PitchBook · TechCrunch 공시 기준">$B · 공시 기준</span></div>
           <HBarChart data={data.FUNDING} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="B" valuePrefix="$" compact />
+          <QuantChartInsight lines={[
+            <>상위 2개 밸류 <mark>{money(fundingPairTotal)}</mark> · 표본 합계의 <mark>{ratio(fundingPairTotal, fundingTotal)}%</mark></>,
+            fundingPair[0] && fundingPair[1] && <>{fundingPair[0].name} {money(fundingPair[0].value)} · {fundingPair[1].name} {money(fundingPair[1].value)} · 격차 <mark>{money(fundingGap)}</mark></>,
+          ]} />
         </div>
 
-        <div className="chart-card">
+        <div className="chart-card has-chart-insight">
           <div className="cc-head"><h3>AI 앱 사용자 수</h3><span title="각 기업 공시 · SimilarWeb · IR 기준">주요 앱·플랫폼 · M(백만) · 공시 기준</span></div>
           <HBarChart data={data.USERS} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="M" compact />
+          <QuantChartInsight lines={[
+            userRows[0] && <>{userRows[0].name} <mark>{unitM(userRows[0].value)}</mark> · 차트 표본 내 최대</>,
+            chatgpt && gemini && <>ChatGPT 주간 활성 · Gemini 앱 MAU 각 <mark>{unitM(chatgpt.value)}</mark> · 지표 정의가 달라 단순 합산 제외</>,
+          ]} />
         </div>
 
-        <div className="chart-card">
+        <div className="chart-card has-chart-insight">
           <div className="cc-head"><h3>AI 서비스 가격</h3><span>$/mo · 2026.06</span></div>
           <HBarChart data={data.BAND_PRICE} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="" valuePrefix="$" compact />
+          <QuantChartInsight lines={[
+            enterprise && pro && <>기업 좌석 <mark>${enterprise.value}/월</mark> · 개인 구독 ${pro.value}/월 대비 <mark>{priceMultiple}배</mark></>,
+            api && <>API 차트값 <mark>${api.value}/1M 토큰</mark> · 구독 요금과 과금 단위 별도</>,
+          ]} />
         </div>
 
-        <div className="chart-card">
+        <div className="chart-card has-chart-insight">
           <div className="cc-head"><h3>AI 매출 — SW·서비스</h3><span title="모델·클라우드·앱 매출">$B · 연환산/ARR/run-rate · 공시·추정</span></div>
           <HBarChart data={data.REVENUE.filter(d => d.seg === "sw")} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="B" valuePrefix="$" compact />
+          <QuantChartInsight lines={[
+            <>상위 3개 <mark>{money(swTopThreeTotal)}</mark> · SW 표본 합계의 <mark>{ratio(swTopThreeTotal, swTotal)}%</mark></>,
+            swTopThree.length === 3 && <>{swTopThree.map(row => `${row.name} ${money(row.value)}`).join(" · ")} · 연환산·ARR·run-rate 산식 혼재</>,
+          ]} />
         </div>
 
-        <div className="chart-card">
+        <div className="chart-card has-chart-insight">
           <div className="cc-head"><h3>AI 매출 — HW(칩)</h3><span title="AI 가속기 하드웨어 매출 — 척도가 달라 SW와 분리">$B · 연매출 · 공시</span></div>
           <HBarChart data={data.REVENUE.filter(d => d.seg === "hw")} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="B" valuePrefix="$" compact />
+          <QuantChartInsight lines={[
+            hw && <>{hw.name} <mark>{money(hw.value)}</mark> · 차트상 유일한 하드웨어 연매출 항목</>,
+            <>HW 연매출 · SW ARR·run-rate는 산식이 달라 <mark>직접 합산 제외</mark></>,
+          ]} />
         </div>
 
       </div>

@@ -783,6 +783,17 @@ a[href]:hover .rainbow-on-hover,
 .chart-card > svg, .chart-card > div:not(.cc-head) { margin: auto 0; }
 .hbar-chart.hbar-compact { width: min(100%, 640px); margin: auto !important; }
 .hbar-chart.hbar-compact svg { display: block; }
+.chart-card.has-chart-insight { justify-content: flex-start; }
+.chart-card.has-chart-insight > .hbar-chart.hbar-compact { margin: 0 !important; }
+.chart-card > .quant-chart-insight {
+  width: min(100%, 640px); margin: 10px 0 0; padding: 9px 10px 8px;
+  border-top: 1px solid var(--line); background: color-mix(in srgb, var(--accent) 3%, var(--panel));
+}
+.quant-chart-insight > span { display: block; margin-bottom: 5px; color: var(--muted); font-family: var(--mono); font-size: 8.5px; font-weight: 900; letter-spacing: .1em; }
+.quant-chart-insight ul { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.quant-chart-insight li { position: relative; padding-left: 11px; color: var(--ink-2); font-size: 10.5px; font-weight: 600; line-height: 1.48; word-break: keep-all; }
+.quant-chart-insight li::before { content: "•"; position: absolute; left: 1px; color: var(--accent); font-weight: 900; }
+.quant-chart-insight mark { color: var(--ink); font-weight: 850; background: linear-gradient(transparent 58%, rgba(255, 216, 75, .75) 58%); text-decoration: underline; text-decoration-color: #E8BB26; text-underline-offset: 2px; text-decoration-thickness: 1px; }
 /* let chart labels that sit at the very edge spill into the card padding instead of being clipped by the SVG viewport */
 .chart-card svg, .ov-chart-card svg, .stock-panel svg { overflow: visible; }
 .cc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
