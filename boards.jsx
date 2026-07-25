@@ -34,6 +34,13 @@ function CoLogo({ name, domain, accent }) {
   );
 }
 
+function CompanyNote({ text }) {
+  const lines = bulletText(text).split(/\s+·\s+/).map(line => line.trim()).filter(Boolean);
+  return lines.map((line, i) => (
+    <span className="ct-note-line" key={i}>{hlBrief(line, "co-note-" + i)}</span>
+  ));
+}
+
 // ---- Category company board (dense table) ----------------------
 function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) {
   const inView = useInView(sectionRef);
@@ -104,7 +111,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
               <em className="ct-strat-label" style={{ color: c.strategy.tier === "large" ? "#2D6BFF" : "#C026D3" }}>{c.strategy.tier === "large" ? "대형·파트너십" : "소형·인수/투자"} · {c.strategy.label}</em>
               <span className="ct-strat-txt"><b>개요:</b> {bulletText(c.strategy.overview)} <b>인사이트:</b> {bulletText(c.strategy.insight)}</span>
             </span>
-          ) : <BoldSummary text={c.note} />}</span>
+          ) : <CompanyNote text={c.note} />}</span>
       </div>
     );
   };

@@ -91,13 +91,14 @@ try {
 
 try {
   const styles = await readFile("styles.css", "utf8");
-  const compactLeftWideRight = styles.includes("grid-template-columns: 1.05fr .72fr .55fr .68fr 4.4fr;");
+  const compactLeftWideRight = styles.includes("grid-template-columns: minmax(150px, .85fr) minmax(125px, .65fr) minmax(100px, .52fr) minmax(120px, .62fr) minmax(0, 5.7fr);");
   const leftCellsWrap = styles.includes("white-space: normal; overflow-wrap: anywhere; line-height: 1.28;");
   const notesWrap = styles.includes("line-height: 1.55; overflow-wrap: anywhere; text-wrap: pretty;");
-  if (!compactLeftWideRight || !leftCellsWrap || !notesWrap) {
-    throw new Error("company table must keep compact left columns and a wide, readable comment column");
+  const sentenceLines = styles.includes(".ct-note-line { display: block;");
+  if (!compactLeftWideRight || !leftCellsWrap || !notesWrap || !sentenceLines) {
+    throw new Error("company table must keep compact left columns, a wide comment column, and separate sentence lines");
   }
-  console.log("  OK  company table uses compact left columns and wrapped readable comments");
+  console.log("  OK  company table uses compact left columns, a wide comment column, and separate sentence lines");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  company table readability: ${error.message}`);
