@@ -16,7 +16,7 @@ export const canonicalUrl = raw => {
 const hash = text => createHash("sha256").update(text).digest("hex").slice(0, 20);
 const hasSource = record => Boolean(canonicalUrl(record?.sourceUrl));
 const identity = record => `${record.type || "metric"}|${canonicalUrl(record.sourceUrl)}|${String(record.title || "").trim()}|${String(record.publishedAt || "")}`;
-const SURVEY_EVIDENCE = /\b(?:survey|respondents?|poll|questionnaire|interviews?|sample(?:\s+size|\s+of)?|adults?\s+surveyed)\b/i;
+const SURVEY_EVIDENCE = /\b(?:survey|respondents?|poll|questionnaire|interviews?|sample(?:\s+size|\s+of)?|adults?\s+surveyed|sondage|enquête|encuesta|entrevista|pesquisa|entrevista|befragung|umfrage|teilnehmer)\b|설문|조사(?:대상|응답자|표본)?|응답자|표본|アンケート|調査対象|回答者|調査|调查|受访者|样本/i;
 
 // "consumer" and "adoption" alone are not survey evidence. Keeping this
 // predicate shared prevents a market headline from being presented as a

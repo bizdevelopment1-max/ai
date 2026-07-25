@@ -2138,6 +2138,7 @@ function MarketBoard({ sectionRef }) {
               <article className="mkt-record" key={record.id}>
                 <div className="mkt-record-top">
                   <span className={"mkt-record-type type-" + record.type}>{TYPE_LABEL[record.type] || "정량 관측"}</span>
+                  {record.sourceRegion && <span className="mkt-record-locale">{record.sourceRegion} · {record.sourceLanguage}</span>}
                   <time>{String(record.publishedAt || record.collectedAt || "").slice(0, 10)}</time>
                 </div>
                 <a className="mkt-record-title" href={record.sourceUrl} target="_blank" rel="noopener">{record.title} <Icon name="ext" size={11} /></a>

@@ -16,11 +16,12 @@
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { llmJSON } from "./llm.mjs";
+import { rotatingLocales, googleNewsUrl } from "./global-sources.mjs";
+import { isExcludedText } from "./news-policy.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
-const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/gi;
-const scrub = s => String(s || "").replace(BANNED, "글로벌 제조사").trim().replace(/[.。]+$/, "").replace(/\.\s+/g, " · ");
+const scrub = s => String(s || "").trim().replace(/[.。]+$/, "").replace(/\.\s+/g, " · ");
 const EXCLUDED = /deepseek|kling|kuaishou|hailuo|minimax|zhipu|moonshot|01\.?ai|baichuan|stepfun|sensetime|iflytek|baidu|alibaba|tencent|bytedance|naver|kakao|upstage|wrtn|hyperclova/i;
 const LABELS_L = ["파트너십 기회", "전략 제휴", "탑재 후보", "모니터링"];
 const LABELS_S = ["인수 후보", "투자 검토", "기술 감시", "모니터링"];
@@ -70,17 +71,22 @@ const decode = s => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
   .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 const tagOf = (xml, n) => { const m = xml.match(new RegExp(`<${n}[^>]*>([\\s\\S]*?)</${n}>`, "i")); return m ? m[1] : ""; };
 
-async function latest(name) {
+async function latest(name, locale) {
   try {
     const q = `"${name.replace(/\s*\(.*\)/, "")}" AI when:21d`;
-    const res = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`, { headers: { "User-Agent": UA } });
+    const res = await fetch(googleNewsUrl(q, locale, 21), { headers: { "User-Agent": UA } });
     if (!res.ok) return null;
     const xml = await res.text();
     const m = /<item>([\s\S]*?)<\/item>/.exec(xml);
     if (!m) return null;
     const it = m[1];
     const d = new Date(tagOf(it, "pubDate"));
-    return { title: decode(tagOf(it, "title")).replace(/ - [^-]*$/, "").trim(), url: decode(tagOf(it, "link")), source: decode(tagOf(it, "source")) || "Google News", date: isNaN(d) ? TODAY : d.toISOString().slice(0, 10) };
+    return {
+      title: decode(tagOf(it, "title")).replace(/ - [^-]*$/, "").trim(),
+      url: decode(tagOf(it, "link")), source: decode(tagOf(it, "source")) || "Google News",
+      date: isNaN(d) ? TODAY : d.toISOString().slice(0, 10),
+      sourceScope: "global-localized-rss", sourceRegion: locale.region, sourceLanguage: locale.language, sourceLocale: locale.id,
+    };
   } catch { return null; }
 }
 
@@ -123,8 +129,12 @@ async function main() {
     /[A-Za-z]{4,}\s+[A-Za-z]{4,}\s+[A-Za-z]{4,}/.test(`${x.partnership || ""} ${x.acqAngle || ""} ${x.revenue || ""} ${x.overview || ""}`));
   if (age < 6.5 && !staleShape && prev.engine !== "rules" && !hasEnglish) { console.log(`[startups] fresh (${prev.weekOf}, ${prev.engine}) — skip`); return; }
 
-  for (const s of [...large, ...small]) { const n = await latest(s.name); if (n) s.latest = n; }
-  console.log(`[startups] large ${large.length} · small ${small.length}, latest news attached`);
+  const locales = rotatingLocales();
+  for (const [index, s] of [...large, ...small].entries()) {
+    const n = await latest(s.name, locales[index % locales.length]);
+    if (n && !isExcludedText(`${n.title} ${n.source}`)) s.latest = n;
+  }
+  console.log(`[startups] large ${large.length} · small ${small.length}, globally localized latest signals attached`);
 
   const e1 = await enrichLarge(large);
   const e2 = await enrichSmall(small);

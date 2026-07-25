@@ -9,6 +9,7 @@ const required = [
   "scripts/crawl-stocks.mjs",
   "scripts/crawl-markets.mjs",
   "scripts/market-db.mjs",
+  "scripts/global-sources.mjs",
   "scripts/build-browser-bundle.mjs",
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
@@ -20,6 +21,7 @@ const required = [
   "llm-health.json",
   "collection-health.json",
   "config/news-policy.json",
+  "config/global-source-policy.json",
   "index.html",
   "app.bundle.js",
 ];
@@ -48,6 +50,28 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  실패  browser bundle: ${error.message}`);
+}
+
+try {
+  const policy = JSON.parse(await readFile("config/global-source-policy.json", "utf8"));
+  if (!Array.isArray(policy.locales) || policy.locales.length < 5 || !policy.locales.every(locale => locale.id && locale.region && locale.language && locale.hl && locale.gl && locale.ceid)) {
+    throw new Error("global source policy needs at least five complete regional locale definitions");
+  }
+  console.log(`  정상  글로벌 비기사 수집 범위 ${policy.locales.length}개 지역·언어 로캘`);
+} catch (error) {
+  failed = true;
+  console.error(`  실패  global source policy: ${error.message}`);
+}
+
+try {
+  const newsCrawler = await readFile("scripts/crawl-news.mjs", "utf8");
+  if (!/hl=en-US&gl=US&ceid=US:en/.test(newsCrawler) || /global-sources\.mjs/.test(newsCrawler)) {
+    throw new Error("daily article feed must remain independently limited to English authoritative sources");
+  }
+  console.log("  정상  기사 피드는 영문 권위 소스 제한 유지");
+} catch (error) {
+  failed = true;
+  console.error(`  실패  article source boundary: ${error.message}`);
 }
 
 try {

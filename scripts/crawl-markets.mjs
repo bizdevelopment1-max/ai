@@ -6,6 +6,7 @@
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { appendRecords, ensureMarketDatabase, hasSurveyEvidence } from "./market-db.mjs";
+import { googleNewsUrl, rotatingLocales } from "./global-sources.mjs";
 
 const UA = "Mozilla/5.0 (compatible; AI-Intelligence-Market-DB/1.0)";
 const now = () => new Date().toISOString();
@@ -30,21 +31,22 @@ const QUERIES = [
 
 const quantified = text => {
   const found = [
-    ...String(text || "").matchAll(/(?:US\$|USD|\$)\s?\d[\d,.]*(?:\s?(?:trillion|billion|million|trn|bn|mn|T|B|M))?/gi),
-    ...String(text || "").matchAll(/\b\d+(?:\.\d+)?%/g),
+    ...String(text || "").matchAll(/(?:US\$|USD|\$|EUR|€|GBP|£|JPY|CNY|CN¥|¥|KRW|₩|INR|₹|BRL|R\$)\s?\d[\d,.]*(?:\s?(?:trillion|billion|million|trn|bn|mn|T|B|M|조|억|만|억엔|億元|亿|万))?/gi),
+    ...String(text || "").matchAll(/\b\d+(?:\.\d+)?\s?(?:%|％)/g),
     ...String(text || "").matchAll(/\b\d[\d,.]*(?:\s?(?:million|billion|bn|mn|thousand|m|b))\s+(?:users|consumers|respondents|shipments|units|adults|people)/gi),
+    ...String(text || "").matchAll(/\b\d[\d,.]*(?:명|대|만명|만 대|억명|억 대|조원|억원|만 원|万人|万台|億人|億台|万人|台|億|万)/g),
   ].map(match => match[0].replace(/\s+/g, " ").trim());
   return [...new Set(found)].slice(0, 4);
 };
 
 const kindOf = record => hasSurveyEvidence(record)
   ? "consumer-survey"
-  : /\b(?:shipments?|units?)\b/i.test(`${record.title || ""} ${record.evidence || ""}`) ? "shipment" : "market-observation";
+  : /\b(?:shipments?|units?)\b|출하|판매량|台|出荷|出货/i.test(`${record.title || ""} ${record.evidence || ""}`) ? "shipment" : "market-observation";
 
-async function rss(query) {
-  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(`${query} when:14d`)}&hl=en-US&gl=US&ceid=US:en`;
+async function rss(query, locale) {
+  const url = googleNewsUrl(query, locale, 14);
   const response = await fetch(url, { headers: { "User-Agent": UA } });
-  if (!response.ok) throw new Error(`Google News RSS ${response.status} for ${query}`);
+  if (!response.ok) throw new Error(`Google News RSS ${response.status} for ${query} (${locale.id})`);
   const xml = await response.text();
   return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].slice(0, 8).map(match => {
     const item = match[1];
@@ -55,6 +57,9 @@ async function rss(query) {
       sourceName: decode(tag(item, "source")) || "Google News",
       publishedAt: Number.isNaN(published.getTime()) ? today() : published.toISOString().slice(0, 10),
       evidence: decode(tag(item, "description")),
+      region: locale.region,
+      language: locale.language,
+      locale: locale.id,
     };
   }).filter(item => item.title && item.sourceUrl);
 }
@@ -70,7 +75,7 @@ async function main() {
   const startedAt = now();
   const migration = ensureMarketDatabase(data, startedAt);
   const ageHours = data.database?.lastCrawledAt ? (Date.now() - Date.parse(data.database.lastCrawledAt)) / 3_600_000 : 999;
-  if (ageHours < 20) {
+  if (ageHours < 20 && process.env.MARKET_FORCE !== "1") {
     if (migration.changed) {
       data.generatedAt = startedAt;
       await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
@@ -83,39 +88,46 @@ async function main() {
   let failures = 0;
   const candidates = [];
   const latestByVertical = new Map();
+  const locales = rotatingLocales();
   for (const config of QUERIES) {
-    try {
-      const rows = await rss(config.query);
-      fetched += rows.length;
-      for (const row of rows) {
-        const combined = `${row.title} ${row.evidence}`;
-        const values = quantified(combined).map((value, index) => ({ label: index === 0 ? "공개 수치" : "추가 수치", value }));
-        if (!values.length) continue;
-        const record = {
-          type: kindOf(row),
-          group: config.group,
-          verticalId: config.verticalId,
-          topic: config.topic,
-          title: row.title,
-          metricLabel: config.topic,
-          values,
-          scope: "검색 결과의 제목·공개 스니펫 범위. 원문에서 정의·표본·기준연도를 재확인해야 합니다.",
-          sourceName: row.sourceName,
-          sourceUrl: row.sourceUrl,
-          publishedAt: row.publishedAt,
-          evidence: row.evidence.slice(0, 900),
-          origin: "rss-quantitative-crawl",
-        };
-        candidates.push(record);
-        if (!latestByVertical.has(config.verticalId)) latestByVertical.set(config.verticalId, row);
+    for (const locale of locales) {
+      try {
+        const rows = await rss(config.query, locale);
+        fetched += rows.length;
+        for (const row of rows) {
+          const combined = `${row.title} ${row.evidence}`;
+          const values = quantified(combined).map((value, index) => ({ label: index === 0 ? "공개 수치" : "추가 수치", value }));
+          if (!values.length) continue;
+          const record = {
+            type: kindOf(row),
+            group: config.group,
+            verticalId: config.verticalId,
+            topic: config.topic,
+            title: row.title,
+            metricLabel: config.topic,
+            values,
+            scope: `지역 ${row.region} · 언어 ${row.language}의 검색 결과 제목·공개 스니펫 범위. 원문에서 정의·표본·기준연도를 재확인해야 합니다.`,
+            sourceName: row.sourceName,
+            sourceUrl: row.sourceUrl,
+            publishedAt: row.publishedAt,
+            evidence: row.evidence.slice(0, 900),
+            origin: "rss-quantitative-crawl",
+            sourceScope: "global-localized-rss",
+            sourceRegion: row.region,
+            sourceLanguage: row.language,
+            sourceLocale: row.locale,
+          };
+          candidates.push(record);
+          if (!latestByVertical.has(config.verticalId)) latestByVertical.set(config.verticalId, row);
+        }
+      } catch (error) {
+        failures++;
+        console.error(`[market-db] ${config.id}/${locale.id}: ${error.message}`);
       }
-    } catch (error) {
-      failures++;
-      console.error(`[market-db] ${config.id}: ${error.message}`);
     }
   }
 
-  if (!fetched && failures === QUERIES.length) throw new Error("All market-data sources failed; refusing to mark the database refreshed");
+  if (!fetched && failures === QUERIES.length * locales.length) throw new Error("All global market-data sources failed; refusing to mark the database refreshed");
   const added = appendRecords(data, candidates, startedAt);
   for (const item of data.items || []) {
     const latest = latestByVertical.get(item.id);
@@ -125,12 +137,12 @@ async function main() {
     ...(data.database || {}),
     recordCount: data.records.length,
     lastCrawledAt: startedAt,
-    lastCrawl: { queries: QUERIES.length, rssRows: fetched, appended: added, failures },
+    lastCrawl: { queries: QUERIES.length, locales: locales.map(locale => ({ id: locale.id, region: locale.region, language: locale.language })), rssRows: fetched, appended: added, failures },
   };
   data.freshAt = startedAt;
   data.generatedAt = startedAt;
   await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
-  console.log(`[market-db] appended ${added} source-linked records; retained ${data.records.length}; RSS rows ${fetched}/${QUERIES.length} queries`);
+  console.log(`[market-db] appended ${added} source-linked records; retained ${data.records.length}; RSS rows ${fetched}/${QUERIES.length * locales.length} global query streams`);
 }
 
 main().catch(error => { console.error(error); process.exit(1); });
