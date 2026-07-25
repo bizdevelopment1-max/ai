@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-25",
+  "purpose": "Keeps company cards and priority news streams tied to individual primary disclosures or named publisher reports, with an explicit distinction between official disclosure and third-party estimates.",
+  "cardRules": {
+    "requireIndividualSourceUrl": true,
+    "requireAsOfDate": true,
+    "separateOfficialFromEstimate": true,
+    "staleDisclosureMonths": 12,
+    "forbidUndatedMarketCapSnapshots": true
+  },
+  "publisherDomains": [
+    "openai.com",
+    "anthropic.com",
+    "nvidianews.nvidia.com",
+    "news.microsoft.com",
+    "aboutamazon.com",
+    "investor.atmeta.com",
+    "investors.cerebras.ai",
+    "databricks.com",
+    "finance.yahoo.com",
+    "apnews.com",
+    "investing.com",
+    "ec.europa.eu",
+    "digital-strategy.ec.europa.eu"
+  ],
+  "priorityStreams": [
+    {
+      "co": "OpenAI",
+      "cat": "native",
+      "tag": "OpenAI 공식 공시",
+      "n": 1,
+      "q": "site:openai.com OpenAI S-1 funding hardware"
+    },
+    {
+      "co": "Anthropic",
+      "cat": "native",
+      "tag": "Anthropic 공식 공시",
+      "n": 1,
+      "q": "site:anthropic.com Anthropic Series H Claude revenue"
+    },
+    {
+      "co": "NVIDIA",
+      "cat": "bigtech",
+      "tag": "NVIDIA IR",
+      "n": 1,
+      "q": "site:nvidianews.nvidia.com NVIDIA financial results AI"
+    },
+    {
+      "co": "Databricks",
+      "cat": "startup",
+      "tag": "Databricks 자본·인프라",
+      "n": 1,
+      "q": "Databricks valuation GPU Reuters CNBC"
+    },
+    {
+      "co": "",
+      "cat": "bigtech",
+      "tag": "AI 규제 원문",
+      "n": 1,
+      "q": "EU AI Act implementation OpenAI regulation official"
+    }
+  ]
+}

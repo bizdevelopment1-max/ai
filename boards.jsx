@@ -197,6 +197,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
             <div className="cd-sub">
               <span className="cd-cat" style={{ color: cat.accent, background: cat.accentSoft }}>{cat.ko}</span>
               <span>{c.unit}</span>
+              {c.dataStatus && <span className="cd-data-status">{c.dataStatus}</span>}
             </div>
           </div>
         </div>
@@ -257,13 +258,25 @@ function CompanyDetail({ company, cats, articles, onClose }) {
 
         {c.sources && c.sources.length > 0 && (
           <div className="cd-section">
-            <h4>출처 <em>{c.sources.length}건 · 텍스트 복사 가능</em></h4>
+            <h4>출처 <em>{c.sources.length}건 · 원문 이동</em></h4>
             <div className="cd-sources">
-              {c.sources.map((s, i) => (
-                <div key={i} className="cd-src-item" onClick={e => { const t = e.currentTarget.querySelector('.cd-src-text'); if (t) { navigator.clipboard.writeText(t.textContent); } }}>
-                  <span className="cd-src-text">{s}</span>
-                </div>
-              ))}
+              {c.sources.map((item, i) => {
+                const source = typeof item === "string" ? { label: item } : item;
+                const tier = source.tier === "official" ? "공식" : source.tier === "estimate" ? "3자 추정" : "보도";
+                const content = <>
+                  <span className={"cd-src-tier tier-" + (source.tier || "reported")}>{tier}</span>
+                  <span className="cd-src-text">{source.label || source.title || "출처"}</span>
+                  {source.asOf && <span className="cd-src-asof">{source.asOf}</span>}
+                  {source.url && <Icon name="ext" size={12} />}
+                </>;
+                return source.url ? (
+                  <a key={i} className="cd-src-item cd-src-link" href={source.url} target="_blank" rel="noopener">
+                    {content}
+                  </a>
+                ) : (
+                  <div key={i} className="cd-src-item">{content}</div>
+                );
+              })}
             </div>
           </div>
         )}

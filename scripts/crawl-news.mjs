@@ -13,6 +13,12 @@ import { writeFile, readFile } from "node:fs/promises";
 import { isExcludedText, newsPolicy } from "./news-policy.mjs";
 import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
 
+// Company-card facts need first-party disclosures or a named publisher report,
+// rather than an undated category page. The same policy supplies priority
+// streams for the daily crawler, so verified company sources keep refreshing.
+const companySourcePolicy = JSON.parse(await readFile("config/company-source-policy.json", "utf8"));
+const PRIORITY_STREAMS = Array.isArray(companySourcePolicy.priorityStreams) ? companySourcePolicy.priorityStreams : [];
+
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const sourceHealth = { failedStreams: [], emptyStreams: [] };
 
@@ -34,7 +40,7 @@ async function fetchText(url, opts = {}, tries = 3) {
 }
 
 // Authoritative English outlets (publisher homepage hostnames). Anything not here is dropped.
-const ALLOW = [
+const BASE_ALLOW = [
   "reuters.com", "bloomberg.com", "cnbc.com", "techcrunch.com", "theverge.com", "wsj.com",
   "ft.com", "nytimes.com", "wired.com", "arstechnica.com", "axios.com", "theinformation.com",
   "engadget.com", "venturebeat.com", "theguardian.com", "businessinsider.com", "forbes.com",
@@ -46,6 +52,7 @@ const ALLOW = [
   "datacenterdynamics.com", "hpcwire.com", "semianalysis.com", "eetimes.com", "huggingface.co",
   "aibusiness.com", "analyticsindiamag.com", "siliconangle.com", "innovationorigins.com",
 ];
+const ALLOW = [...new Set([...BASE_ALLOW, ...(companySourcePolicy.publisherDomains || [])])];
 
 // co must match data.js COMPANIES names exactly (for per-company filtering in the feed).
 const COMPANIES = [
@@ -305,11 +312,12 @@ async function main() {
   console.log("Crawling authoritative English AI news… (publisher/RSS excerpts; no AI API)");
   const companyItems = (await Promise.all(COMPANIES.map(c => pull(c, 1)))).flat();
   const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
+  const priorityItems = (await Promise.all(PRIORITY_STREAMS.map(stream => pull(stream, stream.n || 1)))).flat();
   const directItems = (await Promise.all(DIRECT_FEEDS.map(f => pullDirect(f, 2)))).flat();
 
   // de-dupe this run by URL
   const seen = new Set();
-  const raw = [...companyItems, ...topicItems, ...directItems]
+  const raw = [...companyItems, ...topicItems, ...priorityItems, ...directItems]
     .filter(a => a.url && !seen.has(a.url) && seen.add(a.url))
     .filter(a => !isExcludedText(`${a.title} ${a.descEn || ""}`));
 
@@ -371,7 +379,7 @@ async function main() {
     generatedAt: new Date().toISOString(),
     mode: "source-content-extractive",
     policyVersion: newsPolicy.version,
-    streams: { googleNews: COMPANIES.length + TOPICS.length, directRss: DIRECT_FEEDS.length },
+    streams: { googleNews: COMPANIES.length + TOPICS.length + PRIORITY_STREAMS.length, directRss: DIRECT_FEEDS.length },
     acceptedCandidates: raw.length,
     failedStreams: sourceHealth.failedStreams,
     emptyStreams: sourceHealth.emptyStreams,

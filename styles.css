@@ -907,12 +907,18 @@ a[href]:hover .rainbow-on-hover,
 .cd-sources { display: flex; flex-direction: column; gap: 4px; }
 .cd-src-item {
   padding: 8px 12px; background: var(--panel-2); border: 1px solid var(--line-2);
-  border-radius: 7px; cursor: pointer; transition: background .12s, border-color .12s;
-  position: relative;
+  border-radius: 7px; transition: background .12s, border-color .12s;
+  position: relative; display: flex; align-items: center; gap: 7px;
 }
 .cd-src-item:hover { background: color-mix(in srgb, var(--accent) 8%, var(--panel)); border-color: var(--accent); }
-.cd-src-item:active::after { content: "복사됨!"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 10px; font-weight: 700; color: var(--up); }
-.cd-src-text { font-size: 11.5px; color: var(--ink-2); font-weight: 500; line-height: 1.5; word-break: break-all; user-select: all; }
+.cd-src-link { color: inherit; text-decoration: none; cursor: pointer; }
+.cd-src-text { flex: 1; min-width: 0; font-size: 11.5px; color: var(--ink-2); font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; }
+.cd-src-tier { flex: 0 0 auto; padding: 2px 6px; border-radius: 4px; font-size: 9.5px; font-weight: 800; line-height: 1.2; }
+.tier-official { color: #0F766E; background: #DDF7F1; }
+.tier-reported { color: #225CC5; background: #E8F0FF; }
+.tier-estimate { color: #9A5A00; background: #FFF2CB; }
+.cd-src-asof { flex: 0 0 auto; color: var(--muted); font-size: 10px; font-weight: 700; white-space: nowrap; }
+.cd-data-status { color: #9A5A00; background: #FFF2CB; border: 1px solid #F2D27A; border-radius: 4px; padding: 2px 6px; font-size: 9.5px; font-weight: 800; line-height: 1.25; }
 
 /* ---------- footer ---------- */
 .foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 4px 4px 0; font-size: 11.5px; color: var(--muted); font-weight: 500; }

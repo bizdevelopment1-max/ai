@@ -25,6 +25,7 @@ const required = [
   "collection-health.json",
   "config/news-policy.json",
   "config/global-source-policy.json",
+  "config/company-source-policy.json",
   "index.html",
   "app.bundle.js",
 ];
@@ -110,6 +111,42 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  실패  global source policy: ${error.message}`);
+}
+
+try {
+  const [companyPolicy, crawler, data, boards] = await Promise.all([
+    readFile("config/company-source-policy.json", "utf8").then(JSON.parse),
+    readFile("scripts/crawl-news.mjs", "utf8"),
+    readFile("data.js", "utf8"),
+    readFile("boards.jsx", "utf8"),
+  ]);
+  const block = name => {
+    const start = data.indexOf(`name: "${name}"`);
+    const end = data.indexOf("\n    },", start);
+    return start >= 0 && end > start ? data.slice(start, end) : "";
+  };
+  const openai = block("OpenAI");
+  const anthropic = block("Anthropic");
+  const amazon = block("Amazon");
+  const meta = block("Meta AI");
+  const databricks = block("Databricks");
+  const requiredDomains = ["openai.com", "anthropic.com", "nvidianews.nvidia.com", "investors.cerebras.ai"];
+  if (companyPolicy.cardRules?.requireIndividualSourceUrl !== true
+    || companyPolicy.cardRules?.separateOfficialFromEstimate !== true
+    || !requiredDomains.every(domain => companyPolicy.publisherDomains?.includes(domain))
+    || !Array.isArray(companyPolicy.priorityStreams) || companyPolicy.priorityStreams.length < 4
+    || !/PRIORITY_STREAMS/.test(crawler) || !/companySourcePolicy\.publisherDomains/.test(crawler)
+    || !openai.includes("공모 시점 미정") || openai.includes("2026.09 상장")
+    || !anthropic.includes("3자 추정 $69B") || !anthropic.includes('tier: "official"')
+    || amazon.includes("AWS AI ARR") || amazon.includes("$14B+")
+    || meta.includes("QoQ -5% 역대 첫 감소") || !databricks.includes('valuation: "$188B"')
+    || !/source\.tier === "official"/.test(boards) || !/source\.url/.test(boards)) {
+    throw new Error("company facts need dated individual sources, estimate labels, and corrected priority-card claims");
+  }
+  console.log("  OK  company fact policy, priority source streams, and corrected dated card claims");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  company fact governance: ${error.message}`);
 }
 
 try {

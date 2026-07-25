@@ -16,22 +16,30 @@ window.DASH = (function () {
     // ── native ──
     {
       cat: "native", name: "OpenAI", domain: "openai.com", unit: "파운데이션 모델",
-      valuation: "$852B", valAsof: "26.03", metric: "연환산 매출", value: "$24B+", metricAsof: "26.02",
-      funding: "$122B 라운드(2026.03 확정)", trend: 120, trendBasis: "연환산 $25B+ · Q1 실매출 $5.7B",
-      note: "GPT-4o·o3·GPT-5, ChatGPT, Sora. 2026.03.31 최종 라운드 확정: 총 조달 $122B(SoftBank·Amazon·Nvidia·a16z 등)·post-money 밸류 $852B(직전 2026.02 $730B pre+$110B 수식의 $840B에서 증액 확정). [보도] S-1 2026.06.08 SEC 기밀 제출(이르면 2026.09 상장, 공모 목표 최대 $1T). 2026 전체 매출 ~$30B 목표 트랙([The Information]; 일부 추정 $46B는 미확인). ChatGPT 주간 활성 사용자 ~905M(2월 920M 정점 후 성장 정체 — IPO 핵심 리스크로 부각). 유료 구독자 공식 '50M+'(2026.02 발표)·복수 보도 기준 ~55M(2026 Q1 말, 연말 47M서 증가, The Information). 월 매출 ~$2B(연환산 $24B+, 2026.02). [The Information] Q1 2026 실매출 $5.7B·GAAP 운영손실 $9.3B·현금소각 $3.7B(매출 $5.7B의 65%)·순손실 $21.3B($12.4B 회계비용 포함)·Non-GAAP 마진 -122% · 현금 보유 $73B+·컴퓨트 조달 약정 $665B — 수익성이 핵심 IPO 리스크. $852B는 2030년 매출 목표 $280B 가정에 기반. [OpenAI/Forbes 2026.04.27] Microsoft와의 '독점성(exclusivity)'만 종료 — 파트너십 자체는 유지(Azure 제1 클라우드 지속·MS IP 라이선스 2032년까지 연장·MS 대상 수익공유 20% 2030년까지 지속). 누적 조달 ~$186B(PitchBook).",
+      valuation: "$852B", valAsof: "2026-03-31", metric: "월 매출(보도)", value: "~$2B", metricAsof: "2026-02",
+      funding: "$122B 라운드(2026-03-31)", trend: 0, trendBasis: "S-1 기밀 제출 · 공모 시점 미정",
+      note: "2026-03-31 총 조달 $122B·post-money $852B는 보도 기준 확정 수치. OpenAI는 2026-06-08 기밀 S-1 제출을 공식 발표했으나 공모 시점은 결정하지 않았다고 명시 — 2026년 9월 상장과 $1T 공모 목표 단정은 제거. io 인수는 2025-05-21 발표된 회고성 배경이며 2026년 신규 사건으로 표시하지 않음. 월 매출·분기 손익·연환산 매출은 보도·추정치로 정의와 기준일을 분리해 해석 필요",
       vp: "최고 성능 멀티모달 모델과 9억 규모의 소비자 접점을 동시에 보유한 유일한 사업자. API·구독·엔터프라이즈로 매출 다각화.",
-      direction: "범용 인공지능(AGI) 지향 + 대규모 컴퓨트 자금 조달. 추론 모델(o-시리즈)과 에이전트로 확장. IPO 준비.",
-      sources: ["총 조달 $122B·$852B post-money (2026.03.31, Bloomberg/CNBC)", "[보도] S-1 2026.06.08 SEC 기밀 제출 (Reuters)", "[The Information] Q1 실매출 $5.7B · Non-GAAP 마진 -122%", "[OpenAI '26.04.27] MS '독점성'만 종료·파트너십 유지(IP 라이선스 2032·수익공유 20% 2030까지)"],
+      direction: "범용 인공지능과 에이전트 확장 · 기밀 S-1 제출 완료 · 공모 시점은 회사 결정 대기",
+      sources: [
+        { tier: "reported", label: "총 조달 $122B · $852B post-money", asOf: "2026-03-31", url: "https://www.bloomberg.com/news/articles/2026-03-31/openai-valued-at-852-billion-after-completing-122-billion-round" },
+        { tier: "official", label: "기밀 S-1 제출 · 공모 시점 미정", asOf: "2026-06-08", url: "https://openai.com/index/openai-submits-confidential-s-1/" },
+        { tier: "official", label: "io 발표 · 2025년 사건", asOf: "2025-05-21", url: "https://openai.com/index/sam-and-jony-introduce-io/" }
+      ],
       url: "https://openai.com",
     },
     {
       cat: "native", name: "Anthropic", domain: "anthropic.com", unit: "파운데이션 모델·안전성",
-      valuation: "$965B", valAsof: "26.05", metric: "run-rate 매출", value: "$47B(공식·논쟁)", metricAsof: "26.05",
-      funding: "Series H $65B(2026.05)", trend: 188, trendBasis: "run-rate $30B(4월)→$47B(5월), OpenAI 추월",
-      note: "Claude Opus/Sonnet/Haiku, Constitutional AI. 2026.05.28 Series H $65B 조달·$965B post-money(직전 2026.02 Series G $380B). Series H 발표문서 'run-rate revenue crossed $47 billion earlier this month' 명시 — 2026.04.07 ARR $30B(당시 OpenAI가 회계 인식 차이로 ~$22B 반박)에서 6주 만에 $47B로 급증, OpenAI ARR($25B)을 2배 가까이 추월. 단, run-rate $47B의 신뢰성은 논쟁 — The Information의 Q1 실매출 추정은 $4.8B(연환산 ~$19B)로 run-rate와 간극이 크며, GAAP 감사 재무 미공개·단기 급등 요인 존재(S-1 공개가 검증 분수령). Claude Code 단독 $2.5B+ ARR 돌파(코딩 에이전트 섹터: Cursor ~$4B·GitHub Copilot·Windsurf와 3강). 2026.06.02 IPO용 S-1 기밀 제출($965B 기준). Amazon은 기존 $8B 외 즉시 $5B 투자, 향후 최대 $20B 추가 가능(2026.04.20)·AWS 10년 $100B+ 약정. Google도 최대 $40B 투자(즉시 $10B+성과 연동 $30B, 2026.04.24)·Google Cloud 5GW 컴퓨트(2027~)·Broadcom TPU 3.5GW — Amazon·Google 양대 후원으로 컴퓨트 병목 해소. 누적 조달 ~$127B(PitchBook). PitchBook 기록상 거래 시점 trailing 매출 $9B — $47B는 회사 발표 연환산 run-rate로 기준 상이.",
+      valuation: "$965B", valAsof: "2026-05-28", metric: "run-rate 매출(회사 발표)", value: "$47B", metricAsof: "2026-05",
+      funding: "Series H $65B(2026-05-28)", trend: 0, trendBasis: "공식 $47B · 3자 추정 $69B(2026-07-10)",
+      note: "2026-05-28 Series H $65B·post-money $965B와 run-rate $47B는 회사 발표 기준. 2026-07-10 Yipit 기반 $69B와 2026-07-22 Tickerplus $74.3B는 후속 3자 추정으로 공식 수치와 혼합하지 않음. run-rate·실매출·ARR은 정의가 달라 직접 비교하지 않으며 GAAP 감사 재무 공개 전에는 추정치로만 해석 필요",
       vp: "Constitutional AI 기반 신뢰·안전성으로 금융·의료·법률 등 규제 산업 엔터프라이즈에서 선호. 코딩 에이전트 성능 최상위(Claude Code).",
       direction: "안전성 연구와 상업화의 균형. Amazon·Google 클라우드 파트너십으로 컴퓨트 확보, 엔터프라이즈 침투 가속.",
-      sources: ["run-rate 매출 $47B (Anthropic Series H 발표문, 2026.05.28)", "Series H $65B·$965B post-money (2026.05.28)", "Claude Code $2.5B+ ARR", "Amazon 즉시 $5B + 향후 최대 $20B(기존 $8B 별도) (2026.04.20)"],
+      sources: [
+        { tier: "official", label: "Series H $65B · $965B post-money · run-rate $47B", asOf: "2026-05-28", url: "https://www.anthropic.com/news/series-h" },
+        { tier: "estimate", label: "Yipit 기반 run-rate $69B · 공식 갱신 대기", asOf: "2026-07-10", url: "https://www.nextbigfuture.com/2026/07/reports-of-69-billion-annualized-revenue-rate-for-anthropic.html" },
+        { tier: "estimate", label: "Tickerplus run-rate $74.3B · 3자 추정", asOf: "2026-07-22", url: "https://x.com/tickerplus/status/2080067009388097831" }
+      ],
       url: "https://anthropic.com",
     },
     {
@@ -78,12 +86,15 @@ window.DASH = (function () {
     },
     {
       cat: "bigtech", name: "Amazon", group: "infra", domain: "amazon.com", unit: "AWS Bedrock·Trainium",
-      valuation: "$2.4T", valAsof: "26.06", metric: "AWS AI ARR", value: "$14B+", metricAsof: "26E",
-      funding: "상장 (AMZN)", trend: 40, trendBasis: "Bedrock·자체 칩 성장",
-      note: "Bedrock, Alexa+, Trainium 칩 — AWS Bedrock 멀티모델 호스팅. 2026.04.20 Anthropic에 즉시 $5B 투자 + 향후 최대 $20B 추가 가능(기존 $8B 별도)·AWS $100B 약정. 2026.02 OpenAI $50B 투자+$100B 클라우드 약정과 함께 '양쪽 베팅(two-horse)' 전략. Trainium2로 NVIDIA 의존도 저감. ($14B AWS AI ARR은 [업계 추정])",
+      valuation: "$2.4T", valAsof: "2026-06", metric: "AWS AI 매출", value: "분리 공시 없음", metricAsof: "2026-07 확인",
+      funding: "상장 (AMZN)", trend: 0, trendBasis: "AWS AI 매출 공식 분리 공시 없음",
+      note: "Bedrock, Alexa+, Trainium 칩 — AWS Bedrock 멀티모델 호스팅. Anthropic 투자·클라우드 약정은 회사 발표와 보도 기준으로 별도 확인. AWS 전체 실적과 AI 서비스 매출을 혼동하지 않기 위해 근거 없는 $14B AI ARR 추정은 제거. 향후 공식 IR의 AWS 매출·Bedrock 사용 지표만 누적 반영",
       vp: "어느 AI가 이기든 인프라 공급자로서 수익을 확보하는 중립적 클라우드 포지션 + 자체 가속기.",
       direction: "OpenAI·Anthropic 양쪽 투자 + Bedrock 멀티모델 + Trainium 수직계열화로 Azure 대항.",
-      sources: ["Anthropic 즉시 $5B + 최대 $20B 추가(기존 $8B 별도) (2026.04.20)", "OpenAI $50B 투자+$100B AWS 약정 (2026.02)", "[업계 추정] AWS AI 서비스 ARR ~$14B (2026E)"],
+      sources: [
+        { tier: "official", label: "Anthropic 추가 투자 $5B · 최대 $20B 추가 가능", asOf: "2026-04-20", url: "https://www.aboutamazon.com/news/company-news/amazon-invests-additional-5-billion-anthropic-ai" },
+        { tier: "official", label: "AWS AI 제품 페이지 · 매출은 별도 비공개", asOf: "2026-07", url: "https://aws.amazon.com/ai/" }
+      ],
       url: "https://aws.amazon.com/ai/",
     },
     {
@@ -93,17 +104,23 @@ window.DASH = (function () {
       note: "H100/B200 GPU, CUDA — AI 학습/추론 GPU 시장 80%+ 점유. 최신 공개 분기 FY2027 1Q 매출 $81.6B(+85% YoY, 2026.05.20)·EPS $0.96(추정 $0.89 대비 +8% 서프라이즈)·그로스 마진 ~75% 유지(Blackwell 풀 램프 중 마진 방어) · 데이터센터 $75.2B(NVIDIA 공식 IR, +92% YoY, 전체의 ~92%; 일부 리포트 $73.5B는 네트워킹 제외 기준). Q2 FY27 가이던스 $91.0B±2%(China DC 제외 기준). FY2026 연매출 $215.9B(+65% YoY) — Q4 FY26 $68.1B(+73%)·DC $62.3B(+75%) 포함, 직전 FY2025 연 $130.5B와 구분 필요. 데이터센터 영업이익률 ~74.9%. [업계 추정] B200 출하량은 외부 추정. 개발자 생태계 NVIDIA Developer Program 7.5M+ / CUDA-X 1M+ developers(공식) — '400M 개발자'는 근거 없음.",
       vp: "GPU 하드웨어 80%+ 점유에 CUDA 소프트웨어 락인을 더한 이중 해자. 풀스택(칩·네트워킹·소프트웨어).",
       direction: "Blackwell(B200)·차세대 아키텍처 램프 + DGX Cloud + Omniverse. 전력·공급망이 핵심 변수.",
-      sources: ["FY27 1Q 매출 $81.6B(+85%)·DC $75.2B(+92%) (NVIDIA 2026.05.20)", "Q2 FY27 가이던스 $91.0B±2%", "FY2026 연매출 $215.9B · FY2025 $130.5B (구분)", "Developer Program 7.5M+ / CUDA-X 1M+"],
+      sources: [
+        { tier: "official", label: "FY27 1Q 매출 $81.6B(+85%) · 데이터센터 $75.2B(+92%)", asOf: "2026-05-20", url: "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-first-quarter-fiscal-2027" },
+        { tier: "official", label: "Q2 FY27 가이던스 $91.0B±2% · FY2026 연매출 $215.9B", asOf: "2026-05-20", url: "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-first-quarter-fiscal-2027" }
+      ],
       url: "https://www.nvidia.com",
     },
     {
       cat: "bigtech", name: "Meta AI", group: "model", domain: "ai.meta.com", unit: "오픈소스 LLM",
-      valuation: "$1.7T", valAsof: "26.06", metric: "Meta AI 제품 MAU", value: "1.2B", metricAsof: "26.Q1",
+      valuation: "시가총액 동적", valAsof: "주가 차트 기준", metric: "Meta AI 제품 MAU", value: "1.2B", metricAsof: "2026 Q1",
       funding: "상장 (META)", trend: 50, trendBasis: "Meta AI 제품 MAU 1.2B (Q1 2026 공식)",
-      note: "Llama 4, 오픈 가중치 LLM 리더. Meta AI 어시스턴트(제품) MAU 1.2B (Q1 2026 공식, 직전 1B+ 2025.10에서 증가). 별개로 페이스북·인스타·왓츠앱 앱군 Family DAP는 3.56B(Q1 2026) — 단 Iran 전쟁·러시아 WhatsApp 금지로 QoQ -5% 역대 첫 순감소(리스크 변수). 제품 MAU와 앱군 도달은 다른 지표이므로 분리 표기. 연간 AI 인프라 투자 $65B+.",
+      note: "Llama 4, 오픈 가중치 LLM 리더. Meta AI 어시스턴트 제품 MAU와 Facebook·Instagram·WhatsApp의 Family DAP는 서로 다른 지표로 분리 표기. 원문 근거가 확인되지 않은 Family DAP의 QoQ 감소·사상 첫 감소 주장은 제거. 상장사 시가총액은 고정 스냅샷 대신 주가 차트의 기준일 데이터를 사용",
       vp: "가장 넓은 오픈소스 분포 + 앱군 35억 도달 유통망. 무료 모델로 생태계를 키우고 AI 광고로 수익화.",
       direction: "오픈 가중치 Llama로 표준 장악 + 광고 최적화 수익. 슈퍼인텔리전스 랩으로 프런티어 투자.",
-      sources: ["Meta AI 제품 MAU 1.2B (Meta Q1 2026 IR)", "[구분 지표] Family DAP 3.56B(Q1'26) · QoQ -5% 역대 첫 감소(지정학)", "Llama 4 오픈 가중치 배포 · AI 인프라 투자 $65B+"],
+      sources: [
+        { tier: "official", label: "Meta 분기 실적 · 제품 MAU와 Family 지표는 별도 해석", asOf: "2026 Q1", url: "https://investor.atmeta.com/financial-information/quarterly-earnings/default.aspx" },
+        { tier: "official", label: "Meta AI · Llama 공식 제품 정보", asOf: "2026-07", url: "https://ai.meta.com/" }
+      ],
       url: "https://ai.meta.com",
     },
 
@@ -130,22 +147,29 @@ window.DASH = (function () {
     },
     {
       cat: "startup", name: "Cohere", vertical: "엔터프라이즈 AI", domain: "cohere.com", unit: "엔터프라이즈·소버린 LLM",
-      valuation: "$5.5B", valAsof: "25.07", metric: "ARR", value: "$240M", metricAsof: "25(2026 갱신 대기)",
-      funding: "Series D · IPO 준비", trend: 50, trendBasis: "전 분기 QoQ 50%+",
-      note: "기업용·소버린 AI 특화. 표기 수치는 2025년 기준(ARR $240M·밸류 $5.5B, 2025.07) — 2026 최신 공식 수치 미확인으로 업데이트 대기. 2026.05 Command A+ 오픈소스·North Mini Code 출시. Oracle·Salesforce·SAP 파트너십, IPO 준비.",
+      valuation: "$5.5B", valAsof: "2025-07", metric: "ARR", value: "$240M", metricAsof: "2025 기준",
+      funding: "Series D · IPO 준비", trend: 0, trendBasis: "공식 핵심 지표 12개월+ 미갱신",
+      dataStatus: "공식 핵심 지표 12개월+ 미갱신 · 비교 차트 해석 주의",
+      note: "기업용·소버린 AI 특화. ARR·밸류는 2025년 공개치이며 2026년 최신 공식 수치는 확인되지 않음. 최신성을 보장할 수 없는 수치를 다른 2026 카드와 직접 비교하지 않도록 데이터 미공개 상태를 명시. 제품 출시와 파트너십 뉴스는 원문 확인 후 별도 누적",
       vp: "엔터프라이즈 데이터 보안·소버린(주권) 배포와 RAG 최적화 모델.",
       direction: "규제·보안 민감 산업 + 국가 소버린 AI 타깃, IPO 추진.",
-      sources: ["ARR $240M (CNBC '26.2)", "Command A+ 오픈소스 (2026.5)", "Oracle·Salesforce·SAP 파트너십"],
+      sources: [
+        { tier: "reported", label: "ARR $240M · 2025년 실적 보도", asOf: "2026-02 보도", url: "https://www.cnbc.com/2026/02/13/ai-startup-cohere-revenue-ipo.html" },
+        { tier: "official", label: "Cohere 제품·뉴스룸 · 2026 핵심 재무 지표 미공개", asOf: "2026-07", url: "https://cohere.com/news" }
+      ],
       url: "https://cohere.com",
     },
     {
       cat: "startup", name: "Databricks", vertical: "인프라·파운데이션", domain: "databricks.com", unit: "데이터+AI 플랫폼",
-      valuation: "$134B", valAsof: "26.02", metric: "ARR", value: "$5.4B", metricAsof: "26.06",
-      funding: "Series L · $175B 협의", trend: 116, trendBasis: "밸류 $62B→$134B",
-      note: "데이터 레이크하우스 + AI 통합 플랫폼. 2026.02 Series L $5B로 밸류 $134B 확정(JPMorgan·Goldman·카타르). ARR 런레이트 $5.4B 돌파, 밸류 $175B 라운드 협의. CEO Ghodsi 'IPO는 2027년 목표'. 최고가치 미상장 소프트웨어 기업.",
+      valuation: "$188B", valAsof: "2026-07-16 보도", metric: "ARR 런레이트", value: "$5.4B", metricAsof: "2026-06 보도",
+      funding: "$3B Coatue 주도 투자 보도", trend: 0, trendBasis: "$188B 밸류 · Reuters 보도 기준",
+      note: "데이터 레이크하우스 + AI 통합 플랫폼. 2026-07-16 Reuters 보도 기준 Coatue 주도 $3B 투자로 $188B 밸류 평가 — 이전 $134B와 $175B 협의 단계는 최신 보도로 교체. AI 특화 제품 연환산 매출 $1.7B는 3자 보도치로 전체 ARR 런레이트와 분리 표기. CEO의 GPU 부족 발언은 인프라 공급 제약이 플랫폼 기업까지 확산된 사례로 추적",
       vp: "기업 데이터가 모여 있는 레이크하우스 위에서 바로 AI를 학습·배포. 데이터-모델 통합 가치사슬.",
       direction: "데이터+AI 통합 플랫폼 확장 + 에이전트·거버넌스. 2027년 IPO 목표.",
-      sources: ["Series L $5B, 밸류 $134B (2026.02)", "ARR 런레이트 $5.4B (2026.06)", "밸류 $175B 라운드 협의"],
+      sources: [
+        { tier: "reported", label: "Coatue 주도 $3B 투자 · Databricks $188B 평가", asOf: "2026-07-16", url: "https://www.investing.com/news/stock-market-news/databricks-valued-at-188-billion-after-coatueled-investment-wsj-reports-4797338" },
+        { tier: "estimate", label: "AI 특화 제품 연환산 $1.7B · 3자 보도", asOf: "2026-07", url: "https://www.blockonomi.com/databricks-raises-3b-in-coatue-led-round/" }
+      ],
       url: "https://databricks.com",
     },
     {
@@ -210,12 +234,15 @@ window.DASH = (function () {
     },
     {
       cat: "startup", name: "Sierra AI", vertical: "엔터프라이즈 AI", rel: "에이전트 UX 벤치마크", tier: "T2", domain: "sierra.ai", unit: "고객 서비스 AI 에이전트",
-      valuation: "$15B+", valAsof: "26.05", metric: "ARR", value: "$150M", metricAsof: "26.05",
-      funding: "$950M(Tiger Global·GV)", trend: 110, trendBasis: "밸류 $10B→$15B+ · 8분기 만에 ARR $150M",
-      note: "고객 대면 AI 에이전트 플랫폼 — 기업 고객 서비스 전문. 2026.05 $950M 라운드(Tiger Global·GV)로 밸류 $15B+(직전 $10B). 출시(2024.02) 8분기 만에 ARR $150M 돌파 — 엔터프라이즈 AI 패권 경쟁 가열. (공동창업: Bret Taylor) Sequoia 투자.",
+      valuation: "$15B+", valAsof: "2026-05-04", metric: "ARR", value: "$150M+", metricAsof: "2026-02 보도",
+      funding: "$950M(Tiger Global·GV)", trend: 0, trendBasis: "ARR $150M+는 2026-02 기준 보도",
+      note: "고객 대면 AI 에이전트 플랫폼 — 기업 고객 서비스 전문. 2026-05 $950M 라운드(Tiger Global·GV)·밸류 $15B+는 확인된 거래 수치. ARR $150M+는 2026-02 기준 보도이며 5월 라운드 시점의 정확한 ARR은 공개 확인되지 않아 기준일을 분리 표기",
       vp: "기업 브랜드 맞춤형 고객 응대 에이전트로 콜센터·CS 비용 구조 재편.",
       direction: "산업별 CS 에이전트 템플릿 확장. 성과 기반 과금 실험.",
-      sources: ["$950M 라운드·밸류 $15B+ (TechCrunch '26.05.04)", "8분기 만에 ARR $150M"],
+      sources: [
+        { tier: "reported", label: "$950M 라운드 · 밸류 $15B+", asOf: "2026-05-04", url: "https://techcrunch.com/2026/05/04/sierra-raises-950m-as-the-race-to-own-enterprise-ai-gets-serious/" },
+        { tier: "reported", label: "ARR $150M+ · 2026-02 기준 보도", asOf: "2026-02", url: "https://techcrunch.com/2026/05/04/sierra-raises-950m-as-the-race-to-own-enterprise-ai-gets-serious/" }
+      ],
       url: "https://sierra.ai",
     },
     {
@@ -518,7 +545,7 @@ window.DASH = (function () {
     { name: "Anthropic", value: 965, cat: "native", src: "Series H $65B·$965B post (2026.05.28)" },
     { name: "OpenAI", value: 852, cat: "native", src: "2026.03 확정 $730B pre + $122B 신규(post $852B)" },
     { name: "SpaceX (xAI, Cursor)", value: 230, cat: "native", src: "xAI Series E '26.1 밸류 $230B+ · Cursor 인수 $60B" },
-    { name: "Databricks", value: 134, cat: "startup", src: "Series L '26.2 $134B ($175B 협의)" },
+    { name: "Databricks", value: 188, cat: "startup", src: "Coatue 주도 투자 보도 · $188B (2026-07-16)" },
     { name: "DeepSeek", value: 55, cat: "startup", src: "Reuters '26.5 $52B~59B" },
     { name: "Mistral AI", value: 20, cat: "startup", src: "$3.5B 라운드·밸류 $20B 클로즈 (2026.06)" },
     { name: "Perplexity", value: 20, cat: "startup", src: "'25.09 Series E-6 $20B post(보도 추정 $21B+)" },
@@ -630,7 +657,7 @@ window.DASH = (function () {
     { tag: "온디바이스 스펙 경쟁", tone: "signal", nav: "bigtech",
       now: "Morgan Stanley: 구형 iPhone 8.5억대가 메모리 한계로 온디바이스 AI 구동 곤란(고급 비서엔 12GB) · IDC: 생성형 AI 폰 2028년 70%",
       cause: "고급 AI 추론에 메모리·NPU가 필수 → AI 성능이 하드웨어 사양에 직접 종속되고 구형 단말은 구조적으로 배제됨",
-      decision: "AI 기능 = 하드웨어 스펙 = 프리미엄 전환·교체수요 동력 — 단 'AI 탑재=판매 증가'는 단정 금물(침투율과 실제 교체수요는 분리)" },
+      decision: "프리미엄 세그먼트에서 AI 기능·메모리·NPU를 함께 설계하되 판매·교체 효과는 가격·사용 빈도·업그레이드 주기로 별도 검증" },
     { tag: "수익화 분기", tone: "revenue", nav: "bizmodel",
       now: "Perplexity는 구독 버리고 광고·에이전트 커머스로 · OpenAI는 구독+API지만 Q1 마진 -122% · 버티컬은 ARR 배수 67배",
       cause: "추론 단가가 3년 150배 급락 → 'AI 기능=무료' 압력이 커지며 '어디서 돈을 받는가'의 과금 모델 자체가 흔들림",
