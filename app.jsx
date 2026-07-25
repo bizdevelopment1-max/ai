@@ -36,6 +36,17 @@ function App() {
   const [selected, setSelected] = uS(null);
   const [sidebarOpen, setSidebarOpen] = uS(false);
   const [collapsed, setCollapsed] = uS(false);
+  const refs = {
+    ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
+    sanalysis: uR(null), charts: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null), market: uR(null), audit: uR(null),
+  };
+  const nativeInView = useInView(refs.native);
+  const bigtechInView = useInView(refs.bigtech);
+  const startupInView = useInView(refs.startup);
+  const companyInView = nativeInView || bigtechInView || startupInView;
+  const briefingInView = useInView(refs.briefing);
+  const stocksInView = useInView(refs.stocks);
+  const auditInView = useInView(refs.audit);
 
   const D = window.DASH;
   const dark = t.dark;
@@ -105,12 +116,16 @@ function App() {
         const onepager = j && j.onepager?.provenance?.status === "source-linked" ? j.onepager : null;
         if (alive && (onepager || feed.length)) setResearch({ ...j, onepager, feed });
       }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
+  // Lower sections do not compete with the first viewport. The largest live
+  // files are requested only when their respective section is near the reader.
+  uE(() => {
+    if (!companyInView) return;
+    let alive = true;
     fetch("companies.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
-    fetch("audit.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
-    fetch("quality.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && j.checks) setQuality(j); }).catch(() => {});
     fetch("startups.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && (j.large || j.small)) {
         const m = {};
@@ -119,7 +134,17 @@ function App() {
         setStartupsX(m);
       } }).catch(() => {});
     return () => { alive = false; };
-  }, []);
+  }, [companyInView]);
+
+  uE(() => {
+    if (!auditInView) return;
+    let alive = true;
+    fetch("audit.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
+    fetch("quality.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && j.checks) setQuality(j); }).catch(() => {});
+    return () => { alive = false; };
+  }, [auditInView]);
   // COMPANIES에 라이브 데이터(최신 기사·언급량·실시세 시총) 병합
   const companiesLive = useMemo(() => (D.COMPANIES || []).map(c => {
     const lv = coLive && coLive[c.name];
@@ -131,6 +156,7 @@ function App() {
     return merged;
   }), [coLive, startupsX]);
   uE(() => {
+    if (!briefingInView) return;
     let alive = true;
     fetch("briefing.json" + cb(), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
@@ -140,18 +166,19 @@ function App() {
       })
       .catch(() => {});
     return () => { alive = false; };
-  }, []);
+  }, [briefingInView]);
 
   // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
   const [stockData, setStockData] = uS(null);
   uE(() => {
+    if (!stocksInView) return;
     let alive = true;
     fetch("stocks.json" + cb(), { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.stocks) setStockData({ ...j.stocks, __generatedAt: j.generatedAt }); })
       .catch(() => {});
     return () => { alive = false; };
-  }, []);
+  }, [stocksInView]);
 
   // category objects with tweakable accents
   const cats = useMemo(() => D.CATEGORIES.map(c => ({
@@ -175,12 +202,8 @@ function App() {
   const pal = dark ? PALETTE.dark : PALETTE.light;
   const chartTheme = { ...pal, accent: t.colNative };
 
-  // section refs
+  // section scroll container
   const scrollRef = uR(null);
-  const refs = {
-    ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    sanalysis: uR(null), charts: uR(null), signals: uR(null), bizmodel: uR(null), reports: uR(null), stocks: uR(null), market: uR(null),
-  };
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
 
@@ -315,7 +338,7 @@ function App() {
             <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} sectionRef={refs.stocks} theme={chartTheme} />
             <MarketBoard sectionRef={refs.market} />
 
-            <AuditPanel audit={audit} quality={quality} />
+            <AuditPanel audit={audit} quality={quality} sectionRef={refs.audit} />
 
             <footer className="foot">
               <span>AI Intelligence Dashboard</span>
@@ -335,12 +358,14 @@ function App() {
 
 // soft tint of a hex color for chips/backgrounds
 // ---- 데이터 감사 패널: audit-agent.mjs 산출물(audit.json) 표시 ----
-function AuditPanel({ audit, quality }) {
+function AuditPanel({ audit, quality, sectionRef }) {
   const [open, setOpen] = uS(false);
-  if (!audit) return null;
+  // Keep a measurable target in the document so the audit JSON can be loaded
+  // lazily before the panel itself has content to render.
+  if (!audit) return <div className="audit-wrap" ref={sectionRef} style={{ minHeight: 1 }} aria-hidden="true" />;
   const C = { ok: "#16A34A", warn: "#EA580C", fail: "#D23B3B" };
   return (
-    <div className="audit-wrap">
+    <div className="audit-wrap" ref={sectionRef}>
       <button className="audit-chip" onClick={() => setOpen(o => !o)} title="데이터 파이프라인 감사 상태">
         <i style={{ background: C[audit.overall] || "#8A93A4" }} />
         데이터 신뢰센터 {audit.overall === "ok" ? "정상" : audit.overall === "warn" ? "주의" : "실패"} · {audit.summary}

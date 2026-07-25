@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { access, readFile } from "node:fs/promises";
+import { BUNDLE_FILE, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
 
 const required = [
   ".github/workflows/daily-news.yml",
@@ -8,6 +9,7 @@ const required = [
   "scripts/crawl-stocks.mjs",
   "scripts/crawl-markets.mjs",
   "scripts/market-db.mjs",
+  "scripts/build-browser-bundle.mjs",
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
   "scripts/audit-agent.mjs",
@@ -15,6 +17,8 @@ const required = [
   "stocks.json",
   "quality.json",
   "history.json",
+  "index.html",
+  "app.bundle.js",
 ];
 
 let failed = false;
@@ -28,6 +32,19 @@ for (const file of required) {
     failed = true;
     console.error(`  실패  ${file}: ${error.message}`);
   }
+}
+
+try {
+  const [sources, bundle, index] = await Promise.all([readBrowserSources(), readFile(BUNDLE_FILE, "utf8"), readFile("index.html", "utf8")]);
+  const expected = `/* ai-dashboard-bundle:${sourceStamp(sources)} */`;
+  if (!bundle.startsWith(expected)) throw new Error("bundle is stale; run npm run build:browser before publishing");
+  if (/babel\.min\.js|text\/babel/.test(index) || !/defer src="app\.bundle\.js/.test(index)) {
+    throw new Error("index must serve the precompiled browser bundle without a runtime JSX compiler");
+  }
+  console.log("  정상  browser bundle is current (no runtime JSX compiler)");
+} catch (error) {
+  failed = true;
+  console.error(`  실패  browser bundle: ${error.message}`);
 }
 
 try {

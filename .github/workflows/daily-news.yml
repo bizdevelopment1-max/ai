@@ -30,6 +30,7 @@ jobs:
     timeout-minutes: 45
     env:
       RETRY_ATTEMPTS: 3
+      PIPELINE_TIMEOUT_MS: 300000
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -40,7 +41,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       # 영어→한국어 요약·번역은 crawl-news.mjs 안에서 키 없는 GitHub Models로 수행(품질 양호).
       # (이전 로컬 opus-mt/m2m100 번역은 CPU에서 단어 샐러드 수준의 저품질 출력이라 비활성화)
@@ -97,6 +98,9 @@ jobs:
 
       - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
         run: node scripts/audit-agent.mjs
+
+      - name: Validate automation and browser bundle
+        run: node scripts/test-automation.mjs
 
       - name: Commit refreshed data
         run: |
