@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-25T04:43:45.607Z",
+  "generatedAt": "2026-07-25T04:44:22.728Z",
   "overall": "warn",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
-  "summary": "검증 16개 · 정상 12 · 주의 4 · 실패 0",
+  "summary": "검증 16개 · 정상 11 · 주의 5 · 실패 0",
   "checks": [
     {
       "id": "news-coverage",
@@ -31,8 +31,8 @@
     {
       "id": "collection-health",
       "label": "수집 스트림 상태",
-      "status": "ok",
-      "value": "실패 0 · 빈 스트림 6"
+      "status": "warn",
+      "value": "실패 1 · 빈 스트림 5"
     },
     {
       "id": "briefing-evidence",
@@ -124,8 +124,8 @@
   "sources": {
     "news": {
       "TechCrunch": 15,
-      "Engadget": 4,
       "Wired": 4,
+      "Engadget": 4,
       "AI Business": 4,
       "ZDNet": 4,
       "The Decoder": 4,
@@ -134,8 +134,8 @@
       "MIT Tech Review": 4,
       "SiliconANGLE": 2,
       "Axios": 2,
-      "Ars Technica": 2,
       "WSJ": 2,
+      "Ars Technica": 2,
       "CNBC": 5,
       "IEEE Spectrum": 2,
       "Bloomberg.com": 1,
@@ -154,8 +154,8 @@
       "The Information": 1,
       "TrendForce": 2,
       "WIRED": 1,
-      "GlobeNewswire": 1,
       "The Guardian": 1,
+      "GlobeNewswire": 1,
       "Goldman Sachs": 1,
       "Seoul Economic Daily": 1,
       "Fortune": 1,
@@ -166,7 +166,7 @@
     }
   },
   "collection": {
-    "generatedAt": "2026-07-25T03:37:22.626Z",
+    "generatedAt": "2026-07-25T04:44:13.100Z",
     "mode": "source-excerpt",
     "policyVersion": 1,
     "streams": {
@@ -174,16 +174,20 @@
       "directRss": 14
     },
     "acceptedCandidates": 60,
-    "failedStreams": [],
+    "failedStreams": [
+      {
+        "stream": "rss:The Register",
+        "error": "HTTP 403"
+      }
+    ],
     "emptyStreams": [
       "google-news:Amazon",
       "rss:Ars Technica",
       "rss:Hugging Face",
-      "rss:SiliconANGLE",
       "rss:VentureBeat",
-      "rss:The Register"
+      "rss:SiliconANGLE"
     ],
-    "status": "ok"
+    "status": "partial"
   },
   "notices": [
     "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",

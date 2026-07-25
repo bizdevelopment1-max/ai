@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T03:37:22.626Z",
+  "generatedAt": "2026-07-25T04:44:13.100Z",
   "mode": "source-excerpt",
   "policyVersion": 1,
   "streams": {
@@ -7,14 +7,18 @@
     "directRss": 14
   },
   "acceptedCandidates": 60,
-  "failedStreams": [],
+  "failedStreams": [
+    {
+      "stream": "rss:The Register",
+      "error": "HTTP 403"
+    }
+  ],
   "emptyStreams": [
     "google-news:Amazon",
     "rss:Ars Technica",
     "rss:Hugging Face",
-    "rss:SiliconANGLE",
     "rss:VentureBeat",
-    "rss:The Register"
+    "rss:SiliconANGLE"
   ],
-  "status": "ok"
+  "status": "partial"
 }
