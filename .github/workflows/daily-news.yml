@@ -68,6 +68,9 @@ jobs:
       - name: Retry retained source links and store publisher-page text
         run: SOURCE_REFRESH_LIMIT=30 SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-source-content.mjs
 
+      - name: Reframe source briefs as fact, change and implication
+        run: node scripts/reframe-source-briefs.mjs
+
       - name: Localise distinct source-page sentences
         run: python scripts/translate_summarize.py
 

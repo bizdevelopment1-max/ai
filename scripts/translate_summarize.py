@@ -256,6 +256,7 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
     accepted = fallback = 0
     for item, title, excerpt, language, loc in work:
         lines = loc["sourceLines"]
+        roles = list(item.get("summaryRoles") or [])[:len(lines)]
         code = source_language_code(language)
         try:
             if code == "ko" or has_korean(title):
@@ -271,7 +272,7 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
             if len({clean(line).casefold() for line in ko_lines}) != len(ko_lines):
                 raise ValueError("duplicate-translated-lines")
             if valid_korean(ko_title, title) and all(valid_korean(line, source) for line, source in zip(ko_lines, lines)):
-                item["localization"] = {**loc, "status": "accepted", "displayLanguage": "ko", "title": ko_title, "summaryLines": ko_lines, "provider": "public-source-translation", "issues": []}
+                item["localization"] = {**loc, "status": "accepted", "displayLanguage": "ko", "title": ko_title, "summaryLines": ko_lines, "summaryRoles": roles, "provider": "public-source-translation", "issues": []}
                 item["titleKo"] = ko_title
                 item["summaryLinesKo"] = ko_lines
                 if item.get("house"):
@@ -290,7 +291,7 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
             # scheduled pipeline or making one card visually inconsistent.
             fallback_title = bulletize_korean(title)
             fallback_lines = [bulletize_korean(line) for line in lines]
-            item["localization"] = {**loc, "status": "fallback-english", "displayLanguage": "en", "title": fallback_title, "summaryLines": fallback_lines, "provider": "public-source-translation", "issues": [str(exc)[:120]]}
+            item["localization"] = {**loc, "status": "fallback-english", "displayLanguage": "en", "title": fallback_title, "summaryLines": fallback_lines, "summaryRoles": roles, "provider": "public-source-translation", "issues": [str(exc)[:120]]}
             # Do not put an English fallback into the research briefing. The
             # original record and its source text remain in the expanding DB,
             # and the next scheduled run retries the source-bound translation.

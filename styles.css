@@ -716,6 +716,8 @@ a[href]:hover .rainbow-on-hover,
 .art-summary { font-size: 12px; font-weight: 500; color: var(--muted); line-height: 1.55; text-wrap: pretty; margin-top: 2px; white-space: pre-line; }
 .art-sum-line { display: block; position: relative; padding-left: 16px; margin-top: 2px; }
 .art-sum-line::before { content: "•"; position: absolute; left: 2px; top: 0; color: var(--accent); font-size: 11px; font-weight: 900; }
+.art-insight-role { display: inline-block; margin: 0 6px 0 0; padding: 1px 5px; border-radius: 4px; color: color-mix(in srgb, var(--accent) 82%, var(--ink)); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); font-size: 9px; font-style: normal; font-weight: 850; letter-spacing: .01em; line-height: 1.35; vertical-align: 1px; }
+.art:hover .art-insight-role, .art-sel .art-insight-role { color: #fff; background: rgba(255,255,255,.18); }
 .d-compact .art-summary { display: none; }
 .feed-list { display: flex; flex-direction: column; gap: 2px; padding-top: 4px; }
 .art-date {
@@ -1888,6 +1890,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ib-feed-title > b { display: block; color: var(--ink); font-weight: 700; }
 .ib-feed-title em { display: block; font-style: normal; color: var(--muted); font-weight: 500; margin-top: 5px; line-height: 1.58; white-space: pre-line; }
 .ib-feed-title .art-sum-line { padding-left: 16px; }
+.ib-feed-title .art-insight-role { font-size: 8.5px; }
 .ib-feed-meta { flex-shrink: 0; font-family: var(--f); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
 
 /* 기업 테이블 라이브 최신 기사 칩 */

@@ -333,16 +333,20 @@ function hlBrief(text, keyBase) {
 }
 
 // Render a feed summary as up to 3 개조식 lines (제목 한글 + 3줄 요약 정책).
-function BoldSummary({ text }) {
+const INSIGHT_ROLE_LABEL = { fact: "핵심 사실", change: "시장 변화", implication: "사업 의미", evidence: "추가 근거" };
+function BoldSummary({ text, roles = [] }) {
   if (!text) return null;
   const clean = bulletText(
     String(text).replace(/<[^>]+>/g, "") // strip stray HTML (e.g. <font color>)
       .replace(/2026[.\-](\d{1,2})[.\-](\d{1,2})/g, (_, m, d) => `${+m}/${+d}`)
   );
   const lines = clean.split(/\n+/).map(l => l.trim()).filter(Boolean).slice(0, 3);   // 최대 3줄
-  if (lines.length <= 1) return <span className="art-sum-line">{hlBrief(clean, "s")}</span>;
+  if (lines.length <= 1) return <span className="art-sum-line">{roles[0] && <i className="art-insight-role">{INSIGHT_ROLE_LABEL[roles[0]] || INSIGHT_ROLE_LABEL.evidence}</i>}{hlBrief(clean, "s")}</span>;
   return lines.map((line, i) => (
-    <span className="art-sum-line" key={i}>{hlBrief(bulletText(line.replace(/^[·\-•]\s*/, "")), "l" + i)}</span>
+    <span className="art-sum-line" key={i}>
+      {roles[i] && <i className="art-insight-role">{INSIGHT_ROLE_LABEL[roles[i]] || INSIGHT_ROLE_LABEL.evidence}</i>}
+      {hlBrief(bulletText(line.replace(/^[·\-•]\s*/, "")), "l" + i)}
+    </span>
   ));
 }
 
@@ -353,9 +357,14 @@ function displayFeedText(item) {
   const lines = Array.isArray(loc?.summaryLines) && loc.summaryLines.length >= 1
     ? loc.summaryLines
     : (item?.summaryLinesKo || (item?.sum ? [item.sum] : null));
+  const roles = Array.isArray(loc?.summaryRoles) && loc.summaryRoles.length
+    ? loc.summaryRoles
+    : (Array.isArray(item?.summaryRoles) ? item.summaryRoles : []);
   return {
     title: loc?.title || item?.titleKo || item?.title || "",
     summary: lines ? lines.join("\n") : (item?.summary || item?.desc || ""),
+    lines: lines || [],
+    roles,
     translated: loc?.status === "accepted" && loc?.displayLanguage === "ko",
     fallback: loc?.status === "fallback-english",
   };
@@ -484,7 +493,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     <span className="art-verify">{display.translated ? "원문 번역" : display.fallback ? "원문 영어" : "원문 발췌"}</span>
                   </span>
                   <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{hlBrief(display.title, "art-title")}</a>
-                  {display.summary && <span className="art-summary"><BoldSummary text={display.summary} /></span>}
+                  {display.summary && <span className="art-summary"><BoldSummary text={display.summary} roles={display.roles} /></span>}
                 </div>
                 {pendingDel === keyOf(a) ? (
                   <div className="art-del-pw" onClick={e => e.stopPropagation()}>
@@ -1841,14 +1850,14 @@ function IBInsightBoard({ research, reports, sectionRef }) {
       {feed.length > 0 && (
         <div className="ib-feed">
           <div className="ib-feed-head">
-            <h3>증권사·기관 리서치 피드</h3>
+            <h3>증권사·기관 리서치 피드 <em>원문 근거 기반 · 핵심 사실 · 시장 변화 · 사업 의미</em></h3>
             {feed.length > 8 && <button onClick={() => setShowAll(s => !s)}>{showAll ? "접기" : `전체 ${Math.min(feed.length, 20)}건`}</button>}
           </div>
           {feedRows.map((f, i) => {
             const display = displayFeedText(f);
             return <a className="ib-feed-row" key={f.url || i} href={f.url} target="_blank" rel="noopener">
               <span className={"ib-house " + (f.type === "Securities" ? "sec" : "mkt")}>{f.house}</span>
-              <span className="ib-feed-title"><b>{hlBrief(display.title, "ib-title")}</b>{display.summary && <em><BoldSummary text={display.summary} /></em>}</span>
+              <span className="ib-feed-title"><b>{hlBrief(display.title, "ib-title")}</b>{display.summary && <em><BoldSummary text={display.summary} roles={display.roles} /></em>}</span>
               <span className="ib-feed-meta">{f.source} · {f.date && f.date.slice(5)}</span>
               <Icon name="ext" size={11} />
               <DelBtn item={f} />

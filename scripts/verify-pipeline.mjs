@@ -143,14 +143,26 @@ function cleanLocalizationText(value) {
     .replace(/&#x([\da-f]+);?/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
     .replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">").replace(/&quot;/gi, '"').replace(/&#39;/gi, "'")
+    .replace(/&zwnj;/gi, "\u200c").replace(/&zwj;/gi, "\u200d")
     .replace(/&mdash;/gi, "—").replace(/&ndash;/gi, "–").replace(/&apos;/gi, "'")
     .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+// Verification may need to repair a stale localization after a source excerpt
+// changes. Keep that English fallback in the same compact bullet style as the
+// normal localization job, without modifying the source-bound evidence lines.
+function compactFallbackText(value) {
+  return cleanLocalizationText(value)
+    .replace(/\b(\d{4})\.(\d{1,2})\.(\d{1,2})\b/g, "$1-$2-$3")
+    .replace(/(?<=[A-Za-z])\.(?=[A-Za-z])/g, "·")
+    .replace(/([^0-9])\.(?=\s+)/g, "$1 ·")
+    .replace(/([^0-9])\.(?=["”’']?\s*$)/g, "$1")
+    .replace(/[。!?]+$/g, "").trim();
 }
 function localizationHash(title, excerpt) {
   return createHash("sha256").update(`${cleanLocalizationText(title)}\n${cleanLocalizationText(excerpt)}`).digest("hex");
 }
 function fallbackLines(title, excerpt, source, date) {
-  return cleanLocalizationText(excerpt).split(/\n+/).map(cleanLocalizationText).filter(Boolean).slice(0, 3);
+  return cleanLocalizationText(excerpt).split(/\n+/).map(compactFallbackText).filter(Boolean).slice(0, 3);
 }
 function validLocalization(input, title, excerpt) {
   const loc = input?.localization;
@@ -166,7 +178,20 @@ function validLocalization(input, title, excerpt) {
     && typeof loc.title === "string" && Array.isArray(loc.summaryLines) && loc.summaryLines.length >= 1 && loc.summaryLines.length <= 3;
   if ((accepted || fallback) && sourceBound && hashMatches) return { ...loc, sourceLines };
   const lines = sourceLines.length >= 1 ? sourceLines.slice(0, 3) : fallbackLines(title, excerpt, input?.source, input?.date);
-  return { version: 12, status: "fallback-english", displayLanguage: "en", title: cleanLocalizationText(title), summaryLines: lines, sourceLines: lines, sourceHash: localizationHash(title, excerpt), checkedAt: now.toISOString(), method: "verification-fallback", issues: ["localization-verification-failed"] };
+  const evidenceLines = sourceLines.length >= 1 ? sourceLines.slice(0, 3) : fallbackLines(title, excerpt, input?.source, input?.date);
+  return {
+    version: 13,
+    status: "fallback-english",
+    displayLanguage: "en",
+    title: compactFallbackText(title),
+    summaryLines: evidenceLines.map(compactFallbackText),
+    summaryRoles: Array.isArray(input?.summaryRoles) ? input.summaryRoles.slice(0, evidenceLines.length) : [],
+    sourceLines: evidenceLines,
+    sourceHash: localizationHash(title, excerpt),
+    checkedAt: now.toISOString(),
+    method: "verification-fallback",
+    issues: ["localization-verification-failed"],
+  };
 }
 const derivedSourceStatus = item => item?.sourceSummaryMode === "source-content-extractive"
   ? directSourceStatus(item)

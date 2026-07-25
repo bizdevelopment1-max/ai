@@ -8,6 +8,7 @@ const required = [
   "scripts/crawl-news.mjs",
   "scripts/source-content.mjs",
   "scripts/refresh-source-content.mjs",
+  "scripts/reframe-source-briefs.mjs",
   "scripts/crawl-stocks.mjs",
   "scripts/crawl-markets.mjs",
   "scripts/market-db.mjs",
@@ -158,6 +159,34 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  실패  article source boundary: ${error.message}`);
+}
+
+try {
+  const [{ selectInsightLines }, workflow, reframe, boards, styles] = await Promise.all([
+    import("./source-content.mjs"),
+    readFile(".github/workflows/daily-news.yml", "utf8"),
+    readFile("scripts/reframe-source-briefs.mjs", "utf8"),
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+  ]);
+  const selected = selectInsightLines([
+    "Every vendor claims to be AI-powered, but few will show how their systems work.",
+    "Worldwide spending is projected to reach $64 billion in 2026, up 63.4 percent from 2025.",
+    "ARM-based rack-scale servers overtook x86 as the leading accelerated computing platform.",
+    "This means buyers need to compare cost, performance, and operating efficiency before committing capacity.",
+  ].join(" "));
+  const lines = selected.map(item => item.line);
+  const roles = selected.map(item => item.role);
+  if (selected.length !== 3 || lines.some(line => /Every vendor claims/i.test(line))
+    || !roles.includes("fact") || !roles.includes("change") || !roles.includes("implication")
+    || !/reframe-source-briefs\.mjs/.test(workflow) || !/selectionVersion/.test(reframe)
+    || !/summaryRoles/.test(boards) || !/art-insight-role/.test(styles)) {
+    throw new Error("visible source briefs need non-redundant fact, change, and implication lines with a retained-source reframe path");
+  }
+  console.log("  OK  source briefs select fact, change and implication without publisher boilerplate");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  source brief framing: ${error.message}`);
 }
 
 try {
@@ -326,11 +355,18 @@ try {
   });
   const terminalProse = /(?:다|[。])(?:["”’']?\s*)$/;
   const sentencePeriod = /(^|[^0-9])\.(?=\s|["”’']?$)/;
-  if (!/function bulletText\(/.test(boards)
-    || !/bulletText\(op\.thesis\)/.test(boards)
-    || /bulletText\(op\.(?:conclusion|watch)\)/.test(boards)
-    || displayTexts.some(text => terminalProse.test(text) || sentencePeriod.test(text))) {
-    throw new Error("display copy must use compact bullet phrasing without sentence-final dots or -다 endings");
+  const malformedDisplay = displayTexts.filter(text => terminalProse.test(text) || sentencePeriod.test(text));
+  const bulletFunctionPresent = /function bulletText\(/.test(boards);
+  const thesisUsesBulletText = /bulletText\(op\.thesis\)/.test(boards);
+  const removedCopyRendered = /bulletText\(op\.(?:conclusion|watch)\)/.test(boards);
+  if (!bulletFunctionPresent || !thesisUsesBulletText || removedCopyRendered || malformedDisplay.length) {
+    const causes = [
+      !bulletFunctionPresent && "bulletText-missing",
+      !thesisUsesBulletText && "thesis-not-bulletized",
+      removedCopyRendered && "removed-copy-rendered",
+      malformedDisplay.length && `bad-display:${malformedDisplay.slice(0, 2).join(" | ")}`,
+    ].filter(Boolean).join(", ");
+    throw new Error(`display copy must use compact bullet phrasing without sentence-final dots or -다 endings (${causes})`);
   }
   console.log(`  정상  노출 원문 번역 ${displayTexts.length}줄 · 개조식·마침표·다체 종결 검증`);
 } catch (error) {

@@ -9,7 +9,11 @@ import { createHash } from "node:crypto";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const MAX_TEXT = 12_000;
-const JUNK = /(?:^|\b)(?:advertisement|advertising|affiliate commission|purchase through links|subscribe|sign up|read more|cookie|privacy policy|all rights reserved|share this article|follow us|related articles?|news tips|newsletters?|get this delivered to your inbox|confidential news tip|data is a real-time snapshot|global business and financial news|stock quotes and market data|sorry, an error occurred while processing your request|we(?:'|’)re aware of the situation and are working to address the problem)(?:\b|$)/i;
+const JUNK = /(?:^|\b)(?:advertisement|advertising|affiliate commission|purchase through links|subscribe|sign up|read more|cookie|privacy policy|all rights reserved|share this article|follow us|related articles?|news tips|newsletters?|get this delivered to your inbox|confidential news tip|data is a real-time snapshot|global business and financial news|stock quotes and market data|sorry, an error occurred while processing your request|we(?:'|’)re aware of the situation and are working to address the problem|we harness every resource|our award-winning podcast|we help entrepreneurs|proactive financial news|all our content is produced independently|our human content creators|request a demo|talk to your .* team|no new portal|no new login|see how it works|what it means for your organization|already use.*tools)(?:\b|$)/i;
+const GENERIC_LEDE = /(?:^|\b)(?:every vendor claims|this is what actually happens|you don['’]t have to take .* word for it|at the .* webinar|here['’]s what .* says|that['’]s the theory|elsewhere in the workforce|the team delivers news|we are experts in|we(?:'|’)re focused on providing|stay ahead in a rapidly evolving market|whether you['’]re driving innovation|everything you need to track the market|the architecture.*easier to evaluate|you know|i mean|all right|thanks for joining|today is|i['’]m .* (?:here|with)|trading floor)(?:\b|$)/i;
+const FACT_TERMS = /(?:\$|€|£|\b\d+(?:\.\d+)?\s*(?:%|percent|per cent|billion|million|trillion|basis points?|bps|years?|months?)\b|\b(?:forecast|forecasted|project(?:s|ed|ion)?|estimate(?:s|d)?|expect(?:s|ed)?|reached|total(?:s|ed)?|grew|growth|rose|fell|declin(?:e|ed|ing)|increase(?:d)?|decrease(?:d)?|up|down|share|spending|revenue|sales|demand|supply|capacity|capex|investment|adoption|usage)\b)/i;
+const CHANGE_TERMS = /\b(?:overtook|surpassed|shift(?:ed|ing)?|moved|launched|introduced|expanded|accelerat(?:ed|ing)|transition(?:ed|ing)?|displace(?:d|s|ment)|prioriti[sz](?:ed|ing)|tight(?:ened|ness)|eas(?:ed|ing)|recover(?:ed|y)|normaliz(?:ed|ing)|restore(?:d|s|ing)?|rebalance(?:d|s|ing)?)\b/i;
+const IMPACT_TERMS = /\b(?:therefore|consequently|means?|because|driven by|due to|impact|risk|pressure|benefit|supports?|enables?|requires?|need(?:s|ed)?|helps?|competition|cost|margin|efficien(?:cy|t))\b/i;
 
 export const cleanText = value => String(value || "")
   .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
@@ -111,17 +115,87 @@ const splitSentences = text => {
   }
 };
 
-export function selectCoreLines(text, title = "") {
+function insightRole(line) {
+  // A sentence can contain a metric and an implication. The implication role
+  // is more useful for a three-part brief, so classify it first.
+  if (IMPACT_TERMS.test(line)) return "implication";
+  if (/(?:ため|より|必要|課題|影響|可能)/.test(line)) return "implication";
+  if (CHANGE_TERMS.test(line)) return "change";
+  if (/(?:高ま|増加|増え|伸び|上回|下回|拡大|転換)/.test(line)) return "change";
+  if (FACT_TERMS.test(line)) return "fact";
+  if (/[０-９0-9][％%]/.test(line)) return "fact";
+  return "evidence";
+}
+
+function titleRelevance(line, title) {
+  const ignored = new Set(["the", "and", "with", "from", "that", "this", "will", "into", "over", "says", "said", "how", "for"]);
+  const titleWords = new Set(normal(title).split(" ").filter(word => word.length >= 4 && !ignored.has(word)));
+  if (!titleWords.size) return 0;
+  const lineWords = new Set(normal(line).split(" "));
+  let matches = 0;
+  for (const word of titleWords) if (lineWords.has(word)) matches++;
+  return Math.min(matches, 4) * 3;
+}
+
+function insightScore(line, index, role, title) {
+  const numeric = (line.match(/(?:\$|€|£|\b\d)/g) || []).length;
+  const fact = FACT_TERMS.test(line) ? 8 : 0;
+  const change = CHANGE_TERMS.test(line) ? 5 : 0;
+  const impact = IMPACT_TERMS.test(line) ? 4 : 0;
+  const named = /\b(?:according to|reported|said|announced|survey|tracker|study|research)\b/i.test(line) ? 3 : 0;
+  // Later paragraphs are usually the evidence and implication, rather than
+  // boilerplate page introductions. Keep a small early-position preference.
+  return fact + change + impact + named + titleRelevance(line, title) + Math.min(numeric, 4) * 2 + Math.max(0, 3 - index * 0.16) + (role === "evidence" ? 0 : 2);
+}
+
+function numericClaimTokens(line) {
+  return [...String(line || "").matchAll(/(?:\$|€|£)?\d+(?:\.\d+)?(?:%|percent|per cent|billion|million|trillion|bp|bps)?/gi)]
+    .map(match => match[0].toLowerCase().replace(/\s+/g, ""))
+    .filter(token => !/^20(?:2\d|3\d)$/.test(token));
+}
+
+function repeatsPrimaryFact(candidate, selected) {
+  if (candidate.role !== "fact") return false;
+  const candidateTokens = new Set(numericClaimTokens(candidate.line));
+  if (!candidateTokens.size) return false;
+  return selected.some(previous => {
+    if (previous.role !== "fact") return false;
+    const previousTokens = numericClaimTokens(previous.line);
+    return previousTokens.some(token => candidateTokens.has(token));
+  });
+}
+
+// Select source sentences for three distinct jobs: the verifiable fact, the
+// market change, and its practical implication. This is extractive only — it
+// never adds a claim that does not appear in the publisher text.
+export function selectInsightLines(text, title = "") {
   const candidates = splitSentences(text)
-    .filter(line => line.length >= 45 && line.length <= 460 && !JUNK.test(line))
-    .filter(line => similarity(line, title) < 0.87);
+    .map((line, index) => ({ line, index }))
+    .filter(({ line }) => line.length >= 45 && line.length <= 460 && !JUNK.test(line) && !GENERIC_LEDE.test(line))
+    .filter(({ line }) => similarity(line, title) < 0.87)
+    .map(item => ({ ...item, role: insightRole(item.line) }))
+    .map(item => ({ ...item, score: insightScore(item.line, item.index, item.role, title) }))
+    .sort((a, b) => b.score - a.score || a.index - b.index);
+
   const selected = [];
-  for (const line of candidates) {
-    if (selected.some(previous => similarity(previous, line) > 0.72)) continue;
-    selected.push(line);
-    if (selected.length === 3) break;
+  const take = candidate => {
+    if (!candidate || selected.some(previous => similarity(previous.line, candidate.line) > 0.68) || repeatsPrimaryFact(candidate, selected)) return false;
+    selected.push(candidate);
+    return true;
+  };
+
+  // Use each role at most once before filling remaining slots. This prevents
+  // three translations of the same fact from becoming a visibly repetitive brief.
+  for (const role of ["fact", "change", "implication"]) take(candidates.find(candidate => candidate.role === role));
+  for (const candidate of candidates) {
+    if (selected.length >= 3) break;
+    take(candidate);
   }
-  return selected;
+  return selected.slice(0, 3).map(({ line, role }) => ({ line, role }));
+}
+
+export function selectCoreLines(text, title = "") {
+  return selectInsightLines(text, title).map(item => item.line);
 }
 
 async function resolveGoogleNews(url) {
@@ -173,7 +247,8 @@ export async function enrichSourceRecord(record) {
     }
     if (malformedEncoding(headline) || paragraphs.some(malformedEncoding)) throw new Error("malformed-source-encoding");
     const sourceText = paragraphs.join("\n\n").slice(0, MAX_TEXT);
-    const summaryLinesEn = selectCoreLines(sourceText, headline);
+    const insightLines = selectInsightLines(sourceText, headline);
+    const summaryLinesEn = insightLines.map(item => item.line);
     // The research feed promises a three-point brief. Keep a record with
     // thinner evidence in the append-only data set, but do not surface it
     // until three distinct publisher sentences can support the display.
@@ -201,12 +276,13 @@ export async function enrichSourceRecord(record) {
       titleEn: headline,
       descEn: description || record.descEn || record.desc || "",
       summaryLinesEn,
+      summaryRoles: insightLines.map(item => item.role),
       summary: summaryLinesEn.join("\n"),
-      summaryVersion: 4,
+      summaryVersion: 5,
       summaryMode: "source-content-extractive",
       summaryEngine: "source-content-extractive",
       displayEligible: true,
-      sourceContent,
+      sourceContent: { ...sourceContent, selectionVersion: 7 },
     };
   } catch (error) {
     return {
@@ -231,7 +307,7 @@ export async function enrichSourceBatch(records, concurrency = 4) {
   return out;
 }
 
-export const isContentBacked = record => record?.summaryVersion === 4
+export const isContentBacked = record => Number(record?.summaryVersion) >= 4
   && record?.summaryMode === "source-content-extractive"
   && record?.displayEligible === true
   && record?.sourceContent?.status === "content-extracted"
