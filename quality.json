@@ -1,38 +1,38 @@
 {
-  "generatedAt": "2026-07-25T05:07:56.898Z",
+  "generatedAt": "2026-07-25T05:10:28.262Z",
   "overall": "warn",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
-  "summary": "검증 16개 · 정상 12 · 주의 4 · 실패 0",
+  "summary": "검증 16개 · 정상 13 · 주의 3 · 실패 0",
   "checks": [
     {
       "id": "news-coverage",
       "label": "뉴스 수집",
       "status": "ok",
-      "value": "93건"
+      "value": "82건"
     },
     {
       "id": "source-backed",
       "label": "원문 스니펫 근거",
       "status": "ok",
-      "value": "50/93건"
+      "value": "73/82건"
     },
     {
       "id": "source-content-mode",
       "label": "원문 본문 추출",
       "status": "ok",
-      "value": "49/93건"
+      "value": "72/82건"
     },
     {
       "id": "feed-localization",
       "label": "기사 한국어 표시·영문 폴백",
       "status": "ok",
-      "value": "한국어 92 · 영문 폴백 1"
+      "value": "한국어 81 · 영문 폴백 1"
     },
     {
       "id": "collection-health",
       "label": "수집 스트림 상태",
-      "status": "warn",
-      "value": "실패 1 · 빈 스트림 5"
+      "status": "ok",
+      "value": "실패 0 · 빈 스트림 6"
     },
     {
       "id": "briefing-evidence",
@@ -62,13 +62,13 @@
       "id": "infra-evidence",
       "label": "인프라 시그널 근거",
       "status": "warn",
-      "value": "0/88건"
+      "value": "24/103건"
     },
     {
       "id": "bizmodel-evidence",
       "label": "수익화 시그널 근거",
       "status": "warn",
-      "value": "0/21건"
+      "value": "2/23건"
     },
     {
       "id": "research-source",
@@ -80,7 +80,7 @@
       "id": "research-localization",
       "label": "리서치 3줄 표시",
       "status": "ok",
-      "value": "한국어 54 · 영문 폴백 1"
+      "value": "한국어 52 · 영문 폴백 3"
     },
     {
       "id": "market-source",
@@ -102,21 +102,21 @@
     }
   ],
   "metrics": {
-    "currentArticles": 93,
-    "accumulatedArticles": 129,
-    "sourceBackedArticles": 50,
-    "sourceExcerptArticles": 49,
-    "localizedArticles": 92,
+    "currentArticles": 82,
+    "accumulatedArticles": 153,
+    "sourceBackedArticles": 73,
+    "sourceExcerptArticles": 72,
+    "localizedArticles": 81,
     "localizedFallbackArticles": 1,
-    "limitedArticles": 43,
-    "limitedRate": 0.46236559139784944,
+    "limitedArticles": 9,
+    "limitedRate": 0.10975609756097561,
     "freshStocks": 25,
     "totalStocks": 25,
-    "linkedInfra": 0,
-    "linkedBizmodel": 0,
+    "linkedInfra": 24,
+    "linkedBizmodel": 2,
     "linkedResearch": 55,
-    "localizedResearch": 54,
-    "localizedFallbackResearch": 1,
+    "localizedResearch": 52,
+    "localizedFallbackResearch": 3,
     "linkedMarket": 29,
     "linkedMarketRecords": 44,
     "consumerSurveyRecords": 5
@@ -124,41 +124,37 @@
   "sources": {
     "news": {
       "TechCrunch": 14,
-      "Wired": 4,
       "Engadget": 4,
-      "AI Business": 4,
+      "Wired": 4,
       "ZDNet": 4,
       "The Decoder": 4,
       "The Verge": 5,
-      "The Register": 3,
-      "MIT Tech Review": 4,
+      "The Register": 2,
+      "MIT Tech Review": 3,
       "SiliconANGLE": 2,
-      "Axios": 2,
-      "WSJ": 2,
+      "AI Business": 1,
       "Ars Technica": 2,
+      "WSJ": 2,
       "CNBC": 5,
       "IEEE Spectrum": 2,
-      "Bloomberg.com": 1,
       "Android Authority": 1,
-      "qz.com": 2,
       "VentureBeat": 5,
       "Business Insider": 3,
-      "Reuters": 3,
-      "Data Center Dynamics": 1,
-      "South China Morning Post": 1,
+      "Reuters": 2,
       "MacRumors": 1,
+      "Fortune": 2,
       "US News (Reuters)": 1,
       "BNN Bloomberg (Reuters)": 1,
       "WXYZ Detroit": 1,
       "Anthropic": 1,
       "The Information": 1,
+      "Axios": 1,
       "TrendForce": 2,
       "WIRED": 1,
-      "The Guardian": 1,
       "GlobeNewswire": 1,
+      "The Guardian": 1,
       "Goldman Sachs": 1,
       "Seoul Economic Daily": 1,
-      "Fortune": 1,
       "Morgan Stanley": 1
     },
     "stocks": {
@@ -166,32 +162,28 @@
     }
   },
   "collection": {
-    "generatedAt": "2026-07-25T04:44:13.100Z",
-    "mode": "source-excerpt",
-    "policyVersion": 1,
+    "generatedAt": "2026-07-25T05:09:06.513Z",
+    "mode": "source-content-extractive",
+    "policyVersion": 2,
     "streams": {
       "googleNews": 33,
       "directRss": 14
     },
     "acceptedCandidates": 60,
-    "failedStreams": [
-      {
-        "stream": "rss:The Register",
-        "error": "HTTP 403"
-      }
-    ],
+    "failedStreams": [],
     "emptyStreams": [
       "google-news:Amazon",
       "rss:Ars Technica",
       "rss:Hugging Face",
       "rss:VentureBeat",
-      "rss:SiliconANGLE"
+      "rss:SiliconANGLE",
+      "rss:The Register"
     ],
-    "status": "partial"
+    "status": "ok"
   },
   "notices": [
     "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",
-    "검증 제한 기사 비율: 46.2% (43/93)",
+    "검증 제한 기사 비율: 11.0% (9/82)",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
     "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다."
