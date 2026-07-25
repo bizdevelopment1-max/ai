@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-25T03:38:23.189Z",
+  "generatedAt": "2026-07-25T04:43:45.607Z",
   "overall": "warn",
-  "policy": "뉴스는 원문 제목·RSS 스니펫에서 정제한 발췌만 표시하며, 생성형 요약·번역 API를 사용하지 않습니다. 규칙 기반 해석은 원문 사실과 분리해 표시합니다.",
-  "summary": "검증 14개 · 정상 10 · 주의 4 · 실패 0",
+  "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
+  "summary": "검증 16개 · 정상 12 · 주의 4 · 실패 0",
   "checks": [
     {
       "id": "news-coverage",
@@ -21,6 +21,12 @@
       "label": "생성 없는 원문 발췌",
       "status": "warn",
       "value": "42/95건"
+    },
+    {
+      "id": "feed-localization",
+      "label": "기사 한국어 표시·영문 폴백",
+      "status": "ok",
+      "value": "한국어 95 · 영문 폴백 0"
     },
     {
       "id": "collection-health",
@@ -71,6 +77,12 @@
       "value": "55/55건"
     },
     {
+      "id": "research-localization",
+      "label": "리서치 3줄 표시",
+      "status": "ok",
+      "value": "한국어 55 · 영문 폴백 0"
+    },
+    {
       "id": "market-source",
       "label": "시장 데이터 원문 링크",
       "status": "warn",
@@ -94,6 +106,8 @@
     "accumulatedArticles": 123,
     "sourceBackedArticles": 42,
     "sourceExcerptArticles": 42,
+    "localizedArticles": 95,
+    "localizedFallbackArticles": 0,
     "limitedArticles": 53,
     "limitedRate": 0.5578947368421052,
     "freshStocks": 25,
@@ -101,6 +115,8 @@
     "linkedInfra": 10,
     "linkedBizmodel": 2,
     "linkedResearch": 55,
+    "localizedResearch": 55,
+    "localizedFallbackResearch": 0,
     "linkedMarket": 29,
     "linkedMarketRecords": 44,
     "consumerSurveyRecords": 5
@@ -170,7 +186,7 @@
     "status": "ok"
   },
   "notices": [
-    "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 자동 생성 요약이 아닙니다.",
+    "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",
     "검증 제한 기사 비율: 55.8% (53/95)",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",

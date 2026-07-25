@@ -1,7 +1,7 @@
 {
   "version": 1,
   "summaryMode": "source-excerpt",
-  "summaryPolicy": "News cards display only an unmodified, cleaned publisher/RSS excerpt. No generative AI or translation API is called by the collection pipeline.",
+  "summaryPolicy": "News facts remain unmodified, cleaned publisher/RSS excerpts. The display layer translates only those stored source fragments and records their hash; it never generates a summary. If translation is unavailable or fails quality checks, it displays the original language.",
   "displayPolicy": "Only records verified against their stored publisher headline and RSS snippet are shown in the main feed. Rule-based interpretation is separately labelled and never treated as a source fact.",
   "excludedTerms": ["삼성", "samsung", "갤럭시", "galaxy", "MX"],
   "excludedTermsReason": "Configured product-scope exclusion for this dashboard. The rule is applied at collection time; existing records remain in the cumulative history ledger."

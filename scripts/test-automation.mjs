@@ -11,6 +11,7 @@ const required = [
   "scripts/market-db.mjs",
   "scripts/global-sources.mjs",
   "scripts/build-browser-bundle.mjs",
+  "scripts/translate_summarize.py",
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
   "scripts/audit-agent.mjs",
@@ -100,6 +101,29 @@ try {
   console.error(`  실패  증권사·기관 리서치 3줄 핵심: ${error.message}`);
 }
 
+try {
+  const news = JSON.parse(await readFile("news.json", "utf8"));
+  const research = JSON.parse(await readFile("research.json", "utf8"));
+  const records = [...(news.articles || []), ...(research.feed || [])];
+  const valid = record => {
+    const loc = record.localization || {};
+    return ["accepted", "fallback-english"].includes(loc.status)
+      && ["ko", "en"].includes(loc.displayLanguage)
+      && typeof loc.title === "string" && loc.title.trim().length > 1
+      && Array.isArray(loc.sourceLines) && loc.sourceLines.length === 3
+      && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3
+      && /^[a-f0-9]{64}$/i.test(loc.sourceHash || "");
+  };
+  if (!records.length || !records.every(valid)) {
+    throw new Error("every crawled article and research row needs a source-hashed Korean translation or English fallback with exactly three display lines");
+  }
+  const translated = records.filter(record => record.localization.status === "accepted").length;
+  console.log(`  정상  전체 피드 3줄 표시 ${records.length}건 · 한국어 ${translated}건 · 영문 폴백 ${records.length - translated}건`);
+} catch (error) {
+  failed = true;
+  console.error(`  실패  전체 피드 번역·폴백: ${error.message}`);
+}
+
 const major = Number(process.versions.node.split(".")[0]);
 if (major < 20) {
   failed = true;
@@ -132,11 +156,11 @@ try {
   if (policy.summaryMode !== "source-excerpt" || health.externalModelApiCalls !== 0) {
     throw new Error("source-only policy or model API health declaration is invalid");
   }
-  const sources = await Promise.all(pipelineScripts.concat(["scripts/llm.mjs"]).map(file => readFile(file, "utf8")));
+  const sources = await Promise.all(pipelineScripts.concat(["scripts/llm.mjs", "scripts/translate_summarize.py"]).map(file => readFile(file, "utf8")));
   if (sources.some(source => /api\.anthropic\.com|models\.github\.ai|@anthropic-ai\/sdk/.test(source))) {
     throw new Error("a model API endpoint or SDK remains in an active pipeline source");
   }
-  console.log("  정상  source-only summary policy (external AI API calls: 0)");
+  console.log("  정상  source-only facts + source-bound translated display (external AI API calls: 0)");
 } catch (error) {
   failed = true;
   console.error(`  실패  source-only policy: ${error.message}`);

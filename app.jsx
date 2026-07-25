@@ -455,6 +455,8 @@ function AuditPanel({ audit, quality, llmHealth, collectionHealth, sectionRef })
                 <span>누적 기사 <b>{quality.metrics.accumulatedArticles}</b></span>
                 <span>원문 근거 <b>{quality.metrics.sourceBackedArticles}</b></span>
                 <span>원문 발췌 <b>{quality.metrics.sourceExcerptArticles || 0}</b></span>
+                <span>한글 표시 <b>{quality.metrics.localizedArticles || 0}</b></span>
+                <span>영문 폴백 <b>{quality.metrics.localizedFallbackArticles || 0}</b></span>
                 <span>제한 비율 <b>{((quality.metrics.limitedRate || 0) * 100).toFixed(1)}%</b></span>
                 <span>최신 주가 <b>{quality.metrics.freshStocks}/{quality.metrics.totalStocks}</b></span>
               </div>

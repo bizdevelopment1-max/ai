@@ -31,8 +31,16 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Setup Python for source-fragment translation
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Crawl publisher and RSS source excerpts
         run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
+
+      - name: Localise article and research feeds from stored source fragments
+        run: python scripts/translate_summarize.py
 
       - name: Build deterministic insights and briefing
         run: node scripts/run-with-retry.mjs scripts/build-insights.mjs

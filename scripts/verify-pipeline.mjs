@@ -7,6 +7,7 @@
  * non-zero when the publishable bundle is critically incomplete.
  */
 import { readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { isExcludedText } from "./news-policy.mjs";
 
 const DAY = 86_400_000;
@@ -79,9 +80,11 @@ for (const input of news.articles || []) {
   if (extraNumbers.length) issues.push("numbers-not-in-source-snippet");
 
   const verificationStatus = issues.length === 0 ? "source-backed" : "limited";
+  const localization = validLocalization(input, input.titleEn || input.title, input.descEn || input.summary);
   const item = {
     ...input,
     url,
+    ...(localization ? { localization } : {}),
     provenance: {
       status: verificationStatus,
       evidenceType: input.descEn ? "publisher-or-rss-snippet" : "headline-only",
@@ -122,6 +125,41 @@ const directSourceStatus = item => {
   if (url && validHttp(url)) return { status: "source-linked", evidenceCount: 1, checkedAt: now.toISOString() };
   return { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() };
 };
+
+// Korean is a display-only translation of source snippets. Any stale,
+// malformed, or untraceable translation is replaced by the original language.
+function cleanLocalizationText(value) {
+  return String(value || "")
+    .replace(/&#(\d+);?/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([\da-f]+);?/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
+    .replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">").replace(/&quot;/gi, '"').replace(/&#39;/gi, "'")
+    .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+function localizationHash(title, excerpt) {
+  return createHash("sha256").update(`${cleanLocalizationText(title)}\n${cleanLocalizationText(excerpt)}`).digest("hex");
+}
+function fallbackLines(title, excerpt, source, date) {
+  const first = cleanLocalizationText(title);
+  const second = cleanLocalizationText(excerpt) || first;
+  return [first, second, `Source: ${cleanLocalizationText(source) || "Original publisher"} · ${cleanLocalizationText(date) || "publication date not supplied"}`];
+}
+function validLocalization(input, title, excerpt) {
+  const loc = input?.localization;
+  if (!loc) return null;
+  const sourceLines = Array.isArray(loc.sourceLines) ? loc.sourceLines.map(cleanLocalizationText) : [];
+  const evidence = cleanLocalizationText(`${title} ${excerpt}`);
+  const sourceBound = sourceLines.length === 3 && sourceLines.slice(0, 2).every(line => line && evidence.includes(line));
+  const hashMatches = loc.sourceHash === localizationHash(title, excerpt);
+  const korean = text => /[가-힣]/.test(String(text || ""));
+  const accepted = loc.status === "accepted" && loc.displayLanguage === "ko" && korean(loc.title)
+    && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3 && loc.summaryLines.slice(0, 2).every(korean);
+  const fallback = loc.status === "fallback-english" && loc.displayLanguage === "en"
+    && typeof loc.title === "string" && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3;
+  if ((accepted || fallback) && sourceBound && hashMatches) return { ...loc, sourceLines };
+  const lines = sourceLines.length === 3 ? sourceLines : fallbackLines(title, excerpt, input?.source, input?.date);
+  return { version: 1, status: "fallback-english", displayLanguage: "en", title: cleanLocalizationText(title), summaryLines: lines, sourceLines: lines, sourceHash: localizationHash(title, excerpt), checkedAt: now.toISOString(), method: "verification-fallback", issues: ["localization-verification-failed"] };
+}
 const derivedSourceStatus = item => item?.sourceSummaryMode === "source-excerpt"
   ? directSourceStatus(item)
   : { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() };
@@ -131,7 +169,10 @@ for (const day of briefing.days || []) {
 }
 insights.cards = (insights.cards || []).map(card => ({ ...card, provenance: verifyEvidenceList(card.evidence) }));
 radar.picks = (radar.picks || []).map(pick => ({ ...pick, provenance: verifyEvidenceList(pick.evidence) }));
-research.feed = (research.feed || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
+research.feed = (research.feed || []).map(item => {
+  const localization = validLocalization(item, item.title, item.desc || item.title);
+  return { ...item, ...(localization ? { localization } : {}), provenance: directSourceStatus(item) };
+});
 if (research.onepager) research.onepager = { ...research.onepager, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString(), issues: ["generated-or-legacy-synthesis-not-publishable"] } };
 research.pinned = (research.pinned || []).map(brief => {
   const valid = brief?.provenance?.status === "user-provided-source"
@@ -170,10 +211,14 @@ const linkedBriefs = (briefing.days?.[0]?.items || []).filter(x => x.provenance?
 const linkedInsights = (insights.cards || []).filter(x => x.provenance?.status === "evidence-linked").length;
 const backedArticles = currentArticles.filter(a => a.provenance.status === "source-backed").length;
 const sourceExcerptArticles = currentArticles.filter(a => a.summaryMode === "source-excerpt").length;
+const localizedArticles = currentArticles.filter(a => a.localization?.status === "accepted").length;
+const localizedFallbackArticles = currentArticles.filter(a => a.localization?.status === "fallback-english").length;
 const limitedRate = currentArticles.length ? articleIssues.length / currentArticles.length : 1;
 const linkedInfra = (infra.items || []).filter(item => item.provenance?.status === "evidence-linked").length;
 const linkedBizmodel = (bizmodel.items || []).filter(item => item.provenance?.status === "evidence-linked").length;
 const linkedResearch = (research.feed || []).filter(item => item.provenance?.status !== "reference-only").length;
+const localizedResearch = (research.feed || []).filter(item => item.localization?.status === "accepted").length;
+const localizedFallbackResearch = (research.feed || []).filter(item => item.localization?.status === "fallback-english").length;
 const linkedMarket = (market.items || []).filter(item => item.provenance?.status !== "reference-only").length;
 const linkedMarketRecords = (market.records || []).filter(record => record.provenance?.status !== "reference-only").length;
 const consumerSurveyRecords = (market.records || []).filter(record => record.type === "consumer-survey" && record.provenance?.status !== "reference-only").length;
@@ -182,6 +227,7 @@ const checks = [
   { id: "news-coverage", label: "뉴스 수집", status: currentArticles.length >= 20 ? "ok" : "fail", value: `${currentArticles.length}건` },
   { id: "source-backed", label: "원문 스니펫 근거", status: backedArticles >= Math.max(10, currentArticles.length * 0.35) ? "ok" : "warn", value: `${backedArticles}/${currentArticles.length}건` },
   { id: "source-excerpt-mode", label: "생성 없는 원문 발췌", status: sourceExcerptArticles >= Math.max(10, currentArticles.length * 0.8) ? "ok" : "warn", value: `${sourceExcerptArticles}/${currentArticles.length}건` },
+  { id: "feed-localization", label: "기사 한국어 표시·영문 폴백", status: localizedArticles + localizedFallbackArticles >= Math.max(10, currentArticles.length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedArticles} · 영문 폴백 ${localizedFallbackArticles}` },
   { id: "collection-health", label: "수집 스트림 상태", status: collectionHealth.status === "ok" ? "ok" : collectionHealth.status === "partial" ? "warn" : "fail", value: `실패 ${(collectionHealth.failedStreams || []).length} · 빈 스트림 ${(collectionHealth.emptyStreams || []).length}` },
   { id: "briefing-evidence", label: "브리핑 근거 연결", status: linkedBriefs > 0 ? "ok" : "fail", value: `${linkedBriefs}건` },
   { id: "insight-evidence", label: "인사이트 근거 연결", status: linkedInsights > 0 ? "ok" : "warn", value: `${linkedInsights}건` },
@@ -190,6 +236,7 @@ const checks = [
   { id: "infra-evidence", label: "인프라 시그널 근거", status: linkedInfra >= Math.max(3, (infra.items || []).length * 0.5) ? "ok" : "warn", value: `${linkedInfra}/${(infra.items || []).length}건` },
   { id: "bizmodel-evidence", label: "수익화 시그널 근거", status: linkedBizmodel >= Math.max(3, (bizmodel.items || []).length * 0.5) ? "ok" : "warn", value: `${linkedBizmodel}/${(bizmodel.items || []).length}건` },
   { id: "research-source", label: "리서치 원문 링크", status: linkedResearch >= Math.max(3, (research.feed || []).length * 0.5) ? "ok" : "warn", value: `${linkedResearch}/${(research.feed || []).length}건` },
+  { id: "research-localization", label: "리서치 3줄 표시", status: localizedResearch + localizedFallbackResearch >= Math.max(3, (research.feed || []).length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedResearch} · 영문 폴백 ${localizedFallbackResearch}` },
   { id: "market-source", label: "시장 데이터 원문 링크", status: linkedMarket >= Math.max(10, (market.items || []).length * 0.8) ? "ok" : "warn", value: `${linkedMarket}/${(market.items || []).length}건` },
   { id: "market-db-source", label: "신사업 정량 DB 원문 링크", status: linkedMarketRecords >= Math.max(3, (market.records || []).length * 0.95) ? "ok" : "warn", value: `${linkedMarketRecords}/${(market.records || []).length}건` },
   { id: "consumer-survey-coverage", label: "소비자 조사 레코드", status: consumerSurveyRecords >= 2 ? "ok" : "warn", value: `${consumerSurveyRecords}건` },
@@ -201,7 +248,7 @@ const overall = fails ? "fail" : warns ? "warn" : "ok";
 const quality = {
   generatedAt: now.toISOString(),
   overall,
-  policy: "뉴스는 원문 제목·RSS 스니펫에서 정제한 발췌만 표시하며, 생성형 요약·번역 API를 사용하지 않습니다. 규칙 기반 해석은 원문 사실과 분리해 표시합니다.",
+  policy: "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   summary: `검증 ${checks.length}개 · 정상 ${checks.length - fails - warns} · 주의 ${warns} · 실패 ${fails}`,
   checks,
   metrics: {
@@ -209,6 +256,8 @@ const quality = {
     accumulatedArticles: historyArticles.length,
     sourceBackedArticles: backedArticles,
     sourceExcerptArticles,
+    localizedArticles,
+    localizedFallbackArticles,
     limitedArticles: articleIssues.length,
     limitedRate,
     freshStocks: stockFresh,
@@ -216,6 +265,8 @@ const quality = {
     linkedInfra,
     linkedBizmodel,
     linkedResearch,
+    localizedResearch,
+    localizedFallbackResearch,
     linkedMarket,
     linkedMarketRecords,
     consumerSurveyRecords,
@@ -223,7 +274,7 @@ const quality = {
   sources: { news: sourceCountsNews, stocks: sourceCounts },
   collection: collectionHealth,
   notices: [
-    "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 자동 생성 요약이 아닙니다.",
+    "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",
     `검증 제한 기사 비율: ${(limitedRate * 100).toFixed(1)}% (${articleIssues.length}/${currentArticles.length})`,
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
@@ -238,6 +289,8 @@ const runs = [...(priorHistory.runs || []), {
   articles: currentArticles.length,
   sourceBacked: backedArticles,
   sourceExcerpt: sourceExcerptArticles,
+  localized: localizedArticles,
+  localizationFallback: localizedFallbackArticles,
   limited: articleIssues.length,
   freshStocks: stockFresh,
   status: overall,
@@ -245,14 +298,15 @@ const runs = [...(priorHistory.runs || []), {
 
 news.articles = currentArticles;
 news.count = currentArticles.length;
-news.quality = { sourceBacked: backedArticles, sourceExcerpt: sourceExcerptArticles, limited: articleIssues.length, limitedRate };
+news.quality = { sourceBacked: backedArticles, sourceExcerpt: sourceExcerptArticles, localized: localizedArticles, localizationFallback: localizedFallbackArticles, limited: articleIssues.length, limitedRate };
 
 const llmHealth = {
   generatedAt: now.toISOString(),
-  mode: "not-used",
+  mode: "source-fragment-localization",
   summaryEngine: "source-excerpt",
   externalModelApiCalls: 0,
-  policy: "No generative model/API is used in the data collection and news summary path. Rule-based analysis is separately labelled as unverified interpretation.",
+  policy: "Source facts remain publisher/RSS excerpts. Korean display text translates only stored source fragments and retains their hash; no generative model API is used. Failed quality checks or translation errors display the original language.",
+  displayLocalization: "source-fragment-translation-with-english-fallback",
   articleSummaryModes: { sourceExcerpt: sourceExcerptArticles, legacyOrLimited: currentArticles.length - sourceExcerptArticles },
 };
 

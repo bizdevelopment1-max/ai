@@ -1,215 +1,241 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""Build source-traceable Korean display text for the live feeds.
+
+This is a localisation job, never a fact-generation or summarisation job. It
+does not change the source-evidence fields used by the verification pipeline.
+Each displayed line is translated from a stored publisher/RSS fragment and the
+original fragments plus a source hash remain in the published record.
+
+The service request contains only public headline/snippet text. If the
+translation endpoint is unavailable or its output fails the Korean quality
+gate, the browser displays the original language instead. This makes a partial
+network failure safe and prevents malformed Korean from being published.
 """
-무료·오프라인 영어→한국어 번역 + 추출식(Extractive) 요약 — API 키 불필요.
 
-목적: crawl-news.mjs 이후에도 한국어로 번역되지 않고 영어로 남은 기사 요약을
-      로컬 무료 모델로 번역·요약해 채운다(할루시네이션 0 — 원문 번역·문장 추출만).
+from __future__ import annotations
 
-파이프라인(모두 CPU·오프라인, GitHub Actions Ubuntu 러너 4GB RAM 안):
-  · 번역: Helsinki-NLP/opus-mt-en-ko (MarianMT, ~300MB) — EN→KO
-  · 요약: 번역된 한국어 본문에서 핵심 문장 3~5개 추출
-          (sumy LexRank 사용 가능 시 랭킹, 아니면 문장 슬라이스) → 개조식(명사형·마침표 제거)
-
-결과가 news.json에 커밋되므로 사용자 브라우저 부하 0.
-라이브러리/모델 다운로드 실패 시 graceful하게 건너뛴다(기존 동작 보존, exit 0).
-
-대안(무거워서 기본 비활성): 신경망 요약 csebuetnlp/mT5_multilingual_XLSum(~2.3GB).
-환경변수 USE_MT5=1 이면 번역본을 mT5로 추상 요약(러너 메모리 여유 시).
-"""
-import json, os, re, sys
-
-NEWS = os.environ.get("NEWS_JSON", "news.json")
-MAX_ITEMS = int(os.environ.get("TRANSLATE_MAX", "60"))     # 러너 시간 보호(1회 상한)
+import hashlib
+import html
+import json
+import os
+import re
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 
-def is_korean(s):
-    return bool(re.search(r"[가-힣]", s or ""))
+ROOT = Path(os.environ.get("LOCALIZE_ROOT", "."))
+NEWS_PATH = ROOT / os.environ.get("NEWS_JSON", "news.json")
+RESEARCH_PATH = ROOT / os.environ.get("RESEARCH_JSON", "research.json")
+MAX_ITEMS = int(os.environ.get("TRANSLATE_MAX", "500"))
+TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
+LANG_CODES = {
+    "english": "en", "en": "en", "japanese": "ja", "french": "fr",
+    "spanish": "es", "portuguese": "pt", "german": "de", "italian": "it",
+    "korean": "ko",
+}
+BAD_OUTPUT = re.compile(r"<unk>|</?s>|\b(?:nan|none|undefined)\b", re.I)
+HANGUL = re.compile(r"[가-힣]")
+KOREAN_CHAR = re.compile(r"[가-힣ㄱ-ㅎㅏ-ㅣ]")
+SENTENCE_SPLIT = re.compile(r"(?<=[.!?。！？])\s+|\s*[;；]\s+|\s+—\s+|\s+–\s+")
+CLAUSE_SPLIT = re.compile(r"\s*,\s+|\s*:\s+")
 
 
-def has_korean_summary(a):
-    sm = a.get("summary", "")
-    lines = [l.strip() for l in sm.split("\n") if l.strip()]
-    return is_korean(a.get("title", "")) and is_korean(sm) and len(lines) >= 2
+def clean(value: object) -> str:
+    value = html.unescape(str(value or ""))
+    value = re.sub(r"<[^>]+>", " ", value)
+    return re.sub(r"\s+", " ", value).strip()
 
 
-# 개조식 변환(JS nounize 포팅): 서술/존댓말 종결 → 명사형, 끝 마침표 제거
-NOUN_END = [
-    (r"하고 있습니다$", ""), (r"하고 있다$", ""), (r"되고 있습니다$", "됨"), (r"되고 있다$", "됨"),
-    (r"합니다$", "함"), (r"입니다$", "임"), (r"됩니다$", "됨"), (r"있습니다$", "있음"), (r"없습니다$", "없음"),
-    (r"([가-힣])습니다$", r"\1음"), (r"한다$", "함"), (r"된다$", "됨"), (r"이다$", "임"), (r"있다$", "있음"),
-    (r"없다$", "없음"), (r"했다$", "했음"), (r"였다$", "였음"), (r"([가-힣])었다$", r"\1었음"), (r"([가-힣])았다$", r"\1았음"),
-]
+def has_korean(value: str) -> bool:
+    return bool(KOREAN_CHAR.search(value or ""))
 
 
-def nounize(line):
-    l = re.sub(r"[.。]+\s*$", "", (line or "").strip())
-    for pat, rep in NOUN_END:
-        if re.search(pat, l):
-            l = re.sub(pat, rep, l)
+def source_hash(title: str, excerpt: str) -> str:
+    return hashlib.sha256(f"{title}\n{excerpt}".encode("utf-8")).hexdigest()
+
+
+def canonical_fragments(title: str, excerpt: str, source: str, date: str) -> list[str]:
+    """Create exactly three source-bound display lines without new facts."""
+    title, excerpt = clean(title), clean(excerpt)
+    pieces: list[str] = []
+    if excerpt and excerpt.casefold() != title.casefold():
+        raw = [part.strip() for part in SENTENCE_SPLIT.split(excerpt) if len(part.strip()) >= 12]
+        if len(raw) == 1:
+            clauses = [part.strip() for part in CLAUSE_SPLIT.split(raw[0]) if len(part.strip()) >= 18]
+            if len(clauses) > 1:
+                raw = clauses
+        pieces.extend(raw)
+    if title and title not in pieces:
+        pieces.insert(0, title)
+
+    unique: list[str] = []
+    for piece in pieces:
+        key = re.sub(r"\W+", "", piece).casefold()
+        if key and not any(re.sub(r"\W+", "", old).casefold() == key for old in unique):
+            unique.append(piece[:500])
+        if len(unique) >= 3:
             break
-    return re.sub(r"[.。]+\s*$", "", l).strip()
+    while len(unique) < 2 and title:
+        unique.append(title)
+    if len(unique) < 3:
+        unique.append(f"Source: {clean(source) or 'Original publisher'} · {clean(date) or 'publication date not supplied'}")
+    return unique[:3]
 
 
-def ko_sentences(text):
-    # 한국어/영어 혼용 문장 분리(마침표·물음표·느낌표·종결어미 뒤)
-    parts = re.split(r"(?<=[.!?。])\s+", (text or "").strip())
-    return [p.strip() for p in parts if len(p.strip()) > 1]
+def valid_korean(text: str, source: str) -> bool:
+    text = clean(text)
+    if len(text) < 3 or len(text) > max(700, len(source) * 5 + 80):
+        return False
+    if BAD_OUTPUT.search(text) or "�" in text or "http://" in text or "https://" in text:
+        return False
+    letters = re.findall(r"[A-Za-z가-힣]", text)
+    return bool(letters) and len(HANGUL.findall(text)) >= 2 and len(HANGUL.findall(text)) / len(letters) >= 0.12
 
 
-def main():
-    try:
-        data = json.load(open(NEWS, encoding="utf-8"))
-    except Exception as e:
-        print("[translate] news.json 없음 — skip:", e)
-        return
-    arts = data.get("articles", [])
-    todo = [a for a in arts if not has_korean_summary(a) and (a.get("descEn") or a.get("titleEn") or a.get("title"))]
-    if not todo:
-        print("[translate] 한국어 번역이 필요한 영어 기사 없음")
-        return
-    todo = todo[:MAX_ITEMS]
+class SourceTranslator:
+    """Batched public-source translation with cache and bounded retry."""
 
-    # 지연 임포트 — 미설치/다운로드 실패 시 기존 동작 보존
-    try:
-        import torch
-        import transformers  # noqa: F401  (설치 여부 확인)
-    except Exception as e:
-        print("[translate] transformers/torch 없음 — skip:", e)
-        return
+    def __init__(self) -> None:
+        self.cache: dict[tuple[str, str], str] = {}
+        self.calls = 0
 
-    # 다중 후보 로더 — 경량 OPUS-MT-TC(en→ko) 우선, 실패 시 다국어 m2m100(확실히 존재)로 폴백.
-    # (구 'opus-mt-en-ko' 바이링궐 모델은 HF에 없어 404 → tc-big / m2m100 사용)
-    def load_translator():
-        # 1) Helsinki OPUS-MT-TC big en→ko (MarianMT, 경량·빠름)
-        try:
-            from transformers import MarianMTModel, MarianTokenizer
-            m = "Helsinki-NLP/opus-mt-tc-big-en-ko"
-            tk = MarianTokenizer.from_pretrained(m)
-            md = MarianMTModel.from_pretrained(m)
-            md.eval()
-
-            def tr(text):
-                b = tk([text], return_tensors="pt", truncation=True, max_length=512, padding=True)
-                with torch.no_grad():
-                    g = md.generate(**b, max_length=256, num_beams=2)
-                return tk.decode(g[0], skip_special_tokens=True).strip()
-
-            print("[translate] 모델 로드 성공: opus-mt-tc-big-en-ko")
-            return tr
-        except Exception as e:
-            print("[translate] opus-mt-tc-big-en-ko 실패 → m2m100 시도:", str(e)[:140])
-        # 2) facebook/m2m100_418M (다국어, ko 지원, 확실히 존재)
-        try:
-            from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
-            m = "facebook/m2m100_418M"
-            tk = M2M100Tokenizer.from_pretrained(m)
-            md = M2M100ForConditionalGeneration.from_pretrained(m)
-            md.eval()
-            ko_id = tk.get_lang_id("ko")
-
-            def tr(text):
-                tk.src_lang = "en"
-                b = tk([text], return_tensors="pt", truncation=True, max_length=512)
-                with torch.no_grad():
-                    g = md.generate(**b, forced_bos_token_id=ko_id, max_length=256, num_beams=2)
-                return tk.batch_decode(g, skip_special_tokens=True)[0].strip()
-
-            print("[translate] 모델 로드 성공: m2m100_418M")
-            return tr
-        except Exception as e:
-            print("[translate] m2m100_418M 로드 실패 — skip:", str(e)[:140])
-        return None
-
-    tr = load_translator()
-    if tr is None:
-        return
-
-    # 선택: sumy LexRank(추출 랭킹). 없으면 문장 슬라이스로 폴백
-    summarizer = None
-    try:
-        from sumy.parsers.plaintext import PlaintextParser
-        from sumy.nlp.tokenizers import Tokenizer
-        from sumy.summarizers.lex_rank import LexRankSummarizer
-        summarizer = (PlaintextParser, Tokenizer, LexRankSummarizer())
-    except Exception:
-        summarizer = None
-
-    def translate(text, max_sents=6):
-        text = (text or "").strip()
-        if not text:
-            return ""
-        sents = re.split(r"(?<=[.!?])\s+", text)[:max_sents]
-        out = []
-        for s in sents:
-            s = s.strip()
-            if not s:
-                continue
+    def _request(self, text: str, source_language: str) -> str:
+        query = urlencode({"client": "gtx", "sl": source_language, "tl": "ko", "dt": "t", "q": text})
+        request = Request(f"{TRANSLATE_URL}?{query}", headers={"User-Agent": "Mozilla/5.0 (compatible; AI-Feed-Localizer/1.0)", "Accept": "application/json"})
+        last_error: Exception | None = None
+        for attempt in range(3):
             try:
-                out.append(tr(s))
-            except Exception:
-                pass
-        return " ".join([o for o in out if o])
+                with urlopen(request, timeout=20) as response:
+                    payload = json.loads(response.read().decode("utf-8"))
+                self.calls += 1
+                return "".join(str(part[0] or "") for part in (payload[0] or []))
+            except Exception as exc:  # network errors deliberately become English fallback
+                last_error = exc
+                time.sleep(0.5 * (attempt + 1))
+        raise RuntimeError(f"translation-request-failed:{type(last_error).__name__}")
 
-    def extract(ko_text, n=3):
-        sents = ko_sentences(ko_text)
-        if len(sents) <= n:
-            return sents
-        if summarizer:
-            try:
-                Parser, Tokr, summ = summarizer
-                parser = Parser.from_string(ko_text, Tokr("english"))
-                picks = [str(s) for s in summ(parser.document, n)]
-                if picks:
-                    return picks
-            except Exception:
-                pass
-        return sents[:n]
+    def translate_many(self, pairs: list[tuple[str, str]]) -> dict[tuple[str, str], str]:
+        pending = [(clean(text), LANG_CODES.get((language or "").casefold(), "auto")) for text, language in pairs if clean(text)]
+        pending = list(dict.fromkeys(pair for pair in pending if pair not in self.cache))
+        by_language: dict[str, list[str]] = {}
+        for text, language in pending:
+            by_language.setdefault(language, []).append(text)
+        for language, texts in by_language.items():
+            chunk: list[str] = []
+            for text in texts:
+                if chunk and sum(len(value) for value in chunk) + len(text) + 40 > 3600:
+                    self._translate_chunk(chunk, language)
+                    chunk = []
+                chunk.append(text)
+            if chunk:
+                self._translate_chunk(chunk, language)
+        return self.cache
 
-    use_mt5 = os.environ.get("USE_MT5") == "1"
-    mt5 = None
-    if use_mt5:
-        try:
-            from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-            mt = "csebuetnlp/mT5_multilingual_XLSum"
-            mt5 = (AutoTokenizer.from_pretrained(mt), AutoModelForSeq2SeqLM.from_pretrained(mt))
-        except Exception as e:
-            print("[translate] mT5 로드 실패 — 추출식으로 진행:", e)
-            mt5 = None
+    def _translate_chunk(self, texts: list[str], language: str) -> None:
+        markers = [f"<<<AIFB{index:03d}>>>" for index in range(len(texts) - 1)]
+        joined = texts[0]
+        for marker, text in zip(markers, texts[1:]):
+            joined += f"\n{marker}\n{text}"
+        translated = self._request(joined, language)
+        parts = re.split(r"\s*<<<AIFB\d{3}>>>\s*", translated)
+        if len(parts) != len(texts):
+            # Do not guess segment boundaries. Smaller requests retain a safe
+            # fallback path and make endpoint quirks local to one fragment.
+            for text in texts:
+                self.cache[(text, language)] = self._request(text, language)
+            return
+        for text, result in zip(texts, parts):
+            self.cache[(text, language)] = clean(result)
 
-    done = 0
-    for a in todo:
-        src = a.get("descEn") or a.get("titleEn") or a.get("title") or ""
-        ko_title = translate(a.get("titleEn") or a.get("title") or "", max_sents=1)
-        ko_body = translate(src, max_sents=6)
-        if not is_korean(ko_body):
+
+def new_localization(item: dict, title: str, excerpt: str, language: str) -> dict:
+    title, excerpt = clean(title), clean(excerpt)
+    digest = source_hash(title, excerpt)
+    previous = item.get("localization") or {}
+    # A successful translation is cached until its source changes. A fallback
+    # is deliberately retried on the next scheduled run so a transient
+    # translation outage does not become permanent English display.
+    if previous.get("version") == 2 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
+        return previous
+    return {
+        "version": 2,
+        "sourceHash": digest,
+        "sourceLines": canonical_fragments(title, excerpt, item.get("source", ""), item.get("date", "")),
+        "checkedAt": datetime.now(timezone.utc).isoformat(),
+        "method": "source-fragment-translation",
+        "sourceLanguage": language or "English",
+    }
+
+
+def source_language_code(language: str) -> str:
+    return LANG_CODES.get((language or "").strip().casefold(), "auto")
+
+
+def localize_records(records: list[tuple[dict, str, str, str]], translator: SourceTranslator) -> tuple[int, int, int]:
+    work: list[tuple[dict, str, str, str, dict]] = []
+    queries: list[tuple[str, str]] = []
+    for item, title, excerpt, language in records:
+        loc = new_localization(item, title, excerpt, language)
+        item["localization"] = loc
+        if loc.get("status") in {"accepted", "fallback-english"}:
             continue
-        if mt5:
-            try:
-                mtok, mmodel = mt5
-                inp = mtok([ko_body], return_tensors="pt", truncation=True, max_length=512)
-                with torch.no_grad():
-                    g = mmodel.generate(**inp, max_length=140, num_beams=4, no_repeat_ngram_size=2)
-                abstract = mtok.decode(g[0], skip_special_tokens=True)
-                picks = ko_sentences(abstract) or [abstract]
-            except Exception:
-                picks = extract(ko_body, 3)
-        else:
-            picks = extract(ko_body, 3)
-        summary = "\n".join("· " + nounize(re.sub(r"^[·\-•]\s*", "", p)) for p in picks if p.strip())
-        if not summary:
-            continue
-        if is_korean(ko_title):
-            a["title"] = nounize(ko_title)
-        a["summary"] = summary
-        a["engine"] = "local-mt"          # 무료 로컬 번역(opus-mt) + 추출식 요약
-        a["needsLLM"] = False
-        done += 1
+        work.append((item, clean(title), clean(excerpt), language, loc))
+        if source_language_code(language) != "ko" and not has_korean(title):
+            queries.append((title, language))
+            queries.extend((line, language) for line in loc["sourceLines"] if not line.startswith("Source:"))
 
-    data["articles"] = arts
-    json.dump(data, open(NEWS, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
-    open(NEWS, "a", encoding="utf-8").write("\n")
-    print(f"[translate] {done}건 로컬 번역·요약 완료 (Helsinki opus-mt-en-ko + {'mT5' if mt5 else 'LexRank/슬라이스'})")
+    translations = translator.translate_many(queries) if queries else {}
+    accepted = fallback = 0
+    for item, title, excerpt, language, loc in work:
+        lines = loc["sourceLines"]
+        code = source_language_code(language)
+        try:
+            if code == "ko" or has_korean(title):
+                ko_title = title
+                ko_lines = [line.replace("Source:", "원문 출처:") if line.startswith("Source:") else line for line in lines]
+            else:
+                ko_title = translations[(title, code)]
+                ko_lines = [line.replace("Source:", "원문 출처:") if line.startswith("Source:") else translations[(line, code)] for line in lines]
+            if valid_korean(ko_title, title) and all(valid_korean(line, source) for line, source in zip(ko_lines[:2], lines[:2])):
+                item["localization"] = {**loc, "status": "accepted", "displayLanguage": "ko", "title": ko_title, "summaryLines": ko_lines, "provider": "public-source-translation", "issues": []}
+                item["titleKo"] = ko_title
+                item["summaryLinesKo"] = ko_lines
+                accepted += 1
+            else:
+                raise ValueError("korean-quality-gate-failed")
+        except Exception as exc:
+            item["localization"] = {**loc, "status": "fallback-english", "displayLanguage": "en", "title": title, "summaryLines": lines, "provider": "public-source-translation", "issues": [str(exc)[:120]]}
+            fallback += 1
+    return len(work), accepted, fallback
+
+
+def read_json(path: Path, fallback: dict) -> dict:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"[localize] {path} read failed: {exc}")
+        return fallback
+
+
+def write_json(path: Path, value: dict) -> None:
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def main() -> None:
+    news = read_json(NEWS_PATH, {"articles": []})
+    research = read_json(RESEARCH_PATH, {"feed": []})
+    translator = SourceTranslator()
+    news_rows = [(item, item.get("titleEn") or item.get("title") or "", item.get("descEn") or item.get("summary") or "", "English") for item in (news.get("articles") or [])[:MAX_ITEMS]]
+    research_rows = [(item, item.get("title") or "", item.get("desc") or item.get("title") or "", item.get("sourceLanguage") or "English") for item in (research.get("feed") or [])[:MAX_ITEMS]]
+    changed_news, accepted_news, fallback_news = localize_records(news_rows, translator)
+    changed_research, accepted_research, fallback_research = localize_records(research_rows, translator)
+    write_json(NEWS_PATH, news)
+    write_json(RESEARCH_PATH, research)
+    print(f"[localize] changed {changed_news + changed_research}; Korean {accepted_news + accepted_research}; English fallback {fallback_news + fallback_research}; translation requests {translator.calls}")
 
 
 if __name__ == "__main__":

@@ -241,16 +241,17 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           <h4>관련 뉴스 <em>{rel.length}건</em></h4>
           <div className="cd-news">
             {rel.length === 0 && <span className="cd-empty">관련 기사가 없습니다</span>}
-            {rel.map((a, i) => (
-              <a key={i} className="cd-art" href={a.url} target="_blank" rel="noopener">
+            {rel.map((a, i) => {
+              const display = displayFeedText(a);
+              return <a key={i} className="cd-art" href={a.url} target="_blank" rel="noopener">
                 <span className="cd-art-dot" style={{ background: cat.accent }} />
                 <span className="cd-art-body">
                   <span className="cd-art-meta"><em>{a.source}</em><span className="cd-art-date">{fmtPubKo(pubOf(a))}</span><span className="cd-art-tag" style={{ color: cat.accent, background: cat.accentSoft }}>{a.tag}</span></span>
-                  <span className="cd-art-title">{a.title}</span>
-                  {a.summary && <span className="cd-art-sum"><BoldSummary text={a.summary} /></span>}
+                  <span className="cd-art-title">{display.title}</span>
+                  {display.summary && <span className="cd-art-sum"><BoldSummary text={display.summary} /></span>}
                 </span>
-              </a>
-            ))}
+              </a>;
+            })}
           </div>
         </div>
 
@@ -297,6 +298,21 @@ function BoldSummary({ text }) {
   return lines.map((line, i) => (
     <span className="art-sum-line" key={i}>{hlNums(line.replace(/^[·\-•]\s*/, "").replace(/[.。]+\s*$/, ""), "l" + i)}</span>
   ));
+}
+
+// Korean is display-only localisation. The source title/excerpt remain intact
+// for evidence verification; a failed quality gate deliberately shows English.
+function displayFeedText(item) {
+  const loc = item && item.localization;
+  const lines = Array.isArray(loc?.summaryLines) && loc.summaryLines.length === 3
+    ? loc.summaryLines
+    : (item?.summaryLinesKo || (item?.sum ? [item.sum] : null));
+  return {
+    title: loc?.title || item?.titleKo || item?.title || "",
+    summary: lines ? lines.join("\n") : (item?.summary || item?.desc || ""),
+    translated: loc?.status === "accepted" && loc?.displayLanguage === "ko",
+    fallback: loc?.status === "fallback-english",
+  };
 }
 
 // ---- Article feed: category filter → company dropdown, deletable rows ----
@@ -357,7 +373,11 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
     .filter(a => filter === "all" || a.cat === filter)
     .filter(a => co === "all" || a.co === co)
     .filter(a => !deleted[keyOf(a)])
-    .filter(a => !query || a.title.toLowerCase().includes(query.toLowerCase()) || a.source.toLowerCase().includes(query.toLowerCase()) || (a.co || "").toLowerCase().includes(query.toLowerCase()));
+    .filter(a => {
+      const display = displayFeedText(a);
+      const haystack = `${a.title || ""} ${display.title || ""} ${a.source || ""} ${a.co || ""}`.toLowerCase();
+      return !query || haystack.includes(query.toLowerCase());
+    });
 
   const sorted = [...filtered].sort((a, b) => pubOf(b).localeCompare(pubOf(a)));
   const activeCat = filter !== "all" ? catMap[filter] : null;
@@ -372,7 +392,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
         <span className="board-tab" style={{ background: "var(--ink)" }} />
         <div className="board-titles">
           <h2>데일리 기사 피드 <span className="board-en">Daily Articles · 업체별 외신 큐레이션</span></h2>
-          <p>원문 링크·수집 시각·검증 상태를 표시합니다 · ✕로 불필요한 기사 삭제</p>
+          <p>한글 제목·원문 기반 3줄 브리핑을 표시합니다 · 번역 품질 미달 시 영문 원문으로 자동 전환 · ✕로 불필요한 기사 삭제</p>
         </div>
         <div className="feed-filters">
           <button className={filter === "all" ? "on" : ""} onClick={() => onFilter("all")}>전체</button>
@@ -402,6 +422,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
           {shown.map((a, i) => {
             const c = catMap[a.cat] || {};
             const isSel = selKey === keyOf(a);
+            const display = displayFeedText(a);
             return (
               <div className={"art" + (isSel ? " art-sel" : "")} key={keyOf(a)}
                 onClick={() => setSelKey(isSel ? null : keyOf(a))}>
@@ -412,11 +433,11 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     {a.co && <span className="art-co" style={{ color: c.accent, borderColor: c.accent }}>{a.co}</span>}
                     <span className="art-tag" style={{ color: c.accent, background: c.accentSoft }}>{a.tag}</span>
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
-                    <span className="art-verify">원문 발췌</span>
+                    <span className="art-verify">{display.translated ? "원문 번역" : display.fallback ? "원문 영어" : "원문 발췌"}</span>
                     {a.collectedAt && <span className="art-collected">수집 {String(a.collectedAt).slice(0, 10)}</span>}
                   </span>
-                  <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{a.title}</a>
-                  {a.summary && <span className="art-summary"><BoldSummary text={a.summary} /></span>}
+                  <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{display.title}</a>
+                  {display.summary && <span className="art-summary"><BoldSummary text={display.summary} /></span>}
                 </div>
                 {pendingDel === keyOf(a) ? (
                   <div className="art-del-pw" onClick={e => e.stopPropagation()}>
@@ -1809,18 +1830,19 @@ function IBInsightBoard({ research, reports, sectionRef }) {
       {feed.length > 0 && (
         <div className="ib-feed">
           <div className="ib-feed-head">
-            <h3>증권사·기관 리서치 피드 <em>매일 자동 크롤링 · Morgan Stanley·Goldman Sachs·JPMorgan·UBS·TrendForce·IDC·Gartner 등</em></h3>
+            <h3>증권사·기관 리서치 피드 <em>매일 자동 크롤링 · 한글 제목·원문 기반 3줄 브리핑 · Morgan Stanley·Goldman Sachs·JPMorgan·UBS·TrendForce·IDC·Gartner 등</em></h3>
             {feed.length > 8 && <button onClick={() => setShowAll(s => !s)}>{showAll ? "접기" : `전체 ${Math.min(feed.length, 20)}건`}</button>}
           </div>
-          {feedRows.map((f, i) => (
-            <a className="ib-feed-row" key={f.url || i} href={f.url} target="_blank" rel="noopener">
+          {feedRows.map((f, i) => {
+            const display = displayFeedText(f);
+            return <a className="ib-feed-row" key={f.url || i} href={f.url} target="_blank" rel="noopener">
               <span className={"ib-house " + (f.type === "Securities" ? "sec" : "mkt")}>{f.house}</span>
-              <span className="ib-feed-title">{f.titleKo || f.title}{f.sum && <em> — {f.sum}</em>}</span>
+              <span className="ib-feed-title"><b>{display.title}</b>{display.summary && <em><BoldSummary text={display.summary} /></em>}</span>
               <span className="ib-feed-meta">{f.source} · {f.date && f.date.slice(5)}</span>
               <Icon name="ext" size={11} />
               <DelBtn item={f} />
-            </a>
-          ))}
+            </a>;
+          })}
         </div>
       )}
 

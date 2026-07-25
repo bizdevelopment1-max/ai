@@ -115,12 +115,18 @@ async function main() {
   // Keep a reviewed Korean title/summary if Google News returns the same
   // source again on a later crawl. The original title and link remain stored.
   const reviewedByUrl = new Map((prev.feed || [])
-    .filter(item => item.url && (item.titleKo || item.sum))
+    .filter(item => item.url && (item.titleKo || item.sum || item.localization))
     .map(item => [item.url, item]));
   const seen = new Set();
   const fresh = raw.filter(a => a.url && !seen.has(a.url) && seen.add(a.url)).map(item => {
     const reviewed = reviewedByUrl.get(item.url);
-    return reviewed ? { ...item, titleKo: reviewed.titleKo, sum: reviewed.sum } : item;
+    return reviewed ? {
+      ...item,
+      ...(reviewed.titleKo ? { titleKo: reviewed.titleKo } : {}),
+      ...(reviewed.sum ? { sum: reviewed.sum } : {}),
+      ...(reviewed.summaryLinesKo ? { summaryLinesKo: reviewed.summaryLinesKo } : {}),
+      ...(reviewed.localization ? { localization: reviewed.localization } : {}),
+    } : item;
   });
   // 이전 피드와 병합(30일 보존), 최신순
   const prevFeed = (prev.feed || []).filter(a => !seen.has(a.url) && seen.add(a.url));
