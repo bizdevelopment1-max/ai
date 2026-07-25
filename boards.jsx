@@ -932,6 +932,33 @@ function QuantInsightSlider({ data }) {
   );
 }
 
+function FundingTrendInsight({ data }) {
+  const latest = data[0];
+  const quarter = latest?.name.split(" ")[0];
+  const sameQuarterLastYear = latest ? data.slice(1).find(item => item.name.split(" ")[0] === quarter) : null;
+  const latestYear = Number(latest?.name.match(/\d{4}/)?.[0]);
+  const previousYear = latestYear - 1;
+  const sumYear = year => data
+    .filter(item => item.name.endsWith(String(year)))
+    .reduce((sum, item) => sum + item.value, 0);
+  const currentTotal = sumYear(previousYear);
+  const priorTotal = sumYear(previousYear - 1);
+  const change = (now, before) => before > 0 ? Math.round((now / before - 1) * 100) : null;
+  const yoy = latest && sameQuarterLastYear ? change(latest.value, sameQuarterLastYear.value) : null;
+  const annualChange = currentTotal && priorTotal ? change(currentTotal, priorTotal) : null;
+  const amount = value => `$${value.toFixed(1)}B`;
+
+  if (!latest || !sameQuarterLastYear || yoy == null || annualChange == null) return null;
+
+  return (
+    <aside className="funding-trend-insight" aria-label="AI 펀딩 추세 해석">
+      <span>READOUT · 분기별 집계</span>
+      <p><b>분기 회복</b><mark>{latest.name} {amount(latest.value)}</mark> · 전년 동기 {amount(sameQuarterLastYear.value)} 대비 <mark>+{yoy}%</mark></p>
+      <p><b>연간 확대</b><mark>{previousYear} 합계 {amount(currentTotal)}</mark> · {previousYear - 1} {amount(priorTotal)} 대비 <mark>+{annualChange}%</mark></p>
+    </aside>
+  );
+}
+
 // ---- Overview Charts (market-level donut + bar + area, no company names) ----
 function OverviewCharts({ data, cats, theme }) {
   const ref = React.useRef(null);
@@ -956,9 +983,10 @@ function OverviewCharts({ data, cats, theme }) {
           <div className="cc-head"><h3>AI 주요 딜</h3><span title="Crunchbase · PitchBook 기준">2025~2026 주요 투자</span></div>
           <DonutChart data={data.AI_DEALS} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} centerLabel="$97B" centerSub="AI 총 투자 (추정)" />
         </div>
-        <div className="ov-chart-card">
+        <div className="ov-chart-card funding-trend-card">
           <div className="cc-head"><h3>AI 펀딩 트렌드</h3><span title="Crunchbase 분기별 AI 벤처 펀딩">$B · 분기별 집계</span></div>
-          <HBarChart data={data.FUNDING_TREND} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="B" valuePrefix="$" />
+          <HBarChart data={data.FUNDING_TREND} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="B" valuePrefix="$" compact />
+          <FundingTrendInsight data={data.FUNDING_TREND} />
         </div>
         <QuantInsightSlider data={data} />
       </div>

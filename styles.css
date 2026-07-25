@@ -479,6 +479,16 @@ a[href]:hover .rainbow-on-hover,
 }
 .ov-chart-card:hover { transform: translateY(-2px) scale(1.005); box-shadow: var(--shadow-lg); background: var(--panel-2); }
 .ov-chart-card:hover .cc-head h3 { color: var(--accent); }
+.funding-trend-card .hbar-chart.hbar-compact { width: min(100%, 540px); margin: 0 auto 3px !important; }
+.funding-trend-insight {
+  width: min(100%, 540px); margin: 8px auto 0; padding: 9px 11px 8px;
+  border-top: 1px solid var(--line); display: grid; gap: 4px;
+  color: var(--ink-2); background: color-mix(in srgb, var(--accent) 3%, var(--panel));
+}
+.funding-trend-insight > span { color: var(--muted); font-family: var(--mono); font-size: 8.5px; font-weight: 900; letter-spacing: .1em; }
+.funding-trend-insight p { margin: 0; font-size: 10.5px; font-weight: 600; line-height: 1.5; word-break: keep-all; }
+.funding-trend-insight b { color: var(--ink); display: inline-block; min-width: 52px; }
+.funding-trend-insight mark { color: var(--ink); font-weight: 850; background: linear-gradient(transparent 58%, rgba(255, 216, 75, .75) 58%); text-decoration: underline; text-decoration-color: #E8BB26; text-underline-offset: 2px; text-decoration-thickness: 1px; }
 
 /* 정량 분석 빈 칸을 채우는 주요 인사이트 슬라이드 */
 .quant-insight-card { position: relative; min-height: 330px; padding: 0; overflow: hidden; isolation: isolate; background: #061126; }

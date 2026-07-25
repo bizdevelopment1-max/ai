@@ -94,8 +94,10 @@ function MarketGrowthChart({ data, accent, ink, grid, muted, compact = false, sh
   const cagr = start.size > 0 && end.size > 0 ? (Math.pow(end.size / start.size, 1 / years) - 1) * 100 : null;
   const cagrLabel = cagr == null ? "—" : `${cagr.toFixed(1)}%`;
   const cagrPeriod = yearOf(start) && yearOf(end) ? `${String(yearOf(start)).slice(2)}–${String(yearOf(end)).slice(2)} CAGR` : "CAGR";
-  const cagrX = padL + iw * 0.53;
-  const cagrY = padT + ih * 0.47;
+  // Keep the derived CAGR badge in the open lower-right area so it never
+  // intersects an annual growth label or the trend line.
+  const cagrX = padL + iw * 0.68;
+  const cagrY = padT + ih * 0.76;
 
   return (
     <div ref={ref} style={{ position: "relative" }} onMouseLeave={tip.hide}>
@@ -125,9 +127,9 @@ function MarketGrowthChart({ data, accent, ink, grid, muted, compact = false, sh
       {showCagr && cagr != null && (
         <g className="mg-cagr" style={{ opacity: Math.min(prog * 2.2, 1), transition: "opacity .25s" }}>
           <title>{cagrPeriod} {cagrLabel}</title>
-          <circle cx={cagrX} cy={cagrY} r="31" fill="#fff" fillOpacity=".96" stroke={accent} strokeWidth="2" />
-          <text x={cagrX} y={cagrY - 6} textAnchor="middle" fontSize="7.5" fontWeight="800" fill={muted}>{cagrPeriod}</text>
-          <text x={cagrX} y={cagrY + 10} textAnchor="middle" fontSize="14" fontWeight="900" fill={ink} style={{ fontVariantNumeric: "tabular-nums" }}>{cagrLabel}</text>
+          <circle cx={cagrX} cy={cagrY} r="25" fill="#fff" fillOpacity=".98" stroke={accent} strokeWidth="1.8" />
+          <text x={cagrX} y={cagrY - 4} textAnchor="middle" fontSize="7" fontWeight="800" fill={muted}>{cagrPeriod}</text>
+          <text x={cagrX} y={cagrY + 9} textAnchor="middle" fontSize="12.5" fontWeight="900" fill={ink} style={{ fontVariantNumeric: "tabular-nums" }}>{cagrLabel}</text>
         </g>
       )}
       {data.map((d, i) => {

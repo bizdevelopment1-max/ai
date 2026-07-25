@@ -315,16 +315,24 @@ try {
   const hasDerivedCagr = charts.includes("showCagr = false")
     && charts.includes("const cagr =")
     && charts.includes('className="mg-cagr"')
+    && charts.includes("iw * 0.68")
+    && charts.includes("ih * 0.76")
+    && charts.includes('r="25"')
     && boards.includes("compact showCagr");
   const hasCompactChartsAndDeferredPaint = charts.includes("compact = false")
     && charts.includes('className={"hbar-chart" + (compact ? " hbar-compact" : "")}')
     && styles.includes(".hbar-chart.hbar-compact")
     && styles.includes("content-visibility: auto")
     && app.includes('rootMargin: "600px 0px"');
-  if (!hasInstanceScopedLine || !hasDerivedCagr || !hasCompactChartsAndDeferredPaint) {
-    throw new Error("market charts need a visible line, source-data CAGR badge, compact chart density, and deferred below-fold paint");
+  const hasFundingReadout = boards.includes("function FundingTrendInsight")
+    && boards.includes("<FundingTrendInsight data={data.FUNDING_TREND} />")
+    && boards.includes('valuePrefix="$" compact />')
+    && styles.includes(".funding-trend-insight")
+    && styles.includes(".funding-trend-card .hbar-chart.hbar-compact");
+  if (!hasInstanceScopedLine || !hasDerivedCagr || !hasCompactChartsAndDeferredPaint || !hasFundingReadout) {
+    throw new Error("market charts need a clear CAGR badge, compact funding chart with source-series readout, and deferred below-fold paint");
   }
-  console.log("  OK  market charts use independent lines, derived CAGR badges, compact density and deferred paint");
+  console.log("  OK  market charts use clear CAGR badges, compact funding readouts and deferred paint");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  market-chart readability and performance: ${error.message}`);
