@@ -98,6 +98,9 @@ jobs:
       - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
         run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
 
+      - name: Build compact source-backed public datasets
+        run: node scripts/run-with-retry.mjs scripts/build-public-data.mjs
+
       - name: Validate automation and browser bundle
         run: node scripts/run-with-retry.mjs scripts/test-automation.mjs
 
@@ -117,7 +120,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json llm-health.json collection-health.json
+          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

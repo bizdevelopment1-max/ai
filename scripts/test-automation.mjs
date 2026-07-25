@@ -18,8 +18,15 @@ const required = [
   "scripts/translate_summarize.py",
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
+  "scripts/build-public-data.mjs",
   "scripts/audit-agent.mjs",
   "news.json",
+  "news-view.json",
+  "research-view.json",
+  "market-view.json",
+  "infra-view.json",
+  "bizmodel-view.json",
+  "data-version.json",
   "stocks.json",
   "quality.json",
   "history.json",
@@ -593,7 +600,7 @@ try {
     .filter(item => item.provenance?.status === "evidence-linked");
   const visibleBriefs = linked.filter(canShowAsKoreanBrief);
   if (!/articles=\{articles\}/.test(appSource)
-    || !/function SignalInfographic\(\{ file, delKey, title, sub, articles \}\)/.test(boardsSource)
+    || !/function SignalInfographic\(\{ file, delKey, title, sub, articles, dataVersion \}\)/.test(boardsSource)
     || !/className="isg-summary"/.test(boardsSource)
     || !/hlBrief\(it\.display\.title/.test(boardsSource)
     || !visibleBriefs.length || !visibleBriefs.every(canShowAsKoreanBrief)) {
@@ -603,6 +610,28 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  Korean signal cards: ${error.message}`);
+}
+
+try {
+  const [appSource, boardsSource, animSource, workflowSource, version, publicNews, publicResearch, publicMarket] = await Promise.all([
+    readFile("app.jsx", "utf8"), readFile("boards.jsx", "utf8"), readFile("anim.jsx", "utf8"),
+    readFile(".github/workflows/daily-news.yml", "utf8"), readFile("data-version.json", "utf8").then(JSON.parse),
+    readFile("news-view.json", "utf8").then(JSON.parse), readFile("research-view.json", "utf8").then(JSON.parse),
+    readFile("market-view.json", "utf8").then(JSON.parse),
+  ]);
+  const safe = list => list.every(item => item.displayEligible !== false && item.provenance?.status === "source-backed");
+  if (!version.version || !/data-version\.json/.test(appSource)
+    || !/news-view\.json/.test(appSource) || !/research-view\.json/.test(appSource)
+    || !/market-view\.json/.test(boardsSource) || /Math\.floor\(Date\.now\s*\/\s*60000\)/.test(`${appSource}\n${boardsSource}`)
+    || /setInterval\(_queueScan,\s*600\)/.test(animSource)
+    || !/build-public-data\.mjs/.test(workflowSource)
+    || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(publicMarket.records || [])) {
+    throw new Error("public views must be versioned, source-backed, and free of minute cache busting");
+  }
+  console.log(`  OK  versioned source-only public views ${publicNews.count}/${publicResearch.count}/${publicMarket.records.length}`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  source-only public views: ${error.message}`);
 }
 
 const major = Number(process.versions.node.split(".")[0]);

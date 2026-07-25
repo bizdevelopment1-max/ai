@@ -79,25 +79,41 @@ function App() {
   const startupInView = useInView(refs.startup);
   const companyInView = nativeInView || bigtechInView || startupInView;
   const briefingInView = useInView(refs.briefing);
+  const articlesInView = useInView(refs.articles);
+  const signalsInView = useInView(refs.signals);
   const stocksInView = useInView(refs.stocks);
   const auditInView = useInView(refs.audit);
 
   const D = window.DASH;
   const dark = t.dark;
+  const [dataVersion, setDataVersion] = uS("");
+  const dataUrl = file => `${file}?v=${encodeURIComponent(dataVersion || "bootstrap")}`;
+  const needsNews = articlesInView || companyInView || signalsInView || active === "articles";
+
+  // A tiny version manifest is the only uncacheable request. Every sizeable
+  // data file is immutable for that version and can therefore be CDN-cached.
+  uE(() => {
+    let alive = true;
+    fetch("data-version.json", { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive) setDataVersion(j?.version || j?.generatedAt || "bootstrap"); })
+      .catch(() => { if (alive) setDataVersion("bootstrap"); });
+    return () => { alive = false; };
+  }, []);
 
   // crawler output: news.json (refreshed daily by GitHub Action). No static-news fallback:
   // if provenance cannot be loaded, the feed stays empty rather than showing unverified claims.
   // 캐시버스터: GitHub Pages CDN(edge)은 URL 기준 캐시 → 분 단위 쿼리스트링으로 항상 최신 파일을 받게 함
-  const cb = () => `?t=${Math.floor(Date.now() / 60000)}`;   // 1분 단위 — 매일 갱신분 즉시 반영
   const [crawled, setCrawled] = uS([]);
   uE(() => {
+    if (!dataVersion || !needsNews) return;
     let alive = true;
-    fetch("news.json" + cb(), { cache: "no-store" })
+    fetch(dataUrl("news-view.json"), { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive) setCrawled(j && Array.isArray(j.articles) ? j.articles : []); })
       .catch(() => { if (alive) setCrawled([]); });
     return () => { alive = false; };
-  }, []);
+  }, [dataVersion, needsNews]);
   // device-topic articles (co "AI 노트북"/"AI 폰")을 제목 기준으로 실제 업체에 재분류, 매칭 없으면 co 제거
   const DEVICE_CO_MAP = [
     [/iphone|ipad|siri|apple intelligence|\bapple\b|macbook|\bm[0-9] |vision pro/i, "Apple"],
@@ -122,8 +138,9 @@ function App() {
   // 매일 갱신되는 '오늘의 톱라인' 인사이트. 근거 데이터가 없으면 빈 상태를 유지한다.
   const [insights, setInsights] = uS({ cards: [], engine: "rules" });
   uE(() => {
+    if (!dataVersion) return;
     let alive = true;
-    fetch("insights.json" + cb(), { cache: "no-store" })
+    fetch(dataUrl("insights.json"), { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => {
         const cards = (j && j.cards || []).filter(card => card.provenance?.status === "evidence-linked");
@@ -131,7 +148,7 @@ function App() {
       })
       .catch(() => { if (alive) setInsights({ cards: [], engine: "rules" }); });
     return () => { alive = false; };
-  }, []);
+  }, [dataVersion]);
 
   // 매일 자동 생성되는 모닝 브리핑(briefing.json) + 주간 스타트업 레이더(radar.json)
   const [briefing, setBriefing] = uS(null);
@@ -144,60 +161,61 @@ function App() {
   const [collectionHealth, setCollectionHealth] = uS(null);
   const [startupsX, setStartupsX] = uS(null);
   uE(() => {
+    if (!dataVersion) return;
     let alive = true;
-    fetch("research.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+    fetch(dataUrl("research-view.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => {
-        const feed = (j && j.feed || []).filter(item => item.displayEligible !== false && item.provenance?.status !== "reference-only");
-        const onepager = j && j.onepager?.provenance?.status === "source-linked" ? j.onepager : null;
-        if (alive && (onepager || feed.length)) setResearch({ ...j, onepager, feed });
+        const feed = (j && j.feed || []).filter(item => item.displayEligible !== false && item.provenance?.status === "source-backed");
+        if (alive && feed.length) setResearch({ ...j, onepager: null, feed });
       }).catch(() => {});
     return () => { alive = false; };
-  }, []);
+  }, [dataVersion]);
 
   // Lower sections do not compete with the first viewport. The largest live
   // files are requested only when their respective section is near the reader.
   uE(() => {
-    if (!companyInView) return;
+    if (!companyInView || !dataVersion) return;
     let alive = true;
-    fetch("companies.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+    fetch(dataUrl("companies.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
-    fetch("startups.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+    fetch(dataUrl("startups.json"), { cache: "force-cache" }).then(r => { if (r.ok) return r.json(); return null; })
       .then(j => { if (alive && j && (j.large || j.small)) {
         const m = {};
-        (j.large || []).filter(x => x.provenance?.status !== "reference-only").forEach(x => { m[x.name] = { overview: x.businessModel, insight: x.partnership, label: x.label, tier: "large" }; });
-        (j.small || []).filter(x => x.provenance?.status !== "reference-only").forEach(x => { m[x.name] = { overview: x.overview, insight: x.acqAngle, label: x.label, tier: "small" }; });
+        (j.large || []).filter(x => x.provenance?.status === "source-backed").forEach(x => { m[x.name] = { overview: x.businessModel, insight: x.partnership, label: x.label, tier: "large" }; });
+        (j.small || []).filter(x => x.provenance?.status === "source-backed").forEach(x => { m[x.name] = { overview: x.overview, insight: x.acqAngle, label: x.label, tier: "small" }; });
         setStartupsX(m);
       } }).catch(() => {});
     return () => { alive = false; };
-  }, [companyInView]);
+  }, [companyInView, dataVersion]);
 
   uE(() => {
-    if (!auditInView) return;
+    if (!auditInView || !dataVersion) return;
     let alive = true;
-    fetch("audit.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+    fetch(dataUrl("audit.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
-    fetch("quality.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+    fetch(dataUrl("quality.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.checks) setQuality(j); }).catch(() => {});
-    fetch("llm-health.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+    fetch(dataUrl("llm-health.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j) setLlmHealth(j); }).catch(() => {});
-    fetch("collection-health.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+    fetch(dataUrl("collection-health.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j) setCollectionHealth(j); }).catch(() => {});
     return () => { alive = false; };
-  }, [auditInView]);
+  }, [auditInView, dataVersion]);
   // COMPANIES에 라이브 데이터(최신 기사·언급량·실시세 시총) 병합
   const companiesLive = useMemo(() => (D.COMPANIES || []).map(c => {
     const lv = coLive && coLive[c.name];
     const strat = startupsX && (startupsX[c.name] || startupsX[c.name.replace(/\s*\(.*\)/, "")]);
-    if (!lv && !strat) return c;
-    const merged = { ...c };
+    // Legacy hand-entered valuation, funding and KPI values stay in the
+    // append-only ledger but do not reach the public company map.
+    const merged = { ...c, valuation: "—", valAsof: "", metric: "원문 기사", value: "—", metricAsof: "", funding: "—" };
     if (lv) { merged.live = lv; if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); } }
     if (strat) merged.strategy = strat;
     return merged;
   }), [coLive, startupsX]);
   uE(() => {
-    if (!briefingInView) return;
+    if (!briefingInView || !dataVersion) return;
     let alive = true;
-    fetch("briefing.json" + cb(), { cache: "no-store" })
+    fetch(dataUrl("briefing.json"), { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => {
         const days = (j && j.days || []).map(day => ({ ...day, items: (day.items || []).filter(item => item.provenance?.status === "evidence-linked") })).filter(day => day.items.length);
@@ -205,19 +223,19 @@ function App() {
       })
       .catch(() => {});
     return () => { alive = false; };
-  }, [briefingInView]);
+  }, [briefingInView, dataVersion]);
 
   // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
   const [stockData, setStockData] = uS(null);
   uE(() => {
-    if (!stocksInView) return;
+    if (!stocksInView || !dataVersion) return;
     let alive = true;
-    fetch("stocks.json" + cb(), { cache: "no-store" })
+    fetch(dataUrl("stocks.json"), { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.stocks) setStockData({ ...j.stocks, __generatedAt: j.generatedAt }); })
       .catch(() => {});
     return () => { alive = false; };
-  }, [stocksInView]);
+  }, [stocksInView, dataVersion]);
 
   // category objects with tweakable accents
   const cats = useMemo(() => D.CATEGORIES.map(c => ({
@@ -367,7 +385,7 @@ function App() {
                 <h2 className="ov-title">전략 의사결정 브리프 <span>Executive Summary</span></h2>
               </div>
               <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
-              <ESCompetitiveMap companies={D.COMPANIES} cats={cats} articles={articles} />
+              <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} />
             </section>
 
             <LazySection id="briefing" active={active} sectionRef={refs.briefing} height={560}>
@@ -389,23 +407,23 @@ function App() {
               <CompanyBoard cat={cats[2]} companies={companiesLive} density={t.density} query={query} onSelect={setSelected} />
             </LazySection>
             <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
-              <StartupScopeBoard />
+              <StartupScopeBoard dataVersion={dataVersion} />
             </LazySection>
 
             {/* ── 3. 심층 분석 ── */}
             <LazySection id="signals" active={active} sectionRef={refs.signals} height={900}>
-              <SignalBoard data={D} theme={chartTheme} articles={articles} />
+              <SignalBoard articles={articles} dataVersion={dataVersion} />
             </LazySection>
 
             {/* ── 4. 정량 데이터 ── */}
             <LazySection id="charts" active={active} sectionRef={refs.charts} height={980}>
-              <ChartsBoard data={D} cats={cats} theme={chartTheme} />
+              <SourceOnlyQuantBoard onNav={navTo} />
             </LazySection>
             <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
               <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} />
             </LazySection>
             <LazySection id="market" active={active} sectionRef={refs.market} height={780}>
-              <MarketBoard />
+              <MarketBoard dataVersion={dataVersion} />
             </LazySection>
 
             <LazySection id="audit" active={active} sectionRef={refs.audit} height={520}>

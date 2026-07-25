@@ -1051,6 +1051,32 @@ function OverviewCharts({ data, cats, theme }) {
   );
 }
 
+function SourceOnlyQuantBoard({ sectionRef, onNav }) {
+  const inView = useInView(sectionRef);
+  return (
+    <section className="board source-only-board" ref={sectionRef} data-screen-label="Verified Quantitative Analysis">
+      <AnimCtx.Provider value={inView}>
+        <div className="board-head">
+          <span className="board-tab" style={{ background: "#173F5F" }} />
+          <div className="board-titles">
+            <h2>검증 정량 분석 <span className="board-en">Verified quantitative analysis</span></h2>
+            <p>숫자·정의·기준 시점이 원문 본문에서 함께 추출된 기록만 공개합니다</p>
+          </div>
+        </div>
+        <div className="source-only-intro">
+          <article><span>01</span><b>발행사 본문</b><p>원문 페이지를 추출하고 링크가 유지되는지 확인</p></article>
+          <article><span>02</span><b>정량 근거</b><p>수치가 포함된 원문 문장을 카드에 함께 표시</p></article>
+          <article><span>03</span><b>해석 범위</b><p>예측값은 원문에 미래 기준 시점이 있을 때만 표시</p></article>
+        </div>
+        <div className="source-only-cta">
+          <div><b>누적 정량·소비자 조사 데이터베이스</b><span>과거 기록은 보존하고 검증 완료 기록만 화면에 추가</span></div>
+          <button onClick={() => onNav && onNav("market")}>원문 근거 데이터 보기 <span>▶</span></button>
+        </div>
+      </AnimCtx.Provider>
+    </section>
+  );
+}
+
 // ---- Dynamics Board (competitive landscape visualization) ------
 // ---- Knowledge Graph (interactive force-directed) ----
 // 경쟁 다이내믹스 전용 — 같은 시장을 두고 다투는 라이벌 구도만 표시
@@ -1108,7 +1134,7 @@ const MONEY_EDGES = [
   { from: "Cohere", to: "Amazon", type: "파트너십", label: "AWS·소버린 배포" },
 ];
 
-function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, onNodeSelect, initialSelected = null, compact = false }) {
+function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, onNodeSelect, initialSelected = null, compact = false, sourceOnly = false, active = true }) {
   const canvasRef = React.useRef(null);
   const containerRef = React.useRef(null);
   const [hovered, setHovered] = React.useState(null);
@@ -1159,7 +1185,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
           cat: catMap[c.cat], fixed: false,
         };
       });
-      const EDGE_SET = mode === "dynamics" ? COMPETE_EDGES : MONEY_EDGES;
+      const EDGE_SET = sourceOnly ? [] : (mode === "dynamics" ? COMPETE_EDGES : MONEY_EDGES);
       edgesRef.current = EDGE_SET.filter(e =>
         nodesRef.current.some(n => n.id === e.from) && nodesRef.current.some(n => n.id === e.to)
       );
@@ -1256,7 +1282,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
         ctx.globalAlpha = 1;
       }
 
-      const legendItems = Object.entries(edgeColors);
+      const legendItems = sourceOnly ? [] : Object.entries(edgeColors);
       ctx.font = "bold 10px sans-serif"; ctx.textBaseline = "top";
       legendItems.forEach(([type, color], i) => {
         const lx = 12, ly = H - 14 - (legendItems.length - 1 - i) * 16;
@@ -1269,7 +1295,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
       tick(); draw();
       frameRef.current = requestAnimationFrame(animate);
     }
-    animate();
+    if (active) animate(); else draw();
 
     const getNode = (x, y) => {
       const rect = canvas.getBoundingClientRect();
@@ -1323,10 +1349,10 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
       canvas.removeEventListener("touchstart", onDown);
       canvas.removeEventListener("touchend", onUp);
     };
-  }, [companies, cats, hovered, selected, selectNode]);
+  }, [companies, cats, hovered, selected, selectNode, sourceOnly, active]);
 
   const selCo = selected ? companies.find(c => c.name === selected) : null;
-  const selEdges = selected ? (mode === "dynamics" ? COMPETE_EDGES : MONEY_EDGES).filter(e => e.from === selected || e.to === selected) : [];
+  const selEdges = sourceOnly ? [] : (selected ? (mode === "dynamics" ? COMPETE_EDGES : MONEY_EDGES).filter(e => e.from === selected || e.to === selected) : []);
 
   return (
     <div className="kg-wrap" style={{ opacity: Math.min(1, progress * 2) }}>
@@ -1391,7 +1417,7 @@ function ESCompetitiveMap({ companies, cats, articles }) {
   const { list, articleByCo } = React.useMemo(() => {
     const connected = new Set();
     COMPETE_EDGES.forEach(e => { connected.add(e.from); connected.add(e.to); });
-    const list = companies.filter(c => connected.has(c.name));
+    const list = companies;
     const names = list.map(c => c.name);
     const matchName = (co) => names.find(n => n === co || co.startsWith(n.split(" (")[0]) || n.startsWith(co.split(" (")[0]));
     const byName = {};
@@ -1415,18 +1441,21 @@ function ESCompetitiveMap({ companies, cats, articles }) {
   React.useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
+    if (!inView) { video.pause(); return undefined; }
     const slowPlayback = () => {
       video.defaultPlaybackRate = 0.55;
       video.playbackRate = 0.55;
     };
     slowPlayback();
+    const play = video.play();
+    if (play?.catch) play.catch(() => {});
     video.addEventListener("loadedmetadata", slowPlayback);
     video.addEventListener("play", slowPlayback);
     return () => {
       video.removeEventListener("loadedmetadata", slowPlayback);
       video.removeEventListener("play", slowPlayback);
     };
-  }, []);
+  }, [inView]);
 
   const selectedCompany = list.find(c => c.name === activeCompany) || list[0] || null;
   const selectedArticle = selectedCompany ? articleByCo[selectedCompany.name] : null;
@@ -1462,6 +1491,8 @@ function ESCompetitiveMap({ companies, cats, articles }) {
             initialSelected={activeCompany}
             onNodeSelect={setActiveCompany}
             compact
+            sourceOnly
+            active={inView}
           />
         </div>
         <aside className="dyn-video-panel" aria-live="polite">
@@ -1483,8 +1514,8 @@ function ESCompetitiveMap({ companies, cats, articles }) {
                   <strong>{selectedCompany.name}</strong>
                   <em>{selectedCompany.valuation}</em>
                 </div>
-                <p>{hlKey(selectedCompany.note)}</p>
-                {relationshipGroups.length > 0 && (
+                <p>{selectedArticle ? "연결된 원문 기사에서 확인한 사실만 표시합니다" : "원문 확인이 완료된 연결 기사를 수집 중입니다"}</p>
+                {false && relationshipGroups.length > 0 && (
                   <div className="dyn-relationships">
                     {relationshipGroups.map(axis => (
                       <div key={axis.id} className="dyn-relationship" style={{ "--axis": axis.color }}>
@@ -1836,19 +1867,19 @@ function signalSourceKey(value) {
   }
 }
 
-function SignalInfographic({ file, delKey, title, sub, articles }) {
+function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) {
   const ref = React.useRef(null);
   const inView = useInView(ref);
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   React.useEffect(() => {
-    if (!inView || loaded) return;
+    if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
-    fetch(file + "?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" })
+    fetch(`${file}?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (j && j.items) setData(j); })
       .catch(() => {});
-  }, [inView, loaded]);
+  }, [inView, loaded, dataVersion, file]);
 
   // 삭제(비밀번호)·localStorage 영구 보존 — 기사 누적이라 삭제 항목은 다시 안 나오게
   const DEL_LS = delKey;
@@ -1970,7 +2001,31 @@ function SignalInfographic({ file, delKey, title, sub, articles }) {
   );
 }
 
-function SignalBoard({ data, theme, sectionRef, articles }) {
+function SignalBoard({ sectionRef, articles, dataVersion }) {
+  const inView = useInView(sectionRef);
+  return (
+    <section className="board signal-source-board" ref={sectionRef} data-screen-label="Infra and future tech signals">
+      <AnimCtx.Provider value={inView}>
+        <div className="board-head">
+          <span className="board-tab" style={{ background: "#315C4A" }} />
+          <div className="board-titles">
+            <h2>인프라·미래 기술 시그널 <span className="board-en">Source-backed infrastructure signals</span></h2>
+            <p>원문 본문까지 확인된 기사에서만 컴퓨트·메모리·광통신·전력·아키텍처 신호를 누적합니다</p>
+          </div>
+        </div>
+        <div className="source-only-intro signal-source-method">
+          <article><span>01</span><b>사실</b><p>발행사 문장과 원문 링크가 남아 있는 신호만 수집</p></article>
+          <article><span>02</span><b>정량</b><p>수치가 있으면 해당 원문 문장과 함께 표시</p></article>
+          <article><span>03</span><b>해석</b><p>확인된 사실을 벗어나는 전망·관계 추정은 표시하지 않음</p></article>
+        </div>
+        <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
+          dataVersion={dataVersion} title="인프라·미래 기술 신호" sub="원문 문장으로 확인된 카드만 표시 · 확인 전 기록은 누적 ledger에 보존" />
+      </AnimCtx.Provider>
+    </section>
+  );
+}
+
+function LegacySignalBoard({ data, theme, sectionRef, articles }) {
   const inView = useInView(sectionRef);
   const strat = data.INFRA_STRATEGY || { hyperscaler: [], aiNative: [] };
   const metricAt = (series, key, value) => (series || []).find(row => String(row[key]) === value) || (series || [])[0] || {};
@@ -2484,20 +2539,20 @@ function ExecToplines({ items, insights, onNav }) {
 
 
 // ---- AI 신사업 시장 보드: lazy-load(inView 시에만 fetch), MECE 그룹, 플레인 텍스트, 삭제/숨김 ----
-function MarketBoard({ sectionRef }) {
+function MarketBoard({ sectionRef, dataVersion }) {
   const inView = useInView(sectionRef);
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   const [recordFilter, setRecordFilter] = React.useState("all");
   // 화면에 들어올 때 1회만 market.json 로드 — 초기 페이지 로드에 영향 없음
   React.useEffect(() => {
-    if (!inView || loaded) return;
+    if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
-    fetch("market.json?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" })
+    fetch(`market-view.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
-      .then(j => { if (j && j.items) setData(j); })
+      .then(j => { if (j && Array.isArray(j.records)) setData(j); })
       .catch(() => {});
-  }, [inView, loaded]);
+  }, [inView, loaded, dataVersion]);
 
   // RSS titles/snippets remain in market.json for the append-only discovery
   // ledger, but cannot enter this view. A visible card must have a resolved
@@ -2505,7 +2560,6 @@ function MarketBoard({ sectionRef }) {
   const records = ((data && data.records) || []).filter(record => record.sourceUrl
     && record.displayEligible === true
     && record.provenance?.status === "source-backed"
-    && record.sourceContent?.status === "content-extracted"
     && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
     && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length);
   const consumerRecords = records.filter(record => record.type === "consumer-survey");
@@ -2626,19 +2680,19 @@ function MarketBoard({ sectionRef }) {
 
 
 // ---- 스타트업 분석 보드(2계층·lazy-load): 대형=파트너십 / 소형=인수·투자 ----
-function StartupScopeBoard({ sectionRef }) {
+function StartupScopeBoard({ sectionRef, dataVersion }) {
   const inView = useInView(sectionRef);
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   const [tier, setTier] = React.useState("large");
   React.useEffect(() => {
-    if (!inView || loaded) return;
+    if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
-    fetch("startups.json?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" })
+    fetch(`startups.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (j && (j.large || j.small)) setData(j); })
       .catch(() => {});
-  }, [inView, loaded]);
+  }, [inView, loaded, dataVersion]);
 
   const DEL_LS = "aiDashDeletedStartups";
   const [del, setDel] = React.useState(() => { try { return JSON.parse(localStorage.getItem(DEL_LS) || "{}"); } catch { return {}; } });
@@ -2680,8 +2734,8 @@ function StartupScopeBoard({ sectionRef }) {
     ));
   };
 
-  const large = ((data && data.large) || []).filter(s => s.provenance?.status !== "reference-only" && !del[s.name]);
-  const small = ((data && data.small) || []).filter(s => s.provenance?.status !== "reference-only" && !del[s.name]);
+  const large = ((data && data.large) || []).filter(s => s.provenance?.status === "source-backed" && !del[s.name]);
+  const small = ((data && data.small) || []).filter(s => s.provenance?.status === "source-backed" && !del[s.name]);
 
   return (
     <section className="board" ref={sectionRef} data-screen-label="Startup Analysis">

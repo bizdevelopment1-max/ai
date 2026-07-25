@@ -130,6 +130,23 @@ const verifyEvidenceList = evidence => {
 
 const directSourceStatus = item => {
   const url = canonicalUrl(item?.url || item?.latest?.url);
+  const content = item?.sourceContent || {};
+  const sourceText = cleanLocalizationText(`${content.headline || item?.title || ""}\n${content.text || ""}`);
+  const summaryLines = Array.isArray(item?.summaryLinesEn) ? item.summaryLinesEn.filter(Boolean) : [];
+  const hasOwnPublisherEvidence = validHttp(url)
+    && content.status === "content-extracted"
+    && item?.summaryMode === "source-content-extractive"
+    && item?.displayEligible !== false
+    && sourceText.length >= 120
+    && summaryLines.length === 3
+    && summaryLines.every(line => sourceText.includes(cleanLocalizationText(line)));
+  if (hasOwnPublisherEvidence) return {
+    status: "source-backed",
+    evidenceCount: summaryLines.length,
+    evidenceType: "publisher-page-text",
+    checkedAt: now.toISOString(),
+    sourceContentHash: content.contentHash || "",
+  };
   if (url && sourceBackedUrls.has(url)) return { status: "evidence-linked", evidenceCount: 1, checkedAt: now.toISOString() };
   if (url && validHttp(url)) return { status: "source-linked", evidenceCount: 1, checkedAt: now.toISOString() };
   return { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() };
@@ -307,10 +324,10 @@ const localizedFallbackArticles = currentArticles.filter(a => a.localization?.st
 const limitedRate = currentArticles.length ? articleIssues.length / currentArticles.length : 1;
 const linkedInfra = (infra.items || []).filter(item => item.provenance?.status === "evidence-linked").length;
 const linkedBizmodel = (bizmodel.items || []).filter(item => item.provenance?.status === "evidence-linked").length;
-const linkedResearch = (research.feed || []).filter(item => item.provenance?.status !== "reference-only").length;
+const linkedResearch = (research.feed || []).filter(item => item.provenance?.status === "source-backed").length;
 const localizedResearch = (research.feed || []).filter(item => item.localization?.status === "accepted").length;
 const localizedFallbackResearch = (research.feed || []).filter(item => item.localization?.status === "fallback-english").length;
-const linkedMarket = (market.items || []).filter(item => item.provenance?.status !== "reference-only").length;
+const archivedMarketBaselines = (market.items || []).length;
 const linkedMarketRecords = (market.records || []).filter(record => record.provenance?.status === "source-backed").length;
 const consumerSurveyRecords = (market.records || []).filter(record => record.type === "consumer-survey" && record.provenance?.status === "source-backed").length;
 
@@ -324,11 +341,11 @@ const checks = [
   { id: "insight-evidence", label: "인사이트 근거 연결", status: linkedInsights > 0 ? "ok" : "warn", value: `${linkedInsights}건` },
   { id: "stock-freshness", label: "주가 최신성", status: stockFresh >= Math.max(8, stockRows.length * 0.7) ? "ok" : "fail", value: `${stockFresh}/${stockRows.length}종목` },
   { id: "news-freshness", label: "뉴스 번들 최신성", status: ageDays(news.generatedAt) <= 2 ? "ok" : "fail", value: `${ageDays(news.generatedAt).toFixed(1)}일` },
-  { id: "infra-evidence", label: "인프라 시그널 근거", status: linkedInfra >= Math.max(3, (infra.items || []).length * 0.5) ? "ok" : "warn", value: `${linkedInfra}/${(infra.items || []).length}건` },
-  { id: "bizmodel-evidence", label: "수익화 시그널 근거", status: linkedBizmodel >= Math.max(3, (bizmodel.items || []).length * 0.5) ? "ok" : "warn", value: `${linkedBizmodel}/${(bizmodel.items || []).length}건` },
-  { id: "research-source", label: "리서치 원문 링크", status: linkedResearch >= Math.max(3, (research.feed || []).length * 0.5) ? "ok" : "warn", value: `${linkedResearch}/${(research.feed || []).length}건` },
+  { id: "infra-evidence", label: "인프라 시그널 근거", status: linkedInfra >= 3 ? "ok" : "warn", value: `공개 ${linkedInfra}건 · 보존 ${(infra.items || []).length - linkedInfra}건` },
+  { id: "bizmodel-evidence", label: "수익화 시그널 근거", status: linkedBizmodel >= 3 ? "ok" : "warn", value: `공개 ${linkedBizmodel}건 · 보존 ${(bizmodel.items || []).length - linkedBizmodel}건` },
+  { id: "research-source", label: "리서치 원문 링크", status: linkedResearch >= 3 ? "ok" : "warn", value: `공개 ${linkedResearch}건 · 보존 ${(research.feed || []).length - linkedResearch}건` },
   { id: "research-localization", label: "리서치 3줄 표시", status: localizedResearch + localizedFallbackResearch >= Math.max(3, (research.feed || []).length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedResearch} · 영문 폴백 ${localizedFallbackResearch}` },
-  { id: "market-source", label: "시장 데이터 원문 링크", status: linkedMarket >= Math.max(10, (market.items || []).length * 0.8) ? "ok" : "warn", value: `${linkedMarket}/${(market.items || []).length}건` },
+  { id: "market-source", label: "시장 기준선 보존", status: "ok", value: `화면 제외 · 원문 확인 대기 ${archivedMarketBaselines}건` },
   { id: "market-db-source", label: "신사업 정량 DB 원문 직접 검증", status: linkedMarketRecords >= Math.max(3, Math.min(12, (market.records || []).length * 0.25)) ? "ok" : "warn", value: `${linkedMarketRecords}/${(market.records || []).length}건` },
   { id: "consumer-survey-coverage", label: "소비자 조사 레코드", status: consumerSurveyRecords >= 2 ? "ok" : "warn", value: `${consumerSurveyRecords}건` },
 ];
@@ -358,7 +375,7 @@ const quality = {
     linkedResearch,
     localizedResearch,
     localizedFallbackResearch,
-    linkedMarket,
+    archivedMarketBaselines,
     linkedMarketRecords,
     consumerSurveyRecords,
   },

@@ -67,8 +67,10 @@ function _initEngine() {
   window.addEventListener("resize", _queueScan, { passive: true });
   window.addEventListener("load", _queueScan);
   document.addEventListener("DOMContentLoaded", _queueScan);
-  // periodic catch-up for layout shifts (images, fonts, async data)
-  setInterval(_queueScan, 600);
+  // Catch late fonts and async content without keeping the page awake every
+  // 600ms for its entire lifetime.
+  [120, 650, 1600].forEach(delay => setTimeout(_queueScan, delay));
+  if (document.fonts?.ready) document.fonts.ready.then(_queueScan).catch(() => {});
 }
 
 function _register(el, cb, lead) {
