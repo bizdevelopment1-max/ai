@@ -63,7 +63,7 @@ function niceTicks(max, count) {
 }
 
 // ---- Combo: market size (area+line draws L→R) + growth markers count up ---
-function MarketGrowthChart({ data, accent, ink, grid, muted }) {
+function MarketGrowthChart({ data, accent, ink, grid, muted, compact = false, showCagr = false }) {
   const [ref, inView] = useEyeLevel();
   const [nonce, bump] = useHoverReplay();
   const tip = useTip();
@@ -76,7 +76,7 @@ function MarketGrowthChart({ data, accent, ink, grid, muted }) {
   const lineId = `mg-line-${chartId}`;
   const clipId = `mg-clip-${chartId}`;
 
-  const W = 520, H = 235, padL = 46, padR = 16, padT = 26, padB = 30;
+  const W = 520, H = compact ? 205 : 235, padL = 46, padR = 16, padT = 26, padB = 30;
   const iw = W - padL - padR, ih = H - padT - padB;
   const maxSize = Math.max(...data.map(d => d.size));
   const ticks = niceTicks(maxSize * 1.08, 4);
@@ -87,6 +87,15 @@ function MarketGrowthChart({ data, accent, ink, grid, muted }) {
   const linePts = data.map((d, i) => `${x(i)},${y(d.size)}`).join(" ");
   const areaPts = `${padL},${padT + ih} ${linePts} ${padL + iw},${padT + ih}`;
   const n = data.length;
+  const yearOf = d => Number(String(d.year || "").match(/\d{4}/)?.[0]);
+  const start = data[0] || {};
+  const end = data[n - 1] || {};
+  const years = Math.max(1, yearOf(end) - yearOf(start) || n - 1);
+  const cagr = start.size > 0 && end.size > 0 ? (Math.pow(end.size / start.size, 1 / years) - 1) * 100 : null;
+  const cagrLabel = cagr == null ? "—" : `${cagr.toFixed(1)}%`;
+  const cagrPeriod = yearOf(start) && yearOf(end) ? `${String(yearOf(start)).slice(2)}–${String(yearOf(end)).slice(2)} CAGR` : "CAGR";
+  const cagrX = padL + iw * 0.53;
+  const cagrY = padT + ih * 0.47;
 
   return (
     <div ref={ref} style={{ position: "relative" }} onMouseLeave={tip.hide}>
@@ -113,6 +122,14 @@ function MarketGrowthChart({ data, accent, ink, grid, muted }) {
         <polygon points={areaPts} fill={`url(#${fillId})`} />
         <polyline points={linePts} fill="none" stroke={`url(#${lineId})`} strokeWidth="3" strokeLinejoin="round" />
       </g>
+      {showCagr && cagr != null && (
+        <g className="mg-cagr" style={{ opacity: Math.min(prog * 2.2, 1), transition: "opacity .25s" }}>
+          <title>{cagrPeriod} {cagrLabel}</title>
+          <circle cx={cagrX} cy={cagrY} r="31" fill="#fff" fillOpacity=".96" stroke={accent} strokeWidth="2" />
+          <text x={cagrX} y={cagrY - 6} textAnchor="middle" fontSize="7.5" fontWeight="800" fill={muted}>{cagrPeriod}</text>
+          <text x={cagrX} y={cagrY + 10} textAnchor="middle" fontSize="14" fontWeight="900" fill={ink} style={{ fontVariantNumeric: "tabular-nums" }}>{cagrLabel}</text>
+        </g>
+      )}
       {data.map((d, i) => {
         const frac = i / (n - 1);
         const span = 1 / (n - 1) || 1;
@@ -146,21 +163,24 @@ function easeOutBack(p) {
 }
 
 // ---- Horizontal bars (funding / users): spring widths, staggered, labels count ----
-function HBarChart({ data, colorOf, ink, muted, grid, unit, valuePrefix }) {
+function HBarChart({ data, colorOf, ink, muted, grid, unit, valuePrefix, compact = false }) {
   const [ref, inView] = useEyeLevel();
   const [nonce, bump] = useHoverReplay();
   const tip = useTip();
   const gid = useRefC("hb" + Math.random().toString(36).slice(2, 8)).current;
   const prog = useProgress(inView, 2700, 0, nonce);
 
-  const rowH = 28, padL = 4, padT = 6;
-  const labelW = 108, barMaxW = 300;
-  const W = labelW + barMaxW + 96, H = padT * 2 + data.length * rowH;
+  const rowH = compact ? 25 : 28, padL = 4, padT = 6;
+  const labelW = compact ? 116 : 108, barMaxW = compact ? 270 : 300;
+  const valueGap = compact ? 7 : 8;
+  const labelSize = compact ? 10.5 : 11.5;
+  const valueSize = compact ? 10.5 : 11.5;
+  const W = labelW + barMaxW + (compact ? 86 : 96), H = padT * 2 + data.length * rowH;
   const max = Math.max(...data.map(d => d.value));
   const pre = valuePrefix || "";
   const stagger = 0.08;
   return (
-    <div ref={ref} style={{ position: "relative" }} onMouseLeave={tip.hide}>
+    <div ref={ref} className={"hbar-chart" + (compact ? " hbar-compact" : "")} style={{ position: "relative" }} onMouseLeave={tip.hide}>
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: "block", cursor: "pointer" }}
       onMouseMove={bump} onMouseEnter={bump}>
       <defs>
@@ -189,10 +209,10 @@ function HBarChart({ data, colorOf, ink, muted, grid, unit, valuePrefix }) {
             onMouseMove={tip.move} onMouseLeave={tip.hide}>
             <title>{d.src || d.name}</title>
             <rect x={padL} y={yy} width={W - padL * 2} height={rowH} fill="transparent" />
-            <text x={padL} y={yy + rowH / 2 + 3.5} fontSize="11.5" fill={ink} fontWeight="600">{d.name}</text>
+            <text x={padL} y={yy + rowH / 2 + 3.5} fontSize={labelSize} fill={ink} fontWeight="600">{d.name}</text>
             <rect x={labelW} y={yy + 5} width={barMaxW} height={rowH - 13} rx="3.5" fill={grid} />
             <rect x={labelW} y={yy + 5} width={Math.max(w, 0.5)} height={rowH - 13} rx="3.5" fill={`url(#${gid}-${i})`} />
-            <text x={labelW + Math.max(w, 0.5) + 8} y={yy + rowH / 2 + 3.5} fontSize="11.5" fontWeight="800" fill={ink}
+            <text x={labelW + Math.max(w, 0.5) + valueGap} y={yy + rowH / 2 + 3.5} fontSize={valueSize} fontWeight="800" fill={ink}
               style={{ fontVariantNumeric: "tabular-nums", opacity: Math.min(local * 2, 1) }}>{pre}{shown}{unit}</text>
           </g>
         );

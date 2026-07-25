@@ -45,7 +45,7 @@ function LazySection({ id, active, sectionRef, height = 420, children }) {
       if (!entries.some(entry => entry.isIntersecting)) return;
       setReady(true);
       observer.disconnect();
-    }, { root, rootMargin: "900px 0px", threshold: 0.01 });
+    }, { root, rootMargin: "600px 0px", threshold: 0.01 });
     observer.observe(target);
     return () => observer.disconnect();
   }, [ready, sectionRef]);

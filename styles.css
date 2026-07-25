@@ -580,6 +580,10 @@ a[href]:hover .rainbow-on-hover,
 
 /* ---------- board ---------- */
 .board { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 14px; }
+/* 화면 밖의 누적 보드는 자리만 확보하고 실제 페인트를 뒤로 미뤄 첫 화면을 빠르게 표시 */
+@supports (content-visibility: auto) {
+  .board-gate.is-ready .board { content-visibility: auto; contain-intrinsic-size: auto var(--gate-height, 760px); }
+}
 .board-head { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--line); position: relative; cursor: pointer; user-select: none; }
 .board-head::after {
   content: ""; width: 9px; height: 9px; flex-shrink: 0; margin: -4px 4px 0 4px;
@@ -767,6 +771,8 @@ a[href]:hover .rainbow-on-hover,
 .chart-card .cc-head { margin-bottom: 14px; }
 .chart-card:hover .cc-head h3 { color: var(--accent); }
 .chart-card > svg, .chart-card > div:not(.cc-head) { margin: auto 0; }
+.hbar-chart.hbar-compact { width: min(100%, 640px); margin: auto !important; }
+.hbar-chart.hbar-compact svg { display: block; }
 /* let chart labels that sit at the very edge spill into the card padding instead of being clipped by the SVG viewport */
 .chart-card svg, .ov-chart-card svg, .stock-panel svg { overflow: visible; }
 .cc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 14px; }

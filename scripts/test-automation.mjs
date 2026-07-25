@@ -302,18 +302,32 @@ try {
 }
 
 try {
-  const charts = await readFile("charts.jsx", "utf8");
+  const [charts, boards, styles, app] = await Promise.all([
+    readFile("charts.jsx", "utf8"),
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+    readFile("app.jsx", "utf8"),
+  ]);
   const hasInstanceScopedLine = /const chartId = React\.useId\(\)\.replace\(\/:\/g, ""\);/.test(charts)
     && /const clipId = `mg-clip-\$\{chartId\}`;/.test(charts)
     && /clipPath=\{`url\(#\$\{clipId\}\)`\}/.test(charts)
     && /stroke=\{`url\(#\$\{lineId\}\)`\}/.test(charts);
-  if (!hasInstanceScopedLine) {
-    throw new Error("market-growth chart needs an instance-scoped visible connecting line");
+  const hasDerivedCagr = charts.includes("showCagr = false")
+    && charts.includes("const cagr =")
+    && charts.includes('className="mg-cagr"')
+    && boards.includes("compact showCagr");
+  const hasCompactChartsAndDeferredPaint = charts.includes("compact = false")
+    && charts.includes('className={"hbar-chart" + (compact ? " hbar-compact" : "")}')
+    && styles.includes(".hbar-chart.hbar-compact")
+    && styles.includes("content-visibility: auto")
+    && app.includes('rootMargin: "600px 0px"');
+  if (!hasInstanceScopedLine || !hasDerivedCagr || !hasCompactChartsAndDeferredPaint) {
+    throw new Error("market charts need a visible line, source-data CAGR badge, compact chart density, and deferred below-fold paint");
   }
-  console.log("  OK  market-growth charts use independent visible connecting lines");
+  console.log("  OK  market charts use independent lines, derived CAGR badges, compact density and deferred paint");
 } catch (error) {
   failed = true;
-  console.error(`  FAIL  market-growth chart line: ${error.message}`);
+  console.error(`  FAIL  market-chart readability and performance: ${error.message}`);
 }
 
 try {
