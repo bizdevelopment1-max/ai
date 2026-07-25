@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T16:28:38.888Z",
+  "generatedAt": "2026-07-25T22:25:38.497Z",
   "overall": "ok",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 16개 · 정상 16 · 주의 0 · 실패 0",
@@ -8,25 +8,25 @@
       "id": "news-coverage",
       "label": "뉴스 수집",
       "status": "ok",
-      "value": "90건"
+      "value": "91건"
     },
     {
       "id": "source-backed",
       "label": "원문 스니펫 근거",
       "status": "ok",
-      "value": "85/90건"
+      "value": "86/91건"
     },
     {
       "id": "source-content-mode",
       "label": "원문 본문 추출",
       "status": "ok",
-      "value": "81/90건"
+      "value": "82/91건"
     },
     {
       "id": "feed-localization",
       "label": "기사 한국어 표시·영문 폴백",
       "status": "ok",
-      "value": "한국어 88 · 영문 폴백 2"
+      "value": "한국어 89 · 영문 폴백 2"
     },
     {
       "id": "collection-health",
@@ -74,13 +74,13 @@
       "id": "research-source",
       "label": "리서치 원문 링크",
       "status": "ok",
-      "value": "공개 30건 · 보존 29건"
+      "value": "공개 31건 · 보존 29건"
     },
     {
       "id": "research-localization",
       "label": "리서치 3줄 표시",
       "status": "ok",
-      "value": "한국어 57 · 영문 폴백 2"
+      "value": "한국어 58 · 영문 폴백 2"
     },
     {
       "id": "market-source",
@@ -92,7 +92,7 @@
       "id": "market-db-source",
       "label": "신사업 정량 DB 원문 직접 검증",
       "status": "ok",
-      "value": "28/55건"
+      "value": "32/59건"
     },
     {
       "id": "consumer-survey-coverage",
@@ -102,45 +102,46 @@
     }
   ],
   "metrics": {
-    "currentArticles": 90,
-    "accumulatedArticles": 163,
-    "sourceBackedArticles": 85,
-    "sourceExcerptArticles": 81,
-    "localizedArticles": 88,
+    "currentArticles": 91,
+    "accumulatedArticles": 164,
+    "sourceBackedArticles": 86,
+    "sourceExcerptArticles": 82,
+    "localizedArticles": 89,
     "localizedFallbackArticles": 2,
     "limitedArticles": 5,
-    "limitedRate": 0.05555555555555555,
+    "limitedRate": 0.054945054945054944,
     "freshStocks": 25,
     "totalStocks": 25,
     "linkedInfra": 39,
     "linkedBizmodel": 9,
-    "linkedResearch": 30,
-    "localizedResearch": 57,
+    "linkedResearch": 31,
+    "localizedResearch": 58,
     "localizedFallbackResearch": 2,
     "archivedMarketBaselines": 43,
-    "linkedMarketRecords": 28,
+    "linkedMarketRecords": 32,
     "consumerSurveyRecords": 7
   },
   "sources": {
     "news": {
-      "TechCrunch": 16,
       "The Decoder": 6,
+      "TechCrunch": 16,
       "Engadget": 4,
       "Wired": 4,
       "AI Business": 3,
       "ZDNet": 4,
       "The Verge": 5,
+      "CNET": 1,
       "The Register": 3,
       "MIT Tech Review": 3,
       "SiliconANGLE": 2,
-      "Ars Technica": 2,
       "CNBC": 5,
+      "Ars Technica": 2,
       "Android Authority": 1,
       "IEEE Spectrum": 2,
       "Microsoft Source": 1,
       "VentureBeat": 5,
-      "South China Morning Post": 1,
       "Business Insider": 3,
+      "South China Morning Post": 1,
       "Reuters": 1,
       "MacRumors": 1,
       "Fortune": 2,
@@ -152,8 +153,8 @@
       "Axios": 1,
       "TrendForce": 2,
       "WIRED": 1,
-      "The Guardian": 1,
       "GlobeNewswire": 1,
+      "The Guardian": 1,
       "Goldman Sachs": 1,
       "Seoul Economic Daily": 1,
       "Morgan Stanley": 1
@@ -163,7 +164,7 @@
     }
   },
   "collection": {
-    "generatedAt": "2026-07-25T16:27:14.282Z",
+    "generatedAt": "2026-07-25T22:24:02.485Z",
     "mode": "source-content-extractive",
     "policyVersion": 2,
     "streams": {
@@ -179,14 +180,14 @@
       "rss:Ars Technica",
       "rss:Hugging Face",
       "rss:VentureBeat",
-      "rss:SiliconANGLE",
-      "rss:The Register"
+      "rss:The Register",
+      "rss:SiliconANGLE"
     ],
     "status": "ok"
   },
   "notices": [
     "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",
-    "검증 제한 기사 비율: 5.6% (5/90)",
+    "검증 제한 기사 비율: 5.5% (5/91)",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
     "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다."
