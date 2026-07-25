@@ -2097,9 +2097,9 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .es-col-h { font-family: var(--f); font-size: 9px; font-weight: 900; letter-spacing: .1em; color: #536777; text-transform: uppercase; }
 .es-col-h:nth-child(2) { grid-column: 2; }.es-col-h:nth-child(3) { grid-column: 4; }.es-col-h:nth-child(4) { grid-column: 6; }
 .es-col-h em { margin-left: 4px; color: #7a8994; font-size: 9px; font-style: normal; font-weight: 600; letter-spacing: 0; text-transform: none; }
-.es-row { display: grid; grid-template-columns: 148px minmax(180px, 1.02fr) 28px minmax(220px, 1.2fr) 28px minmax(180px, .98fr); gap: 10px; align-items: stretch; min-width: 0; padding: 0 26px; border-bottom: 1px solid #dce1e1; background: #fcfcfa; transition: background .18s ease; }
+.es-row { display: grid; grid-template-columns: 148px minmax(180px, 1.02fr) 28px minmax(220px, 1.2fr) 28px minmax(180px, .98fr); gap: 10px; align-items: stretch; min-width: 0; padding: 0 26px; border-bottom: 1px solid #dce1e1; background: #fcfcfa; transition: background .18s ease, color .18s ease; }
 .es-row:last-child { border-bottom: 0; }
-.es-row:hover { background: #f7f8f5; }
+.es-row:hover { background: #102a43; }
 .es-axis { position: relative; display: flex; align-content: center; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; padding: 18px 10px 18px 0; font-family: var(--f); }
 .es-axis::before { position: absolute; top: 18px; bottom: 18px; left: 0; width: 2px; background: var(--tl); content: ""; }
 .es-axis-ico { display: inline-grid; width: 20px; height: 20px; margin-left: 9px; place-items: center; color: var(--tl); }
@@ -2117,8 +2117,18 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .es-act .tl-link { display: inline-flex; margin-top: 10px; color: #315c4a; }
 .es-arr { position: relative; display: grid; min-width: 0; place-items: center; color: #8b9aa3; font-size: 16px; font-weight: 600; }
 .es-arr::before { position: absolute; top: 50%; right: 0; left: 0; height: 1px; background: #ccd4d7; content: ""; }
-.es-arr { text-indent: 1px; }.es-arr::after { position: relative; padding: 0 2px; background: #fcfcfa; content: "→"; }
-.es-row:hover .es-arr::after { background: #f7f8f5; }
+.es-arr::after { position: relative; padding: 0 2px; background: #fcfcfa; content: "→"; }
+/* 핵심어는 색상 배지 대신 노란색 밑줄로 통일 */
+.es-cell .tl-hl, .es-cell .tl-kw, .es-cell .tl-kw-pos, .es-cell .tl-kw-neg, .es-cell .tl-kw-key { color: inherit; background: linear-gradient(transparent 62%, rgba(255, 211, 49, .72) 62%, rgba(255, 211, 49, .72) 92%, transparent 92%); border-radius: 0; padding: 0 1px; font-weight: 900; }
+/* 행 단위 반전 — 마우스를 올려도 화살표와 핵심어의 위계 유지 */
+.es-row:hover .es-axis::before { background: #f3c64c; }
+.es-row:hover .es-axis-ico, .es-row:hover .es-axis b, .es-row:hover .es-score, .es-row:hover .es-score em, .es-row:hover .es-cell, .es-row:hover .es-act { color: #f8fbfd; }
+.es-row:hover .es-axis-label, .es-row:hover .es-score-note, .es-row:hover .es-cell::before { color: #b8c9d5; }
+.es-row:hover .es-arr::before { background: rgba(233, 243, 248, .35); }
+.es-row:hover .es-arr::after { color: #f3c64c; background: #102a43; }
+.es-row:hover .tl-ev-chip { color: #f8fbfd; border-color: rgba(248, 251, 253, .35); background: rgba(255,255,255,.08); }
+.es-row:hover .es-act .tl-link { color: #f3c64c; }
+.es-row:hover .es-cell .tl-hl, .es-row:hover .es-cell .tl-kw, .es-row:hover .es-cell .tl-kw-pos, .es-row:hover .es-cell .tl-kw-neg, .es-row:hover .es-cell .tl-kw-key { color: #fffdf1; background: linear-gradient(transparent 62%, rgba(243, 198, 76, .82) 62%, rgba(243, 198, 76, .82) 92%, transparent 92%); }
 .es-info .ct-del { float: none; margin-left: auto; }
 .ib-engtag { color: #315c4a; font-weight: 700; }.ib-engtag.rules { color: #173f5f; }
 @media (max-width: 1080px) { .es-info-head, .es-row { grid-template-columns: 126px minmax(150px, .98fr) 20px minmax(180px, 1.12fr) 20px minmax(150px, .88fr); gap: 8px; padding-right: 18px; padding-left: 18px; }.es-brief-head, .es-framework-key { padding-right: 18px; padding-left: 18px; }.es-cell { font-size: 12px; }.es-axis b { width: calc(100% - 41px); } }

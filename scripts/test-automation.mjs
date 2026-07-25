@@ -206,8 +206,11 @@ try {
     && boards.includes("FACT <em>원문 근거</em>")
     && boards.includes("IMPLICATION <em>사업 의미</em>")
     && boards.includes("DECISION <em>권고 실행</em>")
+    && !boards.includes('className="es-arr" aria-hidden="true">→</span>')
     && styles.includes(".es-brief-head")
     && styles.includes(".es-framework-key")
+    && styles.includes(".es-row:hover { background: #102a43; }")
+    && styles.includes(".es-cell .tl-hl, .es-cell .tl-kw")
     && styles.includes("background: #fcfcfa;");
   if (!removedPriorityStrip || !consultingFramework) {
     throw new Error("executive summary must use the evidence → implication → decision consulting framework without a priority-strip graphic");

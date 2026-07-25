@@ -2369,9 +2369,9 @@ function ExecToplines({ items, insights, onNav }) {
                 </a>
               ))}
             </div>
-            <span className="es-arr" aria-hidden="true">→</span>
+            <span className="es-arr" aria-hidden="true" />
             <div className="es-cell es-ins">{hlKey(t.decision)}</div>
-            <span className="es-arr" aria-hidden="true">→</span>
+            <span className="es-arr" aria-hidden="true" />
             <div className="es-cell es-act">{hlKey(t.action || "")}
               {t.nav && <button className="tl-link" onClick={() => onNav && onNav(t.nav)}>{NAVLABEL[t.nav] || "상세"} ›</button>}
             </div>
