@@ -1297,6 +1297,7 @@ const DYNAMICS_AXES = [
 
 function ESCompetitiveMap({ companies, cats, articles }) {
   const ref = React.useRef(null);
+  const videoRef = React.useRef(null);
   const inView = useInView(ref);
   const prog = useProgress(inView, 1400);
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
@@ -1325,6 +1326,22 @@ function ESCompetitiveMap({ companies, cats, articles }) {
   React.useEffect(() => {
     setActiveCompany(current => list.some(c => c.name === current) ? current : defaultCompany);
   }, [graphKey, defaultCompany]);
+
+  React.useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+    const slowPlayback = () => {
+      video.defaultPlaybackRate = 0.55;
+      video.playbackRate = 0.55;
+    };
+    slowPlayback();
+    video.addEventListener("loadedmetadata", slowPlayback);
+    video.addEventListener("play", slowPlayback);
+    return () => {
+      video.removeEventListener("loadedmetadata", slowPlayback);
+      video.removeEventListener("play", slowPlayback);
+    };
+  }, []);
 
   const selectedCompany = list.find(c => c.name === activeCompany) || list[0] || null;
   const selectedArticle = selectedCompany ? articleByCo[selectedCompany.name] : null;
@@ -1363,7 +1380,7 @@ function ESCompetitiveMap({ companies, cats, articles }) {
           />
         </div>
         <aside className="dyn-video-panel" aria-live="polite">
-          <video className="dyn-video" autoPlay muted loop playsInline preload="metadata" aria-label="AI 업계 경쟁 다이내믹스 영상">
+          <video ref={videoRef} className="dyn-video" autoPlay muted loop playsInline preload="metadata" aria-label="AI 업계 경쟁 다이내믹스 영상">
             <source src="assets/competitive-dynamics.mp4" type="video/mp4" />
           </video>
           <div className="dyn-video-overlay">
@@ -2242,23 +2259,6 @@ function ExecToplines({ items, insights, onNav }) {
         <span className={"es-engine " + eb.cls} title="생성 방식: LLM=완전 자동 생성 · 규칙=키워드 규칙 매핑 · 시드=초기 입력값(자동 갱신 대기)">{eb.ko}</span>
         <span className="es-score-legend" title="상대 중요도 0~100 = 최신성 × 출처신뢰도 × 주제적합도 (당일 최고 카드 = 100)">점수 = 상대 중요도 0~100</span>
         {insights && insights.generatedAt && <span className="es-gen">갱신 {String(insights.generatedAt).slice(0, 10)}</span>}
-      </div>
-      <div className="es-priority-map" aria-label="전략 축별 상대 중요도">
-        <span className="es-priority-title">우선순위</span>
-        <div className="es-priority-list">
-          {cards.slice().sort((a, b) => (b.score || 0) - (a.score || 0)).map(t => {
-            const tone = TONE[t.tone] || "#2D6BFF";
-            const score = typeof t.score === "number" ? t.score : 0;
-            return (
-              <span className="es-priority-chip" key={t.tag} style={{ "--tl": tone, "--score": `${Math.max(8, Math.min(100, score))}%` }}>
-                <span className="es-priority-dot"><Icon name={ICON[t.tone] || "spark"} size={11} /></span>
-                <b>{t.tag}</b>
-                {typeof t.score === "number" && <em>{t.score}</em>}
-                <i aria-hidden="true"><span /></i>
-              </span>
-            );
-          })}
-        </div>
       </div>
       <div className="es-flow-key" aria-label="경영 요약 읽는 순서">
         <span className="sig"><b>1</b> Signal <em>관측된 사실</em></span>

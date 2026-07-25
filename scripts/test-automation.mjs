@@ -182,10 +182,13 @@ try {
   const videoPanel = boards.includes('src="assets/competitive-dynamics.mp4"')
     && boards.includes("const DYNAMICS_AXES")
     && boards.includes("onNodeSelect={setActiveCompany}")
+    && boards.includes("video.playbackRate = 0.55")
     && boards.includes("compact");
   const interactiveLayout = styles.includes(".es-dynamics-grid")
     && styles.includes(".dyn-video-panel")
-    && styles.includes(".dyn-relationship");
+    && styles.includes(".dyn-relationship")
+    && styles.includes("grid-template-columns: minmax(460px, 1.25fr) minmax(340px, .85fr)")
+    && styles.includes("brightness(.66)");
   if (!videoPanel || !interactiveLayout) {
     throw new Error("competitive dynamics needs a left interactive circle map and a right combined-video insight panel");
   }
@@ -193,6 +196,20 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  competitive dynamics video panel: ${error.message}`);
+}
+
+try {
+  const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
+  const removedPriorityStrip = !boards.includes('className="es-priority-map"') && !styles.includes(".es-priority-map");
+  const gentleWholeCardTone = styles.includes(".es-row::before { display: none; }")
+    && styles.includes("background: color-mix(in srgb, var(--tl) 5%, var(--panel));");
+  if (!removedPriorityStrip || !gentleWholeCardTone) {
+    throw new Error("executive summary must remove the priority-strip graphic and use a gentle full-card tone without a left accent bar");
+  }
+  console.log("  OK  executive summary removes the priority strip and uses gentle full-card tones");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  executive summary card tone: ${error.message}`);
 }
 
 try {
