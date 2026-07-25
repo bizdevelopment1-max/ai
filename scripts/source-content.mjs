@@ -9,7 +9,7 @@ import { createHash } from "node:crypto";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const MAX_TEXT = 12_000;
-const JUNK = /^(?:advertisement|advertising|subscribe|sign up|read more|cookie|privacy policy|all rights reserved|share this article|follow us|related articles?)\b/i;
+const JUNK = /(?:^|\b)(?:advertisement|advertising|subscribe|sign up|read more|cookie|privacy policy|all rights reserved|share this article|follow us|related articles?|news tips|newsletters?|get this delivered to your inbox|confidential news tip|data is a real-time snapshot|global business and financial news|stock quotes and market data)(?:\b|$)/i;
 
 export const cleanText = value => String(value || "")
   .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
@@ -36,6 +36,8 @@ const similarity = (a, b) => {
   let same = 0; for (const word of aa) if (bb.has(word)) same++;
   return same / Math.min(aa.size, bb.size);
 };
+
+const malformedEncoding = value => /\uFFFD|(?:Ã.|Â.|â..){2,}/.test(String(value || ""));
 
 async function fetchText(url, tries = 2) {
   let error;
@@ -164,7 +166,12 @@ export async function enrichSourceRecord(record) {
     const headline = cleanText(rawHeadline).replace(/\s*[|｜]\s*(?:techcrunch|the verge|wired|engadget|cnbc|reuters|bloomberg)\s*$/i, "").trim();
     const description = meta(page.text, ["og:description", "description", "twitter:description"]);
     let paragraphs = paragraphsFromHtml(page.text);
-    if (paragraphs.length < 2) paragraphs = jsonLdBodies(page.text).flatMap(splitSentences).filter(line => line.length >= 55).slice(0, 18);
+    if (paragraphs.length < 2) {
+      const schemaParagraphs = jsonLdBodies(page.text).flatMap(splitSentences)
+        .map(cleanText).filter(line => line.length >= 55 && !JUNK.test(line)).slice(0, 18);
+      if (schemaParagraphs.length >= 2) paragraphs = schemaParagraphs;
+    }
+    if (malformedEncoding(headline) || paragraphs.some(malformedEncoding)) throw new Error("malformed-source-encoding");
     const sourceText = paragraphs.join("\n\n").slice(0, MAX_TEXT);
     const summaryLinesEn = selectCoreLines(sourceText, headline);
     if (summaryLinesEn.length < 2) throw new Error("insufficient-distinct-source-sentences");
