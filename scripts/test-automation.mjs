@@ -202,15 +202,37 @@ try {
 try {
   const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
   const removedPriorityStrip = !boards.includes('className="es-priority-map"') && !styles.includes(".es-priority-map");
-  const gentleWholeCardTone = styles.includes(".es-row::before { display: none; }")
-    && styles.includes("background: color-mix(in srgb, var(--tl) 5%, var(--panel));");
-  if (!removedPriorityStrip || !gentleWholeCardTone) {
-    throw new Error("executive summary must remove the priority-strip graphic and use a gentle full-card tone without a left accent bar");
+  const consultingFramework = boards.includes("STRATEGIC DECISION BRIEF")
+    && boards.includes("FACT <em>원문 근거</em>")
+    && boards.includes("IMPLICATION <em>사업 의미</em>")
+    && boards.includes("DECISION <em>권고 실행</em>")
+    && styles.includes(".es-brief-head")
+    && styles.includes(".es-framework-key")
+    && styles.includes("background: #fcfcfa;");
+  if (!removedPriorityStrip || !consultingFramework) {
+    throw new Error("executive summary must use the evidence → implication → decision consulting framework without a priority-strip graphic");
   }
-  console.log("  OK  executive summary removes the priority strip and uses gentle full-card tones");
+  console.log("  OK  executive summary uses an evidence → implication → decision consulting framework");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  executive summary card tone: ${error.message}`);
+}
+
+try {
+  const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
+  const readableSignals = boards.includes("signal-quant-layout")
+    && boards.includes("DECISION LENS")
+    && boards.includes("검토 항목")
+    && styles.includes(".signal-reading")
+    && styles.includes(".isg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));")
+    && !styles.includes(".isg-summary li { position: relative; min-width: 0; padding-left: 10px; font-size: 11px; font-weight: 600; line-height: 1.45; color: var(--muted); word-break: keep-all; display: -webkit-box;");
+  if (!readableSignals) {
+    throw new Error("infra charts need a compact chart layout, source-derived decision lenses, and unclipped readable signal cards");
+  }
+  console.log("  OK  infrastructure charts include compact visuals and readable source-derived insights");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  infrastructure chart readability: ${error.message}`);
 }
 
 try {

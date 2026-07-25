@@ -1888,6 +1888,41 @@ function SignalInfographic({ file, delKey, title, sub, articles }) {
 function SignalBoard({ data, theme, sectionRef, articles }) {
   const inView = useInView(sectionRef);
   const strat = data.INFRA_STRATEGY || { hyperscaler: [], aiNative: [] };
+  const metricAt = (series, key, value) => (series || []).find(row => String(row[key]) === value) || (series || [])[0] || {};
+  const capexNow = metricAt(data.DC_CAPEX, "year", "2026E");
+  const capexPrev = metricAt(data.DC_CAPEX, "year", "2025");
+  const hbmNow = metricAt(data.HBM_MARKET, "year", "2026E");
+  const hbmNext = metricAt(data.HBM_MARKET, "year", "2027E");
+  const chipNow = metricAt(data.CHIP_MIX, "period", "2026E");
+  const chipNext = metricAt(data.CHIP_MIX, "period", "2027E");
+  const opticalNow = metricAt(data.OPTICAL_TREND, "year", "2026");
+  const opticalNext = metricAt(data.OPTICAL_TREND, "year", "2030E");
+  const decisionReadouts = [
+    {
+      no: "01", label: "CAPEX", metric: capexNow.size ? `$${capexNow.size}B` : "—",
+      fact: `${capexPrev.year || "직전"} ${capexPrev.size ? `$${capexPrev.size}B` : "—"} → ${capexNow.year || "최신"} ${capexNow.size ? `$${capexNow.size}B` : "—"} · ${capexNow.growth ? `성장률 ${capexNow.growth}%` : ""}`,
+      insight: "전력·부지·메모리 조달이 투자 집행을 따라가는지 공급 제약을 별도 점검",
+      src: capexNow.src,
+    },
+    {
+      no: "02", label: "MEMORY", metric: hbmNow.size ? `$${hbmNow.size}B` : "—",
+      fact: `${hbmNow.year || "최신"} ${hbmNow.size ? `$${hbmNow.size}B` : "—"} → ${hbmNext.year || "다음"} ${hbmNext.size ? `$${hbmNext.size}B` : "—"} · ${hbmNow.growth ? `성장률 ${hbmNow.growth}%` : ""}`,
+      insight: "메모리 확보 시점이 모델 배포와 서버 증설의 선행 지표인지 확인",
+      src: hbmNow.src,
+    },
+    {
+      no: "03", label: "COMPUTE", metric: chipNow.custom != null ? `${chipNow.custom}%` : "—",
+      fact: `${chipNow.period || "최신"} 커스텀 실리콘 ${chipNow.custom ?? "—"}% → ${chipNext.period || "다음"} ${chipNext.custom ?? "—"}%`,
+      insight: "GPU 단일 조달이 아닌 멀티실리콘 호환성과 소프트웨어 이식성을 검토",
+      src: chipNow.src,
+    },
+    {
+      no: "04", label: "NETWORK", metric: opticalNext.pen != null ? `${opticalNext.pen}%` : "—",
+      fact: `${opticalNow.year || "최신"} 침투율 ${opticalNow.pen ?? "—"}% → ${opticalNext.year || "전망"} ${opticalNext.pen ?? "—"}%`,
+      insight: "광통신 전환 시점과 전력 효율 개선이 데이터센터 설계에 반영되는지 추적",
+      src: opticalNext.src,
+    },
+  ];
   return (
     <section className="board" ref={sectionRef} data-screen-label="Infra & Future Tech">
      <AnimCtx.Provider value={inView}>
@@ -1898,23 +1933,42 @@ function SignalBoard({ data, theme, sectionRef, articles }) {
           <p>하이퍼스케일러 CapEx·메모리·칩 믹스·광통신 — 경쟁 로드맵을 좌우하는 인프라 변수</p>
         </div>
       </div>
-      <div className="chart-grid">
-        <div className="chart-card">
-          <div className="cc-head"><h3>하이퍼스케일러 데이터센터 CapEx</h3><span>$B · Big 5 합산 · Moody's / 각사 공시</span></div>
-          <MarketGrowthChart data={data.DC_CAPEX} accent={theme.accent} ink={theme.ink} grid={theme.grid} muted={theme.muted} />
+      <div className="signal-quant-layout">
+        <div className="chart-grid signal-chart-grid">
+          <div className="chart-card">
+            <div className="cc-head"><h3>하이퍼스케일러 데이터센터 CapEx</h3><span>$B · Big 5 합산 · Moody's / 각사 공시</span></div>
+            <MarketGrowthChart data={data.DC_CAPEX} accent={theme.accent} ink={theme.ink} grid={theme.grid} muted={theme.muted} />
+          </div>
+          <div className="chart-card">
+            <div className="cc-head"><h3>HBM(고대역폭메모리) 시장 규모</h3><span>$B · AI 가속기 공급망 최대 병목 · Gartner / BofA</span></div>
+            <MarketGrowthChart data={data.HBM_MARKET} accent="#F59E0B" ink={theme.ink} grid={theme.grid} muted={theme.muted} />
+          </div>
+          <div className="chart-card">
+            <div className="cc-head"><h3>AI 가속기 칩 믹스 변화</h3><span>GPU 범용 vs 커스텀 실리콘 비중(%)</span></div>
+            <ShareTrendChart data={data.CHIP_MIX} theme={theme} keyA="gpu" keyB="custom" labelA="GPU(범용)" labelB="커스텀 실리콘" colorA="#2D6BFF" colorB="#16A34A" />
+          </div>
+          <div className="chart-card">
+            <div className="cc-head"><h3>광통신(CPO) 데이터센터 침투율</h3><span>% · 차세대 인터커넥트 전환 · IDTechEx</span></div>
+            <PenetrationChart data={data.OPTICAL_TREND} theme={theme} />
+          </div>
         </div>
-        <div className="chart-card">
-          <div className="cc-head"><h3>HBM(고대역폭메모리) 시장 규모</h3><span>$B · AI 가속기 공급망 최대 병목 · Gartner / BofA</span></div>
-          <MarketGrowthChart data={data.HBM_MARKET} accent="#F59E0B" ink={theme.ink} grid={theme.grid} muted={theme.muted} />
-        </div>
-        <div className="chart-card">
-          <div className="cc-head"><h3>AI 가속기 칩 믹스 변화</h3><span>GPU 범용 vs 커스텀 실리콘 비중(%)</span></div>
-          <ShareTrendChart data={data.CHIP_MIX} theme={theme} keyA="gpu" keyB="custom" labelA="GPU(범용)" labelB="커스텀 실리콘" colorA="#2D6BFF" colorB="#16A34A" />
-        </div>
-        <div className="chart-card">
-          <div className="cc-head"><h3>광통신(CPO) 데이터센터 침투율</h3><span>% · 차세대 인터커넥트 전환 · IDTechEx</span></div>
-          <PenetrationChart data={data.OPTICAL_TREND} theme={theme} />
-        </div>
+        <aside className="signal-reading" aria-label="인프라 수치 기반 시사점">
+          <div className="signal-reading-head">
+            <span>DECISION LENS</span>
+            <h3>숫자가 말하는 다음 질문</h3>
+            <p>그래프의 현재값·전망값을 분리해 해석</p>
+          </div>
+          <div className="signal-reading-list">
+            {decisionReadouts.map(readout => (
+              <article className="signal-reading-item" key={readout.label}>
+                <div className="signal-reading-top"><span>{readout.no}</span><em>{readout.label}</em><strong>{readout.metric}</strong></div>
+                <p className="signal-reading-fact">{readout.fact}</p>
+                <p className="signal-reading-insight"><b>검토 항목</b>{readout.insight}</p>
+                {readout.src && <small>{readout.src}</small>}
+              </article>
+            ))}
+          </div>
+        </aside>
       </div>
       <div className="infra-strategy">
         <div className="is-col">
@@ -2226,7 +2280,8 @@ function RadarBoard({ radar, sectionRef }) {
 
 // insights.json(매일 규칙기반 갱신)이 있으면 그걸로, 없으면 정적 TOPLINE으로 폴백.
 function ExecToplines({ items, insights, onNav }) {
-  const TONE = { warn: "#D23B3B", signal: "#2D6BFF", revenue: "#16A34A", compete: "#C026D3" };
+  // 컨설팅 브리프는 축별 네온 색상 대신 절제된 우선순위 표식만 사용
+  const TONE = { warn: "#8E3B31", signal: "#173F5F", revenue: "#315C4A", compete: "#655867" };
   const ICON = { warn: "target", signal: "pulse", revenue: "chart", compete: "brain" };
   const NAVLABEL = { bigtech: "빅테크 AI", bizmodel: "수익화 모델", signals: "인프라·미래기술", native: "AI 네이티브", overview: "경쟁 구도", ib: "증권사 인사이트" };
   // 삭제(비밀번호 000) — 축 태그 기준, localStorage 영구 보존
@@ -2254,24 +2309,30 @@ function ExecToplines({ items, insights, onNav }) {
   };
   const eb = ENGINE_BADGE[eng] || ENGINE_BADGE.rules;
   return (
-    <div className="es-info">
-      <div className="es-meta-bar">
-        <span className={"es-engine " + eb.cls} title="생성 방식: LLM=완전 자동 생성 · 규칙=키워드 규칙 매핑 · 시드=초기 입력값(자동 갱신 대기)">{eb.ko}</span>
-        <span className="es-score-legend" title="상대 중요도 0~100 = 최신성 × 출처신뢰도 × 주제적합도 (당일 최고 카드 = 100)">점수 = 상대 중요도 0~100</span>
-        {insights && insights.generatedAt && <span className="es-gen">갱신 {String(insights.generatedAt).slice(0, 10)}</span>}
-      </div>
-      <div className="es-flow-key" aria-label="경영 요약 읽는 순서">
-        <span className="sig"><b>1</b> Signal <em>관측된 사실</em></span>
+    <section className="es-info" aria-label="전략 의사결정 브리프">
+      <header className="es-brief-head">
+        <div>
+          <span className="es-brief-kicker">STRATEGIC DECISION BRIEF</span>
+          <h3>핵심 신호를 의사결정으로 연결</h3>
+          <p>확인 가능한 원문 근거를 사업적 의미와 다음 실행으로 구조화</p>
+        </div>
+        <div className="es-brief-note" title="상대 중요도 0~100 = 최신성 × 출처신뢰도 × 주제적합도">
+          <strong>Evidence-led</strong>
+          <span>{eb.ko} · 상대 중요도 기준</span>
+        </div>
+      </header>
+      <div className="es-framework-key" aria-label="전략 브리프 읽는 순서">
+        <span><b>01</b> FACT <em>원문 근거</em></span>
         <i aria-hidden="true">→</i>
-        <span className="ins"><b>2</b> Insight <em>사업 의미</em></span>
+        <span><b>02</b> IMPLICATION <em>사업 의미</em></span>
         <i aria-hidden="true">→</i>
-        <span className="act"><b>3</b> Action <em>다음 실행</em></span>
+        <span><b>03</b> DECISION <em>권고 실행</em></span>
       </div>
-      <div className="es-info-head">
-        <span className="es-col-h es-col-axis">전략 축</span>
-        <span className="es-col-h">Signal <em>관측된 사실</em></span>
-        <span className="es-col-h">Insight <em>왜 중요한가</em></span>
-        <span className="es-col-h">Action <em>다음 실행</em></span>
+      <div className="es-info-head" aria-hidden="true">
+        <span className="es-col-h es-col-axis">우선순위</span>
+        <span className="es-col-h">01 Fact <em>원문 근거</em></span>
+        <span className="es-col-h">02 Implication <em>사업 의미</em></span>
+        <span className="es-col-h">03 Decision <em>권고 실행</em></span>
       </div>
       {cards.map((t, i) => {
         const tone = TONE[t.tone] || "#2D6BFF";
@@ -2279,12 +2340,13 @@ function ExecToplines({ items, insights, onNav }) {
         return (
           <div className="es-row" key={t.tag} style={{ "--tl": tone, "--score": `${Math.max(8, Math.min(100, score))}%` }}>
             <div className="es-axis">
-              <span className="es-axis-ico"><Icon name={ICON[t.tone] || "spark"} size={15} /></span>
+              <span className="es-axis-ico"><Icon name={ICON[t.tone] || "spark"} size={14} /></span>
+              <span className="es-axis-label">전략 축</span>
               <b>{t.tag}</b>
               {typeof t.score === "number"
-                ? <span className="es-score" style={{ "--tl": tone }} title={t.scoreBasis || "상대 중요도 0~100"}>{t.score}</span>
+                ? <span className="es-score" style={{ "--tl": tone }} title={t.scoreBasis || "상대 중요도 0~100"}>P{Math.max(1, Math.min(3, Math.ceil((101 - t.score) / 34)))} <em>{t.score}</em></span>
                 : (t.live === false && <span className="es-score base" title={t.scoreBasis || "근거 기사 매칭 대기 — 큐레이션 기준선"}>기준선</span>)}
-              {typeof t.score === "number" && <div className="es-meter" aria-label={`상대 중요도 ${t.score}`}><i /></div>}
+              {typeof t.score === "number" && <span className="es-score-note">상대 중요도</span>}
               {pend === t.tag ? (
                 <span className="art-del-pw" onClick={e => e.stopPropagation()}>
                   <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
@@ -2307,16 +2369,16 @@ function ExecToplines({ items, insights, onNav }) {
                 </a>
               ))}
             </div>
-            <span className="es-arr">→</span>
+            <span className="es-arr" aria-hidden="true">→</span>
             <div className="es-cell es-ins">{hlKey(t.decision)}</div>
-            <span className="es-arr">→</span>
+            <span className="es-arr" aria-hidden="true">→</span>
             <div className="es-cell es-act">{hlKey(t.action || "")}
               {t.nav && <button className="tl-link" onClick={() => onNav && onNav(t.nav)}>{NAVLABEL[t.nav] || "상세"} ›</button>}
             </div>
           </div>
         );
       })}
-    </div>
+    </section>
   );
 }
 

@@ -364,7 +364,7 @@ function App() {
             {/* ── 1. 개요 ── */}
             <section ref={refs.overview} data-screen-label="Overview">
               <div className="ov-head">
-                <h2 className="ov-title">Executive Summary</h2>
+                <h2 className="ov-title">전략 의사결정 브리프 <span>Executive Summary</span></h2>
               </div>
               <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
               <ESCompetitiveMap companies={D.COMPANIES} cats={cats} articles={articles} />
