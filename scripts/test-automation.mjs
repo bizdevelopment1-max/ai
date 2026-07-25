@@ -6,6 +6,8 @@ const required = [
   ".github/workflows/daily-news.yml",
   ".github/workflows/daily-news-update.yml",
   "scripts/crawl-news.mjs",
+  "scripts/source-content.mjs",
+  "scripts/refresh-source-content.mjs",
   "scripts/crawl-stocks.mjs",
   "scripts/crawl-markets.mjs",
   "scripts/market-db.mjs",
@@ -105,20 +107,25 @@ try {
   const news = JSON.parse(await readFile("news.json", "utf8"));
   const research = JSON.parse(await readFile("research.json", "utf8"));
   const records = [...(news.articles || []), ...(research.feed || [])];
+  const visible = records.filter(record => record.displayEligible !== false);
   const valid = record => {
     const loc = record.localization || {};
+    const lines = Array.isArray(loc.summaryLines) ? loc.summaryLines : [];
     return ["accepted", "fallback-english"].includes(loc.status)
       && ["ko", "en"].includes(loc.displayLanguage)
       && typeof loc.title === "string" && loc.title.trim().length > 1
-      && Array.isArray(loc.sourceLines) && loc.sourceLines.length === 3
-      && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3
+      && Array.isArray(loc.sourceLines) && loc.sourceLines.length >= 1 && loc.sourceLines.length <= 3
+      && lines.length >= 1 && lines.length <= 3
+      && new Set(lines.map(line => String(line).replace(/\s+/g, "").toLowerCase())).size === lines.length
+      && record.summaryMode === "source-content-extractive"
+      && record.sourceContent?.status === "content-extracted"
       && /^[a-f0-9]{64}$/i.test(loc.sourceHash || "");
   };
-  if (!records.length || !records.every(valid)) {
-    throw new Error("every crawled article and research row needs a source-hashed Korean translation or English fallback with exactly three display lines");
+  if (visible.length < 10 || !visible.every(valid)) {
+    throw new Error("every visible feed row needs source-page text, one-to-three distinct source-hashed Korean or English lines, and no repeated filler");
   }
-  const translated = records.filter(record => record.localization.status === "accepted").length;
-  console.log(`  정상  전체 피드 3줄 표시 ${records.length}건 · 한국어 ${translated}건 · 영문 폴백 ${records.length - translated}건`);
+  const translated = visible.filter(record => record.localization.status === "accepted").length;
+  console.log(`  정상  본문 기반 피드 ${visible.length}건 · 한국어 ${translated}건 · 영문 폴백 ${visible.length - translated}건`);
 } catch (error) {
   failed = true;
   console.error(`  실패  전체 피드 번역·폴백: ${error.message}`);
@@ -153,7 +160,7 @@ for (const file of pipelineScripts) {
 try {
   const policy = JSON.parse(await readFile("config/news-policy.json", "utf8"));
   const health = JSON.parse(await readFile("llm-health.json", "utf8"));
-  if (policy.summaryMode !== "source-excerpt" || health.externalModelApiCalls !== 0) {
+  if (policy.summaryMode !== "source-content-extractive" || health.externalModelApiCalls !== 0) {
     throw new Error("source-only policy or model API health declaration is invalid");
   }
   const sources = await Promise.all(pipelineScripts.concat(["scripts/llm.mjs", "scripts/translate_summarize.py"]).map(file => readFile(file, "utf8")));

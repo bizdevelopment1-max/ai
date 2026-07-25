@@ -113,7 +113,7 @@ function gaejosik(s) {
 async function main() {
   let articles = [];
   try { articles = (JSON.parse(await readFile("news.json", "utf8")).articles || []); } catch { articles = []; }
-  articles = articles.filter(a => a.summaryMode === "source-excerpt" && !isExcludedText(`${a.title || ""} ${a.summary || ""}`));
+  articles = articles.filter(a => a.displayEligible !== false && a.summaryMode === "source-content-extractive" && !isExcludedText(`${a.title || ""} ${a.summary || ""}`));
 
   // 각 (기사,축) 점수 계산 — 근거 기사↔축 주제 정합성 게이트 적용
   const scored = [];

@@ -65,7 +65,10 @@ jobs:
       - name: Crawl IB research (증권사 1페이저 + 기관 피드)
         run: node scripts/run-with-retry.mjs scripts/crawl-research.mjs
 
-      - name: Localise article and research feeds from stored source fragments
+      - name: Retry retained source links and store publisher-page text
+        run: SOURCE_REFRESH_LIMIT=30 SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-source-content.mjs
+
+      - name: Localise distinct source-page sentences
         run: python scripts/translate_summarize.py
 
       - name: Build live company data (mentions + market caps)

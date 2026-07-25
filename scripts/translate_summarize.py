@@ -4,7 +4,7 @@
 
 This is a localisation job, never a fact-generation or summarisation job. It
 does not change the source-evidence fields used by the verification pipeline.
-Each displayed line is translated from a stored publisher/RSS fragment and the
+Each displayed line is translated from a stored publisher-page sentence and the
 original fragments plus a source hash remain in the published record.
 
 The service request contains only public headline/snippet text. If the
@@ -59,18 +59,19 @@ def source_hash(title: str, excerpt: str) -> str:
 
 
 def canonical_fragments(title: str, excerpt: str, source: str, date: str) -> list[str]:
-    """Create exactly three source-bound display lines without new facts."""
+    """Keep one to three distinct source sentences; never add filler lines."""
+    raw_lines = [clean(part) for part in str(excerpt or "").splitlines() if clean(part)]
     title, excerpt = clean(title), clean(excerpt)
     pieces: list[str] = []
-    if excerpt and excerpt.casefold() != title.casefold():
+    if raw_lines:
+        pieces.extend(raw_lines)
+    elif excerpt:
         raw = [part.strip() for part in SENTENCE_SPLIT.split(excerpt) if len(part.strip()) >= 12]
         if len(raw) == 1:
             clauses = [part.strip() for part in CLAUSE_SPLIT.split(raw[0]) if len(part.strip()) >= 18]
             if len(clauses) > 1:
                 raw = clauses
         pieces.extend(raw)
-    if title and title not in pieces:
-        pieces.insert(0, title)
 
     unique: list[str] = []
     for piece in pieces:
@@ -79,18 +80,16 @@ def canonical_fragments(title: str, excerpt: str, source: str, date: str) -> lis
             unique.append(piece[:500])
         if len(unique) >= 3:
             break
-    while len(unique) < 2 and title:
-        unique.append(title)
-    if len(unique) < 3:
-        unique.append(f"Source: {clean(source) or 'Original publisher'} · {clean(date) or 'publication date not supplied'}")
     return unique[:3]
 
 
 def valid_korean(text: str, source: str) -> bool:
     text = clean(text)
-    if len(text) < 3 or len(text) > max(700, len(source) * 5 + 80):
+    if len(text) < max(6, int(len(clean(source)) * 0.20)) or len(text) > max(700, len(source) * 5 + 80):
         return False
     if BAD_OUTPUT.search(text) or "�" in text or "http://" in text or "https://" in text:
+        return False
+    if re.search(r"(?<![A-Za-z])[a-z](?=\s*[가-힣])", text):
         return False
     letters = re.findall(r"[A-Za-z가-힣]", text)
     return bool(letters) and len(HANGUL.findall(text)) >= 2 and len(HANGUL.findall(text)) / len(letters) >= 0.12
@@ -153,18 +152,19 @@ class SourceTranslator:
 
 
 def new_localization(item: dict, title: str, excerpt: str, language: str) -> dict:
-    title, excerpt = clean(title), clean(excerpt)
+    raw_excerpt = str(excerpt or "")
+    title, excerpt = clean(title), clean(raw_excerpt)
     digest = source_hash(title, excerpt)
     previous = item.get("localization") or {}
     # A successful translation is cached until its source changes. A fallback
     # is deliberately retried on the next scheduled run so a transient
     # translation outage does not become permanent English display.
-    if previous.get("version") == 2 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
+    if previous.get("version") == 5 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
         return previous
     return {
-        "version": 2,
+        "version": 5,
         "sourceHash": digest,
-        "sourceLines": canonical_fragments(title, excerpt, item.get("source", ""), item.get("date", "")),
+        "sourceLines": canonical_fragments(title, raw_excerpt, item.get("source", ""), item.get("date", "")),
         "checkedAt": datetime.now(timezone.utc).isoformat(),
         "method": "source-fragment-translation",
         "sourceLanguage": language or "English",
@@ -186,7 +186,7 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
         work.append((item, clean(title), clean(excerpt), language, loc))
         if source_language_code(language) != "ko" and not has_korean(title):
             queries.append((title, language))
-            queries.extend((line, language) for line in loc["sourceLines"] if not line.startswith("Source:"))
+            queries.extend((line, language) for line in loc["sourceLines"])
 
     translations = translator.translate_many(queries) if queries else {}
     accepted = fallback = 0
@@ -196,11 +196,15 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
         try:
             if code == "ko" or has_korean(title):
                 ko_title = title
-                ko_lines = [line.replace("Source:", "원문 출처:") if line.startswith("Source:") else line for line in lines]
+                ko_lines = lines
             else:
                 ko_title = translations[(title, code)]
-                ko_lines = [line.replace("Source:", "원문 출처:") if line.startswith("Source:") else translations[(line, code)] for line in lines]
-            if valid_korean(ko_title, title) and all(valid_korean(line, source) for line, source in zip(ko_lines[:2], lines[:2])):
+                ko_lines = [translations[(line, code)] for line in lines]
+            if not ko_lines:
+                raise ValueError("no-distinct-source-lines")
+            if len({clean(line).casefold() for line in ko_lines}) != len(ko_lines):
+                raise ValueError("duplicate-translated-lines")
+            if valid_korean(ko_title, title) and all(valid_korean(line, source) for line, source in zip(ko_lines, lines)):
                 item["localization"] = {**loc, "status": "accepted", "displayLanguage": "ko", "title": ko_title, "summaryLines": ko_lines, "provider": "public-source-translation", "issues": []}
                 item["titleKo"] = ko_title
                 item["summaryLinesKo"] = ko_lines
@@ -229,8 +233,14 @@ def main() -> None:
     news = read_json(NEWS_PATH, {"articles": []})
     research = read_json(RESEARCH_PATH, {"feed": []})
     translator = SourceTranslator()
-    news_rows = [(item, item.get("titleEn") or item.get("title") or "", item.get("descEn") or item.get("summary") or "", "English") for item in (news.get("articles") or [])[:MAX_ITEMS]]
-    research_rows = [(item, item.get("title") or "", item.get("desc") or item.get("title") or "", item.get("sourceLanguage") or "English") for item in (research.get("feed") or [])[:MAX_ITEMS]]
+    def source_lines(item: dict) -> str:
+        lines = item.get("summaryLinesEn") or []
+        if isinstance(lines, list) and lines:
+            return "\n".join(clean(line) for line in lines if clean(line))
+        return item.get("descEn") or item.get("desc") or item.get("summary") or ""
+
+    news_rows = [(item, item.get("titleEn") or item.get("title") or "", source_lines(item), "English") for item in (news.get("articles") or [])[:MAX_ITEMS]]
+    research_rows = [(item, item.get("titleEn") or item.get("title") or "", source_lines(item), item.get("sourceLanguage") or "English") for item in (research.get("feed") or [])[:MAX_ITEMS]]
     changed_news, accepted_news, fallback_news = localize_records(news_rows, translator)
     changed_research, accepted_research, fallback_research = localize_records(research_rows, translator)
     write_json(NEWS_PATH, news)

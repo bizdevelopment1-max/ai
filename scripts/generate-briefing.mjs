@@ -32,7 +32,7 @@ const clamp15 = n => Math.max(1, Math.min(5, Math.round(Number(n) || 3)));
 // ---- 후보 기사 선정: 최근성×출처 가중, 이전 브리핑에서 이미 쓴 URL은 감점(중복 제거) ----
 function pickCandidates(articles, usedUrls) {
   return articles
-    .filter(a => a && a.title && a.url && a.summaryMode === "source-excerpt" && !isExcludedText(`${a.title} ${a.summary || ""}`))
+    .filter(a => a && a.displayEligible !== false && a.title && a.url && a.summaryMode === "source-content-extractive" && !isExcludedText(`${a.title} ${a.summary || ""}`))
     .map(a => ({ a, s: recency(a.date) * sourceWeight(a.source) * (usedUrls.has(a.url) ? 0.25 : 1) }))
     .sort((x, y) => y.s - x.s)
     .slice(0, 14)

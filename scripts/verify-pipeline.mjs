@@ -19,6 +19,12 @@ const readJson = async (file, fallback = null) => {
   catch { return fallback; }
 };
 
+const sourceTitleFor = input => String(input?.titleEn || input?.sourceContent?.headline || input?.title || "");
+const sourceExcerptFor = input => {
+  const lines = Array.isArray(input?.summaryLinesEn) ? input.summaryLinesEn.filter(Boolean) : [];
+  return lines.length ? lines.join("\n") : String(input?.descEn || input?.desc || input?.summary || "");
+};
+
 const canonicalUrl = raw => {
   try {
     const url = new URL(raw);
@@ -66,7 +72,7 @@ for (const input of news.articles || []) {
   const url = canonicalUrl(input.url);
   if (!url || seen.has(url)) continue;
   seen.add(url);
-  const evidenceText = [input.titleEn, input.descEn].filter(Boolean).join(" — ").trim();
+  const evidenceText = [sourceTitleFor(input), sourceExcerptFor(input), input?.sourceContent?.text].filter(Boolean).join("\n").trim();
   const issues = [];
   if (!validHttp(url)) issues.push("invalid-url");
   if (!validDate(input.date)) issues.push("invalid-or-future-date");
@@ -74,22 +80,23 @@ for (const input of news.articles || []) {
   if (!String(input.title || "").trim()) issues.push("missing-title");
   if (!String(input.summary || "").trim()) issues.push("missing-summary");
   if (evidenceText.length < 35) issues.push("insufficient-source-snippet");
-  if (input.summaryMode !== "source-excerpt") issues.push("summary-not-source-excerpt");
-  if (input.summaryMode === "source-excerpt" && !String(evidenceText).includes(String(input.summary || ""))) issues.push("source-excerpt-mismatch");
+  if (input.summaryMode !== "source-content-extractive") issues.push("summary-not-source-content-extractive");
+  if (input.displayEligible !== false && input.sourceContent?.status !== "content-extracted") issues.push("source-content-unavailable");
+  if (input.summaryMode === "source-content-extractive" && !String(evidenceText).includes(String(input.summary || ""))) issues.push("source-content-mismatch");
   const extraNumbers = unsupportedNumbers(input.summary, evidenceText);
   if (extraNumbers.length) issues.push("numbers-not-in-source-snippet");
 
   const verificationStatus = issues.length === 0 ? "source-backed" : "limited";
-  const localization = validLocalization(input, input.titleEn || input.title, input.descEn || input.summary);
+  const localization = validLocalization(input, sourceTitleFor(input), sourceExcerptFor(input));
   const item = {
     ...input,
     url,
     ...(localization ? { localization } : {}),
     provenance: {
       status: verificationStatus,
-      evidenceType: input.descEn ? "publisher-or-rss-snippet" : "headline-only",
+      evidenceType: input.sourceContent?.status === "content-extracted" ? "publisher-page-text" : "retained-without-source-page",
       summaryMode: input.summaryMode || "legacy-or-unknown",
-      verificationTier: input.summaryMode === "source-excerpt" ? "publisher-snippet-exact" : "limited",
+      verificationTier: input.summaryMode === "source-content-extractive" ? "publisher-page-extractive" : "limited",
       checkedAt: now.toISOString(),
       issues,
       unsupportedNumbers: extraNumbers,
@@ -140,27 +147,25 @@ function localizationHash(title, excerpt) {
   return createHash("sha256").update(`${cleanLocalizationText(title)}\n${cleanLocalizationText(excerpt)}`).digest("hex");
 }
 function fallbackLines(title, excerpt, source, date) {
-  const first = cleanLocalizationText(title);
-  const second = cleanLocalizationText(excerpt) || first;
-  return [first, second, `Source: ${cleanLocalizationText(source) || "Original publisher"} · ${cleanLocalizationText(date) || "publication date not supplied"}`];
+  return cleanLocalizationText(excerpt).split(/\n+/).map(cleanLocalizationText).filter(Boolean).slice(0, 3);
 }
 function validLocalization(input, title, excerpt) {
   const loc = input?.localization;
   if (!loc) return null;
   const sourceLines = Array.isArray(loc.sourceLines) ? loc.sourceLines.map(cleanLocalizationText) : [];
   const evidence = cleanLocalizationText(`${title} ${excerpt}`);
-  const sourceBound = sourceLines.length === 3 && sourceLines.slice(0, 2).every(line => line && evidence.includes(line));
+  const sourceBound = sourceLines.length >= 1 && sourceLines.length <= 3 && sourceLines.every(line => line && evidence.includes(line));
   const hashMatches = loc.sourceHash === localizationHash(title, excerpt);
   const korean = text => /[가-힣]/.test(String(text || ""));
   const accepted = loc.status === "accepted" && loc.displayLanguage === "ko" && korean(loc.title)
-    && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3 && loc.summaryLines.slice(0, 2).every(korean);
+    && Array.isArray(loc.summaryLines) && loc.summaryLines.length >= 1 && loc.summaryLines.length <= 3 && loc.summaryLines.every(korean);
   const fallback = loc.status === "fallback-english" && loc.displayLanguage === "en"
-    && typeof loc.title === "string" && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3;
+    && typeof loc.title === "string" && Array.isArray(loc.summaryLines) && loc.summaryLines.length >= 1 && loc.summaryLines.length <= 3;
   if ((accepted || fallback) && sourceBound && hashMatches) return { ...loc, sourceLines };
-  const lines = sourceLines.length === 3 ? sourceLines : fallbackLines(title, excerpt, input?.source, input?.date);
-  return { version: 1, status: "fallback-english", displayLanguage: "en", title: cleanLocalizationText(title), summaryLines: lines, sourceLines: lines, sourceHash: localizationHash(title, excerpt), checkedAt: now.toISOString(), method: "verification-fallback", issues: ["localization-verification-failed"] };
+  const lines = sourceLines.length >= 1 ? sourceLines.slice(0, 3) : fallbackLines(title, excerpt, input?.source, input?.date);
+  return { version: 5, status: "fallback-english", displayLanguage: "en", title: cleanLocalizationText(title), summaryLines: lines, sourceLines: lines, sourceHash: localizationHash(title, excerpt), checkedAt: now.toISOString(), method: "verification-fallback", issues: ["localization-verification-failed"] };
 }
-const derivedSourceStatus = item => item?.sourceSummaryMode === "source-excerpt"
+const derivedSourceStatus = item => item?.sourceSummaryMode === "source-content-extractive"
   ? directSourceStatus(item)
   : { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() };
 
@@ -170,7 +175,7 @@ for (const day of briefing.days || []) {
 insights.cards = (insights.cards || []).map(card => ({ ...card, provenance: verifyEvidenceList(card.evidence) }));
 radar.picks = (radar.picks || []).map(pick => ({ ...pick, provenance: verifyEvidenceList(pick.evidence) }));
 research.feed = (research.feed || []).map(item => {
-  const localization = validLocalization(item, item.title, item.desc || item.title);
+  const localization = validLocalization(item, sourceTitleFor(item), sourceExcerptFor(item));
   return { ...item, ...(localization ? { localization } : {}), provenance: directSourceStatus(item) };
 });
 if (research.onepager) research.onepager = { ...research.onepager, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString(), issues: ["generated-or-legacy-synthesis-not-publishable"] } };
@@ -210,7 +215,7 @@ for (const a of currentArticles) sourceCountsNews[a.source || "unknown"] = (sour
 const linkedBriefs = (briefing.days?.[0]?.items || []).filter(x => x.provenance?.status === "evidence-linked").length;
 const linkedInsights = (insights.cards || []).filter(x => x.provenance?.status === "evidence-linked").length;
 const backedArticles = currentArticles.filter(a => a.provenance.status === "source-backed").length;
-const sourceExcerptArticles = currentArticles.filter(a => a.summaryMode === "source-excerpt").length;
+const sourceExcerptArticles = currentArticles.filter(a => a.summaryMode === "source-content-extractive" && a.displayEligible !== false).length;
 const localizedArticles = currentArticles.filter(a => a.localization?.status === "accepted").length;
 const localizedFallbackArticles = currentArticles.filter(a => a.localization?.status === "fallback-english").length;
 const limitedRate = currentArticles.length ? articleIssues.length / currentArticles.length : 1;
@@ -226,7 +231,7 @@ const consumerSurveyRecords = (market.records || []).filter(record => record.typ
 const checks = [
   { id: "news-coverage", label: "뉴스 수집", status: currentArticles.length >= 20 ? "ok" : "fail", value: `${currentArticles.length}건` },
   { id: "source-backed", label: "원문 스니펫 근거", status: backedArticles >= Math.max(10, currentArticles.length * 0.35) ? "ok" : "warn", value: `${backedArticles}/${currentArticles.length}건` },
-  { id: "source-excerpt-mode", label: "생성 없는 원문 발췌", status: sourceExcerptArticles >= Math.max(10, currentArticles.length * 0.8) ? "ok" : "warn", value: `${sourceExcerptArticles}/${currentArticles.length}건` },
+  { id: "source-content-mode", label: "원문 본문 추출", status: sourceExcerptArticles >= Math.max(10, currentArticles.filter(a => a.displayEligible !== false).length * 0.8) ? "ok" : "warn", value: `${sourceExcerptArticles}/${currentArticles.length}건` },
   { id: "feed-localization", label: "기사 한국어 표시·영문 폴백", status: localizedArticles + localizedFallbackArticles >= Math.max(10, currentArticles.length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedArticles} · 영문 폴백 ${localizedFallbackArticles}` },
   { id: "collection-health", label: "수집 스트림 상태", status: collectionHealth.status === "ok" ? "ok" : collectionHealth.status === "partial" ? "warn" : "fail", value: `실패 ${(collectionHealth.failedStreams || []).length} · 빈 스트림 ${(collectionHealth.emptyStreams || []).length}` },
   { id: "briefing-evidence", label: "브리핑 근거 연결", status: linkedBriefs > 0 ? "ok" : "fail", value: `${linkedBriefs}건` },
@@ -303,9 +308,9 @@ news.quality = { sourceBacked: backedArticles, sourceExcerpt: sourceExcerptArtic
 const llmHealth = {
   generatedAt: now.toISOString(),
   mode: "source-fragment-localization",
-  summaryEngine: "source-excerpt",
+  summaryEngine: "source-content-extractive",
   externalModelApiCalls: 0,
-  policy: "Source facts remain publisher/RSS excerpts. Korean display text translates only stored source fragments and retains their hash; no generative model API is used. Failed quality checks or translation errors display the original language.",
+  policy: "Visible facts are distinct sentences extracted from stored publisher-page text. Korean display text translates only those source sentences and retains their hash; no generative model API is used. Failed quality checks or translation errors display the original language.",
   displayLocalization: "source-fragment-translation-with-english-fallback",
   articleSummaryModes: { sourceExcerpt: sourceExcerptArticles, legacyOrLimited: currentArticles.length - sourceExcerptArticles },
 };

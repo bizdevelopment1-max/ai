@@ -46,7 +46,7 @@ async function main() {
 
   let added = 0;
   for (const a of news) {
-    if (a.summaryMode !== "source-excerpt") continue;
+    if (a.displayEligible === false || a.summaryMode !== "source-content-extractive") continue;
     const hay = `${a.title || ""} ${a.tag || ""} ${a.summary || ""}`;
     if (isExcludedText(hay)) continue;
     if (!MONETIZE.test(hay)) continue;                     // 수익화 맥락이 없으면 skip

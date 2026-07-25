@@ -304,7 +304,7 @@ function BoldSummary({ text }) {
 // for evidence verification; a failed quality gate deliberately shows English.
 function displayFeedText(item) {
   const loc = item && item.localization;
-  const lines = Array.isArray(loc?.summaryLines) && loc.summaryLines.length === 3
+  const lines = Array.isArray(loc?.summaryLines) && loc.summaryLines.length >= 1
     ? loc.summaryLines
     : (item?.summaryLinesKo || (item?.sum ? [item.sum] : null));
   return {
@@ -370,6 +370,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   }, [articles]);
 
   const filtered = deduped
+    .filter(a => a.displayEligible !== false)
     .filter(a => filter === "all" || a.cat === filter)
     .filter(a => co === "all" || a.co === co)
     .filter(a => !deleted[keyOf(a)])
@@ -1731,7 +1732,7 @@ function IBInsightBoard({ research, reports, sectionRef }) {
       <Icon name="x" size={12} sw={2.2} />
     </button>
   ));
-  const feed = ((research && research.feed) || []).filter(f => f.provenance?.status !== "reference-only" && !delR[rKey(f)]);
+  const feed = ((research && research.feed) || []).filter(f => f.displayEligible !== false && f.provenance?.status !== "reference-only" && !delR[rKey(f)]);
   const reps = (reports || []).filter(r => !delR[rKey(r)]);
   const [showAll, setShowAll] = React.useState(false);
   if (!op && !feed.length && !reps.length) return null;

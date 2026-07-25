@@ -39,7 +39,10 @@ jobs:
       - name: Crawl publisher and RSS source excerpts
         run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
 
-      - name: Localise article and research feeds from stored source fragments
+      - name: Retry retained source links and store publisher-page text
+        run: SOURCE_REFRESH_LIMIT=30 SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-source-content.mjs
+
+      - name: Localise distinct source-page sentences
         run: python scripts/translate_summarize.py
 
       - name: Build deterministic insights and briefing

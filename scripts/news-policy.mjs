@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 
 const DEFAULT_POLICY = {
-  version: 1,
-  summaryMode: "source-excerpt",
+  version: 2,
+  summaryMode: "source-content-extractive",
   excludedTerms: [],
 };
 

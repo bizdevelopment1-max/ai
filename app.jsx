@@ -146,7 +146,7 @@ function App() {
     let alive = true;
     fetch("research.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => {
-        const feed = (j && j.feed || []).filter(item => item.provenance?.status !== "reference-only");
+        const feed = (j && j.feed || []).filter(item => item.displayEligible !== false && item.provenance?.status !== "reference-only");
         const onepager = j && j.onepager?.provenance?.status === "source-linked" ? j.onepager : null;
         if (alive && (onepager || feed.length)) setResearch({ ...j, onepager, feed });
       }).catch(() => {});

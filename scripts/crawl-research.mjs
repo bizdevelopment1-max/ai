@@ -11,6 +11,7 @@
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { globalLocales, googleNewsUrl } from "./global-sources.mjs";
+import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -112,29 +113,24 @@ async function main() {
 
   // 1) 기관별 피드 크롤
   const raw = (await Promise.all(HOUSES.map(pullHouse))).flat();
-  // Keep a reviewed Korean title/summary if Google News returns the same
-  // source again on a later crawl. The original title and link remain stored.
   const reviewedByUrl = new Map((prev.feed || [])
-    .filter(item => item.url && (item.titleKo || item.sum || item.localization))
-    .map(item => [item.url, item]));
+    .filter(isContentBacked)
+    .flatMap(item => [[item.url, item], ...(item.rssUrl ? [[item.rssUrl, item]] : [])]));
   const seen = new Set();
-  const fresh = raw.filter(a => a.url && !seen.has(a.url) && seen.add(a.url)).map(item => {
+  const freshCandidates = raw.filter(a => a.url && !seen.has(a.url) && seen.add(a.url)).map(item => {
     const reviewed = reviewedByUrl.get(item.url);
-    return reviewed ? {
-      ...item,
-      ...(reviewed.titleKo ? { titleKo: reviewed.titleKo } : {}),
-      ...(reviewed.sum ? { sum: reviewed.sum } : {}),
-      ...(reviewed.summaryLinesKo ? { summaryLinesKo: reviewed.summaryLinesKo } : {}),
-      ...(reviewed.localization ? { localization: reviewed.localization } : {}),
-    } : item;
+    return reviewed || item;
   });
+  const newCandidates = freshCandidates.filter(item => !isContentBacked(item));
+  const refreshed = await enrichSourceBatch(newCandidates, 4);
+  const byRssUrl = new Map(refreshed.map(item => [item.rssUrl || item.url, item]));
+  const fresh = freshCandidates.map(item => byRssUrl.get(item.rssUrl || item.url) || item);
   // 이전 피드와 병합(30일 보존), 최신순
-  const prevFeed = (prev.feed || []).filter(a => !seen.has(a.url) && seen.add(a.url));
+  const prevFeed = (prev.feed || []).filter(a => !seen.has(a.rssUrl || a.url) && seen.add(a.rssUrl || a.url));
   let feed = [...fresh, ...prevFeed]
     .filter(a => (Date.now() - new Date(a.date).getTime()) / 86400000 < 120)   // 누적 보존 확대
     .sort((x, y) => (x.date < y.date ? 1 : -1)).slice(0, 150);
-  const needKo = feed.filter(a => !a.titleKo);
-  await koSummarize(needKo);
+  await koSummarize([]);
 
   // 2) 1페이저: 주 1회(7일 경과) 또는 부재 시 갱신 시도, LLM 실패 시 기존 유지
   let onepager = prev.onepager || null;
@@ -152,7 +148,7 @@ async function main() {
   // RSS job. Keep them intact when the automated feed refreshes.
   const pinned = prev.pinned || [];
   const out = { generatedAt: new Date().toISOString(), pinned, onepager, archive, feed };
-  await writeFile("research.json", JSON.stringify(out) + "\n");
+  await writeFile("research.json", JSON.stringify(out, null, 2) + "\n");
   console.log(`Wrote research.json — onepager: ${onepager ? onepager.date + "/" + onepager.engine : "none"}, feed ${feed.length} item(s)`);
 }
 

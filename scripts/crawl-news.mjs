@@ -11,6 +11,7 @@
    ============================================================ */
 import { writeFile, readFile } from "node:fs/promises";
 import { isExcludedText, newsPolicy } from "./news-policy.mjs";
+import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const sourceHealth = { failedStreams: [], emptyStreams: [] };
@@ -285,11 +286,7 @@ async function pull(src, limit) {
 
 // ---- Source excerpt: deterministic cleaning only, never generated text ----
 async function summarizeBatch(arts) {
-  return arts.map(a => ({
-    title: cleanTitle(a.title, a.source),
-    summary: cleanDesc(a.descEn || "") || cleanTitle(a.title, a.source),
-    mode: "source-excerpt",
-  }));
+  return enrichSourceBatch(arts, 4);
 }
 
 // limited-concurrency map
@@ -302,9 +299,7 @@ async function pool(items, n, fn) {
   return out;
 }
 
-const SUMMARY_VERSION = 3;
-const isSourceExcerpt = a => a && a.summaryVersion === SUMMARY_VERSION
-  && a.summaryMode === "source-excerpt" && a.summary && a.titleEn;
+const SUMMARY_VERSION = 4;
 
 async function main() {
   console.log("Crawling authoritative English AI news… (publisher/RSS excerpts; no AI API)");
@@ -321,35 +316,33 @@ async function main() {
   // previously stored articles — reuse their summaries so we never re-crawl/re-summarize duplicates
   let prev = [];
   try { prev = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
-  const prevByUrl = new Map(prev.map(a => [a.url, a]));
+  const prevByUrl = new Map(prev.flatMap(a => [[a.url, a], ...(a.rssUrl ? [[a.rssUrl, a]] : [])]));
   // 영문 원제목(titleEn)으로도 매칭 — URL이 리다이렉트/이미지로 바뀌어도 수동 보정 요약을 보존
   const prevByTitleEn = new Map(prev.filter(a => a.titleEn).map(a => [a.titleEn, a]));
   const findOld = a => prevByUrl.get(a.url) || prevByTitleEn.get(a.title);
 
   // Only extract newly seen URLs. Legacy generated entries are preserved in
   // history but are not reused as displayable source excerpts.
-  const toSummarize = raw.filter(a => !isSourceExcerpt(findOld(a)));
+  const toSummarize = raw.filter(a => !isContentBacked(findOld(a)));
   const sums = await summarizeBatch(toSummarize);
   const sumByUrl = new Map();
   toSummarize.forEach((a, k) => { if (sums[k]) sumByUrl.set(a.url, sums[k]); });
 
   const processed = raw.map(a => {
     const old = findOld(a);
-    if (isSourceExcerpt(old)) return old;
+    if (isContentBacked(old)) return old;
     const s = sumByUrl.get(a.url);
-    const summary = s?.summary || cleanDesc(a.descEn || "") || a.title;
     return {
+      ...(s || a),
       date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag,
-      url: a.url,
-      title: s?.title || cleanTitle(a.title, a.source),
-      titleEn: a.title,
-      descEn: a.descEn || "",
-      summary,
-      summaryVersion: SUMMARY_VERSION,
-      summaryMode: "source-excerpt",
-      summaryEngine: "source-excerpt",
+      ...(s?.rssUrl ? {} : { rssUrl: a.url }),
       collectedAt: new Date().toISOString(),
       needsLLM: false,
+      ...(s?.summaryVersion ? {} : {
+        title: cleanTitle(a.title, a.source), titleEn: a.title, descEn: a.descEn || "",
+        summary: "", summaryLinesEn: [], summaryVersion: SUMMARY_VERSION,
+        summaryMode: "source-content-extractive", summaryEngine: "source-content-extractive",
+      }),
     };
   });
 
@@ -360,7 +353,7 @@ async function main() {
   // 제목 정규화 키 — 같은 사건을 여러 소스가 다룬 근사 중복 제거(소스 확대 시 유용)
   const tkey = a => String(a.titleEn || a.title || "").toLowerCase().replace(/[^a-z0-9가-힣]/g, "").slice(0, 48);
   const tseen = new Set();
-  const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
+  const final = [...processed, ...prev.filter(a => !curUrls.has(a.rssUrl || a.url))]
     .filter(a => !isExcludedText(JSON.stringify(a)))
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
     .filter(a => { const k = tkey(a); if (!k || tseen.has(k)) return !k; tseen.add(k); return true; })  // 제목 근사 중복 제거
@@ -376,7 +369,7 @@ async function main() {
 
   const crawlHealth = {
     generatedAt: new Date().toISOString(),
-    mode: "source-excerpt",
+    mode: "source-content-extractive",
     policyVersion: newsPolicy.version,
     streams: { googleNews: COMPANIES.length + TOPICS.length, directRss: DIRECT_FEEDS.length },
     acceptedCandidates: raw.length,
@@ -391,7 +384,7 @@ async function main() {
   }
   const out = final;
   await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: out.length, articles: out }, null, 2) + "\n");
-  console.log(`Wrote news.json with ${out.length} articles (${sums.length} new source excerpts; failed streams: ${sourceHealth.failedStreams.length}).`);
+  console.log(`Wrote news.json with ${out.length} articles (${sums.filter(isContentBacked).length} new source-page briefings; failed streams: ${sourceHealth.failedStreams.length}).`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

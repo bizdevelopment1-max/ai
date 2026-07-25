@@ -1,8 +1,8 @@
 {
-  "version": 1,
-  "summaryMode": "source-excerpt",
-  "summaryPolicy": "News facts remain unmodified, cleaned publisher/RSS excerpts. The display layer translates only those stored source fragments and records their hash; it never generates a summary. If translation is unavailable or fails quality checks, it displays the original language.",
-  "displayPolicy": "Only records verified against their stored publisher headline and RSS snippet are shown in the main feed. Rule-based interpretation is separately labelled and never treated as a source fact.",
+  "version": 2,
+  "summaryMode": "source-content-extractive",
+  "summaryPolicy": "Each visible article stores cleaned public publisher-page text. Its one-to-three display bullets are distinct complete sentences extracted from that stored text; the pipeline does not generate or add claims. The display layer translates only those stored sentences and records their hash. Translation failure or a Korean quality failure displays English.",
+  "displayPolicy": "Only records with a retrievable publisher page, stored source text, distinct extracted sentences, and a source link are visible. Records whose source page cannot be retrieved remain in the cumulative database but are withheld from the feed.",
   "excludedTerms": ["삼성", "samsung", "갤럭시", "galaxy", "MX"],
   "excludedTermsReason": "Configured product-scope exclusion for this dashboard. The rule is applied at collection time; existing records remain in the cumulative history ledger."
 }
