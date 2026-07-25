@@ -101,8 +101,14 @@ body {
   color: var(--accent); font-weight: 800; padding: 0 1px; border-radius: 2px;
   background: linear-gradient(transparent 60%, rgba(255,212,0,.42) 60%, rgba(255,212,0,.42) 95%, transparent 95%);
 }
+.term-hl {
+  color: color-mix(in srgb, var(--accent) 84%, #172554); font-weight: 800; padding: 0 2px; border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
 [data-theme="dark"] .num-hl { background: linear-gradient(transparent 60%, rgba(255,212,0,.2) 60%, rgba(255,212,0,.2) 95%, transparent 95%); }
+[data-theme="dark"] .term-hl { color: #B8A7FF; background: rgba(139,116,255,.16); }
 .ct-row:hover .num-hl, .art:hover .num-hl { color: #FFE76A; background: none; }
+.ct-row:hover .term-hl, .art:hover .term-hl { color: #D8D0FF; background: none; }
 a { color: inherit; text-decoration: none; transition: color .2s; }
 a:hover { color: var(--accent); }
 b, strong { font-weight: 700; }
@@ -704,8 +710,8 @@ a[href]:hover .rainbow-on-hover,
 .art-title { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.4; text-wrap: pretty; text-decoration: none; cursor: pointer; }
 .art-title:hover { text-decoration: underline; }
 .art-summary { font-size: 12px; font-weight: 500; color: var(--muted); line-height: 1.55; text-wrap: pretty; margin-top: 2px; white-space: pre-line; }
-.art-sum-line { display: block; position: relative; padding-left: 11px; margin-top: 1px; }
-.art-sum-line::before { content: "·"; position: absolute; left: 2px; color: var(--accent); font-weight: 800; }
+.art-sum-line { display: block; position: relative; padding-left: 16px; margin-top: 2px; }
+.art-sum-line::before { content: "•"; position: absolute; left: 2px; top: 0; color: var(--accent); font-size: 11px; font-weight: 900; }
 .d-compact .art-summary { display: none; }
 .feed-list { display: flex; flex-direction: column; gap: 2px; padding-top: 4px; }
 .art-date {
@@ -1867,8 +1873,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ib-house.mkt { color: #fff; background: #15304f; }
 .ib-feed-title { font-family: var(--f); font-size: 12.5px; font-weight: 600; line-height: 1.45; word-break: keep-all; flex: 1; min-width: 0; }
 .ib-feed-title > b { display: block; color: var(--ink); font-weight: 700; }
-.ib-feed-title em { display: block; font-style: normal; color: var(--muted); font-weight: 500; margin-top: 3px; white-space: pre-line; }
-.ib-feed-title .art-sum-line { padding-left: 10px; }
+.ib-feed-title em { display: block; font-style: normal; color: var(--muted); font-weight: 500; margin-top: 5px; line-height: 1.58; white-space: pre-line; }
+.ib-feed-title .art-sum-line { padding-left: 16px; }
 .ib-feed-meta { flex-shrink: 0; font-family: var(--f); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
 
 /* 기업 테이블 라이브 최신 기사 칩 */

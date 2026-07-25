@@ -141,6 +141,7 @@ function cleanLocalizationText(value) {
     .replace(/&#x([\da-f]+);?/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
     .replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">").replace(/&quot;/gi, '"').replace(/&#39;/gi, "'")
+    .replace(/&mdash;/gi, "—").replace(/&ndash;/gi, "–").replace(/&apos;/gi, "'")
     .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 function localizationHash(title, excerpt) {
@@ -163,7 +164,7 @@ function validLocalization(input, title, excerpt) {
     && typeof loc.title === "string" && Array.isArray(loc.summaryLines) && loc.summaryLines.length >= 1 && loc.summaryLines.length <= 3;
   if ((accepted || fallback) && sourceBound && hashMatches) return { ...loc, sourceLines };
   const lines = sourceLines.length >= 1 ? sourceLines.slice(0, 3) : fallbackLines(title, excerpt, input?.source, input?.date);
-  return { version: 5, status: "fallback-english", displayLanguage: "en", title: cleanLocalizationText(title), summaryLines: lines, sourceLines: lines, sourceHash: localizationHash(title, excerpt), checkedAt: now.toISOString(), method: "verification-fallback", issues: ["localization-verification-failed"] };
+  return { version: 7, status: "fallback-english", displayLanguage: "en", title: cleanLocalizationText(title), summaryLines: lines, sourceLines: lines, sourceHash: localizationHash(title, excerpt), checkedAt: now.toISOString(), method: "verification-fallback", issues: ["localization-verification-failed"] };
 }
 const derivedSourceStatus = item => item?.sourceSummaryMode === "source-content-extractive"
   ? directSourceStatus(item)
@@ -176,7 +177,13 @@ insights.cards = (insights.cards || []).map(card => ({ ...card, provenance: veri
 radar.picks = (radar.picks || []).map(pick => ({ ...pick, provenance: verifyEvidenceList(pick.evidence) }));
 research.feed = (research.feed || []).map(item => {
   const localization = validLocalization(item, sourceTitleFor(item), sourceExcerptFor(item));
-  return { ...item, ...(localization ? { localization } : {}), provenance: directSourceStatus(item) };
+  // A research row is a Korean three-point brief by contract. Preserve an
+  // unverified/English record in JSON, but do not expose it until the next
+  // translation retry can satisfy that contract.
+  const researchVisible = localization?.status === "accepted"
+    && localization?.displayLanguage === "ko"
+    && Array.isArray(localization?.summaryLines) && localization.summaryLines.length === 3;
+  return { ...item, ...(localization ? { localization } : {}), ...(researchVisible ? {} : { displayEligible: false }), provenance: directSourceStatus(item) };
 });
 if (research.onepager) research.onepager = { ...research.onepager, provenance: { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString(), issues: ["generated-or-legacy-synthesis-not-publishable"] } };
 research.pinned = (research.pinned || []).map(brief => {

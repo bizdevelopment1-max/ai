@@ -277,15 +277,21 @@ function CompanyDetail({ company, cats, articles, onClose }) {
   );
 }
 
-// ---- Bold key numbers helper (accent bold + yellow marker) -----
-// highlight numbers/currency inside one line of text
-function hlNums(text, keyBase) {
-  const parts = String(text).split(/(\$[\d,.]+[BMK]?(?:\+|~)?|\d+\.?\d*%|\+\d+\.?\d*%|-\d+\.?\d*%)/g);
-  return parts.map((part, i) =>
-    /^\$|^\d+\.?\d*%$|^[+-]\d+\.?\d*%$/.test(part)
-      ? <b key={keyBase + "-" + i} className="num-hl">{part}</b>
-      : part
-  );
+// ---- Source briefing emphasis -------------------------------------------
+// Highlight only recognisable source terms (facts remain unchanged): figures,
+// currencies, company names and AI infrastructure keywords.
+const BRIEF_KEYWORDS = /((?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년)|AI(?:\s*(?:서버|인프라|에이전트|모델|칩|수요|지출))?|인공지능|생성\s*AI|HBM|DRAM|NAND|SSD|GPU|NPU|ARM|x86|CapEx|데이터\s*센터|클라우드|Morgan Stanley|Goldman Sachs|JPMorgan|Bank of America|Citi|Citigroup|TrendForce|IDC|Gartner|OpenAI|Anthropic|NVIDIA|Google|Microsoft|Amazon|Meta|Apple))/gi;
+const NUMBER_TOKEN = /^(?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년))$/i;
+function hlBrief(text, keyBase) {
+  BRIEF_KEYWORDS.lastIndex = 0;
+  const parts = String(text).split(BRIEF_KEYWORDS);
+  return parts.map((part, i) => {
+    if (!part) return null;
+    if (NUMBER_TOKEN.test(part)) return <b key={keyBase + "-" + i} className="num-hl">{part}</b>;
+    if (BRIEF_KEYWORDS.test(part)) { BRIEF_KEYWORDS.lastIndex = 0; return <b key={keyBase + "-" + i} className="term-hl">{part}</b>; }
+    BRIEF_KEYWORDS.lastIndex = 0;
+    return <React.Fragment key={keyBase + "-" + i}>{part}</React.Fragment>;
+  });
 }
 
 // Render a feed summary as up to 3 개조식 lines (제목 한글 + 3줄 요약 정책).
@@ -294,9 +300,9 @@ function BoldSummary({ text }) {
   const clean = String(text).replace(/<[^>]+>/g, "")           // strip stray HTML (e.g. <font color>)
     .replace(/2026[.\-](\d{1,2})[.\-](\d{1,2})/g, (_, m, d) => `${+m}/${+d}`);
   const lines = clean.split(/\n+/).map(l => l.trim()).filter(Boolean).slice(0, 3);   // 최대 3줄
-  if (lines.length <= 1) return <>{hlNums(clean, "s")}</>;
+  if (lines.length <= 1) return <span className="art-sum-line">{hlBrief(clean, "s")}</span>;
   return lines.map((line, i) => (
-    <span className="art-sum-line" key={i}>{hlNums(line.replace(/^[·\-•]\s*/, "").replace(/[.。]+\s*$/, ""), "l" + i)}</span>
+    <span className="art-sum-line" key={i}>{hlBrief(line.replace(/^[·\-•]\s*/, "").replace(/[.。]+\s*$/, ""), "l" + i)}</span>
   ));
 }
 
@@ -436,7 +442,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
                     <span className="art-verify">{display.translated ? "원문 번역" : display.fallback ? "원문 영어" : "원문 발췌"}</span>
                   </span>
-                  <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{display.title}</a>
+                  <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{hlBrief(display.title, "art-title")}</a>
                   {display.summary && <span className="art-summary"><BoldSummary text={display.summary} /></span>}
                 </div>
                 {pendingDel === keyOf(a) ? (
@@ -1837,7 +1843,7 @@ function IBInsightBoard({ research, reports, sectionRef }) {
             const display = displayFeedText(f);
             return <a className="ib-feed-row" key={f.url || i} href={f.url} target="_blank" rel="noopener">
               <span className={"ib-house " + (f.type === "Securities" ? "sec" : "mkt")}>{f.house}</span>
-              <span className="ib-feed-title"><b>{display.title}</b>{display.summary && <em><BoldSummary text={display.summary} /></em>}</span>
+              <span className="ib-feed-title"><b>{hlBrief(display.title, "ib-title")}</b>{display.summary && <em><BoldSummary text={display.summary} /></em>}</span>
               <span className="ib-feed-meta">{f.source} · {f.date && f.date.slice(5)}</span>
               <Icon name="ext" size={11} />
               <DelBtn item={f} />

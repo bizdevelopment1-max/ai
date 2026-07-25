@@ -126,6 +126,18 @@ try {
   }
   const translated = visible.filter(record => record.localization.status === "accepted").length;
   console.log(`  정상  본문 기반 피드 ${visible.length}건 · 한국어 ${translated}건 · 영문 폴백 ${visible.length - translated}건`);
+
+  const visibleResearch = (research.feed || []).filter(record => record.displayEligible !== false);
+  const researchValid = record => {
+    const loc = record.localization || {};
+    return loc.status === "accepted" && loc.displayLanguage === "ko"
+      && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3
+      && loc.summaryLines.every(line => /[가-힣]/.test(String(line || "")));
+  };
+  if (!visibleResearch.length || !visibleResearch.every(researchValid)) {
+    throw new Error("every visible research row must have a Korean title and exactly three source-bound Korean bullet lines");
+  }
+  console.log(`  정상  노출 리서치 ${visibleResearch.length}건 · 한글 제목·3줄 개조식 검증`);
 } catch (error) {
   failed = true;
   console.error(`  실패  전체 피드 번역·폴백: ${error.message}`);

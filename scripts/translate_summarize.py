@@ -85,11 +85,17 @@ def canonical_fragments(title: str, excerpt: str, source: str, date: str) -> lis
 
 def valid_korean(text: str, source: str) -> bool:
     text = clean(text)
-    if len(text) < max(6, int(len(clean(source)) * 0.20)) or len(text) > max(700, len(source) * 5 + 80):
+    # Short broken fragments such as "6월에는 미국" must not pass, but a
+    # faithful Korean translation can be materially shorter than verbose
+    # English source copy.  This keeps Korean display available without
+    # accepting truncated output.
+    if len(text) < max(12, int(len(clean(source)) * 0.12)) or len(text) > max(700, len(source) * 5 + 80):
         return False
     if BAD_OUTPUT.search(text) or "�" in text or "http://" in text or "https://" in text:
         return False
-    if re.search(r"(?<![A-Za-z])[a-z](?=\s*[가-힣])", text):
+    # Do not reject a valid model/version token such as "GPT-5.x보다".
+    # This still blocks a stray standalone Latin fragment glued to Hangul.
+    if re.search(r"(?<![A-Za-z0-9._-])[a-z](?=\s*[가-힣])", text):
         return False
     letters = re.findall(r"[A-Za-z가-힣]", text)
     return bool(letters) and len(HANGUL.findall(text)) >= 2 and len(HANGUL.findall(text)) / len(letters) >= 0.12
@@ -159,10 +165,12 @@ def new_localization(item: dict, title: str, excerpt: str, language: str) -> dic
     # A successful translation is cached until its source changes. A fallback
     # is deliberately retried on the next scheduled run so a transient
     # translation outage does not become permanent English display.
-    if previous.get("version") == 5 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
+    if previous.get("version") == 7 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
+        if item.get("house"):
+            item["displayEligible"] = item.get("sourceContent", {}).get("status") == "content-extracted"
         return previous
     return {
-        "version": 5,
+        "version": 7,
         "sourceHash": digest,
         "sourceLines": canonical_fragments(title, raw_excerpt, item.get("source", ""), item.get("date", "")),
         "checkedAt": datetime.now(timezone.utc).isoformat(),
@@ -208,11 +216,21 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
                 item["localization"] = {**loc, "status": "accepted", "displayLanguage": "ko", "title": ko_title, "summaryLines": ko_lines, "provider": "public-source-translation", "issues": []}
                 item["titleKo"] = ko_title
                 item["summaryLinesKo"] = ko_lines
+                if item.get("house"):
+                    # Translation success alone is not enough: a refreshed
+                    # source page must still be available for the displayed
+                    # three bullets to remain auditable.
+                    item["displayEligible"] = item.get("sourceContent", {}).get("status") == "content-extracted"
                 accepted += 1
             else:
                 raise ValueError("korean-quality-gate-failed")
         except Exception as exc:
             item["localization"] = {**loc, "status": "fallback-english", "displayLanguage": "en", "title": title, "summaryLines": lines, "provider": "public-source-translation", "issues": [str(exc)[:120]]}
+            # Do not put an English fallback into the research briefing. The
+            # original record and its source text remain in the expanding DB,
+            # and the next scheduled run retries the source-bound translation.
+            if item.get("house"):
+                item["displayEligible"] = False
             fallback += 1
     return len(work), accepted, fallback
 

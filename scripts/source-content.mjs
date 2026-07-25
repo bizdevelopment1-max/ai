@@ -9,7 +9,7 @@ import { createHash } from "node:crypto";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const MAX_TEXT = 12_000;
-const JUNK = /(?:^|\b)(?:advertisement|advertising|subscribe|sign up|read more|cookie|privacy policy|all rights reserved|share this article|follow us|related articles?|news tips|newsletters?|get this delivered to your inbox|confidential news tip|data is a real-time snapshot|global business and financial news|stock quotes and market data)(?:\b|$)/i;
+const JUNK = /(?:^|\b)(?:advertisement|advertising|affiliate commission|purchase through links|subscribe|sign up|read more|cookie|privacy policy|all rights reserved|share this article|follow us|related articles?|news tips|newsletters?|get this delivered to your inbox|confidential news tip|data is a real-time snapshot|global business and financial news|stock quotes and market data)(?:\b|$)/i;
 
 export const cleanText = value => String(value || "")
   .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
@@ -174,7 +174,11 @@ export async function enrichSourceRecord(record) {
     if (malformedEncoding(headline) || paragraphs.some(malformedEncoding)) throw new Error("malformed-source-encoding");
     const sourceText = paragraphs.join("\n\n").slice(0, MAX_TEXT);
     const summaryLinesEn = selectCoreLines(sourceText, headline);
-    if (summaryLinesEn.length < 2) throw new Error("insufficient-distinct-source-sentences");
+    // The research feed promises a three-point brief. Keep a record with
+    // thinner evidence in the append-only data set, but do not surface it
+    // until three distinct publisher sentences can support the display.
+    const minLines = record.house ? 3 : 2;
+    if (summaryLinesEn.length < minLines) throw new Error(record.house ? "insufficient-three-source-sentences" : "insufficient-distinct-source-sentences");
     const canonical = meta(page.text, ["og:url"]) || page.url;
     const sourceContent = {
       version: 1,
