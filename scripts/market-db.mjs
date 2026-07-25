@@ -323,7 +323,15 @@ export function appendRecords(data, candidates = [], collectedAt = isoNow()) {
       id: candidate.id || `crawl:${hash(`${candidate.type}|${sourceUrl}|${candidate.title}|${candidate.publishedAt || ""}`)}`,
       sourceUrl,
       collectedAt: candidate.collectedAt || collectedAt,
-      provenance: candidate.provenance || { status: "source-linked", evidenceCount: 1, checkedAt: collectedAt },
+      // New crawler candidates are retained immediately, but are not a
+      // published fact until their linked publisher page has been extracted.
+      provenance: candidate.provenance || {
+        status: "pending-source-page",
+        evidenceCount: 0,
+        evidenceType: "discovery-only",
+        checkedAt: collectedAt,
+        issues: ["publisher-page-extraction-required"],
+      },
     };
     const key = identity(record);
     if (seen.has(key) || data.records.some(existing => existing.id === record.id)) continue;
@@ -336,12 +344,12 @@ export function appendRecords(data, candidates = [], collectedAt = isoNow()) {
 
 export function ensureMarketDatabase(data, collectedAt = isoNow()) {
   let changed = false;
-  data.schemaVersion = Math.max(Number(data.schemaVersion || 1), 2);
+  data.schemaVersion = Math.max(Number(data.schemaVersion || 1), 3);
   data.database = {
     ...(data.database || {}),
     mode: "append-only",
-    recordSchemaVersion: 1,
-    sourcePolicy: "Every published quantitative record requires a clickable public source URL.",
+    recordSchemaVersion: 2,
+    sourcePolicy: "Every visible quantitative record requires a resolved publisher page, extracted source text, and source-bound quantities. RSS discovery rows remain append-only but hidden until verified.",
     migratedAt: data.database?.migratedAt || collectedAt,
   };
   data.records = Array.isArray(data.records) ? data.records : [];

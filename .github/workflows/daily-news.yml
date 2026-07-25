@@ -65,8 +65,14 @@ jobs:
       - name: Crawl IB research (증권사 1페이저 + 기관 피드)
         run: node scripts/run-with-retry.mjs scripts/crawl-research.mjs
 
+      - name: Append global AI market, shipment and consumer-survey discovery records
+        run: node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
+
       - name: Retry retained source links and store publisher-page text
         run: SOURCE_REFRESH_LIMIT=30 SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-source-content.mjs
+
+      - name: Resolve market discoveries to publisher-page evidence
+        run: MARKET_SOURCE_REFRESH_LIMIT=90 MARKET_SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-market-source-content.mjs
 
       - name: Reframe source briefs as fact, change and implication
         run: node scripts/reframe-source-briefs.mjs
@@ -79,9 +85,6 @@ jobs:
 
       - name: Crawl startup strategies (투자·협력 관점, 주간)
         run: node scripts/run-with-retry.mjs scripts/crawl-startups.mjs
-
-      - name: Append AI market, shipment and consumer-survey records (daily)
-        run: node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
 
       - name: Accumulate AI infra & future-tech signals (기사 기반 누적)
         run: node scripts/run-with-retry.mjs scripts/crawl-infra.mjs

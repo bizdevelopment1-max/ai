@@ -30,6 +30,7 @@ from urllib.request import Request, urlopen
 ROOT = Path(os.environ.get("LOCALIZE_ROOT", "."))
 NEWS_PATH = ROOT / os.environ.get("NEWS_JSON", "news.json")
 RESEARCH_PATH = ROOT / os.environ.get("RESEARCH_JSON", "research.json")
+MARKET_PATH = ROOT / os.environ.get("MARKET_JSON", "market.json")
 MAX_ITEMS = int(os.environ.get("TRANSLATE_MAX", "500"))
 TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
 LANG_CODES = {
@@ -321,6 +322,7 @@ def write_json(path: Path, value: dict) -> None:
 def main() -> None:
     news = read_json(NEWS_PATH, {"articles": []})
     research = read_json(RESEARCH_PATH, {"feed": []})
+    market = read_json(MARKET_PATH, {"records": []})
     translator = SourceTranslator()
     def source_lines(item: dict) -> str:
         lines = item.get("summaryLinesEn") or []
@@ -330,11 +332,23 @@ def main() -> None:
 
     news_rows = [(item, item.get("titleEn") or item.get("title") or "", source_lines(item), "English") for item in (news.get("articles") or [])[:MAX_ITEMS]]
     research_rows = [(item, item.get("titleEn") or item.get("title") or "", source_lines(item), item.get("sourceLanguage") or "English") for item in (research.get("feed") or [])[:MAX_ITEMS]]
+    # Translation is presentation-only.  RSS discovery rows are deliberately
+    # omitted: only extracted publisher-page sentences may be localized and
+    # later shown in the quantitative market database.
+    market_rows = [
+        (item, item.get("titleEn") or item.get("title") or "", source_lines(item), item.get("sourceLanguage") or "English")
+        for item in (market.get("records") or [])
+        if item.get("displayEligible") is True
+        and item.get("provenance", {}).get("status") == "source-backed"
+        and item.get("sourceContent", {}).get("status") == "content-extracted"
+    ][:MAX_ITEMS]
     changed_news, accepted_news, fallback_news = localize_records(news_rows, translator)
     changed_research, accepted_research, fallback_research = localize_records(research_rows, translator)
+    changed_market, accepted_market, fallback_market = localize_records(market_rows, translator)
     write_json(NEWS_PATH, news)
     write_json(RESEARCH_PATH, research)
-    print(f"[localize] changed {changed_news + changed_research}; Korean {accepted_news + accepted_research}; English fallback {fallback_news + fallback_research}; translation requests {translator.calls}")
+    write_json(MARKET_PATH, market)
+    print(f"[localize] changed {changed_news + changed_research + changed_market}; Korean {accepted_news + accepted_research + accepted_market}; English fallback {fallback_news + fallback_research + fallback_market}; translation requests {translator.calls}")
 
 
 if __name__ == "__main__":

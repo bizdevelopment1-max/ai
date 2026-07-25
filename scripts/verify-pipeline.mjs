@@ -215,6 +215,37 @@ const startupSourceStatus = item => {
   return { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() };
 };
 
+// A URL alone is not evidence for the market database.  In particular, Google
+// News RSS descriptions are discovery metadata rather than publisher facts.
+// Keep every row in the append-only ledger, but make it source-backed only
+// when the resolved publisher page, exact source text, and literal quantities
+// are all present and internally traceable.
+const marketSourceStatus = record => {
+  const content = record?.sourceContent || {};
+  const url = canonicalUrl(content.canonicalUrl || record?.sourceUrl);
+  const googleNews = (() => { try { return /(^|\.)news\.google\.com$/i.test(new URL(url).hostname); } catch { return false; } })();
+  const sourceText = cleanLocalizationText(`${content.headline || record?.title || ""}\n${content.text || ""}`);
+  const summaryLines = Array.isArray(record?.summaryLinesEn) ? record.summaryLinesEn.filter(Boolean) : [];
+  const quantifiedLines = Array.isArray(record?.sourceQuantifiedLines) ? record.sourceQuantifiedLines : [];
+  const quantities = Array.isArray(record?.sourceQuantities) ? record.sourceQuantities.filter(Boolean) : [];
+  const exactLines = quantifiedLines.length > 0 && quantifiedLines.every(item => item?.line && sourceText.includes(cleanLocalizationText(item.line))
+    && Array.isArray(item.values) && item.values.every(value => String(item.line).includes(value)));
+  const exactQuantities = quantities.length > 0 && quantities.every(value => quantifiedLines.some(item => (item.values || []).includes(value)));
+  const valid = validHttp(url)
+    && !googleNews
+    && content.status === "content-extracted"
+    && record?.summaryMode === "source-content-extractive"
+    && record?.displayEligible === true
+    && sourceText.length >= 120
+    && summaryLines.length === 3
+    && summaryLines.every(line => sourceText.includes(cleanLocalizationText(line)))
+    && exactLines
+    && exactQuantities;
+  return valid
+    ? { status: "source-backed", evidenceCount: quantifiedLines.length, evidenceType: "publisher-page-text-with-quantities", checkedAt: now.toISOString(), sourceContentHash: content.contentHash || "" }
+    : { status: "reference-only", evidenceCount: 0, evidenceType: "publisher-page-not-verified", checkedAt: now.toISOString(), issues: [googleNews ? "unresolved-google-news-url" : "source-page-extraction-required"] };
+};
+
 for (const day of briefing.days || []) {
   day.items = (day.items || []).map(item => ({ ...item, provenance: verifyEvidenceList(item.evidence) }));
 }
@@ -246,12 +277,15 @@ startups.small = (startups.small || []).map(item => ({ ...item, provenance: star
 market.items = (market.items || []).map(item => ({ ...item, provenance: directSourceStatus(item) }));
 market.records = (market.records || []).map(record => {
   const excluded = isExcludedText(`${record.title || ""} ${record.evidence || ""} ${record.sourceName || ""}`);
+  const verifiedUrl = canonicalUrl(record.sourceContent?.canonicalUrl || record.sourceUrl);
+  const sourceStatus = marketSourceStatus({ ...record, sourceUrl: verifiedUrl });
   return {
     ...record,
-    sourceUrl: canonicalUrl(record.sourceUrl),
+    sourceUrl: verifiedUrl,
+    displayEligible: !excluded && sourceStatus.status === "source-backed",
     provenance: excluded
       ? { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString(), issues: ["configured-display-exclusion"] }
-      : directSourceStatus({ url: record.sourceUrl }),
+      : sourceStatus,
   };
 });
 infra.items = (infra.items || []).map(item => ({ ...item, provenance: derivedSourceStatus(item) }));
@@ -277,8 +311,8 @@ const linkedResearch = (research.feed || []).filter(item => item.provenance?.sta
 const localizedResearch = (research.feed || []).filter(item => item.localization?.status === "accepted").length;
 const localizedFallbackResearch = (research.feed || []).filter(item => item.localization?.status === "fallback-english").length;
 const linkedMarket = (market.items || []).filter(item => item.provenance?.status !== "reference-only").length;
-const linkedMarketRecords = (market.records || []).filter(record => record.provenance?.status !== "reference-only").length;
-const consumerSurveyRecords = (market.records || []).filter(record => record.type === "consumer-survey" && record.provenance?.status !== "reference-only").length;
+const linkedMarketRecords = (market.records || []).filter(record => record.provenance?.status === "source-backed").length;
+const consumerSurveyRecords = (market.records || []).filter(record => record.type === "consumer-survey" && record.provenance?.status === "source-backed").length;
 
 const checks = [
   { id: "news-coverage", label: "뉴스 수집", status: currentArticles.length >= 20 ? "ok" : "fail", value: `${currentArticles.length}건` },
@@ -295,7 +329,7 @@ const checks = [
   { id: "research-source", label: "리서치 원문 링크", status: linkedResearch >= Math.max(3, (research.feed || []).length * 0.5) ? "ok" : "warn", value: `${linkedResearch}/${(research.feed || []).length}건` },
   { id: "research-localization", label: "리서치 3줄 표시", status: localizedResearch + localizedFallbackResearch >= Math.max(3, (research.feed || []).length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedResearch} · 영문 폴백 ${localizedFallbackResearch}` },
   { id: "market-source", label: "시장 데이터 원문 링크", status: linkedMarket >= Math.max(10, (market.items || []).length * 0.8) ? "ok" : "warn", value: `${linkedMarket}/${(market.items || []).length}건` },
-  { id: "market-db-source", label: "신사업 정량 DB 원문 링크", status: linkedMarketRecords >= Math.max(3, (market.records || []).length * 0.95) ? "ok" : "warn", value: `${linkedMarketRecords}/${(market.records || []).length}건` },
+  { id: "market-db-source", label: "신사업 정량 DB 원문 직접 검증", status: linkedMarketRecords >= Math.max(3, Math.min(12, (market.records || []).length * 0.25)) ? "ok" : "warn", value: `${linkedMarketRecords}/${(market.records || []).length}건` },
   { id: "consumer-survey-coverage", label: "소비자 조사 레코드", status: consumerSurveyRecords >= 2 ? "ok" : "warn", value: `${consumerSurveyRecords}건` },
 ];
 

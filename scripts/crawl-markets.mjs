@@ -2,7 +2,9 @@
 /*
  * Append-only market intelligence crawler.
  * Keeps the existing six-axis market map intact, then adds only new,
- * source-linked quantitative observations to market.json.records.
+ * RSS discovery observations to market.json.records. RSS content is retained
+ * as a discovery ledger only; a separate source-page pass must resolve and
+ * extract the publisher page before a record is allowed onto the site.
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { appendRecords, ensureMarketDatabase, hasSurveyEvidence } from "./market-db.mjs";
@@ -107,12 +109,25 @@ async function main() {
             topic: config.topic,
             title: row.title,
             metricLabel: config.topic,
+            // These values are discovery hints from the RSS title/snippet.
+            // They must never be rendered as source facts. The source-page
+            // refresher replaces them with sourceQuantifiedLines only after
+            // extracting the linked publisher page.
             values,
-            scope: `지역 ${row.region} · 언어 ${row.language}의 검색 결과 제목·공개 스니펫 범위. 원문에서 정의·표본·기준연도를 재확인해야 합니다.`,
+            scope: `발견 경로 ${row.region} · ${row.language} RSS · 발행사 원문 확인 전`,
             sourceName: row.sourceName,
             sourceUrl: row.sourceUrl,
             publishedAt: row.publishedAt,
             evidence: row.evidence.slice(0, 900),
+            rssEvidence: row.evidence.slice(0, 900),
+            displayEligible: false,
+            provenance: {
+              status: "pending-source-page",
+              evidenceCount: 0,
+              evidenceType: "rss-discovery-only",
+              checkedAt: startedAt,
+              issues: ["publisher-page-extraction-required"],
+            },
             origin: "rss-quantitative-crawl",
             sourceScope: "global-localized-rss",
             sourceRegion: row.region,
@@ -144,7 +159,7 @@ async function main() {
   data.freshAt = startedAt;
   data.generatedAt = startedAt;
   await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
-  console.log(`[market-db] appended ${added} source-linked records; retained ${data.records.length}; RSS rows ${fetched}/${QUERIES.length * locales.length} global query streams`);
+  console.log(`[market-db] appended ${added} discovery records awaiting publisher-page extraction; retained ${data.records.length}; RSS rows ${fetched}/${QUERIES.length * locales.length} global query streams`);
 }
 
 main().catch(error => { console.error(error); process.exit(1); });

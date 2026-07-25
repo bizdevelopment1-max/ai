@@ -12,6 +12,7 @@ const required = [
   "scripts/crawl-stocks.mjs",
   "scripts/crawl-markets.mjs",
   "scripts/market-db.mjs",
+  "scripts/refresh-market-source-content.mjs",
   "scripts/global-sources.mjs",
   "scripts/build-browser-bundle.mjs",
   "scripts/translate_summarize.py",
@@ -306,10 +307,26 @@ try {
 }
 
 try {
-  const market = JSON.parse(await readFile("market.json", "utf8"));
+  const [market, boards] = await Promise.all([
+    readFile("market.json", "utf8").then(JSON.parse),
+    readFile("boards.jsx", "utf8"),
+  ]);
   const records = market.records || [];
   const ids = new Set(records.map(record => record.id));
   const linked = records.filter(record => /^https?:\/\//.test(record.sourceUrl || ""));
+  const displayable = records.filter(record => record.provenance?.status === "source-backed"
+    && record.displayEligible === true
+    && record.sourceContent?.status === "content-extracted"
+    && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
+    && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length);
+  const sourceBoundCards = displayable.every(record => {
+    const normalize = value => String(value || "").replace(/\s+/g, " ").trim();
+    const sourceText = normalize(`${record.sourceContent?.headline || ""}\n${record.sourceContent?.text || ""}`);
+    return (record.summaryLinesEn || []).length >= 2
+      && (record.summaryLinesEn || []).every(line => sourceText.includes(normalize(line)))
+      && record.sourceQuantifiedLines.every(item => item?.line && sourceText.includes(normalize(item.line))
+        && (item.values || []).every(value => String(item.line).includes(value)));
+  });
   const userResearchIds = [
     "survey:flipkart-counterpoint-india-ai-phone-2026",
     "survey:emarketer-cnet-us-ai-wtp-2025",
@@ -323,9 +340,12 @@ try {
   const hasUserResearch = userResearchIds.every(id => records.some(record => record.id === id
     && /^https?:\/\//.test(record.sourceUrl || "") && Array.isArray(record.values) && record.values.length));
   const hasNewVerticals = ["core-41", "wearxr-42"].every(id => (market.items || []).some(item => item.id === id && /^https?:\/\//.test(item.url || "")));
+  const boardContract = /record\.provenance\?\.status === "source-backed"/.test(boards)
+    && /sourceQuantifiedLines/.test(boards)
+    && /검색 제목·스니펫은 화면에서 제외/.test(boards);
   if (market.database?.mode !== "append-only" || records.length < 3 || ids.size !== records.length || linked.length !== records.length
-    || !hasUserResearch || !hasNewVerticals) {
-    throw new Error("append-only market database requires unique, source-linked records");
+    || !hasUserResearch || !hasNewVerticals || !sourceBoundCards || !boardContract) {
+    throw new Error("append-only market database requires publisher-page-backed display records and retained source links");
   }
   console.log(`  정상  market.json 누적 정량 DB ${records.length}건`);
 } catch (error) {

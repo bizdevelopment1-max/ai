@@ -2337,13 +2337,21 @@ function MarketBoard({ sectionRef }) {
       .catch(() => {});
   }, [inView, loaded]);
 
-  const records = ((data && data.records) || []).filter(record => record.sourceUrl && record.provenance?.status !== "reference-only");
+  // RSS titles/snippets remain in market.json for the append-only discovery
+  // ledger, but cannot enter this view. A visible card must have a resolved
+  // publisher page, source-extracted text, and literal source quantities.
+  const records = ((data && data.records) || []).filter(record => record.sourceUrl
+    && record.displayEligible === true
+    && record.provenance?.status === "source-backed"
+    && record.sourceContent?.status === "content-extracted"
+    && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
+    && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length);
   const consumerRecords = records.filter(record => record.type === "consumer-survey");
   const sourceCount = new Set(records.map(record => record.sourceUrl)).size;
+  const quantityCount = records.reduce((count, record) => count + new Set(record.sourceQuantities || []).size, 0);
   const shownRecords = records
     .filter(record => recordFilter === "all" || (recordFilter === "survey" ? record.type === "consumer-survey" : record.type !== "consumer-survey"))
-    .sort((a, b) => String(b.publishedAt || b.collectedAt || "").localeCompare(String(a.publishedAt || a.collectedAt || "")))
-    .slice(0, 12);
+    .sort((a, b) => String(b.publishedAt || b.collectedAt || "").localeCompare(String(a.publishedAt || a.collectedAt || "")));
   const TYPE_LABEL = { "consumer-survey": "소비자 조사", "market-estimate": "시장 기준선", shipment: "출하량", "market-observation": "정량 관측" };
 
   return (
@@ -2353,7 +2361,7 @@ function MarketBoard({ sectionRef }) {
         <span className="board-tab" style={{ background: "#0891B2" }} />
         <div className="board-titles">
           <h2>AI 신사업 시장 <span className="board-en">AI New-Business Market Map · 휴대폰 사업 관점</span></h2>
-          <p>시장 규모·출하량·소비자 조사 수치를 원문 링크와 함께 누적하는 append-only DB · 기존 6개 MECE 버티컬은 보존하고 새 관측값만 추가</p>
+          <p>발행사 원문에서 직접 추출한 문장·정량 수치만 표시하는 append-only DB · RSS 발견 기록과 기존 6개 MECE 버티컬은 삭제하지 않고 보존</p>
         </div>
       </div>
 
@@ -2362,16 +2370,16 @@ function MarketBoard({ sectionRef }) {
       ) : (
         <React.Fragment>
           <div className="mkt-db-summary">
-            <div><em>누적 정량 레코드</em><b>{records.length}</b><span>삭제하지 않고 새 관측값만 추가</span></div>
-            <div><em>소비자 조사</em><b>{consumerRecords.length}</b><span>표본·국가·조사 시점은 원문 확인</span></div>
-            <div><em>클릭 가능한 원문</em><b>{sourceCount}</b><span>모든 공개 수치에 링크 필수</span></div>
-            <div><em>마지막 수집</em><b>{data.database?.lastCrawledAt ? String(data.database.lastCrawledAt).slice(0, 10) : "기준선"}</b><span>{data.database?.mode === "append-only" ? "append-only" : "source-linked"}</span></div>
+            <div><em>원문 검증 레코드</em><b>{records.length}</b><span>발행사 본문 추출 후에만 표시</span></div>
+            <div><em>소비자 조사</em><b>{consumerRecords.length}</b><span>표본·국가·관측 시점은 원문 문장으로 확인</span></div>
+            <div><em>원문 링크</em><b>{sourceCount}</b><span>카드 제목과 하단 링크에서 원문 이동</span></div>
+            <div><em>추출 정량 수치</em><b>{quantityCount}</b><span>원문에 나온 수치와 근거 문장 전체 표시</span></div>
           </div>
 
           <div className="mkt-db-head">
             <div>
               <h3>정량·소비자 조사 데이터베이스</h3>
-              <p>수치·표본·관측 시점은 원문으로 이동해 확인하세요. 검색 스니펫 수치는 원문의 정의와 다를 수 있어 자동으로 단정하지 않습니다.</p>
+              <p>검색 제목·스니펫은 화면에서 제외 · 발행사 원문에서 확인된 3줄 핵심과 정량 근거만 표시 · 번역 품질 미달 시 영문 원문으로 표시</p>
             </div>
             <div className="mkt-tools">
               <button className={recordFilter === "all" ? "on" : ""} onClick={() => setRecordFilter("all")}>전체 {records.length}</button>
@@ -2380,23 +2388,31 @@ function MarketBoard({ sectionRef }) {
             </div>
           </div>
           <div className="mkt-record-grid">
-            {shownRecords.map(record => (
+            {shownRecords.map(record => {
+              const localized = record.localization?.status === "accepted" || record.localization?.status === "fallback-english"
+                ? record.localization : null;
+              const title = localized?.title || record.titleEn || record.title;
+              const insights = localized?.summaryLines?.length ? localized.summaryLines : (record.summaryLinesEn || []);
+              return (
               <article className="mkt-record" key={record.id}>
                 <div className="mkt-record-top">
                   <span className={"mkt-record-type type-" + record.type}>{TYPE_LABEL[record.type] || "정량 관측"}</span>
                   {record.sourceRegion && <span className="mkt-record-locale">{record.sourceRegion} · {record.sourceLanguage}</span>}
-                  <time>{String(record.publishedAt || record.collectedAt || "").slice(0, 10)}</time>
                 </div>
-                <a className="mkt-record-title" href={record.sourceUrl} target="_blank" rel="noopener">{record.title} <Icon name="ext" size={11} /></a>
+                <a className="mkt-record-title" href={record.sourceUrl} target="_blank" rel="noopener">{title} <Icon name="ext" size={11} /></a>
                 <div className="mkt-record-values">
-                  {(record.values || []).slice(0, 4).map((value, index) => <span key={index}><em>{value.label}</em>{value.value}</span>)}
+                  {(record.sourceQuantities || []).map((value, index) => <span key={index}><em>원문 수치</em>{value}</span>)}
                 </div>
-                {record.scope && <p className="mkt-record-scope">{record.scope}</p>}
-                {record.evidence && <p className="mkt-record-evidence">{String(record.evidence).slice(0, 210)}</p>}
+                {insights.length > 0 && <ul className="mkt-record-insights">{insights.map((line, index) => <li key={index}>{line}</li>)}</ul>}
+                <details className="mkt-record-quant-evidence" open>
+                  <summary>원문 정량 근거 {record.sourceQuantifiedLines.length}개</summary>
+                  <ul>{record.sourceQuantifiedLines.map((item, index) => <li key={index}>{item.line}</li>)}</ul>
+                </details>
                 <a className="mkt-record-source" href={record.sourceUrl} target="_blank" rel="noopener">원문 열기 · {record.sourceName} <Icon name="ext" size={10} /></a>
               </article>
-            ))}
-            {!shownRecords.length && <div className="mkt-loading">원문 링크가 있는 정량 레코드를 수집 중입니다.</div>}
+              );
+            })}
+            {!shownRecords.length && <div className="mkt-loading">발행사 원문을 확인해 정량 근거를 추출 중입니다 · 검색 스니펫은 표시하지 않습니다</div>}
           </div>
 
           <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>기존 시장규모·예측·CAGR 데이터는 보존되며, 상단 누적 DB에 새 수치가 추가됩니다.</em></div>

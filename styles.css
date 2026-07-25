@@ -2151,8 +2151,13 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-record-values { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
 .mkt-record-values span { display: inline-flex; flex-direction: column; gap: 2px; max-width: 100%; padding: 5px 7px; border: 1px solid color-mix(in srgb, #0891B2 20%, var(--line)); border-radius: 7px; font-family: var(--mono); font-size: 11px; font-weight: 800; color: var(--ink); background: var(--panel); }
 .mkt-record-values em { overflow: hidden; text-overflow: ellipsis; font-family: var(--f); font-style: normal; font-size: 8.5px; font-weight: 800; color: var(--muted); white-space: nowrap; }
-.mkt-record-scope, .mkt-record-evidence { margin: 8px 0 0; font-family: var(--f); font-size: 10.5px; font-weight: 600; line-height: 1.45; color: var(--ink-2); word-break: keep-all; }
-.mkt-record-evidence { color: var(--muted); }
+.mkt-record-insights { display: grid; gap: 5px; margin: 10px 0 0; padding: 0; list-style: none; font-family: var(--f); font-size: 10.75px; font-weight: 650; line-height: 1.5; color: var(--ink-2); word-break: keep-all; }
+.mkt-record-insights li { position: relative; padding-left: 10px; }
+.mkt-record-insights li::before { content: ""; position: absolute; top: .62em; left: 0; width: 4px; height: 4px; border-radius: 99px; background: #0891B2; }
+.mkt-record-quant-evidence { margin-top: 11px; border-top: 1px solid color-mix(in srgb, #0891B2 18%, var(--line)); padding-top: 8px; color: var(--ink-2); }
+.mkt-record-quant-evidence summary { cursor: pointer; font-family: var(--f); font-size: 10px; font-weight: 800; color: #087F5B; }
+.mkt-record-quant-evidence ul { display: grid; gap: 5px; margin: 7px 0 0; padding-left: 15px; font-family: var(--f); font-size: 10px; font-weight: 600; line-height: 1.45; color: var(--muted); word-break: break-word; }
+.mkt-record-quant-evidence li::marker { color: #0891B2; }
 .mkt-record-source { display: inline-flex; align-items: center; gap: 4px; margin-top: auto; padding-top: 10px; font-family: var(--f); font-size: 10.5px; font-weight: 800; color: #0891B2; text-decoration: none; }
 .mkt-record-source:hover { text-decoration: underline; }
 .mkt-baseline-head { display: flex; align-items: baseline; gap: 9px; margin: 0 20px 2px; padding-top: 7px; border-top: 1px solid var(--line); }

@@ -39,8 +39,14 @@ jobs:
       - name: Crawl publisher and RSS source excerpts
         run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
 
+      - name: Append global market discovery records
+        run: node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
+
       - name: Retry retained source links and store publisher-page text
         run: SOURCE_REFRESH_LIMIT=30 SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-source-content.mjs
+
+      - name: Resolve market discoveries to publisher-page evidence
+        run: MARKET_SOURCE_REFRESH_LIMIT=90 MARKET_SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-market-source-content.mjs
 
       - name: Localise distinct source-page sentences
         run: python scripts/translate_summarize.py
