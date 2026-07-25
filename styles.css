@@ -480,6 +480,26 @@ a[href]:hover .rainbow-on-hover,
 .ov-chart-card:hover { transform: translateY(-2px) scale(1.005); box-shadow: var(--shadow-lg); background: var(--panel-2); }
 .ov-chart-card:hover .cc-head h3 { color: var(--accent); }
 
+/* 정량 분석 빈 칸을 채우는 주요 인사이트 슬라이드 */
+.quant-insight-card { position: relative; min-height: 330px; padding: 0; overflow: hidden; isolation: isolate; background: #061126; }
+.quant-insight-card:hover { background: #061126; }
+.qis-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .55s ease; pointer-events: none; }
+.qis-slide.on { opacity: 1; pointer-events: auto; }
+.qis-slide img { position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.qis-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(3,10,29,.96) 0%, rgba(4,13,37,.88) 38%, rgba(5,14,37,.35) 72%, rgba(5,14,37,.06) 100%); }
+.qis-copy { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; width: min(74%, 440px); height: 100%; padding: 25px 27px 34px; color: #fff; }
+.qis-eyebrow { display: inline-flex; padding: 3px 7px; border: 1px solid rgba(161,121,255,.58); border-radius: 999px; color: #D7C5FF; background: rgba(80,47,180,.23); font-family: var(--f); font-size: 9px; font-weight: 900; letter-spacing: .09em; }
+.qis-copy > strong { margin-top: 12px; color: #F6D55C; font-family: var(--f-display); font-size: 24px; font-weight: 800; letter-spacing: -.035em; line-height: 1.05; }
+.qis-copy h3 { max-width: 360px; margin: 8px 0 0; font-family: var(--f); font-size: 18px; font-weight: 800; line-height: 1.35; letter-spacing: -.025em; }
+.qis-copy ul { display: grid; gap: 5px; margin: 14px 0 0; padding: 0; list-style: none; }
+.qis-copy li { position: relative; padding-left: 12px; color: rgba(240,245,255,.86); font-family: var(--f); font-size: 11.5px; font-weight: 600; line-height: 1.45; word-break: keep-all; }
+.qis-copy li::before { position: absolute; top: .48em; left: 0; width: 4px; height: 4px; border-radius: 50%; background: #B99AFF; content: ""; }
+.qis-source { margin-top: auto; color: rgba(218,226,245,.62); font-family: var(--f); font-size: 9.5px; font-weight: 600; }
+.qis-controls { position: absolute; z-index: 2; right: 18px; bottom: 16px; display: flex; gap: 6px; }
+.qis-controls button { width: 20px; height: 4px; border: 0; border-radius: 99px; background: rgba(255,255,255,.34); cursor: pointer; transition: width .2s ease, background .2s ease; }
+.qis-controls button.on { width: 34px; background: #fff; }
+@media (max-width: 760px) { .quant-insight-card { min-height: 300px; overflow: hidden; }.qis-copy { width: 86%; padding: 22px 21px 32px; }.qis-copy > strong { font-size: 21px; }.qis-copy h3 { font-size: 16px; }.qis-copy li { font-size: 10.5px; }.qis-controls { right: 14px; bottom: 13px; } }
+
 .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 12px; }
 .kpi {
   background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);

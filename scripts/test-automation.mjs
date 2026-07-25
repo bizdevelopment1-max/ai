@@ -29,6 +29,9 @@ const required = [
   "config/company-source-policy.json",
   "index.html",
   "app.bundle.js",
+  "assets/quant-insight-capital.webp",
+  "assets/quant-insight-device.webp",
+  "assets/quant-insight-infra.webp",
 ];
 
 let failed = false;
@@ -160,6 +163,17 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  실패  article source boundary: ${error.message}`);
+}
+
+try {
+  const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
+  const sliderImages = ["capital", "device", "infra"].every(name => boards.includes(`assets/quant-insight-${name}.webp`));
+  const sliderUi = boards.includes("function QuantInsightSlider") && boards.includes("setInterval") && styles.includes(".quant-insight-card");
+  if (!sliderImages || !sliderUi) throw new Error("quantitative overview needs three optimized insight slides with automatic rotation");
+  console.log("  OK  quantitative overview uses three optimized rotating insight slides");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  quantitative insight slides: ${error.message}`);
 }
 
 try {

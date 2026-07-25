@@ -861,6 +861,77 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
   );
 }
 
+function QuantInsightSlider({ data }) {
+  const [active, setActive] = React.useState(0);
+  const [paused, setPaused] = React.useState(false);
+  const topFunding = (data.FUNDING || []).slice(0, 2);
+  const fundingTrend = data.FUNDING_TREND || [];
+  const marketGrowth = data.MARKET_GROWTH || [];
+  const market2026 = marketGrowth.find(item => item.year === "2026E");
+  const market2030 = marketGrowth.find(item => item.year === "2030E");
+  const slides = [
+    {
+      image: "assets/quant-insight-capital.webp",
+      eyebrow: "CAPITAL SIGNAL",
+      metric: topFunding.map(item => `$${item.value}B`).join(" · "),
+      title: "AI 기업가치는 상위 두 곳으로 집중",
+      lines: [
+        `${topFunding.map(item => item.name).join(" · ")} 기업가치 기준`,
+        "기업가치와 매출·현금흐름은 별도 지표로 확인",
+      ],
+      source: "Series·공시·보도 기반 기업가치",
+    },
+    {
+      image: "assets/quant-insight-device.webp",
+      eyebrow: "DEVICE DECISION",
+      metric: "메모리 · NPU · 전력",
+      title: "온디바이스 AI는 사양 설계와 함께 검증",
+      lines: [
+        "기능 로드맵과 메모리·NPU 조건을 동시에 비교",
+        "AI 탑재만으로 판매 증가를 단정하지 않음",
+      ],
+      source: "단말 사양·기능 로드맵 검토 기준",
+    },
+    {
+      image: "assets/quant-insight-infra.webp",
+      eyebrow: "MARKET SCALE",
+      metric: `$${market2026?.size || 540}B → $${market2030?.size || 1812}B`,
+      title: "AI 시장 성장의 병목은 인프라 실행력",
+      lines: [
+        `${market2026?.year || "2026E"}에서 ${market2030?.year || "2030E"}까지 시장 규모 전망`,
+        "시장 정의와 전망 범위는 원문 기준으로 분리 확인",
+      ],
+      source: "Grand View Research 시장 전망 기준",
+    },
+  ];
+  React.useEffect(() => {
+    if (paused) return undefined;
+    const timer = window.setInterval(() => setActive(index => (index + 1) % slides.length), 6500);
+    return () => window.clearInterval(timer);
+  }, [paused, slides.length]);
+
+  return (
+    <article className="ov-chart-card quant-insight-card" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={() => setPaused(false)}>
+      {slides.map((slide, index) => (
+        <div className={"qis-slide" + (index === active ? " on" : "")} key={slide.image} aria-hidden={index !== active}>
+          <img src={slide.image} alt="" loading={index === 0 ? "eager" : "lazy"} />
+          <div className="qis-shade" />
+          <div className="qis-copy">
+            <span className="qis-eyebrow">{slide.eyebrow}</span>
+            <strong>{slide.metric}</strong>
+            <h3>{slide.title}</h3>
+            <ul>{slide.lines.map(line => <li key={line}>{line}</li>)}</ul>
+            <span className="qis-source">{slide.source}</span>
+          </div>
+        </div>
+      ))}
+      <div className="qis-controls" aria-label="핵심 인사이트 슬라이드 선택">
+        {slides.map((slide, index) => <button key={slide.image} className={index === active ? "on" : ""} aria-label={`${index + 1}번째 인사이트`} aria-current={index === active ? "true" : undefined} onClick={() => setActive(index)} />)}
+      </div>
+    </article>
+  );
+}
+
 // ---- Overview Charts (market-level donut + bar + area, no company names) ----
 function OverviewCharts({ data, cats, theme }) {
   const ref = React.useRef(null);
@@ -889,6 +960,7 @@ function OverviewCharts({ data, cats, theme }) {
           <div className="cc-head"><h3>AI 펀딩 트렌드</h3><span title="Crunchbase 분기별 AI 벤처 펀딩">$B · 분기별 집계</span></div>
           <HBarChart data={data.FUNDING_TREND} colorOf={d => catColor(d.cat)} ink={theme.ink} muted={theme.muted} grid={theme.grid} unit="B" valuePrefix="$" />
         </div>
+        <QuantInsightSlider data={data} />
       </div>
     </AnimCtx.Provider>
   );
