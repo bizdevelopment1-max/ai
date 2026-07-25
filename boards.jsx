@@ -2078,6 +2078,30 @@ function ExecToplines({ items, insights, onNav }) {
         <span className="es-score-legend" title="상대 중요도 0~100 = 최신성 × 출처신뢰도 × 주제적합도 (당일 최고 카드 = 100)">점수 = 상대 중요도 0~100</span>
         {insights && insights.generatedAt && <span className="es-gen">갱신 {String(insights.generatedAt).slice(0, 10)}</span>}
       </div>
+      <div className="es-priority-map" aria-label="전략 축별 상대 중요도">
+        <span className="es-priority-title">우선순위</span>
+        <div className="es-priority-list">
+          {cards.slice().sort((a, b) => (b.score || 0) - (a.score || 0)).map(t => {
+            const tone = TONE[t.tone] || "#2D6BFF";
+            const score = typeof t.score === "number" ? t.score : 0;
+            return (
+              <span className="es-priority-chip" key={t.tag} style={{ "--tl": tone, "--score": `${Math.max(8, Math.min(100, score))}%` }}>
+                <span className="es-priority-dot"><Icon name={ICON[t.tone] || "spark"} size={11} /></span>
+                <b>{t.tag}</b>
+                {typeof t.score === "number" && <em>{t.score}</em>}
+                <i aria-hidden="true"><span /></i>
+              </span>
+            );
+          })}
+        </div>
+      </div>
+      <div className="es-flow-key" aria-label="경영 요약 읽는 순서">
+        <span className="sig"><b>1</b> Signal <em>관측된 사실</em></span>
+        <i aria-hidden="true">→</i>
+        <span className="ins"><b>2</b> Insight <em>사업 의미</em></span>
+        <i aria-hidden="true">→</i>
+        <span className="act"><b>3</b> Action <em>다음 실행</em></span>
+      </div>
       <div className="es-info-head">
         <span className="es-col-h es-col-axis">전략 축</span>
         <span className="es-col-h">Signal <em>관측된 사실</em></span>
@@ -2086,14 +2110,16 @@ function ExecToplines({ items, insights, onNav }) {
       </div>
       {cards.map((t, i) => {
         const tone = TONE[t.tone] || "#2D6BFF";
+        const score = typeof t.score === "number" ? t.score : 0;
         return (
-          <div className="es-row" key={t.tag} style={{ "--tl": tone }}>
+          <div className="es-row" key={t.tag} style={{ "--tl": tone, "--score": `${Math.max(8, Math.min(100, score))}%` }}>
             <div className="es-axis">
               <span className="es-axis-ico"><Icon name={ICON[t.tone] || "spark"} size={15} /></span>
               <b>{t.tag}</b>
               {typeof t.score === "number"
                 ? <span className="es-score" style={{ "--tl": tone }} title={t.scoreBasis || "상대 중요도 0~100"}>{t.score}</span>
                 : (t.live === false && <span className="es-score base" title={t.scoreBasis || "근거 기사 매칭 대기 — 큐레이션 기준선"}>기준선</span>)}
+              {typeof t.score === "number" && <div className="es-meter" aria-label={`상대 중요도 ${t.score}`}><i /></div>}
               {pend === t.tag ? (
                 <span className="art-del-pw" onClick={e => e.stopPropagation()}>
                   <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus

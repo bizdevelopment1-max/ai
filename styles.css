@@ -1976,6 +1976,50 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .es-act { color: var(--ink); font-weight: 700; }
 .es-arr { color: var(--muted); font-size: 13px; text-align: center; padding-top: 2px; }
 .es-info .ct-del { float: none; margin-left: auto; }
+
+/* Executive Summary: 표가 아닌 우선순위→신호→의미→실행 인포그래픽 */
+.es-info { padding: 12px 14px 14px; overflow: visible; }
+.es-meta-bar { padding: 1px 2px 10px; border-bottom: 1px solid var(--line); }
+.es-priority-map { display: flex; align-items: flex-start; gap: 14px; padding: 13px 2px 12px; border-bottom: 1px solid var(--line); }
+.es-priority-title { flex: 0 0 54px; padding-top: 4px; font-family: var(--f); font-size: 10.5px; font-weight: 900; letter-spacing: .05em; color: var(--muted); }
+.es-priority-list { display: grid; grid-template-columns: repeat(3, minmax(148px, 1fr)); gap: 8px 12px; flex: 1; min-width: 0; }
+.es-priority-chip { position: relative; display: grid; grid-template-columns: 15px minmax(0, 1fr) auto; align-items: center; column-gap: 5px; padding: 3px 0 7px; min-width: 0; font-family: var(--f); }
+.es-priority-chip b { overflow: hidden; font-size: 11px; font-weight: 800; color: var(--ink); text-overflow: ellipsis; white-space: nowrap; }
+.es-priority-chip em { min-width: 20px; font-family: var(--mono); font-size: 10px; font-style: normal; font-weight: 800; color: var(--tl); text-align: right; font-variant-numeric: tabular-nums; }
+.es-priority-dot { display: inline-flex; color: var(--tl); }
+.es-priority-chip > i { position: absolute; right: 0; bottom: 0; left: 0; height: 3px; overflow: hidden; border-radius: 99px; background: color-mix(in srgb, var(--tl) 12%, var(--line)); }
+.es-priority-chip > i > span { display: block; width: var(--score); height: 100%; border-radius: inherit; background: var(--tl); }
+.es-flow-key { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 2px 4px; }
+.es-flow-key > span { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 999px; font-family: var(--f); font-size: 10.5px; font-weight: 800; }
+.es-flow-key > span b { display: inline-grid; width: 15px; height: 15px; place-items: center; border-radius: 50%; font-family: var(--mono); font-size: 9px; color: #fff; }
+.es-flow-key > span em { font-style: normal; font-weight: 600; color: var(--muted); }
+.es-flow-key > i { color: var(--muted); font-size: 12px; font-style: normal; }
+.es-flow-key .sig { color: #2463EB; background: #EFF6FF; }.es-flow-key .sig b { background: #2463EB; }
+.es-flow-key .ins { color: #7C3AED; background: #F5F3FF; }.es-flow-key .ins b { background: #7C3AED; }
+.es-flow-key .act { color: #087F5B; background: #ECFDF5; }.es-flow-key .act b { background: #087F5B; }
+.es-info-head { display: none; }
+.es-row { position: relative; grid-template-columns: 170px minmax(170px, .95fr) 28px minmax(220px, 1.22fr) 28px minmax(180px, .95fr); gap: 10px; min-width: 0; align-items: stretch; margin-top: 10px; padding: 13px 14px 13px 17px; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.es-row::before { position: absolute; top: 0; bottom: 0; left: 0; width: 4px; background: var(--tl); content: ""; }
+.es-row:last-child { border-bottom: 1px solid var(--line); }
+.es-row:hover { border-color: color-mix(in srgb, var(--tl) 36%, var(--line)); box-shadow: 0 8px 20px color-mix(in srgb, var(--tl) 8%, transparent); }
+.es-axis { align-content: flex-start; align-items: center; padding: 4px 6px 4px 0; }
+.es-axis-ico { display: inline-grid; width: 24px; height: 24px; place-items: center; border-radius: 8px; color: var(--tl); background: color-mix(in srgb, var(--tl) 10%, var(--panel)); }
+.es-axis b { font-size: 12.5px; }
+.es-score { margin-left: auto; padding: 1px 6px; border-radius: 999px; }
+.es-meter { flex-basis: 100%; height: 5px; margin-top: 6px; background: color-mix(in srgb, var(--tl) 12%, var(--line)); }
+.es-meter i { width: var(--score); background: var(--tl); }
+.es-cell { position: relative; min-width: 0; padding: 27px 12px 11px; border: 1px solid var(--line); border-radius: 10px; font-size: 12.5px; line-height: 1.58; background: var(--panel); }
+.es-cell::before { position: absolute; top: 9px; left: 12px; font-family: var(--f); font-size: 9.5px; font-weight: 900; letter-spacing: .07em; }
+.es-sig { border-color: color-mix(in srgb, #2463EB 22%, var(--line)); background: color-mix(in srgb, #2463EB 3%, var(--panel)); }.es-sig::before { color: #2463EB; content: "01  SIGNAL · 관측"; }
+.es-ins { border-color: color-mix(in srgb, #7C3AED 22%, var(--line)); background: color-mix(in srgb, #7C3AED 3%, var(--panel)); }.es-ins::before { color: #7C3AED; content: "02  INSIGHT · 사업 의미"; }
+.es-act { border-color: color-mix(in srgb, #087F5B 25%, var(--line)); background: color-mix(in srgb, #16A34A 5%, var(--panel)); }.es-act::before { color: #087F5B; content: "03  ACTION · 다음 실행"; }
+.es-sig .tl-ev-chip { display: table; margin-top: 8px; }
+.es-act .tl-link { display: inline-flex; margin-top: 9px; color: #087F5B; }
+.es-arr { display: flex; flex-direction: column; align-items: center; align-self: center; gap: 2px; padding: 0; color: var(--tl); font-size: 18px; font-weight: 800; }
+.es-arr::after { font-family: var(--f); font-size: 9px; font-weight: 800; color: var(--muted); letter-spacing: .04em; }
+.es-row > .es-arr:nth-child(3)::after { content: "해석"; }.es-row > .es-arr:nth-child(5)::after { content: "실행"; }
+@media (max-width: 1100px) { .es-row { grid-template-columns: 150px minmax(150px, .9fr) 22px minmax(190px, 1.15fr) 22px minmax(160px, .85fr); gap: 7px; padding-right: 10px; }.es-cell { padding-right: 9px; padding-left: 9px; }.es-cell::before { left: 9px; }.es-priority-list { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
+@media (max-width: 760px) { .es-info { padding: 11px; }.es-gen { margin-left: 0; }.es-priority-map { gap: 8px; }.es-priority-title { flex-basis: 42px; }.es-priority-list { grid-template-columns: 1fr; gap: 5px; }.es-flow-key { justify-content: flex-start; gap: 4px; overflow-x: auto; }.es-flow-key > span { white-space: nowrap; }.es-flow-key > span em { display: none; }.es-row { grid-template-columns: 1fr; gap: 8px; padding: 12px; }.es-axis { padding: 0 0 2px; }.es-arr { display: none; }.es-cell { padding: 26px 11px 11px; }.es-cell::before { left: 11px; }.es-info .ct-del { margin-left: 0; } }
 .brief-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px 20px 0; }
 @media (max-width: 760px) { .brief-stats { grid-template-columns: repeat(2, 1fr); } }
 
