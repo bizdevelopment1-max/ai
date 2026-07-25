@@ -211,7 +211,10 @@ try {
     && styles.includes(".es-framework-key")
     && styles.includes(".es-row:hover { background: #102a43; }")
     && styles.includes(".es-cell .tl-hl, .es-cell .tl-kw")
-    && styles.includes("background: #fcfcfa;");
+    && styles.includes('content: "▶";')
+    && styles.includes("font-size: 21px")
+    && styles.includes("color: #7de3ff; background: transparent;")
+    && styles.includes(".es-score-tip");
   if (!removedPriorityStrip || !consultingFramework) {
     throw new Error("executive summary must use the evidence → implication → decision consulting framework without a priority-strip graphic");
   }
@@ -219,6 +222,27 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  executive summary card tone: ${error.message}`);
+}
+
+try {
+  const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
+  const conciseBriefing = boards.includes("Source 기반 규칙 해석 · 신사업 기회 스코어(1~5)")
+    && boards.includes("function fmtMonthDay")
+    && boards.includes("{fmtMonthDay(d.date)}")
+    && boards.includes("{fmtMonthDay(day.date)}")
+    && !boards.includes("AI 추론(검증 불가)");
+  const transparentPriority = boards.includes("const priorityMeta =")
+    && boards.includes("${meta.label} = ${meta.meaning} (${meta.range}점)")
+    && boards.includes("점수 = 최신성 × 출처 신뢰도 × 주제 적합도")
+    && boards.includes("당일 최고 카드 = 100으로 정규화")
+    && styles.includes(".es-score:hover .es-score-tip");
+  if (!conciseBriefing || !transparentPriority) {
+    throw new Error("briefing dates and priority-score reasoning must remain concise and inspectable");
+  }
+  console.log("  OK  briefing uses simple dates and priority scores expose their source-based rule");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  briefing clarity and score transparency: ${error.message}`);
 }
 
 try {

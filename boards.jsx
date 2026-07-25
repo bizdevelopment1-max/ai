@@ -19,6 +19,10 @@ function fmtPubKo(ds) {
   const [y, m, d] = ds.split("-").map(Number);
   return y === 2026 ? `${m}/${d}` : `'${String(y).slice(2)}.${m}.${d}`;
 }
+function fmtMonthDay(ds) {
+  const [, month, day] = String(ds || "").split("-");
+  return month && day ? `${Number(month)}/${Number(day)}` : "";
+}
 
 // ---- Company logo (real favicon, falls back to initial) ---------
 function CoLogo({ name, domain, accent }) {
@@ -2219,12 +2223,12 @@ function BriefingBoard({ briefing, sectionRef }) {
         <span className="board-tab" style={{ background: "#2D6BFF" }} />
         <div className="board-titles">
           <h2>모닝 브리핑 <span className="board-en">Weekly Synthesis · Signal → Insight → Action</span></h2>
-          <p>원문 발췌를 바탕으로 한 규칙 기반 해석 · 사실과 구분해 표시 · 신사업 기회 스코어(각 1~5)</p>
+          <p>Source 기반 규칙 해석 · 신사업 기회 스코어(1~5)</p>
         </div>
         <div className="brief-days">
           {days.slice(0, 7).map((d, i) => (
             <button key={d.date} className={i === dayIdx ? "on" : ""} onClick={() => setDayIdx(i)}>
-              {i === 0 ? "오늘" : d.date.slice(5).replace("-", "/")}
+              {fmtMonthDay(d.date)}
             </button>
           ))}
         </div>
@@ -2232,7 +2236,7 @@ function BriefingBoard({ briefing, sectionRef }) {
 
       <div className="brief-headline">
         <Icon name="sun" size={16} /> <b>{day.headline}</b>
-        <span className="brief-date">{day.date}{day.engine === "rules" ? " · AI 추론(검증 불가)" : ""}</span>
+        <span className="brief-date">{fmtMonthDay(day.date)}</span>
       </div>
 
       {(day.stats || []).length > 0 && (
@@ -2266,7 +2270,7 @@ function BriefingBoard({ briefing, sectionRef }) {
               <div className="brief-ev">
                 {it.evidence.map((e, k) => (
                   <a key={k} href={e.url} target="_blank" rel="noopener" className="tl-ev-chip">
-                    <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${e.date.slice(5)}` : ""}
+                    <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${fmtMonthDay(e.date)}` : ""}
                   </a>
                 ))}
               </div>
@@ -2329,7 +2333,7 @@ function RadarBoard({ radar, sectionRef }) {
               <div className="brief-ev">
                 {p.evidence.map((e, k) => (
                   <a key={k} href={e.url} target="_blank" rel="noopener" className="tl-ev-chip" onClick={ev => ev.stopPropagation()}>
-                    <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${e.date.slice(5)}` : ""}
+                    <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${fmtMonthDay(e.date)}` : ""}
                   </a>
                 ))}
               </div>
@@ -2389,6 +2393,16 @@ function ExecToplines({ items, insights, onNav }) {
     "rules": { ko: "규칙 기반 자동", cls: "rules" }, "seed": { ko: "시드(초기값)", cls: "seed" },
   };
   const eb = ENGINE_BADGE[eng] || ENGINE_BADGE.rules;
+  const priorityMeta = (rawScore) => {
+    const score = Math.max(0, Math.min(100, Math.round(rawScore)));
+    if (score >= 67) return { label: "P1", range: "67–100", meaning: "상위 우선순위" };
+    if (score >= 34) return { label: "P2", range: "34–66", meaning: "중간 우선순위" };
+    return { label: "P3", range: "0–33", meaning: "관찰 우선순위" };
+  };
+  const priorityHelp = (rawScore, basis) => {
+    const meta = priorityMeta(rawScore);
+    return `${meta.label} = ${meta.meaning} (${meta.range}점)\n점수 = 최신성 × 출처 신뢰도 × 주제 적합도\n당일 최고 카드 = 100으로 정규화한 상대 중요도\n${basis || ""}`.trim();
+  };
   return (
     <section className="es-info" aria-label="전략 의사결정 브리프">
       <header className="es-brief-head">
@@ -2418,6 +2432,8 @@ function ExecToplines({ items, insights, onNav }) {
       {cards.map((t, i) => {
         const tone = TONE[t.tone] || "#2D6BFF";
         const score = typeof t.score === "number" ? t.score : 0;
+        const priority = priorityMeta(score);
+        const scoreHelp = priorityHelp(score, t.scoreBasis);
         return (
           <div className="es-row" key={t.tag} style={{ "--tl": tone, "--score": `${Math.max(8, Math.min(100, score))}%` }}>
             <div className="es-axis">
@@ -2425,9 +2441,12 @@ function ExecToplines({ items, insights, onNav }) {
               <span className="es-axis-label">전략 축</span>
               <b>{t.tag}</b>
               {typeof t.score === "number"
-                ? <span className="es-score" style={{ "--tl": tone }} title={t.scoreBasis || "상대 중요도 0~100"}>P{Math.max(1, Math.min(3, Math.ceil((101 - t.score) / 34)))} <em>{t.score}</em></span>
+                ? <span className="es-score" style={{ "--tl": tone }} title={scoreHelp} tabIndex="0" aria-label={scoreHelp}>
+                    {priority.label} <em>{t.score}</em>
+                    <span className="es-score-tip" role="tooltip"><b>{priority.label}</b> {priority.meaning} · {priority.range}점<br />점수 = 최신성 × 출처 신뢰도 × 주제 적합도<br />당일 최고 카드 = 100으로 정규화</span>
+                  </span>
                 : (t.live === false && <span className="es-score base" title={t.scoreBasis || "근거 기사 매칭 대기 — 큐레이션 기준선"}>기준선</span>)}
-              {typeof t.score === "number" && <span className="es-score-note">상대 중요도</span>}
+              {typeof t.score === "number" && <span className="es-score-note">상대 중요도 · 점수 근거 보기</span>}
               {pend === t.tag ? (
                 <span className="art-del-pw" onClick={e => e.stopPropagation()}>
                   <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
@@ -2446,7 +2465,7 @@ function ExecToplines({ items, insights, onNav }) {
             <div className="es-cell es-sig">{hlKey(t.now)}
               {t.evidence.slice(0, 1).map((e, k) => (
                 <a className="tl-ev-chip" key={k} href={e.url} target="_blank" rel="noopener">
-                  <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${e.date.slice(5)}` : ""}
+                  <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${fmtMonthDay(e.date)}` : ""}
                 </a>
               ))}
             </div>
