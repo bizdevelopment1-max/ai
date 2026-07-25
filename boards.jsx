@@ -1023,17 +1023,26 @@ const MONEY_EDGES = [
   { from: "Cohere", to: "Amazon", type: "파트너십", label: "AWS·소버린 배포" },
 ];
 
-function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo }) {
+function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, onNodeSelect, initialSelected = null, compact = false }) {
   const canvasRef = React.useRef(null);
   const containerRef = React.useRef(null);
   const [hovered, setHovered] = React.useState(null);
-  const [selected, setSelected] = React.useState(null);
+  const [selected, setSelected] = React.useState(initialSelected);
   const [tooltip, setTooltip] = React.useState(null);
   const nodesRef = React.useRef([]);
   const edgesRef = React.useRef([]);
   const dragRef = React.useRef(null);
   const frameRef = React.useRef(null);
   const mouseRef = React.useRef({ x: 0, y: 0 });
+
+  React.useEffect(() => {
+    if (initialSelected) setSelected(initialSelected);
+  }, [initialSelected]);
+
+  const selectNode = React.useCallback((name) => {
+    setSelected(name);
+    if (onNodeSelect) onNodeSelect(name);
+  }, [onNodeSelect]);
 
   const edgeColors = { "경쟁": "#FF4D4D", "투자": "#00C2A8", "매출": "#F59E0B", "파트너십": "#2D6BFF", "인수": "#C026D3", "생태계": "#FFB02E", "모회사": "#6366F1", "계열사": "#8B5CF6" };
   const edgeDash = { "경쟁": [], "투자": [6, 4], "파트너십": [3, 3], "생태계": [8, 3], "인수": [2, 2], "모회사": [], "계열사": [4, 4], "GPU 공급": [6, 2], "서비스": [3, 3], "API 공급": [5, 3], "데이터": [4, 4], "클라우드": [6, 4], "독점": [2, 4] };
@@ -1208,7 +1217,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo }
     const onDown = (e) => {
       const pt = e.touches ? e.touches[0] : e;
       const n = getNode(pt.clientX, pt.clientY);
-      if (n) { dragRef.current = n; n.fixed = true; canvas.style.cursor = "grabbing"; setSelected(n.id); e.preventDefault(); }
+      if (n) { dragRef.current = n; n.fixed = true; canvas.style.cursor = "grabbing"; selectNode(n.id); e.preventDefault(); }
     };
     const onUp = () => { if (dragRef.current) { dragRef.current.fixed = false; dragRef.current = null; canvas.style.cursor = "default"; } };
 
@@ -1229,7 +1238,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo }
       canvas.removeEventListener("touchstart", onDown);
       canvas.removeEventListener("touchend", onUp);
     };
-  }, [companies, cats, hovered, selected]);
+  }, [companies, cats, hovered, selected, selectNode]);
 
   const selCo = selected ? companies.find(c => c.name === selected) : null;
   const selEdges = selected ? (mode === "dynamics" ? COMPETE_EDGES : MONEY_EDGES).filter(e => e.from === selected || e.to === selected) : [];
@@ -1246,7 +1255,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo }
           </div>
         )}
       </div>
-      {selCo && (
+      {!compact && selCo && (
         <div className="kg-detail" onClick={() => setSelected(null)}>
           <div className="kg-detail-head">
             <b>{selCo.name}</b>
@@ -1273,12 +1282,19 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo }
           )}
         </div>
       )}
-      <div className="kg-hint">노드를 드래그하여 이동 · 클릭하여 상세 관계 보기 · 범례: 원 크기 = 밸류에이션</div>
+      <div className={`kg-hint${compact ? " kg-hint-compact" : ""}`}>{compact ? "왼쪽 원을 선택하면 오른쪽 영상 위에 업체 관계가 표시됩니다" : "노드를 드래그하여 이동 · 클릭하여 상세 관계 보기 · 범례: 원 크기 = 밸류에이션"}</div>
     </div>
   );
 }
 
 // ---- Executive Summary 내 '경쟁 구도' — 관계(엣지)가 있는 업체만, 노드→최신 기사 ----
+const DYNAMICS_AXES = [
+  { id: "competition", label: "경쟁", color: "#FF4D4D", types: ["경쟁"] },
+  { id: "partnership", label: "파트너십", color: "#2D6BFF", types: ["파트너십"] },
+  { id: "investment", label: "투자", color: "#00C2A8", types: ["투자"] },
+  { id: "supply", label: "공급", color: "#F59E0B", types: ["매출"] },
+];
+
 function ESCompetitiveMap({ companies, cats, articles }) {
   const ref = React.useRef(null);
   const inView = useInView(ref);
@@ -1303,6 +1319,22 @@ function ESCompetitiveMap({ companies, cats, articles }) {
   }, [companies, articles]);
 
   const graphKey = list.map(c => c.name).join("|");   // 목록이 바뀌면 그래프 재구성
+  const defaultCompany = list.some(c => c.name === "OpenAI") ? "OpenAI" : (list[0] ? list[0].name : null);
+  const [activeCompany, setActiveCompany] = React.useState(defaultCompany);
+
+  React.useEffect(() => {
+    setActiveCompany(current => list.some(c => c.name === current) ? current : defaultCompany);
+  }, [graphKey, defaultCompany]);
+
+  const selectedCompany = list.find(c => c.name === activeCompany) || list[0] || null;
+  const selectedArticle = selectedCompany ? articleByCo[selectedCompany.name] : null;
+  const relationshipGroups = selectedCompany ? DYNAMICS_AXES.map(axis => ({
+    ...axis,
+    items: COMPETE_EDGES.filter(edge => axis.types.includes(edge.type) && (edge.from === selectedCompany.name || edge.to === selectedCompany.name))
+      .map(edge => ({ company: edge.from === selectedCompany.name ? edge.to : edge.from, label: edge.label }))
+      .slice(0, 3),
+  })).filter(axis => axis.items.length > 0) : [];
+
   return (
     <div className="es-compmap" ref={ref}>
      <AnimCtx.Provider value={inView}>
@@ -1315,7 +1347,61 @@ function ESCompetitiveMap({ companies, cats, articles }) {
           <i style={{ background: "#F59E0B" }} />공급
         </span>
       </div>
-      <KnowledgeGraph key={graphKey} companies={list} cats={cats} catMap={catMap} progress={prog} mode="dynamics" articleByCo={articleByCo} />
+      <div className="es-dynamics-grid">
+        <div className="es-dynamics-map">
+          <KnowledgeGraph
+            key={graphKey}
+            companies={list}
+            cats={cats}
+            catMap={catMap}
+            progress={prog}
+            mode="dynamics"
+            articleByCo={articleByCo}
+            initialSelected={activeCompany}
+            onNodeSelect={setActiveCompany}
+            compact
+          />
+        </div>
+        <aside className="dyn-video-panel" aria-live="polite">
+          <video className="dyn-video" autoPlay muted loop playsInline preload="metadata" aria-label="AI 업계 경쟁 다이내믹스 영상">
+            <source src="assets/competitive-dynamics.mp4" type="video/mp4" />
+          </video>
+          <div className="dyn-video-overlay">
+            <div className="dyn-video-head">
+              <span>AI INDUSTRY</span>
+              <b>Competitive Dynamics</b>
+              <div className="dyn-axis-list" aria-label="관계 축">
+                {DYNAMICS_AXES.map(axis => <span key={axis.id} style={{ "--axis": axis.color }}><i />{axis.label}</span>)}
+              </div>
+            </div>
+            {selectedCompany && (
+              <div className="dyn-selected">
+                <div className="dyn-selected-meta">
+                  <span>{catMap[selectedCompany.cat] ? catMap[selectedCompany.cat].ko : selectedCompany.cat}</span>
+                  <strong>{selectedCompany.name}</strong>
+                  <em>{selectedCompany.valuation}</em>
+                </div>
+                <p>{hlKey(selectedCompany.note)}</p>
+                {relationshipGroups.length > 0 && (
+                  <div className="dyn-relationships">
+                    {relationshipGroups.map(axis => (
+                      <div key={axis.id} className="dyn-relationship" style={{ "--axis": axis.color }}>
+                        <b>{axis.label}</b>
+                        <div>{axis.items.map(item => <span key={`${item.company}-${item.label}`}><strong>{item.company}</strong>{item.label}</span>)}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {selectedArticle && (
+                  <a className="dyn-source" href={selectedArticle.url} target="_blank" rel="noopener">
+                    <span>연결 기사 원문</span><b>↗</b>
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </aside>
+      </div>
      </AnimCtx.Provider>
     </div>
   );

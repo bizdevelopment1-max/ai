@@ -32,6 +32,7 @@ const required = [
   "assets/quant-insight-capital.webp",
   "assets/quant-insight-device.webp",
   "assets/quant-insight-infra.webp",
+  "assets/competitive-dynamics.mp4",
 ];
 
 let failed = false;
@@ -174,6 +175,24 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  quantitative insight slides: ${error.message}`);
+}
+
+try {
+  const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
+  const videoPanel = boards.includes('src="assets/competitive-dynamics.mp4"')
+    && boards.includes("const DYNAMICS_AXES")
+    && boards.includes("onNodeSelect={setActiveCompany}")
+    && boards.includes("compact");
+  const interactiveLayout = styles.includes(".es-dynamics-grid")
+    && styles.includes(".dyn-video-panel")
+    && styles.includes(".dyn-relationship");
+  if (!videoPanel || !interactiveLayout) {
+    throw new Error("competitive dynamics needs a left interactive circle map and a right combined-video insight panel");
+  }
+  console.log("  OK  competitive dynamics links each selected circle to the right-side video insight panel");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  competitive dynamics video panel: ${error.message}`);
 }
 
 try {
