@@ -1250,7 +1250,7 @@ function BigtechFlowGrid() {
   );
 }
 
-function BizModelBoard({ companies, cats, sectionRef, theme }) {
+function BizModelBoard({ companies, cats, sectionRef, theme, articles }) {
   const inView = useInView(sectionRef);
   const bizProg = useProgress(inView, 1400);
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
@@ -1351,7 +1351,7 @@ function BizModelBoard({ companies, cats, sectionRef, theme }) {
           );
         })}
       </div>
-      <SignalInfographic file="bizmodel.json" delKey="aiDashDeletedBiz"
+      <SignalInfographic file="bizmodel.json" delKey="aiDashDeletedBiz" articles={articles}
         title="AI 수익화 모델 시그널"
         sub="매일 크롤된 기사에서 '돈 버는 방식'을 구독·사용량(API)·광고/커머스·하드웨어/번들·성과기반·엔터프라이즈 6개 MECE 유형으로 누적 도식화 · 핵심 리드 + 상세 · 정량 수치는 플레인 텍스트 · ✕로 삭제(비밀번호)" />
      </AnimCtx.Provider>
@@ -1537,7 +1537,18 @@ function splitSignal(s) {
 
 // ---- 기사 기반 누적 시그널 인포그래픽(범용): lazy-load, MECE 축, 리드+상세, X 삭제 ----
 // file(json)·delKey(localStorage)·title·sub 를 받아 인프라/수익화 등 여러 보드에서 재사용.
-function SignalInfographic({ file, delKey, title, sub }) {
+function signalSourceKey(value) {
+  try {
+    const parsed = new URL(String(value || ""));
+    parsed.hash = "";
+    parsed.search = "";
+    return parsed.href.replace(/\/$/, "");
+  } catch {
+    return String(value || "").replace(/[?#].*$/, "").replace(/\/$/, "");
+  }
+}
+
+function SignalInfographic({ file, delKey, title, sub, articles }) {
   const ref = React.useRef(null);
   const inView = useInView(ref);
   const [data, setData] = React.useState(null);
@@ -1561,9 +1572,35 @@ function SignalInfographic({ file, delKey, title, sub }) {
   const resetAll = () => { setDel({}); try { localStorage.removeItem(DEL_LS); } catch {} };
 
   const groups = (data && data.groups) || [];
-  const items = ((data && data.items) || []).filter(it => it.provenance?.status === "evidence-linked" && !del[it.id]);
+  const sourceByUrl = React.useMemo(() => {
+    const sourceIndex = new Map();
+    (articles || []).forEach(article => {
+      const localization = article?.localization;
+      const key = signalSourceKey(article?.url);
+      if (key && localization?.status === "accepted" && localization?.displayLanguage === "ko"
+        && Array.isArray(localization.summaryLines) && localization.summaryLines.length === 3) {
+        sourceIndex.set(key, article);
+      }
+    });
+    return sourceIndex;
+  }, [articles]);
+  // Only show a signal when the linked publisher page supports a Korean title
+  // and exactly three translated source fragments. This prevents generic error
+  // pages or unverified English excerpts from entering the card grid.
+  const items = ((data && data.items) || [])
+    .filter(it => it.provenance?.status === "evidence-linked" && !del[it.id])
+    .map(it => {
+      const source = sourceByUrl.get(signalSourceKey(it.url));
+      if (!source) return null;
+      const display = displayFeedText(source);
+      const summaryLines = String(display.summary || "").split(/\n+/)
+        .map(line => bulletText(line)).filter(Boolean).slice(0, 3);
+      return display.translated && summaryLines.length === 3 ? { ...it, display, summaryLines } : null;
+    })
+    .filter(Boolean);
   const countOf = id => items.filter(it => it.group === id).length;
   const maxC = Math.max(1, ...groups.map(g => countOf(g.id)));
+  const sourceReady = Array.isArray(articles) && articles.length > 0;
 
   return (
     <div className="infra-signals" ref={ref}>
@@ -1578,8 +1615,8 @@ function SignalInfographic({ file, delKey, title, sub }) {
         </div>
       </div>
 
-      {!data ? (
-        <div className="mkt-loading">{loaded ? "시그널을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+      {!data || !sourceReady ? (
+        <div className="mkt-loading">{loaded ? "원문 기반 한국어 3줄 요약을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
       ) : items.length === 0 ? (
         <div className="mkt-loading">표시할 시그널이 없습니다 · 초기화로 되돌릴 수 있습니다</div>
       ) : (
@@ -1610,15 +1647,16 @@ function SignalInfographic({ file, delKey, title, sub }) {
                 </div>
                 <div className="isg-cards">
                   {rows.map(it => {
-                    const sp = splitSignal(it.signal);
                     return (
-                    <div className="isg-card" key={it.id}>
+                    <div className="isg-card" key={it.id} style={{ "--gc": g.accent }}>
                       <div className="isg-card-top">
                         {it.quant && <span className="isg-quant" style={{ color: g.accent, borderColor: g.accent, background: "color-mix(in srgb, " + g.accent + " 9%, transparent)" }}>{it.quant}</span>}
                         <span className="isg-src"><a href={it.url} target="_blank" rel="noopener">{it.source || "출처"}</a> · {String(it.date || "").slice(5)}</span>
                       </div>
-                      <p className="isg-lead">{hlKey(sp.lead)}</p>
-                      {sp.detail && <p className="isg-detail" title={it.signal}>{sp.detail}</p>}
+                      <a className="isg-lead" href={it.url} target="_blank" rel="noopener" title={it.display.title}>{hlBrief(it.display.title, "isg-title-" + it.id)}</a>
+                      <ul className="isg-summary">
+                        {it.summaryLines.map((line, index) => <li key={index} title={line}>{hlBrief(line, "isg-line-" + it.id + "-" + index)}</li>)}
+                      </ul>
                       {pend === it.id ? (
                         <div className="art-del-pw" onClick={e => e.stopPropagation()}>
                           <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
@@ -1644,7 +1682,7 @@ function SignalInfographic({ file, delKey, title, sub }) {
   );
 }
 
-function SignalBoard({ data, theme, sectionRef }) {
+function SignalBoard({ data, theme, sectionRef, articles }) {
   const inView = useInView(sectionRef);
   const strat = data.INFRA_STRATEGY || { hyperscaler: [], aiNative: [] };
   return (
@@ -1703,7 +1741,7 @@ function SignalBoard({ data, theme, sectionRef }) {
           <p>인프라 병목·전환 시점은 <b>온디바이스 AI 로드맵의 외생 변수</b>입니다. 메모리·전력 제약이 클라우드 AI 단가에 반영되는 시점, 광통신 상용화로 지연시간이 줄어드는 시점을 <b>분기 단위로 추적</b>해야 합니다.</p>
         </div>
       </div>
-      <SignalInfographic file="infra.json" delKey="aiDashDeletedInfra"
+      <SignalInfographic file="infra.json" delKey="aiDashDeletedInfra" articles={articles}
         title="인프라·미래기술 시그널"
         sub="매일 크롤된 기사에서 컴퓨트·메모리·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로 누적 도식화 · 핵심 리드 + 상세 · 정량 수치는 플레인 텍스트 · ✕로 삭제(비밀번호)" />
      </AnimCtx.Provider>

@@ -9,7 +9,7 @@ import { createHash } from "node:crypto";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const MAX_TEXT = 12_000;
-const JUNK = /(?:^|\b)(?:advertisement|advertising|affiliate commission|purchase through links|subscribe|sign up|read more|cookie|privacy policy|all rights reserved|share this article|follow us|related articles?|news tips|newsletters?|get this delivered to your inbox|confidential news tip|data is a real-time snapshot|global business and financial news|stock quotes and market data)(?:\b|$)/i;
+const JUNK = /(?:^|\b)(?:advertisement|advertising|affiliate commission|purchase through links|subscribe|sign up|read more|cookie|privacy policy|all rights reserved|share this article|follow us|related articles?|news tips|newsletters?|get this delivered to your inbox|confidential news tip|data is a real-time snapshot|global business and financial news|stock quotes and market data|sorry, an error occurred while processing your request|we(?:'|’)re aware of the situation and are working to address the problem)(?:\b|$)/i;
 
 export const cleanText = value => String(value || "")
   .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")

@@ -115,10 +115,12 @@ const historyArticles = [...historyByUrl.values()]
   .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
   .slice(0, 5000);
 
-const evidenceUrls = new Set(historyArticles.map(a => canonicalUrl(a.url)).filter(Boolean));
+const sourceBackedUrls = new Set(historyArticles
+  .filter(item => item?.provenance?.status === "source-backed")
+  .map(item => canonicalUrl(item.url)).filter(Boolean));
 const verifyEvidenceList = evidence => {
   const rows = (evidence || []).filter(e => validHttp(e.url));
-  const matched = rows.filter(e => evidenceUrls.has(canonicalUrl(e.url)));
+  const matched = rows.filter(e => sourceBackedUrls.has(canonicalUrl(e.url)));
   return {
     status: matched.length ? "evidence-linked" : "reference-only",
     evidenceCount: matched.length,
@@ -128,7 +130,7 @@ const verifyEvidenceList = evidence => {
 
 const directSourceStatus = item => {
   const url = canonicalUrl(item?.url || item?.latest?.url);
-  if (url && evidenceUrls.has(url)) return { status: "evidence-linked", evidenceCount: 1, checkedAt: now.toISOString() };
+  if (url && sourceBackedUrls.has(url)) return { status: "evidence-linked", evidenceCount: 1, checkedAt: now.toISOString() };
   if (url && validHttp(url)) return { status: "source-linked", evidenceCount: 1, checkedAt: now.toISOString() };
   return { status: "reference-only", evidenceCount: 0, checkedAt: now.toISOString() };
 };

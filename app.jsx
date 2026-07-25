@@ -394,10 +394,10 @@ function App() {
 
             {/* ── 3. 심층 분석 (수익화 모델 최상단) ── */}
             <LazySection id="bizmodel" active={active} sectionRef={refs.bizmodel} height={900}>
-              <BizModelBoard companies={D.COMPANIES} cats={cats} theme={chartTheme} />
+              <BizModelBoard companies={D.COMPANIES} cats={cats} theme={chartTheme} articles={articles} />
             </LazySection>
             <LazySection id="signals" active={active} sectionRef={refs.signals} height={900}>
-              <SignalBoard data={D} theme={chartTheme} />
+              <SignalBoard data={D} theme={chartTheme} articles={articles} />
             </LazySection>
 
             {/* ── 4. 정량 데이터 ── */}

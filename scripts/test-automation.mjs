@@ -196,6 +196,49 @@ try {
   console.error(`  FAIL  keyword emphasis: ${error.message}`);
 }
 
+try {
+  const [appSource, boardsSource, news, infra, bizmodel] = await Promise.all([
+    readFile("app.jsx", "utf8"),
+    readFile("boards.jsx", "utf8"),
+    readFile("news.json", "utf8").then(JSON.parse),
+    readFile("infra.json", "utf8").then(JSON.parse),
+    readFile("bizmodel.json", "utf8").then(JSON.parse),
+  ]);
+  const sourceKey = (value) => {
+    try {
+      const url = new URL(String(value || ""));
+      url.hash = "";
+      url.search = "";
+      return url.href.replace(/\/$/, "");
+    } catch {
+      return String(value || "").replace(/[?#].*$/, "").replace(/\/$/, "");
+    }
+  };
+  const articlesByUrl = new Map((news.articles || []).map(article => [sourceKey(article.url), article]));
+  const canShowAsKoreanBrief = (item) => {
+    const article = articlesByUrl.get(sourceKey(item.url));
+    const loc = article?.localization || {};
+    return loc.status === "accepted" && loc.displayLanguage === "ko"
+      && /[가-힣]/.test(loc.title || "")
+      && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3
+      && loc.summaryLines.every(line => /[가-힣]/.test(String(line || "")));
+  };
+  const linked = [...(infra.items || []), ...(bizmodel.items || [])]
+    .filter(item => item.provenance?.status === "evidence-linked");
+  const visibleBriefs = linked.filter(canShowAsKoreanBrief);
+  if (!/articles=\{articles\}/.test(appSource)
+    || !/function SignalInfographic\(\{ file, delKey, title, sub, articles \}\)/.test(boardsSource)
+    || !/className="isg-summary"/.test(boardsSource)
+    || !/hlBrief\(it\.display\.title/.test(boardsSource)
+    || !visibleBriefs.length || !visibleBriefs.every(canShowAsKoreanBrief)) {
+    throw new Error("signal cards must use linked Korean titles and exactly three source-derived lines");
+  }
+  console.log(`  OK  Korean signal-card briefs ${visibleBriefs.length}/${linked.length} source-linked rows`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  Korean signal cards: ${error.message}`);
+}
+
 const major = Number(process.versions.node.split(".")[0]);
 if (major < 20) {
   failed = true;
