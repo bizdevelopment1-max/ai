@@ -159,6 +159,21 @@ try {
 }
 
 try {
+  const charts = await readFile("charts.jsx", "utf8");
+  const hasInstanceScopedLine = /const chartId = React\.useId\(\)\.replace\(\/:\/g, ""\);/.test(charts)
+    && /const clipId = `mg-clip-\$\{chartId\}`;/.test(charts)
+    && /clipPath=\{`url\(#\$\{clipId\}\)`\}/.test(charts)
+    && /stroke=\{`url\(#\$\{lineId\}\)`\}/.test(charts);
+  if (!hasInstanceScopedLine) {
+    throw new Error("market-growth chart needs an instance-scoped visible connecting line");
+  }
+  console.log("  OK  market-growth charts use independent visible connecting lines");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  market-growth chart line: ${error.message}`);
+}
+
+try {
   const boards = await readFile("boards.jsx", "utf8");
   const removedSignalIntros = [
     "매일 크롤된 기사에서 '돈 버는 방식'을 구독·사용량(API)",

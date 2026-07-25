@@ -68,6 +68,13 @@ function MarketGrowthChart({ data, accent, ink, grid, muted }) {
   const [nonce, bump] = useHoverReplay();
   const tip = useTip();
   const prog = useProgress(inView, 2000, 0, nonce);
+  // SVG paint-server IDs share one document namespace. A chart can appear
+  // several times on the dashboard, so each instance needs its own IDs;
+  // otherwise a later chart can hide this chart's clipped line.
+  const chartId = React.useId().replace(/:/g, "");
+  const fillId = `mg-fill-${chartId}`;
+  const lineId = `mg-line-${chartId}`;
+  const clipId = `mg-clip-${chartId}`;
 
   const W = 520, H = 235, padL = 46, padR = 16, padT = 26, padB = 30;
   const iw = W - padL - padR, ih = H - padT - padB;
@@ -86,15 +93,15 @@ function MarketGrowthChart({ data, accent, ink, grid, muted }) {
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: "block", cursor: "pointer" }}
       onMouseMove={bump} onMouseEnter={bump}>
       <defs>
-        <linearGradient id="mg-fill" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={accent} stopOpacity="0.34" />
           <stop offset="100%" stopColor={accent} stopOpacity="0.02" />
         </linearGradient>
-        <linearGradient id="mg-line" x1="0" y1="0" x2="1" y2="0">
+        <linearGradient id={lineId} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor={liteC(accent, 0.5)} />
           <stop offset="100%" stopColor={accent} />
         </linearGradient>
-        <clipPath id="mg-clip"><rect x={padL} y="0" width={iw * prog} height={H} /></clipPath>
+        <clipPath id={clipId}><rect x={padL} y="0" width={iw * prog} height={H} /></clipPath>
       </defs>
       {ticks.map((t, i) => (
         <g key={i}>
@@ -102,9 +109,9 @@ function MarketGrowthChart({ data, accent, ink, grid, muted }) {
           <text x={padL - 8} y={y(t) + 3} textAnchor="end" fontSize="10" fill={muted} style={{ fontVariantNumeric: "tabular-nums" }}>${t}B</text>
         </g>
       ))}
-      <g clipPath="url(#mg-clip)">
-        <polygon points={areaPts} fill="url(#mg-fill)" />
-        <polyline points={linePts} fill="none" stroke="url(#mg-line)" strokeWidth="3" strokeLinejoin="round" />
+      <g clipPath={`url(#${clipId})`}>
+        <polygon points={areaPts} fill={`url(#${fillId})`} />
+        <polyline points={linePts} fill="none" stroke={`url(#${lineId})`} strokeWidth="3" strokeLinejoin="round" />
       </g>
       {data.map((d, i) => {
         const frac = i / (n - 1);
