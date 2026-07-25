@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T03:35:51.605Z",
+  "generatedAt": "2026-07-25T03:38:23.189Z",
   "overall": "warn",
   "policy": "뉴스는 원문 제목·RSS 스니펫에서 정제한 발췌만 표시하며, 생성형 요약·번역 API를 사용하지 않습니다. 규칙 기반 해석은 원문 사실과 분리해 표시합니다.",
   "summary": "검증 14개 · 정상 10 · 주의 4 · 실패 0",
@@ -50,7 +50,7 @@
       "id": "news-freshness",
       "label": "뉴스 번들 최신성",
       "status": "ok",
-      "value": "0.1일"
+      "value": "0.0일"
     },
     {
       "id": "infra-evidence",
@@ -68,7 +68,7 @@
       "id": "research-source",
       "label": "리서치 원문 링크",
       "status": "ok",
-      "value": "53/53건"
+      "value": "55/55건"
     },
     {
       "id": "market-source",
@@ -100,7 +100,7 @@
     "totalStocks": 25,
     "linkedInfra": 10,
     "linkedBizmodel": 2,
-    "linkedResearch": 53,
+    "linkedResearch": 55,
     "linkedMarket": 29,
     "linkedMarketRecords": 44,
     "consumerSurveyRecords": 5
@@ -108,8 +108,8 @@
   "sources": {
     "news": {
       "TechCrunch": 15,
-      "Wired": 4,
       "Engadget": 4,
+      "Wired": 4,
       "AI Business": 4,
       "ZDNet": 4,
       "The Decoder": 4,
@@ -118,8 +118,8 @@
       "MIT Tech Review": 4,
       "SiliconANGLE": 2,
       "Axios": 2,
-      "WSJ": 2,
       "Ars Technica": 2,
+      "WSJ": 2,
       "CNBC": 5,
       "IEEE Spectrum": 2,
       "Bloomberg.com": 1,
@@ -129,8 +129,8 @@
       "Business Insider": 3,
       "Reuters": 3,
       "Data Center Dynamics": 1,
-      "MacRumors": 1,
       "South China Morning Post": 1,
+      "MacRumors": 1,
       "US News (Reuters)": 2,
       "BNN Bloomberg (Reuters)": 1,
       "WXYZ Detroit": 1,
@@ -138,8 +138,8 @@
       "The Information": 1,
       "TrendForce": 2,
       "WIRED": 1,
-      "The Guardian": 1,
       "GlobeNewswire": 1,
+      "The Guardian": 1,
       "Goldman Sachs": 1,
       "Seoul Economic Daily": 1,
       "Fortune": 1,
@@ -150,21 +150,21 @@
     }
   },
   "collection": {
-    "generatedAt": "2026-07-25T01:19:35.455Z",
+    "generatedAt": "2026-07-25T03:37:22.626Z",
     "mode": "source-excerpt",
     "policyVersion": 1,
     "streams": {
       "googleNews": 33,
       "directRss": 14
     },
-    "acceptedCandidates": 61,
+    "acceptedCandidates": 60,
     "failedStreams": [],
     "emptyStreams": [
       "google-news:Amazon",
       "rss:Ars Technica",
       "rss:Hugging Face",
-      "rss:VentureBeat",
       "rss:SiliconANGLE",
+      "rss:VentureBeat",
       "rss:The Register"
     ],
     "status": "ok"
