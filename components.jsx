@@ -63,7 +63,6 @@ const NAV = [
   { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", icon: "device", group: "기업 동향" },
   { id: "startup", ko: "AI 스타트업", en: "AI Startups", icon: "spark", group: "기업 동향" },
   { id: "sanalysis", ko: "스타트업 분석", en: "Startup Analysis", icon: "target", group: "기업 동향" },
-  { id: "bizmodel", ko: "수익화 모델", en: "Monetization", icon: "palette", group: "심층 분석" },
   { id: "signals", ko: "인프라·미래기술", en: "Infra & Future Tech", icon: "server", group: "심층 분석" },
   { id: "charts", ko: "정량 분석", en: "Quant Charts", icon: "chart", group: "정량 데이터" },
   { id: "stocks", ko: "주가 차트", en: "Stock Prices", icon: "up", group: "정량 데이터" },

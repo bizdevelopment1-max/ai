@@ -140,6 +140,25 @@ try {
 }
 
 try {
+  const [app, components] = await Promise.all([
+    readFile("app.jsx", "utf8"),
+    readFile("components.jsx", "utf8"),
+  ]);
+  if (/\{\s*id:\s*["']bizmodel["']/.test(components)
+    || /<LazySection\s+id=["']bizmodel["']/.test(app)
+    || /bizmodel:\s*uR\(null\)/.test(app)) {
+    throw new Error("the removed AI business-model menu or board is still rendered");
+  }
+  if (!/bizmodel:\s*["']signals["']/.test(app)) {
+    throw new Error("legacy business-model links must redirect to an available section");
+  }
+  console.log("  OK  removed AI business-model menu and board with a safe legacy-link redirect");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  AI business-model removal: ${error.message}`);
+}
+
+try {
   const market = JSON.parse(await readFile("market.json", "utf8"));
   const records = market.records || [];
   const ids = new Set(records.map(record => record.id));
