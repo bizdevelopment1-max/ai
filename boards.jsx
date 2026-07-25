@@ -434,7 +434,6 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     <span className="art-tag" style={{ color: c.accent, background: c.accentSoft }}>{a.tag}</span>
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
                     <span className="art-verify">{display.translated ? "원문 번역" : display.fallback ? "원문 영어" : "원문 발췌"}</span>
-                    {a.collectedAt && <span className="art-collected">수집 {String(a.collectedAt).slice(0, 10)}</span>}
                   </span>
                   <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{display.title}</a>
                   {display.summary && <span className="art-summary"><BoldSummary text={display.summary} /></span>}
