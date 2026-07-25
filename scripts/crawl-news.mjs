@@ -4,19 +4,16 @@
    - Per-company + device-topic (AI agent / AI PC / AI phone) streams
      from Google News (en-US), filtered to an allowlist of authoritative
      English outlets. Korean sources are excluded by construction.
-   - Each item is summarized into a 3-line KOREAN brief via the Claude API
-     (claude-opus-4-8), written from the strategic lens of a global
-     smartphone / on-device-AI device maker — WITHOUT naming any company.
+   - Each card preserves a cleaned publisher/RSS excerpt. No text-generation
+     or translation API is called, so the pipeline cannot invent a summary.
    - Source label is always the original English outlet (never an aggregator).
    - HTML (e.g. <font color>) is stripped from all text.
-   Requires ANTHROPIC_API_KEY (repo secret). Degrades gracefully if absent.
    ============================================================ */
 import { writeFile, readFile } from "node:fs/promises";
-import { llmJSON, llmAvailable } from "./llm.mjs";
+import { isExcludedText, newsPolicy } from "./news-policy.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
-const KEY = process.env.ANTHROPIC_API_KEY || "";
-const MODEL = "claude-opus-4-8";
+const sourceHealth = { failedStreams: [], emptyStreams: [] };
 
 // 네트워크 복원력: 타임아웃 + 지수 백오프 재시도(소스 확대에 따른 일시적 실패 흡수)
 async function fetchText(url, opts = {}, tries = 3) {
@@ -130,9 +127,14 @@ async function pullDirect(feed, limit = 2) {
       const desc = cleanDesc(decode(tag(it, "description") || tag(it, "summary"))).slice(0, 240);
       out.push({ date, co: deviceCo(title), cat: "bigtech", source: feed.source, title, descEn: desc, url: link, tag: "글로벌" });
     }
+    if (!out.length) sourceHealth.emptyStreams.push(`rss:${feed.source}`);
     console.log(`[news:rss:${feed.source}] ${out.length} item(s)`);
     return out;
-  } catch (e) { console.warn(`[news:rss:${feed.source}] ${e.message}`); return []; }
+  } catch (e) {
+    sourceHealth.failedStreams.push({ stream: `rss:${feed.source}`, error: e.message });
+    console.warn(`[news:rss:${feed.source}] ${e.message}`);
+    return [];
+  }
 }
 
 // device-topic 기사를 제목 기준으로 실제 업체에 재분류(매칭 없으면 업체 미지정). 토픽은 tag로만 남김.
@@ -270,40 +272,24 @@ async function pull(src, limit) {
       out.push({ date, co, cat: src.cat, source: srcName || host, title, descEn: desc, url: link, tag: src.tag || "최신" });
       if (out.length >= limit) break;
     }
-    console.log(`[news:${src.tag || src.co || "topic"}] ${out.length} authoritative item(s)`);
+    const stream = src.tag || src.co || "topic";
+    if (!out.length) sourceHealth.emptyStreams.push(`google-news:${stream}`);
+    console.log(`[news:${stream}] ${out.length} authoritative item(s)`);
     return out;
   } catch (e) {
+    sourceHealth.failedStreams.push({ stream: `google-news:${src.tag || src.co || "topic"}`, error: e.message });
     console.warn(`[news:${src.tag || src.co || "topic"}] failed: ${e.message}`);
     return [];
   }
 }
 
-// ---- Claude summarization: 3-line Korean brief, device-maker lens ----
-const SYS = "당신은 근거 중심 AI 산업 리서치 편집자입니다. 제공된 제목과 내용에 명시된 사실만 번역·요약하고, 없는 수치·회사·인과관계·전망을 절대 추가하지 않습니다. 사실과 해석을 분리하며 불확실하면 생략합니다. 자사·소속 기업명(삼성, MX, Galaxy, 사업부 등)은 언급하지 않습니다.";
-function userPrompt(a) {
-  return `다음 영문 AI 뉴스를 한국어로 정리하세요.\n\n제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}\n\n출력(JSON):\n- title_ko: 제목의 고유명사와 의미를 보존한 자연스러운 한국어 번역(30자 내외)\n- summary: 정확히 3줄. 1줄=제목·내용에 명시된 핵심 사실, 2줄=제공된 경우에만 수치·배경, 3줄="[해석] "으로 시작하는 단말·에이전트 전략 시사점. 각 줄은 "· "로 시작\n\n금지: 입력에 없는 수치·인과관계·회사·전망 추가, 과장, 출처명 반복. 내용이 제목뿐이면 제목에서 확인되는 사실 외에는 쓰지 마세요.`;
-}
-
-// 배치 요약: 10건/1콜(GitHub Models 무료 쿼터 보호). 실패 청크는 영문 폴백.
+// ---- Source excerpt: deterministic cleaning only, never generated text ----
 async function summarizeBatch(arts) {
-  const out = new Array(arts.length).fill(null);
-  for (let i = 0; i < arts.length; i += 10) {
-    const chunk = arts.slice(i, i + 10);
-    const user = `다음 영문 AI 뉴스들을 한국어로 정리해 JSON으로 출력하세요.\n\n` +
-      chunk.map((a, k) => `[${k}] 제목: ${a.title}\n내용: ${a.descEn || "(본문 요약 없음)"}`).join("\n\n") +
-      `\n\n각 항목을 rows 배열로: {idx, title_ko(고유명사와 의미를 보존한 한국어 번역 30자 내외), summary(정확히 3줄 — 1줄=입력에 명시된 핵심 사실, 2줄=입력에 있는 경우에만 수치·배경, 3줄="· [해석] "으로 시작하는 단말·에이전트 전략 시사점)}.\n모든 줄은 "· "로 시작하세요. 입력에 없는 수치·인과관계·회사·전망은 절대 추가하지 마세요. 내용이 제목뿐이면 제목에서 확인되는 사실 외에는 쓰지 마세요.`;
-    const r = await llmJSON({
-      system: SYS, user, maxTokens: 2600,
-      schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, title_ko: { type: "string" }, summary: { type: "string" } }, required: ["idx", "title_ko", "summary"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
-    });
-    if (r && r.data && Array.isArray(r.data.rows)) {
-      for (const row of r.data.rows) {
-        const t = chunk[row.idx];
-        if (t && row.title_ko && row.summary) out[i + row.idx] = { title_ko: decode(row.title_ko), summary: decode(String(row.summary).replace(/\\n/g, "\n")) };
-      }
-    }
-  }
-  return out;
+  return arts.map(a => ({
+    title: cleanTitle(a.title, a.source),
+    summary: cleanDesc(a.descEn || "") || cleanTitle(a.title, a.source),
+    mode: "source-excerpt",
+  }));
 }
 
 // limited-concurrency map
@@ -316,24 +302,21 @@ async function pool(items, n, fn) {
   return out;
 }
 
-// 한국어 제목 + 한국어 개조식 다줄(최소 2줄, 보통 3줄) 요약을 갖춘 항목만 유효로 간주
-const SUMMARY_VERSION = 2;
-const isKoreanSummary = a => a && a.summaryVersion === SUMMARY_VERSION && /[가-힣]/.test(a.title || "") && a.summary && /[가-힣]/.test(a.summary)
-  && a.summary.split("\n").map(l => l.trim()).filter(Boolean).length >= 2
-  && !/출처\s*[:：]/.test(a.summary);
+const SUMMARY_VERSION = 3;
+const isSourceExcerpt = a => a && a.summaryVersion === SUMMARY_VERSION
+  && a.summaryMode === "source-excerpt" && a.summary && a.titleEn;
 
 async function main() {
-  console.log(`Crawling authoritative English AI news… (LLM: ${llmAvailable() || "OFF — rules only"})`);
+  console.log("Crawling authoritative English AI news… (publisher/RSS excerpts; no AI API)");
   const companyItems = (await Promise.all(COMPANIES.map(c => pull(c, 1)))).flat();
   const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
   const directItems = (await Promise.all(DIRECT_FEEDS.map(f => pullDirect(f, 2)))).flat();
 
   // de-dupe this run by URL
   const seen = new Set();
-  const BANNED_SRC = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;   // 관점 노출 방지 — 수집 단계에서 원천 차단
   const raw = [...companyItems, ...topicItems, ...directItems]
     .filter(a => a.url && !seen.has(a.url) && seen.add(a.url))
-    .filter(a => !BANNED_SRC.test(`${a.title} ${a.descEn || ""}`));
+    .filter(a => !isExcludedText(`${a.title} ${a.descEn || ""}`));
 
   // previously stored articles — reuse their summaries so we never re-crawl/re-summarize duplicates
   let prev = [];
@@ -343,44 +326,34 @@ async function main() {
   const prevByTitleEn = new Map(prev.filter(a => a.titleEn).map(a => [a.titleEn, a]));
   const findOld = a => prevByUrl.get(a.url) || prevByTitleEn.get(a.title);
 
-  // only summarize genuinely new URLs (or prior entries lacking a good Korean summary)
-  // 키 없는 GitHub Models(llm.mjs 공급자 체인)로 배치 요약 — 실패 시 원문 폴백
-  const toSummarize = raw.filter(a => !isKoreanSummary(findOld(a)));
+  // Only extract newly seen URLs. Legacy generated entries are preserved in
+  // history but are not reused as displayable source excerpts.
+  const toSummarize = raw.filter(a => !isSourceExcerpt(findOld(a)));
   const sums = await summarizeBatch(toSummarize);
   const sumByUrl = new Map();
   toSummarize.forEach((a, k) => { if (sums[k]) sumByUrl.set(a.url, sums[k]); });
 
-  const lineCount = sm => String(sm || "").split("\n").map(l => l.trim()).filter(Boolean).length;
   const processed = raw.map(a => {
     const old = findOld(a);
-    if (isKoreanSummary(old) && lineCount(old.summary) >= 3) return old;   // 3줄 인사이트(수동 보정 포함)면 재사용
+    if (isSourceExcerpt(old)) return old;
     const s = sumByUrl.get(a.url);
-    // LLM 요약 실패 시에도 피드에 요약이 보이도록 — 정제한 원문 설명(descEn)을 폴백으로 사용
-    const cleanFallback = cleanDesc(a.descEn || "");
-    const summary = s ? s.summary : (cleanFallback ? `· ${cleanFallback.slice(0, 200)}` : `· ${a.title}`);
+    const summary = s?.summary || cleanDesc(a.descEn || "") || a.title;
     return {
       date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag,
-      url: (s && s.url) ? s.url : a.url,                   // Google News 리다이렉트 대신 원문 URL
-      title: cleanTitle(s ? s.title_ko : a.title, a.source), // 한국어 번역 제목(라벨·매체꼬리 제거)
-      titleEn: a.title,                                   // 원문(영문) 제목 — CLI 재요약용
-      descEn: (s && s.contentEn) || a.descEn || "",       // 보강된 원문 — CLI 재요약용
+      url: a.url,
+      title: s?.title || cleanTitle(a.title, a.source),
+      titleEn: a.title,
+      descEn: a.descEn || "",
       summary,
-      summaryVersion: s ? SUMMARY_VERSION : 0,
-      needsLLM: lineCount(summary) < 3,                   // 3줄 미만이면 다른 PC Claude CLI가 보강
+      summaryVersion: SUMMARY_VERSION,
+      summaryMode: "source-excerpt",
+      summaryEngine: "source-excerpt",
+      collectedAt: new Date().toISOString(),
+      needsLLM: false,
     };
   });
 
   // accumulate: this run + older prev not re-seen, de-duped by URL, newest first, capped
-  // 하단 '출처:' 줄은 어떤 항목에서도 노출되지 않도록 제거(출처는 상단에 표기)
-  const stripSrc = s => String(s || "").split("\n").filter(l => !/출처\s*[:：]/.test(l)).join("\n").trim();
-  // 제목=요약(1줄 에코) 또는 본문 없는 깨진 항목 탐지 → 노출 제외(원문 url이 이미지/에셋이면 본문 수집 실패한 쓰레기)
-  const norm = s => String(s || "").replace(/^[·\-•]\s*/, "").replace(/^(독점|단독|속보|Exclusive|Breaking)\s*[:：]\s*/i, "").replace(/\s+/g, " ").trim();
-  const isTitleEcho = a => {
-    const lines = String(a.summary || "").split("\n").map(l => l.trim()).filter(Boolean);
-    if (lines.length >= 2) return false;                 // 2줄 이상이면 정상 취급
-    const sm = norm(lines[0]), t = norm(a.title), te = norm(a.titleEn);
-    return !sm || sm === t || sm === te || sm.includes(t) || (te && sm.includes(te));
-  };
   const isAssetUrl = u => /googleusercontent\.com|=w\d+|\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(String(u || ""));
   const curUrls = new Set(raw.map(a => a.url));
   const dseen = new Set();
@@ -388,46 +361,37 @@ async function main() {
   const tkey = a => String(a.titleEn || a.title || "").toLowerCase().replace(/[^a-z0-9가-힣]/g, "").slice(0, 48);
   const tseen = new Set();
   const final = [...processed, ...prev.filter(a => !curUrls.has(a.url))]
-    .filter(a => !BANNED_SRC.test(JSON.stringify(a)))
+    .filter(a => !isExcludedText(JSON.stringify(a)))
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
     .filter(a => { const k = tkey(a); if (!k || tseen.has(k)) return !k; tseen.add(k); return true; })  // 제목 근사 중복 제거
-    .map(a => ({ ...a, title: nounize(a.title), summary: nounizeSummary(stripSrc(a.summary)) }))  // 개조식·마침표 제거(기존 항목 포함)
-    .filter(a => a.title && a.summary)                   // 요약은 한글 우선(번역), 불가 시 영문 폴백 허용
-    .filter(a => !isTitleEcho(a) && !isAssetUrl(a.url))   // 제목=요약 에코·이미지 url 깨진 항목 제외
-    .filter(a => {                                        // 화면 노출 금지어 포함 기사 제외(드롭 로그 남김)
-      const hit = BANNED.test((a.title || "") + " " + (a.summary || ""));
+    .filter(a => a.title && a.summary)
+    .filter(a => !isAssetUrl(a.url))
+    .filter(a => {
+      const hit = isExcludedText((a.title || "") + " " + (a.summary || ""));
       if (hit) console.log(`[policy] dropped banned-term article: ${String(a.title).slice(0, 60)}`);
       return !hit;
     })
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .slice(0, 500);   // 계속 누적(과거 기사 유지) — UI가 페이지네이션으로 초기 렌더 경량화
 
-  // 자가 치유: 이월돼(재크롤 안 됨) 아직 영문/폴백으로 남은 기사도 GitHub Models로 재번역해 한글화.
-  // (한 번에 다 못 하면 다음 실행이 이어서 처리 → 회차를 거치며 전부 한글로 수렴)
-  const needKo = final.filter(a => !isKoreanSummary(a) && (a.descEn || a.titleEn)).slice(0, 40);
-  if (needKo.length) {
-    const s2 = await summarizeBatch(needKo.map(a => ({ title: a.titleEn || a.title, descEn: a.descEn || "" })));
-    let healed = 0;
-    needKo.forEach((a, k) => {
-      const r = s2[k];
-      if (r && r.title_ko && r.summary && /[가-힣]/.test(r.summary) && lineCount(r.summary) >= 2) {
-        a.title = nounize(cleanTitle(r.title_ko, a.source));
-        a.summary = nounizeSummary(stripSrc(r.summary));
-        a.summaryVersion = SUMMARY_VERSION;
-        a.needsLLM = lineCount(a.summary) < 3;
-        healed++;
-      }
-    });
-    console.log(`[self-heal] 이월 영문 기사 재번역 ${healed}/${needKo.length}건`);
-  }
+  const crawlHealth = {
+    generatedAt: new Date().toISOString(),
+    mode: "source-excerpt",
+    policyVersion: newsPolicy.version,
+    streams: { googleNews: COMPANIES.length + TOPICS.length, directRss: DIRECT_FEEDS.length },
+    acceptedCandidates: raw.length,
+    failedStreams: sourceHealth.failedStreams,
+    emptyStreams: sourceHealth.emptyStreams,
+    status: sourceHealth.failedStreams.length ? "partial" : "ok",
+  };
+  await writeFile("collection-health.json", JSON.stringify(crawlHealth, null, 2) + "\n");
 
-  // network failure → keep prev, but still enforce the banned-term policy on it
   if (!raw.length) {
     throw new Error("No new candidates were collected from any news source; keeping the previous bundle unchanged.");
   }
   const out = final;
   await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: out.length, articles: out }, null, 2) + "\n");
-  console.log(`Wrote news.json with ${out.length} articles (${sums.filter(Boolean).length} new Korean summaries).`);
+  console.log(`Wrote news.json with ${out.length} articles (${sums.length} new source excerpts; failed streams: ${sourceHealth.failedStreams.length}).`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

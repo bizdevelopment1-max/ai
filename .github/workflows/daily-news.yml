@@ -18,7 +18,6 @@ on:
 
 permissions:
   contents: write
-  models: read     # GitHub Models — 별도 키 없이 GITHUB_TOKEN으로 LLM 호출
 
 concurrency:
   group: daily-news
@@ -43,45 +42,28 @@ jobs:
         with:
           node-version: "24"
 
-      # 영어→한국어 요약·번역은 crawl-news.mjs 안에서 키 없는 GitHub Models로 수행(품질 양호).
-      # (이전 로컬 opus-mt/m2m100 번역은 CPU에서 단어 샐러드 수준의 저품질 출력이라 비활성화)
-      - name: Crawl authoritative English news → Korean briefs
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Crawl authoritative English news → source excerpts
         run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
 
       - name: Crawl real stock prices + market cap
         run: node scripts/run-with-retry.mjs scripts/crawl-stocks.mjs
 
       - name: Generate AI Morning Briefing (Signal → Insight → Action)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/run-with-retry.mjs scripts/generate-briefing.mjs
 
       - name: Generate Startup Radar + scorecards + monthly opportunity memo
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/run-with-retry.mjs scripts/startup-radar.mjs
 
       - name: Build daily insights (rule-based, deterministic — no API key)
-        run: node scripts/build-insights.mjs
+        run: node scripts/run-with-retry.mjs scripts/build-insights.mjs
 
       - name: Crawl IB research (증권사 1페이저 + 기관 피드)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/run-with-retry.mjs scripts/crawl-research.mjs
 
       - name: Build live company data (mentions + market caps)
-        run: node scripts/crawl-companies.mjs
+        run: node scripts/run-with-retry.mjs scripts/crawl-companies.mjs
 
       - name: Crawl startup strategies (투자·협력 관점, 주간)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/run-with-retry.mjs scripts/crawl-startups.mjs
 
       - name: Append AI market, shipment and consumer-survey records (daily)
@@ -94,19 +76,31 @@ jobs:
         run: node scripts/run-with-retry.mjs scripts/crawl-bizmodel.mjs
 
       - name: Verify evidence, provenance and cumulative history
-        run: node scripts/verify-pipeline.mjs
+        run: node scripts/run-with-retry.mjs scripts/verify-pipeline.mjs
 
       - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
-        run: node scripts/audit-agent.mjs
+        run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
 
       - name: Validate automation and browser bundle
-        run: node scripts/test-automation.mjs
+        run: node scripts/run-with-retry.mjs scripts/test-automation.mjs
+
+      - name: Archive verifiable pipeline records
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-audit-${{ github.run_id }}
+          path: |
+            audit.json
+            quality.json
+            history.json
+            llm-health.json
+            collection-health.json
+          retention-days: 90
 
       - name: Commit refreshed data
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json
+          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json llm-health.json collection-health.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

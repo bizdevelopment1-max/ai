@@ -1,20 +1,32 @@
 {
-  "generatedAt": "2026-07-25T00:14:25.322Z",
+  "generatedAt": "2026-07-25T00:23:27.515Z",
   "overall": "warn",
-  "policy": "원문 제목·스니펫과 연결된 공개 URL만 근거로 인정하며, 근거가 약한 항목은 제한 또는 참고용으로 표시합니다.",
-  "summary": "검증 12개 · 정상 11 · 주의 1 · 실패 0",
+  "policy": "뉴스는 원문 제목·RSS 스니펫에서 정제한 발췌만 표시하며, 생성형 요약·번역 API를 사용하지 않습니다. 규칙 기반 해석은 원문 사실과 분리해 표시합니다.",
+  "summary": "검증 14개 · 정상 10 · 주의 4 · 실패 0",
   "checks": [
     {
       "id": "news-coverage",
       "label": "뉴스 수집",
       "status": "ok",
-      "value": "120건"
+      "value": "94건"
     },
     {
       "id": "source-backed",
       "label": "원문 스니펫 근거",
       "status": "ok",
-      "value": "93/120건"
+      "value": "39/94건"
+    },
+    {
+      "id": "source-excerpt-mode",
+      "label": "생성 없는 원문 발췌",
+      "status": "warn",
+      "value": "39/94건"
+    },
+    {
+      "id": "collection-health",
+      "label": "수집 스트림 상태",
+      "status": "ok",
+      "value": "실패 0 · 빈 스트림 6"
     },
     {
       "id": "briefing-evidence",
@@ -43,14 +55,14 @@
     {
       "id": "infra-evidence",
       "label": "인프라 시그널 근거",
-      "status": "ok",
-      "value": "96/108건"
+      "status": "warn",
+      "value": "6/84건"
     },
     {
       "id": "bizmodel-evidence",
       "label": "수익화 시그널 근거",
-      "status": "ok",
-      "value": "23/24건"
+      "status": "warn",
+      "value": "1/20건"
     },
     {
       "id": "research-source",
@@ -78,14 +90,16 @@
     }
   ],
   "metrics": {
-    "currentArticles": 120,
+    "currentArticles": 94,
     "accumulatedArticles": 122,
-    "sourceBackedArticles": 93,
-    "limitedArticles": 27,
+    "sourceBackedArticles": 39,
+    "sourceExcerptArticles": 39,
+    "limitedArticles": 55,
+    "limitedRate": 0.5851063829787234,
     "freshStocks": 25,
     "totalStocks": 25,
-    "linkedInfra": 96,
-    "linkedBizmodel": 23,
+    "linkedInfra": 6,
+    "linkedBizmodel": 1,
     "linkedResearch": 37,
     "linkedMarket": 29,
     "linkedMarketRecords": 41,
@@ -93,34 +107,29 @@
   },
   "sources": {
     "news": {
-      "TechCrunch": 14,
-      "Wired": 4,
       "Engadget": 4,
+      "Wired": 4,
+      "TechCrunch": 14,
       "AI Business": 4,
       "ZDNet": 4,
       "The Decoder": 4,
       "The Verge": 5,
-      "IEEE Spectrum": 3,
-      "The Register": 4,
+      "The Register": 3,
       "MIT Tech Review": 4,
-      "CNET": 1,
-      "SiliconANGLE": 4,
-      "Business Insider": 5,
-      "Reuters": 6,
+      "SiliconANGLE": 2,
       "Axios": 2,
-      "WSJ": 3,
       "Ars Technica": 2,
-      "Financial Times": 1,
-      "CNBC": 11,
-      "9to5Mac": 1,
-      "Bloomberg.com": 2,
-      "Android Authority": 2,
-      "Forbes": 1,
+      "CNBC": 5,
+      "WSJ": 2,
+      "IEEE Spectrum": 2,
+      "Bloomberg.com": 1,
+      "Android Authority": 1,
       "qz.com": 2,
-      "VentureBeat": 6,
-      "Fortune": 3,
+      "VentureBeat": 5,
+      "Business Insider": 3,
       "Data Center Dynamics": 1,
-      "South China Morning Post": 2,
+      "Reuters": 3,
+      "South China Morning Post": 1,
       "MacRumors": 1,
       "US News (Reuters)": 2,
       "BNN Bloomberg (Reuters)": 1,
@@ -129,18 +138,40 @@
       "The Information": 1,
       "TrendForce": 2,
       "WIRED": 1,
-      "The Guardian": 1,
       "GlobeNewswire": 1,
+      "The Guardian": 1,
       "Goldman Sachs": 1,
       "Seoul Economic Daily": 1,
+      "Fortune": 1,
       "Morgan Stanley": 1
     },
     "stocks": {
       "nasdaq": 25
     }
   },
+  "collection": {
+    "generatedAt": "2026-07-25T00:23:00.853Z",
+    "mode": "source-excerpt",
+    "policyVersion": 1,
+    "streams": {
+      "googleNews": 33,
+      "directRss": 14
+    },
+    "acceptedCandidates": 60,
+    "failedStreams": [],
+    "emptyStreams": [
+      "google-news:Amazon",
+      "rss:Hugging Face",
+      "rss:Ars Technica",
+      "rss:VentureBeat",
+      "rss:SiliconANGLE",
+      "rss:The Register"
+    ],
+    "status": "ok"
+  },
   "notices": [
-    "AI 요약은 원문 전체가 아니라 공개 제목·스니펫 범위에서 검증됩니다.",
+    "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 자동 생성 요약이 아닙니다.",
+    "검증 제한 기사 비율: 58.5% (55/94)",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
     "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다."

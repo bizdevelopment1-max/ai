@@ -685,6 +685,9 @@ a[href]:hover .rainbow-on-hover,
 .art-meta { display: flex; align-items: center; gap: 9px; }
 .art-src { font-style: normal; font-size: 11px; font-weight: 800; color: var(--ink-2); letter-spacing: .01em; white-space: nowrap; flex-shrink: 0; }
 .art-tag { font-size: 9.5px; font-weight: 700; padding: 1px 7px; border-radius: 4px; letter-spacing: .02em; }
+.art-verify, .art-collected { font-size: 9.5px; font-weight: 750; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+.art-verify { color: #087F5B; background: rgba(22,163,74,.10); border: 1px solid rgba(22,163,74,.22); }
+.art-collected { color: var(--muted); background: var(--panel-2); }
 .art-catname { font-size: 10.5px; color: var(--muted); font-weight: 600; white-space: nowrap; }
 .art-title { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.4; text-wrap: pretty; text-decoration: none; cursor: pointer; }
 .art-title:hover { text-decoration: underline; }
@@ -1431,7 +1434,7 @@ a[href]:hover .rainbow-on-hover,
   /* 데일리 기사 메타: 모바일에서도 한 줄(소스명만 말줄임), 세로 적층 방지 */
   .art-meta { flex-wrap: nowrap; gap: 6px; min-width: 0; }
   .art-src { font-size: 10px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-  .art-co, .art-tag, .art-date { flex-shrink: 0; }
+  .art-co, .art-tag, .art-date, .art-verify, .art-collected { flex-shrink: 0; }
   .art-date { font-size: 9.5px; padding: 1px 6px; }
   .feed-codrop { gap: 6px; }
   .fc-select { min-width: 130px; }
@@ -2040,6 +2043,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   text-align: center;
 }
 .audit-metrics b { display: block; margin-top: 2px; font-size: 14px; color: var(--ink); }
+.audit-policy-state { margin: 6px 0; padding: 8px 10px; border-radius: 8px; background: var(--panel-2); color: var(--muted); font-size: 11px; }
+.audit-policy-state b { color: var(--ink); margin-right: 6px; }
 @media (max-width: 640px) {
   .audit-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

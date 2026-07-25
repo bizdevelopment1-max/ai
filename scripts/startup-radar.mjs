@@ -10,14 +10,12 @@
      acquire(인수 용이성). 합계 12점 이상 → '즉시 검토'.
    - 비즈니스 맥락 라벨: [파트너십 기회]/[인수 후보] 자동 부여.
    - 월초(1~2일) 또는 해당 월 메모 부재 시 '월간 기회 메모' 초안 생성.
-   - ANTHROPIC_API_KEY 있으면 LLM, 없으면 후보 풀 기반 규칙 폴백.
+   - 후보 풀 기반 규칙만 사용. 모델/API 호출은 하지 않음.
    - 사명(삼성/MX/Galaxy) 미출력 — '글로벌 단말 제조사' 관점만.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { llmJSON } from "./llm.mjs";
 
-const KEY = process.env.ANTHROPIC_API_KEY || "";
-const MODEL = "claude-opus-4-8";
 const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/gi;
 const TODAY = new Date().toISOString().slice(0, 10);
 const scrub = s => String(s || "").replace(BANNED, "글로벌 제조사").trim();

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-25T00:14:25.545Z",
+  "generatedAt": "2026-07-25T00:23:41.679Z",
   "overall": "warn",
-  "summary": "24개 검사 · 정상 23 · 주의 1 · 실패 0",
+  "summary": "26개 검사 · 정상 22 · 주의 4 · 실패 0",
   "checks": [
     {
       "file": "news.json",
@@ -9,7 +9,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 120
+      "items": 94
     },
     {
       "file": "briefing.json",
@@ -73,7 +73,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 108
+      "items": 84
     },
     {
       "file": "bizmodel.json",
@@ -81,7 +81,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 24
+      "items": 20
     },
     {
       "file": "stocks.json",
@@ -105,7 +105,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "120건"
+      "items": "94건"
     },
     {
       "file": "quality.json",
@@ -113,7 +113,25 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "93/120건"
+      "items": "39/94건"
+    },
+    {
+      "file": "quality.json",
+      "tab": "생성 없는 원문 발췌",
+      "status": "warn",
+      "issues": [
+        "뉴스는 원문 제목·RSS 스니펫에서 정제한 발췌만 표시하며, 생성형 요약·번역 API를 사용하지 않습니다. 규칙 기반 해석은 원문 사실과 분리해 표시합니다."
+      ],
+      "ageDays": 0,
+      "items": "39/94건"
+    },
+    {
+      "file": "quality.json",
+      "tab": "수집 스트림 상태",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": "실패 0 · 빈 스트림 6"
     },
     {
       "file": "quality.json",
@@ -150,18 +168,22 @@
     {
       "file": "quality.json",
       "tab": "인프라 시그널 근거",
-      "status": "ok",
-      "issues": [],
+      "status": "warn",
+      "issues": [
+        "뉴스는 원문 제목·RSS 스니펫에서 정제한 발췌만 표시하며, 생성형 요약·번역 API를 사용하지 않습니다. 규칙 기반 해석은 원문 사실과 분리해 표시합니다."
+      ],
       "ageDays": 0,
-      "items": "96/108건"
+      "items": "6/84건"
     },
     {
       "file": "quality.json",
       "tab": "수익화 시그널 근거",
-      "status": "ok",
-      "issues": [],
+      "status": "warn",
+      "issues": [
+        "뉴스는 원문 제목·RSS 스니펫에서 정제한 발췌만 표시하며, 생성형 요약·번역 API를 사용하지 않습니다. 규칙 기반 해석은 원문 사실과 분리해 표시합니다."
+      ],
       "ageDays": 0,
-      "items": "23/24건"
+      "items": "1/20건"
     },
     {
       "file": "quality.json",
@@ -176,7 +198,7 @@
       "tab": "시장 데이터 원문 링크",
       "status": "warn",
       "issues": [
-        "원문 제목·스니펫과 연결된 공개 URL만 근거로 인정하며, 근거가 약한 항목은 제한 또는 참고용으로 표시합니다."
+        "뉴스는 원문 제목·RSS 스니펫에서 정제한 발췌만 표시하며, 생성형 요약·번역 API를 사용하지 않습니다. 규칙 기반 해석은 원문 사실과 분리해 표시합니다."
       ],
       "ageDays": 0,
       "items": "29/41건"

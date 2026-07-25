@@ -1,7 +1,6 @@
-name: Daily Ha Thai & AI News Update
+name: Manual Source-Only News Recovery
 
-# Updates Ha Thai article summary and adds latest related AI news to news.json
-# Scheduled for 11:40 KST (02:40 UTC)
+# Manual source-only recovery. The main workflow handles routine refreshes.
 on:
   # Manual recovery only. The primary pipeline already refreshes four times
   # daily; a second schedule caused concurrent writes to the same JSON files.
@@ -32,26 +31,24 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Install dependencies
-        run: npm install @anthropic-ai/sdk
+      - name: Crawl publisher and RSS source excerpts
+        run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
 
-      - name: Update Ha Thai article summary and add latest AI news
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/run-with-retry.mjs scripts/update-ha-thai.mjs
+      - name: Build deterministic insights and briefing
+        run: node scripts/run-with-retry.mjs scripts/build-insights.mjs
+      - run: node scripts/run-with-retry.mjs scripts/generate-briefing.mjs
 
       - name: Verify evidence, provenance and cumulative history
-        run: node scripts/verify-pipeline.mjs
+        run: node scripts/run-with-retry.mjs scripts/verify-pipeline.mjs
 
       - name: Audit published bundle
-        run: node scripts/audit-agent.mjs
+        run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
 
       - name: Commit changes
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json insights.json briefing.json radar.json research.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json
+          git add news.json insights.json briefing.json radar.json research.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json llm-health.json collection-health.json
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else

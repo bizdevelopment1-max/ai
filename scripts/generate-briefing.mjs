@@ -9,17 +9,13 @@
      [경쟁 위협]/[시장 신호]/[공급망]/[규제])과 4축 기회 스코어
      (전략 정합성·시장 성장성·실행 가능성·경쟁 우위, 각 1~5)를 부여.
    - 합계 12점 이상이면 urgent(즉시 검토) 플래그.
-   - ANTHROPIC_API_KEY 있으면 LLM(engine:"llm"), 없으면 규칙 기반
-     폴백(engine:"rules")으로 항상 결과 보장.
+   - 규칙 기반으로만 동작하며, 원문 발췌와 분리된 해석임을 화면에서
+     명시한다. 모델/API 호출은 하지 않는다.
    - 최근 14일치 브리핑을 days 배열로 아카이브(재탐색성).
    - 사명(삼성/MX/Galaxy) 미출력 — '글로벌 단말 제조사' 관점만.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
-import { llmJSON } from "./llm.mjs";
-
-const KEY = process.env.ANTHROPIC_API_KEY || "";
-const MODEL = "claude-opus-4-8";
-const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/gi;
+import { isExcludedText } from "./news-policy.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 const MAX_DAYS = 60;          // 아카이브 보존 일수(누적)
 const MAX_ITEMS = 6;          // 하루 브리핑 카드 수
@@ -30,13 +26,13 @@ const daysAgo = d => { const t = new Date(d + "T00:00:00Z").getTime(); return is
 const recency = d => Math.exp(-daysAgo(d) / 7);
 const AUTHORITATIVE = ["reuters", "bloomberg", "cnbc", "the information", "wsj", "ft", "techcrunch", "the verge", "anthropic", "openai", "nvidia", "goldman", "morgan stanley", "trendforce", "idc", "gartner"];
 const sourceWeight = s => (AUTHORITATIVE.some(a => String(s || "").toLowerCase().includes(a)) ? 1.25 : 1.0);
-const scrub = s => String(s || "").replace(BANNED, "글로벌 제조사").trim().replace(/[.。]+$/, "");
+const scrub = s => String(s || "").trim().replace(/[.。]+$/, "");
 const clamp15 = n => Math.max(1, Math.min(5, Math.round(Number(n) || 3)));
 
 // ---- 후보 기사 선정: 최근성×출처 가중, 이전 브리핑에서 이미 쓴 URL은 감점(중복 제거) ----
 function pickCandidates(articles, usedUrls) {
   return articles
-    .filter(a => a && a.title && a.url && !BANNED.test(`${a.title} ${a.summary || ""}`))
+    .filter(a => a && a.title && a.url && a.summaryMode === "source-excerpt" && !isExcludedText(`${a.title} ${a.summary || ""}`))
     .map(a => ({ a, s: recency(a.date) * sourceWeight(a.source) * (usedUrls.has(a.url) ? 0.25 : 1) }))
     .sort((x, y) => y.s - x.s)
     .slice(0, 14)
@@ -148,8 +144,8 @@ async function main() {
   const cands = pickCandidates(articles, usedUrls);
   if (!cands.length) { console.log("[briefing] no candidate articles — keeping previous file"); return; }
 
-  const brief = (await llmBriefing(cands)) || ruleBriefing(cands);
-  const today = { date: TODAY, headline: brief.headline, engine: brief.engine, stats: brief.stats || [], items: brief.items };
+  const brief = ruleBriefing(cands);
+  const today = { date: TODAY, headline: brief.headline, engine: brief.engine, analysisMode: "rule-based-unverified", stats: brief.stats || [], items: brief.items };
 
   const out = { generatedAt: new Date().toISOString(), days: [today, ...prevDays].slice(0, MAX_DAYS) };
   await writeFile("briefing.json", JSON.stringify(out) + "\n");

@@ -6,16 +6,12 @@
    [feed]  기관별 Google News RSS 크롤(기관명 필수 매칭, 14일 창):
            Morgan Stanley·Goldman Sachs·JPMorgan·UBS·BofA·Citi·
            TrendForce·IDC·Gartner·Counterpoint·Canalys — 탭 전용 크롤.
-   [onepager] 피드+뉴스 상위 신호를 LLM이 'IB 리서치 브리핑 1페이저'
-           (논지→핵심 인사이트→지표→영역별 분석→시사점→결론)로 합성.
-           수치는 입력 기사에 있는 것만 사용(생성 금지 지시).
-           키 없으면 기존 1페이저 유지(품질 후퇴 방지) + 피드만 갱신.
+   [onepager] 생성형 합성은 사용하지 않는다. 직접 수집한 기관 피드만
+           갱신하고, 기존 합성 1페이지는 reference-only로 분리한다.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { llmJSON } from "./llm.mjs";
 
-const KEY = process.env.ANTHROPIC_API_KEY || "";
-const MODEL = "claude-opus-4-8";
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
 

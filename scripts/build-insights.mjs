@@ -9,6 +9,7 @@
    - 사명(삼성/MX/Galaxy) 미출력 — '단말 사업/온디바이스' 관점만.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
+import { isExcludedText } from "./news-policy.mjs";
 
 // 각 축: strong = 그 주제를 명확히 규정하는 핵심 키워드(1개만 맞아도 주제 성립),
 //        weak   = 보조 키워드(단독으로는 우연의 일치일 수 있어 2개 이상 필요).
@@ -71,9 +72,6 @@ const AXES = [
   },
 ];
 
-// 화면 노출 금지어 — 포함 기사는 인사이트 입력에서 제외
-const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
-
 const AUTHORITATIVE = ["reuters", "bloomberg", "cnbc", "the information", "wsj", "ft", "financial times", "techcrunch", "the verge", "nvidia", "anthropic", "openai", "morgan stanley", "idc", "gartner", "stanford"];
 
 const daysAgo = (d) => {
@@ -115,7 +113,7 @@ function gaejosik(s) {
 async function main() {
   let articles = [];
   try { articles = (JSON.parse(await readFile("news.json", "utf8")).articles || []); } catch { articles = []; }
-  articles = articles.filter(a => !BANNED.test(`${a.title || ""} ${a.summary || ""}`));
+  articles = articles.filter(a => a.summaryMode === "source-excerpt" && !isExcludedText(`${a.title || ""} ${a.summary || ""}`));
 
   // 각 (기사,축) 점수 계산 — 근거 기사↔축 주제 정합성 게이트 적용
   const scored = [];

@@ -10,8 +10,7 @@
          하드코딩이 아니라 매일 기사 기반으로 계속 쌓임.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
-
-const BANNED = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
+import { isExcludedText } from "./news-policy.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 
 // 5개 MECE 인프라 카테고리 — 각 키워드 매칭으로 분류(위에서부터 우선)
@@ -47,27 +46,29 @@ async function main() {
 
   let added = 0;
   for (const a of news) {
+    if (a.summaryMode !== "source-excerpt") continue;
     const hay = `${a.title || ""} ${a.tag || ""} ${a.summary || ""}`;
-    if (BANNED.test(hay)) continue;
+    if (isExcludedText(hay)) continue;
     const group = classify(hay);
     if (!group) continue;                                  // 인프라·미래기술 시그널이 아니면 skip
     const url = a.url; if (!url) continue;
     const line = firstLine(a.summary) || a.title;
     const signal = line.replace(/[.。]+\s*$/, "").trim();
-    if (!signal || BANNED.test(signal)) continue;
+    if (!signal || isExcludedText(signal)) continue;
     const qm = (a.summary || "").match(QUANT) || (a.title || "").match(QUANT);
     const item = {
       id: idOf(url, a.title), group,
       title: String(a.title || "").replace(/[.。]+\s*$/, "").trim(),
       signal, quant: qm ? qm[0].replace(/\s+/g, "") : "",
       source: a.source || "", date: a.date || TODAY, url,
+      sourceSummaryMode: a.summaryMode || "legacy-or-unknown",
     };
     if (!byUrl.has(url)) added++;
     byUrl.set(url, { ...byUrl.get(url), ...item });        // 최신 내용으로 갱신하되 누적 보존
   }
 
   const items = [...byUrl.values()]
-    .filter(it => it.group && it.signal && it.url && !BANNED.test(JSON.stringify(it)))
+    .filter(it => it.group && it.signal && it.url && !isExcludedText(JSON.stringify(it)))
     .sort((x, y) => (x.date < y.date ? 1 : x.date > y.date ? -1 : 0))
     .slice(0, 140);                                        // 누적 상한(성능)
 

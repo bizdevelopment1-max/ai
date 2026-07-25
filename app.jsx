@@ -77,13 +77,11 @@ function App() {
     const hit = DEVICE_CO_MAP.find(([re]) => re.test(a.title || ""));
     return { ...a, co: hit ? hit[1] : "" };   // 매칭되는 업체로, 없으면 업체 미지정(드롭다운 미노출)
   };
-  // 근거 검증을 통과한 자동 수집 기사만 표시한다.
-  // 화면 노출 금지어 최종 방어선 — 크롤 데이터에 섞여 들어와도 렌더 전 차단
-  const BANNED_RE = /삼성|samsung|갤럭시|galaxy|\bMX\b/i;
+  // 검증된 원문 발췌만 표시한다. 노출 제외 정책은 config/news-policy.json에서
+  // 수집 단계에 적용되어, 프론트엔드에 중복된 숨김 규칙을 두지 않는다.
   const articles = useMemo(() => {
     return crawled.map(reclassCo)
-      .filter(a => a && a.title && a.summary && a.summaryVersion === 2 && a.provenance?.status === "source-backed")
-      .filter(a => !BANNED_RE.test((a.title || "") + " " + (a.summary || "")));
+      .filter(a => a && a.title && a.summary && a.summaryMode === "source-excerpt" && a.provenance?.status === "source-backed");
   }, [crawled]);
 
   // 매일 갱신되는 '오늘의 톱라인' 인사이트. 근거 데이터가 없으면 빈 상태를 유지한다.
@@ -107,6 +105,8 @@ function App() {
   const [coLive, setCoLive] = uS(null);
   const [audit, setAudit] = uS(null);
   const [quality, setQuality] = uS(null);
+  const [llmHealth, setLlmHealth] = uS(null);
+  const [collectionHealth, setCollectionHealth] = uS(null);
   const [startupsX, setStartupsX] = uS(null);
   uE(() => {
     let alive = true;
@@ -143,6 +143,10 @@ function App() {
       .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
     fetch("quality.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.checks) setQuality(j); }).catch(() => {});
+    fetch("llm-health.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j) setLlmHealth(j); }).catch(() => {});
+    fetch("collection-health.json" + cb(), { cache: "no-store" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j) setCollectionHealth(j); }).catch(() => {});
     return () => { alive = false; };
   }, [auditInView]);
   // COMPANIES에 라이브 데이터(최신 기사·언급량·실시세 시총) 병합
@@ -338,7 +342,7 @@ function App() {
             <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} sectionRef={refs.stocks} theme={chartTheme} />
             <MarketBoard sectionRef={refs.market} />
 
-            <AuditPanel audit={audit} quality={quality} sectionRef={refs.audit} />
+            <AuditPanel audit={audit} quality={quality} llmHealth={llmHealth} collectionHealth={collectionHealth} sectionRef={refs.audit} />
 
             <footer className="foot">
               <span>AI Intelligence Dashboard</span>
@@ -358,7 +362,7 @@ function App() {
 
 // soft tint of a hex color for chips/backgrounds
 // ---- 데이터 감사 패널: audit-agent.mjs 산출물(audit.json) 표시 ----
-function AuditPanel({ audit, quality, sectionRef }) {
+function AuditPanel({ audit, quality, llmHealth, collectionHealth, sectionRef }) {
   const [open, setOpen] = uS(false);
   // Keep a measurable target in the document so the audit JSON can be loaded
   // lazily before the panel itself has content to render.
@@ -380,10 +384,14 @@ function AuditPanel({ audit, quality, sectionRef }) {
                 <span>현재 기사 <b>{quality.metrics.currentArticles}</b></span>
                 <span>누적 기사 <b>{quality.metrics.accumulatedArticles}</b></span>
                 <span>원문 근거 <b>{quality.metrics.sourceBackedArticles}</b></span>
+                <span>원문 발췌 <b>{quality.metrics.sourceExcerptArticles || 0}</b></span>
+                <span>제한 비율 <b>{((quality.metrics.limitedRate || 0) * 100).toFixed(1)}%</b></span>
                 <span>최신 주가 <b>{quality.metrics.freshStocks}/{quality.metrics.totalStocks}</b></span>
               </div>
             </div>
           )}
+          {llmHealth && <div className="audit-policy-state"><b>요약 엔진</b> {llmHealth.summaryEngine === "source-excerpt" ? "원문 발췌 · 외부 AI API 0회" : "상태 확인 필요"}</div>}
+          {collectionHealth && <div className="audit-policy-state"><b>수집 상태</b> {collectionHealth.status === "ok" ? "정상" : "부분 수집"} · 실패 {(collectionHealth.failedStreams || []).length} · 빈 스트림 {(collectionHealth.emptyStreams || []).length}</div>}
           {audit.checks.map(c => (
             <div className="audit-row" key={`${c.file}-${c.tab}`}>
               <i style={{ background: C[c.status] || "#8A93A4" }} />

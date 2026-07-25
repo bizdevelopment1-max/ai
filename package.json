@@ -9,8 +9,8 @@
     "test:automation": "node scripts/test-automation.mjs",
     "verify": "node scripts/verify-pipeline.mjs",
     "audit": "node scripts/audit-agent.mjs",
-    "update:news": "node scripts/update-ha-thai.mjs",
-    "generate:insights": "node scripts/generate-insights.mjs",
+    "update:news": "node scripts/crawl-news.mjs",
+    "generate:insights": "node scripts/build-insights.mjs",
     "crawl:news": "node scripts/crawl-news.mjs",
     "crawl:stocks": "node scripts/crawl-stocks.mjs"
   },
@@ -21,8 +21,5 @@
     "dashboard"
   ],
   "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.24.0"
-  }
+  "license": "MIT"
 }

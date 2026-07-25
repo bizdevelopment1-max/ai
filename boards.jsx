@@ -372,7 +372,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
         <span className="board-tab" style={{ background: "var(--ink)" }} />
         <div className="board-titles">
           <h2>데일리 기사 피드 <span className="board-en">Daily Articles · 업체별 외신 큐레이션</span></h2>
-          <p>✕로 불필요한 기사 삭제</p>
+          <p>원문 링크·수집 시각·검증 상태를 표시합니다 · ✕로 불필요한 기사 삭제</p>
         </div>
         <div className="feed-filters">
           <button className={filter === "all" ? "on" : ""} onClick={() => onFilter("all")}>전체</button>
@@ -412,6 +412,8 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     {a.co && <span className="art-co" style={{ color: c.accent, borderColor: c.accent }}>{a.co}</span>}
                     <span className="art-tag" style={{ color: c.accent, background: c.accentSoft }}>{a.tag}</span>
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
+                    <span className="art-verify">원문 발췌</span>
+                    {a.collectedAt && <span className="art-collected">수집 {String(a.collectedAt).slice(0, 10)}</span>}
                   </span>
                   <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{a.title}</a>
                   {a.summary && <span className="art-summary"><BoldSummary text={a.summary} /></span>}
@@ -1845,7 +1847,7 @@ function BriefingBoard({ briefing, sectionRef }) {
         <span className="board-tab" style={{ background: "#2D6BFF" }} />
         <div className="board-titles">
           <h2>모닝 브리핑 <span className="board-en">Weekly Synthesis · Signal → Insight → Action</span></h2>
-          <p>글로벌 외신 기반 매일 자동 생성 · 신사업 기회 스코어(전략 정합성·시장 성장성·실행 가능성·경쟁 우위, 각 1~5) · 12점+ 즉시 검토</p>
+          <p>원문 발췌를 바탕으로 한 규칙 기반 해석 · 사실과 구분해 표시 · 신사업 기회 스코어(각 1~5)</p>
         </div>
         <div className="brief-days">
           {days.slice(0, 7).map((d, i) => (
@@ -1858,7 +1860,7 @@ function BriefingBoard({ briefing, sectionRef }) {
 
       <div className="brief-headline">
         <Icon name="sun" size={16} /> <b>{day.headline}</b>
-        <span className="brief-date">{day.date}{day.engine === "rules" ? " · 자동 요약" : ""}</span>
+        <span className="brief-date">{day.date}{day.engine === "rules" ? " · AI 추론(검증 불가)" : ""}</span>
       </div>
 
       {(day.stats || []).length > 0 && (
@@ -1880,8 +1882,8 @@ function BriefingBoard({ briefing, sectionRef }) {
                 {it.total}/20{it.urgent ? " ★" : ""}
               </span>
             </div>
-            <p className="brief-row"><span className="brief-k sig">Signal</span><BoldSummary text={it.signal} /></p>
-            <p className="brief-row"><span className="brief-k ins">Insight</span><BoldSummary text={it.insight} /></p>
+            <p className="brief-row"><span className="brief-k sig">원문 사실</span><BoldSummary text={it.signal} /></p>
+            <p className="brief-row"><span className="brief-k ins">AI 추론</span><BoldSummary text={it.insight} /></p>
             <p className="brief-row"><span className="brief-k act">Action</span><BoldSummary text={it.action} /></p>
             <div className="brief-axes">
               {[["정합성", it.scores.fit], ["성장성", it.scores.growth], ["실행", it.scores.exec], ["우위", it.scores.edge]].map(([k, v]) => (

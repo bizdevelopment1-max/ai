@@ -17,6 +17,9 @@ const required = [
   "stocks.json",
   "quality.json",
   "history.json",
+  "llm-health.json",
+  "collection-health.json",
+  "config/news-policy.json",
   "index.html",
   "app.bundle.js",
 ];
@@ -69,12 +72,7 @@ if (major < 20) {
   console.log(`  정상  Node.js ${process.version}`);
 }
 
-const llm = process.env.ANTHROPIC_API_KEY
-  ? "Anthropic API"
-  : (process.env.GITHUB_TOKEN || process.env.GH_MODELS_TOKEN)
-    ? "GitHub Models"
-    : "없음(규칙 기반 폴백)";
-console.log(`  정보  요약 엔진: ${llm}`);
+console.log("  정보  요약 엔진: 원문 발췌(외부 AI API 미사용)");
 console.log("  정보  기본 파이프라인: 매일 06:30 · 12:30 · 19:30 · 00:30 KST");
 console.log("  정보  보조 업데이트: 수동 복구 전용(동시 쓰기 방지)");
 
@@ -90,6 +88,22 @@ for (const file of pipelineScripts) {
     failed = true;
     console.error(`  실패  ${file}: 오류를 성공으로 종료하는 코드가 남아 있음`);
   }
+}
+
+try {
+  const policy = JSON.parse(await readFile("config/news-policy.json", "utf8"));
+  const health = JSON.parse(await readFile("llm-health.json", "utf8"));
+  if (policy.summaryMode !== "source-excerpt" || health.externalModelApiCalls !== 0) {
+    throw new Error("source-only policy or model API health declaration is invalid");
+  }
+  const sources = await Promise.all(pipelineScripts.concat(["scripts/llm.mjs"]).map(file => readFile(file, "utf8")));
+  if (sources.some(source => /api\.anthropic\.com|models\.github\.ai|@anthropic-ai\/sdk/.test(source))) {
+    throw new Error("a model API endpoint or SDK remains in an active pipeline source");
+  }
+  console.log("  정상  source-only summary policy (external AI API calls: 0)");
+} catch (error) {
+  failed = true;
+  console.error(`  실패  source-only policy: ${error.message}`);
 }
 
 if (failed) process.exit(1);
