@@ -1,4 +1,4 @@
-/* ai-dashboard-bundle:7fe20c3f6e19ad832df4ac0da72c3a6cee93650115c3cb8ed1eeaf168034014b */
+/* ai-dashboard-bundle:129fb76ea91bb24c09c138fa589ac2c39c49dd646123f68286c60f54c16a3382 */
 const __TWEAKS_STYLE=`
   .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
     max-height:calc(100vh - 32px);display:flex;flex-direction:column;

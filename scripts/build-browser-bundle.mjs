@@ -25,7 +25,9 @@ export const BUNDLE_FILE = "app.bundle.js";
 const BABEL_URL = "https://unpkg.com/@babel/standalone@7.29.0/babel.min.js";
 
 export const sourceStamp = sources => createHash("sha256")
-  .update(sources.map(({ file, source }) => `${file}\0${source}`).join("\0"))
+  // Git checks out LF on Actions and CRLF locally on this workspace. The
+  // stamp represents source content, not platform-specific line endings.
+  .update(sources.map(({ file, source }) => `${file}\0${source.replace(/\r\n/g, "\n")}`).join("\0"))
   .digest("hex");
 
 export async function readBrowserSources() {
