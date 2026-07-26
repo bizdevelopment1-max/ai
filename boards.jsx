@@ -2683,7 +2683,7 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
   const inView = useInView(sectionRef);
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
-  const [tier, setTier] = React.useState("large");
+  const [tier, setTier] = React.useState("all");
   React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
@@ -2714,21 +2714,42 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
   ) : (
     <button className="ct-del" title="삭제(비밀번호)" onClick={() => { setPend(name); setPw(""); setPwErr(false); }}><Icon name="x" size={12} sw={2.2} /></button>
   ));
+  const startupTerms = (name) => String(name || "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ").split(/\s+/)
+    .filter(term => term.length >= 4 && !["labs", "music", "technologies"].includes(term));
+  const startupTitle = (entry, startup) => {
+    const original = String(entry?.title || "").trim();
+    const localized = entry?.localization?.status === "accepted" ? String(entry.localization.title || "").trim() : "";
+    const anchor = startupTerms(startup?.name)[0];
+    // A machine-translated headline that turns a company name into a common
+    // noun is less useful than the source headline.  Keep that link in its
+    // original language rather than publishing a misleading Korean label.
+    if (localized && anchor && original.toLowerCase().includes(anchor) && !localized.toLowerCase().includes(anchor)) return original;
+    return localized || original;
+  };
+  const sourceMatchesStartup = (startup, entry) => {
+    const title = String(entry?.title || "").toLowerCase();
+    return startupTerms(startup?.name).some(term => title.includes(term));
+  };
   const SourceHistory = ({ it }) => {
-    const seen = new Set();
+    const seenUrl = new Set();
+    const seenTitle = new Set();
     const entries = [it.latest, ...(it.history || [])]
       .filter(entry => /^https?:\/\//.test(String(entry?.url || "")))
+      .filter(entry => sourceMatchesStartup(it, entry))
       .filter(entry => {
-        const key = String(entry.url).replace(/[?#].*$/, "");
-        if (seen.has(key)) return false;
-        seen.add(key);
+        const urlKey = String(entry.url).replace(/[?#].*$/, "");
+        const titleKey = startupTitle(entry, it).toLowerCase().replace(/[^a-z0-9가-힣]+/g, "");
+        if (seenUrl.has(urlKey) || (titleKey && seenTitle.has(titleKey))) return false;
+        seenUrl.add(urlKey);
+        if (titleKey) seenTitle.add(titleKey);
         return true;
       })
       .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
       .slice(0, 4);
     return entries.map((entry, index) => (
       <a className="mkt-latest" key={`${entry.url}-${index}`} href={entry.url} target="_blank" rel="noopener">
-        <Icon name="news" size={10} /> {entry.url === it.latest?.url ? "최신" : "과거"} {entry.date && entry.date.slice(5)} · {String(entry.title).slice(0, 56)}
+        <Icon name="news" size={10} /> {entry.date ? `${fmtMonthDay(entry.date)} · ` : ""}{startupTitle(entry, it).slice(0, 72)}
       </a>
     ));
   };
@@ -2741,7 +2762,7 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
     const status = s?.provenance?.status;
     const entries = [s?.latest, ...(s?.history || [])];
     return (status === "source-backed" || status === "source-linked")
-      && entries.some(entry => /^https?:\/\//.test(String(entry?.url || "")));
+      && entries.some(entry => /^https?:\/\//.test(String(entry?.url || "")) && sourceMatchesStartup(s, entry));
   };
   const hasVerifiedDetails = (s) => s?.provenance?.status === "source-backed";
   const large = ((data && data.large) || []).filter(s => hasLinkedEvidence(s) && !del[s.name]);
@@ -2757,6 +2778,7 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
           <p>글로벌 AI 스타트업(한국·중국 제외)을 규모별 MECE 2계층으로 분석 · 대형은 비즈니스 모델·수익 구조·파트너십, 소형은 개요·펀딩·인수/투자 관점 · 주간 자동 갱신 · ✕ 삭제(비밀번호)</p>
         </div>
         <div className="mkt-tools">
+          <button className={tier === "all" ? "on" : ""} onClick={() => setTier("all")}>전체 {large.length + small.length}</button>
           <button className={tier === "large" ? "on" : ""} onClick={() => setTier("large")}>대형 {large.length}</button>
           <button className={tier === "small" ? "on" : ""} onClick={() => setTier("small")}>소형·초기 {small.length}</button>
           {Object.keys(del).length > 0 && <button onClick={reset} title="삭제 초기화">초기화</button>}
@@ -2767,7 +2789,9 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
         <div className="mkt-loading">{loaded ? "스타트업 분석을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
       ) : !(large.length || small.length) ? (
         <div className="mkt-loading">원문 근거를 연결하는 중입니다 · 근거 없는 투자·인수 후보는 표시하지 않습니다</div>
-      ) : tier === "large" ? (
+      ) : (
+        <>
+        {tier !== "small" && (
         <div className="mkt-group">
           <div className="mkt-group-head"><b>대형 업체 — 원문 링크 기반 관찰</b><em>업체 분류와 누적 원문 링크 표시 · 검증되지 않은 정량 수치와 거래 해석은 제외</em></div>
           <div className="mkt-grid">
@@ -2785,13 +2809,14 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
                   <p className="su-row"><span className="brief-k sig">비즈니스 모델</span>{s.businessModel}</p>
                   <p className="su-row"><span className="brief-k ins">수익</span>{s.revenue}</p>
                   <p className="su-row"><span className="brief-k act">파트너십</span>{s.partnership}</p>
-                </> : <p className="su-row"><span className="brief-k sig">원문 연결</span>원문 링크 기반 업체 분류 · 정량 수치와 파트너십 해석은 본문 근거 확보 후 표시</p>}
+                </> : null}
                 <SourceHistory it={s} />
               </div>
             ))}
           </div>
         </div>
-      ) : (
+        )}
+        {tier !== "large" && (
         <div className="mkt-group">
           <div className="mkt-group-head"><b>소형·초기 업체 — 원문 링크 기반 관찰</b><em>업체 분류와 누적 원문 링크 표시 · 펀딩·밸류·인수 해석은 본문 근거 확인 후 표시</em></div>
           <div className="mkt-grid">
@@ -2809,12 +2834,14 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
                   <p className="su-row"><span className="brief-k sig">개요</span>{s.overview}</p>
                   <p className="su-row"><span className="brief-k ins">펀딩</span>{s.funding}</p>
                   <p className="su-row"><span className="brief-k act">인수·투자</span>{s.acqAngle}</p>
-                </> : <p className="su-row"><span className="brief-k sig">원문 연결</span>원문 링크 기반 업체 분류 · 펀딩·밸류·인수 해석은 본문 근거 확보 후 표시</p>}
+                </> : null}
                 <SourceHistory it={s} />
               </div>
             ))}
           </div>
         </div>
+        )}
+        </>
       )}
      </AnimCtx.Provider>
     </section>

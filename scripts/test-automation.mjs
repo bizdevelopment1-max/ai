@@ -468,13 +468,16 @@ try {
   const rows = [...(startups.large || []), ...(startups.small || [])];
   const visible = rows.filter(row => row.provenance?.status === "source-linked");
   const historyRows = rows.filter(row => Array.isArray(row.history) && row.history.some(entry => /^https?:\/\//.test(entry?.url || "")));
-  if (rows.length < 8 || visible.length < 8 || historyRows.length < 8
+  const smallRows = (startups.small || []).filter(row => row.provenance?.status === "source-linked");
+  const localizedHeadlines = rows.flatMap(row => [row.latest, ...(row.history || [])]).filter(entry => entry?.localization?.status === "accepted");
+  if (rows.length < 8 || visible.length < 8 || smallRows.length < 10 || historyRows.length < 8 || localizedHeadlines.length < 8
     || !/const SourceHistory\s*=/.test(boards) || !/const hasLinkedEvidence\s*=/.test(boards)
     || !/status === "source-backed" \|\| status === "source-linked"/.test(boards)
-    || !/\[it\.latest, \.\.\.\(it\.history \|\| \[\]\)\]/.test(boards)) {
-    throw new Error("startup analysis requires source-linked current rows and cumulative source history");
+    || !/React\.useState\("all"\)/.test(boards) || !/fmtMonthDay\(entry\.date\)/.test(boards)
+    || /\? "최신" : "과거"/.test(boards) || !/\[it\.latest, \.\.\.\(it\.history \|\| \[\]\)\]/.test(boards)) {
+    throw new Error("startup analysis requires visible small-company coverage, Korean source headlines and de-duplicated cumulative links");
   }
-  console.log(`  OK  startup analysis ${visible.length} source-linked rows · ${historyRows.length} cumulative history rows`);
+  console.log(`  OK  startup analysis ${visible.length} source-linked rows · ${smallRows.length} small rows · ${localizedHeadlines.length} Korean source headlines`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  startup cumulative analysis: ${error.message}`);

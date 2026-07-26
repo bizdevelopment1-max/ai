@@ -83,6 +83,9 @@ const sourceSnapshot = record => {
     ...(record.rssUrl ? { rssUrl: record.rssUrl } : {}),
     source: String(record.source || "Google News").trim(),
     date: String(record.date || TODAY).slice(0, 10),
+    ...(record.sourceLanguage ? { sourceLanguage: record.sourceLanguage } : {}),
+    ...(record.sourceRegion ? { sourceRegion: record.sourceRegion } : {}),
+    ...(record.sourceLocale ? { sourceLocale: record.sourceLocale } : {}),
     ...(isContentBacked(record) ? {
       sourceSummaryMode: record.summaryMode,
       sourceLinesEn: (record.summaryLinesEn || []).slice(0, 3),

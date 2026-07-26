@@ -77,14 +77,14 @@ jobs:
       - name: Reframe source briefs as fact, change and implication
         run: node scripts/reframe-source-briefs.mjs
 
+      - name: Crawl startup strategies (투자·협력 관점, 주간)
+        run: node scripts/run-with-retry.mjs scripts/crawl-startups.mjs
+
       - name: Localise distinct source-page sentences
         run: python scripts/translate_summarize.py
 
       - name: Build live company data (mentions + market caps)
         run: node scripts/run-with-retry.mjs scripts/crawl-companies.mjs
-
-      - name: Crawl startup strategies (투자·협력 관점, 주간)
-        run: node scripts/run-with-retry.mjs scripts/crawl-startups.mjs
 
       - name: Accumulate AI infra & future-tech signals (기사 기반 누적)
         run: node scripts/run-with-retry.mjs scripts/crawl-infra.mjs

@@ -31,6 +31,7 @@ ROOT = Path(os.environ.get("LOCALIZE_ROOT", "."))
 NEWS_PATH = ROOT / os.environ.get("NEWS_JSON", "news.json")
 RESEARCH_PATH = ROOT / os.environ.get("RESEARCH_JSON", "research.json")
 MARKET_PATH = ROOT / os.environ.get("MARKET_JSON", "market.json")
+STARTUPS_PATH = ROOT / os.environ.get("STARTUPS_JSON", "startups.json")
 MAX_ITEMS = int(os.environ.get("TRANSLATE_MAX", "500"))
 TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
 LANG_CODES = {
@@ -313,7 +314,7 @@ def read_json(path: Path, fallback: dict) -> dict:
 def write_json(path: Path, value: dict) -> None:
     # verify-pipeline keeps research.json compact, so preserve that stable
     # layout instead of creating a formatting-only churn on every translation.
-    if path == RESEARCH_PATH:
+    if path in {RESEARCH_PATH, MARKET_PATH, STARTUPS_PATH}:
         path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     else:
         path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -323,6 +324,7 @@ def main() -> None:
     news = read_json(NEWS_PATH, {"articles": []})
     research = read_json(RESEARCH_PATH, {"feed": []})
     market = read_json(MARKET_PATH, {"records": []})
+    startups = read_json(STARTUPS_PATH, {"large": [], "small": []})
     translator = SourceTranslator()
     def source_lines(item: dict) -> str:
         lines = item.get("summaryLinesEn") or []
@@ -342,13 +344,38 @@ def main() -> None:
         and item.get("provenance", {}).get("status") == "source-backed"
         and item.get("sourceContent", {}).get("status") == "content-extracted"
     ][:MAX_ITEMS]
+    # Startup analysis preserves each source link as an append-only history.
+    # Translate only the stored headline (and extracted source fragments when
+    # available) so the UI can show a Korean, source-bound one-line brief
+    # without inventing a company or deal interpretation.
+    startup_rows = []
+    seen_startup_sources = set()
+    for startup in [*(startups.get("large") or []), *(startups.get("small") or [])]:
+        fallback_language = (startup.get("latest") or {}).get("sourceLanguage") or "auto"
+        for entry in [startup.get("latest"), *((startup.get("history") or []))]:
+            if not isinstance(entry, dict):
+                continue
+            key = str(entry.get("url") or entry.get("title") or "").strip()
+            title = entry.get("title") or ""
+            if not key or not clean(title) or key in seen_startup_sources:
+                continue
+            seen_startup_sources.add(key)
+            excerpt = "\n".join(clean(line) for line in (entry.get("sourceLinesEn") or []) if clean(line)) or title
+            language = entry.get("sourceLanguage") or fallback_language
+            startup_rows.append((entry, title, excerpt, language))
+            if len(startup_rows) >= MAX_ITEMS:
+                break
+        if len(startup_rows) >= MAX_ITEMS:
+            break
     changed_news, accepted_news, fallback_news = localize_records(news_rows, translator)
     changed_research, accepted_research, fallback_research = localize_records(research_rows, translator)
     changed_market, accepted_market, fallback_market = localize_records(market_rows, translator)
+    changed_startups, accepted_startups, fallback_startups = localize_records(startup_rows, translator)
     write_json(NEWS_PATH, news)
     write_json(RESEARCH_PATH, research)
     write_json(MARKET_PATH, market)
-    print(f"[localize] changed {changed_news + changed_research + changed_market}; Korean {accepted_news + accepted_research + accepted_market}; English fallback {fallback_news + fallback_research + fallback_market}; translation requests {translator.calls}")
+    write_json(STARTUPS_PATH, startups)
+    print(f"[localize] changed {changed_news + changed_research + changed_market + changed_startups}; Korean {accepted_news + accepted_research + accepted_market + accepted_startups}; English fallback {fallback_news + fallback_research + fallback_market + fallback_startups}; translation requests {translator.calls}")
 
 
 if __name__ == "__main__":
