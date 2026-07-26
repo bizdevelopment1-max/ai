@@ -466,7 +466,9 @@ try {
   const visible = rows.filter(row => row.provenance?.status === "source-linked");
   const historyRows = rows.filter(row => Array.isArray(row.history) && row.history.some(entry => /^https?:\/\//.test(entry?.url || "")));
   if (rows.length < 8 || visible.length < 8 || historyRows.length < 8
-    || !/const SourceHistory\s*=/.test(boards) || !/\[it\.latest, \.\.\.\(it\.history \|\| \[\]\)\]/.test(boards)) {
+    || !/const SourceHistory\s*=/.test(boards) || !/const hasLinkedEvidence\s*=/.test(boards)
+    || !/status === "source-backed" \|\| status === "source-linked"/.test(boards)
+    || !/\[it\.latest, \.\.\.\(it\.history \|\| \[\]\)\]/.test(boards)) {
     throw new Error("startup analysis requires source-linked current rows and cumulative source history");
   }
   console.log(`  OK  startup analysis ${visible.length} source-linked rows · ${historyRows.length} cumulative history rows`);

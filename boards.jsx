@@ -2733,8 +2733,19 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
     ));
   };
 
-  const large = ((data && data.large) || []).filter(s => s.provenance?.status === "source-backed" && !del[s.name]);
-  const small = ((data && data.small) || []).filter(s => s.provenance?.status === "source-backed" && !del[s.name]);
+  // Startup records are publishable when a reader can follow at least one
+  // retained source link.  Unlike the market-number board, the startup board
+  // deliberately keeps source-linked company coverage visible; unsupported
+  // funding, valuation and acquisition claims stay out of those cards below.
+  const hasLinkedEvidence = (s) => {
+    const status = s?.provenance?.status;
+    const entries = [s?.latest, ...(s?.history || [])];
+    return (status === "source-backed" || status === "source-linked")
+      && entries.some(entry => /^https?:\/\//.test(String(entry?.url || "")));
+  };
+  const hasVerifiedDetails = (s) => s?.provenance?.status === "source-backed";
+  const large = ((data && data.large) || []).filter(s => hasLinkedEvidence(s) && !del[s.name]);
+  const small = ((data && data.small) || []).filter(s => hasLinkedEvidence(s) && !del[s.name]);
 
   return (
     <section className="board" ref={sectionRef} data-screen-label="Startup Analysis">
@@ -2758,20 +2769,23 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
         <div className="mkt-loading">원문 근거를 연결하는 중입니다 · 근거 없는 투자·인수 후보는 표시하지 않습니다</div>
       ) : tier === "large" ? (
         <div className="mkt-group">
-          <div className="mkt-group-head"><b>대형 업체 — 파트너십 관점</b><em>비즈니스 모델·수익 구조를 참고해 탑재·제휴·공동개발 각도 분석</em></div>
+          <div className="mkt-group-head"><b>대형 업체 — 원문 링크 기반 관찰</b><em>업체 분류와 누적 원문 링크 표시 · 검증되지 않은 정량 수치와 거래 해석은 제외</em></div>
           <div className="mkt-grid">
             {large.map(s => (
               <div className="mkt-card" key={s.name}>
                 <div className="mkt-card-head">
                   <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
                   <b className="mkt-name">{s.name}</b>
-                  <span className="su-meta">{s.vertical} · {s.val}</span>
+                  <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.val}` : ""}</span>
                   <DelUI name={s.name} />
                 </div>
                 <span className="brief-label" style={{ "--lc": LC[s.label] || "#2D6BFF" }}>{s.label}</span>
-                <p className="su-row"><span className="brief-k sig">비즈니스 모델</span>{s.businessModel}</p>
-                <p className="su-row"><span className="brief-k ins">수익</span>{s.revenue}</p>
-                <p className="su-row"><span className="brief-k act">파트너십</span>{s.partnership}</p>
+                <span className="brief-label" style={{ "--lc": hasVerifiedDetails(s) ? "#0E8F6E" : "#64748B" }}>{hasVerifiedDetails(s) ? "원문 본문 확인" : "원문 링크"}</span>
+                {hasVerifiedDetails(s) ? <>
+                  <p className="su-row"><span className="brief-k sig">비즈니스 모델</span>{s.businessModel}</p>
+                  <p className="su-row"><span className="brief-k ins">수익</span>{s.revenue}</p>
+                  <p className="su-row"><span className="brief-k act">파트너십</span>{s.partnership}</p>
+                </> : <p className="su-row"><span className="brief-k sig">원문 연결</span>원문 링크 기반 업체 분류 · 정량 수치와 파트너십 해석은 본문 근거 확보 후 표시</p>}
                 <SourceHistory it={s} />
               </div>
             ))}
@@ -2779,20 +2793,23 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
         </div>
       ) : (
         <div className="mkt-group">
-          <div className="mkt-group-head"><b>소형·초기 업체 — 인수·투자 관점</b><em>업체 개요·펀딩/밸류(정량)를 근거로 인수·전략 투자 각도 분석</em></div>
+          <div className="mkt-group-head"><b>소형·초기 업체 — 원문 링크 기반 관찰</b><em>업체 분류와 누적 원문 링크 표시 · 펀딩·밸류·인수 해석은 본문 근거 확인 후 표시</em></div>
           <div className="mkt-grid">
             {small.map(s => (
               <div className="mkt-card" key={s.name}>
                 <div className="mkt-card-head">
                   <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
                   <b className="mkt-name">{s.name}</b>
-                  <span className="su-meta">{s.vertical} · {s.stage}</span>
+                  <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.stage}` : ""}</span>
                   <DelUI name={s.name} />
                 </div>
                 <span className="brief-label" style={{ "--lc": LC[s.label] || "#2D6BFF" }}>{s.label}</span>
-                <p className="su-row"><span className="brief-k sig">개요</span>{s.overview}</p>
-                <p className="su-row"><span className="brief-k ins">펀딩</span>{s.funding}</p>
-                <p className="su-row"><span className="brief-k act">인수·투자</span>{s.acqAngle}</p>
+                <span className="brief-label" style={{ "--lc": hasVerifiedDetails(s) ? "#0E8F6E" : "#64748B" }}>{hasVerifiedDetails(s) ? "원문 본문 확인" : "원문 링크"}</span>
+                {hasVerifiedDetails(s) ? <>
+                  <p className="su-row"><span className="brief-k sig">개요</span>{s.overview}</p>
+                  <p className="su-row"><span className="brief-k ins">펀딩</span>{s.funding}</p>
+                  <p className="su-row"><span className="brief-k act">인수·투자</span>{s.acqAngle}</p>
+                </> : <p className="su-row"><span className="brief-k sig">원문 연결</span>원문 링크 기반 업체 분류 · 펀딩·밸류·인수 해석은 본문 근거 확보 후 표시</p>}
                 <SourceHistory it={s} />
               </div>
             ))}
