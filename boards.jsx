@@ -2538,7 +2538,6 @@ function MarketBoard({ sectionRef, dataVersion }) {
         <span className="board-tab" style={{ background: "#0891B2" }} />
         <div className="board-titles">
           <h2>AI 신사업 시장 <span className="board-en">AI New-Business Market Map · 휴대폰 사업 관점</span></h2>
-          <p>발행사 원문에서 직접 추출한 문장·정량 수치만 표시하는 append-only DB · RSS 발견 기록과 기존 6개 MECE 버티컬은 삭제하지 않고 보존</p>
         </div>
       </div>
 
