@@ -190,6 +190,8 @@ try {
   const videoPanel = boards.includes('src="assets/competitive-dynamics.mp4"')
     && boards.includes("const DYNAMICS_AXES")
     && boards.includes("onNodeSelect={setActiveCompany}")
+    && boards.includes("relationshipGroups.length > 0")
+    && !boards.includes("false && relationshipGroups.length > 0")
     && boards.includes("video.playbackRate = 0.55")
     && boards.includes("compact");
   const interactiveLayout = styles.includes(".es-dynamics-grid")

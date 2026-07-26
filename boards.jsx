@@ -1417,7 +1417,7 @@ function ESCompetitiveMap({ companies, cats, articles }) {
   const { list, articleByCo } = React.useMemo(() => {
     const connected = new Set();
     COMPETE_EDGES.forEach(e => { connected.add(e.from); connected.add(e.to); });
-    const list = companies;
+    const list = companies.filter(c => connected.has(c.name));
     const names = list.map(c => c.name);
     const matchName = (co) => names.find(n => n === co || co.startsWith(n.split(" (")[0]) || n.startsWith(co.split(" (")[0]));
     const byName = {};
@@ -1491,7 +1491,6 @@ function ESCompetitiveMap({ companies, cats, articles }) {
             initialSelected={activeCompany}
             onNodeSelect={setActiveCompany}
             compact
-            sourceOnly
             active={inView}
           />
         </div>
@@ -1514,8 +1513,8 @@ function ESCompetitiveMap({ companies, cats, articles }) {
                   <strong>{selectedCompany.name}</strong>
                   <em>{selectedCompany.valuation}</em>
                 </div>
-                <p>{selectedArticle ? "연결된 원문 기사에서 확인한 사실만 표시합니다" : "원문 확인이 완료된 연결 기사를 수집 중입니다"}</p>
-                {false && relationshipGroups.length > 0 && (
+                <p>{hlKey(selectedCompany.note)}</p>
+                {relationshipGroups.length > 0 && (
                   <div className="dyn-relationships">
                     {relationshipGroups.map(axis => (
                       <div key={axis.id} className="dyn-relationship" style={{ "--axis": axis.color }}>
