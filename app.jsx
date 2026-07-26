@@ -72,7 +72,7 @@ function App() {
   const [collapsed, setCollapsed] = uS(false);
   const refs = {
     ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    sanalysis: uR(null), charts: uR(null), signals: uR(null), reports: uR(null), stocks: uR(null), market: uR(null), audit: uR(null),
+    sanalysis: uR(null), signals: uR(null), reports: uR(null), stocks: uR(null), market: uR(null), audit: uR(null),
   };
   const nativeInView = useInView(refs.native);
   const bigtechInView = useInView(refs.bigtech);
@@ -415,10 +415,6 @@ function App() {
               <SignalBoard articles={articles} dataVersion={dataVersion} />
             </LazySection>
 
-            {/* ── 4. 정량 데이터 ── */}
-            <LazySection id="charts" active={active} sectionRef={refs.charts} height={980}>
-              <SourceOnlyQuantBoard onNav={navTo} />
-            </LazySection>
             <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
               <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} />
             </LazySection>

@@ -1051,32 +1051,6 @@ function OverviewCharts({ data, cats, theme }) {
   );
 }
 
-function SourceOnlyQuantBoard({ sectionRef, onNav }) {
-  const inView = useInView(sectionRef);
-  return (
-    <section className="board source-only-board" ref={sectionRef} data-screen-label="Verified Quantitative Analysis">
-      <AnimCtx.Provider value={inView}>
-        <div className="board-head">
-          <span className="board-tab" style={{ background: "#173F5F" }} />
-          <div className="board-titles">
-            <h2>검증 정량 분석 <span className="board-en">Verified quantitative analysis</span></h2>
-            <p>숫자·정의·기준 시점이 원문 본문에서 함께 추출된 기록만 공개합니다</p>
-          </div>
-        </div>
-        <div className="source-only-intro">
-          <article><span>01</span><b>발행사 본문</b><p>원문 페이지를 추출하고 링크가 유지되는지 확인</p></article>
-          <article><span>02</span><b>정량 근거</b><p>수치가 포함된 원문 문장을 카드에 함께 표시</p></article>
-          <article><span>03</span><b>해석 범위</b><p>예측값은 원문에 미래 기준 시점이 있을 때만 표시</p></article>
-        </div>
-        <div className="source-only-cta">
-          <div><b>누적 정량·소비자 조사 데이터베이스</b><span>과거 기록은 보존하고 검증 완료 기록만 화면에 추가</span></div>
-          <button onClick={() => onNav && onNav("market")}>원문 근거 데이터 보기 <span>▶</span></button>
-        </div>
-      </AnimCtx.Provider>
-    </section>
-  );
-}
-
 // ---- Dynamics Board (competitive landscape visualization) ------
 // ---- Knowledge Graph (interactive force-directed) ----
 // 경쟁 다이내믹스 전용 — 같은 시장을 두고 다투는 라이벌 구도만 표시
