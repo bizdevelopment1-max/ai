@@ -261,6 +261,9 @@ try {
     && boards.includes("검토 항목")
     && styles.includes(".signal-reading")
     && styles.includes(".isg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));")
+    && styles.includes(".isg-card:hover {")
+    && styles.includes(".isg-card:hover::after { opacity: 1; }")
+    && styles.includes("@media (prefers-reduced-motion: reduce)")
     && !styles.includes(".isg-summary li { position: relative; min-width: 0; padding-left: 10px; font-size: 11px; font-weight: 600; line-height: 1.45; color: var(--muted); word-break: keep-all; display: -webkit-box;");
   if (!readableSignals) {
     throw new Error("infra charts need a compact chart layout, source-derived decision lenses, and unclipped readable signal cards");
