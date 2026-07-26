@@ -128,7 +128,7 @@ function ruleBriefing(cands) {
       evidence: [{ title: a.title, date: a.date, source: a.source, url: a.url, cat: a.cat }],
     };
   });
-  return { engine: "rules", headline: "이번 주 AI 산업 핵심 신호", stats: [], items };
+  return { engine: "rules", stats: [], items };
 }
 
 // ---- main ---------------------------------------------------------------
@@ -145,7 +145,7 @@ async function main() {
   if (!cands.length) { console.log("[briefing] no candidate articles — keeping previous file"); return; }
 
   const brief = ruleBriefing(cands);
-  const today = { date: TODAY, headline: brief.headline, engine: brief.engine, analysisMode: "rule-based-unverified", stats: brief.stats || [], items: brief.items };
+  const today = { date: TODAY, engine: brief.engine, analysisMode: "rule-based-unverified", stats: brief.stats || [], items: brief.items };
 
   const out = { generatedAt: new Date().toISOString(), days: [today, ...prevDays].slice(0, MAX_DAYS) };
   await writeFile("briefing.json", JSON.stringify(out) + "\n");

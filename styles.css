@@ -1945,8 +1945,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .brief-days button:hover { border-color: var(--accent); color: var(--ink); }
 .brief-days button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-.brief-headline { display: flex; align-items: center; gap: 8px; padding: 14px 20px 0; font-family: var(--f); color: var(--ink); }
-.brief-headline b { font-size: 15.5px; font-weight: 800; word-break: keep-all; }
 .brief-date { font-size: 11px; font-weight: 700; color: var(--muted); margin-left: auto; }
 
 .brief-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 12px 20px 20px; }
@@ -2021,7 +2019,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .brief-grid, .radar-grid, .memo-cols { grid-template-columns: 1fr; }
   .brief-days { flex: 1 1 100%; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
   .brief-days button { flex-shrink: 0; }
-  .brief-headline { flex-wrap: wrap; }
   .brief-date { margin-left: 0; flex-basis: 100%; }
 }
 

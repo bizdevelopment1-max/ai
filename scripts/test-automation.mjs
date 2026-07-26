@@ -238,7 +238,8 @@ try {
   const conciseBriefing = boards.includes("Source 기반 규칙 해석 · 신사업 기회 스코어(1~5)")
     && boards.includes("function fmtMonthDay")
     && boards.includes("{fmtMonthDay(d.date)}")
-    && boards.includes("{fmtMonthDay(day.date)}")
+    && !boards.includes("brief-headline")
+    && !boards.includes("{day.headline}")
     && !boards.includes("AI 추론(검증 불가)");
   const transparentPriority = boards.includes("const priorityMeta =")
     && boards.includes("${meta.label} = ${meta.meaning} (${meta.range}점)")

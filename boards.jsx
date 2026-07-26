@@ -2262,11 +2262,6 @@ function BriefingBoard({ briefing, sectionRef }) {
         </div>
       </div>
 
-      <div className="brief-headline">
-        <Icon name="sun" size={16} /> <b>{day.headline}</b>
-        <span className="brief-date">{fmtMonthDay(day.date)}</span>
-      </div>
-
       {(day.stats || []).length > 0 && (
         <div className="brief-stats">
           {day.stats.map((s, i) => (
