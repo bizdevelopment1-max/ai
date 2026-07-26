@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-26T06:22:14.623Z",
+  "generatedAt": "2026-07-26T11:46:36.496Z",
   "overall": "ok",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 16개 · 정상 16 · 주의 0 · 실패 0",
@@ -8,25 +8,25 @@
       "id": "news-coverage",
       "label": "뉴스 수집",
       "status": "ok",
-      "value": "92건"
+      "value": "95건"
     },
     {
       "id": "source-backed",
       "label": "원문 스니펫 근거",
       "status": "ok",
-      "value": "87/92건"
+      "value": "90/95건"
     },
     {
       "id": "source-content-mode",
       "label": "원문 본문 추출",
       "status": "ok",
-      "value": "83/92건"
+      "value": "86/95건"
     },
     {
       "id": "feed-localization",
       "label": "기사 한국어 표시·영문 폴백",
       "status": "ok",
-      "value": "한국어 90 · 영문 폴백 2"
+      "value": "한국어 92 · 영문 폴백 3"
     },
     {
       "id": "collection-health",
@@ -74,13 +74,13 @@
       "id": "research-source",
       "label": "리서치 원문 링크",
       "status": "ok",
-      "value": "공개 33건 · 보존 29건"
+      "value": "공개 34건 · 보존 29건"
     },
     {
       "id": "research-localization",
       "label": "리서치 3줄 표시",
       "status": "ok",
-      "value": "한국어 60 · 영문 폴백 2"
+      "value": "한국어 61 · 영문 폴백 2"
     },
     {
       "id": "market-source",
@@ -102,20 +102,20 @@
     }
   ],
   "metrics": {
-    "currentArticles": 92,
-    "accumulatedArticles": 165,
-    "sourceBackedArticles": 87,
-    "sourceExcerptArticles": 83,
-    "localizedArticles": 90,
-    "localizedFallbackArticles": 2,
+    "currentArticles": 95,
+    "accumulatedArticles": 168,
+    "sourceBackedArticles": 90,
+    "sourceExcerptArticles": 86,
+    "localizedArticles": 92,
+    "localizedFallbackArticles": 3,
     "limitedArticles": 5,
-    "limitedRate": 0.05434782608695652,
+    "limitedRate": 0.05263157894736842,
     "freshStocks": 25,
     "totalStocks": 25,
     "linkedInfra": 39,
     "linkedBizmodel": 9,
-    "linkedResearch": 33,
-    "localizedResearch": 60,
+    "linkedResearch": 34,
+    "localizedResearch": 61,
     "localizedFallbackResearch": 2,
     "archivedMarketBaselines": 43,
     "linkedMarketRecords": 32,
@@ -123,25 +123,26 @@
   },
   "sources": {
     "news": {
+      "The Decoder": 8,
       "TechCrunch": 17,
-      "The Decoder": 6,
       "Engadget": 4,
       "Wired": 4,
       "AI Business": 3,
       "ZDNet": 4,
       "The Verge": 5,
+      "Shaping Europe’s digital future": 1,
       "CNET": 1,
       "The Register": 3,
       "MIT Tech Review": 3,
       "SiliconANGLE": 2,
-      "CNBC": 5,
       "Ars Technica": 2,
-      "Android Authority": 1,
+      "CNBC": 5,
       "IEEE Spectrum": 2,
+      "Android Authority": 1,
       "Microsoft Source": 1,
       "VentureBeat": 5,
-      "Business Insider": 3,
       "South China Morning Post": 1,
+      "Business Insider": 3,
       "Reuters": 1,
       "MacRumors": 1,
       "Fortune": 2,
@@ -153,8 +154,8 @@
       "Axios": 1,
       "TrendForce": 2,
       "WIRED": 1,
-      "GlobeNewswire": 1,
       "The Guardian": 1,
+      "GlobeNewswire": 1,
       "Goldman Sachs": 1,
       "Seoul Economic Daily": 1,
       "Morgan Stanley": 1
@@ -164,14 +165,14 @@
     }
   },
   "collection": {
-    "generatedAt": "2026-07-26T06:20:47.647Z",
+    "generatedAt": "2026-07-26T11:45:11.042Z",
     "mode": "source-content-extractive",
     "policyVersion": 2,
     "streams": {
       "googleNews": 38,
       "directRss": 14
     },
-    "acceptedCandidates": 65,
+    "acceptedCandidates": 63,
     "failedStreams": [],
     "emptyStreams": [
       "google-news:Amazon",
@@ -179,15 +180,15 @@
       "google-news:Databricks 자본·인프라",
       "rss:Ars Technica",
       "rss:Hugging Face",
-      "rss:SiliconANGLE",
       "rss:VentureBeat",
+      "rss:SiliconANGLE",
       "rss:The Register"
     ],
     "status": "ok"
   },
   "notices": [
     "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",
-    "검증 제한 기사 비율: 5.4% (5/92)",
+    "검증 제한 기사 비율: 5.3% (5/95)",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
     "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다."
