@@ -7,7 +7,7 @@ window.DASH = (function () {
 
   const CATEGORIES = [
     { id: "native", ko: "AI 네이티브", en: "AI Native", accent: "#7A38D6", accentSoft: "#F0E9FB", desc: "파운데이션 모델·범용 AI 플랫폼 기업" },
-    { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", accent: "#1428A0", accentSoft: "#E8ECFA", desc: "대형 기술 기업의 AI 사업부·인프라" },
+    { id: "bigtech", ko: "빅테크 AI", en: "Big Tech AI", accent: "#1428A0", accentSoft: "#E8ECFA", desc: "" },
     { id: "startup", ko: "AI 스타트업", en: "AI Startups", accent: "#0E8F6E", accentSoft: "#E2F4EE", desc: "버티컬·응용 AI 스타트업" },
   ];
 
@@ -396,7 +396,7 @@ window.DASH = (function () {
     { id: "creative", ko: "크리에이티브 도구", en: "Creative Tools", desc: "영상·음악·이미지·음성 생성 — 온디바이스 생성 기능과 직접 연결" },
     { id: "infra", ko: "인프라·파운데이션", en: "Infra & Foundation", desc: "오픈·소버린 모델·데이터·평가·모델 허브 — 모델 경쟁의 후방 가치사슬" },
     { id: "regional", ko: "지역 AI 플랫폼", en: "Regional Ecosystems", desc: "중국 등 지역 생태계 — 비용 효율·지정학 변수" },
-    { id: "enterprise", ko: "엔터프라이즈 AI", en: "Enterprise AI", desc: "법률·CS·헬스케어·사내검색 등 도메인 특화(별도 소스: CB Insights)" },
+    { id: "enterprise", ko: "엔터프라이즈 AI", en: "Enterprise AI", desc: "법률·CS·헬스케어·사내검색 등 도메인 특화" },
   ];
 
   /* ---- 빅테크 그룹(핵심지표 성격별) ---- */

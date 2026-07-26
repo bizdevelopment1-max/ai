@@ -154,7 +154,6 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
         <span className="board-tab" style={{ background: cat.accent }} />
         <div className="board-titles">
           <h2>{cat.ko} <span className="board-en">{cat.en}</span></h2>
-          <p>{isStartup ? "6개 카테고리로 분류 — 에이전틱 AI·코딩 / 검색·어시스턴트 / 크리에이티브 도구 / 인프라·파운데이션 / 지역 AI 플랫폼 / 엔터프라이즈 AI(별도 소스: CB Insights)" : cat.desc} · 업체명 클릭 시 상세 정보</p>
         </div>
         <div className="board-count" style={{ color: cat.accent, background: cat.accentSoft }}>{rows.length} 社</div>
       </div>
@@ -683,7 +682,7 @@ function VPBoard({ companies, cats, sectionRef, onSelect, query }) {
         <span className="board-tab" style={{ background: "var(--accent)" }} />
         <div className="board-titles">
           <h2>Value Proposition <span className="board-en">Value Proposition · Direction</span></h2>
-          <p>3대 카테고리 기업별 핵심 가치 제안과 방향성 · 업체명 클릭 시 상세 정보</p>
+          <p>3대 카테고리 기업별 핵심 가치 제안과 방향성</p>
         </div>
       </div>
       {cats.map(cat => {
@@ -1985,11 +1984,6 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
             <p>원문 본문까지 확인된 기사에서만 컴퓨트·메모리·광통신·전력·아키텍처 신호를 누적합니다</p>
           </div>
         </div>
-        <div className="source-only-intro signal-source-method">
-          <article><span>01</span><b>사실</b><p>발행사 문장과 원문 링크가 남아 있는 신호만 수집</p></article>
-          <article><span>02</span><b>정량</b><p>수치가 있으면 해당 원문 문장과 함께 표시</p></article>
-          <article><span>03</span><b>해석</b><p>확인된 사실을 벗어나는 전망·관계 추정은 표시하지 않음</p></article>
-        </div>
         <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
           dataVersion={dataVersion} title="인프라·미래 기술 신호" sub="원문 문장으로 확인된 카드만 표시 · 확인 전 기록은 누적 ledger에 보존" />
       </AnimCtx.Provider>
@@ -2743,7 +2737,6 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
         <span className="board-tab" style={{ background: "#0E8F6E" }} />
         <div className="board-titles">
           <h2>스타트업 분석 <span className="board-en">Startup Analysis · 대형=파트너십 / 소형=인수·투자 (레이더 통합)</span></h2>
-          <p>글로벌 AI 스타트업(한국·중국 제외)을 규모별 MECE 2계층으로 분석 · 대형은 비즈니스 모델·수익 구조·파트너십, 소형은 개요·펀딩·인수/투자 관점 · 주간 자동 갱신 · ✕ 삭제(비밀번호)</p>
         </div>
         <div className="mkt-tools">
           <button className={tier === "all" ? "on" : ""} onClick={() => setTier("all")}>전체 {large.length + small.length}</button>

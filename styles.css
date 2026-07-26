@@ -1767,12 +1767,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .pt-foot b { color: var(--ink); font-weight: 800; }
 /* 인프라·미래기술 — 차트는 압축하고 우측에 수치 기반 의사결정 질문을 배치 */
 .signal-quant-layout { display: grid; grid-template-columns: minmax(0, 1.72fr) minmax(320px, .8fr); border: 1px solid var(--line); background: var(--line); }
-.source-only-intro { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 0 0 16px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--line); }
-.source-only-intro article { min-height: 118px; padding: 18px 20px; background: var(--panel); }
-.source-only-intro span { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; margin: 0 0 10px; border-radius: 50%; background: #E8EEF7; color: #173F5F; font: 700 11px/1 var(--font); }
-.source-only-intro b { display: block; color: var(--ink); font-size: 15px; }
-.source-only-intro p { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
-@media (max-width: 760px) { .source-only-intro { grid-template-columns: 1fr; } }
 .signal-chart-grid { min-width: 0; }
 .signal-chart-grid .chart-card { min-width: 0; padding: 15px 17px 13px; }
 .signal-chart-grid .chart-card .cc-head { min-height: 38px; margin-bottom: 6px; }
