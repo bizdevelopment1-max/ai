@@ -1,6 +1,104 @@
 {
-  "generatedAt": "2026-07-26T22:30:04.161Z",
+  "generatedAt": "2026-07-27T06:50:44.469Z",
   "articles": [
+    {
+      "date": "2026-07-27",
+      "co": "",
+      "cat": "bigtech",
+      "source": "TechCrunch",
+      "title": "Are brain waves the next unlock for physical AI?",
+      "descEn": "Forget YouTube videos—frontier physical AI models need multiple camera angles, dense annotation, and soon, brain wave readings.",
+      "url": "https://techcrunch.com/2026/07/26/are-brain-waves-the-next-unlock-for-physical-ai",
+      "tag": "글로벌",
+      "titleEn": "Are brain waves the next unlock for physical AI?",
+      "summaryLinesEn": [
+        "Encord’s work with Zander is currently a trial run; Encord says the goal is to build an initial brain wave-tagged data set, run it through customer robotics models, and evaluate whether it actually improves performance before deciding whether to scale it up.",
+        "But “20 times more” is still real money, and that’s the catch: scraping text off the internet, the way LLM makers built their models by pulling from Stack Overflow and the rest of the web, cost frontier labs next to nothing.",
+        "Velmurugan estimates this kind of dense annotation is worth 100 times as much as “junky ego data” for training specific tasks, and it only costs 20 times more to produce, which is a good trade, on paper."
+      ],
+      "summaryRoles": [
+        "fact",
+        "implication",
+        "fact"
+      ],
+      "summary": "Encord’s work with Zander is currently a trial run; Encord says the goal is to build an initial brain wave-tagged data set, run it through customer robotics models, and evaluate whether it actually improves performance before deciding whether to scale it up.\nBut “20 times more” is still real money, and that’s the catch: scraping text off the internet, the way LLM makers built their models by pulling from Stack Overflow and the rest of the web, cost frontier labs next to nothing.\nVelmurugan estimates this kind of dense annotation is worth 100 times as much as “junky ego data” for training specific tasks, and it only costs 20 times more to produce, which is a good trade, on paper.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-07-27T06:49:07.750Z",
+        "originalUrl": "https://techcrunch.com/2026/07/26/are-brain-waves-the-next-unlock-for-physical-ai/",
+        "resolvedUrl": "https://techcrunch.com/2026/07/26/are-brain-waves-the-next-unlock-for-physical-ai/",
+        "canonicalUrl": "https://techcrunch.com/2026/07/26/are-brain-waves-the-next-unlock-for-physical-ai/",
+        "headline": "Are brain waves the next unlock for physical AI?",
+        "description": "Forget YouTube videos—frontier physical AI models need multiple camera angles, dense annotation, and soon, brain wave readings.",
+        "paragraphs": [
+          "The frontier of physical AI is a Jenga game in a warehouse in San Leandro, California.",
+          "That warehouse is occupied by Encord , a company that builds data tooling used to train AI models. Andrew Ceja is a pilot—the company’s term for its robotic trainers—and he’s carefully pulling wooden blocks from a tottering tower while wearing a headset with a camera that tracks what he sees. That alone is fairly common for collecting robot training data, but this headset includes sensors that measure his brain waves as he carefully disassembles the block tower.",
+          "Encord is one of a small but growing number of startups betting the next real constraint on humanoid and warehouse robotics won’t be model architecture but instead the sheer scarcity of real-world physical training data. Rather than just helping robotics companies manage the data they have, Encord is building a business around manufacturing the data they don’t.",
+          "The brain wave headset Ceja is wearing was built by Zander Labs , a German neuroscience startup that’s betting measuring brain activity — to deduce mental states like error, intent and surprise — can create a more useful data set to train models. Encord’s work with Zander is currently a trial run; Encord says the goal is to build an initial brain wave-tagged data set, run it through customer robotics models, and evaluate whether it actually improves performance before deciding whether to scale it up.",
+          "Lucas Gehrke, a Zander neuroscientist supervising the work, says that the amount of brain activity used at any point during a given task offers clues for model builders trying to figure out when they need to deploy their highest-effort models.",
+          "This is the “bleeding edge” of the effort to solve the robotics data bottleneck, according to Vineeth Velmurugan, Encord’s head of robot learning. A veteran of OpenAI’s robot lab and Berkshire Grey, the warehouse automation firm, Velmurugan joined Encord to build the company’s internal data-creation team.",
+          "Encord was founded to help companies building machine-vision applications annotate data and evaluate models. As their customers—Velmurugan says they work with many leading robotics firms but that he’s not authorized to name them—began to apply end-to-end learning to robotic manipulation tasks, executives realized they would have to produce training data themselves, rather than simply manage it. “The data simply does not exist,” Velmurugan said.",
+          "The bet that generative AI can do for robots what it’s done for chatbots keeps running into this same wall. Self-driving car companies collect physical-world data themselves, but that’s hard to scale. Training from video can work, but it lacks the fidelity of real world data. Velmurugan says it will take a data set something like five times the size of YouTube’s video corpus to break through—a scale that helps explain why data-generation itself has become a business and not just a research problem.",
+          "Companies building robot brains are now turning to two main sources: “egocentric” video collected by workers wearing cameras, often augmented with additional camera angles and other metrics, and data from robots operated remotely. Encord does both, drawing egocentric data from several factories around the globe, and using its San Leandro facility to experiment with new modalities, like brain waves, or collect data sets around specific skills for fine-tuning.",
+          "When TechCrunch visited, pilots were using leader-follower rigs — paired robotic arms, one controlled directly by a human operator and one that mimics its movements —to create data about tasks like pouring coffee from a pot into mugs (very sloshy) and stacking poker chips. “Every humanoid company has asked us for these pieces,” Velmurugan says.",
+          "Storage racks held cartons of fake flowers in vases, books, plastic vegetables, kitty litter trays and scoops, bags and bundles of wires, the stock in trade for training manipulators for household tasks.",
+          "At one of these stations, another pilot, Sofia Infante, maneuvers robotic arms to plug and unplug ethernet cables from the back of a server—the kind of work data center operators would love to be automated, if only robots could manipulate them with the required precision. Taking a spin behind the controls, I was able to see why that’s still out of reach: Pincers are far less dextrous than human fingers and lack the degrees of freedom we take for granted in our arms."
+        ],
+        "text": "The frontier of physical AI is a Jenga game in a warehouse in San Leandro, California.\n\nThat warehouse is occupied by Encord , a company that builds data tooling used to train AI models. Andrew Ceja is a pilot—the company’s term for its robotic trainers—and he’s carefully pulling wooden blocks from a tottering tower while wearing a headset with a camera that tracks what he sees. That alone is fairly common for collecting robot training data, but this headset includes sensors that measure his brain waves as he carefully disassembles the block tower.\n\nEncord is one of a small but growing number of startups betting the next real constraint on humanoid and warehouse robotics won’t be model architecture but instead the sheer scarcity of real-world physical training data. Rather than just helping robotics companies manage the data they have, Encord is building a business around manufacturing the data they don’t.\n\nThe brain wave headset Ceja is wearing was built by Zander Labs , a German neuroscience startup that’s betting measuring brain activity — to deduce mental states like error, intent and surprise — can create a more useful data set to train models. Encord’s work with Zander is currently a trial run; Encord says the goal is to build an initial brain wave-tagged data set, run it through customer robotics models, and evaluate whether it actually improves performance before deciding whether to scale it up.\n\nLucas Gehrke, a Zander neuroscientist supervising the work, says that the amount of brain activity used at any point during a given task offers clues for model builders trying to figure out when they need to deploy their highest-effort models.\n\nThis is the “bleeding edge” of the effort to solve the robotics data bottleneck, according to Vineeth Velmurugan, Encord’s head of robot learning. A veteran of OpenAI’s robot lab and Berkshire Grey, the warehouse automation firm, Velmurugan joined Encord to build the company’s internal data-creation team.\n\nEncord was founded to help companies building machine-vision applications annotate data and evaluate models. As their customers—Velmurugan says they work with many leading robotics firms but that he’s not authorized to name them—began to apply end-to-end learning to robotic manipulation tasks, executives realized they would have to produce training data themselves, rather than simply manage it. “The data simply does not exist,” Velmurugan said.\n\nThe bet that generative AI can do for robots what it’s done for chatbots keeps running into this same wall. Self-driving car companies collect physical-world data themselves, but that’s hard to scale. Training from video can work, but it lacks the fidelity of real world data. Velmurugan says it will take a data set something like five times the size of YouTube’s video corpus to break through—a scale that helps explain why data-generation itself has become a business and not just a research problem.\n\nCompanies building robot brains are now turning to two main sources: “egocentric” video collected by workers wearing cameras, often augmented with additional camera angles and other metrics, and data from robots operated remotely. Encord does both, drawing egocentric data from several factories around the globe, and using its San Leandro facility to experiment with new modalities, like brain waves, or collect data sets around specific skills for fine-tuning.\n\nWhen TechCrunch visited, pilots were using leader-follower rigs — paired robotic arms, one controlled directly by a human operator and one that mimics its movements —to create data about tasks like pouring coffee from a pot into mugs (very sloshy) and stacking poker chips. “Every humanoid company has asked us for these pieces,” Velmurugan says.\n\nStorage racks held cartons of fake flowers in vases, books, plastic vegetables, kitty litter trays and scoops, bags and bundles of wires, the stock in trade for training manipulators for household tasks.\n\nAt one of these stations, another pilot, Sofia Infante, maneuvers robotic arms to plug and unplug ethernet cables from the back of a server—the kind of work data center operators would love to be automated, if only robots could manipulate them with the required precision. Taking a spin behind the controls, I was able to see why that’s still out of reach: Pincers are far less dextrous than human fingers and lack the degrees of freedom we take for granted in our arms.\n\nAnother new data modality that Encord is developing uses a set of sensors strapped to the forearm to detect electrical signals in muscles. Video taken of human hands manipulating objects typically doesn’t capture the entire hand, but Velmurugan hopes to build a 3D depiction of where the hand is at any time based on the arm sensors, creating a more robust understanding for models.\n\nEncord’s data sets are annotated with physical descriptions of what each video contains—”right hand tightens bolt”—to aid LLM-based models in understanding what is happening. Velmurugan estimates this kind of dense annotation is worth 100 times as much as “junky ego data” for training specific tasks, and it only costs 20 times more to produce, which is a good trade, on paper.\n\nBut “20 times more” is still real money, and that’s the catch: scraping text off the internet, the way LLM makers built their models by pulling from Stack Overflow and the rest of the web, cost frontier labs next to nothing. Generating physical training data does not, and that’s the limit of the physical-AI-as-LLM comparison. This kind of data has to be manufactured, not just collected, and that changes the economics of building these models.\n\nVelmurugan says that progress is being made—with Encord’s visibility into programs across the industry, he’s able to see start-ups and frontier labs alike figure out what works and what doesn’t to improve physical AI models. That vantage point—sitting between many robotics companies at once—is also part of Encord’s pitch. It can spot which data techniques are gaining traction industry-wide before any single customer can.\n\nThat will keep the dozen or so pilots at Encord’s facility busy. Both Infante and Ceja are part of a burgeoning workforce developing the building blocks for neural networks; they previously worked at Scale, another AI data annotation firm, before joining Encord.\n\nCeja had worked at a waste management company where his interest in technology found him in charge of keeping a robotic trash sorter in good working order. Now, as the Jenga tower topples, he says he enjoys the challenge of solving training tasks for robots —”It’s something new every day!”",
+        "contentHash": "67e33364a10d9277a17acdf4b07a171c4da819f58e009ad6e306c659e6e6042d",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://techcrunch.com/2026/07/26/are-brain-waves-the-next-unlock-for-physical-ai/",
+      "collectedAt": "2026-07-27T06:49:10.591Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 13,
+        "sourceHash": "6274458a0ebcac664e7be535bd7969f652596c844728e5bbc48c24a7bee5eb43",
+        "sourceLines": [
+          "Encord’s work with Zander is currently a trial run; Encord says the goal is to build an initial brain wave-tagged data set, run it through customer robotics models, and evaluate whether it actually improves performance before deciding whether to scale it up.",
+          "But “20 times more” is still real money, and that’s the catch: scraping text off the internet, the way LLM makers built their models by pulling from Stack Overflow and the rest of the web, cost frontier labs next to nothing.",
+          "Velmurugan estimates this kind of dense annotation is worth 100 times as much as “junky ego data” for training specific tasks, and it only costs 20 times more to produce, which is a good trade, on paper."
+        ],
+        "checkedAt": "2026-07-27T06:50:31.404076+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "물리적 AI의 다음 잠금 해제는 뇌파입니까",
+        "summaryLines": [
+          "Encord의 Zander 작업은 현재 시범적으로 진행되고 있음 · Encord는 초기 뇌파 태그가 지정된 데이터 세트를 구축하고 이를 고객 로봇 모델을 통해 실행하며 확장 여부를 결정하기 전에 실제로 성능이 향상되는지 평가하는 것이 목표라고 말했음",
+          "하지만 \"20배 더 많은 것\"은 여전히 실제 돈이고 그게 문제임 · LLM 제작자가 Stack Overflow와 나머지 웹에서 가져와 모델을 구축하는 방식은 인터넷에서 텍스트를 긁어내는 방식으로 프런티어 연구실에 비용이 전혀 들지 않음",
+          "Velmurugan은 이러한 종류의 조밀한 주석이 특정 작업을 훈련하기 위한 \"정키 자아 데이터\"보다 100배 더 가치가 있고, 종이로 작성하는 데 드는 비용은 20배만 더 높을 뿐이라고 추정함"
+        ],
+        "summaryRoles": [
+          "fact",
+          "implication",
+          "fact"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "물리적 AI의 다음 잠금 해제는 뇌파입니까",
+      "summaryLinesKo": [
+        "Encord의 Zander 작업은 현재 시범적으로 진행되고 있음 · Encord는 초기 뇌파 태그가 지정된 데이터 세트를 구축하고 이를 고객 로봇 모델을 통해 실행하며 확장 여부를 결정하기 전에 실제로 성능이 향상되는지 평가하는 것이 목표라고 말했음",
+        "하지만 \"20배 더 많은 것\"은 여전히 실제 돈이고 그게 문제임 · LLM 제작자가 Stack Overflow와 나머지 웹에서 가져와 모델을 구축하는 방식은 인터넷에서 텍스트를 긁어내는 방식으로 프런티어 연구실에 비용이 전혀 들지 않음",
+        "Velmurugan은 이러한 종류의 조밀한 주석이 특정 작업을 훈련하기 위한 \"정키 자아 데이터\"보다 100배 더 가치가 있고, 종이로 작성하는 데 드는 비용은 20배만 더 높을 뿐이라고 추정함"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
     {
       "date": "2026-07-26",
       "co": "",
@@ -94,7 +192,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -182,7 +280,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -280,7 +378,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -363,7 +461,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -461,7 +559,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -559,7 +657,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -619,7 +717,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -718,7 +816,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -855,7 +953,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -943,7 +1041,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1041,7 +1139,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1139,7 +1237,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1237,7 +1335,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1259,7 +1357,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -1357,7 +1455,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -1452,7 +1550,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -1579,7 +1677,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -1640,7 +1738,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -1734,7 +1832,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -1830,7 +1928,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -1931,7 +2029,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -2030,7 +2128,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -2161,7 +2259,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -2226,7 +2324,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -2324,7 +2422,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -2508,7 +2606,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -2591,7 +2689,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -2764,7 +2862,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2832,7 +2930,7 @@
           "While most AI systems pose limited to no risk and can contribute to solving many societal challenges, certain AI systems create risks that we must address to avoid undesirable outcomes.",
           "So, it may become difficult to assess whether someone has been unfairly disadvantaged, such as in a hiring decision or in an application for a public benefit scheme."
         ],
-        "checkedAt": "2026-07-26T22:29:56.386362+00:00",
+        "checkedAt": "2026-07-27T06:50:31.405124+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -2858,7 +2956,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2880,7 +2978,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -2978,7 +3076,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -3075,7 +3173,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -3173,7 +3271,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -3271,7 +3369,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -3369,7 +3467,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -3467,7 +3565,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -3565,7 +3663,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -3754,7 +3852,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -3819,7 +3917,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -4005,7 +4103,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -4453,7 +4551,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -4552,7 +4650,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -4651,7 +4749,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -4712,7 +4810,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -4864,7 +4962,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [
           "summary-not-source-content-extractive",
           "numbers-not-in-source-snippet"
@@ -4899,7 +4997,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-26T22:28:27.770Z",
+        "checkedAt": "2026-07-27T06:49:20.880Z",
         "originalUrl": "https://aibusiness.com/cybersecurity/startup-focused-enterprise-ai-security-valued-1-2-billion",
         "error": "HTTP 403"
       }
@@ -4921,7 +5019,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -5017,7 +5115,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -5114,7 +5212,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -5212,7 +5310,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -5505,7 +5603,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -5641,7 +5739,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -5740,7 +5838,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -5801,7 +5899,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -5856,7 +5954,7 @@
           "Since the platform is open source, developers can make their own Buzz instance feel more customized to the needs and workflows of their specific team.",
           "a new groupchat platform for teams of people and agents of all sizes, built to reduce our dependency on slack and github. model-agnostic, decentralized, self-sovereign, and open source. 🐝 https://t.co/8IaMVeTQNo As startups increasingly rely on AI agents to get work done, it can be challenging for employees to collaborate on various tasks across different platforms."
         ],
-        "checkedAt": "2026-07-26T22:29:56.387323+00:00",
+        "checkedAt": "2026-07-27T06:50:31.406204+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -5895,7 +5993,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -5993,7 +6091,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -6091,7 +6189,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -6193,7 +6291,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -6282,7 +6380,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -6772,7 +6870,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -6871,7 +6969,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -7072,7 +7170,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -7205,7 +7303,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -7537,7 +7635,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -7634,7 +7732,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -7670,7 +7768,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-26T22:28:27.770Z",
+        "checkedAt": "2026-07-27T06:49:20.881Z",
         "originalUrl": "https://www.cnbc.com/video/2026/07/17/the-feds-plan-to-restore-price-stability-relies-on-ai.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -7740,7 +7838,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -7833,7 +7931,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -8154,7 +8252,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -8199,7 +8297,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-26T22:28:27.770Z",
+        "checkedAt": "2026-07-27T06:49:20.881Z",
         "originalUrl": "https://www.ft.com/content/af8f4659-df0c-4c83-9fcc-8239714d0928?syn-25a6b1a6=1",
         "error": "HTTP 403"
       }
@@ -8221,7 +8319,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -8319,7 +8417,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -8525,7 +8623,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -8557,7 +8655,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-26T22:28:28.318Z",
+        "checkedAt": "2026-07-27T06:49:20.881Z",
         "originalUrl": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQMmZaRXBtUG5RLWpZQjg4UjFZd012cTM1Uy0xZy13SkkxamJiSzVuZ0dIMGllZDZVZGJKMkItTlo4bzliUGdndlY2ZG1JYTlpY0Z0a3lEWERtZDE5ZGY0VlA5WEYxaXJvSkZUMDBaUkxkekF5b2NQamFhdHRUVEM3aVRwNkw4VFlPa2M3VWtOa1cyNGUtVGRzOHhGdVJYVUw2aHpVZV91TmpUWjFWQ25STmwtMA?oc=5",
         "error": "HTTP 401"
       }
@@ -8948,7 +9046,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -9046,7 +9144,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -9082,7 +9180,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-26T22:28:27.770Z",
+        "checkedAt": "2026-07-27T06:49:21.429Z",
         "originalUrl": "https://www.cnbc.com/2026/07/15/why-jim-cramer-is-shocked-by-citis-against-the-grain-praise-of-microsofts-copilot.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -9152,7 +9250,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -9251,7 +9349,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -9348,7 +9446,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -9667,7 +9765,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -9766,7 +9864,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -9865,7 +9963,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -9908,6 +10006,104 @@
         "증거 기반 커리큘럼 및 K-12 생태계에 연결된 Claude for Teachers는 Learning Commons에 연결되어 Claude가 50개 주 전체의 학업 표준에 액세스할 수 있게 하며, 각 표준 아래에는 작은 학습 역량과 학생들이 일반적으로 학습하는 순서가 표시됨",
         "초기 증거에 따르면 학생을 위한 AI 도구의 영향은 혼합되어 구현에 따라 다르지만 교사를 위한 AI 도구는 교육 실습을 강화하고 학생 성과를 향상시킬 수 있음"
       ]
+    },
+    {
+      "date": "2026-07-14",
+      "co": "",
+      "cat": "native",
+      "source": "SiliconANGLE",
+      "title": "Sovereign AI infrastructure startup Valarian raises $50M to help nations secure their defense systems",
+      "descEn": "The defense-focused artificial intelligence systems infrastructure startup Valarian Technologies Ltd. said today it has closed on a hefty $50 million early-stage funding round as it looks to position",
+      "url": "https://siliconangle.com/2026/07/14/sovereign-ai-infrastructure-startup-valarian-raises-50m-help-nations-secure-military-defense-systems",
+      "tag": "오픈소스",
+      "rssUrl": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxOcGtzZEVUamphN2VudWVoX0xLaEJQRDV5Y0g3V29vQWM5WGIya0VwaDBMVDJQbkZyZmpvZFdKb2p4MUFpZkVyQlZUY25WOTQtamY5LTVhZzlpZnkwUEZia2hsVU5yZWxnX2YxRzFYQnUyd3F1bFNIeDJuNTUxQWY1aldqUUFSSm9EVU4xRmVHYmUtV04tTTlkSUlkYlNCT2JEUzdXTWJORGdGUW1EemtVN3pGMi01RVY4VlNmUTVsaFdTOGJyVXBzYnNXc2YwZFI4OGRB?oc=5",
+      "titleEn": "Sovereign AI infrastructure startup Valarian raises $50M to help nations secure their defense systems",
+      "summaryLinesEn": [
+        "In 2025, European defense spending reportedly topped €392 billion (around $447 billion), with a significant chunk of that money going to modern AI-driven systems.",
+        "Spectro Cloud wants to ease AI infrastructure management after raising $100M in funding QumulusAI’s direct listing: Accelerating the neocloud for enterprise AI",
+        "Buchan said Valarian’s platform is needed because the intelligence layer of western nations is consolidating, contract by contract, into systems that they have no control over."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "In 2025, European defense spending reportedly topped €392 billion (around $447 billion), with a significant chunk of that money going to modern AI-driven systems.\nSpectro Cloud wants to ease AI infrastructure management after raising $100M in funding QumulusAI’s direct listing: Accelerating the neocloud for enterprise AI\nBuchan said Valarian’s platform is needed because the intelligence layer of western nations is consolidating, contract by contract, into systems that they have no control over.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-07-27T06:49:07.545Z",
+        "originalUrl": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxOcGtzZEVUamphN2VudWVoX0xLaEJQRDV5Y0g3V29vQWM5WGIya0VwaDBMVDJQbkZyZmpvZFdKb2p4MUFpZkVyQlZUY25WOTQtamY5LTVhZzlpZnkwUEZia2hsVU5yZWxnX2YxRzFYQnUyd3F1bFNIeDJuNTUxQWY1aldqUUFSSm9EVU4xRmVHYmUtV04tTTlkSUlkYlNCT2JEUzdXTWJORGdGUW1EemtVN3pGMi01RVY4VlNmUTVsaFdTOGJyVXBzYnNXc2YwZFI4OGRB?oc=5",
+        "resolvedUrl": "https://siliconangle.com/2026/07/14/sovereign-ai-infrastructure-startup-valarian-raises-50m-help-nations-secure-military-defense-systems/",
+        "canonicalUrl": "https://siliconangle.com/2026/07/14/sovereign-ai-infrastructure-startup-valarian-raises-50m-help-nations-secure-military-defense-systems/",
+        "headline": "Sovereign AI infrastructure startup Valarian raises $50M to help nations secure their defense systems",
+        "description": "The defense-focused artificial intelligence systems infrastructure startup Valarian Technologies Ltd. said today it has closed on a hefty $50 million early-stage funding round as it looks to position",
+        "paragraphs": [
+          "Sovereign AI infrastructure startup Valarian raises $50M to help nations secure their defense systems",
+          "The defense-focused artificial intelligence systems infrastructure startup Valarian Technologies Ltd. said today it has closed on a hefty $50 million early-stage funding round as it looks to position itself as a critical player in the emerging “sovereign AI” market.",
+          "The Series A round was led by new investor New Enterprise Associates, which is making its first investment in a European defense startup. It was joined by a strong cohort of backers, including Lightbank, XTX Markets, Sequel and LitVC, plus Gokul Rajaram and Nikesh Arora, who participated as angels.",
+          "In 2025, European defense spending reportedly topped €392 billion (around $447 billion), with a significant chunk of that money going to modern AI-driven systems. However, as European nations increase their reliance on AI, they’re becoming increasingly concerned about their reliance on a handful of dominant U.S.-based firms, which can revoke access to their high-end systems at any moment.",
+          "Historically, defense organizations and regulated institutions have always snubbed public cloud infrastructure in favor of bespoke, on-premises environments that enable sovereign-level control. As AI becomes a critical component of modern computer systems, there’s a pressing need for a similar level of control over that technology, too.",
+          "This is where Valarian says it can help. It has developed a foundational infrastructure layer that enforces sovereignty over modern, AI-powered software environments. It was founded by the former international finance operator Max Buchan and ex-Palantir executive and U.S. Army officer Josh McLaughlin to provide workload-level governance for the sensitive computing environments that host AI systems, mission-critical applications and other key infrastructure.",
+          "Valerian’s core infrastructure platform, called ACRA, is designed to grant organizations full and absolute control over how their most critical software systems function, access data and communicate with other platforms. It was originally development for compartmentalized compute and data operations, and primarily caters to government agencies and commercial entities that need to ensure their systems – including those hosted in public clouds – are totally isolated from shared environments.",
+          "Buchan said Valarian’s platform is needed because the intelligence layer of western nations is consolidating, contract by contract, into systems that they have no control over. They must urgently reverse this trend, he believes. “We built Valarian because sovereignty isn’t a feature you can add later. It’s architecture you have to build from the ground up,” he explained. “This round gives us the capital to take that architecture to the organizations that need it most, at the moment they need it most.”",
+          "Valerian offers two deployment options for customers, including Valarian Enterprise, which is targeted at commercial operations that need to run AI and other workloads with rigorous control. Meanwhile, Valerian Defense is specially geared toward national militaries and defense agencies, giving them to the tools they need to build computing environments that simply cannot take any chances.",
+          "The startup’s dual-focus has garnered the support of the U.K. government, which has prioritized domestic AI as a strategic imperative and is no doubt further convinced of the need for sovereignty following the recent actions of its most important ally, the U.S.",
+          "Kanishka Narayan, U.K. Minister for AI and Online Safety, said AI technology has become the main currency of both hard and soft power. “To shape our own destiny, in accordance with our values, it is imperative that we build Britain’s sovereign AI capabilities,” he said. “Pioneering British firms like Valarian understand the challenge that’s in front of us and are building the solutions that will help us deliver a safer and stronger Britain.”",
+          "NEA partner Mustafa Neemuchwala said he has similar motivations, stressing that sovereign infrastructure is the most vital “next layer” for enterprise and government computing. “The critical question now isn’t which model wins, but who controls the environment that intelligence operates inside,” he said. “Valarian answers that question with genuine defense-grade architecture.”"
+        ],
+        "text": "Sovereign AI infrastructure startup Valarian raises $50M to help nations secure their defense systems\n\nThe defense-focused artificial intelligence systems infrastructure startup Valarian Technologies Ltd. said today it has closed on a hefty $50 million early-stage funding round as it looks to position itself as a critical player in the emerging “sovereign AI” market.\n\nThe Series A round was led by new investor New Enterprise Associates, which is making its first investment in a European defense startup. It was joined by a strong cohort of backers, including Lightbank, XTX Markets, Sequel and LitVC, plus Gokul Rajaram and Nikesh Arora, who participated as angels.\n\nIn 2025, European defense spending reportedly topped €392 billion (around $447 billion), with a significant chunk of that money going to modern AI-driven systems. However, as European nations increase their reliance on AI, they’re becoming increasingly concerned about their reliance on a handful of dominant U.S.-based firms, which can revoke access to their high-end systems at any moment.\n\nHistorically, defense organizations and regulated institutions have always snubbed public cloud infrastructure in favor of bespoke, on-premises environments that enable sovereign-level control. As AI becomes a critical component of modern computer systems, there’s a pressing need for a similar level of control over that technology, too.\n\nThis is where Valarian says it can help. It has developed a foundational infrastructure layer that enforces sovereignty over modern, AI-powered software environments. It was founded by the former international finance operator Max Buchan and ex-Palantir executive and U.S. Army officer Josh McLaughlin to provide workload-level governance for the sensitive computing environments that host AI systems, mission-critical applications and other key infrastructure.\n\nValerian’s core infrastructure platform, called ACRA, is designed to grant organizations full and absolute control over how their most critical software systems function, access data and communicate with other platforms. It was originally development for compartmentalized compute and data operations, and primarily caters to government agencies and commercial entities that need to ensure their systems – including those hosted in public clouds – are totally isolated from shared environments.\n\nBuchan said Valarian’s platform is needed because the intelligence layer of western nations is consolidating, contract by contract, into systems that they have no control over. They must urgently reverse this trend, he believes. “We built Valarian because sovereignty isn’t a feature you can add later. It’s architecture you have to build from the ground up,” he explained. “This round gives us the capital to take that architecture to the organizations that need it most, at the moment they need it most.”\n\nValerian offers two deployment options for customers, including Valarian Enterprise, which is targeted at commercial operations that need to run AI and other workloads with rigorous control. Meanwhile, Valerian Defense is specially geared toward national militaries and defense agencies, giving them to the tools they need to build computing environments that simply cannot take any chances.\n\nThe startup’s dual-focus has garnered the support of the U.K. government, which has prioritized domestic AI as a strategic imperative and is no doubt further convinced of the need for sovereignty following the recent actions of its most important ally, the U.S.\n\nKanishka Narayan, U.K. Minister for AI and Online Safety, said AI technology has become the main currency of both hard and soft power. “To shape our own destiny, in accordance with our values, it is imperative that we build Britain’s sovereign AI capabilities,” he said. “Pioneering British firms like Valarian understand the challenge that’s in front of us and are building the solutions that will help us deliver a safer and stronger Britain.”\n\nNEA partner Mustafa Neemuchwala said he has similar motivations, stressing that sovereign infrastructure is the most vital “next layer” for enterprise and government computing. “The critical question now isn’t which model wins, but who controls the environment that intelligence operates inside,” he said. “Valarian answers that question with genuine defense-grade architecture.”\n\nSupport our mission to keep content open and free by engaging with theCUBE community. Join theCUBE’s Alumni Trust Network , where technology leaders connect, share intelligence and create opportunities.\n\n15M+ viewers of theCUBE videos , powering conversations across AI, cloud, cybersecurity and more\n\n11.4k+ theCUBE alumni — Connect with more than 11,400 tech and business leaders shaping the future through a unique trusted-based network.\n\nFounded by tech visionaries John Furrier and Dave Vellante, SiliconANGLE Media has built a dynamic ecosystem of industry-leading digital media brands that reach 15+ million elite tech professionals. Our new proprietary theCUBE AI Video Cloud is breaking ground in audience interaction, leveraging theCUBEai.com neural network to help technology companies make data-driven decisions and stay at the forefront of industry conversations.\n\nSpectro Cloud wants to ease AI infrastructure management after raising $100M in funding\n\nQumulusAI’s direct listing: Accelerating the neocloud for enterprise AI",
+        "contentHash": "e2a1e8cfc5f87d04aacbd10f2d8e59f9bed2b9de33b1174d6e91ddd82ca1b0ed",
+        "selectionVersion": 7
+      },
+      "collectedAt": "2026-07-27T06:49:10.591Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 13,
+        "sourceHash": "99ad9c33cffad599164b82389193f830cfa59011c0309a5a3e28ebf027fa118c",
+        "sourceLines": [
+          "In 2025, European defense spending reportedly topped €392 billion (around $447 billion), with a significant chunk of that money going to modern AI-driven systems.",
+          "Spectro Cloud wants to ease AI infrastructure management after raising $100M in funding QumulusAI’s direct listing: Accelerating the neocloud for enterprise AI",
+          "Buchan said Valarian’s platform is needed because the intelligence layer of western nations is consolidating, contract by contract, into systems that they have no control over."
+        ],
+        "checkedAt": "2026-07-27T06:50:31.407018+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "주권 AI 인프라 스타트업 Valarian, 국가의 국방 시스템 보안을 돕기 위해 5천만 달러 모금",
+        "summaryLines": [
+          "2025년 유럽 국방비는 3,920억 유로(약 4,470억 달러)에 달한 것으로 알려졌으며, 그 중 상당 부분이 현대 AI 기반 시스템에 사용되었음",
+          "Spectro Cloud는 QumulusAI의 직접 상장 자금으로 1억 달러를 모금한 후 AI 인프라 관리를 용이하게 하려고 함 · 엔터프라이즈 AI를 위한 네오클라우드 가속화",
+          "Buchan은 서방 국가의 정보 계층이 계약별로 통제할 수 없는 시스템으로 통합하고 있기 때문에 Valarian의 플랫폼이 필요하다고 말했음"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "주권 AI 인프라 스타트업 Valarian, 국가의 국방 시스템 보안을 돕기 위해 5천만 달러 모금",
+      "summaryLinesKo": [
+        "2025년 유럽 국방비는 3,920억 유로(약 4,470억 달러)에 달한 것으로 알려졌으며, 그 중 상당 부분이 현대 AI 기반 시스템에 사용되었음",
+        "Spectro Cloud는 QumulusAI의 직접 상장 자금으로 1억 달러를 모금한 후 AI 인프라 관리를 용이하게 하려고 함 · 엔터프라이즈 AI를 위한 네오클라우드 가속화",
+        "Buchan은 서방 국가의 정보 계층이 계약별로 통제할 수 없는 시스템으로 통합하고 있기 때문에 Valarian의 플랫폼이 필요하다고 말했음"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
     },
     {
       "date": "2026-07-13",
@@ -10063,7 +10259,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -10122,7 +10318,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -10160,7 +10356,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-26T22:28:28.434Z",
+        "checkedAt": "2026-07-27T06:49:21.480Z",
         "originalUrl": "https://money.usnews.com/investing/news/articles/2026-07-10/sk-hynix-ceo-sees-worst-ever-memory-supply-shortage-in-2027-says-demand-to-outstrip-supply-beyond-2030",
         "error": "This operation was aborted"
       }
@@ -10200,7 +10396,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -10298,7 +10494,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -10447,7 +10643,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -10544,7 +10740,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -10643,7 +10839,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -10675,7 +10871,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-26T22:28:28.979Z",
+        "checkedAt": "2026-07-27T06:49:21.613Z",
         "originalUrl": "https://www.axios.com/2026/06/25/trump-administration-openai-gpt-model-release",
         "error": "HTTP 403"
       }
@@ -10697,7 +10893,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -10729,7 +10925,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-26T22:28:29.035Z",
+        "checkedAt": "2026-07-27T06:49:21.838Z",
         "originalUrl": "https://www.axios.com/2026/06/18/openai-devices-ha-thai",
         "error": "HTTP 403"
       }
@@ -10749,7 +10945,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -10904,7 +11100,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11060,7 +11256,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11157,7 +11353,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11313,7 +11509,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11614,7 +11810,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11657,7 +11853,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-26T22:28:29.467Z",
+        "checkedAt": "2026-07-27T06:49:22.103Z",
         "originalUrl": "https://www.globenewswire.com/Error/Index?error=1",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -11678,7 +11874,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11854,7 +12050,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11951,7 +12147,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12102,7 +12298,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12200,7 +12396,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12298,7 +12494,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12433,7 +12629,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-26T22:30:04.161Z",
+        "checkedAt": "2026-07-27T06:50:44.469Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12451,7 +12647,7 @@
           "Try Claude Try Claude Try Claude Learn more about Claude About Claude Overview Log in to Claude Log in to Claude Log in to Claude Download app Download app Download app AI will have a vast impact on the world.",
           "At Anthropic, we build AI to serve humanity’s long-term well-being."
         ],
-        "checkedAt": "2026-07-26T22:29:56.388840+00:00",
+        "checkedAt": "2026-07-27T06:50:31.407837+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -13546,6 +13742,19 @@
       "sourceBacked": 94,
       "sourceExcerpt": 90,
       "localized": 96,
+      "localizationFallback": 3,
+      "limited": 5,
+      "freshStocks": 25,
+      "status": "ok"
+    },
+    {
+      "generatedAt": "2026-07-27T06:50:44.469Z",
+      "newsGeneratedAt": "2026-07-27T06:49:43.933Z",
+      "stocksGeneratedAt": "2026-07-27T06:49:16.771Z",
+      "articles": 101,
+      "sourceBacked": 96,
+      "sourceExcerpt": 92,
+      "localized": 98,
       "localizationFallback": 3,
       "limited": 5,
       "freshStocks": 25,
