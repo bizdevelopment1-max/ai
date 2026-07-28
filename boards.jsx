@@ -1643,6 +1643,28 @@ function BizModelBoard({ companies, cats, sectionRef, theme, articles }) {
         })}
       </div>
       <div className="pricing-tracker">
+        <div className="pt-head"><h3>수직통합 신사업 실사례 — 모델사가 자회사·합작으로 AI 서비스에 직접 진입</h3><span>파운데이션 모델사가 모델 판매를 넘어 앱·배포·컨설팅 계층으로 내려오는 최신 사례 · 하단에 기사 기반 신호 누적</span></div>
+        <div className="pt-table">
+          <div className="pt-row pt-hrow"><span>업체·벤처</span><span>구조</span><span>규모·투자</span><span>서비스 영역 · 출처</span></div>
+          {[
+            { who: "OpenAI — Deployment Co.(DeployCo)", struct: "과반 소유·지배 자회사", size: "초기 40억달러+ · M&A 롤업", svc: "기업 AI 도입·구축 컨설팅 — TPG·Bain 등 19개 파트너", tone: "native", href: "https://aibusiness.com/generative-ai/openai-launches-ai-consulting-company-anthropic" },
+            { who: "Anthropic — 엔터프라이즈 합작사", struct: "소수지분 조인트벤처", size: "기업가치 15억달러 · 3사 각 3억달러", svc: "기업 AI 서비스 배포 — Blackstone·H&F·Goldman 창립 파트너", tone: "software", href: "https://techcrunch.com/2026/05/04/anthropic-and-openai-are-both-launching-joint-ventures-for-enterprise-ai-services/" },
+            { who: "모델사 공통 — 앱·툴 수직통합", struct: "인수·분사(M&A)", size: "개발툴·에이전트 계층 흡수", svc: "'인프라 공급자가 곧 경쟁자로' — 모델→앱 가치사슬 장악", tone: "datacenter", href: "https://agentmarketcap.ai/blog/2026/04/09/foundation-model-agent-builder-threat-openai-anthropic-google-vertical-integration" },
+          ].map((r, i) => {
+            const ac = (catMap[r.tone] || {}).accent || "var(--accent)";
+            return (
+              <div className="pt-row" key={i}>
+                <span className="pt-model"><i style={{ background: ac }} />{r.who}</span>
+                <span className="pt-players">{r.struct}</span>
+                <span className="pt-price">{r.size}</span>
+                <span className="pt-note">{r.svc} · <a href={r.href} target="_blank" rel="noopener" style={{ color: ac }}>출처</a></span>
+              </div>
+            );
+          })}
+        </div>
+        <p className="pt-foot"><b>시장 맥락:</b> 모델사는 API 판매만으로는 가치사슬 하단(앱·배포·서비스)의 마진을 놓친다는 판단 아래 <b>자회사·합작</b>으로 직접 서비스에 진입 중 — Anthropic은 2026년 매출 목표를 <b>약 260억달러</b>로 제시했고, 엔터프라이즈 AI 서비스·버티컬 애플리케이션이 성장 축이다. 아래 '기사 기반 시그널'과 신사업 시장 탭에 관련 시장 규모가 계속 누적된다.</p>
+      </div>
+      <div className="pricing-tracker">
         <div className="pt-head"><h3>수직통합 복제 경로 — 모델사의 '자체 서비스화'를 누가 어떻게 따라 하나</h3><span>OpenAI·Anthropic의 자회사·분사형 버티컬 AI 서비스 진입에 대응하는 4개 주체별 진입 방식</span></div>
         <div className="pt-table">
           <div className="pt-row pt-hrow"><span>주체 유형</span><span>복제 방식</span><span>핵심 자산·해자</span><span>단말 제조사 시사점</span></div>
