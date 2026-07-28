@@ -68,6 +68,13 @@ const QUERIES = [
   { id: "labs-spinoff", group: "service", verticalId: "service-0", topic: "AI 랩 자회사·분사 서비스", query: "AI lab subsidiary spinoff consumer enterprise service launch" },
   { id: "ai-native-saas", group: "service", verticalId: "service-0", topic: "AI 네이티브 버티컬 SaaS 시장", query: "AI native vertical SaaS application market size forecast" },
   { id: "labs-consumer", group: "assistant", verticalId: "assistant-0", topic: "모델사 소비자 앱·구독 매출", query: "OpenAI ChatGPT consumer app subscription revenue market" },
+  // ── 엔터프라이즈 AI 서비스·컨설팅·구축(Forward-Deployed) 신사업 — 딜·시장·모델 발굴 ──
+  { id: "ode-anthropic", group: "service", verticalId: "service-0", topic: "Ode with Anthropic 엔터프라이즈 서비스", query: "Ode with Anthropic enterprise AI services Blackstone joint venture revenue" },
+  { id: "openai-deployco", group: "service", verticalId: "service-0", topic: "OpenAI Deployment Company", query: "OpenAI Deployment Company TPG Tomoro enterprise AI valuation" },
+  { id: "fde-model", group: "service", verticalId: "service-0", topic: "포워드 디플로이드 엔지니어 모델", query: "forward deployed engineer enterprise AI services market Palantir model" },
+  { id: "ent-agentic", group: "service", verticalId: "service-0", topic: "엔터프라이즈 에이전틱 AI 시장", query: "enterprise agentic AI market size forecast deployment implementation" },
+  { id: "ai-consulting", group: "service", verticalId: "service-0", topic: "AI 컨설팅·구축 서비스 시장", query: "AI consulting implementation services market size Accenture forecast" },
+  { id: "ai-services-si", group: "service", verticalId: "service-0", topic: "AI 도입 SI·파트너 생태계", query: "enterprise Claude deployment system integrator Wipro Cognizant partner" },
 ];
 
 const quantified = text => {

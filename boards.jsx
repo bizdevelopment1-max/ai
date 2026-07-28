@@ -1547,16 +1547,16 @@ const VI_ACCENT = { native: "#7A38D6", datacenter: "#0891B2", device: "#16A34A",
 // 두 플래그십 딜(OpenAI DeployCo / Anthropic JV) 상세 — 구조·수치·파트너·모델·기사·인사이트.
 const NEWBIZ_DEALS = [
   {
-    id: "openai-deployco", name: "OpenAI — The Deployment Company (DeployCo)", accent: "#7A38D6",
-    date: "2026.05", badge: "과반 지배 자회사",
+    id: "openai-deployco", name: "OpenAI Deployment Company", accent: "#7A38D6",
+    date: "2026.05.11", badge: "과반 지배 자회사",
     metrics: [
-      ["조달·밸류", "40억달러+ 조달 · 기업가치 100억달러"],
-      ["소유 구조", "OpenAI 과반 소유·지배(슈퍼보팅 주식) · 델라웨어 JV"],
-      ["재무 투자자(19)", "TPG · Brookfield · Advent · Bain Capital · Dragoneer · SoftBank"],
+      ["조달·밸류", "40억달러+ 조달 · 법인가치 약 140억달러"],
+      ["소유 구조", "OpenAI 과반 소유·지배(슈퍼보팅 주식) · 델라웨어 법인"],
+      ["재무 투자자(19)", "TPG(주도) · Advent · Bain Capital · Brookfield · Dragoneer · SoftBank"],
       ["컨설팅 공동투자자", "McKinsey · Bain & Company · Capgemini(경쟁자→co-investor)"],
       ["수익 보장", "PE 백커에 5년간 연 17.5% 우선 수익 보장(우선주)"],
-      ["운영 모델", "포워드 디플로이드 엔지니어(Palantir식)가 고객사 내부 상주"],
-      ["인수(M&A)", "Tomoro 인수 → 숙련 엔지니어 ~150명 합류, 수개월 내 종료"],
+      ["창립 인수", "Tomoro(Edinburgh) 인수 → FDE ~150명 · 12개월 매출 10배"],
+      ["Tomoro 고객", "Mattel · Red Bull · Tesco · NBA"],
       ["타깃 산업", "헬스케어 · 물류 · 제조 · 금융 · 리테일"],
     ],
     facts: [
@@ -1566,36 +1566,36 @@ const NEWBIZ_DEALS = [
     ],
     insight: "모델 커모디티화에 대비해 마진이 남는 '배포·서비스' 계층을 직접 장악. PE 자금으로 자본 리스크를 분산하고, 백커의 포트폴리오사를 captive 유통망으로 쓰는 무거운(지배형) 수직통합.",
     articles: [
-      { t: "OpenAI Finalizes $10B Venture With PE Firms to Deploy AI", s: "Bloomberg", u: "https://www.bloomberg.com/news/articles/2026-05-04/openai-finalizes-10-billion-joint-venture-with-pe-firms-to-deploy-ai" },
+      { t: "OpenAI Launches $4B Deployment Company With TPG, Buys Tomoro", s: "Let's Data Science", u: "https://letsdatascience.com/blog/openai-deployment-company-4b-tpg-tomoro-may-11-2026" },
+      { t: "OpenAI Deployment Company: $4B Enterprise AI Push", s: "Digital Applied", u: "https://www.digitalapplied.com/blog/openai-deployment-company-4b-enterprise-push" },
+      { t: "OpenAI Finalizes ~$14B Venture With PE Firms to Deploy AI", s: "Bloomberg", u: "https://www.bloomberg.com/news/articles/2026-05-04/openai-finalizes-10-billion-joint-venture-with-pe-firms-to-deploy-ai" },
       { t: "OpenAI Launches $4B Deployment Venture, Recruits McKinsey·Capgemini", s: "TechTimes", u: "https://www.techtimes.com/articles/316726/20260516/openai-launches-4-billion-enterprise-ai-deployment-venture-recruits-mckinsey-capgemini.htm" },
-      { t: "OpenAI launches $4bn Deployment Company with TPG, Tomoro", s: "The Next Web", u: "https://thenextweb.com/news/openai-deployment-company-4bn-tpg-tomoro" },
-      { t: "OpenAI Launches DeployCo, a $4B-Backed AI Consulting Powerhouse", s: "eWeek", u: "https://www.eweek.com/news/openai-deployco-enterprise-ai-consulting/" },
     ],
   },
   {
-    id: "anthropic-jv", name: "Anthropic — 엔터프라이즈 AI 서비스 합작사", accent: "#DB2777",
+    id: "anthropic-jv", name: "Ode with Anthropic", accent: "#DB2777",
     date: "2026.05.04", badge: "소수지분 합작(JV)",
     metrics: [
       ["밸류·출자", "기업가치 15억달러 · Anthropic·Blackstone·H&F 각 3억달러"],
-      ["소유 구조", "Anthropic은 소수 파트너(비지배 지분)"],
+      ["소유 구조", "Anthropic은 소수 파트너(비지배 지분) · 브랜드 'Ode with Anthropic'"],
       ["창립 파트너", "Blackstone · Hellman & Friedman · Goldman Sachs"],
       ["추가 백커", "Apollo · General Atlantic · GIC · Leonard Green · Sequoia"],
-      ["FDE 명칭", "Applied AI Engineer — 안전성·리서치 문화를 반영한 포워드 디플로이드 직군"],
-      ["딜리버리", "고객사 multi-week 스프린트 상주 → 프롬프트·evals 설계 → 에이전트 프로덕션 배포"],
+      ["인력", "현재 엔지니어 ~100명 · Anthropic 내부 Applied AI팀과 공동 작업"],
+      ["FDE 명칭·딜리버리", "Applied AI Engineer가 고객사 상주 → 밑바닥부터 커스텀 AI 시스템 구축"],
       ["타깃 산업", "금융·헬스케어·법률·정부 등 규제 산업(PE 보유 중견기업)"],
     ],
     facts: [
+      "핵심 주장: '엔터프라이즈 AI의 가치는 모델이 아니라 구현(implementation)에 있다' — Claude를 핵심 업무에 직접 이식",
       "목표는 라이선스 판매가 아니라 '핵심 비즈니스 프로세스 재설계 + 프로덕션 시스템 구축' — PoC에서 실서비스로 전환",
-      "Anthropic 분석: 가장 큰 가치를 얻는 조직은 라이선스를 많이 산 곳이 아니라 '지식 노동의 흐름(워크플로)을 재설계'한 곳",
       "Wipro·Cognizant·ServiceNow·phData 등 SI 파트너가 Claude FDE를 대량 훈련·공급해 배포 인력을 확장",
       "OpenAI와 같은 날(5/4) 발표했지만 지배구조는 정반대 — 소수지분 vs 과반 지배",
     ],
     insight: "자본·지배는 덜 쥐고 파트너십으로 확장하는 가벼운 수직통합. 안전성 브랜드 + 규제산업 침투 + SI 파트너 FDE 풀로 배포를 스케일 — OpenAI보다 자본 부담이 작은 구조.",
     articles: [
-      { t: "Anthropic teams with Goldman, Blackstone on $1.5B AI venture targeting PE-owned firms", s: "CNBC", u: "https://www.cnbc.com/2026/05/04/anthropic-goldman-blackstone-ai-venture.html" },
+      { t: "Anthropic and Blackstone's $1.5B JV 'Ode' bets AI value lives in implementation, not models", s: "MarketScale", u: "https://www.marketscale.com/industries/software-and-technology/anthropic-and-blackstones-15b-joint-venture-ode-bets-enterprise-ai-value-lives-in-implementation-not-models" },
       { t: "Building a new enterprise AI services company (공식 발표)", s: "Anthropic", u: "https://www.anthropic.com/news/enterprise-ai-services-company" },
+      { t: "Anthropic teams with Goldman, Blackstone on $1.5B AI venture targeting PE-owned firms", s: "CNBC", u: "https://www.cnbc.com/2026/05/04/anthropic-goldman-blackstone-ai-venture.html" },
       { t: "Anthropic's Applied AI Engineers: The Forward-Deployed Function Behind Claude", s: "Perspective AI", u: "https://getperspective.ai/blog/anthropic-applied-ai-engineers-forward-deployed-claude-enterprise" },
-      { t: "Wipro launches Applied AI Center of Excellence for Claude Models, FDE talent pool", s: "Wipro", u: "https://www.wipro.com/newsroom/press-releases/2026/wipro-advances-enterprise-ai-leadership-with-an-applied-ai-center-of-excellence-for-claude-models-powered-by-anthropic/" },
       { t: "Anthropic takes shot at consulting industry in JV with Wall Street giants", s: "Fortune", u: "https://fortune.com/2026/05/04/anthropic-claude-consulting-industry-joint-venture-blackstone-goldman-sachs/" },
     ],
   },
@@ -1656,13 +1656,12 @@ function NewBizDeepDive() {
         <div className="nbz-take-col">
           <em>차이</em>
           <ul>
-            <li>OpenAI = 과반 지배 · 밸류 100억달러 · 연 17.5% 수익 보장 → 무거운 수직통합</li>
-            <li>Anthropic = 소수지분 · 밸류 15억달러 → 가벼운 파트너십형</li>
+            <li>OpenAI = 과반 지배 · 법인가치 ~140억달러 · 연 17.5% 수익 보장 → 무거운 수직통합</li>
+            <li>Ode(Anthropic) = 소수지분 · 밸류 15억달러 · 엔지니어 ~100명 → 가벼운 파트너십형</li>
             <li>OpenAI는 컨설팅사까지 co-investor로 흡수 / Anthropic은 컨설팅과 직접 경쟁</li>
           </ul>
         </div>
       </div>
-      <p className="nbz-device"><b>단말 제조사 시사점</b> 진짜 수익은 '모델'이 아니라 <b>배포(deployment gap)</b> 계층에 있다 — 기업이 AI를 실제로 돌리게 만드는 인재·구축·운영이 병목이자 마진이다. 단말 제조사는 <b>수억 대 기기·OS·결제·개인 컨텍스트</b>라는 유통망을 이미 보유하므로, 온디바이스·컨슈머 AI에 '포워드 디플로이드' 서비스 조직을 <b>자회사·JV</b>로 세우고 파운데이션 모델은 <b>오픈·파트너 모델로 조달</b>하면 동일한 플레이가 가능하다. 자본은 파트너·PE와 공유해 리스크를 격리한다.</p>
     </div>
   );
 }
@@ -1694,8 +1693,8 @@ function AIConsultingBuildSection() {
   return (
     <div className="acb">
       <div className="acb-head">
-        <h3>AI 컨설팅·엔터프라이즈 구축 신사업 — 시장·경제학·진입 전략</h3>
-        <p>모델은 커모디티화되고, 돈은 '기업이 AI를 실제로 돌리게 만드는' 도입·구축·운영(deployment) 계층으로 이동한다. 그 시장 규모·수익 구조·경쟁 지형과 단말 제조사의 진입 경로.</p>
+        <h3>AI 컨설팅·엔터프라이즈 구축 시장 — 규모·경쟁·과금</h3>
+        <p>모델은 커모디티화되고, 돈은 '기업이 AI를 실제로 돌리게 만드는' 도입·구축·운영(deployment) 계층으로 이동한다. 계층별 시장 규모·경쟁 지형·수요 실증·과금 구조.</p>
       </div>
 
       <div className="acb-grid3">
@@ -1707,16 +1706,6 @@ function AIConsultingBuildSection() {
             <a className="acb-src" href={l.u} target="_blank" rel="noopener">{l.src}</a>
           </div>
         ))}
-      </div>
-
-      <div className="acb-fde">
-        <div className="acb-fde-head"><b>포워드 디플로이드 엔지니어(FDE) 경제학</b><span>Palantir가 만들고 모델사가 복제한 배포 모델</span></div>
-        <ul className="acb-fde-list">
-          <li><em>작동</em>고객사에 엔지니어를 상주시켜 <b>내부에서</b> 구축·운영 — FDE는 로드맵 상류(upstream)에서, 컨설턴트는 계약 하류(downstream)에서 움직인다</li>
-          <li><em>수익원</em>선투자 배포비용이 <b>좌석 구독이 아니라 무제한·확장되는 토큰/소비 annuity</b>를 산다 — 엔지니어가 소비를 극대화</li>
-          <li><em>마진</em>Anthropic 추론 마진 <b>~70%</b>(전년 38%→) — 고마진 반복 소비가 상주 비용을 정당화. 단 전문서비스가 매출 <b>18~20%</b>면 마진 희석 리스크</li>
-          <li><em>실적</em>Palantir는 FDE 모델로 <b>640% 주가 수익</b> · 제품 발굴 메커니즘으로도 작동(단순 용역 아님)</li>
-        </ul>
       </div>
 
       <div className="acb-camps">
@@ -1752,8 +1741,6 @@ function AIConsultingBuildSection() {
           ))}
         </div>
       </div>
-
-      <p className="nbz-device"><b>단말 제조사 진입 플레이북</b> ① <b>자산</b> — 기기 fleet·MDM(모바일 단말 관리)·보안·유통·현장 서비스 채널을 이미 보유. ② <b>진입</b> — 기업 디바이스 fleet를 AI로 전환하는 <b>온디바이스·엣지 구축 서비스</b>에 FDE형 조직을 자회사·JV로 신설. ③ <b>모델 조달</b> — 파운데이션 모델은 오픈·파트너로 확보(자체 개발 불필요). ④ <b>과금</b> — 초기 구축비 + <b>디바이스·소비 기반 annuity</b> + 아웃컴 성공보수 조합. ⑤ <b>차별화</b> — 클라우드 없이도 도는 <b>온디바이스 프라이버시·오프라인 구동</b>은 규제·현장 산업에서 모델사·SI가 못 주는 해자.</p>
     </div>
   );
 }
@@ -1768,7 +1755,7 @@ const FDA_STEPS = [
 ];
 const FDA_NAMING = [
   ["Anthropic", "Applied AI Engineer", "안전성·리서치 문화 반영 · 규제산업(금융·헬스·법률·정부) 집중 · SI 파트너 FDE 풀로 확장", "#DB2777"],
-  ["OpenAI", "Forward-Deployed Engineer / DeployCo", "과반 지배 자회사(밸류 100억달러) · Tomoro 인수로 ~150명 · PE 포트폴리오 전속 유통", "#7A38D6"],
+  ["OpenAI", "Forward-Deployed Engineer / Deployment Co.", "과반 지배 자회사(법인가치 ~140억달러) · Tomoro 인수로 ~150명 · PE 포트폴리오 전속 유통", "#7A38D6"],
   ["Palantir", "Forward-Deployed Engineer(원조)", "정부 앵커 + 상업 확장 · 플랫폼(Foundry/AIP)으로 학습을 제품에 재사용", "#0891B2"],
 ];
 const FDA_PARTNERS = [
@@ -1797,6 +1784,16 @@ function ForwardDeployedAIModel() {
         ))}
       </div>
 
+      <div className="acb-fde">
+        <div className="acb-fde-head"><b>FDE 유닛 이코노믹스 — 왜 상주 비용이 정당화되나</b><span>선투자 배포비 → 반복 소비 매출로 회수</span></div>
+        <ul className="acb-fde-list">
+          <li><em>위치</em>FDE는 로드맵 상류(upstream)에서 <b>내부 구축</b>, 컨설턴트는 계약 하류(downstream) — 제품 발굴 메커니즘도 겸함</li>
+          <li><em>수익원</em>선투자 배포비용이 <b>좌석 구독이 아니라 무제한·확장되는 토큰/소비 annuity</b>를 산다 — 엔지니어가 소비를 극대화</li>
+          <li><em>마진</em>Anthropic 추론 마진 <b>~70%</b>(전년 38%→) — 고마진 반복 소비가 상주 비용을 정당화. 단 전문서비스가 매출 <b>18~20%</b>면 마진 희석 리스크</li>
+          <li><em>실적</em>Palantir는 FDE 모델로 <b>640% 주가 수익</b> · 배포 학습을 플랫폼에 재사용해 다음 고객 비용을 절감</li>
+        </ul>
+      </div>
+
       <div className="pricing-tracker fda-naming">
         <div className="pt-head"><h3>3사 Forward-Deployed 직군 — 같은 모델, 다른 프레이밍</h3><span>명칭·전략 차이 · 본질은 '상주 구축'으로 동일</span></div>
         <div className="pt-table">
@@ -1818,20 +1815,13 @@ function ForwardDeployedAIModel() {
             <div className="fda-partner" key={i}><b>{p[0]}</b><span>{p[1]}</span></div>
           ))}
         </div>
-        <p className="fda-partners-note">출처: <a href="https://getperspective.ai/blog/anthropic-applied-ai-engineers-forward-deployed-claude-enterprise" target="_blank" rel="noopener">Perspective AI</a> · <a href="https://www.wipro.com/newsroom/press-releases/2026/wipro-advances-enterprise-ai-leadership-with-an-applied-ai-center-of-excellence-for-claude-models-powered-by-anthropic/" target="_blank" rel="noopener">Wipro</a> · <a href="https://www.phdata.io/partners/anthropic/" target="_blank" rel="noopener">phData</a></p>
+        <p className="fda-partners-note">출처: <a href="https://getperspective.ai/blog/anthropic-applied-ai-engineers-forward-deployed-claude-enterprise" target="_blank" rel="noopener">Perspective AI</a> · <a href="https://www.wipro.com/newsroom/press-releases/2026/wipro-advances-enterprise-ai-leadership-with-an-applied-ai-center-of-excellence-for-claude-models-powered-by-anthropic/" target="_blank" rel="noopener">Wipro</a> · <a href="https://www.phdata.io/partners/anthropic/" target="_blank" rel="noopener">phData</a> · <a href="https://www.mindstudio.ai/blog/palantir-forward-deployed-engineer-model-anthropic-openai" target="_blank" rel="noopener">MindStudio</a></p>
       </div>
-
-      <p className="nbz-device"><b>단말 제조사 적용</b> Forward-Deployed AI의 핵심은 <b>'상주 → 프로세스 재설계 → 프로덕션 구축 → 소비 기반 매출'</b> 사이클이다. 단말 제조사는 파운데이션 모델을 만들 필요 없이, ① 오픈·파트너 모델을 조달하고 ② <b>온디바이스 특화 FDE 조직</b>(자회사·JV)이 기업 현장에 상주해 ③ 디바이스 fleet의 업무 프로세스를 온디바이스 AI로 재설계·구축하고 ④ 구축비 + 디바이스·소비 annuity로 회수하면 된다. SI 파트너와 공동 FDE 풀을 만들면 배포 인력도 빠르게 확장 가능하다.</p>
     </div>
   );
 }
 
 function VerticalIntegrationTables() {
-  const cases = [
-    { who: "OpenAI — Deployment Co.(DeployCo)", struct: "과반 소유·지배 자회사", size: "초기 40억달러+ · M&A 롤업", svc: "기업 AI 도입·구축 컨설팅 — TPG·Bain 등 19개 파트너", tone: "native", href: "https://aibusiness.com/generative-ai/openai-launches-ai-consulting-company-anthropic" },
-    { who: "Anthropic — 엔터프라이즈 합작사", struct: "소수지분 조인트벤처", size: "기업가치 15억달러 · 3사 각 3억달러", svc: "기업 AI 서비스 배포 — Blackstone·H&F·Goldman 창립 파트너", tone: "software", href: "https://techcrunch.com/2026/05/04/anthropic-and-openai-are-both-launching-joint-ventures-for-enterprise-ai-services/" },
-    { who: "모델사 공통 — 앱·툴 수직통합", struct: "인수·분사(M&A)", size: "개발툴·에이전트 계층 흡수", svc: "'인프라 공급자가 곧 경쟁자로' — 모델→앱 가치사슬 장악", tone: "datacenter", href: "https://agentmarketcap.ai/blog/2026/04/09/foundation-model-agent-builder-threat-openai-anthropic-google-vertical-integration" },
-  ];
   const paths = [
     { who: "파운데이션 모델사", how: "자회사·분사(spin-off)로 앱·소비자/기업 서비스를 모델 위에 직접 구축", asset: "최신 모델·추론 원가·연구 인재", impl: "가장 빠르게 앱 계층까지 장악 — 단말은 이 계층에 종속되지 않도록 자체 서비스 축 필요", tone: "native" },
     { who: "클라우드·플랫폼", how: "모델 호스팅 + 버티컬 SaaS를 사내/합작으로 병행(멀티모델 중립)", asset: "컴퓨트·유통·기업 고객 계약", impl: "인프라는 빌려 쓰되, 사용자 접점·과금은 단말이 직접 소유해야 마진 확보", tone: "datacenter" },
@@ -1840,24 +1830,6 @@ function VerticalIntegrationTables() {
   ];
   return (
     <React.Fragment>
-      <div className="pricing-tracker">
-        <div className="pt-head"><h3>수직통합 신사업 실사례 — 모델사가 자회사·합작으로 AI 서비스에 직접 진입</h3><span>파운데이션 모델사가 모델 판매를 넘어 앱·배포·컨설팅 계층으로 내려오는 최신 사례 · 하단에 기사 기반 신호 누적</span></div>
-        <div className="pt-table">
-          <div className="pt-row pt-hrow"><span>업체·벤처</span><span>구조</span><span>규모·투자</span><span>서비스 영역 · 출처</span></div>
-          {cases.map((r, i) => {
-            const ac = VI_ACCENT[r.tone] || "var(--accent)";
-            return (
-              <div className="pt-row" key={i}>
-                <span className="pt-model"><i style={{ background: ac }} />{r.who}</span>
-                <span className="pt-players">{r.struct}</span>
-                <span className="pt-price">{r.size}</span>
-                <span className="pt-note">{r.svc} · <a href={r.href} target="_blank" rel="noopener" style={{ color: ac }}>출처</a></span>
-              </div>
-            );
-          })}
-        </div>
-        <p className="pt-foot"><b>시장 맥락:</b> 모델사는 API 판매만으로는 가치사슬 하단(앱·배포·서비스)의 마진을 놓친다는 판단 아래 <b>자회사·합작</b>으로 직접 서비스에 진입 중 — Anthropic은 2026년 매출 목표를 <b>약 260억달러</b>로 제시했고, 엔터프라이즈 AI 서비스·버티컬 애플리케이션이 성장 축이다. 아래 '기사 기반 시그널'과 신사업 시장 탭에 관련 시장 규모가 계속 누적된다.</p>
-      </div>
       <div className="pricing-tracker">
         <div className="pt-head"><h3>수직통합 복제 경로 — 모델사의 '자체 서비스화'를 누가 어떻게 따라 하나</h3><span>OpenAI·Anthropic의 자회사·분사형 버티컬 AI 서비스 진입에 대응하는 4개 주체별 진입 방식</span></div>
         <div className="pt-table">
@@ -2344,10 +2316,10 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
             <p>OpenAI·Anthropic이 자회사·합작으로 AI 서비스에 직접 진입하는 수직통합 신사업 — 실사례·딜 심층분석·Forward-Deployed AI 모델·컨설팅/구축 시장·단말 제조사 진입 전략</p>
           </div>
         </div>
-        <VerticalIntegrationTables />
         <NewBizDeepDive />
         <ForwardDeployedAIModel />
         <AIConsultingBuildSection />
+        <VerticalIntegrationTables />
         <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
           dataVersion={dataVersion} title="AI 수익화·신사업 모델 시그널" sub="수직통합·자체 서비스 등 7개 수익화 유형 · 원문 확인 카드만 누적 표시" />
       </AnimCtx.Provider>
