@@ -30,6 +30,25 @@ const QUERIES = [
   { id: "creative", group: "creative", verticalId: "creative-0", topic: "생성형 콘텐츠·카메라", query: "generative AI content creation consumer survey market size" },
   { id: "service", group: "service", verticalId: "service-0", topic: "AI 서비스 플랫폼", query: "AI healthcare smart home fintech consumer survey market size" },
   { id: "trust", group: "trust", verticalId: "trust-0", topic: "AI 신뢰·보안 소비자 조사", query: "AI privacy trust consumer survey respondents" },
+  // ── DB 확장(신사업 시장 사이즈 + 소비자 조사) — 41개 버티컬 커버리지 확대, 계속 누적 ──
+  { id: "ai-health", group: "service", verticalId: "service-0", topic: "AI 헬스케어 시장·조사", query: "AI healthcare diagnosis market size forecast consumer survey" },
+  { id: "ai-fintech", group: "service", verticalId: "service-2", topic: "AI 핀테크·결제 시장", query: "AI fintech mobile payment market size forecast adoption survey" },
+  { id: "ai-edu", group: "service", verticalId: "service-3", topic: "AI 에듀테크 시장", query: "AI education edtech market size forecast learner survey" },
+  { id: "ai-mentalhealth", group: "service", verticalId: "service-38", topic: "AI 멘탈헬스·웰빙", query: "AI mental health wellness app market size forecast users survey" },
+  { id: "ai-weather", group: "service", verticalId: "service-30", topic: "AI 날씨·환경 예보", query: "AI weather forecasting app market size forecast adoption" },
+  { id: "ai-companion", group: "assistant", verticalId: "assistant-2", topic: "AI 컴패니언·챗봇 조사", query: "AI companion chatbot consumer adoption survey market size" },
+  { id: "ai-translation", group: "assistant", verticalId: "assistant-4", topic: "AI 통역·번역 시장", query: "AI translation interpretation market size forecast users" },
+  { id: "ai-travel", group: "assistant", verticalId: "assistant-39", topic: "AI 여행 어시스턴트", query: "AI travel assistant market size forecast traveler survey" },
+  { id: "ai-caption", group: "assistant", verticalId: "assistant-37", topic: "AI 실시간 자막·접근성", query: "AI live captioning accessibility market size forecast" },
+  { id: "ai-earbuds", group: "wearxr", verticalId: "wearxr-35", topic: "AI 이어버드·히어러블", query: "AI earbuds hearables market size forecast shipments consumer survey" },
+  { id: "ai-pet", group: "wearxr", verticalId: "wearxr-40", topic: "AI 반려동물 웨어러블", query: "AI pet health wearable market size forecast adoption" },
+  { id: "ai-robotics", group: "wearxr", verticalId: "wearxr-0", topic: "휴머노이드·물리 AI 시장", query: "humanoid robot physical AI market size forecast shipments" },
+  { id: "ai-scanner", group: "creative", verticalId: "creative-29", topic: "AI 문서 스캐너·OCR", query: "AI document scanner OCR app market size forecast users" },
+  { id: "ai-carkey", group: "trust", verticalId: "trust-36", topic: "스마트폰 디지털 차키", query: "smartphone digital car key UWB NFC market size forecast adoption" },
+  { id: "ai-scam", group: "trust", verticalId: "trust-32", topic: "AI 스팸·스캠 통화 탐지", query: "AI spam scam call detection market size forecast consumer survey" },
+  { id: "ai-deepfake", group: "trust", verticalId: "trust-1", topic: "딥페이크 탐지 시장", query: "deepfake detection market size forecast enterprise survey" },
+  { id: "ai-wtp", group: "assistant", verticalId: "assistant-0", topic: "AI 구독 지불의사 조사", query: "consumers willing to pay AI features subscription survey percent" },
+  { id: "ai-enterprise", group: "assistant", verticalId: "assistant-0", topic: "기업 AI 도입 조사", query: "enterprise generative AI adoption survey ROI market size" },
 ];
 
 const quantified = text => {
@@ -141,6 +160,8 @@ async function main() {
         failures++;
         console.error(`[market-db] ${config.id}/${locale.id}: ${error.message}`);
       }
+      // 쿼리 확대(8→26)에 따른 요청 페이싱 — Google News RSS 레이트리밋 회피(직렬 ~4req/s 이하)
+      await new Promise(resolve => setTimeout(resolve, Number(process.env.MARKET_PACE_MS) || 250));
     }
   }
 
