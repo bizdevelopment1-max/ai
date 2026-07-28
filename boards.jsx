@@ -1543,6 +1543,127 @@ function BigtechFlowGrid() {
 
 // 수직통합(모델사 자회사·합작) 신사업 트렌드 — 실사례 + 복제 경로. cats 의존 없이 재사용.
 const VI_ACCENT = { native: "#7A38D6", datacenter: "#0891B2", device: "#16A34A", software: "#DB2777" };
+
+// 두 플래그십 딜(OpenAI DeployCo / Anthropic JV) 상세 — 구조·수치·파트너·모델·기사·인사이트.
+const NEWBIZ_DEALS = [
+  {
+    id: "openai-deployco", name: "OpenAI — The Deployment Company (DeployCo)", accent: "#7A38D6",
+    date: "2026.05", badge: "과반 지배 자회사",
+    metrics: [
+      ["조달·밸류", "40억달러+ 조달 · 기업가치 100억달러"],
+      ["소유 구조", "OpenAI 과반 소유·지배(슈퍼보팅 주식) · 델라웨어 JV"],
+      ["재무 투자자(19)", "TPG · Brookfield · Advent · Bain Capital · Dragoneer · SoftBank"],
+      ["컨설팅 공동투자자", "McKinsey · Bain & Company · Capgemini(경쟁자→co-investor)"],
+      ["수익 보장", "PE 백커에 5년간 연 17.5% 우선 수익 보장(우선주)"],
+      ["운영 모델", "포워드 디플로이드 엔지니어(Palantir식)가 고객사 내부 상주"],
+      ["인수(M&A)", "Tomoro 인수 → 숙련 엔지니어 ~150명 합류, 수개월 내 종료"],
+      ["타깃 산업", "헬스케어 · 물류 · 제조 · 금융 · 리테일"],
+    ],
+    facts: [
+      "모델 판매가 아니라 도입·구축·운영을 대행 — OpenAI 엔지니어가 기업 내부에 상주해 프로덕션 AI 시스템을 직접 구축",
+      "PE 백커의 포트폴리오사를 전속 유통망(captive channel)으로 확보 — 대규모 영업 없이 수백 개 기업에 배포 경로 확보",
+      "McKinsey·Bain·Capgemini를 경쟁자가 아닌 공동투자자로 편입해 컨설팅 채널까지 흡수",
+    ],
+    insight: "모델 커모디티화에 대비해 마진이 남는 '배포·서비스' 계층을 직접 장악. PE 자금으로 자본 리스크를 분산하고, 백커의 포트폴리오사를 captive 유통망으로 쓰는 무거운(지배형) 수직통합.",
+    articles: [
+      { t: "OpenAI Finalizes $10B Venture With PE Firms to Deploy AI", s: "Bloomberg", u: "https://www.bloomberg.com/news/articles/2026-05-04/openai-finalizes-10-billion-joint-venture-with-pe-firms-to-deploy-ai" },
+      { t: "OpenAI Launches $4B Deployment Venture, Recruits McKinsey·Capgemini", s: "TechTimes", u: "https://www.techtimes.com/articles/316726/20260516/openai-launches-4-billion-enterprise-ai-deployment-venture-recruits-mckinsey-capgemini.htm" },
+      { t: "OpenAI launches $4bn Deployment Company with TPG, Tomoro", s: "The Next Web", u: "https://thenextweb.com/news/openai-deployment-company-4bn-tpg-tomoro" },
+      { t: "OpenAI Launches DeployCo, a $4B-Backed AI Consulting Powerhouse", s: "eWeek", u: "https://www.eweek.com/news/openai-deployco-enterprise-ai-consulting/" },
+    ],
+  },
+  {
+    id: "anthropic-jv", name: "Anthropic — 엔터프라이즈 AI 서비스 합작사", accent: "#DB2777",
+    date: "2026.05.04", badge: "소수지분 합작(JV)",
+    metrics: [
+      ["밸류·출자", "기업가치 15억달러 · Anthropic·Blackstone·H&F 각 3억달러"],
+      ["소유 구조", "Anthropic은 소수 파트너(비지배 지분)"],
+      ["창립 파트너", "Blackstone · Hellman & Friedman · Goldman Sachs"],
+      ["추가 백커", "Apollo · General Atlantic · GIC · Leonard Green · Sequoia"],
+      ["운영 모델", "Applied AI 엔지니어가 중견·PE 보유기업에 상주해 에이전트로 워크플로 재설계"],
+      ["타깃 산업", "PE 보유 포트폴리오 중견기업(규제산업 포함)"],
+    ],
+    facts: [
+      "전통 컨설팅이 아니라 Claude를 기업 워크플로에 심는 '적용(applied)' 서비스 — 커스텀 구축 + 장기 운영 지원",
+      "Wall Street·PE의 포트폴리오사를 통해 Claude 도입을 가속 — 'AI 인재 병목' 해소로 포지셔닝",
+      "OpenAI와 같은 날(5/4) 발표했지만 지배구조는 정반대 — 소수지분 vs 과반 지배",
+    ],
+    insight: "자본·지배는 덜 쥐고 파트너십으로 확장하는 가벼운 수직통합. 안전성 브랜드 + 규제산업(PE 포트폴리오) 침투를 노려, OpenAI보다 자본 부담이 작은 구조.",
+    articles: [
+      { t: "Anthropic teams with Goldman, Blackstone on $1.5B AI venture targeting PE-owned firms", s: "CNBC", u: "https://www.cnbc.com/2026/05/04/anthropic-goldman-blackstone-ai-venture.html" },
+      { t: "Building a new enterprise AI services company (공식 발표)", s: "Anthropic", u: "https://www.anthropic.com/news/enterprise-ai-services-company" },
+      { t: "Anthropic takes shot at consulting industry in JV with Wall Street giants", s: "Fortune", u: "https://fortune.com/2026/05/04/anthropic-claude-consulting-industry-joint-venture-blackstone-goldman-sachs/" },
+      { t: "Anthropic and OpenAI are both launching JVs for enterprise AI services", s: "TechCrunch", u: "https://techcrunch.com/2026/05/04/anthropic-and-openai-are-both-launching-joint-ventures-for-enterprise-ai-services/" },
+    ],
+  },
+];
+
+function NewBizDeepDive() {
+  return (
+    <div className="nbz-deep">
+      <div className="nbz-deep-head">
+        <h3>플래그십 딜 심층 분석 — 모델사가 'AI 서비스 회사'를 직접 세운다</h3>
+        <p>2026년 5월 4일, OpenAI와 Anthropic이 <b>같은 날</b> Wall Street·PE 자본으로 엔터프라이즈 AI 서비스 합작사를 발표 — 구조는 정반대다.</p>
+      </div>
+      <div className="nbz-deals">
+        {NEWBIZ_DEALS.map(d => (
+          <div className="nbz-deal" key={d.id} style={{ "--dc": d.accent }}>
+            <div className="nbz-deal-head">
+              <span className="nbz-badge">{d.badge}</span>
+              <span className="nbz-date">{d.date}</span>
+            </div>
+            <h4 className="nbz-name">{d.name}</h4>
+            <div className="nbz-metrics">
+              {d.metrics.map(([k, v], i) => (
+                <div className="nbz-metric" key={i}><em>{k}</em><span>{v}</span></div>
+              ))}
+            </div>
+            <ul className="nbz-facts">
+              {d.facts.map((f, i) => <li key={i}>{f}</li>)}
+            </ul>
+            <p className="nbz-insight"><b>인사이트</b> {d.insight}</p>
+            <div className="nbz-arts">
+              <em>관련 기사</em>
+              <ul>
+                {d.articles.map((a, i) => (
+                  <li key={i}><a href={a.u} target="_blank" rel="noopener">{a.t}</a><span>{a.s}</span></li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="nbz-market">
+        <div className="nbz-market-row">
+          <span className="nbz-market-k">AI 컨설팅·서비스 시장</span>
+          <span className="nbz-market-v">2030년 <b>약 195억달러</b>(CAGR 21.4%) · 2032년 <b>491억달러</b>(CAGR 24.1%) · 2033년 <b>2,150억달러</b> 전망</span>
+        </div>
+        <p className="nbz-market-note">기존 강자 Accenture·Deloitte·McKinsey·BCG·Palantir가 장악하던 도입·구축 시장을, 모델사가 <b>포워드 디플로이드 엔지니어</b> 모델로 직접 파고드는 구도. 출처: <a href="https://www.globenewswire.com/de/news-release/2025/08/06/3128409/0/en/AI-Consulting-Services-Market-Size-to-Hit-USD-49-11-Billion-by-2032-Driven-by-Enterprise-AI-Adoption-Custom-Strategy-and-Regulatory-Demand-SNS-Insider.html" target="_blank" rel="noopener">SNS Insider</a> · <a href="https://www.fortunebusinessinsights.com/ai-consulting-services-market-111179" target="_blank" rel="noopener">Fortune Business Insights</a></p>
+      </div>
+      <div className="nbz-take">
+        <div className="nbz-take-col">
+          <em>공통점</em>
+          <ul>
+            <li>같은 날(5/4) 발표 · Wall Street·PE 자본 동원</li>
+            <li>Palantir式 포워드 디플로이드 엔지니어 — 고객사 상주</li>
+            <li>백커의 포트폴리오사를 전속 유통망으로 확보</li>
+            <li>모델→서비스 수직통합으로 도입·운영 마진 장악</li>
+          </ul>
+        </div>
+        <div className="nbz-take-col">
+          <em>차이</em>
+          <ul>
+            <li>OpenAI = 과반 지배 · 밸류 100억달러 · 연 17.5% 수익 보장 → 무거운 수직통합</li>
+            <li>Anthropic = 소수지분 · 밸류 15억달러 → 가벼운 파트너십형</li>
+            <li>OpenAI는 컨설팅사까지 co-investor로 흡수 / Anthropic은 컨설팅과 직접 경쟁</li>
+          </ul>
+        </div>
+      </div>
+      <p className="nbz-device"><b>단말 제조사 시사점</b> 진짜 수익은 '모델'이 아니라 <b>배포(deployment gap)</b> 계층에 있다 — 기업이 AI를 실제로 돌리게 만드는 인재·구축·운영이 병목이자 마진이다. 단말 제조사는 <b>수억 대 기기·OS·결제·개인 컨텍스트</b>라는 유통망을 이미 보유하므로, 온디바이스·컨슈머 AI에 '포워드 디플로이드' 서비스 조직을 <b>자회사·JV</b>로 세우고 파운데이션 모델은 <b>오픈·파트너 모델로 조달</b>하면 동일한 플레이가 가능하다. 자본은 파트너·PE와 공유해 리스크를 격리한다.</p>
+    </div>
+  );
+}
+
 function VerticalIntegrationTables() {
   const cases = [
     { who: "OpenAI — Deployment Co.(DeployCo)", struct: "과반 소유·지배 자회사", size: "초기 40억달러+ · M&A 롤업", svc: "기업 AI 도입·구축 컨설팅 — TPG·Bain 등 19개 파트너", tone: "native", href: "https://aibusiness.com/generative-ai/openai-launches-ai-consulting-company-anthropic" },
@@ -2049,6 +2170,7 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
           <p>OpenAI·Anthropic이 자회사·합작으로 AI 서비스에 직접 진입하는 수직통합 신사업 흐름 — 실사례·복제 경로·기사 기반 시그널</p>
         </div>
         <VerticalIntegrationTables />
+        <NewBizDeepDive />
         <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
           dataVersion={dataVersion} title="AI 수익화·신사업 모델 시그널" sub="수직통합·자체 서비스 등 7개 수익화 유형 · 원문 확인 카드만 누적 표시" />
       </AnimCtx.Provider>

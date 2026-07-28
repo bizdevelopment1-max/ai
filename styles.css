@@ -1776,6 +1776,50 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .signal-newbiz-head { margin: 30px 0 4px; padding-top: 22px; border-top: 2px solid var(--line); }
 .signal-newbiz-head h2 { margin: 0; font-size: 19px; font-weight: 850; letter-spacing: -.03em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .signal-newbiz-head p { margin: 6px 0 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1.5; }
+
+/* ── 플래그십 딜 심층 분석 (OpenAI DeployCo / Anthropic JV) ── */
+.nbz-deep { margin: 18px 0 4px; }
+.nbz-deep-head h3 { margin: 0 0 4px; font-size: 15px; font-weight: 850; letter-spacing: -.02em; }
+.nbz-deep-head p { margin: 0 0 14px; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1.5; }
+.nbz-deals { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.nbz-deal { border: 1px solid var(--line); border-top: 3px solid var(--dc); border-radius: 10px; padding: 15px 16px; background: var(--panel); }
+.nbz-deal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+.nbz-badge { font-size: 10.5px; font-weight: 800; color: #fff; background: var(--dc); padding: 3px 9px; border-radius: 999px; letter-spacing: .01em; }
+.nbz-date { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--muted); }
+.nbz-name { margin: 0 0 11px; font-size: 14.5px; font-weight: 850; letter-spacing: -.02em; line-height: 1.3; }
+.nbz-metrics { display: grid; grid-template-columns: 1fr; gap: 0; margin-bottom: 11px; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+.nbz-metric { display: grid; grid-template-columns: 116px 1fr; gap: 10px; padding: 7px 11px; font-size: 11.5px; border-bottom: 1px solid var(--line-2); }
+.nbz-metric:last-child { border-bottom: 0; }
+.nbz-metric em { color: var(--muted); font-style: normal; font-weight: 700; }
+.nbz-metric span { font-weight: 650; line-height: 1.4; }
+.nbz-facts { margin: 0 0 11px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.nbz-facts li { position: relative; padding-left: 14px; font-size: 11.8px; font-weight: 600; line-height: 1.5; color: var(--ink); }
+.nbz-facts li::before { content: ""; position: absolute; left: 2px; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: var(--dc); }
+.nbz-insight { margin: 0 0 12px; padding: 10px 12px; background: color-mix(in srgb, var(--dc) 7%, transparent); border-left: 3px solid var(--dc); border-radius: 0 6px 6px 0; font-size: 11.8px; font-weight: 600; line-height: 1.55; }
+.nbz-insight b { color: var(--dc); margin-right: 6px; }
+.nbz-arts > em { display: block; font-style: normal; font-size: 10px; font-weight: 900; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+.nbz-arts ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.nbz-arts li { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.nbz-arts a { font-size: 11.8px; font-weight: 700; color: var(--dc); text-decoration: none; line-height: 1.4; }
+.nbz-arts a:hover { text-decoration: underline; }
+.nbz-arts li > span { flex: none; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--muted); }
+.nbz-market { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 13px 16px; background: var(--panel-2); }
+.nbz-market-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.nbz-market-k { font-size: 12px; font-weight: 850; letter-spacing: -.01em; }
+.nbz-market-v { font-size: 12px; font-weight: 600; color: var(--ink); }
+.nbz-market-note { margin: 7px 0 0; font-size: 11.3px; font-weight: 600; line-height: 1.5; color: var(--muted); }
+.nbz-market-note a { color: var(--ink); font-weight: 700; }
+.nbz-take { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.nbz-take-col { border: 1px solid var(--line); border-radius: 10px; padding: 12px 15px; }
+.nbz-take-col > em { display: block; font-style: normal; font-size: 10px; font-weight: 900; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; margin-bottom: 7px; }
+.nbz-take-col ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.nbz-take-col li { position: relative; padding-left: 13px; font-size: 11.6px; font-weight: 600; line-height: 1.5; }
+.nbz-take-col li::before { content: "–"; position: absolute; left: 0; color: var(--muted); }
+.nbz-device { margin: 12px 0 0; padding: 13px 16px; border: 1px dashed var(--line); border-radius: 10px; background: color-mix(in srgb, #16A34A 5%, transparent); font-size: 12px; font-weight: 600; line-height: 1.6; }
+.nbz-device b { color: #157F4A; }
+@media (max-width: 720px) {
+  .nbz-deals, .nbz-take { grid-template-columns: 1fr; }
+}
 .signal-reading { display: flex; flex-direction: column; background: #f7f8f5; border-left: 1px solid var(--line); }
 .signal-reading-head { padding: 17px 18px 13px; border-bottom: 1px solid var(--line); }
 .signal-reading-head > span { display: block; margin-bottom: 5px; color: #48627a; font-family: var(--mono); font-size: 9px; font-weight: 900; letter-spacing: .12em; }
