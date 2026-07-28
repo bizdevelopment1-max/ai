@@ -33,6 +33,9 @@ RESEARCH_PATH = ROOT / os.environ.get("RESEARCH_JSON", "research.json")
 MARKET_PATH = ROOT / os.environ.get("MARKET_JSON", "market.json")
 STARTUPS_PATH = ROOT / os.environ.get("STARTUPS_JSON", "startups.json")
 MAX_ITEMS = int(os.environ.get("TRANSLATE_MAX", "500"))
+# 무료 번역 엔드포인트 IP 레이트리밋 회피 — 요청 간 최소 간격(초). 배치(마커 청크)와
+# 함께 동작해 호출 수를 줄이면서 순간 폭주를 막아 English 폴백을 최소화.
+TRANSLATE_PACE_S = float(os.environ.get("TRANSLATE_PACE_S", "0.4"))
 TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
 LANG_CODES = {
     "english": "en", "en": "en", "japanese": "ja", "french": "fr",
@@ -165,20 +168,28 @@ class SourceTranslator:
     def __init__(self) -> None:
         self.cache: dict[tuple[str, str], str] = {}
         self.calls = 0
+        self._last = 0.0   # 마지막 요청 시각(모노토닉) — 요청 간 페이싱용
+
+    def _throttle(self) -> None:
+        gap = time.monotonic() - self._last
+        if gap < TRANSLATE_PACE_S:
+            time.sleep(TRANSLATE_PACE_S - gap)
+        self._last = time.monotonic()
 
     def _request(self, text: str, source_language: str) -> str:
         query = urlencode({"client": "gtx", "sl": source_language, "tl": "ko", "dt": "t", "q": text})
         request = Request(f"{TRANSLATE_URL}?{query}", headers={"User-Agent": "Mozilla/5.0 (compatible; AI-Feed-Localizer/1.0)", "Accept": "application/json"})
         last_error: Exception | None = None
-        for attempt in range(3):
+        for attempt in range(4):
             try:
+                self._throttle()   # 요청 간 최소 간격 보장(레이트리밋 회피)
                 with urlopen(request, timeout=20) as response:
                     payload = json.loads(response.read().decode("utf-8"))
                 self.calls += 1
                 return "".join(str(part[0] or "") for part in (payload[0] or []))
             except Exception as exc:  # network errors deliberately become English fallback
                 last_error = exc
-                time.sleep(0.5 * (attempt + 1))
+                time.sleep(min(0.8 * (2 ** attempt), 8.0))   # 지수 백오프(레이트리밋·일시 오류 흡수)
         raise RuntimeError(f"translation-request-failed:{type(last_error).__name__}")
 
     def translate_many(self, pairs: list[tuple[str, str]]) -> dict[tuple[str, str], str]:
