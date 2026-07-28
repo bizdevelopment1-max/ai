@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T09:32:58.124Z",
+  "generatedAt": "2026-07-28T09:39:38.166Z",
   "overall": "ok",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 16개 · 정상 16 · 주의 0 · 실패 0",
@@ -62,13 +62,13 @@
       "id": "infra-evidence",
       "label": "인프라 시그널 근거",
       "status": "ok",
-      "value": "공개 48건 · 보존 76건"
+      "value": "공개 38건 · 보존 68건"
     },
     {
       "id": "bizmodel-evidence",
       "label": "수익화 시그널 근거",
       "status": "ok",
-      "value": "공개 9건 · 보존 21건"
+      "value": "공개 7건 · 보존 15건"
     },
     {
       "id": "research-source",
@@ -92,7 +92,7 @@
       "id": "market-db-source",
       "label": "신사업 정량 DB 원문 직접 검증",
       "status": "ok",
-      "value": "36/135건"
+      "value": "85/135건"
     },
     {
       "id": "consumer-survey-coverage",
@@ -112,21 +112,21 @@
     "limitedRate": 0.04,
     "freshStocks": 25,
     "totalStocks": 25,
-    "linkedInfra": 48,
-    "linkedBizmodel": 9,
+    "linkedInfra": 38,
+    "linkedBizmodel": 7,
     "linkedResearch": 41,
     "localizedResearch": 72,
     "localizedFallbackResearch": 2,
     "archivedMarketBaselines": 43,
-    "linkedMarketRecords": 36,
+    "linkedMarketRecords": 85,
     "consumerSurveyRecords": 8
   },
   "sources": {
     "news": {
       "Engadget": 7,
       "TechCrunch": 24,
-      "The Decoder": 12,
       "ZDNet": 7,
+      "The Decoder": 12,
       "AI Business": 4,
       "Wired": 6,
       "IEEE Spectrum": 4,
@@ -136,8 +136,8 @@
       "The Guardian": 2,
       "Shaping Europe’s digital future": 1,
       "CNET": 1,
-      "The Register": 3,
       "SiliconANGLE": 3,
+      "The Register": 3,
       "CNBC": 5,
       "Databricks": 1,
       "Android Authority": 1,
@@ -147,8 +147,8 @@
       "South China Morning Post": 1,
       "Reuters": 1,
       "MacRumors": 1,
-      "Anthropic": 3,
       "Fortune": 2,
+      "Anthropic": 3,
       "US News (Reuters)": 1,
       "BNN Bloomberg (Reuters)": 1,
       "WXYZ Detroit": 1,
@@ -166,7 +166,7 @@
     }
   },
   "collection": {
-    "generatedAt": "2026-07-28T09:29:47.120Z",
+    "generatedAt": "2026-07-28T09:37:30.808Z",
     "mode": "source-content-extractive",
     "policyVersion": 2,
     "streams": {
@@ -177,12 +177,12 @@
     "failedStreams": [],
     "emptyStreams": [
       "google-news:경쟁 단말",
-      "google-news:OpenAI 공식 공시",
       "google-news:Databricks 자본·인프라",
+      "google-news:OpenAI 공식 공시",
       "rss:Hugging Face",
       "rss:VentureBeat",
-      "rss:The Register",
-      "rss:SiliconANGLE"
+      "rss:SiliconANGLE",
+      "rss:The Register"
     ],
     "status": "ok"
   },
