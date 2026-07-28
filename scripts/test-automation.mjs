@@ -329,10 +329,15 @@ try {
     || /bizmodel:\s*uR\(null\)/.test(app)) {
     throw new Error("the removed AI business-model menu or board is still rendered");
   }
-  if (!/bizmodel:\s*["']signals["']/.test(app)) {
+  const aliasMatch = app.match(/bizmodel:\s*["'](\w+)["']/);
+  const aliasTarget = aliasMatch && aliasMatch[1];
+  const targetAvailable = aliasTarget
+    && new RegExp(`\\{\\s*id:\\s*["']${aliasTarget}["']`).test(components)
+    && new RegExp(`<LazySection\\s+id=["']${aliasTarget}["']`).test(app);
+  if (!targetAvailable) {
     throw new Error("legacy business-model links must redirect to an available section");
   }
-  console.log("  OK  removed AI business-model menu and board with a safe legacy-link redirect");
+  console.log(`  OK  removed AI business-model board; legacy links redirect to '${aliasTarget}'`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  AI business-model removal: ${error.message}`);

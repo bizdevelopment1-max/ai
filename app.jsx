@@ -72,7 +72,7 @@ function App() {
   const [collapsed, setCollapsed] = uS(false);
   const refs = {
     ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    sanalysis: uR(null), signals: uR(null), reports: uR(null), stocks: uR(null), market: uR(null), audit: uR(null),
+    sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), market: uR(null), audit: uR(null),
   };
   const nativeInView = useInView(refs.native);
   const bigtechInView = useInView(refs.bigtech);
@@ -81,6 +81,7 @@ function App() {
   const briefingInView = useInView(refs.briefing);
   const articlesInView = useInView(refs.articles);
   const signalsInView = useInView(refs.signals);
+  const newbizInView = useInView(refs.newbiz);
   const stocksInView = useInView(refs.stocks);
   const auditInView = useInView(refs.audit);
 
@@ -88,7 +89,7 @@ function App() {
   const dark = t.dark;
   const [dataVersion, setDataVersion] = uS("");
   const dataUrl = file => `${file}?v=${encodeURIComponent(dataVersion || "bootstrap")}`;
-  const needsNews = articlesInView || companyInView || signalsInView || active === "articles";
+  const needsNews = articlesInView || companyInView || signalsInView || newbizInView || active === "articles" || active === "newbiz";
 
   // A tiny version manifest is the only uncacheable request. Every sizeable
   // data file is immutable for that version and can therefore be CDN-cached.
@@ -265,7 +266,7 @@ function App() {
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
 
   // 일부 Q&A는 통합·이동된 섹션을 가리킴: dynamics→overview(경쟁구도가 ES로 이동), insights→reports
-  const NAV_ALIAS = { dynamics: "overview", insights: "ib", reports: "ib", bizmodel: "signals" };
+  const NAV_ALIAS = { dynamics: "overview", insights: "ib", reports: "ib", bizmodel: "newbiz" };
   const navTo = rawId => {
     const id = NAV_ALIAS[rawId] || rawId;
     setActive(id);
@@ -413,6 +414,10 @@ function App() {
             {/* ── 3. 심층 분석 ── */}
             <LazySection id="signals" active={active} sectionRef={refs.signals} height={900}>
               <SignalBoard articles={articles} dataVersion={dataVersion} />
+            </LazySection>
+
+            <LazySection id="newbiz" active={active} sectionRef={refs.newbiz} height={900}>
+              <NewBizBoard articles={articles} dataVersion={dataVersion} />
             </LazySection>
 
             <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>

@@ -2326,10 +2326,23 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
         </div>
         <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
           dataVersion={dataVersion} title="인프라·미래 기술 신호" sub="원문 문장으로 확인된 카드만 표시 · 확인 전 기록은 누적 ledger에 보존" />
+      </AnimCtx.Provider>
+    </section>
+  );
+}
 
-        <div className="signal-newbiz-head">
-          <h2>AI 신사업·수익화 모델 <span className="board-en">Vertical AI Services · New Business</span></h2>
-          <p>OpenAI·Anthropic이 자회사·합작으로 AI 서비스에 직접 진입하는 수직통합 신사업 흐름 — 실사례·복제 경로·기사 기반 시그널</p>
+// AI 신사업 발굴 — 수직통합 실사례·플래그십 딜·Forward-Deployed AI 모델·컨설팅/구축 시장을 한 탭에 모음.
+function NewBizBoard({ sectionRef, articles, dataVersion }) {
+  const inView = useInView(sectionRef);
+  return (
+    <section className="board signal-source-board" ref={sectionRef} data-screen-label="AI New Business">
+      <AnimCtx.Provider value={inView}>
+        <div className="board-head">
+          <span className="board-tab" style={{ background: "#7A38D6" }} />
+          <div className="board-titles">
+            <h2>AI 신사업 발굴 <span className="board-en">Vertical AI Services · Consulting & Deployment</span></h2>
+            <p>OpenAI·Anthropic이 자회사·합작으로 AI 서비스에 직접 진입하는 수직통합 신사업 — 실사례·딜 심층분석·Forward-Deployed AI 모델·컨설팅/구축 시장·단말 제조사 진입 전략</p>
+          </div>
         </div>
         <VerticalIntegrationTables />
         <NewBizDeepDive />
@@ -3159,4 +3172,4 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
   );
 }
 
-Object.assign(window, { BoldSummary, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+Object.assign(window, { BoldSummary, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
