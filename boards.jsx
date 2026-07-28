@@ -1664,6 +1664,97 @@ function NewBizDeepDive() {
   );
 }
 
+// AI 컨설팅·엔터프라이즈 구축 신사업 — 시장 계층·FDE 경제학·경쟁 지형·수요 실증·과금 모델·진입 플레이북.
+const ACB_LAYERS = [
+  { k: "엔터프라이즈 에이전틱 AI", v: "$6.8B(2025) → $46B(2030)", g: "CAGR 47%", src: "MarketsandMarkets", u: "https://www.marketsandmarkets.com/Market-Reports/enterprise-agentic-ai-market-219711254.html" },
+  { k: "AI 컨설팅·서비스", v: "→ $49B(2032) · $215B(2033)", g: "CAGR ~24%", src: "SNS Insider", u: "https://www.globenewswire.com/de/news-release/2025/08/06/3128409/0/en/AI-Consulting-Services-Market-Size-to-Hit-USD-49-11-Billion-by-2032-Driven-by-Enterprise-AI-Adoption-Custom-Strategy-and-Regulatory-Demand-SNS-Insider.html" },
+  { k: "배포 모델 구성", v: "Ready-to-deploy(최대 점유)·Build-your-own(최고 성장)·SI", g: "커스텀 수요 급증", src: "Grand View", u: "https://www.grandviewresearch.com/industry-analysis/enterprise-agentic-ai-market-report" },
+];
+const ACB_CAMPS = [
+  { name: "모델사 — OpenAI·Anthropic", accent: "#7A38D6", pts: ["FDE로 배포계층 직접 진입", "PE 백커의 포트폴리오사를 전속 유통망으로", "모델 마진 + 서비스 마진 동시 확보"] },
+  { name: "전통 SI·컨설팅 — Accenture·Deloitte·McKinsey·BCG", accent: "#0891B2", pts: ["대규모 인력·기존 고객 관계가 해자", "AI·데이터 인력 7.7만명(2년새 2배)", "리스크: 인재 유출(이직률 14%)·서비스 마진 압박"] },
+  { name: "Palantir — FDE 원조", accent: "#DB2777", pts: ["FDE 플레이북 원조 · 플랫폼으로 재사용", "정부 앵커 + 상업 옵셔널리티", "FDE 모델로 640% 주가 수익 실적"] },
+];
+const ACB_PROOF = [
+  ["누적 AI 부킹", "$11.5B"], ["누적 AI 매출", "$4.8B"], ["Q1 FY26 부킹", "$2.2B · +76%"],
+  ["Q1 FY26 매출", "$1.1B · +120%"], ["대형딜 AI 침투", "80%"], ["AI·데이터 인력", "77,000명"],
+];
+const ACB_BMODELS = [
+  ["임베디드 FDE(포워드 디플로이드)", "선투자 배포비 → 무제한·확장 토큰/소비 annuity", "OpenAI DeployCo · Anthropic JV · Palantir", "온디바이스·기업 fleet에 상주 엔지니어 조직"],
+  ["아웃컴·성과 기반", "ROI·절감액 연동 성공보수", "에이전트 전환율 4~7배 · 비용 70%↓ · ROI 171%", "검증 쉬운 버티컬부터 성공보수형 도입"],
+  ["Ready-to-deploy 에이전트", "구독·시트·사용량(반복 매출)", "CS·영업·데이터 자동화 기성 에이전트", "단말 기본 탑재 에이전트를 구독화"],
+  ["Build-your-own 플랫폼", "플랫폼 라이선스 + 사용량", "도메인 특화 커스텀 에이전트(최고 성장)", "파트너·기업이 온디바이스 에이전트 제작"],
+  ["SI·구축 프로젝트", "프로젝트 피 + 유지보수 리테이너", "Accenture·Deloitte·McKinsey", "기기 fleet AI 전환 구축 수주"],
+];
+
+function AIConsultingBuildSection() {
+  return (
+    <div className="acb">
+      <div className="acb-head">
+        <h3>AI 컨설팅·엔터프라이즈 구축 신사업 — 시장·경제학·진입 전략</h3>
+        <p>모델은 커모디티화되고, 돈은 '기업이 AI를 실제로 돌리게 만드는' 도입·구축·운영(deployment) 계층으로 이동한다. 그 시장 규모·수익 구조·경쟁 지형과 단말 제조사의 진입 경로.</p>
+      </div>
+
+      <div className="acb-grid3">
+        {ACB_LAYERS.map((l, i) => (
+          <div className="acb-card acb-layer" key={i}>
+            <em className="acb-layer-k">{l.k}</em>
+            <b className="acb-layer-v">{l.v}</b>
+            <span className="acb-layer-g">{l.g}</span>
+            <a className="acb-src" href={l.u} target="_blank" rel="noopener">{l.src}</a>
+          </div>
+        ))}
+      </div>
+
+      <div className="acb-fde">
+        <div className="acb-fde-head"><b>포워드 디플로이드 엔지니어(FDE) 경제학</b><span>Palantir가 만들고 모델사가 복제한 배포 모델</span></div>
+        <ul className="acb-fde-list">
+          <li><em>작동</em>고객사에 엔지니어를 상주시켜 <b>내부에서</b> 구축·운영 — FDE는 로드맵 상류(upstream)에서, 컨설턴트는 계약 하류(downstream)에서 움직인다</li>
+          <li><em>수익원</em>선투자 배포비용이 <b>좌석 구독이 아니라 무제한·확장되는 토큰/소비 annuity</b>를 산다 — 엔지니어가 소비를 극대화</li>
+          <li><em>마진</em>Anthropic 추론 마진 <b>~70%</b>(전년 38%→) — 고마진 반복 소비가 상주 비용을 정당화. 단 전문서비스가 매출 <b>18~20%</b>면 마진 희석 리스크</li>
+          <li><em>실적</em>Palantir는 FDE 모델로 <b>640% 주가 수익</b> · 제품 발굴 메커니즘으로도 작동(단순 용역 아님)</li>
+        </ul>
+      </div>
+
+      <div className="acb-camps">
+        {ACB_CAMPS.map((c, i) => (
+          <div className="acb-card acb-camp" key={i} style={{ "--dc": c.accent }}>
+            <b className="acb-camp-name">{c.name}</b>
+            <ul>{c.pts.map((p, j) => <li key={j}>{p}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+
+      <div className="acb-proof">
+        <div className="acb-proof-head"><b>수요 실증 — Accenture AI 지표</b><span>서비스 계층에 실제 돈이 흐른다는 증거(FY2026)</span></div>
+        <div className="acb-proof-grid">
+          {ACB_PROOF.map(([k, v], i) => (
+            <div className="acb-proof-cell" key={i}><span>{k}</span><b>{v}</b></div>
+          ))}
+        </div>
+        <p className="acb-proof-note">출처: <a href="https://www.ciodive.com/news/accenture-generative-ai-revenue-skills-training-data-modernization/761161/" target="_blank" rel="noopener">CIO Dive</a> · <a href="https://phemex.com/academy/accenture-acn-stock-2026" target="_blank" rel="noopener">Accenture FY26 실적</a> — 에이전틱 AI ROI 171%·비용 70%↓·전환율 4~7배(<a href="https://www.marketsandmarkets.com/Market-Reports/enterprise-agentic-ai-market-219711254.html" target="_blank" rel="noopener">MarketsandMarkets</a>)</p>
+      </div>
+
+      <div className="pricing-tracker acb-bm">
+        <div className="pt-head"><h3>서비스 신사업 과금 모델 — 어떻게 돈을 버나</h3><span>도입·구축·운영을 수익화하는 5가지 구조와 단말 제조사 적용</span></div>
+        <div className="pt-table">
+          <div className="pt-row pt-hrow"><span>모델</span><span>과금 구조</span><span>대표 사례</span><span>단말 제조사 적용</span></div>
+          {ACB_BMODELS.map((r, i) => (
+            <div className="pt-row" key={i}>
+              <span className="pt-model"><i style={{ background: VI_ACCENT.native }} />{r[0]}</span>
+              <span className="pt-players">{r[1]}</span>
+              <span className="pt-price">{r[2]}</span>
+              <span className="pt-note">{r[3]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <p className="nbz-device"><b>단말 제조사 진입 플레이북</b> ① <b>자산</b> — 기기 fleet·MDM(모바일 단말 관리)·보안·유통·현장 서비스 채널을 이미 보유. ② <b>진입</b> — 기업 디바이스 fleet를 AI로 전환하는 <b>온디바이스·엣지 구축 서비스</b>에 FDE형 조직을 자회사·JV로 신설. ③ <b>모델 조달</b> — 파운데이션 모델은 오픈·파트너로 확보(자체 개발 불필요). ④ <b>과금</b> — 초기 구축비 + <b>디바이스·소비 기반 annuity</b> + 아웃컴 성공보수 조합. ⑤ <b>차별화</b> — 클라우드 없이도 도는 <b>온디바이스 프라이버시·오프라인 구동</b>은 규제·현장 산업에서 모델사·SI가 못 주는 해자.</p>
+    </div>
+  );
+}
+
 function VerticalIntegrationTables() {
   const cases = [
     { who: "OpenAI — Deployment Co.(DeployCo)", struct: "과반 소유·지배 자회사", size: "초기 40억달러+ · M&A 롤업", svc: "기업 AI 도입·구축 컨설팅 — TPG·Bain 등 19개 파트너", tone: "native", href: "https://aibusiness.com/generative-ai/openai-launches-ai-consulting-company-anthropic" },
@@ -2171,6 +2262,7 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
         </div>
         <VerticalIntegrationTables />
         <NewBizDeepDive />
+        <AIConsultingBuildSection />
         <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
           dataVersion={dataVersion} title="AI 수익화·신사업 모델 시그널" sub="수직통합·자체 서비스 등 7개 수익화 유형 · 원문 확인 카드만 누적 표시" />
       </AnimCtx.Provider>

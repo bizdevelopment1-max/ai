@@ -1820,6 +1820,48 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 @media (max-width: 720px) {
   .nbz-deals, .nbz-take { grid-template-columns: 1fr; }
 }
+
+/* ── AI 컨설팅·엔터프라이즈 구축 신사업 ── */
+.acb { margin: 22px 0 4px; padding-top: 20px; border-top: 1px solid var(--line); }
+.acb-head h3 { margin: 0 0 4px; font-size: 15px; font-weight: 850; letter-spacing: -.02em; }
+.acb-head p { margin: 0 0 14px; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1.5; }
+.acb-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.acb-card { border: 1px solid var(--line); border-radius: 10px; padding: 13px 15px; background: var(--panel); }
+.acb-layer { display: flex; flex-direction: column; gap: 3px; }
+.acb-layer-k { font-style: normal; font-size: 11.5px; font-weight: 800; color: var(--muted); }
+.acb-layer-v { font-size: 15px; font-weight: 850; letter-spacing: -.02em; line-height: 1.25; }
+.acb-layer-g { font-family: var(--mono); font-size: 11px; font-weight: 800; color: #157F4A; }
+.acb-src { margin-top: 4px; font-size: 10.5px; font-weight: 700; color: var(--muted); text-decoration: none; }
+.acb-src:hover { text-decoration: underline; color: var(--ink); }
+.acb-fde { margin-top: 12px; border: 1px solid var(--line); border-left: 3px solid #7A38D6; border-radius: 0 10px 10px 0; padding: 13px 16px; background: color-mix(in srgb, #7A38D6 4%, transparent); }
+.acb-fde-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 9px; }
+.acb-fde-head b { font-size: 13px; font-weight: 850; }
+.acb-fde-head span { font-size: 11px; font-weight: 600; color: var(--muted); }
+.acb-fde-list { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.acb-fde-list li { font-size: 11.8px; font-weight: 600; line-height: 1.5; }
+.acb-fde-list em { display: inline-block; font-style: normal; font-weight: 800; color: #7A38D6; margin-right: 7px; min-width: 34px; }
+.acb-camps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+.acb-camp { border-top: 3px solid var(--dc); }
+.acb-camp-name { display: block; font-size: 12.5px; font-weight: 850; letter-spacing: -.01em; line-height: 1.3; margin-bottom: 8px; color: var(--dc); }
+.acb-camp ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.acb-camp li { position: relative; padding-left: 13px; font-size: 11.5px; font-weight: 600; line-height: 1.45; }
+.acb-camp li::before { content: ""; position: absolute; left: 2px; top: 6px; width: 5px; height: 5px; border-radius: 50%; background: var(--dc); }
+.acb-proof { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 13px 16px; background: var(--panel-2); }
+.acb-proof-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.acb-proof-head b { font-size: 13px; font-weight: 850; }
+.acb-proof-head span { font-size: 11px; font-weight: 600; color: var(--muted); }
+.acb-proof-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.acb-proof-cell { display: flex; flex-direction: column; gap: 3px; padding: 9px 11px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--panel); }
+.acb-proof-cell span { font-size: 10.5px; font-weight: 700; color: var(--muted); line-height: 1.2; }
+.acb-proof-cell b { font-size: 14px; font-weight: 850; letter-spacing: -.02em; }
+.acb-proof-note { margin: 9px 0 0; font-size: 11px; font-weight: 600; line-height: 1.5; color: var(--muted); }
+.acb-proof-note a { color: var(--ink); font-weight: 700; }
+.acb-bm { margin-top: 12px; }
+@media (max-width: 860px) {
+  .acb-grid3, .acb-camps { grid-template-columns: 1fr; }
+  .acb-fde-list { grid-template-columns: 1fr; }
+  .acb-proof-grid { grid-template-columns: repeat(3, 1fr); }
+}
 .signal-reading { display: flex; flex-direction: column; background: #f7f8f5; border-left: 1px solid var(--line); }
 .signal-reading-head { padding: 17px 18px 13px; border-bottom: 1px solid var(--line); }
 .signal-reading-head > span { display: block; margin-bottom: 5px; color: #48627a; font-family: var(--mono); font-size: 9px; font-weight: 900; letter-spacing: .12em; }
