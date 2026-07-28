@@ -32,7 +32,13 @@ const QUANT = /(\$[\d,.]+\s?(?:[TBM]|억|조)?(?:\+)?|\d+\.?\d*\s?%|\d+\.?\d*\s?
 
 const firstLine = sm => String(sm || "").split("\n").map(l => l.replace(/^[·\-•]\s*/, "").trim()).filter(Boolean)[0] || "";
 const classify = (text) => { for (const g of GROUPS) if (g.re.test(text)) return g.id; return null; };
-const idOf = (url, title) => "if_" + Buffer.from(String(url || title || "")).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(-16);
+// URL 정규화(끝 슬래시·쿼리·해시 제거) — 같은 기사가 표기 차이로 중복 누적되는 것을 방지.
+const canonUrl = u => {
+  const s = String(u || "");
+  try { const p = new URL(s); p.hash = ""; p.search = ""; return p.href.replace(/\/+$/, ""); }
+  catch { return s.replace(/[?#].*$/, "").replace(/\/+$/, ""); }
+};
+const idOf = (url, title) => "if_" + Buffer.from(canonUrl(url) || String(title || "")).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(-16);
 
 async function main() {
   let news = [];
@@ -42,7 +48,7 @@ async function main() {
   // 이전 누적본 로드(보존)
   let prev = { groups: GROUPS.map(({ re, ...g }) => g), items: [] };
   try { const p = JSON.parse(await readFile("infra.json", "utf8")); if (p && Array.isArray(p.items)) prev = p; } catch {}
-  const byUrl = new Map(prev.items.map(it => [it.url, it]));
+  const byUrl = new Map(prev.items.map(it => [canonUrl(it.url), it]));
 
   let added = 0;
   for (const a of news) {
@@ -63,8 +69,9 @@ async function main() {
       source: a.source || "", date: a.date || TODAY, url,
       sourceSummaryMode: a.summaryMode || "legacy-or-unknown",
     };
-    if (!byUrl.has(url)) added++;
-    byUrl.set(url, { ...byUrl.get(url), ...item });        // 최신 내용으로 갱신하되 누적 보존
+    const ukey = canonUrl(url);
+    if (!byUrl.has(ukey)) added++;
+    byUrl.set(ukey, { ...byUrl.get(ukey), ...item });      // 최신 내용으로 갱신하되 누적 보존
   }
 
   const items = [...byUrl.values()]

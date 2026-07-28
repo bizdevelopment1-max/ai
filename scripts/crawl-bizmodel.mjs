@@ -36,7 +36,13 @@ const MONETIZE = /수익|매출|과금|가격|요금|단가|구독|arr|매출화
 
 const firstLine = sm => String(sm || "").split("\n").map(l => l.replace(/^[·\-•]\s*/, "").trim()).filter(Boolean)[0] || "";
 const classify = (text) => { for (const g of GROUPS) if (g.re.test(text)) return g.id; return null; };
-const idOf = (url, title) => "bm_" + Buffer.from(String(url || title || "")).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(-16);
+// URL 정규화(끝 슬래시·쿼리·해시 제거) — 같은 기사가 표기 차이로 중복 누적되는 것을 방지.
+const canonUrl = u => {
+  const s = String(u || "");
+  try { const p = new URL(s); p.hash = ""; p.search = ""; return p.href.replace(/\/+$/, ""); }
+  catch { return s.replace(/[?#].*$/, "").replace(/\/+$/, ""); }
+};
+const idOf = (url, title) => "bm_" + Buffer.from(canonUrl(url) || String(title || "")).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(-16);
 
 async function main() {
   let news = [];
@@ -45,7 +51,7 @@ async function main() {
 
   let prev = { groups: GROUPS.map(({ re, ...g }) => g), items: [] };
   try { const p = JSON.parse(await readFile("bizmodel.json", "utf8")); if (p && Array.isArray(p.items)) prev = p; } catch {}
-  const byUrl = new Map(prev.items.map(it => [it.url, it]));
+  const byUrl = new Map(prev.items.map(it => [canonUrl(it.url), it]));
 
   let added = 0;
   for (const a of news) {
@@ -67,8 +73,9 @@ async function main() {
       source: a.source || "", date: a.date || TODAY, url,
       sourceSummaryMode: a.summaryMode || "legacy-or-unknown",
     };
-    if (!byUrl.has(url)) added++;
-    byUrl.set(url, { ...byUrl.get(url), ...item });
+    const ukey = canonUrl(url);
+    if (!byUrl.has(ukey)) added++;
+    byUrl.set(ukey, { ...byUrl.get(ukey), ...item });
   }
 
   const items = [...byUrl.values()]

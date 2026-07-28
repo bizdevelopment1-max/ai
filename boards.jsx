@@ -2189,6 +2189,7 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   // Only show a signal when the linked publisher page supports a Korean title
   // and exactly three translated source fragments. This prevents generic error
   // pages or unverified English excerpts from entering the card grid.
+  const seenSourceKeys = new Set();
   const items = ((data && data.items) || [])
     .filter(it => it.provenance?.status === "evidence-linked" && !del[it.id])
     .map(it => {
@@ -2199,7 +2200,14 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
         .map(line => bulletText(line)).filter(Boolean).slice(0, 3);
       return display.translated && summaryLines.length === 3 ? { ...it, display, summaryLines } : null;
     })
-    .filter(Boolean);
+    .filter(Boolean)
+    // 같은 기사가 URL 표기 차이(끝 슬래시·쿼리 등)로 중복 저장되어도 한 번만 노출 — 정규화 키로 MECE 보장
+    .filter(it => {
+      const key = signalSourceKey(it.url);
+      if (seenSourceKeys.has(key)) return false;
+      seenSourceKeys.add(key);
+      return true;
+    });
   const countOf = id => items.filter(it => it.group === id).length;
   const maxC = Math.max(1, ...groups.map(g => countOf(g.id)));
   const sourceReady = Array.isArray(articles) && articles.length > 0;
