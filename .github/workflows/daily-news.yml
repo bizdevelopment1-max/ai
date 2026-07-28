@@ -9,7 +9,12 @@ on:
     - cron: "30 3 * * *"    # 12:30 KST — 점심 업데이트
     - cron: "30 10 * * *"   # 19:30 KST — 저녁 업데이트
     - cron: "30 15 * * *"   # 00:30 KST — 심야 업데이트
-  workflow_dispatch: {}      # manual run
+  workflow_dispatch:         # manual run
+    inputs:
+      market_force:
+        description: "1 = ignore the 20h market-crawl freshness gate and re-crawl now"
+        required: false
+        default: "0"
   push:
     branches: [main]
     paths:
@@ -66,7 +71,7 @@ jobs:
         run: node scripts/run-with-retry.mjs scripts/crawl-research.mjs
 
       - name: Append global AI market, shipment and consumer-survey discovery records
-        run: node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
+        run: MARKET_FORCE=${{ github.event.inputs.market_force || '0' }} node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
 
       - name: Retry retained source links and store publisher-page text
         run: SOURCE_REFRESH_LIMIT=45 SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-source-content.mjs
