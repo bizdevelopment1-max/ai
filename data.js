@@ -907,12 +907,21 @@ window.DASH = (function () {
   const STOCK_GROUPS = [
     { id: "chip", ko: "AI 칩", en: "AI Chips", accent: "#C026D3" },
     { id: "memory", ko: "메모리", en: "Memory", accent: "#EA580C" },
+    { id: "foundry", ko: "파운드리", en: "Foundry", accent: "#2563EB" },
+    { id: "equipment", ko: "반도체 장비", en: "Semiconductor Equipment", accent: "#0F766E" },
+    { id: "packaging", ko: "패키징·테스트", en: "Packaging / Test", accent: "#B45309" },
     { id: "network", ko: "네트워킹·광통신", en: "Networking / Optical", accent: "#0D9488" },
     { id: "hyperscaler", ko: "하이퍼스케일러", en: "Hyperscalers", accent: "#1428A0" },
     { id: "datacenter", ko: "데이터센터·뉴클라우드", en: "Data Center / Neocloud", accent: "#0891B2" },
     { id: "software", ko: "AI 소프트웨어·플랫폼", en: "AI Software / Platform", accent: "#DB2777" },
     { id: "device", ko: "온디바이스", en: "On-device", accent: "#16A34A" },
     { id: "native", ko: "AI 네이티브", en: "AI Native", accent: "#7A38D6" },
+    { id: "china-memory", region: "china", ko: "메모리", en: "China Memory", accent: "#0F766E" },
+    { id: "china-foundry", region: "china", ko: "파운드리", en: "China Foundry", accent: "#2563EB" },
+    { id: "china-equipment", region: "china", ko: "장비", en: "China Equipment", accent: "#0891B2" },
+    { id: "china-packaging", region: "china", ko: "패키징·테스트", en: "China Packaging / Test", accent: "#B45309" },
+    { id: "china-design", region: "china", ko: "팹리스·IP·EDA", en: "China Design / IP / EDA", accent: "#6D28D9" },
+    { id: "china-materials", region: "china", ko: "소재·기판", en: "China Materials / Substrate", accent: "#475569" },
   ];
 
   /* ============================================================
@@ -944,7 +953,7 @@ window.DASH = (function () {
       note: "Broadcom(나스닥, 반도체·네트워킹). Google TPU 등 커스텀 AI ASIC 공동설계·고속 네트워킹 칩으로 AI 인프라 핵심 공급사.",
     },
     {
-      ticker: "TSM", name: "TSMC", group: "chip", domain: "tsmc.com", cat: "bigtech",
+      ticker: "TSM", name: "TSMC", group: "foundry", domain: "tsmc.com", cat: "bigtech",
       events: [],
       note: "TSMC(뉴욕 ADR, 파운드리). NVIDIA·AMD·Apple 등 최선단 AI 칩 위탁생산 — 첨단 공정 사실상 독점적 지위.",
     },
@@ -974,11 +983,9 @@ window.DASH = (function () {
       note: "Micron(나스닥, 메모리). HBM(고대역폭메모리) 3대 공급사 중 하나로 AI 가속기 필수 부품 제공.",
     },
     {
-      ticker: "SKHY", name: "SK hynix", group: "memory", domain: "skhynix.com", cat: "bigtech",
-      events: [
-        { date: "2026-07-10", dir: "up", label: "나스닥 ADR 상장 데뷔 +13%", reason: "공모가 $149로 $26.5B 조달(외국기업 사상 최대 미국 주식 공모) — 한국거래소(000660) 상장 유지한 채 나스닥에 예탁증권(ADR) 동시 상장. 첫날 +13% $168.01 마감 — HBM 공급 부족 장기화 기대가 상승을 견인." },
-      ],
-      note: "SK hynix(나스닥 ADR, 2026-07-10 상장). HBM 시장 선도업체 — 상장 초기라 일별 시세 데이터가 아직 얇을 수 있습니다.",
+      ticker: "000660.KS", name: "SK hynix", group: "memory", domain: "skhynix.com", cat: "bigtech",
+      exchange: "KRX", events: [],
+      note: "SK hynix(한국거래소). HBM과 서버 DRAM 중심의 글로벌 메모리 공급사.",
     },
     {
       ticker: "ANET", name: "Arista Networks", group: "network", domain: "arista.com", cat: "bigtech",
@@ -1076,7 +1083,165 @@ window.DASH = (function () {
         { date: "2026-06-16", dir: "up", label: "Cursor 인수 + 목표주가 상향", reason: "AI 코딩 에이전트 Cursor(Anysphere) $60B 전액 주식 인수 합의에 더해, Oppenheimer가 목표주가를 $190→$250(+32%)·아웃퍼폼으로 상향. 시총 ~$2.51T로 Amazon·Microsoft를 제치고 미 시총 4위권 진입 — 코딩 AI 시장 진입 기대가 상승을 견인." },
         { date: "2026-06-19", dir: "down", label: "희석·락업 우려로 조정", reason: "$60B 전액 주식 인수에 따른 약 3.4% 지분 희석과 8월 보호예수(락업) 해제 물량 우려가 부각. 데뷔 직후 차익실현까지 겹치며 $185 → $166 수준으로 되돌림." },
       ],
-      note: "SPCX(나스닥, 2026-06-12 상장). 매일 Yahoo Finance→Stooq→Nasdaq→StockAnalysis→TradingView 순으로 실시세를 자동 크롤링합니다. 공개 피드 미수집 시에만 상장일 기준 시나리오 시세로 폴백합니다.",
+      note: "SPCX 공개 시세가 Yahoo Finance·Stooq·Nasdaq·StockAnalysis에서 확인되는 경우에만 차트에 표시합니다.",
+    },
+    {
+      ticker: "005930.KS", name: "Samsung Electronics", group: "memory", domain: "samsung.com", cat: "bigtech",
+      exchange: "KRX", events: [], note: "삼성전자(한국거래소). DRAM·NAND·파운드리·첨단 패키징을 함께 보유한 종합 반도체 기업.",
+    },
+    {
+      ticker: "SNDK", name: "SanDisk", group: "memory", domain: "sandisk.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "SanDisk(나스닥). NAND 플래시와 클라이언트·데이터센터 스토리지 공급사.",
+    },
+    {
+      ticker: "WDC", name: "Western Digital", group: "memory", domain: "westerndigital.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "Western Digital(나스닥). HDD 중심 데이터 스토리지 공급사.",
+    },
+    {
+      ticker: "285A.T", name: "Kioxia", group: "memory", domain: "kioxia-holdings.com", cat: "bigtech",
+      exchange: "TSE", events: [], note: "Kioxia(도쿄증권거래소). NAND 플래시와 엔터프라이즈 SSD 공급사.",
+    },
+    {
+      ticker: "UMC", name: "UMC", group: "foundry", domain: "umc.com", cat: "bigtech",
+      exchange: "NYSE", events: [], note: "UMC(뉴욕 ADR). 성숙 공정 중심 글로벌 파운드리.",
+    },
+    {
+      ticker: "GFS", name: "GlobalFoundries", group: "foundry", domain: "gf.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "GlobalFoundries(나스닥). 특화·성숙 공정 중심 글로벌 파운드리.",
+    },
+    {
+      ticker: "ASML", name: "ASML", group: "equipment", domain: "asml.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "ASML(나스닥 ADR). EUV·DUV 노광 장비 공급사.",
+    },
+    {
+      ticker: "AMAT", name: "Applied Materials", group: "equipment", domain: "appliedmaterials.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "Applied Materials(나스닥). 증착·식각·검사 전반을 공급하는 반도체 장비 기업.",
+    },
+    {
+      ticker: "LRCX", name: "Lam Research", group: "equipment", domain: "lamresearch.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "Lam Research(나스닥). 식각·증착 장비 공급사.",
+    },
+    {
+      ticker: "KLAC", name: "KLA", group: "equipment", domain: "kla.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "KLA(나스닥). 공정 제어·검사·계측 장비 공급사.",
+    },
+    {
+      ticker: "8035.T", name: "Tokyo Electron", group: "equipment", domain: "tel.com", cat: "bigtech",
+      exchange: "TSE", events: [], note: "Tokyo Electron(도쿄증권거래소). 코터·디벨로퍼·증착·식각 장비 공급사.",
+    },
+    {
+      ticker: "ASX", name: "ASE Technology", group: "packaging", domain: "aseglobal.com", cat: "bigtech",
+      exchange: "NYSE", events: [], note: "ASE Technology(뉴욕 ADR). 글로벌 OSAT·첨단 패키징 공급사.",
+    },
+    {
+      ticker: "AMKR", name: "Amkor Technology", group: "packaging", domain: "amkor.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "Amkor Technology(나스닥). 반도체 패키징·테스트 공급사.",
+    },
+
+    // 중국 A주 반도체 밸류체인 — 상하이·선전 거래소 상장 종목
+    {
+      ticker: "688825.SS", name: "CXMT", group: "china-memory", region: "china", domain: "cxmt.com",
+      exchange: "SSE STAR", listedAt: "2026-07-27", events: [], note: "CXMT(상하이 STAR). 중국 DRAM 공급사로 신규 상장 이력이 짧아 개별 시세와 장기 그룹 비교를 분리합니다.",
+    },
+    {
+      ticker: "603986.SS", name: "GigaDevice", group: "china-memory", region: "china", domain: "gigadevice.com",
+      exchange: "SSE", events: [], note: "GigaDevice(상하이). NOR Flash·MCU·메모리 제품 공급사.",
+    },
+    {
+      ticker: "688525.SS", name: "BIWIN Storage", group: "china-memory", region: "china", domain: "biwin.com.cn",
+      exchange: "SSE STAR", events: [], note: "BIWIN Storage(상하이 STAR). 임베디드·소비자·기업용 스토리지 공급사.",
+    },
+    {
+      ticker: "688981.SS", name: "SMIC", group: "china-foundry", region: "china", domain: "smics.com",
+      exchange: "SSE STAR", events: [], note: "SMIC(상하이 STAR). 중국 최대 파운드리.",
+    },
+    {
+      ticker: "688347.SS", name: "Hua Hong Semiconductor", group: "china-foundry", region: "china", domain: "huahonggrace.com",
+      exchange: "SSE STAR", events: [], note: "Hua Hong Semiconductor(상하이 STAR). 특화·성숙 공정 파운드리.",
+    },
+    {
+      ticker: "002371.SZ", name: "NAURA", group: "china-equipment", region: "china", domain: "naura.com",
+      exchange: "SZSE", events: [], note: "NAURA(선전). 증착·식각·열처리 등 전공정 장비 공급사.",
+    },
+    {
+      ticker: "688012.SS", name: "AMEC", group: "china-equipment", region: "china", domain: "amec-inc.com",
+      exchange: "SSE STAR", events: [], note: "AMEC(상하이 STAR). 식각·MOCVD 장비 공급사.",
+    },
+    {
+      ticker: "688082.SS", name: "ACM Research Shanghai", group: "china-equipment", region: "china", domain: "acmrcsh.com",
+      exchange: "SSE STAR", events: [], note: "ACM Research Shanghai(상하이 STAR). 세정·도금·습식 공정 장비 공급사.",
+    },
+    {
+      ticker: "688072.SS", name: "Piotech", group: "china-equipment", region: "china", domain: "piotech.cn",
+      exchange: "SSE STAR", events: [], note: "Piotech(상하이 STAR). 박막 증착 장비 공급사.",
+    },
+    {
+      ticker: "688037.SS", name: "Kingsemi", group: "china-equipment", region: "china", domain: "kingsemi.com",
+      exchange: "SSE STAR", events: [], note: "Kingsemi(상하이 STAR). 코터·디벨로퍼 장비 공급사.",
+    },
+    {
+      ticker: "688120.SS", name: "Hwatsing Technology", group: "china-equipment", region: "china", domain: "hwatsing.com",
+      exchange: "SSE STAR", events: [], note: "Hwatsing Technology(상하이 STAR). CMP·세정 장비 공급사.",
+    },
+    {
+      ticker: "600584.SS", name: "JCET", group: "china-packaging", region: "china", domain: "jcetglobal.com",
+      exchange: "SSE", events: [], note: "JCET(상하이). 글로벌 OSAT·첨단 패키징 공급사.",
+    },
+    {
+      ticker: "002156.SZ", name: "Tongfu Microelectronics", group: "china-packaging", region: "china", domain: "tfme.com",
+      exchange: "SZSE", events: [], note: "Tongfu Microelectronics(선전). 반도체 패키징·테스트 공급사.",
+    },
+    {
+      ticker: "002185.SZ", name: "Huatian Technology", group: "china-packaging", region: "china", domain: "ht-tech.com",
+      exchange: "SZSE", events: [], note: "Huatian Technology(선전). 반도체 패키징·테스트 공급사.",
+    },
+    {
+      ticker: "688008.SS", name: "Montage Technology", group: "china-design", region: "china", domain: "montage-tech.com",
+      exchange: "SSE STAR", events: [], note: "Montage Technology(상하이 STAR). 서버 메모리 인터페이스·연결 칩 설계사.",
+    },
+    {
+      ticker: "688521.SS", name: "VeriSilicon", group: "china-design", region: "china", domain: "verisilicon.com",
+      exchange: "SSE STAR", events: [], note: "VeriSilicon(상하이 STAR). 반도체 IP·칩 설계 플랫폼 공급사.",
+    },
+    {
+      ticker: "301269.SZ", name: "Empyrean Technology", group: "china-design", region: "china", domain: "empyrean-tech.com",
+      exchange: "SZSE", events: [], note: "Empyrean Technology(선전). EDA 소프트웨어 공급사.",
+    },
+    {
+      ticker: "688206.SS", name: "Primarius Technologies", group: "china-design", region: "china", domain: "primarius-tech.com",
+      exchange: "SSE STAR", events: [], note: "Primarius Technologies(상하이 STAR). EDA·반도체 계측 소프트웨어 공급사.",
+    },
+    {
+      ticker: "603501.SS", name: "OmniVision Group", group: "china-design", region: "china", domain: "ovt.com",
+      exchange: "SSE", events: [], note: "OmniVision Group(상하이). 이미지 센서·아날로그 반도체 설계사.",
+    },
+    {
+      ticker: "603893.SS", name: "Rockchip", group: "china-design", region: "china", domain: "rock-chips.com",
+      exchange: "SSE", events: [], note: "Rockchip(상하이). 엣지·소비자용 SoC 설계사.",
+    },
+    {
+      ticker: "688047.SS", name: "Loongson Technology", group: "china-design", region: "china", domain: "loongson.cn",
+      exchange: "SSE STAR", events: [], note: "Loongson Technology(상하이 STAR). CPU·프로세서 IP 공급사.",
+    },
+    {
+      ticker: "688256.SS", name: "Cambricon", group: "china-design", region: "china", domain: "cambricon.com",
+      exchange: "SSE STAR", events: [], note: "Cambricon(상하이 STAR). AI 가속기·프로세서 설계사.",
+    },
+    {
+      ticker: "688019.SS", name: "Anji Microelectronics", group: "china-materials", region: "china", domain: "anjimicro.com",
+      exchange: "SSE STAR", events: [], note: "Anji Microelectronics(상하이 STAR). CMP 슬러리·습식 화학 소재 공급사.",
+    },
+    {
+      ticker: "688126.SS", name: "National Silicon Industry", group: "china-materials", region: "china", domain: "nsig.com",
+      exchange: "SSE STAR", events: [], note: "National Silicon Industry(상하이 STAR). 반도체 실리콘 웨이퍼 공급사.",
+    },
+    {
+      ticker: "300666.SZ", name: "KFMI", group: "china-materials", region: "china", domain: "kfmic.com",
+      exchange: "SZSE", events: [], note: "KFMI(선전). 반도체용 고순도 스퍼터링 타깃 소재 공급사.",
+    },
+    {
+      ticker: "002916.SZ", name: "Shennan Circuits", group: "china-materials", region: "china", domain: "scc.com.cn",
+      exchange: "SZSE", events: [], note: "Shennan Circuits(선전). IC 기판·고다층 PCB 공급사.",
     },
   ];
 

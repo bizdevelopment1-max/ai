@@ -1475,13 +1475,115 @@ a[href]:hover .rainbow-on-hover,
 /* ============================================================
    Stock price board
    ============================================================ */
+.stock-board-rich {
+  background:
+    radial-gradient(circle at 100% 0, color-mix(in srgb, var(--accent) 8%, transparent), transparent 32%),
+    var(--panel);
+}
+.stock-master-head {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+}
+.stock-generated {
+  margin-left: auto;
+  flex: none;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--panel) 90%, var(--accent) 10%);
+  font-size: 10px;
+  line-height: 1.45;
+  text-align: right;
+}
+.stock-generated b {
+  color: var(--ink);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.stock-region-stack {
+  display: grid;
+  gap: 22px;
+  padding: 20px;
+}
+.stock-region {
+  --region-border: color-mix(in srgb, var(--accent) 34%, var(--line));
+  overflow: hidden;
+  border: 1px solid var(--region-border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--panel) 97%, var(--accent) 3%);
+  box-shadow: 0 12px 34px rgba(15, 23, 42, .07);
+}
+.stock-region-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  padding: 20px 22px 16px;
+  background: linear-gradient(115deg, color-mix(in srgb, var(--accent) 9%, var(--panel)), var(--panel) 68%);
+  border-bottom: 1px solid var(--region-border);
+}
+.stock-region-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .09em;
+}
+.stock-region-head h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(20px, 2vw, 27px);
+  line-height: 1.15;
+  letter-spacing: -.025em;
+}
+.stock-region-head p {
+  max-width: 900px;
+  margin: 7px 0 0;
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.55;
+}
+.stock-region-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 7px;
+}
+.stock-region-metrics span {
+  min-width: 92px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--panel) 92%, var(--accent) 8%);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  text-align: center;
+  white-space: nowrap;
+}
+.stock-region-metrics b {
+  color: var(--ink);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.stock-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--panel) 96%, var(--accent) 4%);
+}
 .stock-range { display: flex; gap: 6px; margin-left: auto; }
 .stock-range button {
   font-family: var(--f); font-size: 12px; font-weight: 700; color: var(--muted);
   background: var(--panel); border: 2px solid var(--line); border-radius: 9px; padding: 6px 14px; cursor: pointer;
-  transition: all .15s;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--line) 82%, transparent);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, color .16s ease, background .16s ease;
 }
-.stock-range button:hover { border-color: var(--accent); color: var(--ink); }
+.stock-range button:hover { border-color: var(--accent); color: var(--ink); transform: translateY(-2px); box-shadow: 0 6px 15px color-mix(in srgb, var(--accent) 17%, transparent); }
 .stock-range button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 .stock-group-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 20px 0; }
@@ -1494,13 +1596,14 @@ a[href]:hover .rainbow-on-hover,
 .stock-group-filters button.on { font-weight: 800; }
 
 /* 개별 종목 / 밸류체인 그룹 트렌드 뷰 전환 */
-.stock-view-toggle { display: flex; gap: 6px; padding: 12px 20px 0; }
+.stock-view-toggle { display: flex; gap: 6px; }
 .stock-view-toggle button {
   font-family: var(--f); font-size: 12px; font-weight: 700; color: var(--muted);
   background: var(--panel); border: 2px solid var(--line); border-radius: 9px; padding: 6px 14px; cursor: pointer;
-  transition: all .15s;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--line) 82%, transparent);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, color .16s ease, background .16s ease;
 }
-.stock-view-toggle button:hover { border-color: var(--accent); color: var(--ink); }
+.stock-view-toggle button:hover { border-color: var(--accent); color: var(--ink); transform: translateY(-2px); box-shadow: 0 6px 15px color-mix(in srgb, var(--accent) 17%, transparent); }
 .stock-view-toggle button.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 800; }
 
 /* 그룹 트렌드 차트 범례·판독 */
@@ -1526,7 +1629,7 @@ a[href]:hover .rainbow-on-hover,
 .stock-tab em { font-style: normal; font-size: 11px; color: var(--muted); font-weight: 600; }
 .stock-tab.on { font-weight: 800; box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 22%, transparent); }
 
-.stock-panel { padding: 10px 20px 20px; }
+.stock-panel { padding: 16px 20px 20px; }
 .stock-panel-head { display: flex; align-items: center; gap: 10px; margin: 6px 0 4px; }
 .sp-name { font-size: 16px; font-weight: 800; color: var(--ink); }
 .sp-tk { font-size: 12px; font-weight: 800; color: var(--muted); letter-spacing: .04em; }
@@ -1572,6 +1675,14 @@ a[href]:hover .rainbow-on-hover,
   .se-date { grid-column: 2; }
   .se-label, .se-reason { grid-column: 2; }
   .stock-range { margin-left: 0; }
+  .stock-region-stack { padding: 12px; gap: 14px; }
+  .stock-region-head { grid-template-columns: 1fr; padding: 16px; gap: 12px; }
+  .stock-region-metrics { grid-template-columns: repeat(3, 1fr); }
+  .stock-region-metrics span { min-width: 0; }
+  .stock-toolbar { align-items: flex-start; flex-direction: column; padding: 10px 16px; }
+  .stock-view-toggle, .stock-range { max-width: 100%; overflow-x: auto; padding-bottom: 2px; }
+  .stock-view-toggle button, .stock-range button { flex: none; }
+  .stock-generated { margin-left: 0; text-align: left; }
 }
 
 /* ============================================================

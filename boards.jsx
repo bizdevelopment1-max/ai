@@ -773,15 +773,14 @@ function ReportsBoard({ reports, sectionRef, query }) {
   );
 }
 
-// ---- Stock board: listed AI companies, daily price, 1Y/5Y, inflection notes ----
-function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
-  const inView = useInView(sectionRef);
+// ---- Stock board: global AI + semiconductor value chains and China A-shares ----
+function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats, groups, theme, defaultView = "group" }) {
   const catMap = Object.fromEntries((cats || []).map(c => [c.id, c]));
   const groupMap = Object.fromEntries((groups || []).map(g => [g.id, g]));
   const [ticker, setTicker] = React.useState((stocks[0] || {}).ticker);
   const [years, setYears] = React.useState(1);
   const [groupFilter, setGroupFilter] = React.useState("all");
-  const [view, setView] = React.useState("single");
+  const [view, setView] = React.useState(defaultView);
   const ranges = [
     { value: 1 / 12, label: "1개월" },
     { value: 0.5, label: "6개월" },
@@ -790,33 +789,42 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
     { value: 0, label: "전체" },
   ];
   const rangeLabel = (ranges.find(r => r.value === years) || ranges[2]).label;
+  if (!stocks.length) return null;
   const sel = stocks.find(s => s.ticker === ticker) || stocks[0];
   const selGroup = groupMap[sel.group];
   const accent = (selGroup || catMap[sel.cat] || {}).accent || theme.accent;
   const real = (stockData && stockData[sel.ticker]) || null;
   const mcap = sel.private ? sel.mcap : (real && real.marketCap);
   const visibleStocks = groupFilter === "all" ? stocks : stocks.filter(s => s.group === groupFilter);
+  const latestDates = stocks.map(stock => stockData?.[stock.ticker]?.asOf).filter(Boolean).sort();
+  const latestDate = latestDates.at(-1) || "";
+  const exchanges = [...new Set(stocks.map(stock => stock.exchange || stockData?.[stock.ticker]?.exchange).filter(Boolean))];
+
   return (
-    <section className="board" ref={sectionRef} data-screen-label="Stock Prices">
-     <AnimCtx.Provider value={inView}>
-      <div className="board-head" style={{ "--accent": accent }}>
-        <span className="board-tab" style={{ background: accent }} />
-        <div className="board-titles">
-          <h2>주가 차트 <span className="board-en">Listed AI Stocks · 실시간 일별 주가</span></h2>
-          <p>상장 AI 기업 실제 일별 종가(매일 자동 크롤링) · 밸류체인 업종별 그룹 트렌드 비교 · 마우스 호버 시 종가 · 변곡점(●)에 상승/하락 사유</p>
+    <article className="stock-region" style={{ "--accent": accent }}>
+      <div className="stock-region-head">
+        <div>
+          <span className="stock-region-eyebrow">{eyebrow}</span>
+          <h3>{title}</h3>
+          <p>{description}</p>
         </div>
-        {(view === "group" || !sel.private) && (
-          <div className="stock-range">
-            {ranges.map(r => (
-              <button key={r.label} className={years === r.value ? "on" : ""} onClick={() => setYears(r.value)}>{r.label}</button>
-            ))}
-          </div>
-        )}
+        <div className="stock-region-metrics">
+          <span><b>{stocks.length}</b>개 상장사</span>
+          <span><b>{groups.length}</b>개 밸류체인</span>
+          {latestDate && <span>기준 <b>{latestDate}</b></span>}
+        </div>
       </div>
 
-      <div className="stock-view-toggle">
-        <button className={view === "single" ? "on" : ""} onClick={() => setView("single")}>개별 종목</button>
-        <button className={view === "group" ? "on" : ""} onClick={() => setView("group")}>밸류체인 그룹 트렌드</button>
+      <div className="stock-toolbar">
+        <div className="stock-view-toggle">
+          <button className={view === "group" ? "on" : ""} onClick={() => setView("group")}>밸류체인 그룹 트렌드</button>
+          <button className={view === "single" ? "on" : ""} onClick={() => setView("single")}>개별 종목</button>
+        </div>
+        <div className="stock-range">
+          {ranges.map(r => (
+            <button key={r.label} className={years === r.value ? "on" : ""} onClick={() => setYears(r.value)}>{r.label}</button>
+          ))}
+        </div>
       </div>
 
       {view === "group" ? (
@@ -824,9 +832,10 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
           <div className="stock-panel-head">
             <span className="sp-name">밸류체인 업종별 상대 추이</span>
             <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{rangeLabel} · 시작=100</span>
+            <span className="sp-source">{exchanges.join(" · ")}</span>
           </div>
           <GroupTrendChart groups={groups} stocks={stocks} stockData={stockData} years={years} theme={theme} />
-          <p className="stock-updated">출처: Yahoo Finance 우선, Stooq·Nasdaq·StockAnalysis 교차 폴백 · 그룹 = 구성 종목 종가를 기간 시작 100으로 재환산 후 평균</p>
+          <p className="stock-updated">조정종가 우선 · 그룹별 구성 종목을 기간 시작 100으로 재환산한 동일가중 추이 · 관측 기간이 부족한 신규 종목은 개별 시세에서 확인</p>
         </div>
       ) : (
       <React.Fragment>
@@ -855,7 +864,7 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
               onClick={() => setTicker(s.ticker)}>
               <img src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
               <b>{s.ticker}</b>
-              <em>{s.name.replace(/\s*\(.*\)/, "")}</em>
+              <em>{s.exchange || s.name.replace(/\s*\(.*\)/, "")}</em>
             </button>
           );
         })}
@@ -867,8 +876,7 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
           <span className="sp-tk">{sel.ticker}</span>
           <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{(selGroup || {}).ko}</span>
           {mcap && <span className="sp-mcap">시가총액 <b>{mcap}</b></span>}
-          {real && real.scenario && <span className="sp-scenario">시나리오(실시세 피드 미반영)</span>}
-          {real && !real.scenario && <span className="sp-source">데이터 {String(real.source || "public feed").replace("yahoo-api", "Yahoo Finance").replace("yahoo-web", "Yahoo Finance")}</span>}
+          {real && <span className="sp-source">데이터 {String(real.source || "public feed").replace("yahoo-api", "Yahoo Finance").replace("yahoo-web", "Yahoo Finance")}</span>}
         </div>
 
         {sel.private ? (
@@ -889,7 +897,7 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
           </div>
         ) : real && real.points ? (
           <StockChart stock={sel} rawPoints={real.points} years={years} marketCap={real.marketCap}
-            asOf={real.asOf} accent={accent} ink={theme.ink} muted={theme.muted} grid={theme.grid} />
+            asOf={real.asOf} currency={real.currency || "$"} accent={accent} ink={theme.ink} muted={theme.muted} grid={theme.grid} />
         ) : (
           <div className="stock-pending">
             <p className="stock-empty">{sel.note || "실제 일별 주가는 매일 자동 크롤링되어 표시됩니다. 첫 갱신을 기다리는 중입니다."}</p>
@@ -907,10 +915,56 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
             )}
           </div>
         )}
-        <p className="stock-updated">Yahoo Finance 차트 UX를 참고한 기간 선택·크로스헤어 · 시세는 Yahoo 우선 다중 공개 소스 · 시총 = 종가 × 발행주식수(근사)</p>
+        <p className="stock-updated">Yahoo Finance 조정종가 우선 · Stooq·Nasdaq·StockAnalysis 공개 피드 폴백 · 기간 선택·크로스헤어 제공</p>
       </div>
       </React.Fragment>
       )}
+    </article>
+  );
+}
+
+function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
+  const inView = useInView(sectionRef);
+  const globalStocks = (stocks || []).filter(stock => stock.region !== "china");
+  const chinaStocks = (stocks || []).filter(stock => stock.region === "china");
+  const globalGroups = (groups || []).filter(group => group.region !== "china");
+  const chinaGroups = (groups || []).filter(group => group.region === "china");
+  const generatedAt = stockData?.__generatedAt ? new Date(stockData.__generatedAt).toLocaleString("ko-KR") : "";
+
+  return (
+    <section className="board stock-board-rich" ref={sectionRef} data-screen-label="Stock Prices">
+     <AnimCtx.Provider value={inView}>
+      <div className="board-head stock-master-head" style={{ "--accent": theme.accent }}>
+        <span className="board-tab" style={{ background: theme.accent }} />
+        <div className="board-titles">
+          <h2>주가 차트 <span className="board-en">Listed AI & Semiconductor Value Chain</span></h2>
+          <p>글로벌 AI·반도체와 중국 A주 공급망을 실제 일별 시세로 비교 · 밸류체인 그룹과 개별 종목을 동일 기준으로 분석</p>
+        </div>
+        {generatedAt && <span className="stock-generated">마지막 수집<br /><b>{generatedAt}</b></span>}
+      </div>
+
+      <div className="stock-region-stack">
+        <StockRegionPanel
+          title="글로벌 AI·반도체 밸류체인"
+          eyebrow="GLOBAL LISTED EQUITIES"
+          description="AI 칩·메모리·파운드리·장비·패키징에서 하이퍼스케일러·데이터센터·소프트웨어까지 연결"
+          stocks={globalStocks}
+          stockData={stockData}
+          cats={cats}
+          groups={globalGroups}
+          theme={theme}
+        />
+        <StockRegionPanel
+          title="중국 A주 반도체 밸류체인"
+          eyebrow="CHINA A-SHARE SEMICONDUCTOR"
+          description="CXMT를 포함한 상하이·선전 상장사를 메모리·파운드리·장비·패키징·팹리스/EDA·소재로 연결"
+          stocks={chinaStocks}
+          stockData={stockData}
+          cats={cats}
+          groups={chinaGroups}
+          theme={theme}
+        />
+      </div>
      </AnimCtx.Provider>
     </section>
   );

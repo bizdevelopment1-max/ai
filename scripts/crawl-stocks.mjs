@@ -27,9 +27,23 @@ const TICKERS = [
   { t: "INTC", y: "INTC", s: "intc.us" },
   // ── 메모리 ──
   { t: "MU", y: "MU", s: "mu.us" },
-  // SK hynix ADR — 2026-07-10 나스닥 신규 상장(한국거래소 000660 동시 상장). 상장 초기라 데이터가
-  // 얇을 수 있어 매일 크롤 시 자동으로 채워짐(단조 최신화 병합 로직).
-  { t: "SKHY", y: "SKHY", s: "skhy.us" },
+  { t: "000660.KS", y: "000660.KS", currency: "₩", market: "KRX" },
+  { t: "005930.KS", y: "005930.KS", currency: "₩", market: "KRX" },
+  { t: "SNDK", y: "SNDK", s: "sndk.us" },
+  { t: "WDC", y: "WDC", s: "wdc.us" },
+  { t: "285A.T", y: "285A.T", currency: "¥", market: "TSE" },
+  // ── 파운드리 ──
+  { t: "UMC", y: "UMC", s: "umc.us" },
+  { t: "GFS", y: "GFS", s: "gfs.us" },
+  // ── 반도체 장비 ──
+  { t: "ASML", y: "ASML", s: "asml.us" },
+  { t: "AMAT", y: "AMAT", s: "amat.us" },
+  { t: "LRCX", y: "LRCX", s: "lrcx.us" },
+  { t: "KLAC", y: "KLAC", s: "klac.us" },
+  { t: "8035.T", y: "8035.T", currency: "¥", market: "TSE" },
+  // ── 패키징·테스트 ──
+  { t: "ASX", y: "ASX", s: "asx.us" },
+  { t: "AMKR", y: "AMKR", s: "amkr.us" },
   // ── 네트워킹·광통신 ──
   { t: "ANET", y: "ANET", s: "anet.us" },
   { t: "CIEN", y: "CIEN", s: "cien.us" },
@@ -44,9 +58,41 @@ const TICKERS = [
   // ── 온디바이스 ──
   { t: "AAPL", y: "AAPL", s: "aapl.us", shares: 14.8 },
   // ── AI 네이티브 ──
-  // SpaceX (SPCX) — try the real listed ticker first; if no public feed carries it yet,
-  // fall back to a clearly-labeled scenario series from the 2026-06-12 listing date.
-  { t: "SPCX", y: "SPCX", s: "spcx.us", shares: 13.05, scenario: { start: "2026-06-12", ipo: 135, last: 165.78, shares: 13.05 } },
+  // 공개 시세가 확인되는 경우에만 표시하며 임의 시나리오 가격은 만들지 않음
+  { t: "SPCX", y: "SPCX", s: "spcx.us" },
+
+  // ── 중국 A주 · 메모리 ──
+  { t: "688825.SS", y: "688825.SS", currency: "CN¥", market: "SSE STAR", listedAt: "2026-07-27" },
+  { t: "603986.SS", y: "603986.SS", currency: "CN¥", market: "SSE" },
+  { t: "688525.SS", y: "688525.SS", currency: "CN¥", market: "SSE STAR" },
+  // ── 중국 A주 · 파운드리 ──
+  { t: "688981.SS", y: "688981.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "688347.SS", y: "688347.SS", currency: "CN¥", market: "SSE STAR" },
+  // ── 중국 A주 · 장비 ──
+  { t: "002371.SZ", y: "002371.SZ", currency: "CN¥", market: "SZSE" },
+  { t: "688012.SS", y: "688012.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "688082.SS", y: "688082.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "688072.SS", y: "688072.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "688037.SS", y: "688037.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "688120.SS", y: "688120.SS", currency: "CN¥", market: "SSE STAR" },
+  // ── 중국 A주 · 패키징·테스트 ──
+  { t: "600584.SS", y: "600584.SS", currency: "CN¥", market: "SSE" },
+  { t: "002156.SZ", y: "002156.SZ", currency: "CN¥", market: "SZSE" },
+  { t: "002185.SZ", y: "002185.SZ", currency: "CN¥", market: "SZSE" },
+  // ── 중국 A주 · 팹리스·IP·EDA ──
+  { t: "688008.SS", y: "688008.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "688521.SS", y: "688521.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "301269.SZ", y: "301269.SZ", currency: "CN¥", market: "SZSE" },
+  { t: "688206.SS", y: "688206.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "603501.SS", y: "603501.SS", currency: "CN¥", market: "SSE" },
+  { t: "603893.SS", y: "603893.SS", currency: "CN¥", market: "SSE" },
+  { t: "688047.SS", y: "688047.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "688256.SS", y: "688256.SS", currency: "CN¥", market: "SSE STAR" },
+  // ── 중국 A주 · 소재·기판 ──
+  { t: "688019.SS", y: "688019.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "688126.SS", y: "688126.SS", currency: "CN¥", market: "SSE STAR" },
+  { t: "300666.SZ", y: "300666.SZ", currency: "CN¥", market: "SZSE" },
+  { t: "002916.SZ", y: "002916.SZ", currency: "CN¥", market: "SZSE" },
 ];
 
 const YEARS = 5;
@@ -72,24 +118,33 @@ async function yahooSession() {
 }
 
 async function fromYahoo(c, sess) {
-  for (const h of ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]) {
-    try {
-      const q = sess && sess.crumb ? `&crumb=${encodeURIComponent(sess.crumb)}` : "";
-      const url = `https://${h}/v8/finance/chart/${c.y}?range=${YEARS}y&interval=1d${q}`;
-      const headers = { "User-Agent": UA, Accept: "application/json" };
-      if (sess && sess.cookie) headers.Cookie = sess.cookie;
-      const res = await fetch(url, { headers });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const j = await res.json();
-      const r = j && j.chart && j.chart.result && j.chart.result[0];
-      if (!r || !r.timestamp) throw new Error("no result");
-      const closes = r.indicators.quote[0].close;
-      const points = r.timestamp
-        .map((t, i) => ({ d: new Date(t * 1000).toISOString().slice(0, 10), p: closes[i] }))
-        .filter((p) => typeof p.p === "number" && isFinite(p.p))
-        .map((p) => ({ d: p.d, p: round2(p.p) }));
-      if (points.length >= 5) return points;
-    } catch { /* next host */ }
+  // Yahoo의 cookie+crumb 경로가 지역·IP별로 401이 될 수 있어 같은 요청을
+  // 무세션으로도 재시도함
+  const sessions = sess ? [sess, null] : [null];
+  for (const activeSession of sessions) {
+    for (const h of ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]) {
+      try {
+        const q = activeSession && activeSession.crumb ? `&crumb=${encodeURIComponent(activeSession.crumb)}` : "";
+        const url = `https://${h}/v8/finance/chart/${c.y}?range=${YEARS}y&interval=1d${q}`;
+        const headers = { "User-Agent": UA, Accept: "application/json" };
+        if (activeSession && activeSession.cookie) headers.Cookie = activeSession.cookie;
+        const res = await fetch(url, { headers });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const j = await res.json();
+        const r = j && j.chart && j.chart.result && j.chart.result[0];
+        if (!r || !r.timestamp) throw new Error("no result");
+        const closes = r.indicators.quote[0].close;
+        const adjusted = r.indicators.adjclose?.[0]?.adjclose || [];
+        const points = r.timestamp
+          .map((t, i) => ({
+            d: new Date(t * 1000).toISOString().slice(0, 10),
+            p: typeof adjusted[i] === "number" ? adjusted[i] : closes[i],
+          }))
+          .filter((p) => typeof p.p === "number" && isFinite(p.p))
+          .map((p) => ({ d: p.d, p: round2(p.p) }));
+        if (points.length >= 2) return points;
+      } catch { /* next host/session */ }
+    }
   }
   return null;
 }
@@ -144,6 +199,91 @@ async function yahooMarketCap(c, sess) {
     if (/^[0-9.eE+]+$/.test(m[1])) { const capB = parseFloat(m[1]) / 1e9; return fmtCap(capB); }
     return m[1];
   } catch { return ""; }
+}
+
+async function fromNaverKorea(c) {
+  if (c.market !== "KRX") return null;
+  const symbol = String(c.y || c.t).split(".")[0];
+  try {
+    const res = await fetch(`https://fchart.stock.naver.com/sise.nhn?symbol=${symbol}&timeframe=day&count=2000&requestType=0`, {
+      headers: { "User-Agent": UA, Accept: "application/xml,text/xml,*/*", Referer: "https://finance.naver.com/" },
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const xml = await res.text();
+    const cut = cutoffDate();
+    const points = [...xml.matchAll(/<item\s+data="([^"]+)"/g)].map(match => {
+      const cols = match[1].split("|");
+      const ymd = cols[0] || "";
+      const d = ymd.length === 8 ? `${ymd.slice(0, 4)}-${ymd.slice(4, 6)}-${ymd.slice(6, 8)}` : "";
+      return { d, p: round2(Number(cols[4])) };
+    }).filter(point => point.d && isFinite(point.p) && new Date(point.d) >= cut)
+      .sort((a, b) => (a.d < b.d ? -1 : 1));
+    return points.length >= 2 ? points : null;
+  } catch {
+    return null;
+  }
+}
+
+const isChinaTicker = (c) => c.market === "SSE" || c.market === "SSE STAR" || c.market === "SZSE";
+const chinaSymbol = (c) => String(c.y || c.t).split(".")[0];
+
+// Eastmoney 전·후방 수정주가 일봉 — 상하이(1)·선전(0) 전용 5년 이력
+async function fromEastMoney(c) {
+  if (!isChinaTicker(c)) return null;
+  const marketId = c.market === "SZSE" ? "0" : "1";
+  const secid = `${marketId}.${chinaSymbol(c)}`;
+  const params = new URLSearchParams({
+    secid,
+    klt: "101",
+    fqt: "1",
+    lmt: "2000",
+    end: "20500101",
+    fields1: "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13",
+    fields2: "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61",
+  });
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`https://push2his.eastmoney.com/api/qt/stock/kline/get?${params}`, {
+        headers: { "User-Agent": UA, Accept: "application/json", Referer: "https://quote.eastmoney.com/" },
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const rows = (await res.json())?.data?.klines || [];
+      const cut = cutoffDate();
+      const points = rows.map(row => {
+        const cols = String(row).split(",");
+        return { d: cols[0], p: round2(Number(cols[2])) };
+      }).filter(point => point.d && isFinite(point.p) && new Date(point.d) >= cut);
+      if (points.length >= 2) return points;
+    } catch {
+      if (attempt === 0) await new Promise(resolve => setTimeout(resolve, 650));
+    }
+  }
+  return null;
+}
+
+// Sina 일봉은 Eastmoney가 일시 차단될 때 사용하는 중국 A주 보조 피드
+async function fromSinaChina(c) {
+  if (!isChinaTicker(c)) return null;
+  const prefix = c.market === "SZSE" ? "sz" : "sh";
+  const url = `https://quotes.sina.cn/cn/api/jsonp_v2.php/var%20stockHistory=/CN_MarketDataService.getKLineData?symbol=${prefix}${chinaSymbol(c)}&scale=240&ma=no&datalen=1600`;
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": UA, Accept: "text/javascript,*/*", Referer: "https://finance.sina.com.cn/" },
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const body = await res.text();
+    const start = body.indexOf("([");
+    const end = body.lastIndexOf("])");
+    if (start < 0 || end <= start) return null;
+    const rows = JSON.parse(body.slice(start + 1, end + 1));
+    const cut = cutoffDate();
+    const points = rows.map(row => ({ d: row.day, p: round2(Number(row.close)) }))
+      .filter(point => point.d && isFinite(point.p) && new Date(point.d) >= cut)
+      .sort((a, b) => (a.d < b.d ? -1 : 1));
+    return points.length >= 2 ? points : null;
+  } catch {
+    return null;
+  }
 }
 
 async function fromStooq(c) {
@@ -214,15 +354,29 @@ async function tvLastPrice(c) {
 }
 
 async function crawlOne(c, sess) {
-  // Source order: Yahoo API → Yahoo web pages → Stooq → Nasdaq → StockAnalysis → TradingView(last price)
-  const sources = [
+  // 지역별 전용 피드를 먼저 사용해 한 공급자의 속도 제한이 전체를 막지 않게 함
+  const yahooSources = [
     ["yahoo-api", () => fromYahoo(c, sess)],
     ["yahoo-web", () => fromYahooWeb(c, sess)],
-    ["stooq", () => fromStooq(c)],
+  ];
+  const usSources = [
     ["nasdaq", () => fromNasdaq(c)],
+    ...yahooSources,
+    ["stooq", () => c.s ? fromStooq(c) : null],
     ["stockanalysis", () => fromStockAnalysis(c)],
     ["tradingview", async () => { const tv = await tvLastPrice(c); return tv ? [{ d: new Date().toISOString().slice(0, 10), p: tv }] : null; }],
   ];
+  const sources = isChinaTicker(c)
+    ? [
+        ["eastmoney", () => fromEastMoney(c)],
+        ["sina", () => fromSinaChina(c)],
+        ...yahooSources,
+      ]
+    : c.market === "KRX"
+      ? [["naver", () => fromNaverKorea(c)], ...yahooSources]
+      : c.market
+        ? yahooSources
+        : usSources;
   let points = null, src = "";
   const tried = [];
   for (const [name, fn] of sources) {
@@ -231,39 +385,28 @@ async function crawlOne(c, sess) {
     tried.push(`${name}:${got ? got.length : 0}`);
     if (got && got.length) { points = got; src = name; break; }
   }
-  // last-resort scenario series (clearly labeled) for symbols not yet on any public feed
-  let scenario = false;
-  if (!points && c.scenario) { points = scenarioSeries(c); src = "scenario"; scenario = true; }
   if (!points) { console.warn(`[stock:${c.t}] no data — tried ${tried.join(" ")}`); return null; }
   const last = points[points.length - 1];
   let marketCap = c.shares ? fmtCap(last.p * c.shares) : "";
-  if (scenario && c.scenario.shares) marketCap = fmtCap(last.p * c.scenario.shares) + " (시나리오)";
-  else if (!marketCap) { marketCap = await yahooMarketCap(c, sess); }   // shares 미상 → Yahoo 요약에서 시총 파싱
-  console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} $${last.p}${marketCap ? ", cap " + marketCap : ""} (${tried.join(" ")})`);
-  return [c.t, { ticker: c.t, asOf: last.d, currency: "$", lastPrice: last.p, marketCap, source: src, scenario: scenario || undefined, points }];
-}
-
-// Deterministic post-IPO scenario series anchored to known IPO price → current price (weekdays).
-// 첫날=상장가(ipo), 마지막날=현재가(last)로 고정하고 중간만 약하게 흔든다. 실데이터 아님(라벨 표기).
-function scenarioSeries(c) {
-  const { start, ipo, last } = c.scenario;
-  const dates = [], d = new Date(start + "T00:00:00Z"), today = new Date();
-  while (d <= today) { const wd = d.getUTCDay(); if (wd !== 0 && wd !== 6) dates.push(d.toISOString().slice(0, 10)); d.setUTCDate(d.getUTCDate() + 1); }
-  if (!dates.length) return null;
-  const n = dates.length, end = (typeof last === "number" ? last : ipo);
-  let seed = 99; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
-  return dates.map((dd, i) => {
-    const t = n === 1 ? 1 : i / (n - 1);
-    const base = ipo + (end - ipo) * t;                         // 상장가 → 현재가 선형
-    const noise = (i === 0 || i === n - 1) ? 0 : (rnd() - 0.5) * Math.abs(end - ipo) * 0.14;  // 양끝 고정, 중간만 변동
-    return { d: dd, p: round2(Math.max(1, base + noise)) };
-  });
+  if (!marketCap && !c.market) { marketCap = await yahooMarketCap(c, sess); }   // 미국 종목의 shares 미상 → Yahoo 요약에서 시총 파싱
+  console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} ${c.currency || "$"}${last.p}${marketCap ? ", cap " + marketCap : ""} (${tried.join(" ")})`);
+  return [c.t, {
+    ticker: c.t,
+    asOf: last.d,
+    currency: c.currency || "$",
+    exchange: c.market || "",
+    listedAt: c.listedAt || undefined,
+    lastPrice: last.p,
+    marketCap,
+    source: src,
+    points,
+  }];
 }
 
 // 신규 크롤과 기존 데이터를 '날짜 합집합'으로 병합 — 데이터가 절대 과거로 후퇴하지 않게(단조 최신화).
 // 같은 날짜는 신규 크롤 값을 우선. 마지막 포인트로 lastPrice/asOf/시총 재계산.
 function mergeSeries(t, prevObj, freshObj) {
-  const sharesOf = () => { const c = TICKERS.find(x => x.t === t); return c ? (c.shares || (c.scenario && c.scenario.shares) || 0) : 0; };
+  const sharesOf = () => { const c = TICKERS.find(x => x.t === t); return c ? (c.shares || 0) : 0; };
   if (prevObj && freshObj) {
     const byDate = {};
     for (const p of (prevObj.points || [])) byDate[p.d] = p.p;
@@ -274,7 +417,7 @@ function mergeSeries(t, prevObj, freshObj) {
       .sort((a, b) => (a.d < b.d ? -1 : 1));
     const last = points[points.length - 1];
     const sh = sharesOf();
-    const cap = sh ? fmtCap(last.p * sh) + (freshObj.scenario ? " (시나리오)" : "") : (freshObj.marketCap || prevObj.marketCap || "");
+    const cap = sh ? fmtCap(last.p * sh) : (freshObj.marketCap || prevObj.marketCap || "");
     return { ...freshObj, points, asOf: last.d, lastPrice: last.p, marketCap: cap };
   }
   return freshObj || prevObj;
@@ -283,16 +426,29 @@ function mergeSeries(t, prevObj, freshObj) {
 async function main() {
   const sess = await yahooSession();
   console.log(`Yahoo session: ${sess ? (sess.crumb ? "cookie+crumb" : "cookie only") : "none"}`);
-  const results = (await Promise.all(TICKERS.map((c) => crawlOne(c, sess)))).filter(Boolean);
+  const results = [];
+  const batchSize = 6;
+  for (let i = 0; i < TICKERS.length;) {
+    // Eastmoney는 동시 다중 요청을 차단하므로 중국 A주는 순차 수집
+    const activeBatchSize = TICKERS[i].market ? 1 : batchSize;
+    const batch = await Promise.all(TICKERS.slice(i, i + activeBatchSize).map((c) => crawlOne(c, sess)));
+    results.push(...batch.filter(Boolean));
+    i += activeBatchSize;
+    if (i < TICKERS.length) await new Promise(resolve => setTimeout(resolve, activeBatchSize === 1 ? 450 : 300));
+  }
   const fresh = Object.fromEntries(results);
   if (!results.length) throw new Error("All stock data providers failed; keeping the previous bundle unchanged.");
 
   let prev = {};
   try { prev = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
 
-  const tickers = new Set([...Object.keys(fresh), ...Object.keys(prev)]);
+  // 현재 설정된 종목만 보존해 삭제된 테스트·시나리오 종목이 DB에 잔존하지 않게 함
+  const tickers = new Set(TICKERS.map(c => c.t));
   const final = {};
-  for (const t of tickers) final[t] = mergeSeries(t, prev[t], fresh[t]);
+  for (const t of tickers) {
+    const merged = mergeSeries(t, prev[t], fresh[t]);
+    if (merged) final[t] = merged;
+  }
 
   const sourceHealth = {
     targetCount: TICKERS.length,

@@ -692,5 +692,50 @@ try {
   console.error(`  실패  source-only policy: ${error.message}`);
 }
 
+try {
+  const [boards, data, charts, crawler, styles] = await Promise.all([
+    readFile("boards.jsx", "utf8"),
+    readFile("data.js", "utf8"),
+    readFile("charts.jsx", "utf8"),
+    readFile("scripts/crawl-stocks.mjs", "utf8"),
+    readFile("styles.css", "utf8"),
+  ]);
+  const chinaGroups = [
+    "china-memory",
+    "china-foundry",
+    "china-equipment",
+    "china-packaging",
+    "china-design",
+    "china-materials",
+  ];
+  const completeBoard = boards.includes("function StockRegionPanel")
+    && boards.includes("글로벌 AI·반도체 밸류체인")
+    && boards.includes("중국 A주 반도체 밸류체인")
+    && boards.includes("밸류체인 그룹 트렌드")
+    && boards.includes("개별 종목");
+  const completeMetadata = data.includes('ticker: "000660.KS"')
+    && data.includes('ticker: "688825.SS"')
+    && chinaGroups.every(group => data.includes(`id: "${group}"`));
+  const liveHistory = crawler.includes('const YEARS = 5')
+    && crawler.includes("indicators.adjclose")
+    && crawler.includes("const batchSize = 6")
+    && crawler.includes("new Set(TICKERS.map(c => c.t))")
+    && !crawler.includes("function scenarioSeries");
+  const currencyAware = charts.includes('currency = "$"')
+    && charts.includes("{currency}{t}")
+    && boards.includes('currency={real.currency || "$"}');
+  const responsiveUi = styles.includes(".stock-region-stack")
+    && styles.includes(".stock-region-head")
+    && styles.includes(".stock-toolbar")
+    && styles.includes("grid-template-columns: minmax(0, 1fr) auto");
+  if (!completeBoard || !completeMetadata || !liveHistory || !currencyAware || !responsiveUi) {
+    throw new Error("global/China stock boards, five-year adjusted-close history, currencies, or responsive UI are incomplete");
+  }
+  console.log("  OK  글로벌·중국 A주 밸류체인 주가 보드와 5년 실데이터 병합 수집");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  stock value-chain board: ${error.message}`);
+}
+
 if (failed) process.exit(1);
 console.log("자동화 구성 정상");

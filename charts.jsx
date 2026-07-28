@@ -411,7 +411,7 @@ function MonthlyLineChart({ series, months, colors, ink, muted, grid, unit, valu
 }
 
 // ---- Interactive daily stock chart (hover price + inflection notes) ----
-function StockChart({ stock, rawPoints, years, marketCap, asOf, accent, ink, muted, grid }) {
+function StockChart({ stock, rawPoints, years, marketCap, asOf, currency = "$", accent, ink, muted, grid }) {
   const [ref, inView] = useEyeLevel();
   const [nonce, bump] = useHoverReplay();
   const prog = useProgress(inView, 1500, 0, nonce);
@@ -466,7 +466,7 @@ function StockChart({ stock, rawPoints, years, marketCap, asOf, accent, ink, mut
     <div ref={ref} className="stock-chart" style={{ position: "relative" }} onMouseLeave={() => { setHover(null); tip.hide(); }}>
       <div className="stock-readout">
         <span className="sr-date">{hp ? fmtKo(hp.d) : ""}</span>
-        <span className="sr-price" style={{ color: lineCol }}>${hp ? hp.p.toFixed(2) : last.toFixed(2)}</span>
+        <span className="sr-price" style={{ color: lineCol }}>{currency}{hp ? hp.p.toFixed(2) : last.toFixed(2)}</span>
         <span className={"sr-chg " + (hChange >= 0 ? "pos" : "neg")}>{hChange >= 0 ? "+" : ""}{hChange.toFixed(1)}% <em>(기간 시작 대비)</em></span>
         {marketCap && <span className="sr-mcap">시총 <b>{marketCap}</b></span>}
         {asOf && <span className="sr-asof">기준일 {asOf}</span>}
@@ -482,7 +482,7 @@ function StockChart({ stock, rawPoints, years, marketCap, asOf, accent, ink, mut
         {ticks.map((t, i) => (
           <g key={i}>
             <line x1={padL} x2={padL + iw} y1={y(t)} y2={y(t)} stroke={grid} strokeWidth="1" />
-            <text x={padL - 8} y={y(t) + 3} textAnchor="end" fontSize="10" fill={muted} style={{ fontVariantNumeric: "tabular-nums" }}>${t}</text>
+            <text x={padL - 8} y={y(t) + 3} textAnchor="end" fontSize="10" fill={muted} style={{ fontVariantNumeric: "tabular-nums" }}>{currency}{t}</text>
           </g>
         ))}
         {/* x labels: ~5 evenly spaced dates */}
@@ -495,7 +495,7 @@ function StockChart({ stock, rawPoints, years, marketCap, asOf, accent, ink, mut
         {/* inflection markers */}
         {evList.map((o, k) => o.i < visN && (
           <g key={k} style={{ cursor: "pointer" }}
-            onMouseEnter={e => tip.show(e, <span><b style={{ color: o.e.dir === "up" ? "#0E8F6E" : "#D23B3B" }}>{o.e.dir === "up" ? "▲ 상승" : "▼ 하락"} · {o.e.label}</b><br />{fmtKo(o.e.d)} · ${o.e.p.toFixed(2)}<br /><em>{o.e.reason}</em></span>)}
+            onMouseEnter={e => tip.show(e, <span><b style={{ color: o.e.dir === "up" ? "#0E8F6E" : "#D23B3B" }}>{o.e.dir === "up" ? "▲ 상승" : "▼ 하락"} · {o.e.label}</b><br />{fmtKo(o.e.d)} · {currency}{o.e.p.toFixed(2)}<br /><em>{o.e.reason}</em></span>)}
             onMouseMove={tip.move} onMouseLeave={tip.hide}>
             <circle cx={x(o.i)} cy={y(o.e.p)} r="9" fill="transparent" />
             <circle cx={x(o.i)} cy={y(o.e.p)} r="5.5" fill={o.e.dir === "up" ? "#0E8F6E" : "#D23B3B"} opacity="0.18" />
