@@ -62,6 +62,12 @@ const QUERIES = [
   { id: "src-pew", group: "trust", verticalId: "trust-0", topic: "Pew AI 인식 조사", query: "Pew Research survey Americans artificial intelligence percent" },
   { id: "src-deloitte", group: "assistant", verticalId: "assistant-0", topic: "Deloitte AI 소비자 조사", query: "Deloitte digital consumer survey generative AI adoption percent" },
   { id: "src-mck", group: "service", verticalId: "service-0", topic: "McKinsey AI 도입 조사", query: "McKinsey state of AI survey adoption organizations percent" },
+  // ── 모델사 수직통합 신사업(자회사·분사로 버티컬 AI 서비스 구축) — 시장규모·비즈니스모델 발굴 ──
+  { id: "labs-vertical", group: "assistant", verticalId: "assistant-0", topic: "모델사 버티컬 AI 서비스 신사업", query: "OpenAI Anthropic new business vertical AI service subsidiary revenue" },
+  { id: "labs-appstack", group: "assistant", verticalId: "assistant-0", topic: "파운데이션 랩 애플리케이션 진출", query: "foundation model company vertical integration application layer market" },
+  { id: "labs-spinoff", group: "service", verticalId: "service-0", topic: "AI 랩 자회사·분사 서비스", query: "AI lab subsidiary spinoff consumer enterprise service launch" },
+  { id: "ai-native-saas", group: "service", verticalId: "service-0", topic: "AI 네이티브 버티컬 SaaS 시장", query: "AI native vertical SaaS application market size forecast" },
+  { id: "labs-consumer", group: "assistant", verticalId: "assistant-0", topic: "모델사 소비자 앱·구독 매출", query: "OpenAI ChatGPT consumer app subscription revenue market" },
 ];
 
 const quantified = text => {

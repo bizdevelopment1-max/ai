@@ -3,16 +3,19 @@
    crawl-bizmodel.mjs — AI 수익화(비즈니스 모델) 시그널 누적 갱신
    입력: news.json(매일 크롤된 최신 기사) — 별도 네트워크 호출 없이
          이미 수집된 기사에서 '돈 버는 방식(과금·수익모델)' 신호만 선별·분류.
-   동작: 구독·사용량/API·광고/커머스·하드웨어/번들·성과기반·엔터프라이즈 라이선스
-         6개 MECE 수익화 유형으로 분류하고 한글 개조식 시그널 + 정량 수치를 추출해
+   동작: 수직통합/자체서비스·구독·사용량/API·광고/커머스·하드웨어/번들·성과기반·엔터프라이즈
+         7개 MECE 수익화 유형으로 분류하고 한글 개조식 시그널 + 정량 수치를 추출해
          bizmodel.json 으로 누적(merge). 하드코딩이 아니라 기사 기반으로 계속 쌓임.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 
-// 6개 MECE 수익화(비즈니스 모델) 유형 — 위에서부터 우선 매칭
+// 7개 MECE 수익화(비즈니스 모델) 유형 — 위에서부터 우선 매칭
+// vertical 을 맨 앞에 둬 자회사·분사·수직통합 신호가 우선권을 갖도록 함(모델사가 직접 서비스화하는 신사업 트렌드).
 const GROUPS = [
+  { id: "vertical", ko: "수직통합·자체 서비스", desc: "모델사가 자회사·분사로 버티컬 AI 서비스를 직접 구축 — 앱·소비자/기업 서비스로 가치사슬 확장", accent: "#7A38D6",
+    re: /자회사|subsidiary|분사|spin(?:s|ning)?[-\s]?off|spin(?:s|ning)?[-\s]?out|수직통합|vertical integrat|application layer|first-?party (?:app|product|service)|owns? the (?:app|stack|product)|자체 (?:앱|서비스|플랫폼)|직접 서비스/i },
   { id: "subscription", ko: "구독·시트", desc: "월정액·좌석당 구독(SaaS) — 반복 매출", accent: "#16A34A",
     re: /구독|subscription|월정액|시트당|좌석당|per-seat|seat|프리미엄 요금|premium tier|pro 요금|유료 전환|paywall|플러스 요금|멤버십/i },
   { id: "usage", ko: "사용량·API·토큰", desc: "종량제·API 호출·토큰당 과금", accent: "#2D6BFF",
@@ -29,7 +32,7 @@ const GROUPS = [
 
 const QUANT = /(\$[\d,.]+\s?(?:[TBM]|억|조)?(?:\+)?|\d+\.?\d*\s?%|\d+\.?\d*\s?억\+?|\d+\.?\d*\s?조\+?|\d+\s?배|ARR\s?\$?[\d,.]+\s?[TBM억]?|\$?\d+\.?\d*\/(?:월|mo|month|년|year)|[0-9]{2,}\s?M\+?)/i;
 // 수익화 맥락 키워드(어느 카테고리든 이게 있어야 '돈 버는 방식' 신호로 채택)
-const MONETIZE = /수익|매출|과금|가격|요금|단가|구독|arr|매출화|monetiz|revenue|pricing|가격제|수익모델|수익화|유료|무료화|커머스|수수료|margin|마진/i;
+const MONETIZE = /수익|매출|과금|가격|요금|단가|구독|arr|매출화|monetiz|revenue|pricing|가격제|수익모델|수익화|유료|무료화|커머스|수수료|margin|마진|신사업|new business|자회사|subsidiary|spin-?off|수직통합|vertical integrat/i;
 
 const firstLine = sm => String(sm || "").split("\n").map(l => l.replace(/^[·\-•]\s*/, "").trim()).filter(Boolean)[0] || "";
 const classify = (text) => { for (const g of GROUPS) if (g.re.test(text)) return g.id; return null; };

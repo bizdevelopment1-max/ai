@@ -1642,6 +1642,29 @@ function BizModelBoard({ companies, cats, sectionRef, theme, articles }) {
           );
         })}
       </div>
+      <div className="pricing-tracker">
+        <div className="pt-head"><h3>수직통합 복제 경로 — 모델사의 '자체 서비스화'를 누가 어떻게 따라 하나</h3><span>OpenAI·Anthropic의 자회사·분사형 버티컬 AI 서비스 진입에 대응하는 4개 주체별 진입 방식</span></div>
+        <div className="pt-table">
+          <div className="pt-row pt-hrow"><span>주체 유형</span><span>복제 방식</span><span>핵심 자산·해자</span><span>단말 제조사 시사점</span></div>
+          {[
+            { who: "파운데이션 모델사", how: "자회사·분사(spin-off)로 앱·소비자/기업 서비스를 모델 위에 직접 구축", asset: "최신 모델·추론 원가·연구 인재", impl: "가장 빠르게 앱 계층까지 장악 — 단말은 이 계층에 종속되지 않도록 자체 서비스 축 필요", tone: "native" },
+            { who: "클라우드·플랫폼", how: "모델 호스팅 + 버티컬 SaaS를 사내/합작으로 병행(멀티모델 중립)", asset: "컴퓨트·유통·기업 고객 계약", impl: "인프라는 빌려 쓰되, 사용자 접점·과금은 단말이 직접 소유해야 마진 확보", tone: "datacenter" },
+            { who: "단말 제조사(우리)", how: "온디바이스 AI + 버티컬 서비스를 자회사·조인트벤처로 분리 구축(오픈모델·파트너 모델 병용)", asset: "단말·OS·유통·결제·개인 컨텍스트 데이터", impl: "역방향 통합(단말→서비스): 배포·과금 채널이 이미 있어 모델만 조달하면 수직통합 성립", tone: "device" },
+            { who: "버티컬 SaaS·스타트업", how: "특정 도메인(법률·의료·CS)에 파운데이션 모델을 얹어 성과기반 과금", asset: "도메인 데이터·워크플로 락인", impl: "인수·지분투자·번들 탑재로 단말 서비스 포트폴리오를 빠르게 확장하는 통로", tone: "software" },
+          ].map((r, i) => {
+            const ac = (catMap[r.tone] || {}).accent || "var(--accent)";
+            return (
+              <div className="pt-row" key={i}>
+                <span className="pt-model"><i style={{ background: ac }} />{r.who}</span>
+                <span className="pt-players">{r.how}</span>
+                <span className="pt-price">{r.asset}</span>
+                <span className="pt-note">{r.impl}</span>
+              </div>
+            );
+          })}
+        </div>
+        <p className="pt-foot"><b>핵심:</b> 모델사는 '모델 → 앱'으로 내려오고, 단말 제조사는 '단말 → 서비스'로 올라가는 <b>역방향 수직통합</b>이 가능하다. 파운데이션 모델을 직접 만들 필요 없이 <b>오픈모델·파트너 모델을 조달</b>하고, 이미 보유한 <b>배포·결제 채널과 온디바이스 개인 컨텍스트</b>를 해자로 삼아 <b>자회사·합작</b> 구조로 리스크를 격리하며 버티컬 AI 서비스를 신사업화할 수 있다.</p>
+      </div>
       <SignalInfographic file="bizmodel.json" delKey="aiDashDeletedBiz" articles={articles}
         title="AI 수익화 모델 시그널" />
      </AnimCtx.Provider>
