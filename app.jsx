@@ -420,11 +420,11 @@ function App() {
               <NewBizBoard articles={articles} dataVersion={dataVersion} />
             </LazySection>
 
-            <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
-              <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} />
-            </LazySection>
             <LazySection id="market" active={active} sectionRef={refs.market} height={780}>
               <MarketBoard dataVersion={dataVersion} />
+            </LazySection>
+            <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
+              <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} />
             </LazySection>
 
             <LazySection id="audit" active={active} sectionRef={refs.audit} height={520}>
