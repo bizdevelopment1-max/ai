@@ -1580,20 +1580,23 @@ const NEWBIZ_DEALS = [
       ["소유 구조", "Anthropic은 소수 파트너(비지배 지분)"],
       ["창립 파트너", "Blackstone · Hellman & Friedman · Goldman Sachs"],
       ["추가 백커", "Apollo · General Atlantic · GIC · Leonard Green · Sequoia"],
-      ["운영 모델", "Applied AI 엔지니어가 중견·PE 보유기업에 상주해 에이전트로 워크플로 재설계"],
-      ["타깃 산업", "PE 보유 포트폴리오 중견기업(규제산업 포함)"],
+      ["FDE 명칭", "Applied AI Engineer — 안전성·리서치 문화를 반영한 포워드 디플로이드 직군"],
+      ["딜리버리", "고객사 multi-week 스프린트 상주 → 프롬프트·evals 설계 → 에이전트 프로덕션 배포"],
+      ["타깃 산업", "금융·헬스케어·법률·정부 등 규제 산업(PE 보유 중견기업)"],
     ],
     facts: [
-      "전통 컨설팅이 아니라 Claude를 기업 워크플로에 심는 '적용(applied)' 서비스 — 커스텀 구축 + 장기 운영 지원",
-      "Wall Street·PE의 포트폴리오사를 통해 Claude 도입을 가속 — 'AI 인재 병목' 해소로 포지셔닝",
+      "목표는 라이선스 판매가 아니라 '핵심 비즈니스 프로세스 재설계 + 프로덕션 시스템 구축' — PoC에서 실서비스로 전환",
+      "Anthropic 분석: 가장 큰 가치를 얻는 조직은 라이선스를 많이 산 곳이 아니라 '지식 노동의 흐름(워크플로)을 재설계'한 곳",
+      "Wipro·Cognizant·ServiceNow·phData 등 SI 파트너가 Claude FDE를 대량 훈련·공급해 배포 인력을 확장",
       "OpenAI와 같은 날(5/4) 발표했지만 지배구조는 정반대 — 소수지분 vs 과반 지배",
     ],
-    insight: "자본·지배는 덜 쥐고 파트너십으로 확장하는 가벼운 수직통합. 안전성 브랜드 + 규제산업(PE 포트폴리오) 침투를 노려, OpenAI보다 자본 부담이 작은 구조.",
+    insight: "자본·지배는 덜 쥐고 파트너십으로 확장하는 가벼운 수직통합. 안전성 브랜드 + 규제산업 침투 + SI 파트너 FDE 풀로 배포를 스케일 — OpenAI보다 자본 부담이 작은 구조.",
     articles: [
       { t: "Anthropic teams with Goldman, Blackstone on $1.5B AI venture targeting PE-owned firms", s: "CNBC", u: "https://www.cnbc.com/2026/05/04/anthropic-goldman-blackstone-ai-venture.html" },
       { t: "Building a new enterprise AI services company (공식 발표)", s: "Anthropic", u: "https://www.anthropic.com/news/enterprise-ai-services-company" },
+      { t: "Anthropic's Applied AI Engineers: The Forward-Deployed Function Behind Claude", s: "Perspective AI", u: "https://getperspective.ai/blog/anthropic-applied-ai-engineers-forward-deployed-claude-enterprise" },
+      { t: "Wipro launches Applied AI Center of Excellence for Claude Models, FDE talent pool", s: "Wipro", u: "https://www.wipro.com/newsroom/press-releases/2026/wipro-advances-enterprise-ai-leadership-with-an-applied-ai-center-of-excellence-for-claude-models-powered-by-anthropic/" },
       { t: "Anthropic takes shot at consulting industry in JV with Wall Street giants", s: "Fortune", u: "https://fortune.com/2026/05/04/anthropic-claude-consulting-industry-joint-venture-blackstone-goldman-sachs/" },
-      { t: "Anthropic and OpenAI are both launching JVs for enterprise AI services", s: "TechCrunch", u: "https://techcrunch.com/2026/05/04/anthropic-and-openai-are-both-launching-joint-ventures-for-enterprise-ai-services/" },
     ],
   },
 ];
@@ -1751,6 +1754,74 @@ function AIConsultingBuildSection() {
       </div>
 
       <p className="nbz-device"><b>단말 제조사 진입 플레이북</b> ① <b>자산</b> — 기기 fleet·MDM(모바일 단말 관리)·보안·유통·현장 서비스 채널을 이미 보유. ② <b>진입</b> — 기업 디바이스 fleet를 AI로 전환하는 <b>온디바이스·엣지 구축 서비스</b>에 FDE형 조직을 자회사·JV로 신설. ③ <b>모델 조달</b> — 파운데이션 모델은 오픈·파트너로 확보(자체 개발 불필요). ④ <b>과금</b> — 초기 구축비 + <b>디바이스·소비 기반 annuity</b> + 아웃컴 성공보수 조합. ⑤ <b>차별화</b> — 클라우드 없이도 도는 <b>온디바이스 프라이버시·오프라인 구동</b>은 규제·현장 산업에서 모델사·SI가 못 주는 해자.</p>
+    </div>
+  );
+}
+
+// Forward-Deployed AI 모델 — 핵심 비즈니스 프로세스 재설계 + 프로덕션 시스템 구축을 목표로 하는 딜리버리 모델.
+const FDA_STEPS = [
+  { n: "01", k: "발굴 Discovery", d: "고객사와 인터뷰·현장 관찰로 진짜 병목과 고가치 프로세스를 식별" },
+  { n: "02", k: "프로세스 재설계", d: "지식 노동의 흐름을 에이전트 중심으로 재구성 — 단순 자동화가 아닌 워크플로 재설계" },
+  { n: "03", k: "구축 Build", d: "프롬프트·evals·가드레일 설계, 도메인 데이터로 커스텀 에이전트 개발" },
+  { n: "04", k: "프로덕션 배포", d: "multi-week 스프린트로 상주하며 실서비스에 투입, 안전성·거버넌스 검증" },
+  { n: "05", k: "운영·확장", d: "성과 측정·지속 개선, 인접 프로세스로 확장 — 소비·성과 기반으로 매출 증가" },
+];
+const FDA_NAMING = [
+  ["Anthropic", "Applied AI Engineer", "안전성·리서치 문화 반영 · 규제산업(금융·헬스·법률·정부) 집중 · SI 파트너 FDE 풀로 확장", "#DB2777"],
+  ["OpenAI", "Forward-Deployed Engineer / DeployCo", "과반 지배 자회사(밸류 100억달러) · Tomoro 인수로 ~150명 · PE 포트폴리오 전속 유통", "#7A38D6"],
+  ["Palantir", "Forward-Deployed Engineer(원조)", "정부 앵커 + 상업 확장 · 플랫폼(Foundry/AIP)으로 학습을 제품에 재사용", "#0891B2"],
+];
+const FDA_PARTNERS = [
+  ["Wipro", "Applied AI CoE — Claude FDE 글로벌 인력풀 구축"],
+  ["Cognizant", "Claude 도입 가속 · 대규모 엔터프라이즈 배포"],
+  ["ServiceNow", "Claude로 업무 앱 구축 · 산업별 신뢰 AI 적용"],
+  ["phData", "Claude 엔터프라이즈 배포 전문 파트너"],
+];
+
+function ForwardDeployedAIModel() {
+  return (
+    <div className="fda">
+      <div className="fda-head">
+        <h3>Forward-Deployed AI 모델 — 핵심 프로세스 재설계 + 프로덕션 시스템 구축</h3>
+        <p>모델사·Palantir가 공유하는 배포 모델의 본질: 라이선스를 파는 게 아니라, 엔지니어가 고객사에 상주해 <b>핵심 비즈니스 프로세스를 재설계</b>하고 <b>실제 프로덕션 시스템을 구축</b>한다. 가치는 라이선스 수가 아니라 워크플로 재설계에서 나온다.</p>
+      </div>
+
+      <div className="fda-flow">
+        {FDA_STEPS.map((s, i) => (
+          <div className="fda-step" key={s.n}>
+            <span className="fda-step-n">{s.n}</span>
+            <b className="fda-step-k">{s.k}</b>
+            <span className="fda-step-d">{s.d}</span>
+            {i < FDA_STEPS.length - 1 && <span className="fda-arrow" aria-hidden="true">→</span>}
+          </div>
+        ))}
+      </div>
+
+      <div className="pricing-tracker fda-naming">
+        <div className="pt-head"><h3>3사 Forward-Deployed 직군 — 같은 모델, 다른 프레이밍</h3><span>명칭·전략 차이 · 본질은 '상주 구축'으로 동일</span></div>
+        <div className="pt-table">
+          <div className="pt-row pt-hrow fda-name-row"><span>주체</span><span>직군 명칭</span><span>전략 특징</span></div>
+          {FDA_NAMING.map((r, i) => (
+            <div className="pt-row fda-name-row" key={i}>
+              <span className="pt-model"><i style={{ background: r[3] }} />{r[0]}</span>
+              <span className="pt-players" style={{ color: r[3], fontWeight: 800 }}>{r[1]}</span>
+              <span className="pt-note">{r[2]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="fda-partners">
+        <div className="fda-partners-head"><b>파트너 FDE 생태계 — 배포 인력의 대량 확장</b><span>SI·컨설팅 파트너가 Claude FDE를 훈련·공급해 상주 배포를 스케일아웃</span></div>
+        <div className="fda-partners-grid">
+          {FDA_PARTNERS.map((p, i) => (
+            <div className="fda-partner" key={i}><b>{p[0]}</b><span>{p[1]}</span></div>
+          ))}
+        </div>
+        <p className="fda-partners-note">출처: <a href="https://getperspective.ai/blog/anthropic-applied-ai-engineers-forward-deployed-claude-enterprise" target="_blank" rel="noopener">Perspective AI</a> · <a href="https://www.wipro.com/newsroom/press-releases/2026/wipro-advances-enterprise-ai-leadership-with-an-applied-ai-center-of-excellence-for-claude-models-powered-by-anthropic/" target="_blank" rel="noopener">Wipro</a> · <a href="https://www.phdata.io/partners/anthropic/" target="_blank" rel="noopener">phData</a></p>
+      </div>
+
+      <p className="nbz-device"><b>단말 제조사 적용</b> Forward-Deployed AI의 핵심은 <b>'상주 → 프로세스 재설계 → 프로덕션 구축 → 소비 기반 매출'</b> 사이클이다. 단말 제조사는 파운데이션 모델을 만들 필요 없이, ① 오픈·파트너 모델을 조달하고 ② <b>온디바이스 특화 FDE 조직</b>(자회사·JV)이 기업 현장에 상주해 ③ 디바이스 fleet의 업무 프로세스를 온디바이스 AI로 재설계·구축하고 ④ 구축비 + 디바이스·소비 annuity로 회수하면 된다. SI 파트너와 공동 FDE 풀을 만들면 배포 인력도 빠르게 확장 가능하다.</p>
     </div>
   );
 }
@@ -2262,6 +2333,7 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
         </div>
         <VerticalIntegrationTables />
         <NewBizDeepDive />
+        <ForwardDeployedAIModel />
         <AIConsultingBuildSection />
         <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
           dataVersion={dataVersion} title="AI 수익화·신사업 모델 시그널" sub="수직통합·자체 서비스 등 7개 수익화 유형 · 원문 확인 카드만 누적 표시" />
