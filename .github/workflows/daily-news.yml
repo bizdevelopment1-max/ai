@@ -69,10 +69,10 @@ jobs:
         run: node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
 
       - name: Retry retained source links and store publisher-page text
-        run: SOURCE_REFRESH_LIMIT=30 SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-source-content.mjs
+        run: SOURCE_REFRESH_LIMIT=45 SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-source-content.mjs
 
       - name: Resolve market discoveries to publisher-page evidence
-        run: MARKET_SOURCE_REFRESH_LIMIT=90 MARKET_SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-market-source-content.mjs
+        run: MARKET_SOURCE_REFRESH_LIMIT=150 MARKET_SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-market-source-content.mjs
 
       - name: Reframe source briefs as fact, change and implication
         run: node scripts/reframe-source-briefs.mjs

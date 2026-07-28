@@ -49,6 +49,19 @@ const QUERIES = [
   { id: "ai-deepfake", group: "trust", verticalId: "trust-1", topic: "딥페이크 탐지 시장", query: "deepfake detection market size forecast enterprise survey" },
   { id: "ai-wtp", group: "assistant", verticalId: "assistant-0", topic: "AI 구독 지불의사 조사", query: "consumers willing to pay AI features subscription survey percent" },
   { id: "ai-enterprise", group: "assistant", verticalId: "assistant-0", topic: "기업 AI 도입 조사", query: "enterprise generative AI adoption survey ROI market size" },
+  // ── 1차 리서치·조사기관 앵커 쿼리 — 발행사 원문(리포트) 직접 발굴 확대 ──
+  { id: "src-idc", group: "core", verticalId: "core-0", topic: "IDC AI 시장 전망", query: "IDC AI market spending forecast billion worldwide" },
+  { id: "src-gartner", group: "assistant", verticalId: "assistant-0", topic: "Gartner AI 예측", query: "Gartner generative AI forecast market billion adoption" },
+  { id: "src-counterpoint", group: "core", verticalId: "core-0", topic: "Counterpoint AI폰 출하", query: "Counterpoint generative AI smartphone shipments forecast units" },
+  { id: "src-canalys", group: "core", verticalId: "core-1", topic: "Canalys AI PC 출하", query: "Canalys AI PC smartphone shipments forecast units" },
+  { id: "src-statista", group: "service", verticalId: "service-0", topic: "Statista AI 시장·이용", query: "Statista artificial intelligence market revenue users forecast" },
+  { id: "src-grandview", group: "service", verticalId: "service-0", topic: "Grand View 시장규모", query: "Grand View Research AI market size CAGR forecast" },
+  { id: "src-mordor", group: "wearxr", verticalId: "wearxr-1", topic: "Mordor 웨어러블·XR", query: "Mordor Intelligence AI wearable AR VR market size forecast" },
+  { id: "src-precedence", group: "service", verticalId: "service-38", topic: "Precedence 신사업 시장", query: "Precedence Research AI application market size 2030 forecast" },
+  { id: "src-omdia", group: "core", verticalId: "core-2", topic: "Omdia AI 반도체·엣지", query: "Omdia AI edge chipset market forecast shipments" },
+  { id: "src-pew", group: "trust", verticalId: "trust-0", topic: "Pew AI 인식 조사", query: "Pew Research survey Americans artificial intelligence percent" },
+  { id: "src-deloitte", group: "assistant", verticalId: "assistant-0", topic: "Deloitte AI 소비자 조사", query: "Deloitte digital consumer survey generative AI adoption percent" },
+  { id: "src-mck", group: "service", verticalId: "service-0", topic: "McKinsey AI 도입 조사", query: "McKinsey state of AI survey adoption organizations percent" },
 ];
 
 const quantified = text => {
