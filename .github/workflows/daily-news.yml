@@ -58,6 +58,9 @@ jobs:
       - name: Crawl real stock prices + market cap
         run: node scripts/run-with-retry.mjs scripts/crawl-stocks.mjs
 
+      - name: Crawl latest quarterly financials + headcount (실적 발표 주기 자동 최신화)
+        run: node scripts/run-with-retry.mjs scripts/crawl-financials.mjs
+
       - name: Generate AI Morning Briefing (Signal → Insight → Action)
         run: node scripts/run-with-retry.mjs scripts/generate-briefing.mjs
 
@@ -125,7 +128,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
+          git add news.json stocks.json financials.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

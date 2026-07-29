@@ -22,9 +22,18 @@ const TICKER_OF = {
 const days = d => { const t = new Date(String(d) + "T00:00:00Z").getTime(); return isNaN(t) ? 999 : (Date.now() - t) / 86400000; };
 
 async function main() {
-  let articles = [], stocks = {};
+  let articles = [], stocks = {}, financials = {};
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   try { stocks = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
+  try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
+  // 실적·인력을 기업 레코드에 붙임(crawl-financials.mjs 산출물 — 분기 발표 주기로 자동 최신화)
+  const joinFin = (rec, tk) => {
+    const f = tk && financials[tk];
+    if (!f) return;
+    if (f.revenueQ) { rec.revenueQ = f.revenueQ; rec.quarterEnd = f.quarterEnd || ""; }
+    if (f.netIncomeQ) rec.netIncomeQ = f.netIncomeQ;
+    if (f.employees) { rec.employees = f.employees; rec.employeesAsof = f.asOf || ""; }
+  };
 
   const byCo = {};
   for (const a of articles) {
@@ -48,11 +57,13 @@ async function main() {
       companies[co].capAsof = stocks[tk].asOf;
       companies[co].ticker = tk;
     }
+    joinFin(companies[co], tk);
   }
-  // 뉴스 co에 없는 상장사도 시총은 제공(티커 역방향)
+  // 뉴스 co에 없는 상장사도 시총·실적은 제공(티커 역방향)
   for (const [co, tk] of Object.entries(TICKER_OF)) {
     if (!companies[co] && stocks[tk] && stocks[tk].marketCap) {
       companies[co] = { mentions7: 0, mentions30: 0, latest: null, cap: stocks[tk].marketCap, capAsof: stocks[tk].asOf, ticker: tk };
+      joinFin(companies[co], tk);
     }
   }
 

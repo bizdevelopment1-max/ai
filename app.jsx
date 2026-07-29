@@ -209,6 +209,7 @@ function App() {
     // Legacy hand-entered valuation, funding and KPI values stay in the
     // append-only ledger but do not reach the public company map.
     const merged = { ...c, valuation: "—", valAsof: "", metric: "원문 기사", value: "—", metricAsof: "", funding: "—" };
+    merged.profile = (D.COMPANY_PROFILES || {})[c.name] || null;   // 정적 기업 개요(설립·경영진·본사 등)
     if (lv) { merged.live = lv; if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); } }
     if (strat) merged.strategy = strat;
     return merged;

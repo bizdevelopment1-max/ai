@@ -1276,5 +1276,54 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  return { CATEGORIES, COMPANIES, COMPANY_ORDER, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  // ── 기업 개요(정적 프로필) ───────────────────────────────────────────
+  // 설립·경영진·본사·주요사업·주주 등 잘 바뀌지 않는 사실만 큐레이션.
+  // 시가총액·인력·경영실적(분기 매출/순이익)은 crawl-stocks/crawl-financials가
+  // 매 크롤마다 companies.json에 덮어써(app.jsx 병합) '최신 기준'으로 표시됨.
+  const COMPANY_PROFILES = {
+    "Apple": { founded: "1976.4 · 미국 캘리포니아", ceo: "Tim Cook (26.9 John Ternus 승계 예정)", hq: "미국 캘리포니아州 쿠퍼티노", employeesStatic: "16.4만명", business: ["HW: iPhone·iPad·Mac·Wearable·Vision Pro", "SW: iOS·iPadOS·macOS·visionOS", "서비스: TV+·Music·iCloud·Card/Wallet"], shareholders: "Vanguard 8.2% · Berkshire 5.2% · BlackRock 4.5%" },
+    "Microsoft": { founded: "1975 · Bill Gates·Paul Allen", ceo: "Satya Nadella", hq: "미국 워싱턴州 레드먼드", employeesStatic: "22.8만명", business: ["Azure 클라우드", "Windows·M365·Office SW", "Copilot·AI(OpenAI 파트너십)", "LinkedIn·GitHub·Xbox"], shareholders: "Vanguard 9% · BlackRock 7% 等" },
+    "NVIDIA": { founded: "1993 · Jensen Huang 等", ceo: "Jensen Huang", hq: "미국 캘리포니아州 산타클라라", employeesStatic: "3.6만명", business: ["데이터센터 GPU·AI 가속기", "CUDA·SW 플랫폼", "게이밍(GeForce)·프로 비주얼", "자동차·로보틱스"], shareholders: "Vanguard 8% · BlackRock 7% 等" },
+    "Amazon": { founded: "1994 · Jeff Bezos", ceo: "Andy Jassy", hq: "미국 워싱턴州 시애틀", employeesStatic: "155만명", business: ["AWS 클라우드", "이커머스·마켓플레이스", "광고", "디바이스(Alexa)·Anthropic 투자"], shareholders: "Jeff Bezos 8.8% · Vanguard 7% 等" },
+    "Google DeepMind": { founded: "Google 1998 · DeepMind 2010(런던)", ceo: "Sundar Pichai(Alphabet) · Demis Hassabis(DeepMind)", hq: "미국 캘리포니아州 마운틴뷰 / 영국 런던", employeesStatic: "18.7만명(Alphabet)", business: ["검색·광고", "Google Cloud", "Gemini·AI 모델", "YouTube·Android"], shareholders: "창업자 이중주식 지배 · Vanguard·BlackRock 等" },
+    "Meta AI": { founded: "2004 · Mark Zuckerberg", ceo: "Mark Zuckerberg", hq: "미국 캘리포니아州 멘로파크", employeesStatic: "7.6만명", business: ["광고(Facebook·Instagram·WhatsApp)", "Reality Labs(AR/VR)", "Llama 오픈 AI"], shareholders: "Zuckerberg 의결권 지배 · Vanguard 等" },
+    "Oracle": { founded: "1977 · Larry Ellison 等", hq: "미국 텍사스州 오스틴", business: ["데이터베이스", "OCI 클라우드 인프라", "엔터프라이즈 SaaS"] },
+    "AMD": { founded: "1969", ceo: "Lisa Su", hq: "미국 캘리포니아州 산타클라라", business: ["CPU(Ryzen·EPYC)", "GPU·AI 가속기(Instinct)", "데이터센터·임베디드"] },
+    "Broadcom": { founded: "1991/2016(Avago 합병)", ceo: "Hock Tan", hq: "미국 캘리포니아州 팰로앨토", business: ["반도체(네트워킹·커스텀 AI칩)", "인프라 SW(VMware)"] },
+    "TSMC": { founded: "1987 · Morris Chang", ceo: "C.C. Wei", hq: "대만 신주", business: ["반도체 파운드리(첨단 공정)", "AI·HPC 칩 위탁생산"] },
+    "Micron": { founded: "1978", ceo: "Sanjay Mehrotra", hq: "미국 아이다호州 보이시", business: ["DRAM·NAND 메모리", "HBM(AI 가속기용)"] },
+    "CoreWeave": { founded: "2017", ceo: "Michael Intrator", hq: "미국 뉴저지州", business: ["GPU 클라우드(AI 전용)", "데이터센터 인프라"] },
+    "Applied Digital": { founded: "2001", hq: "미국 텍사스州 댈러스", business: ["AI·HPC 데이터센터", "GPU 클라우드 호스팅"] },
+    "SK hynix": { founded: "1983", hq: "대한민국 이천", business: ["DRAM·NAND 메모리", "HBM(AI 가속기 선두)"] },
+
+    "OpenAI": { founded: "2015 · Sam Altman 等", ceo: "Sam Altman", hq: "미국 캘리포니아州 샌프란시스코", employeesStatic: "약 4,500명", business: ["ChatGPT(소비자·기업)", "GPT 모델 API", "Deployment Company(엔터프라이즈 구축)"], shareholders: "비영리 모회사 지배 · Microsoft 등 투자" },
+    "Anthropic": { founded: "2021 · Dario·Daniela Amodei 等", ceo: "Dario Amodei", hq: "미국 캘리포니아州 샌프란시스코", business: ["Claude(모델·API)", "엔터프라이즈·Claude Code", "Ode(엔터프라이즈 AI 서비스 JV)"], shareholders: "Amazon·Google 대형 투자" },
+    "DeepSeek": { founded: "2023 · 항저우", hq: "중국 항저우", business: ["오픈 가중치 LLM(R1·V3)", "저비용 추론"] },
+    "Perplexity": { founded: "2022", ceo: "Aravind Srinivas", hq: "미국 캘리포니아州 샌프란시스코", business: ["AI 검색·답변 엔진", "Comet 브라우저"] },
+    "Mistral AI": { founded: "2023", ceo: "Arthur Mensch", hq: "프랑스 파리", business: ["오픈 가중치 LLM", "엔터프라이즈·소버린 AI"] },
+    "Cohere": { founded: "2019", ceo: "Aidan Gomez", hq: "캐나다 토론토", business: ["엔터프라이즈·소버린 LLM", "RAG·임베딩"] },
+    "Databricks": { founded: "2013", ceo: "Ali Ghodsi", hq: "미국 캘리포니아州 샌프란시스코", business: ["데이터·AI 레이크하우스", "Mosaic AI"] },
+    "Scale AI": { founded: "2016", hq: "미국 캘리포니아州 샌프란시스코", business: ["데이터 라벨링·평가", "모델 파인튜닝 데이터"] },
+    "Hugging Face": { founded: "2016", ceo: "Clément Delangue", hq: "미국 뉴욕", business: ["오픈소스 모델 허브", "Transformers·개발 도구"] },
+    "Runway": { founded: "2018", hq: "미국 뉴욕", business: ["생성형 영상 AI(Gen 시리즈)"] },
+    "Stability AI": { founded: "2019", ceo: "Prem Akkaraju", hq: "영국 런던", business: ["오픈 이미지·영상 생성(Stable Diffusion)"] },
+    "ElevenLabs": { founded: "2022", ceo: "Mati Staniszewski", hq: "미국/폴란드", business: ["AI 음성 합성·더빙"] },
+    "Harvey": { founded: "2022", ceo: "Winston Weinberg", hq: "미국 캘리포니아州 샌프란시스코", business: ["법률 특화 AI(로펌·기업 법무)"] },
+    "Glean": { founded: "2019", ceo: "Arvind Jain", hq: "미국 캘리포니아州 팰로앨토", business: ["엔터프라이즈 AI 검색·업무 어시스턴트"] },
+    "Sierra AI": { founded: "2023", ceo: "Bret Taylor · Clay Bavor", hq: "미국 캘리포니아州", business: ["기업용 대화형 AI 에이전트(CS)"] },
+    "Midjourney": { founded: "2021", ceo: "David Holz", hq: "미국 샌프란시스코", business: ["이미지 생성 AI"] },
+    "Suno": { founded: "2022", hq: "미국 매사추세츠州 케임브리지", business: ["AI 음악 생성"] },
+    "Synthesia": { founded: "2017", ceo: "Victor Riparbelli", hq: "영국 런던", business: ["AI 아바타·영상 생성(기업 교육)"] },
+    "Abridge": { founded: "2018", ceo: "Shiv Rao", hq: "미국 펜실베이니아州 피츠버그", business: ["의료 대화 문서화 AI"] },
+    "Together AI": { founded: "2022", ceo: "Vipul Ved Prakash", hq: "미국 캘리포니아州 샌프란시스코", business: ["오픈모델 추론·학습 클라우드"] },
+    "Cursor": { founded: "2022 · Anysphere", hq: "미국 샌프란시스코", business: ["AI 코딩 에디터(IDE)"] },
+    "Lovable": { founded: "2023", hq: "스웨덴 스톡홀름", business: ["AI 앱 빌더(바이브 코딩)"] },
+    "Replit": { founded: "2016", ceo: "Amjad Masad", hq: "미국 캘리포니아州 샌프란시스코", business: ["브라우저 개발환경·AI 에이전트"] },
+    "Kling AI": { founded: "2024 · Kuaishou", hq: "중국", business: ["생성형 영상 AI"] },
+    "Hailuo (MiniMax)": { founded: "2021 · MiniMax", hq: "중국 상하이", business: ["영상·음성·LLM 생성 AI"] },
+    "Writer": { founded: "2020", ceo: "May Habib", hq: "미국 캘리포니아州 샌프란시스코", business: ["엔터프라이즈 생성 AI 플랫폼"] },
+    "SpaceX (xAI, Cursor)": { founded: "SpaceX 2002 · xAI 2023", ceo: "Elon Musk", hq: "미국 텍사스州", business: ["우주 발사·Starlink", "xAI(Grok) AI 모델"] },
+  };
+
+  return { CATEGORIES, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

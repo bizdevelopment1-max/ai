@@ -934,6 +934,21 @@ a[href]:hover .rainbow-on-hover,
 .cd-section h4 { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); margin-bottom: 10px; display: flex; align-items: baseline; gap: 8px; }
 .cd-section h4 em { font-style: normal; font-size: 11px; color: var(--muted); font-weight: 600; }
 .cd-section > p { font-size: 13.5px; line-height: 1.65; color: var(--ink); font-weight: 500; text-wrap: pretty; }
+/* 기업 개요(Company Profile) */
+.cd-profile .cd-prof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+.cd-prof-row { display: grid; grid-template-columns: 62px 1fr; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--line-2); font-size: 12.5px; }
+.cd-prof-row em { font-style: normal; font-weight: 800; color: var(--muted); }
+.cd-prof-row span { font-weight: 600; line-height: 1.45; }
+.cd-prof-biz { margin-top: 12px; }
+.cd-prof-biz > em { display: block; font-style: normal; font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; }
+.cd-prof-biz ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.cd-prof-biz li { position: relative; padding-left: 13px; font-size: 12.5px; font-weight: 600; line-height: 1.45; }
+.cd-prof-biz li::before { content: ""; position: absolute; left: 2px; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.cd-prof-fin { margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; background: var(--panel-2); display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.cd-prof-fin > em { font-style: normal; font-size: 11px; font-weight: 800; color: var(--muted); }
+.cd-prof-fin > span { font-size: 13.5px; font-weight: 800; letter-spacing: -.01em; }
+.cd-prof-fin > i { font-style: normal; font-size: 10px; font-weight: 700; color: var(--muted); margin-left: auto; }
+@media (max-width: 560px) { .cd-profile .cd-prof-grid { grid-template-columns: 1fr; } }
 .cd-vp {
   border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 0 8px 8px 0;
   background: color-mix(in srgb, var(--accent) 6%, var(--panel));

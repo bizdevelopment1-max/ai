@@ -229,6 +229,38 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           </div>
         </div>
 
+        {c.profile && (() => {
+          const p = c.profile, lv = c.live || {};
+          const emp = lv.employees || p.employeesStatic;
+          const empAsof = lv.employees && lv.employeesAsof ? ` ('${String(lv.employeesAsof).slice(2)} 기준)` : "";
+          const capAsof = lv.cap && lv.capAsof ? ` ('${String(lv.capAsof).slice(2, 7)} 기준)` : "";
+          const rows = [
+            ["설립", p.founded],
+            ["경영진", p.ceo],
+            ["본사", p.hq],
+            ["인력", emp ? emp + empAsof : ""],
+            ["시가총액", lv.cap ? lv.cap + capAsof : ""],
+            ["주주", p.shareholders],
+          ].filter(r => r[1]);
+          const fin = lv.revenueQ
+            ? `매출 ${lv.revenueQ}${lv.netIncomeQ ? ` · 순이익 ${lv.netIncomeQ}` : ""}${lv.quarterEnd ? ` (${lv.quarterEnd} 분기)` : ""}`
+            : "";
+          return (
+            <div className="cd-section cd-profile">
+              <h4>기업 개요 <em>Company Profile</em></h4>
+              <div className="cd-prof-grid">
+                {rows.map(([k, v], i) => (
+                  <div className="cd-prof-row" key={i}><em>{k}</em><span>{v}</span></div>
+                ))}
+              </div>
+              {Array.isArray(p.business) && p.business.length > 0 && (
+                <div className="cd-prof-biz"><em>주요사업</em><ul>{p.business.map((b, i) => <li key={i}>{b}</li>)}</ul></div>
+              )}
+              {fin && <div className="cd-prof-fin"><em>경영 실적</em><span>{fin}</span><i>실적 발표 주기로 자동 갱신</i></div>}
+            </div>
+          );
+        })()}
+
         <div className="cd-section">
           <h4>개요</h4>
           <p>{bulletText(c.note)}</p>
