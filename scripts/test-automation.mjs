@@ -14,6 +14,7 @@ const required = [
   "scripts/refresh-source-content.mjs",
   "scripts/reframe-source-briefs.mjs",
   "scripts/crawl-stocks.mjs",
+  "scripts/build-nvidia-investments.mjs",
   "scripts/crawl-financials.mjs",
   "scripts/company-sources.mjs",
   "scripts/crawl-company-officials.mjs",
@@ -43,6 +44,7 @@ const required = [
   "bizmodel-view.json",
   "data-version.json",
   "stocks.json",
+  "nvidia-investments.json",
   "financials.json",
   "companies.json",
   "startups.json",
@@ -1133,13 +1135,18 @@ try {
 }
 
 try {
-  const [boards, data, charts, crawler, styles] = await Promise.all([
+  const [boards, data, charts, crawler, styles, investmentData, investmentBuilder, appSource, workflowSource] = await Promise.all([
     readFile("boards.jsx", "utf8"),
     readFile("data.js", "utf8"),
     readFile("charts.jsx", "utf8"),
     readFile("scripts/crawl-stocks.mjs", "utf8"),
     readFile("styles.css", "utf8"),
+    readFile("nvidia-investments.json", "utf8").then(JSON.parse),
+    readFile("scripts/build-nvidia-investments.mjs", "utf8"),
+    readFile("app.jsx", "utf8"),
+    readFile(".github/workflows/daily-news.yml", "utf8"),
   ]);
+  const dash = loadDash();
   const chinaGroups = [
     "china-memory",
     "china-foundry",
@@ -1148,15 +1155,29 @@ try {
     "china-design",
     "china-materials",
   ];
-  // 주가 보드는 '대시보드 리스트 상장사만 + 밸류체인 계층 그룹' 구조로 재편(글로벌/중국 이원 패널 폐지).
+  // 주가 보드는 수집 중인 63개 상장사 전체를 사이트 공통 7계층으로 재분류한다.
   const completeBoard = boards.includes("function StockRegionPanel")
-    && boards.includes("AI 밸류체인 상장사")
+    && boards.includes("function NvidiaInvestmentMap")
+    && boards.includes("전체 상장사 밸류체인 분석")
     && boards.includes("window.DASH.STOCK_LAYER")
+    && boards.includes("window.DASH.STOCK_GROUP_LAYER")
+    && !boards.includes(".filter(s => STOCK_LAYER[s.ticker])")
     && boards.includes("밸류체인 그룹 트렌드")
     && boards.includes("개별 종목");
   const completeMetadata = data.includes('ticker: "000660.KS"')
     && data.includes('ticker: "688825.SS"')
-    && chinaGroups.every(group => data.includes(`id: "${group}"`));
+    && chinaGroups.every(group => data.includes(`id: "${group}"`))
+    && dash.STOCKS.length === 63
+    && dash.STOCKS.every(stock => dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group]);
+  const sourceBackedInvestments = investmentData.portfolio?.length === 8
+    && new Set(investmentData.portfolio.map(item => item.name)).size === investmentData.portfolio.length
+    && investmentData.portfolio.every(item => item.why && item.strategicFit
+      && /^https?:\/\//.test(item.source?.url || "") && item.source?.date && item.layer);
+  const dynamicInvestmentPipeline = investmentBuilder.includes('readFile("news.json"')
+    && investmentBuilder.includes('summaryMode === "source-content-extractive"')
+    && investmentBuilder.includes('provenance?.status === "source-backed"')
+    && workflowSource.includes("scripts/build-nvidia-investments.mjs")
+    && appSource.includes('dataUrl("nvidia-investments.json")');
   const liveHistory = crawler.includes('const YEARS = 5')
     && crawler.includes("indicators.adjclose")
     && crawler.includes("const batchSize = 6")
@@ -1168,11 +1189,14 @@ try {
   const responsiveUi = styles.includes(".stock-region-stack")
     && styles.includes(".stock-region-head")
     && styles.includes(".stock-toolbar")
+    && styles.includes(".nvi-stage")
+    && styles.includes(".nvi-node:hover")
     && styles.includes("grid-template-columns: minmax(0, 1fr) auto");
-  if (!completeBoard || !completeMetadata || !liveHistory || !currencyAware || !responsiveUi) {
-    throw new Error("global/China stock boards, five-year adjusted-close history, currencies, or responsive UI are incomplete");
+  if (!completeBoard || !completeMetadata || !sourceBackedInvestments || !dynamicInvestmentPipeline
+    || !liveHistory || !currencyAware || !responsiveUi) {
+    throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
-  console.log("  OK  대시보드 상장사 밸류체인 주가 보드와 5년 실데이터·변곡점 자동 설명");
+  console.log("  OK  63개 상장사 Stock 분석 + NVIDIA 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock value-chain board: ${error.message}`);

@@ -1711,7 +1711,109 @@ function ReportsBoard({ reports, sectionRef, query }) {
   );
 }
 
-// ---- Stock board: global AI + semiconductor value chains and China A-shares ----
+// ---- NVIDIA investment portfolio: source-backed radial decision map ----
+function NvidiaInvestmentMap({ data, layers, theme }) {
+  const portfolio = data?.portfolio || [];
+  const [selectedId, setSelectedId] = React.useState(portfolio[0]?.id || "");
+  React.useEffect(() => {
+    if (portfolio.length && !portfolio.some(item => item.id === selectedId)) setSelectedId(portfolio[0].id);
+  }, [data, selectedId]);
+  if (!portfolio.length) return null;
+
+  const layerMap = Object.fromEntries((layers || []).map(layer => [layer.id, layer]));
+  const selected = portfolio.find(item => item.id === selectedId) || portfolio[0];
+  const selectedLayer = layerMap[selected.layer] || {};
+  const positions = [
+    { x: 50, y: 12 }, { x: 76, y: 20 }, { x: 87, y: 48 }, { x: 73, y: 79 },
+    { x: 50, y: 88 }, { x: 26, y: 79 }, { x: 13, y: 48 }, { x: 27, y: 20 },
+  ];
+  const graphNodes = portfolio.map((item, index) => ({ ...item, ...(positions[index] || positions[index % positions.length]) }));
+  const latest = selected.latestEvidence;
+  const primarySource = latest || selected.source;
+  const updated = data.generatedAt ? new Date(data.generatedAt).toLocaleDateString("ko-KR") : "";
+
+  return (
+    <article className="nvi-shell" style={{ "--accent": theme.accent }}>
+      <header className="nvi-head">
+        <div>
+          <span className="nvi-kicker">NVIDIA CAPITAL ECOSYSTEM · SOURCE-BACKED</span>
+          <h3>NVIDIA AI 투자 포트폴리오</h3>
+          <p>원을 선택하면 거래 근거와 ‘왜 투자했는가’를 분리해 확인할 수 있습니다.</p>
+        </div>
+        <div className="nvi-head-metrics">
+          <span><b>{portfolio.length}</b>개 주요 투자</span>
+          <span><b>{new Set(portfolio.map(item => item.layer)).size}</b>개 밸류체인</span>
+          {updated && <span>갱신 <b>{updated}</b></span>}
+        </div>
+      </header>
+
+      <div className="nvi-body">
+        <div className="nvi-stage" aria-label="NVIDIA 투자 포트폴리오 관계도">
+          <svg className="nvi-edges" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <marker id="nvi-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 Z" />
+              </marker>
+            </defs>
+            {graphNodes.map(node => (
+              <line key={node.id} x1="500" y1="260" x2={node.x * 10} y2={node.y * 5.2}
+                className={node.id === selected.id ? "is-selected" : ""} markerEnd="url(#nvi-arrow)" />
+            ))}
+          </svg>
+          <div className="nvi-core">
+            <img src="https://www.google.com/s2/favicons?domain=nvidia.com&sz=64" alt="" />
+            <b>NVIDIA</b>
+            <span>CAPITAL + COMPUTE</span>
+          </div>
+          {graphNodes.map(node => {
+            const layer = layerMap[node.layer] || {};
+            return (
+              <button key={node.id} type="button"
+                className={"nvi-node" + (node.id === selected.id ? " is-selected" : "")}
+                style={{ left: `${node.x}%`, top: `${node.y}%`, "--node-color": layer.accent || theme.accent }}
+                aria-pressed={node.id === selected.id}
+                aria-label={`${node.name} 투자 이유 보기`}
+                onClick={() => setSelectedId(node.id)}>
+                <img src={`https://www.google.com/s2/favicons?domain=${node.domain}&sz=64`} alt="" loading="lazy" />
+                <b>{node.shortName}</b>
+                <span>{layer.ko || node.layer}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <aside className="nvi-detail" style={{ "--node-color": selectedLayer.accent || theme.accent }}>
+          <div className="nvi-detail-top">
+            <span>{selectedLayer.ko || selected.layer}</span>
+            <time>근거 {selected.source.date}</time>
+          </div>
+          <h4>{selected.name}</h4>
+          <p className="nvi-transaction">{selected.transaction}</p>
+          <div className="nvi-answer">
+            <span>왜 투자했나</span>
+            <strong>{selected.why}</strong>
+          </div>
+          <div className="nvi-answer">
+            <span>전략적 의미</span>
+            <strong>{selected.strategicFit}</strong>
+          </div>
+          {latest?.summary && (
+            <div className="nvi-latest">
+              <span>최신 크롤 근거 · {latest.date}</span>
+              <p>{latest.summary}</p>
+            </div>
+          )}
+          <a className="nvi-source" href={primarySource.url} target="_blank" rel="noopener noreferrer">
+            {latest ? `${latest.source} 최신 원문` : `${selected.source.label} 거래 원문`} ↗
+          </a>
+        </aside>
+      </div>
+      <footer className="nvi-method">{data.methodology}</footer>
+    </article>
+  );
+}
+
+// ---- Stock board: all tracked listed equities mapped to the site's 7-layer value chain ----
 function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats, groups, theme, defaultView = "group" }) {
   const catMap = Object.fromEntries((cats || []).map(c => [c.id, c]));
   const groupMap = Object.fromEntries((groups || []).map(g => [g.id, g]));
@@ -1737,6 +1839,7 @@ function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats
   const latestDates = stocks.map(stock => stockData?.[stock.ticker]?.asOf).filter(Boolean).sort();
   const latestDate = latestDates.at(-1) || "";
   const exchanges = [...new Set(stocks.map(stock => stock.exchange || stockData?.[stock.ticker]?.exchange).filter(Boolean))];
+  const marketCategoryCount = new Set(stocks.map(stock => stock.marketGroup).filter(Boolean)).size;
 
   return (
     <article className="stock-region" style={{ "--accent": accent }}>
@@ -1749,6 +1852,7 @@ function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats
         <div className="stock-region-metrics">
           <span><b>{stocks.length}</b>개 상장사</span>
           <span><b>{groups.length}</b>개 밸류체인</span>
+          <span><b>{marketCategoryCount}</b>개 시장 업종</span>
           {latestDate && <span>기준 <b>{latestDate}</b></span>}
         </div>
       </div>
@@ -1802,7 +1906,7 @@ function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats
               onClick={() => setTicker(s.ticker)}>
               <img src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
               <b>{s.ticker}</b>
-              <em>{s.exchange || s.name.replace(/\s*\(.*\)/, "")}</em>
+              <em>{s.marketCategory || s.exchange || s.name.replace(/\s*\(.*\)/, "")}</em>
             </button>
           );
         })}
@@ -1813,6 +1917,7 @@ function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats
           <span className="sp-name">{sel.name}</span>
           <span className="sp-tk">{sel.ticker}</span>
           <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{(selGroup || {}).ko}</span>
+          {sel.marketCategory && <span className="sp-industry">{sel.marketCategory}</span>}
           {mcap && <span className="sp-mcap">시가총액 <b>{mcap}</b></span>}
           {real && <span className="sp-source">데이터 {String(real.source || "public feed").replace("yahoo-api", "Yahoo Finance").replace("yahoo-web", "Yahoo Finance")}</span>}
         </div>
@@ -1861,10 +1966,12 @@ function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats
   );
 }
 
-function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme, dataVersion }) {
+function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectionRef, theme, dataVersion }) {
   const inView = useInView(sectionRef);
   const STOCK_LAYER = window.DASH.STOCK_LAYER || {};
+  const STOCK_GROUP_LAYER = window.DASH.STOCK_GROUP_LAYER || {};
   const VC = window.DASH.VALUE_CHAIN || [];
+  const marketGroupMap = Object.fromEntries((groups || []).map(group => [group.id, group]));
   const generatedAt = stockData?.__generatedAt ? new Date(stockData.__generatedAt).toLocaleString("ko-KR") : "";
 
   // 변곡점 자동 설명(뉴스 크롤 근거) 로드 — 화면 진입 시 1회
@@ -1877,36 +1984,45 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme, dataVe
       .catch(() => {});
   }, [inView, autoEv, dataVersion]);
 
-  // 대시보드 리스트(밸류체인 기업)에 있는 상장사만 + 밸류체인 계층으로 그룹핑
+  // 수집 레지스트리의 상장사 전체를 사이트의 7계층 밸류체인으로 그룹핑
   // + 에디토리얼 변곡점 설명(과거)과 뉴스 기반 자동 설명(최근)을 날짜별 병합(에디토리얼 우선)
   const dashStocks = (stocks || [])
-    .filter(s => STOCK_LAYER[s.ticker])
     .map(s => {
       const merged = new Map();
       ((autoEv && autoEv[s.ticker]) || []).forEach(e => merged.set(e.date, e));
       (s.events || []).forEach(e => merged.set(e.date, e));   // 같은 날짜는 에디토리얼이 덮어씀
       const events = [...merged.values()].sort((a, b) => (a.date < b.date ? -1 : 1));
-      return { ...s, group: STOCK_LAYER[s.ticker], region: undefined, events };
+      const marketGroup = s.group;
+      return {
+        ...s,
+        group: STOCK_LAYER[s.ticker] || STOCK_GROUP_LAYER[marketGroup],
+        marketGroup,
+        marketCategory: marketGroupMap[marketGroup]?.ko || marketGroup,
+        region: undefined,
+        events,
+      };
     });
   const layers = VC.filter(l => dashStocks.some(s => s.group === l.id));
 
   return (
-    <section className="board stock-board-rich" ref={sectionRef} data-screen-label="Stock Prices">
+    <section className="board stock-board-rich" ref={sectionRef} data-screen-label="Stock Analysis">
      <AnimCtx.Provider value={inView}>
       <div className="board-head stock-master-head" style={{ "--accent": theme.accent }}>
         <span className="board-tab" style={{ background: theme.accent }} />
         <div className="board-titles">
-          <h2>주가 차트 <span className="board-en">Dashboard Companies · by AI Value Chain</span></h2>
-          <p>대시보드 기업 리스트의 상장사만 · AI 밸류체인 계층별 그룹 비교 · 변곡점(급등·급락)은 뉴스 기반으로 '왜 올랐/빠졌는지' 자동 설명</p>
+          <h2>Stock 분석 <span className="board-en">Listed Universe · Capital Ecosystem · Price Drivers</span></h2>
+          <p>사이트가 추적하는 전체 상장사 · 7계층 SW·서비스 밸류체인과 세부 시장 업종의 이중 분류 · 투자 포트폴리오와 주가 변곡점의 원문 근거 연결</p>
         </div>
         {generatedAt && <span className="stock-generated">마지막 수집<br /><b>{generatedAt}</b></span>}
       </div>
 
+      <NvidiaInvestmentMap data={nvidiaInvestments} layers={VC} theme={theme} />
+
       <div className="stock-region-stack">
         <StockRegionPanel
-          title="AI 밸류체인 상장사"
-          eyebrow="DASHBOARD LISTED EQUITIES"
-          description="대시보드 기업 리스트에 있는 상장사를 인프라·컴퓨트 / 파운데이션 모델 / 애플리케이션 등 밸류체인 계층으로 묶어 실제 일별 시세로 비교"
+          title="전체 상장사 밸류체인 분석"
+          eyebrow="ALL TRACKED LISTED EQUITIES"
+          description="63개 상장사를 사이트 공통 7계층으로 묶어 비교하고, 각 종목에서는 반도체·클라우드·소프트웨어 등 원래 시장 업종을 함께 표시합니다."
           stocks={dashStocks}
           stockData={stockData}
           cats={cats}

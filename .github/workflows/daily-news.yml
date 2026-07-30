@@ -134,6 +134,9 @@ jobs:
           GITHUB_MODELS_MAX_RETRY_WAIT_MS: 20000
           COMPANY_INTELLIGENCE_AI_BUDGET: 6
 
+      - name: Build source-backed NVIDIA investment portfolio map
+        run: node scripts/run-with-retry.mjs scripts/build-nvidia-investments.mjs
+
       - name: Verify evidence, provenance and cumulative history
         run: node scripts/run-with-retry.mjs scripts/verify-pipeline.mjs
 
@@ -162,7 +165,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json financials.json stock-events.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
+          git add news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

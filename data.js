@@ -1388,8 +1388,19 @@ window.DASH = (function () {
       desc: "단말·엣지·클라우드에서 모델을 실행하는 런타임과 컴퓨트 — 차별화보다 원가·안정성 관리가 핵심",
     },
   ];
-  // 주가 차트에 표시할 '대시보드 상장사' 티커 → 밸류체인 계층(그룹). 여기 없는 티커는 차트에서 제외.
-  const STOCK_LAYER = { MSFT: "infra", AMZN: "infra", NVDA: "infra", GOOGL: "model", META: "model", SPCX: "model", AAPL: "app" };
+  // Stock 분석은 수집 중인 상장사 전체를 사이트의 7계층 SW·서비스 밸류체인으로 재분류한다.
+  // STOCK_GROUP_LAYER는 시장 업종의 기본 연결, STOCK_LAYER는 사업모델이 더 명확한 개별 기업의 우선 분류다.
+  const STOCK_GROUP_LAYER = {
+    chip: "infra", memory: "infra", foundry: "infra", equipment: "infra",
+    packaging: "infra", network: "infra", hyperscaler: "infra", datacenter: "infra",
+    software: "service", device: "app", native: "model",
+    "china-memory": "infra", "china-foundry": "infra", "china-equipment": "infra",
+    "china-packaging": "infra", "china-design": "infra", "china-materials": "infra",
+  };
+  const STOCK_LAYER = {
+    MSFT: "service", AMZN: "infra", NVDA: "infra", GOOGL: "model", META: "model",
+    ORCL: "service", PLTR: "agent", NOW: "service", SPCX: "model", AAPL: "app",
+  };
 
   // 33개 추적 기업의 대표 계층·인접 확장 계층·단말 사업 적합도.
   // primary는 현재 수익과 통제점, adjacent는 기사·제품 방향에서 확인되는 확장 경로다.
@@ -1864,19 +1875,20 @@ window.DASH = (function () {
   // 공시·보도 기반 큐레이션(포지션은 천천히 변함), 최신 자본 활동은 '핵심 활동 분석'(크롤)이 보완.
   const COMPANY_INVEST = {
     "NVIDIA": {
-      strategy: "AI 생태계 확장 — '게임체인저·마켓메이커'에 지분 투자. 자사 GPU → 클라우드 → AI 스타트업으로 이어지는 수직 정렬 스택을 구축해 컴퓨트 수요를 자가 강화.",
+      strategy: "AI 생태계 확장 — 컴퓨트 공급, 모델 개발, 최종 애플리케이션을 잇는 기업에 투자해 NVIDIA 시스템의 학습·추론 수요처를 넓히는 자본 배분.",
       portfolio: [
-        { name: "CoreWeave", layer: "infra", note: "GPU 클라우드 · 약 11% 지분(~$3.66B)" },
-        { name: "Together AI", layer: "infra", note: "추론·학습 클라우드 · Series B(밸류 $3.3B)" },
-        { name: "Mistral AI", layer: "model", note: "오픈·소버린 모델 · 투자자(밸류 ~$13.8B)" },
-        { name: "Cohere", layer: "model", note: "엔터프라이즈 LLM · Series D(밸류 $6.8B)" },
-        { name: "Reka AI", layer: "model", note: "멀티모달 모델 · $110M 라운드(밸류 >$1B)" },
-        { name: "Perplexity", layer: "app", note: "AI 검색·답변 · 2023~ 반복 투자(밸류 ~$18B)" },
-        { name: "Figure AI", layer: "app", note: "휴머노이드 로보틱스 · 온디바이스 AI" },
+        { name: "CoreWeave", layer: "infra", note: "GPU 클라우드 · 2026년 $2B 투자와 5GW 확장 계획" },
+        { name: "Together AI", layer: "infra", note: "오픈 모델 학습·추론 클라우드 · 2026년 $800M 라운드 참여" },
+        { name: "Safe Superintelligence", layer: "model", note: "프런티어 연구 · Vera Rubin 장기 컴퓨트 파트너십" },
+        { name: "Thinking Machines Lab", layer: "model", note: "맞춤형 프런티어 모델 · 기가와트 규모 Vera Rubin 배포" },
+        { name: "Mistral AI", layer: "model", note: "유럽 프런티어 모델 · 성장 라운드 반복 참여" },
+        { name: "Cohere", layer: "model", note: "엔터프라이즈 LLM · 복수 라운드 참여" },
+        { name: "Perplexity", layer: "app", note: "AI 검색·답변 · 2023년 11월 이후 반복 투자" },
+        { name: "Figure AI", layer: "app", note: "휴머노이드 로보틱스 · 2024년 2월부터 투자" },
       ],
-      source: { label: "TechCrunch·Yahoo 2026", url: "https://techcrunch.com/2026/01/02/nvidias-ai-empire-a-look-at-its-top-startup-investments/" },
+      source: { label: "NVIDIA 공식 발표·TechCrunch 2026", url: "https://techcrunch.com/2026/01/02/nvidias-ai-empire-a-look-at-its-top-startup-investments/" },
     },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_GROUP_LAYER, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

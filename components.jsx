@@ -71,7 +71,7 @@ const NAV = [
   { id: "newbiz", ko: "AI 비즈니스 모델", en: "AI Business Models", icon: "spark", group: "심층 분석" },
   { id: "survey", ko: "AI 관련 소비자 조사", en: "AI Consumer Surveys", icon: "target", group: "정량 데이터" },
   { id: "market", ko: "AI 관련 시장", en: "AI Market Map", icon: "grid", group: "정량 데이터" },
-  { id: "stocks", ko: "주가 차트", en: "Stock Prices", icon: "up", group: "정량 데이터" },
+  { id: "stocks", ko: "Stock 분석", en: "Stock Analysis", icon: "up", group: "정량 데이터" },
   { id: "audit", ko: "데이터 신뢰센터", en: "Data Trust Center", icon: "report", group: "운영·검증" },
 ];
 const NAV_SECTION_IDS = NAV.map(item => item.id);
