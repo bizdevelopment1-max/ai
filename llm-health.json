@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-07-30T13:03:06.519Z",
-  "mode": "source-extractive-facts+grounded-company-synthesis",
+  "generatedAt": "2026-07-30T15:13:55.038Z",
+  "mode": "source-extractive-facts",
   "summaryEngine": "source-content-extractive",
-  "externalModelApiCalls": "source-grounded-company-batches",
+  "externalModelApiCalls": 0,
   "policy": "Article facts remain distinct sentences extracted from stored publisher-page text. Company business-model and strategy synthesis may use GitHub Models only with supplied publisher evidence IDs; every visible company conclusion retains its source links. Failed model calls fall back to source-extractive synthesis.",
   "displayLocalization": "source-fragment-translation-with-english-fallback",
   "articleSummaryModes": {
-    "sourceExcerpt": 184,
+    "sourceExcerpt": 187,
     "legacyOrLimited": 9
   },
   "companySynthesis": {
     "policy": "publisher-evidence-id-grounded",
-    "companies": 49,
-    "githubModelsCompanies": 49,
+    "companies": 48,
+    "githubModelsCompanies": 0,
     "engineCounts": {
-      "github-models:openai/gpt-4.1": 49
+      "source-extractive-synthesis": 48
     }
   }
 }
