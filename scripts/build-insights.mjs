@@ -231,10 +231,10 @@ async function main() {
     // 폴백(정합성 게이트를 통과한 근거 기사 없음) — 큐레이션된 자기완결 기준선
     return {
       axis: ax.axis, axisLabel: ax.label, tone: ax.tone, nav: ax.nav,
-      headline: gaejosik(ax.fallback), signalDigest: "근거 매칭 대기 — 큐레이션 기준선",
+      headline: gaejosik(ax.fallback), signalDigest: "큐레이션 기준선",
       themeKeywords: [], quantities: [], signals: [],
       rootCause: ax.rootCause, soWhat: ax.soWhat, action: ax.action,
-      evidence: [], score: null, scoreBasis: "근거 기사 매칭 대기(큐레이션 기준선 표시 중)", matched: [], live: false,
+      evidence: [], score: null, scoreBasis: "화면 비노출 큐레이션 기준선", matched: [], live: false,
       updatedAt: new Date().toISOString().slice(0, 10),
     };
   });

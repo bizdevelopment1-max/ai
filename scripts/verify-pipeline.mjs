@@ -346,7 +346,7 @@ const checks = [
   { id: "bizmodel-evidence", label: "수익화 시그널 근거", status: linkedBizmodel >= 3 ? "ok" : "warn", value: `공개 ${linkedBizmodel}건 · 보존 ${(bizmodel.items || []).length - linkedBizmodel}건` },
   { id: "research-source", label: "리서치 원문 링크", status: linkedResearch >= 3 ? "ok" : "warn", value: `공개 ${linkedResearch}건 · 보존 ${(research.feed || []).length - linkedResearch}건` },
   { id: "research-localization", label: "리서치 3줄 표시", status: localizedResearch + localizedFallbackResearch >= Math.max(3, (research.feed || []).length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedResearch} · 영문 폴백 ${localizedFallbackResearch}` },
-  { id: "market-source", label: "시장 기준선 보존", status: "ok", value: `화면 제외 · 원문 확인 대기 ${archivedMarketBaselines}건` },
+  { id: "market-source", label: "시장 기준선 보존", status: "ok", value: `화면 비노출 기준선 ${archivedMarketBaselines}건` },
   { id: "market-db-source", label: "신사업 정량 DB 원문 직접 검증", status: linkedMarketRecords >= Math.max(3, Math.min(12, (market.records || []).length * 0.25)) ? "ok" : "warn", value: `${linkedMarketRecords}/${(market.records || []).length}건` },
   { id: "consumer-survey-coverage", label: "소비자 조사 레코드", status: consumerSurveyRecords >= 2 ? "ok" : "warn", value: `${consumerSurveyRecords}건` },
 ];

@@ -125,7 +125,7 @@ function finishPick(p, articles) {
   const labels = [];
   if (scores.partner >= 4) labels.push("파트너십 기회");
   if (scores.acquire >= 4) labels.push("인수 후보");
-  if (!labels.length) labels.push("모니터링");
+  if (!labels.length) labels.push("사업 모델 검토");
   return {
     name: base.name, domain: base.domain, vertical: base.vertical, region: base.region,
     why: scrub(p.why), partnership: scrub(p.partnership),
@@ -151,10 +151,10 @@ function ruleRadar(articles) {
       const labels = [];
       if (partner >= 4) labels.push("파트너십 기회");
       if (acquire >= 4) labels.push("인수 후보");
-      if (!labels.length) labels.push("모니터링");
+      if (!labels.length) labels.push("사업 모델 검토");
       return {
         name: p.name, domain: p.domain, vertical: p.vertical, region: p.region,
-        why: p.base, partnership: "상세 분석은 LLM 갱신 대기 — 최근 보도·자금 조달 흐름 기준 예비 평가",
+        why: p.base, partnership: "최근 보도·자금 조달 흐름 기준 예비 평가",
         scores, total, urgent: total >= 12, labels,
         evidence: newsFor(articles, p.name).map(a => ({ title: a.title, date: a.date, source: a.source, url: a.url })),
       };
@@ -245,6 +245,11 @@ async function main() {
     memos = [m, ...memos.filter(x => x.month !== m.month)].slice(0, 6);
   }
 
+  picks = picks.map(pick => ({
+    ...pick,
+    labels: (pick.labels || []).map(label => label === "모니터링" ? "사업 모델 검토" : label),
+    partnership: String(pick.partnership || "").replace(/LLM 갱신 대기\s*[—·-]?\s*/g, ""),
+  }));
   const out = { generatedAt: new Date().toISOString(), weekOf, engine, picks, memos };
   await writeFile("radar.json", JSON.stringify(out) + "\n");
   console.log(`Wrote radar.json — ${picks.length} picks (engine: ${engine}, weekOf: ${weekOf}), ${memos.length} memo(s)`);

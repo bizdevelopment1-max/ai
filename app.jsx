@@ -26,36 +26,15 @@ const COLOR_PRESETS = [
   { sidebar: "#10131C", colNative: "#7A38D6", colBigtech: "#1428A0", colStartup: "#0E8F6E" },
 ];
 
-// Keep deep, chart-heavy boards out of the initial render. The wrapper stays
-// in the document, so sidebar navigation always has a stable scroll target.
+// Keep a stable wrapper for navigation, but render the board immediately.
+// Browser content-visibility handles below-the-fold cost without exposing a
+// blank gate or a transient loading state to readers.
 function LazySection({ id, active, sectionRef, height = 420, children }) {
   const innerRef = uR(null);
-  const [ready, setReady] = uS(false);
-
-  uE(() => {
-    if (active === id) setReady(true);
-  }, [active, id]);
-
-  uE(() => {
-    const target = sectionRef && sectionRef.current;
-    if (!target || ready) return;
-    if (!window.IntersectionObserver) { setReady(true); return; }
-    const root = target.closest(".main");
-    const observer = new IntersectionObserver(entries => {
-      if (!entries.some(entry => entry.isIntersecting)) return;
-      setReady(true);
-      observer.disconnect();
-    }, { root, rootMargin: "600px 0px", threshold: 0.01 });
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [ready, sectionRef]);
-
   return (
-    <div ref={sectionRef} className={"board-gate" + (ready ? " is-ready" : " is-pending")}
-      style={{ "--gate-height": `${height}px` }} aria-busy={!ready}>
-      {ready
-        ? React.cloneElement(children, { sectionRef: innerRef })
-        : <div className="board-gate-placeholder" aria-label="Loading section"><span /></div>}
+    <div ref={sectionRef} className="board-gate is-ready"
+      style={{ "--gate-height": `${height}px` }} data-section={id} data-active={active === id ? "true" : "false"}>
+      {React.cloneElement(children, { sectionRef: innerRef })}
     </div>
   );
 }

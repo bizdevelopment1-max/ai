@@ -203,28 +203,32 @@ const analysisCorpus = ({ base, rec, monet, evidence }) => clean(JSON.stringify(
 const supportedNumbers = (value, corpus) => numericTokens(value)
   .every(token => corpus.toLowerCase().replace(/,/g, "").includes(token));
 const refKey = ref => canon(ref?.url);
-const safeFallback = (name, fallback, corpus, evidence) => {
-  const defaults = {
-    currentBusiness: "공식 회사 개요와 제품 원문을 수집 중",
-    revenueModel: "공개 가격·계약·실적 원문에서 수익 구조를 확인 중",
-    strategyDirection: (() => {
-      const action = evidence.find(item => isCompanyActionEvidenceFor(name, item));
-      return action?.titleKo || action?.titleOriginal || "최근 제품·파트너십 원문에서 사업 방향을 확인 중";
-    })(),
-    investmentDirection: "투자·제휴·인수 관련 공식 발표를 확인 중",
-  };
+const placeholderCopy = value => /(?:수집|확인|분석|업데이트|준비)\s*중|입력되지|신호\s*(?:없음|대기)|근거\s*매칭\s*대기|표시할\s+.+없|정보\s*없음/i.test(clean(value));
+const blankSection = () => ({ summary: "", details: [], evidence: [] });
+const safeFallback = (fallback, corpus) => {
   const out = { ...fallback };
-  for (const key of Object.keys(defaults)) {
-    const value = fallback[key] || {};
+  for (const key of ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"]) {
+    const value = fallback[key] || blankSection();
     const body = `${value.summary || ""} ${(value.details || []).join(" ")}`;
-    if (supportedNumbers(body, corpus)) continue;
-    const modelPrefix = key === "revenueModel" ? clean(value.summary).split("·")[0] : "";
-    out[key] = {
-      ...value,
-      summary: modelPrefix ? `${modelPrefix} · ${defaults[key]}` : defaults[key],
-      details: [],
-      evidence: [],
-    };
+    if (!placeholderCopy(body) && supportedNumbers(body, corpus)) continue;
+    out[key] = blankSection();
+  }
+  return out;
+};
+
+// Sparse refreshes retain the last pipeline-verified section instead of
+// replacing it with operational status copy. Numeric claims must still occur
+// in the current source corpus.
+const retainLastVerified = (next, previous, corpus) => {
+  const out = { ...next };
+  for (const key of ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"]) {
+    if (clean(out[key]?.summary)) continue;
+    const prior = previous?.[key];
+    const body = `${prior?.summary || ""} ${(prior?.details || []).join(" ")}`;
+    const refs = (prior?.evidence || []).filter(ref => /^https?:\/\//.test(String(ref?.url || "")));
+    const grounded = /grounded|checked/i.test(String(prior?.groundingStatus || previous?.groundingStatus || ""));
+    if (!clean(prior?.summary) || placeholderCopy(body) || !supportedNumbers(body, corpus) || (!grounded && !refs.length)) continue;
+    out[key] = { ...prior, evidence: refs, retainedSnapshot: true };
   }
   return out;
 };
@@ -239,13 +243,15 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
   const seenDetails = new Set();
   const out = { ...value };
   for (const key of sectionKeys) {
-    const candidate = out[key] || fallback[key];
+    const fallbackSection = fallback[key] || blankSection();
+    const candidate = out[key] || fallbackSection;
     const refs = (candidate.evidence || []).filter(ref => allowedUrls.has(refKey(ref)));
     const body = `${candidate.summary || ""} ${(candidate.details || []).join(" ")}`;
-    const unsupported = !supportedNumbers(body, corpus)
+    const unsupported = placeholderCopy(body)
+      || !supportedNumbers(body, corpus)
       || ((key === "strategyDirection" || key === "investmentDirection") && speculative(body) && refs.length === 0)
       || (candidate.evidence || []).some(ref => !allowedUrls.has(refKey(ref)));
-    const chosen = unsupported ? fallback[key] : { ...candidate, evidence: refs };
+    const chosen = unsupported ? fallbackSection : { ...candidate, evidence: refs };
     const details = (chosen.details || []).filter(detail => {
       const fingerprint = clean(detail).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
       if (!fingerprint || seenDetails.has(fingerprint)) return false;
@@ -339,19 +345,18 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
   const revenueSignals = monet?.monetize || [];
   const directionSignals = monet?.direction || [];
   const primaryModel = modelLabels.get(monet?.primaryModel);
-  const profileScope = (profile.business || []).join(" · ");
-  const currentBusiness = (profile.business || []).join(" · ") || base?.unit || localizedTitle(rec.latest) || "사업 원문 수집 중";
+  const currentBusiness = (profile.business || []).join(" · ") || base?.unit || localizedTitle(rec.latest);
+  const revenueEvidence = first(revenueSignals[0]?.signal);
   const revenueSummary = primaryModel
-    ? `${primaryModel} 중심 · ${clip(first(revenueSignals[0]?.signal, profileScope ? `${profileScope} 제품군의 가격·계약 구조` : "", "최신 과금 구조 근거를 수집 중"), 220)}`
-    : first(revenueSignals[0]?.signal, profileScope ? `${profileScope} 제품군의 가격·계약 구조` : "", "공개 원문에서 수익 구조를 수집 중");
+    ? [primaryModel, revenueEvidence].filter(Boolean).join(" 중심 · ")
+    : revenueEvidence;
   const actionEvidence = evidence.find(item => isCompanyActionEvidenceFor(base?.name, item));
   const actionEvidenceRows = evidence.filter(item => isCompanyActionEvidenceFor(base?.name, item));
-  const strategySummary = first(directionSignals[0]?.signal, actionEvidence?.titleKo, actionEvidence?.titleOriginal, "최신 사업 방향 원문을 수집 중");
-  const investSignal = directionSignals.find(signal => ["ma", "invest", "partner"].includes(signal.kind)) || directionSignals[0];
+  const strategySummary = first(directionSignals[0]?.signal, actionEvidence?.titleKo, actionEvidence?.titleOriginal, base?.direction);
+  const investSignal = directionSignals.find(signal => ["ma", "invest", "partner"].includes(signal.kind));
   const investmentSummary = investSignal
     ? `${directionLabels.get(investSignal.kind) || "사업 확장"} · ${clip(investSignal.signal, 220)}`
-    : "투자·제휴·인수 관련 공식 발표를 수집 중";
-  const refs = allRefs(evidence);
+    : "";
   const official = (rec.organization?.officialPages || []).find(page => page.status === "reachable");
   const officialEvidence = official ? [{
     title: "공식 회사·리더십 페이지",
@@ -427,6 +432,7 @@ async function synthesizeBatch(inputs) {
       "입력된 company profile, monetization signals, publisher evidence만 사용해 회사별 현재 사업, 수익모델, 향후 사업·투자 방향, 핵심 실행, 신규 비즈니스 모델을 한국어로 구체적으로 종합한다.",
       "포트폴리오 옵션, 신호 감시, 우선순위 같은 일반론을 쓰지 않는다.",
       "근거가 없는 수치·인물·인과를 만들지 않는다. 각 판단은 입력 evidence id를 연결한다.",
+      "근거가 부족한 선택 항목은 빈 문자열과 빈 배열로 반환한다. '수집 중', '확인 중', '대기', '데이터 없음' 같은 운영 상태 문구를 쓰지 않는다.",
       "executiveQuotes는 candidates에 있는 영문 원문을 단 한 글자도 바꾸지 말고 한국어 번역을 함께 제공한다. candidate가 없으면 빈 배열이다.",
       "문장은 짧은 컨설팅 보고서 문체로 쓴다.",
     ].join(" "),
@@ -478,7 +484,11 @@ async function main() {
       directionLabels,
     });
     const corpus = analysisCorpus({ base: bases.get(name), rec, monet, evidence });
-    const fallback = safeFallback(name, fallbackRaw, corpus, evidence);
+    const fallback = retainLastVerified(
+      safeFallback(fallbackRaw, corpus),
+      rec.intelligence,
+      corpus,
+    );
     const groundedFallback = finaliseIntelligence(fallback, { name, evidence, fallback, corpus });
     const priorAiRaw = rec.intelligence?.engine?.startsWith("github-models:") ? rec.intelligence : null;
     const priorAi = priorAiRaw ? finaliseIntelligence(priorAiRaw, { name, evidence, fallback: groundedFallback, corpus }) : null;

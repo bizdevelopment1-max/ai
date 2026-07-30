@@ -23,10 +23,22 @@ import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
 const FORCE_REFRESH = /^(1|true|yes)$/i.test(String(process.env.STARTUP_REFRESH_FORCE || ""));
-const scrub = s => String(s || "").trim().replace(/[.。]+$/, "").replace(/\.\s+/g, " · ");
+const operationalCopy = /(?:수집|확인|분석|업데이트|준비)\s*중|신호\s*(?:없음|대기)|데이터\s*없음/i;
+const scrub = s => {
+  const input = String(s || "").trim();
+  if (operationalCopy.test(input)) return "";
+  return input
+  .replace(/[.。]+$/, "")
+  .replace(/\.\s+/g, " · ")
+  .replace(/기술 감시/g, "기술 적용성 검토")
+  .replace(/기능 감시/g, "기능 적용성 검토")
+  .replace(/제휴 감시/g, "제휴 타당성 검토")
+  .replace(/모니터링/g, "사업 모델 검토")
+  .trim();
+};
 const EXCLUDED = /deepseek|kling|kuaishou|hailuo|minimax|zhipu|moonshot|01\.?ai|baichuan|stepfun|sensetime|iflytek|baidu|alibaba|tencent|bytedance|naver|kakao|upstage|wrtn|hyperclova/i;
-const LABELS_L = ["파트너십 기회", "전략 제휴", "탑재 후보", "모니터링"];
-const LABELS_S = ["인수 후보", "투자 검토", "기술 감시", "모니터링"];
+const LABELS_L = ["파트너십 기회", "전략 제휴", "탑재 후보", "사업 모델 검토"];
+const LABELS_S = ["인수 후보", "투자 검토", "기술 적용", "사업 모델 검토"];
 
 // ── 대형(밸류 ≥ $10B) — 비즈니스 모델·수익구조 시드(플레인) ──
 // cat = STARTUP_TAXONOMY(data.js) 카테고리 id — 단말 신사업 관점 분류
@@ -241,7 +253,7 @@ async function enrichLarge(rows) {
     schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, revenue: { type: "string" }, partnership: { type: "string" }, label: { type: "string" } }, required: ["idx", "revenue", "partnership", "label"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
   });
   if (!r) return null;
-  for (const row of r.data.rows || []) { const s = rows[row.idx]; if (s) { s.revenue = scrub(row.revenue); s.partnership = scrub(row.partnership); s.label = LABELS_L.includes(row.label) ? row.label : "모니터링"; } }
+  for (const row of r.data.rows || []) { const s = rows[row.idx]; if (s) { s.revenue = scrub(row.revenue); s.partnership = scrub(row.partnership); s.label = LABELS_L.includes(row.label) ? row.label : "사업 모델 검토"; } }
   return r.engine;
 }
 
@@ -254,7 +266,7 @@ async function enrichSmall(rows) {
     schema: { type: "object", properties: { rows: { type: "array", items: { type: "object", properties: { idx: { type: "integer" }, acqAngle: { type: "string" }, label: { type: "string" } }, required: ["idx", "acqAngle", "label"], additionalProperties: false } } }, required: ["rows"], additionalProperties: false },
   });
   if (!r) return null;
-  for (const row of r.data.rows || []) { const s = rows[row.idx]; if (s) { s.acqAngle = scrub(row.acqAngle); s.label = LABELS_S.includes(row.label) ? row.label : "모니터링"; } }
+  for (const row of r.data.rows || []) { const s = rows[row.idx]; if (s) { s.acqAngle = scrub(row.acqAngle); s.label = LABELS_S.includes(row.label) ? row.label : "사업 모델 검토"; } }
   return r.engine;
 }
 
@@ -300,9 +312,8 @@ const buildInstitutional = (a16z, large, small) => {
     const match = known.get(item.name.toLowerCase());
     const currentBusiness = match?.businessModel || match?.overview || item.description || item.pageTitle
       || `${item.name} 소비자 AI 제품`;
-    const revenueModel = match?.revenue || "공식 제품·가격·기업 발표에서 구독·인앱결제·광고·거래 수익 구조를 수집 중";
-    const strategyDirection = match?.partnership || match?.acqAngle
-      || `${item.cohorts.includes("mobile") ? "모바일" : "웹"} 사용자 기반을 AI 핵심 기능으로 확장`;
+    const revenueModel = match?.revenue || "";
+    const strategyDirection = match?.partnership || match?.acqAngle || "";
     return {
       ...item,
       vertical: match?.vertical || (item.cohorts.includes("mobile") ? "소비자 AI 모바일 앱" : "소비자 AI 웹 서비스"),
@@ -323,6 +334,28 @@ const buildInstitutional = (a16z, large, small) => {
       },
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
+};
+
+const normalizeStoredSnapshot = snapshot => {
+  if (!snapshot) return false;
+  const before = JSON.stringify(snapshot);
+  for (const row of snapshot.large || []) {
+    row.businessModel = scrub(row.businessModel);
+    row.revenue = scrub(row.revenue);
+    row.partnership = scrub(row.partnership);
+    row.label = scrub(row.label) || "사업 모델 검토";
+  }
+  for (const row of snapshot.small || []) {
+    row.overview = scrub(row.overview);
+    row.acqAngle = scrub(row.acqAngle);
+    row.label = scrub(row.label) || "사업 모델 검토";
+  }
+  for (const row of snapshot.institutional || []) {
+    row.currentBusiness = scrub(row.currentBusiness);
+    row.revenueModel = scrub(row.revenueModel);
+    row.strategyDirection = scrub(row.strategyDirection);
+  }
+  return before !== JSON.stringify(snapshot);
 };
 
 async function enrichInstitutional(rows) {
@@ -362,7 +395,7 @@ async function enrichInstitutional(rows) {
       existingDirection: row.strategyDirection,
     }));
     const result = await llmJSON({
-      system: "당신은 스마트폰 사업자의 소비자 AI 신사업 애널리스트다. 입력된 a16z 선정 정보와 제품 공식 페이지 메타데이터만 사용해 각 제품의 현재 사업, 돈 버는 방식, 앞으로의 사업 방향을 한국어로 구체적으로 정리한다. 근거가 없으면 '확인 중'이라고 명시하고 수치·가격·투자 사실을 만들지 않는다. '옵션 확보', '신호 감시', '모니터링' 같은 일반론은 금지한다.",
+      system: "당신은 스마트폰 사업자의 소비자 AI 신사업 애널리스트다. 입력된 a16z 선정 정보와 제품 공식 페이지 메타데이터만 사용해 각 제품의 현재 사업, 돈 버는 방식, 앞으로의 사업 방향을 한국어로 구체적으로 정리한다. 근거가 부족한 선택 항목은 빈 문자열로 반환하고 수치·가격·투자 사실을 만들지 않는다. '수집 중', '확인 중', '대기', '데이터 없음', '옵션 확보', '신호 감시', '모니터링' 같은 운영 상태·일반론은 금지한다.",
       user: `다음 제품을 분석해 rows JSON으로 반환:\n${JSON.stringify(input)}`,
       maxTokens: 5_500,
       schema,
@@ -382,11 +415,12 @@ async function enrichInstitutional(rows) {
 }
 
 async function main() {
-  const large = LARGE.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", val: s.val, businessModel: s.bm, revenue: s.rev, partnership: s.part, label: "모니터링" }));
-  const small = SMALL.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", stage: s.stage, funding: s.funding, overview: s.ov, acqAngle: s.acq, label: "모니터링" }));
+  const large = LARGE.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", val: s.val, businessModel: scrub(s.bm), revenue: scrub(s.rev), partnership: scrub(s.part), label: "사업 모델 검토" }));
+  const small = SMALL.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", stage: s.stage, funding: s.funding, overview: scrub(s.ov), acqAngle: scrub(s.acq), label: "사업 모델 검토" }));
 
   let prev = null;
   try { prev = JSON.parse(await readFile("startups.json", "utf8")); } catch {}
+  const normalizedStoredSnapshot = normalizeStoredSnapshot(prev);
   const age = prev && prev.weekOf ? (Date.now() - new Date(prev.weekOf + "T00:00:00Z").getTime()) / 86400000 : 99;
   const staleShape = !prev || !Array.isArray(prev.large) || !Array.isArray(prev.institutional);   // 구 스키마면 강제 갱신
   // 영어 문장(연속 알파벳 15자+ 포함)이 남아 있으면 강제 재생성 — 한글 개조식으로 교체
@@ -394,6 +428,10 @@ async function main() {
     /[A-Za-z]{4,}\s+[A-Za-z]{4,}\s+[A-Za-z]{4,}/.test(`${x.partnership || ""} ${x.acqAngle || ""} ${x.revenue || ""} ${x.overview || ""}`));
   const needsAiUpgrade = !!llmAvailable() && !String(prev?.engine || "").startsWith("github-models:");
   if (!FORCE_REFRESH && age < 6.5 && !staleShape && prev.engine !== "rules" && !hasEnglish && !needsAiUpgrade) {
+    if (normalizedStoredSnapshot) {
+      prev.generatedAt = new Date().toISOString();
+      await writeFile("startups.json", JSON.stringify(prev) + "\n");
+    }
     console.log(`[startups] fresh (${prev.weekOf}, ${prev.engine}) — skip`);
     return;
   }

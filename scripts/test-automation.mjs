@@ -201,16 +201,22 @@ try {
     readFile("scripts/crawl-companies.mjs", "utf8"),
     readFile("scripts/llm.mjs", "utf8"),
   ]);
-  const intelligenceReady = Object.values(companies.companies || {}).every(company => {
+  const statusCopy = /(?:수집|확인|분석|업데이트|준비)\s*중|입력되지|신호\s*(?:없음|대기)|데이터\s*없음|표시할\s+.+없/i;
+  const portfolioNames = new Set((loadDash().COMPANIES || []).map(company => company.name));
+  const intelligenceReady = Object.entries(companies.companies || {}).every(([name, company]) => {
     const value = company.intelligence || {};
-    return value.currentBusiness?.summary && value.revenueModel?.summary
-      && value.strategyDirection?.summary && value.investmentDirection?.summary
+    const sections = ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"];
+    const portfolioCoverage = !portfolioNames.has(name) || (
+      value.currentBusiness?.summary && value.revenueModel?.summary && value.strategyDirection?.summary
+    );
+    const noOperationalCopy = sections.every(key =>
+      !statusCopy.test(`${value[key]?.summary || ""} ${(value[key]?.details || []).join(" ")}`));
+    return portfolioCoverage && noOperationalCopy
       && Array.isArray(value.corePractices) && Array.isArray(value.newBusinessModels)
       && Array.isArray(value.executiveQuotes)
       && value.evidenceFingerprint
       && value.groundingStatus === "numeric-and-source-reference-checked"
-      && ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"]
-        .every(key => value[key]?.confidence && value[key]?.groundingStatus);
+      && sections.every(key => value[key]?.confidence && value[key]?.groundingStatus);
   });
   const companyRows = Object.values(companies.companies || {});
   const aiCompanies = companyRows.filter(company => company.intelligence?.engine?.startsWith("github-models:")).length;
@@ -553,7 +559,8 @@ try {
     && charts.includes('className={"hbar-chart" + (compact ? " hbar-compact" : "")}')
     && styles.includes(".hbar-chart.hbar-compact")
     && styles.includes("content-visibility: auto")
-    && app.includes('rootMargin: "600px 0px"');
+    && app.includes('className="board-gate is-ready"')
+    && !app.includes("board-gate-placeholder");
   const hasFundingReadout = boards.includes("function FundingTrendInsight")
     && boards.includes("<FundingTrendInsight data={data.FUNDING_TREND} />")
     && boards.includes('valuePrefix="$" compact />')
