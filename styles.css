@@ -980,6 +980,15 @@ a[href]:hover .rainbow-on-hover,
 .cd-org-reports::before { content: ""; position: absolute; top: 0; left: 15%; right: 15%; height: 2px; background: var(--line); }
 .cd-org-founders { margin: 12px 0 0; font-size: 11.5px; font-weight: 600; line-height: 1.5; color: var(--muted); }
 .cd-org-founders b { color: var(--ink); }
+/* 주요 인터뷰 인사이트 */
+.cd-itv { display: flex; flex-direction: column; gap: 10px; }
+.cd-itv-item { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 11px 14px; background: var(--panel-2); }
+.cd-itv-who { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 5px; }
+.cd-itv-who b { font-size: 12.5px; font-weight: 850; }
+.cd-itv-who span { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--muted); }
+.cd-itv-insight { margin: 0; font-size: 13px; font-weight: 600; line-height: 1.6; }
+.cd-itv-src { display: inline-block; margin-top: 7px; font-size: 11px; font-weight: 700; color: var(--accent); text-decoration: none; }
+.cd-itv-src:hover { text-decoration: underline; }
 .cd-vp {
   border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 0 8px 8px 0;
   background: color-mix(in srgb, var(--accent) 6%, var(--panel));

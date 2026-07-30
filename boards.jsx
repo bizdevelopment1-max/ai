@@ -259,22 +259,23 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           </div>
         </div>
 
-        <div className="cd-stats">
-          <div className="cd-stat">
-            <em>밸류에이션</em>
-            <b><AnimatedNumber value={c.valuation} /></b>
-            {c.valAsof && c.valAsof !== "—" && <span>'{c.valAsof} 기준</span>}
-          </div>
-          <div className="cd-stat">
-            <em>{c.metric}</em>
-            <b><AnimatedNumber value={c.value} /></b>
-            {c.metricAsof && c.metricAsof !== "—" && <span>'{c.metricAsof} 기준</span>}
-          </div>
-          <div className="cd-stat">
-            <em>펀딩 단계</em>
-            <b>{c.funding}</b>
-          </div>
-        </div>
+        {(() => {
+          const empty = v => !v || v === "—" || String(v).trim() === "";
+          const stats = [];
+          if (!empty(c.valuation)) stats.push({ k: "밸류에이션", v: c.valuation, asof: c.valAsof });
+          if (!empty(c.value) && c.metric && c.metric !== "원문 기사") stats.push({ k: c.metric, v: c.value, asof: c.metricAsof });
+          if (!empty(c.funding)) stats.push({ k: "펀딩 단계", v: c.funding });
+          return stats.length ? (
+            <div className="cd-stats">
+              {stats.map((s, i) => (
+                <div className="cd-stat" key={i}>
+                  <em>{s.k}</em><b>{s.v}</b>
+                  {s.asof && s.asof !== "—" && <span>'{s.asof} 기준</span>}
+                </div>
+              ))}
+            </div>
+          ) : null;
+        })()}
 
         {c.profile && (() => {
           const p = c.profile, lv = c.live || {};
@@ -355,6 +356,20 @@ function CompanyDetail({ company, cats, articles, onClose }) {
                   {org.leadership && liveRoster && (
                     <p className="cd-org-founders"><b>창업자·배경</b> {org.leadership.map(l => `${l.name}(${l.role}${l.bg ? " · " + l.bg : ""})`).join(" / ")}</p>
                   )}
+                </div>
+              )}
+              {Array.isArray(org.interviews) && org.interviews.length > 0 && (
+                <div className="cd-section">
+                  <h4>주요 인터뷰 인사이트 <em>Interview Insights</em></h4>
+                  <div className="cd-itv">
+                    {org.interviews.map((it, i) => (
+                      <div className="cd-itv-item" key={i}>
+                        <div className="cd-itv-who"><b>{it.who}</b>{it.source && <span>{it.source}</span>}</div>
+                        <p className="cd-itv-insight">{it.insight}</p>
+                        {it.url && <a className="cd-itv-src" href={it.url} target="_blank" rel="noopener">원문 인터뷰 <Icon name="ext" size={10} /></a>}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </React.Fragment>
