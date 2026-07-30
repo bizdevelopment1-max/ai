@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-30T01:11:04.976Z",
-  "overall": "ok",
-  "summary": "28개 검사 · 정상 28 · 주의 0 · 실패 0",
+  "generatedAt": "2026-07-30T01:35:30.852Z",
+  "overall": "warn",
+  "summary": "28개 검사 · 정상 27 · 주의 1 · 실패 0",
   "checks": [
     {
       "file": "news.json",
@@ -33,7 +33,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 52
+      "items": 53
     },
     {
       "file": "radar.json",
@@ -134,10 +134,12 @@
     {
       "file": "quality.json",
       "tab": "수집 스트림 상태",
-      "status": "ok",
-      "issues": [],
+      "status": "warn",
+      "issues": [
+        "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다."
+      ],
       "ageDays": 0,
-      "items": "실패 0 · 빈 스트림 5"
+      "items": "실패 1 · 빈 스트림 4"
     },
     {
       "file": "quality.json",
@@ -193,7 +195,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "공개 29건 · 보존 23건"
+      "items": "공개 29건 · 보존 24건"
     },
     {
       "file": "quality.json",
@@ -201,7 +203,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "한국어 50 · 영문 폴백 2"
+      "items": "한국어 51 · 영문 폴백 2"
     },
     {
       "file": "quality.json",
