@@ -430,14 +430,14 @@ function App() {
               <NewBizBoard articles={articles} dataVersion={dataVersion} />
             </LazySection>
 
-            <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
-              <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} />
-            </LazySection>
             <LazySection id="survey" active={active} sectionRef={refs.survey} height={620}>
               <MarketBoard dataVersion={dataVersion} mode="survey" />
             </LazySection>
             <LazySection id="market" active={active} sectionRef={refs.market} height={780}>
               <MarketBoard dataVersion={dataVersion} mode="market" />
+            </LazySection>
+            <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
+              <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} />
             </LazySection>
 
             <LazySection id="audit" active={active} sectionRef={refs.audit} height={520}>

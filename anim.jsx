@@ -9,12 +9,9 @@ const { useState: useStateA, useRef: useRefA, useEffect: useEffectA, useContext:
 
 const AnimCtx = createCtxA(false); // legacy fallback context
 
-// NOTE: animation is the central, explicitly-requested feature of this
-// dashboard, so we intentionally always animate — even when the OS/browser
-// reports `prefers-reduced-motion: reduce`. (That setting is what was silently
-// disabling every count-up and chart fill before.) Kept as a constant so the
-// safety-snap paths still read cleanly.
-const REDUCED = false;
+// 애니메이션 비활성화(사용자 요청) — 등장 리빌·카운트업·차트 필 모두 즉시 최종 상태로 렌더.
+// REDUCED 경로가 useInView→true, useProgress→1, CountUp→최종값으로 스냅시켜 모션을 제거한다.
+const REDUCED = true;
 
 /* ============================================================
    Eye-level trigger engine (scroll-position based, NOT
