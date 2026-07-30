@@ -392,9 +392,9 @@ function App() {
               <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
             </LazySection>
 
-            {/* ── 2. 기업 동향 ── */}
-            <LazySection id="infra" active={active} sectionRef={refs.infra} height={620}>
-              <ValueChainBoard layerId="infra" companies={companiesLive} onSelect={setSelected} sectionRef={refs.infra} />
+            {/* ── 2. AI 밸류체인 — SW·서비스 우선(단말 접점) → 백엔드(모델·인프라) 순 ── */}
+            <LazySection id="app" active={active} sectionRef={refs.app} height={740}>
+              <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
             </LazySection>
             <LazySection id="model" active={active} sectionRef={refs.model} height={620}>
               <ValueChainBoard layerId="model" companies={companiesLive} onSelect={setSelected} sectionRef={refs.model} />
@@ -402,8 +402,8 @@ function App() {
             <LazySection id="data" active={active} sectionRef={refs.data} height={520}>
               <ValueChainBoard layerId="data" companies={companiesLive} onSelect={setSelected} sectionRef={refs.data} />
             </LazySection>
-            <LazySection id="app" active={active} sectionRef={refs.app} height={740}>
-              <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
+            <LazySection id="infra" active={active} sectionRef={refs.infra} height={620}>
+              <ValueChainBoard layerId="infra" companies={companiesLive} onSelect={setSelected} sectionRef={refs.infra} />
             </LazySection>
             <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
               <StartupScopeBoard dataVersion={dataVersion} companies={companiesLive} onSelect={setSelected} />

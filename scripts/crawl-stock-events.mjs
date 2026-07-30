@@ -41,6 +41,35 @@ async function main() {
     (byCo[co] = byCo[co] || []).push(a);
   }
 
+  // 티커별 일간 수익률(날짜→pct) — 변곡일의 '동종사 동반 여부'로 섹터/개별 요인 분석
+  const dailyRet = {};
+  for (const [ticker] of Object.entries(TICKER_CO)) {
+    const s = ((stocks[ticker] && stocks[ticker].points) || []).slice().sort((x, y) => (x.d < y.d ? -1 : 1));
+    const m = new Map();
+    for (let i = 1; i < s.length; i++) { if (s[i - 1].p && s[i].p) m.set(s[i].d, s[i].p / s[i - 1].p - 1); }
+    dailyRet[ticker] = m;
+  }
+  // 변곡일의 동종사 동반 분석 — 근접일(±1일)까지 허용해 거래일 차이를 흡수
+  const peerContext = (selfTicker, date, dir) => {
+    const peers = [];
+    for (const [t, m] of Object.entries(dailyRet)) {
+      if (t === selfTicker) continue;
+      let r = m.get(date);
+      if (r == null) { for (const [d, v] of m) { if (daysApart(d, date) <= 1) { r = v; break; } } }
+      if (r != null) peers.push(r);
+    }
+    if (peers.length < 3) return null;
+    const same = peers.filter(r => (dir === "up" ? r > 0.01 : r < -0.01));
+    const avgSame = same.length ? same.reduce((a, b) => a + b, 0) / same.length : 0;
+    const avgAll = peers.reduce((a, b) => a + b, 0) / peers.length;
+    const pct = n => `${n > 0 ? "+" : ""}${(n * 100).toFixed(1)}%`;
+    const word = dir === "up" ? "상승" : "하락";
+    if (same.length / peers.length >= 0.5) {
+      return `섹터 동반 ${word} — 동종 상장사 ${peers.length}곳 중 ${same.length}곳 같은 방향(동종 평균 ${pct(avgSame)}) · 개별 기업 재료 뉴스는 미확보, 시장·섹터 전반 변동으로 추정`;
+    }
+    return `회사 고유 변동 추정 — 같은 날 동종사 평균 ${pct(avgAll)}로 동반 미미(${same.length}/${peers.length}곳만 동조) · 개별 기업 뉴스는 미확보`;
+  };
+
   const events = {};
   for (const [ticker, co] of Object.entries(TICKER_CO)) {
     const series = (stocks[ticker] && stocks[ticker].points) || [];
@@ -74,7 +103,7 @@ async function main() {
       const why = dir === "up" ? "왜 올랐나" : "왜 빠졌나";
       const reason = hit
         ? `${why}: ${decode(hit.title).replace(/\s+-\s+[^-]*$/, "").trim()}`
-        : `${why}: 개별 기업 뉴스 미확인 — 섹터·시장 전반 변동 추정`;
+        : `${why}: ${peerContext(ticker, inf.date, dir) || "개별·섹터 데이터 부족 — 추가 확인 필요"}`;
       return {
         date: inf.date, dir, label, changePct: +(inf.pct * 100).toFixed(1),
         reason, url: hit ? hit.url : "", source: hit ? (hit.source || "") : "", matched: !!hit, auto: true,

@@ -1328,12 +1328,15 @@ window.DASH = (function () {
 
   // ── AI 밸류체인 5계층(MECE) ──────────────────────────────────────────
   // 사이트 전체 기업 분류 기준. 5번째 '배포·AI서비스'는 별도 축(플래그십 딜)으로 표시.
+  // AI 밸류체인 — 휴대폰(단말) 신사업 관점, SW·서비스 중심 재편.
+  // 위로 갈수록 사용자·단말에 가깝고(앱·서비스), 아래로 갈수록 백엔드(모델·인프라).
+  // 반도체·데이터센터 하드웨어는 '후방 지원'으로 격하하고, 단말이 실제로 쓰는 SW·서비스에 초점.
   const VALUE_CHAIN = [
-    { id: "infra", ko: "인프라·컴퓨트", en: "Infrastructure & Compute", accent: "#0891B2", accentSoft: "#E0F2F7", desc: "칩·파운드리·메모리·네트워킹·데이터센터·클라우드 — AI 연산을 공급하는 최하부 계층" },
-    { id: "model", ko: "파운데이션 모델", en: "Foundation Models", accent: "#7A38D6", accentSoft: "#F0E9FB", desc: "범용 LLM·멀티모달 모델을 직접 학습·개발하는 계층" },
-    { id: "data", ko: "데이터·플랫폼·툴링", en: "Data & Tooling", accent: "#2D6BFF", accentSoft: "#E7EEFF", desc: "데이터·MLOps·개발도구·모델 허브 — 모델을 제품으로 잇는 인에이블러 계층" },
-    { id: "app", ko: "애플리케이션·버티컬", en: "Applications", accent: "#EA580C", accentSoft: "#FCEBE0", desc: "도메인 특화 AI 앱 — 코딩·법률·의료·검색·크리에이티브·엔터프라이즈 등 버티컬" },
-    { id: "service", ko: "배포·AI서비스", en: "Deployment & Services", accent: "#16A34A", accentSoft: "#E3F5EA", desc: "FDE·컨설팅·구축 — 모델사가 자회사·합작으로 직접 서비스화(플래그십 딜: 별도 축)" },
+    { id: "app", ko: "AI 앱·서비스(버티컬)", en: "AI Apps & Services", accent: "#EA580C", accentSoft: "#FCEBE0", desc: "단말에서 바로 쓰는 도메인 AI 앱·서비스 — 어시스턴트·검색·코딩·크리에이티브·법률·의료 등 (사용자 접점)" },
+    { id: "service", ko: "배포·수익화·AI서비스", en: "Deployment & Monetization", accent: "#16A34A", accentSoft: "#E3F5EA", desc: "모델사가 자회사·합작으로 직접 서비스화·수익화 — 배포·FDE·컨설팅 (신사업 축)" },
+    { id: "model", ko: "파운데이션 모델", en: "Foundation Models", accent: "#7A38D6", accentSoft: "#F0E9FB", desc: "단말에 탑재·연동할 범용·멀티모달·온디바이스 모델 계층" },
+    { id: "data", ko: "데이터·개발 툴링", en: "Data & Tooling", accent: "#2D6BFF", accentSoft: "#E7EEFF", desc: "데이터·MLOps·SDK·모델 허브 — 모델을 단말 앱·서비스로 잇는 인에이블러" },
+    { id: "infra", ko: "AI 인프라·클라우드", en: "Infra & Cloud (backend)", accent: "#0891B2", accentSoft: "#E0F2F7", desc: "단말이 호출하는 AI 백엔드 — 클라우드·추론 서빙·온디바이스 런타임 (반도체·데이터센터는 후방 지원)" },
   ];
   // 주가 차트에 표시할 '대시보드 상장사' 티커 → 밸류체인 계층(그룹). 여기 없는 티커는 차트에서 제외.
   const STOCK_LAYER = { MSFT: "infra", AMZN: "infra", NVDA: "infra", GOOGL: "model", META: "model", SPCX: "model", AAPL: "app" };

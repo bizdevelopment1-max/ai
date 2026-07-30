@@ -1,30 +1,30 @@
 #!/usr/bin/env node
 /* ============================================================
-   crawl-infra.mjs — AI 인프라·미래기술 시그널 누적 갱신
+   crawl-infra.mjs — AI SW·서비스 기술 시그널 누적 갱신(휴대폰 신사업 관점)
    입력: news.json(매일 크롤된 최신 기사) — 별도 네트워크 호출 없이
-         이미 수집된 기사에서 인프라·미래기술 시그널만 선별·분류.
-   동작: HBM·컴퓨트·광통신·전력·차세대 아키텍처 등 인프라 키워드를 가진
-         기사를 5개 MECE 카테고리로 분류하고, 한글 개조식 시그널 1줄 +
-         정량 수치(플레인 텍스트)를 추출해 infra.json 으로 누적(merge).
-   특징: 기존 시그널 보존(누적), url 기준 중복 제거, 최신순, 최대 140건.
-         하드코딩이 아니라 매일 기사 기반으로 계속 쌓임.
+         이미 수집된 기사에서 '단말에 올릴 만한 AI SW·서비스' 시그널만 선별.
+   동작: 반도체·데이터센터 하드웨어가 아니라, 온디바이스 AI·에이전트·멀티모달
+         기능·OS/앱 통합·AI 서비스(수익화) 등 SW·서비스 관점 5개 MECE 카테고리로
+         분류하고, 한글 개조식 시그널 1줄 + 정량 수치를 추출해 infra.json 누적.
+   특징: 기존 항목은 매 실행 시 새 분류 체계로 재분류(하드웨어 전용 신호는 자연 소거),
+         url 중복 제거, 최신순, 최대 140건. 기사 기반으로 계속 쌓임.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 
-// 5개 MECE 인프라 카테고리 — 각 키워드 매칭으로 분류(위에서부터 우선)
+// 5개 MECE 카테고리 — 단말(스마트폰) 관점의 AI SW·서비스 기술(위에서부터 우선)
 const GROUPS = [
-  { id: "compute", ko: "AI 컴퓨트·가속기", desc: "GPU·NPU·커스텀 실리콘·파운드리 — 연산 공급", accent: "#C026D3",
-    re: /\bGPU\b|\bNPU\b|가속기|accelerator|custom silicon|커스텀 실리콘|\bASIC\b|파운드리|foundry|반도체 공정|Blackwell|\bH100\b|\bH200\b|\bB200\b|\bTPU\b|\bMI3\d0\b|웨이퍼|tensor core/i },
-  { id: "memory", ko: "메모리·HBM", desc: "고대역폭메모리·DRAM — AI 가속기 최대 병목", accent: "#EA580C",
-    re: /\bHBM\b|고대역폭|메모리|\bDRAM\b|\bDDR\d\b|memory bandwidth|스택|낸드|\bNAND\b/i },
-  { id: "network", ko: "네트워킹·광통신", desc: "CPO·광인터커넥트·이더넷 — 클러스터 대역폭", accent: "#0D9488",
-    re: /광통신|optical|\bCPO\b|co-packaged|인터커넥트|interconnect|네트워킹|networking|\bInfiniBand\b|이더넷|ethernet|\bNVLink\b|실리콘 포토닉스|photonics|스위치|switch fabric/i },
-  { id: "power", ko: "데이터센터·전력·냉각", desc: "CapEx·전력·수랭/액침 냉각 — 물리 인프라", accent: "#1428A0",
-    re: /데이터센터|data center|datacenter|\bCapEx\b|capex|전력|power|냉각|cooling|액침|수랭|liquid cool|원자력|nuclear|\bSMR\b|그리드|grid|메가와트|\bMW\b|기가와트|\bGW\b|하이퍼스케일|hyperscale/i },
-  { id: "future", ko: "차세대 아키텍처", desc: "뉴로모픽·양자·온디바이스·엣지 — 미래 기술", accent: "#7A38D6",
-    re: /뉴로모픽|neuromorphic|양자|quantum|온디바이스|on-device|엣지 AI|edge AI|아날로그 컴퓨팅|analog comput|포토닉 컴퓨팅|photonic comput|칩렛|chiplet|3D 적층|advanced packaging|추론 최적화|inference optim/i },
+  { id: "ondevice", ko: "온디바이스·엣지 AI", desc: "기기 내 추론·경량 모델(SLM)·프라이버시 — 단말 직결", accent: "#0891B2",
+    re: /온[\- ]?디바이스|on-device|엣지 ai|edge ai|경량 모델|소형 모델|small language model|\bSLM\b|기기 내 (?:추론|구동)|로컬 추론|local inference|온디바이스 추론|nano 모델|gemini nano|apple intelligence|private cloud compute|양자화|quantization|distill|증류|프라이버시 우선/i },
+  { id: "agent", ko: "AI 에이전트·어시스턴트", desc: "자율 에이전트·컴퓨터 유즈·단말 기본 비서", accent: "#7A38D6",
+    re: /에이전트|agentic|\bagent\b|어시스턴트|assistant|ai 비서|음성 비서|siri|gemini|copilot|comet|컴퓨터 유즈|computer use|tool use|툴 호출|자율 수행|autonomous|작업 자동화|task automation/i },
+  { id: "multimodal", ko: "멀티모달·생성 기능", desc: "카메라·이미지·영상·음성 생성/이해 — 단말 기능", accent: "#EA580C",
+    re: /멀티모달|multimodal|이미지 생성|image gen|영상 생성|video gen|음성 합성|\bTTS\b|음성 인식|\bSTT\b|보이스|voice|카메라 ai|camera|비전|vision|실시간 통역|translation|생성 편집|generative edit|아바타|avatar/i },
+  { id: "os", ko: "OS·앱·플랫폼 통합", desc: "OS·브라우저·앱 통합·개인화·메모리·컨텍스트", accent: "#2D6BFF",
+    re: /운영체제|\bOS\b|android|안드로이드|\biOS\b|앱 통합|app integration|ai 브라우저|browser|개인화|personaliz|메모리|memory|컨텍스트|context|플랫폼|platform|\bSDK\b|앱스토어|app store|딥링크|런타임/i },
+  { id: "service", ko: "AI 서비스·수익화 신사업", desc: "구독·앱·API·수익화·에코시스템 — 신규 서비스", accent: "#16A34A",
+    re: /수익화|monetiz|구독|subscription|서비스 출시|신규 서비스|new service|신사업|new business|에코시스템|ecosystem|앱 매출|과금|pricing|\bARR\b|유료 전환|번들|bundle|마켓플레이스|marketplace/i },
 ];
 
 // 정량 수치(플레인 텍스트) 추출 — $B/T·$억/조, %, 억, 배, GB, MW/GW, nm 등
@@ -45,10 +45,15 @@ async function main() {
   try { news = JSON.parse(await readFile("news.json", "utf8")).articles || []; }
   catch { console.log("[infra] news.json 없음 — crawl-news.mjs 먼저 실행"); }
 
-  // 이전 누적본 로드(보존)
+  // 이전 누적본 로드 — 새 분류 체계(SW·서비스)로 재분류하고, 어느 그룹에도 안 맞으면 제거.
+  // (반도체·데이터센터 하드웨어 전용 신호는 자연스럽게 소거되어 SW·서비스 관점으로 수렴)
   let prev = { groups: GROUPS.map(({ re, ...g }) => g), items: [] };
   try { const p = JSON.parse(await readFile("infra.json", "utf8")); if (p && Array.isArray(p.items)) prev = p; } catch {}
-  const byUrl = new Map(prev.items.map(it => [canonUrl(it.url), it]));
+  const reclassified = prev.items.map(it => {
+    const g = classify(`${it.title || ""} ${it.signal || ""}`);
+    return g ? { ...it, group: g } : null;
+  }).filter(Boolean);
+  const byUrl = new Map(reclassified.map(it => [canonUrl(it.url), it]));
 
   let added = 0;
   for (const a of news) {

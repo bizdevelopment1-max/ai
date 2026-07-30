@@ -203,7 +203,11 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
                 {groups[v].map(c => (
                   <button className="vc-card" key={c.name} onClick={() => onSelect(c)} style={{ "--accent": layer.accent }}>
                     <CoLogo name={c.name} domain={c.domain} accent={layer.accent} />
-                    <span className="vc-card-txt"><b>{c.name}</b><i>{c.unit}</i></span>
+                    <span className="vc-card-txt">
+                      <b>{c.name}</b><i>{c.unit}</i>
+                      {(c.vp || c.direction) && <u className="vc-card-bm">{c.vp || c.direction}</u>}
+                      {c.direction && c.vp && <u className="vc-card-dir"><b>방향</b> {c.direction}</u>}
+                    </span>
                     <span className="vc-card-live">
                       {c.live && c.live.cap && <em className="vc-cap">{c.live.cap}</em>}
                       {c.live && c.live.mentions7 > 0 && <em className="vc-ment">{c.live.mentions7}건·7일</em>}
@@ -2833,17 +2837,17 @@ function MonetizationPlaybook({ articles, dataVersion }) {
 function SignalBoard({ sectionRef, articles, dataVersion }) {
   const inView = useInView(sectionRef);
   return (
-    <section className="board signal-source-board" ref={sectionRef} data-screen-label="Infra and future tech signals">
+    <section className="board signal-source-board" ref={sectionRef} data-screen-label="AI SW and services tech signals">
       <AnimCtx.Provider value={inView}>
         <div className="board-head">
           <span className="board-tab" style={{ background: "#315C4A" }} />
           <div className="board-titles">
-            <h2>인프라·미래 기술 시그널 <span className="board-en">Source-backed infrastructure signals</span></h2>
-            <p>원문 본문까지 확인된 기사에서만 컴퓨트·메모리·광통신·전력·아키텍처 신호를 누적합니다</p>
+            <h2>AI SW·서비스 기술 시그널 <span className="board-en">AI Software & Services · 휴대폰 신사업 관점</span></h2>
+            <p>반도체·데이터센터 하드웨어가 아니라 <b>단말에 올릴 만한 AI SW·서비스</b> — 온디바이스·에이전트·멀티모달 기능·OS/앱 통합·AI 서비스(수익화) 신호를 원문 확인 기사에서 누적</p>
           </div>
         </div>
         <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
-          dataVersion={dataVersion} title="인프라·미래 기술 신호" sub="원문 문장으로 확인된 카드만 표시 · 확인 전 기록은 누적 ledger에 보존" />
+          dataVersion={dataVersion} title="AI SW·서비스 기술 신호" sub="온디바이스·에이전트·멀티모달·OS 통합·AI 서비스 — 원문 문장으로 확인된 카드만 표시" />
       </AnimCtx.Provider>
     </section>
   );
