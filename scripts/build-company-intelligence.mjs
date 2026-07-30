@@ -232,7 +232,7 @@ async function synthesizeBatch(inputs) {
       "문장은 짧은 컨설팅 보고서 문체로 쓴다.",
     ].join(" "),
     user: `다음 기업 묶음을 분석해 JSON으로 반환:\n${JSON.stringify(inputs)}`,
-    maxTokens: 7_500,
+    maxTokens: 3_500,
     schema,
   });
 }
