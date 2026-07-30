@@ -94,7 +94,7 @@ jobs:
       - name: Localise distinct source-page sentences
         run: python scripts/translate_summarize.py
 
-      - name: Build live company data (mentions + market caps)
+      - name: Normalize company profiles + org coverage + live signals
         run: node scripts/run-with-retry.mjs scripts/crawl-companies.mjs
 
       - name: Accumulate AI infra & future-tech signals (기사 기반 누적)
@@ -103,7 +103,7 @@ jobs:
       - name: Accumulate AI monetization (business-model) signals (기사 기반 누적)
         run: node scripts/run-with-retry.mjs scripts/crawl-bizmodel.mjs
 
-      - name: Accumulate AI monetization playbook by company (기사 기반 누적)
+      - name: Reclassify company monetization to the 7-layer SW-service value chain
         run: node scripts/run-with-retry.mjs scripts/crawl-monetization.mjs
 
       - name: Verify evidence, provenance and cumulative history

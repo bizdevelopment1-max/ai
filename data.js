@@ -1326,30 +1326,124 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  // ── AI 밸류체인 5계층(MECE) ──────────────────────────────────────────
-  // 사이트 전체 기업 분류 기준. 5번째 '배포·AI서비스'는 별도 축(플래그십 딜)으로 표시.
-  // AI 밸류체인 — 휴대폰(단말) 신사업 관점, SW·서비스 중심 재편.
-  // 위로 갈수록 사용자·단말에 가깝고(앱·서비스), 아래로 갈수록 백엔드(모델·인프라).
-  // 반도체·데이터센터 하드웨어는 '후방 지원'으로 격하하고, 단말이 실제로 쓰는 SW·서비스에 초점.
+  // ── 단말 AI SW·서비스 밸류체인 7계층 ─────────────────────────────────
+  // 고객 접점 → 서비스 운영 → 기술 인에이블러 → 후방 인프라 순으로 정렬한다.
+  // 기업은 대표 계층(primary) 1개와 인접 확장 계층(adjacent)을 함께 가져,
+  // 단순 업종 분류가 아니라 "현재 통제점과 다음 확장 방향"을 동시에 보여준다.
   const VALUE_CHAIN = [
-    { id: "app", ko: "AI 앱·서비스(버티컬)", en: "AI Apps & Services", accent: "#EA580C", accentSoft: "#FCEBE0", desc: "단말에서 바로 쓰는 도메인 AI 앱·서비스 — 어시스턴트·검색·코딩·크리에이티브·법률·의료 등 (사용자 접점)" },
-    { id: "service", ko: "배포·수익화·AI서비스", en: "Deployment & Monetization", accent: "#16A34A", accentSoft: "#E3F5EA", desc: "모델사가 자회사·합작으로 직접 서비스화·수익화 — 배포·FDE·컨설팅 (신사업 축)" },
-    { id: "model", ko: "파운데이션 모델", en: "Foundation Models", accent: "#7A38D6", accentSoft: "#F0E9FB", desc: "단말에 탑재·연동할 범용·멀티모달·온디바이스 모델 계층" },
-    { id: "data", ko: "데이터·개발 툴링", en: "Data & Tooling", accent: "#2D6BFF", accentSoft: "#E7EEFF", desc: "데이터·MLOps·SDK·모델 허브 — 모델을 단말 앱·서비스로 잇는 인에이블러" },
-    { id: "infra", ko: "AI 인프라·클라우드", en: "Infra & Cloud (backend)", accent: "#0891B2", accentSoft: "#E0F2F7", desc: "단말이 호출하는 AI 백엔드 — 클라우드·추론 서빙·온디바이스 런타임 (반도체·데이터센터는 후방 지원)" },
+    {
+      id: "app", ko: "AI 경험·버티컬 서비스", en: "Experience & Vertical Services",
+      accent: "#EA580C", accentSoft: "#FCEBE0", stance: "OWN", stanceKo: "직접 보유",
+      controlPoint: "홈화면·OS·기본앱·일상 워크플로", economics: "구독·커머스·단말 프리미엄",
+      risk: "킬러 유스케이스 부재·외부 앱에 고객 접점 상실",
+      operatorMove: "생활·업무 버티컬 3~5개를 기본 탑재하고 계정·결제·단말 기능과 결합",
+      desc: "사용자가 단말에서 직접 체감하고 비용을 지불하는 AI 경험 — 비서·검색·생산성·크리에이티브·법률·의료",
+    },
+    {
+      id: "agent", ko: "에이전트·오케스트레이션", en: "Agents & Orchestration",
+      accent: "#C026D3", accentSoft: "#F8E7F5", stance: "ORCHESTRATE", stanceKo: "오케스트레이션",
+      controlPoint: "의도 해석·도구 호출·멀티모델 라우팅", economics: "에이전트 구독·업무 성과 과금",
+      risk: "모델/OS 사업자가 오케스트레이션 계층을 선점",
+      operatorMove: "개인 컨텍스트와 단말 권한을 쓰는 멀티모델 에이전트 레이어를 핵심 통제점으로 확보",
+      desc: "여러 모델·앱·단말 기능을 연결해 사용자의 의도를 실제 행동으로 바꾸는 실행 계층",
+    },
+    {
+      id: "service", ko: "서비스 플랫폼·수익화", en: "Service Platform & Monetization",
+      accent: "#16A34A", accentSoft: "#E3F5EA", stance: "BUILD", stanceKo: "플랫폼 구축",
+      controlPoint: "배포·과금·정산·파트너 마켓플레이스", economics: "수수료·번들·B2B 라이선스·성과 과금",
+      risk: "트래픽만 제공하고 서비스 마진은 파트너가 회수",
+      operatorMove: "AI 서비스 스토어·번들·B2B 배포 패키지로 유통과 과금 주도권 확보",
+      desc: "서비스를 묶고 배포하며 과금·정산하는 플랫폼 계층 — 마켓플레이스·FDE·엔터프라이즈 구축 포함",
+    },
+    {
+      id: "trust", ko: "데이터·컨텍스트·신뢰", en: "Data, Context & Trust",
+      accent: "#0D9488", accentSoft: "#E2F5F2", stance: "CONTROL", stanceKo: "통제권 확보",
+      controlPoint: "개인 컨텍스트·ID·동의·권한·평가", economics: "신뢰 프리미엄·기업 관리·데이터 서비스",
+      risk: "프라이버시 사고·권한 오남용·데이터 이동성 규제",
+      operatorMove: "온디바이스 개인화 금고와 기업용 정책·평가 레이어를 공통 자산으로 구축",
+      desc: "개인화와 기업 배포를 가능하게 하는 컨텍스트·권한·보안·거버넌스·평가 계층",
+    },
+    {
+      id: "model", ko: "모델·온디바이스 지능", en: "Models & On-device Intelligence",
+      accent: "#7A38D6", accentSoft: "#F0E9FB", stance: "PARTNER", stanceKo: "멀티소싱",
+      controlPoint: "성능·원가·지연·프라이버시의 균형", economics: "API 사용량·라이선스·소버린 배포",
+      risk: "단일 모델 종속·추론비 변동·기능 차별화 약화",
+      operatorMove: "자체 경량 모델과 2개 이상 외부 모델을 라우팅해 비용·성능·규제 리스크 분산",
+      desc: "클라우드 프런티어 모델과 단말 경량 모델을 조합하는 지능 공급 계층",
+    },
+    {
+      id: "data", ko: "개발·배포 툴링", en: "Developer & Deployment Tooling",
+      accent: "#2D6BFF", accentSoft: "#E7EEFF", stance: "ENABLE", stanceKo: "생태계 개방",
+      controlPoint: "SDK·모델 허브·평가·MLOps·배포 자동화", economics: "개발자 플랫폼·호스팅·사용량",
+      risk: "폐쇄형 SDK로 파트너 확장 속도 저하",
+      operatorMove: "단말 API·에이전트 SDK·평가도구를 개방해 외부 서비스의 탑재 비용을 낮춤",
+      desc: "모델을 앱과 서비스로 빠르게 제품화하는 SDK·모델 허브·MLOps·평가·배포 도구",
+    },
+    {
+      id: "infra", ko: "엣지·클라우드 런타임", en: "Edge & Cloud Runtime",
+      accent: "#0891B2", accentSoft: "#E0F2F7", stance: "SOURCE", stanceKo: "선택 조달",
+      controlPoint: "추론 원가·지연시간·가용성", economics: "컴퓨트·서빙 사용량",
+      risk: "GPU·클라우드 가격과 공급 제약을 서비스 원가로 전가",
+      operatorMove: "클라우드·칩을 멀티소싱하고 온디바이스 처리율을 높여 변동비를 방어",
+      desc: "단말·엣지·클라우드에서 모델을 실행하는 런타임과 컴퓨트 — 차별화보다 원가·안정성 관리가 핵심",
+    },
   ];
   // 주가 차트에 표시할 '대시보드 상장사' 티커 → 밸류체인 계층(그룹). 여기 없는 티커는 차트에서 제외.
   const STOCK_LAYER = { MSFT: "infra", AMZN: "infra", NVDA: "infra", GOOGL: "model", META: "model", SPCX: "model", AAPL: "app" };
 
-  // 33개 추적 기업의 밸류체인 계층·버티컬 매핑(MECE — 각 기업은 대표 계층 1개).
+  // 33개 추적 기업의 대표 계층·인접 확장 계층·단말 사업 적합도.
+  // primary는 현재 수익과 통제점, adjacent는 기사·제품 방향에서 확인되는 확장 경로다.
   const COMPANY_LAYER = {
-    "Microsoft": { layer: "infra", vertical: "하이퍼스케일 클라우드" }, "Amazon": { layer: "infra", vertical: "하이퍼스케일 클라우드" }, "NVIDIA": { layer: "infra", vertical: "AI 가속기·칩" },
-    "OpenAI": { layer: "model", vertical: "프런티어 모델" }, "Anthropic": { layer: "model", vertical: "프런티어 모델" }, "Google DeepMind": { layer: "model", vertical: "프런티어 모델" }, "Meta AI": { layer: "model", vertical: "오픈 모델" }, "DeepSeek": { layer: "model", vertical: "오픈·저비용 모델" }, "Mistral AI": { layer: "model", vertical: "오픈·소버린 모델" }, "Cohere": { layer: "model", vertical: "엔터프라이즈 모델" }, "SpaceX (xAI, Cursor)": { layer: "model", vertical: "프런티어 모델(xAI)" },
-    "Databricks": { layer: "data", vertical: "데이터·레이크하우스" }, "Scale AI": { layer: "data", vertical: "데이터 라벨링·평가" }, "Hugging Face": { layer: "data", vertical: "모델 허브·오픈소스" }, "Together AI": { layer: "data", vertical: "추론·학습 클라우드" },
-    "Apple": { layer: "app", vertical: "온디바이스·컨슈머" }, "Perplexity": { layer: "app", vertical: "검색·어시스턴트" }, "Glean": { layer: "app", vertical: "엔터프라이즈 검색" }, "Sierra AI": { layer: "app", vertical: "고객경험 에이전트" }, "Writer": { layer: "app", vertical: "엔터프라이즈 생산성" },
-    "Harvey": { layer: "app", vertical: "법률" }, "Abridge": { layer: "app", vertical: "의료" },
-    "Cursor": { layer: "app", vertical: "코딩" }, "Replit": { layer: "app", vertical: "코딩" }, "Lovable": { layer: "app", vertical: "코딩" },
-    "Midjourney": { layer: "app", vertical: "크리에이티브·이미지" }, "Stability AI": { layer: "app", vertical: "크리에이티브·이미지" }, "Runway": { layer: "app", vertical: "크리에이티브·영상" }, "Kling AI": { layer: "app", vertical: "크리에이티브·영상" }, "Hailuo (MiniMax)": { layer: "app", vertical: "크리에이티브·영상" }, "Synthesia": { layer: "app", vertical: "크리에이티브·영상" }, "Suno": { layer: "app", vertical: "크리에이티브·음악" }, "ElevenLabs": { layer: "app", vertical: "크리에이티브·음성" },
+    "Microsoft": { layer: "service", vertical: "생산성·엔터프라이즈 플랫폼", adjacent: ["agent", "model", "data", "infra"], fit: "high" },
+    "Amazon": { layer: "infra", vertical: "멀티모델 클라우드", adjacent: ["service", "agent"], fit: "medium" },
+    "NVIDIA": { layer: "infra", vertical: "AI 가속기·런타임", adjacent: ["data"], fit: "medium" },
+    "Apple": { layer: "app", vertical: "OS·개인 AI 경험", adjacent: ["agent", "service", "trust", "model"], fit: "high" },
+    "OpenAI": { layer: "model", vertical: "프런티어·멀티모달 모델", adjacent: ["agent", "service", "app"], fit: "high" },
+    "Anthropic": { layer: "model", vertical: "프런티어·안전 모델", adjacent: ["agent", "service", "trust"], fit: "high" },
+    "Google DeepMind": { layer: "model", vertical: "프런티어·온디바이스 모델", adjacent: ["app", "agent", "service", "infra"], fit: "high" },
+    "Meta AI": { layer: "model", vertical: "오픈 모델", adjacent: ["app", "agent", "service"], fit: "high" },
+    "DeepSeek": { layer: "model", vertical: "오픈·저비용 모델", adjacent: ["infra"], fit: "medium" },
+    "Mistral AI": { layer: "model", vertical: "오픈·소버린 모델", adjacent: ["trust", "agent"], fit: "high" },
+    "Cohere": { layer: "model", vertical: "엔터프라이즈·소버린 모델", adjacent: ["trust", "agent"], fit: "high" },
+    "SpaceX (xAI, Cursor)": { layer: "model", vertical: "프런티어 모델·플랫폼", adjacent: ["app", "agent", "infra"], fit: "medium" },
+    "Databricks": { layer: "trust", vertical: "기업 데이터·컨텍스트", adjacent: ["data", "agent"], fit: "high" },
+    "Scale AI": { layer: "trust", vertical: "데이터·평가·안전", adjacent: ["data"], fit: "high" },
+    "Hugging Face": { layer: "data", vertical: "모델 허브·오픈소스", adjacent: ["model", "infra"], fit: "high" },
+    "Together AI": { layer: "infra", vertical: "오픈모델 추론 런타임", adjacent: ["data", "model"], fit: "medium" },
+    "Perplexity": { layer: "app", vertical: "검색·어시스턴트", adjacent: ["agent", "service"], fit: "high" },
+    "Glean": { layer: "agent", vertical: "기업 지식·업무 에이전트", adjacent: ["trust", "app"], fit: "high" },
+    "Sierra AI": { layer: "agent", vertical: "고객경험 에이전트", adjacent: ["app", "service"], fit: "high" },
+    "Writer": { layer: "agent", vertical: "엔터프라이즈 워크플로", adjacent: ["trust", "app"], fit: "high" },
+    "Harvey": { layer: "app", vertical: "법률·전문서비스", adjacent: ["agent", "trust"], fit: "high" },
+    "Abridge": { layer: "app", vertical: "의료·임상기록", adjacent: ["agent", "trust"], fit: "high" },
+    "Cursor": { layer: "app", vertical: "코딩·개발", adjacent: ["agent"], fit: "high" },
+    "Replit": { layer: "app", vertical: "코딩·앱 제작", adjacent: ["agent", "data"], fit: "high" },
+    "Lovable": { layer: "app", vertical: "코딩·앱 제작", adjacent: ["agent", "data"], fit: "high" },
+    "Midjourney": { layer: "app", vertical: "크리에이티브·이미지", adjacent: ["service"], fit: "medium" },
+    "Stability AI": { layer: "app", vertical: "크리에이티브·오픈모델", adjacent: ["model", "service"], fit: "medium" },
+    "Runway": { layer: "app", vertical: "크리에이티브·영상", adjacent: ["service"], fit: "high" },
+    "Kling AI": { layer: "app", vertical: "크리에이티브·영상", adjacent: ["service"], fit: "medium" },
+    "Hailuo (MiniMax)": { layer: "app", vertical: "크리에이티브·멀티모달", adjacent: ["model"], fit: "medium" },
+    "Synthesia": { layer: "app", vertical: "기업 영상·교육", adjacent: ["service"], fit: "high" },
+    "Suno": { layer: "app", vertical: "크리에이티브·음악", adjacent: ["service"], fit: "medium" },
+    "ElevenLabs": { layer: "app", vertical: "음성·대화 인터페이스", adjacent: ["agent", "service"], fit: "high" },
+  };
+
+  // 컨설팅형 전략 프레임: Where to Play / How to Win / 실행 Horizon.
+  // 레이어별 시장 신호는 화면에서 companies.json의 기사·활동 데이터를 합산해 자동 갱신한다.
+  const MOBILE_STRATEGY = {
+    northStar: "모델을 소유하는 기업이 아니라, 고객 접점·개인 컨텍스트·서비스 유통과 과금을 통제하는 단말 AI 플랫폼",
+    choices: [
+      { no: "01", title: "개인 컨텍스트 금고", where: "데이터·컨텍스트·신뢰", win: "온디바이스 처리·명시적 동의·앱 간 권한을 공통 서비스로 제공", kpi: "온디바이스 처리율 · 동의율 · 컨텍스트 재사용 앱 수" },
+      { no: "02", title: "멀티모델 에이전트", where: "에이전트·오케스트레이션", win: "성능·가격·프라이버시에 따라 모델을 라우팅하고 단말 기능을 안전하게 실행", kpi: "완료율 · 건당 추론원가 · 재시도율 · 월간 활성 에이전트" },
+      { no: "03", title: "AI 서비스 유통·과금", where: "서비스 플랫폼·수익화", win: "기본 탑재·번들·결제·B2B 배포를 묶어 파트너의 시장진입 비용을 낮춤", kpi: "유료 전환율 · 서비스 ARPU · 파트너 GMV · 수익배분율" },
+      { no: "04", title: "버티컬 포트폴리오", where: "AI 경험·버티컬 서비스", win: "자체 개발·독점 제휴·지분투자를 조합해 생활·업무 핵심 시나리오를 선점", kpi: "주간 이용률 · 기능당 유지율 · 파트너별 CAC · 번들 해지율" },
+    ],
+    horizons: [
+      { id: "h1", label: "H1 · 0–6개월", title: "기준선 확보", actions: ["7계층 파트너·원가·데이터 흐름 맵핑", "모델 라우팅·권한·평가 공통 아키텍처 확정", "상위 3개 버티컬 PoC와 단위경제성 측정"] },
+      { id: "h2", label: "H2 · 6–18개월", title: "통제점 제품화", actions: ["개인 컨텍스트 금고와 에이전트 SDK 출시", "구독·커머스·기업 번들 3개 과금 실험", "파트너 마켓플레이스와 품질·안전 인증 운영"] },
+      { id: "h3", label: "H3 · 18–36개월", title: "플랫폼 확장", actions: ["성과 상위 버티컬 직접 투자·인수", "단말군·지역·기업 fleet로 배포 확장", "외부 개발자 매출과 반복 소비 기반 플랫폼 수익화"] },
+    ],
   };
 
   // ── 기업 개요(정적 프로필) ───────────────────────────────────────────
@@ -1763,5 +1857,5 @@ window.DASH = (function () {
     },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, STOCK_LAYER, COMPANY_ORG, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_LAYER, COMPANY_ORG, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

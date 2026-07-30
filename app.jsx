@@ -71,15 +71,19 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = uS(false);
   const [collapsed, setCollapsed] = uS(false);
   const refs = {
-    ib: uR(null), overview: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    infra: uR(null), model: uR(null), data: uR(null), app: uR(null),
+    ib: uR(null), overview: uR(null), strategy: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
+    infra: uR(null), model: uR(null), data: uR(null), trust: uR(null), service: uR(null), agent: uR(null), app: uR(null),
     sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), survey: uR(null), market: uR(null), audit: uR(null),
   };
+  const strategyInView = useInView(refs.strategy);
   const infraInView = useInView(refs.infra);
   const modelInView = useInView(refs.model);
   const dataInView = useInView(refs.data);
+  const trustInView = useInView(refs.trust);
+  const serviceInView = useInView(refs.service);
+  const agentInView = useInView(refs.agent);
   const appInView = useInView(refs.app);
-  const companyInView = infraInView || modelInView || dataInView || appInView;
+  const companyInView = strategyInView || infraInView || modelInView || dataInView || trustInView || serviceInView || agentInView || appInView;
   const articlesInView = useInView(refs.articles);
   const signalsInView = useInView(refs.signals);
   const newbizInView = useInView(refs.newbiz);
@@ -212,11 +216,13 @@ function App() {
     // Legacy hand-entered valuation, funding and KPI values stay in the
     // append-only ledger but do not reach the public company map.
     const merged = { ...c, valuation: "—", valAsof: "", metric: "원문 기사", value: "—", metricAsof: "", funding: "—" };
-    merged.profile = (D.COMPANY_PROFILES || {})[c.name] || null;   // 정적 기업 개요(설립·경영진·본사 등)
+    merged.profile = (lv && lv.profile) || (D.COMPANY_PROFILES || {})[c.name] || null; // 정규화 개요: 라이브 변동값 우선
     const ly = (D.COMPANY_LAYER || {})[c.name];                    // AI 밸류체인 계층·버티컬
     merged.layer = ly ? ly.layer : null;
     merged.vchainVertical = ly ? ly.vertical : "";
-    merged.org = (D.COMPANY_ORG || {})[c.name] || null;            // 미션·창업자·리더십(정적) — 조직도는 live officers 우선
+    merged.adjacentLayers = ly && Array.isArray(ly.adjacent) ? ly.adjacent : [];
+    merged.mobileFit = ly ? ly.fit || "medium" : "medium";
+    merged.org = (lv && lv.organization) || (D.COMPANY_ORG || {})[c.name] || null; // 정규화 조직: live officers + 큐레이션 배경
     merged.invest = (D.COMPANY_INVEST || {})[c.name] || null;      // AI SW·서비스 투자 포트폴리오·전략 맵
     // 크롤 기반 수익모델·사업 방향(monetization.json) — 원문 링크 신호 + 밸류체인 legend
     merged.monetize = monet
@@ -389,6 +395,10 @@ function App() {
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} />
             </section>
 
+            <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={860}>
+              <MobileStrategyBoard companies={companiesLive} onNav={navTo} />
+            </LazySection>
+
             <LazySection id="articles" active={active} sectionRef={refs.articles} height={840}>
               <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
             </LazySection>
@@ -396,6 +406,15 @@ function App() {
             {/* ── 2. AI 밸류체인 — SW·서비스 우선(단말 접점) → 백엔드(모델·인프라) 순 ── */}
             <LazySection id="app" active={active} sectionRef={refs.app} height={740}>
               <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
+            </LazySection>
+            <LazySection id="agent" active={active} sectionRef={refs.agent} height={660}>
+              <ValueChainBoard layerId="agent" companies={companiesLive} onSelect={setSelected} sectionRef={refs.agent} />
+            </LazySection>
+            <LazySection id="service" active={active} sectionRef={refs.service} height={660}>
+              <ValueChainBoard layerId="service" companies={companiesLive} onSelect={setSelected} sectionRef={refs.service} />
+            </LazySection>
+            <LazySection id="trust" active={active} sectionRef={refs.trust} height={620}>
+              <ValueChainBoard layerId="trust" companies={companiesLive} onSelect={setSelected} sectionRef={refs.trust} />
             </LazySection>
             <LazySection id="model" active={active} sectionRef={refs.model} height={620}>
               <ValueChainBoard layerId="model" companies={companiesLive} onSelect={setSelected} sectionRef={refs.model} />
@@ -442,7 +461,7 @@ function App() {
         </main>
       </div>
 
-      <CompanyDetail company={selected} cats={cats} articles={articles} onClose={() => setSelected(null)} />
+      <CompanyDetail company={selected} cats={cats} articles={articles} generatedAt={dataGeneratedAt} onClose={() => setSelected(null)} />
 
       {/* Color change via palette button in TopBar */}
     </div>

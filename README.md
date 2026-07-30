@@ -2,6 +2,14 @@
 
 GitHub Pages dashboard: <https://bizdevelopment1-max.github.io/ai/>
 
+## Mobile AI strategy model
+
+The company universe is organized as a seven-layer mobile AI software-and-services value chain: experience and vertical services, agents and orchestration, service platform and monetization, data/context/trust, models and on-device intelligence, developer/deployment tooling, and edge/cloud runtime.
+
+Each company has one current control layer plus adjacent expansion layers. The strategy view combines that placement with 30-day source-backed activity, an own/orchestrate/partner/source posture, Where-to-Play/How-to-Win choices, and a three-horizon execution roadmap.
+
+`scripts/crawl-companies.mjs` normalizes every tracked company into the same company-profile and organization schema. Public-company financials and officers are refreshed from Yahoo Finance when available; private-company baseline facts are paired with daily news, executive mentions, business-model signals, coverage scores, and visible provenance.
+
 ## Reliable collection policy
 
 The news feed is collected from Google News RSS (`en-US`) and an allowlisted set of direct publisher RSS feeds. Each displayed card links to the source and contains a cleaned source excerpt, not a generated translation or summary. The pipeline makes zero generative-model API calls.

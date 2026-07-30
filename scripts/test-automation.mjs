@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { access, readFile } from "node:fs/promises";
 import { BUNDLE_FILE, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
+import { loadDash } from "./load-dash.mjs";
 
 const required = [
   ".github/workflows/daily-news.yml",
@@ -10,6 +11,9 @@ const required = [
   "scripts/refresh-source-content.mjs",
   "scripts/reframe-source-briefs.mjs",
   "scripts/crawl-stocks.mjs",
+  "scripts/crawl-financials.mjs",
+  "scripts/crawl-companies.mjs",
+  "scripts/crawl-monetization.mjs",
   "scripts/crawl-markets.mjs",
   "scripts/market-db.mjs",
   "scripts/refresh-market-source-content.mjs",
@@ -28,6 +32,9 @@ const required = [
   "bizmodel-view.json",
   "data-version.json",
   "stocks.json",
+  "financials.json",
+  "companies.json",
+  "monetization.json",
   "quality.json",
   "history.json",
   "llm-health.json",
@@ -37,6 +44,7 @@ const required = [
   "config/company-source-policy.json",
   "index.html",
   "app.bundle.js",
+  "og-mobile-strategy.png",
   "assets/quant-insight-capital.webp",
   "assets/quant-insight-device.webp",
   "assets/quant-insight-infra.webp",
@@ -114,6 +122,41 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  company table readability: ${error.message}`);
+}
+
+try {
+  const [app, boards, components, companies, monetizationCrawler] = await Promise.all([
+    readFile("app.jsx", "utf8"),
+    readFile("boards.jsx", "utf8"),
+    readFile("components.jsx", "utf8"),
+    readFile("companies.json", "utf8").then(JSON.parse),
+    readFile("scripts/crawl-monetization.mjs", "utf8"),
+  ]);
+  const dash = loadDash();
+  const layerIds = (dash.VALUE_CHAIN || []).map(layer => layer.id);
+  const expectedLayers = ["app", "agent", "service", "trust", "model", "data", "infra"];
+  const normalized = (dash.COMPANIES || []).map(company => companies.companies?.[company.name]).filter(Boolean);
+  const completeCoverage = normalized.every(company => company.profile && company.organization
+    && Number.isFinite(company.coverage?.profile?.score)
+    && Number.isFinite(company.coverage?.organization?.score)
+    && company.updatedAt);
+  const strategyReady = dash.MOBILE_STRATEGY?.choices?.length === 4
+    && dash.MOBILE_STRATEGY?.horizons?.length === 3
+    && boards.includes("function MobileStrategyBoard")
+    && boards.includes("Where to Play / How to Win")
+    && boards.includes("Current Model → Shift → Mobile Implication")
+    && app.includes('id="strategy"')
+    && expectedLayers.every(id => components.includes(`id: "${id}"`))
+    && monetizationCrawler.includes("loadDash().COMPANY_LAYER");
+  if (JSON.stringify(layerIds) !== JSON.stringify(expectedLayers)
+    || normalized.length !== (dash.COMPANIES || []).length
+    || companies.schemaVersion !== 2 || !completeCoverage || !strategyReady) {
+    throw new Error("seven-layer mobile strategy, normalized company profiles, or consulting-frame UI is incomplete");
+  }
+  console.log(`  OK  단말 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 개요/조직 정규화`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  mobile strategy and company normalization: ${error.message}`);
 }
 
 try {
@@ -666,7 +709,7 @@ const pipelineScripts = [
   "scripts/crawl-news.mjs", "scripts/crawl-stocks.mjs", "scripts/crawl-research.mjs",
   "scripts/crawl-startups.mjs", "scripts/crawl-markets.mjs", "scripts/crawl-infra.mjs",
   "scripts/crawl-bizmodel.mjs", "scripts/generate-briefing.mjs", "scripts/startup-radar.mjs",
-  "scripts/build-insights.mjs", "scripts/crawl-companies.mjs",
+  "scripts/build-insights.mjs", "scripts/crawl-companies.mjs", "scripts/crawl-monetization.mjs",
 ];
 for (const file of pipelineScripts) {
   const source = await readFile(file, "utf8");

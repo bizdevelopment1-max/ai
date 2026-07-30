@@ -176,14 +176,126 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
   );
 }
 
-// ---- AI 밸류체인 계층 보드 — 계층별·버티컬별로 살아있는(라이브) 기업 카드 ----
+// ---- 단말 AI 전략 프레임 — Where to Play / How to Win / Execution ----
+function MobileStrategyBoard({ companies, onNav, sectionRef }) {
+  const inView = useInView(sectionRef);
+  const layers = window.DASH.VALUE_CHAIN || [];
+  const strategy = window.DASH.MOBILE_STRATEGY || { choices: [], horizons: [] };
+  const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
+  const layerRows = id => (companies || []).filter(c => participates(c, id));
+  const layerStats = layers.map(layer => {
+    const rows = layerRows(layer.id);
+    const primary = rows.filter(c => c.layer === layer.id).length;
+    const mentions = rows.reduce((sum, c) => sum + Number(c.live?.mentions30 || 0), 0);
+    const top = [...rows].sort((a, b) => Number(b.live?.mentions30 || 0) - Number(a.live?.mentions30 || 0))[0];
+    return { ...layer, rows, primary, mentions, top };
+  });
+  const maxMomentum = Math.max(1, ...layerStats.map(l => l.mentions));
+  return (
+    <section className="board msf" ref={sectionRef} data-screen-label="Mobile AI Strategy Framework">
+      <AnimCtx.Provider value={inView}>
+        <div className="board-head" style={{ "--accent": "#1428A0" }}>
+          <span className="board-tab" style={{ background: "#1428A0" }} />
+          <div className="board-titles">
+            <h2>단말 AI 전략 프레임 <span className="board-en">Where to Play · How to Win · Execution</span></h2>
+            <p>휴대폰 사업자가 <b>어디를 직접 보유하고, 어디를 오케스트레이션하며, 어디를 파트너·조달할지</b>를 7개 SW·서비스 계층으로 정리</p>
+          </div>
+          <div className="board-count msf-live">LIVE · 30일 신호</div>
+        </div>
+
+        <div className="msf-north">
+          <span>North Star</span>
+          <p>{strategy.northStar}</p>
+        </div>
+
+        <div className="msf-section-head">
+          <div><em>01</em><h3>밸류체인 통제 전략</h3></div>
+          <p>고객 접점에서 백엔드로 갈수록 ‘직접 보유’에서 ‘선택 조달’로 자본 배분을 전환</p>
+        </div>
+        <div className="msf-chain">
+          {layerStats.map((l, i) => (
+            <button className="msf-layer" key={l.id} onClick={() => onNav && onNav(l.id)}
+              style={{ "--lc": l.accent, "--momentum": `${Math.max(8, 100 * l.mentions / maxMomentum)}%` }}>
+              <span className="msf-layer-no">L{i + 1}</span>
+              <span className="msf-layer-role">{l.stanceKo}</span>
+              <b>{l.ko}</b>
+              <span className="msf-layer-control">{l.controlPoint}</span>
+              <span className="msf-layer-meter"><i /></span>
+              <span className="msf-layer-stats"><em>{l.primary}개 핵심사</em><em>{l.mentions}건·30일</em></span>
+              {l.top && <span className="msf-layer-top">Top signal · {l.top.name}</span>}
+            </button>
+          ))}
+        </div>
+
+        <div className="msf-section-head">
+          <div><em>02</em><h3>Where to Play / How to Win</h3></div>
+          <p>단말·OS·계정·결제·개인 컨텍스트를 재사용할 수 있는 4개 우선 플레이</p>
+        </div>
+        <div className="msf-choices">
+          {(strategy.choices || []).map(c => (
+            <div className="msf-choice" key={c.no}>
+              <div className="msf-choice-top"><span>{c.no}</span><b>{c.title}</b></div>
+              <dl>
+                <div><dt>WHERE</dt><dd>{c.where}</dd></div>
+                <div><dt>WIN</dt><dd>{c.win}</dd></div>
+                <div><dt>KPI</dt><dd>{c.kpi}</dd></div>
+              </dl>
+            </div>
+          ))}
+        </div>
+
+        <div className="msf-section-head">
+          <div><em>03</em><h3>레이어별 의사결정 기준</h3></div>
+          <p>통제점·수익원·리스크를 한 화면에서 비교하고 투자 우선순위를 결정</p>
+        </div>
+        <div className="msf-matrix">
+          <div className="msf-mrow msf-mhead"><span>계층 / 역할</span><span>통제점</span><span>수익 구조</span><span>단말 사업자 Action</span><span>핵심 리스크</span></div>
+          {layers.map(l => (
+            <div className="msf-mrow" key={l.id} style={{ "--lc": l.accent }}>
+              <span className="msf-mname"><i /> <b>{l.ko}</b><em>{l.stanceKo}</em></span>
+              <span>{l.controlPoint}</span><span>{l.economics}</span><span className="msf-maction">{l.operatorMove}</span><span>{l.risk}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="msf-section-head">
+          <div><em>04</em><h3>실행 로드맵</h3></div>
+          <p>기준선 확보 → 통제점 제품화 → 플랫폼 확장</p>
+        </div>
+        <div className="msf-horizons">
+          {(strategy.horizons || []).map((h, i) => (
+            <div className="msf-horizon" key={h.id}>
+              <span>{h.label}</span><h4>{h.title}</h4>
+              <ul>{(h.actions || []).map((a, j) => <li key={j}>{a}</li>)}</ul>
+              {i < strategy.horizons.length - 1 && <i className="msf-harr" aria-hidden="true">→</i>}
+            </div>
+          ))}
+        </div>
+      </AnimCtx.Provider>
+    </section>
+  );
+}
+
+// ---- AI 밸류체인 계층 보드 — 대표 계층 + 인접 확장 경로를 함께 표시 ----
 function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
   const inView = useInView(sectionRef);
   const layer = (window.DASH.VALUE_CHAIN || []).find(l => l.id === layerId) || {};
-  const rows = (companies || []).filter(c => c.layer === layerId);
+  const fitRank = { high: 3, medium: 2, low: 1 };
+  const rows = (companies || []).filter(c => c.layer === layerId || (c.adjacentLayers || []).includes(layerId))
+    .sort((a, b) => {
+      const ap = a.layer === layerId ? 1 : 0, bp = b.layer === layerId ? 1 : 0;
+      return bp - ap || (fitRank[b.mobileFit] || 0) - (fitRank[a.mobileFit] || 0)
+        || Number(b.live?.mentions30 || 0) - Number(a.live?.mentions30 || 0)
+        || a.name.localeCompare(b.name);
+    });
   const groups = {};
   rows.forEach(c => { const v = c.vchainVertical || "기타"; (groups[v] = groups[v] || []).push(c); });
-  const vkeys = Object.keys(groups).sort((a, b) => groups[b].length - groups[a].length);
+  const vkeys = Object.keys(groups).sort((a, b) => {
+    const ap = groups[a].some(c => c.layer === layerId) ? 1 : 0;
+    const bp = groups[b].some(c => c.layer === layerId) ? 1 : 0;
+    return bp - ap || groups[b].length - groups[a].length || a.localeCompare(b);
+  });
+  const primaryCount = rows.filter(c => c.layer === layerId).length;
   return (
     <section className="board" ref={sectionRef} data-screen-label={layer.en}>
       <AnimCtx.Provider value={inView}>
@@ -192,8 +304,11 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
           <div className="board-titles">
             <h2>{layer.ko} <span className="board-en">{layer.en}</span></h2>
             <p>{layer.desc}</p>
+            <div className="vc-thesis">
+              <span>{layer.stanceKo}</span><b>통제점</b> {layer.controlPoint}<i>·</i><b>단말 Action</b> {layer.operatorMove}
+            </div>
           </div>
-          <div className="board-count" style={{ color: layer.accent, background: layer.accentSoft }}>{rows.length} 社</div>
+          <div className="board-count" style={{ color: layer.accent, background: layer.accentSoft }}>{primaryCount} 핵심 · {rows.length} 참여</div>
         </div>
         <div className="vc-verticals">
           {vkeys.map(v => (
@@ -204,11 +319,13 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
                   <button className="vc-card" key={c.name} onClick={() => onSelect(c)} style={{ "--accent": layer.accent }}>
                     <CoLogo name={c.name} domain={c.domain} accent={layer.accent} />
                     <span className="vc-card-txt">
-                      <b>{c.name}</b><i>{c.unit}</i>
+                      <span className="vc-card-name"><b>{c.name}</b><em className={c.layer === layerId ? "primary" : "adjacent"}>{c.layer === layerId ? "핵심" : "확장"}</em></span>
+                      <i>{c.unit}</i>
                       {(c.vp || c.direction) && <u className="vc-card-bm">{c.vp || c.direction}</u>}
                       {c.direction && c.vp && <u className="vc-card-dir"><b>방향</b> {c.direction}</u>}
                     </span>
                     <span className="vc-card-live">
+                      <em className={"vc-fit " + (c.mobileFit || "medium")}>{c.mobileFit === "high" ? "높은 적합" : "선택 적합"}</em>
                       {c.live && c.live.cap && <em className="vc-cap">{c.live.cap}</em>}
                       {c.live && c.live.mentions7 > 0 && <em className="vc-ment">{c.live.mentions7}건·7일</em>}
                     </span>
@@ -225,7 +342,7 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
 }
 
 // ---- Company detail modal (overview + all info + related news) --
-function CompanyDetail({ company, cats, articles, onClose }) {
+function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
   React.useEffect(() => {
     if (!company) return;
     const onKey = e => { if (e.key === "Escape") onClose(); };
@@ -235,6 +352,8 @@ function CompanyDetail({ company, cats, articles, onClose }) {
   if (!company) return null;
   const c = company;
   const cat = (cats.find(x => x.id === c.cat) || {});
+  const layer = (window.DASH.VALUE_CHAIN || []).find(l => l.id === c.layer) || {};
+  const accent = layer.accent || cat.accent || "#2D6BFF";
   const token = c.name.split(" (")[0].toLowerCase();
   // related news: same category, name-mentioning articles surfaced first
   const rel = (articles || [])
@@ -248,16 +367,18 @@ function CompanyDetail({ company, cats, articles, onClose }) {
   return (
     <div className="cd-overlay" onClick={onClose}>
      <AnimCtx.Provider value={true}>
-      <div className="cd-modal" onClick={e => e.stopPropagation()} style={{ "--accent": cat.accent }}>
+      <div className="cd-modal" onClick={e => e.stopPropagation()} style={{ "--accent": accent }}>
         <button className="cd-close" onClick={onClose} aria-label="닫기"><Icon name="x" size={16} sw={2} /></button>
 
         <div className="cd-head">
-          <CoLogo name={c.name} domain={c.domain} accent={cat.accent} />
+          <CoLogo name={c.name} domain={c.domain} accent={accent} />
           <div className="cd-head-txt">
             <h3>{c.name}</h3>
             <div className="cd-sub">
               <span className="cd-cat" style={{ color: cat.accent, background: cat.accentSoft }}>{cat.ko}</span>
+              {layer.ko && <span className="cd-layer" style={{ color: accent, borderColor: accent }}>{layer.ko}</span>}
               <span>{c.unit}</span>
+              {(c.live?.updatedAt || generatedAt) && <span className="cd-refresh">DATA {String(c.live?.updatedAt || generatedAt).slice(0, 10)}</span>}
               {c.dataStatus && <span className="cd-data-status">{c.dataStatus}</span>}
             </div>
           </div>
@@ -303,9 +424,13 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           const fin = lv.revenueQ
             ? `매출 ${lv.revenueQ}${lv.netIncomeQ ? ` · 순이익 ${lv.netIncomeQ}` : ""}${lv.quarterEnd ? ` (${lv.quarterEnd} 분기)` : ""}`
             : "";
+          const profileCoverage = lv.coverage && lv.coverage.profile;
           return (
             <div className="cd-section cd-profile">
-              <h4>기업 개요 <em>Company Profile</em>{live && <b className="cd-prof-live">LIVE · Yahoo Finance</b>}</h4>
+              <h4>기업 개요 <em>Company Profile</em>
+                <b className="cd-prof-live">{live ? "LIVE · 공시/시장" : "기준정보 · 뉴스 모니터링"}</b>
+                {profileCoverage && <b className="cd-coverage">커버리지 {profileCoverage.score}%</b>}
+              </h4>
               <div className="cd-prof-grid">
                 {rows.map(([k, v], i) => (
                   <div className="cd-prof-row" key={i}><em>{k}</em><span>{v}</span></div>
@@ -315,6 +440,54 @@ function CompanyDetail({ company, cats, articles, onClose }) {
                 <div className="cd-prof-biz"><em>주요사업</em><ul>{p.business.map((b, i) => <li key={i}>{b}</li>)}</ul></div>
               )}
               {fin && <div className="cd-prof-fin"><em>경영 실적</em><span>{fin}</span><i>실적 발표 주기로 자동 갱신</i></div>}
+            </div>
+          );
+        })()}
+
+        {(() => {
+          const allLayers = window.DASH.VALUE_CHAIN || [];
+          const primary = allLayers.find(l => l.id === c.layer) || {};
+          const adjacent = (c.adjacentLayers || []).map(id => allLayers.find(l => l.id === id)).filter(Boolean);
+          const entry = c.monetize && c.monetize.entry;
+          const modelMeta = id => ((c.monetize && c.monetize.models) || []).find(m => m.id === id);
+          const primaryModel = entry && modelMeta(entry.primaryModel);
+          const practices = (c.live?.practices || []).slice(0, 3);
+          const orgCoverage = c.live?.coverage?.organization;
+          const evidenceCount = Number(c.live?.mentions30 || 0);
+          return (
+            <div className="cd-section cd-strategy-frame">
+              <h4>전략 스냅샷 <em>Current Model → Shift → Mobile Implication</em><b className="cd-prof-live">CONSULTING FRAME</b></h4>
+              <div className="cd-sf-path">
+                <span className="cd-sf-primary" style={{ "--lc": primary.accent || accent }}>{primary.ko || "분류 대기"} · 핵심</span>
+                {adjacent.slice(0, 4).map(l => <React.Fragment key={l.id}><i>→</i><span style={{ "--lc": l.accent }}>{l.ko}</span></React.Fragment>)}
+              </div>
+              <div className="cd-sf-grid">
+                <div className="cd-sf-card">
+                  <em>현재 비즈니스 모델</em>
+                  <b>{primaryModel ? primaryModel.ko : (c.unit || "원문 신호 수집 중")}</b>
+                  <p>{c.vp || "기업의 현재 가치 제안은 검증 가능한 원문 신호가 누적되는 대로 보강됩니다."}</p>
+                </div>
+                <div className="cd-sf-card">
+                  <em>변화 방향</em>
+                  <b>{adjacent.length ? `${primary.ko || "현재"} → ${adjacent[0].ko}` : "핵심 계층 심화"}</b>
+                  <p>{c.direction || "투자·제품·파트너십 기사를 기준으로 변화 방향을 모니터링합니다."}</p>
+                </div>
+                <div className="cd-sf-card action">
+                  <em>단말 사업자 시사점</em>
+                  <b>{primary.stanceKo || "선택적 협력"}</b>
+                  <p>{primary.operatorMove || "고객 접점·개인 컨텍스트·유통/과금 통제에 미치는 영향을 기준으로 평가합니다."}</p>
+                </div>
+                <div className="cd-sf-card risk">
+                  <em>핵심 Watchpoint</em>
+                  <b>{evidenceCount}건 · 최근 30일</b>
+                  <p>{primary.risk || "경쟁·파트너십·수익화 변화 신호를 지속 추적합니다."}</p>
+                </div>
+              </div>
+              <div className="cd-sf-evidence">
+                <span><b>관찰 축</b>{practices.length ? practices.map(p => `${p.ko} ${p.count}`).join(" · ") : "뉴스 신호 수집 중"}</span>
+                {orgCoverage && <span><b>조직 커버리지</b>{orgCoverage.score}%</span>}
+                <span><b>데이터 방식</b>{c.live?.coverage?.sourceMode || "기준정보 + 원문 뉴스"}</span>
+              </div>
             </div>
           );
         })()}
@@ -410,6 +583,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
             ? <span className="cd-org-bg">{[p.edu, p.career].filter(Boolean).join(" · ")}</span>
             : (p.bg ? <span className="cd-org-bg">{p.bg}</span> : null);
           const founders = org.leadership || [];
+          const orgCoverage = live.coverage && live.coverage.organization;
           return (
             <React.Fragment>
               {org.mission && (
@@ -421,6 +595,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
               {roster.length > 0 && (
                 <div className="cd-section">
                   <h4>조직도 <em>Org Chart</em><b className="cd-prof-live">{liveRoster ? "LIVE · Yahoo Finance 임원" : "창업·리더십"}</b>
+                    {orgCoverage && <b className="cd-coverage">커버리지 {orgCoverage.score}%</b>}
                     <a className="cd-org-colink" href={coLink} target="_blank" rel="noopener" title="회사 LinkedIn 페이지">회사 LinkedIn ↗</a>
                   </h4>
                   <div className="cd-org">
@@ -444,7 +619,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
                       </div>
                     )}
                   </div>
-                  <p className="cd-org-note">현직 임원 명단은 공시(Yahoo Finance)·뉴스 기반으로 자동 갱신 · 각 인물의 LinkedIn 프로필은 <b>in ↗</b>으로 이동</p>
+                  <p className="cd-org-note">상장사는 공시 임원을 우선 반영하고 비상장사는 창업·리더십 기준정보를 사용 · 경영진 기사와 조직 커버리지는 매일 자동 갱신 · 각 인물의 LinkedIn 프로필은 <b>in ↗</b>으로 이동</p>
                 </div>
               )}
               {founders.length > 0 && (
@@ -3793,4 +3968,4 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   );
 }
 
-Object.assign(window, { BoldSummary, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+Object.assign(window, { BoldSummary, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });

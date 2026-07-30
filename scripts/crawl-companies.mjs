@@ -107,7 +107,11 @@ async function main() {
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   try { stocks = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
   try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
-  const leaders = deriveLeaders((loadDash().COMPANY_ORG) || {});
+  const dash = loadDash();
+  const orgSource = dash.COMPANY_ORG || {};
+  const profileSource = dash.COMPANY_PROFILES || {};
+  const trackedCompanies = dash.COMPANIES || [];
+  const leaders = deriveLeaders(orgSource);
   // 기업 개요의 변동 항목을 크롤 값으로 붙임(crawl-financials.mjs — 공시·분기 주기로 자동 최신화)
   const joinFin = (rec, tk) => {
     const f = tk && financials[tk];
@@ -180,7 +184,81 @@ async function main() {
     };
   }
 
-  const out = { generatedAt: new Date().toISOString(), companies };
+  // 모든 추적 기업을 동일 스키마로 정규화한다. 뉴스가 없는 기업도 개요·조직·
+  // 데이터 커버리지 상태가 companies.json에 남아 화면 깊이가 들쭉날쭉해지지 않는다.
+  // 상장사는 Yahoo Finance 변동 항목이 우선이고, 비상장사는 정적 기준정보 +
+  // 매일 누적되는 뉴스·경영진 발언으로 변화 신호를 보완한다.
+  const nowIso = new Date().toISOString();
+  const pct = (present, total) => Math.round((present / Math.max(total, 1)) * 100);
+  for (const base of trackedCompanies) {
+    const name = base.name;
+    let rec = companies[name];
+    if (!rec) {
+      const simple = String(name).replace(/\s*\(.*\)\s*$/, "").trim();
+      const rx = simple ? new RegExp(boundWord(simple), "i") : null;
+      const arts = rx ? articles.filter(a => a.url && a.title
+        && rx.test(`${a.title} ${a.descEn || ""} ${a.summary || ""}`)) : [];
+      arts.sort((x, y) => (x.date < y.date ? 1 : -1));
+      const latest = arts[0];
+      rec = companies[name] = {
+        mentions7: arts.filter(a => days(a.date) <= 7).length,
+        mentions30: arts.filter(a => days(a.date) <= 30).length,
+        latest: latest ? { title: latest.title, url: latest.url, date: latest.date, source: latest.source } : null,
+        practices: classifyPractices(arts),
+        execNews: execMentions(name, articles, leaders),
+      };
+      const tk = TICKER_OF[name];
+      if (tk && stocks[tk] && stocks[tk].marketCap) {
+        rec.cap = stocks[tk].marketCap;
+        rec.capAsof = stocks[tk].asOf;
+        rec.ticker = tk;
+      }
+      joinFin(rec, tk);
+    }
+
+    const p = profileSource[name] || {};
+    const o = orgSource[name] || {};
+    const normalizedProfile = {
+      ...p,
+      ceo: rec.ceo || p.ceo || "",
+      hq: rec.hq || p.hq || "",
+      headcount: rec.employees || p.headcount || "",
+      business: Array.isArray(p.business) && p.business.length ? p.business : [base.unit].filter(Boolean),
+    };
+    const normalizedOrg = {
+      ...o,
+      leadership: Array.isArray(o.leadership) ? o.leadership.slice(0, 8) : [],
+      officers: Array.isArray(rec.officers) ? rec.officers.slice(0, 8) : [],
+      sourceMode: Array.isArray(rec.officers) && rec.officers.length ? "live-officers+curated-background" : "curated+news-monitoring",
+    };
+    const profileChecks = [
+      normalizedProfile.founded, normalizedProfile.ceo, normalizedProfile.hq,
+      normalizedProfile.headcount, normalizedProfile.business.length,
+      normalizedProfile.shareholders || rec.topHolders,
+    ];
+    const orgChecks = [
+      normalizedOrg.mission,
+      normalizedOrg.officers.length || normalizedOrg.leadership.length,
+      (rec.execNews || []).length,
+    ];
+    const profilePresent = profileChecks.filter(Boolean).length;
+    const orgPresent = orgChecks.filter(Boolean).length;
+    rec.profile = normalizedProfile;
+    rec.organization = normalizedOrg;
+    rec.coverage = {
+      profile: { present: profilePresent, total: profileChecks.length, score: pct(profilePresent, profileChecks.length) },
+      organization: { present: orgPresent, total: orgChecks.length, score: pct(orgPresent, orgChecks.length) },
+      sourceMode: rec.ticker ? "market-filing+curated+news" : "curated+news",
+    };
+    rec.updatedAt = nowIso;
+  }
+
+  const out = {
+    generatedAt: nowIso,
+    schemaVersion: 2,
+    methodology: "normalized-company-profile+live-financials+news-signals",
+    companies,
+  };
   await writeFile("companies.json", JSON.stringify(out) + "\n");
   console.log(`Wrote companies.json — ${Object.keys(companies).length} companies (live mentions + market caps)`);
 }

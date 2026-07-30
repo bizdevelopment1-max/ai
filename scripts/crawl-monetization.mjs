@@ -14,10 +14,12 @@
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadDash } from "./load-dash.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 
-// 대시보드 기업 — 별칭(정규식 안전 문자열)·밸류체인 계층. COMPANY_LAYER과 정렬.
-const COMPANIES = [
+// 대시보드 기업 별칭. 계층·버티컬은 data.js COMPANY_LAYER에서 매 실행 시
+// 읽어 단일 소스로 유지한다(밸류체인 재분류 시 크롤 산출물도 자동 정렬).
+const COMPANY_ALIASES = [
   { name: "Microsoft", layer: "infra", vertical: "하이퍼스케일 클라우드", alias: ["Microsoft", "Azure", "Copilot"] },
   { name: "Amazon", layer: "infra", vertical: "하이퍼스케일 클라우드", alias: ["Amazon", "AWS", "Bedrock"] },
   { name: "NVIDIA", layer: "infra", vertical: "AI 가속기·칩", alias: ["NVIDIA", "Nvidia"] },
@@ -52,6 +54,12 @@ const COMPANIES = [
   { name: "Suno", layer: "app", vertical: "크리에이티브·음악", alias: ["Suno"] },
   { name: "ElevenLabs", layer: "app", vertical: "크리에이티브·음성", alias: ["ElevenLabs", "Eleven Labs"] },
 ];
+const DASH_LAYER = loadDash().COMPANY_LAYER || {};
+const COMPANIES = COMPANY_ALIASES.map(c => ({
+  ...c,
+  layer: DASH_LAYER[c.name]?.layer || c.layer,
+  vertical: DASH_LAYER[c.name]?.vertical || c.vertical,
+}));
 
 // 별칭을 단어경계 정규식으로(오탐 방지). 알파벳으로 시작/끝나는 별칭에만 \b 부착.
 const bound = s => {
@@ -115,7 +123,12 @@ async function main() {
   const knownNames = new Set(COMPANIES.map(c => c.name));
   const startupEntries = startupNames
     .filter(s => s.name && !knownNames.has(s.name))
-    .map(s => ({ name: s.name, layer: "app", vertical: s.vertical || "스타트업", alias: [s.name] }));
+    .map(s => ({
+      name: s.name,
+      layer: DASH_LAYER[s.name]?.layer || "app",
+      vertical: DASH_LAYER[s.name]?.vertical || s.vertical || "스타트업",
+      alias: [s.name],
+    }));
   const ALL_COMPANIES = withRegex([...COMPANIES, ...startupEntries]);
 
   // 기존 누적 로드 — signals는 URL 기준으로 병합(중복 방지)
