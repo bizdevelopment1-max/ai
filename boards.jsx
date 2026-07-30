@@ -3544,9 +3544,11 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
 
 
 // ---- 스타트업 분석 보드(2계층·lazy-load): 대형=파트너십 / 소형=인수·투자 ----
-function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
+function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, onSelect }) {
   const inView = useInView(sectionRef);
-  // 업체명 클릭 → 다른 기업과 동일한 상세 모달. 추적 기업이면 전체 프로필, 아니면 원문 링크 기반 최소 정보.
+  // 업체명 클릭 → 다른 기업과 동일한 상세 모달. 추적 기업이면 전체 프로필, 아니면 크롤 라이브 데이터로 강화.
+  // 밸류체인 기업·스타트업 모두 companies.json(핵심활동·경영진 발언)·monetization.json(수익모델·사업방향)에서
+  // 같은 방식으로 채워지므로, 표시 레벨(정보 깊이)이 통일된다.
   const openStartup = (s) => {
     if (!onSelect) return;
     const match = (companies || []).find(c => c.name === s.name || c.name.replace(/\s*\(.*\)/, "") === s.name);
@@ -3557,12 +3559,14 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
     const org = (D.COMPANY_ORG || {})[s.name] || null;
     const profile = (D.COMPANY_PROFILES || {})[s.name] || null;
     const bm = s.businessModel || s.overview || "";
+    const lv = (coLive && coLive[s.name]) || null;    // crawl-companies.mjs 라이브 데이터(멘션·핵심활동·경영진 발언)
     onSelect({
       name: s.name, domain: s.domain, cat: "startup", unit: s.vertical || "AI 스타트업",
       note: bm || "원문 링크 기반 관찰 — 검증된 상세는 본문 확인 후 표시됩니다.",
       vp: bm, direction: s.partnership || s.acqAngle || "",
       layer: "app", vchainVertical: s.vertical || "", profile, org,
-      live: { latest: s.latest || null, mentions7: 0, mentions30: 0 },
+      live: lv ? { ...lv, latest: lv.latest || s.latest || null } : { latest: s.latest || null, mentions7: 0, mentions30: 0 },
+      monetize: monet ? { entry: (monet.companies || []).find(x => x.name === s.name) || null, models: monet.models || [], directions: monet.directions || [] } : null,
       sources: hist.slice(0, 6).map(h => ({ tier: "reported", label: String(h.title || "관련 기사"), asOf: h.date || "", url: h.url })),
     });
   };
@@ -3736,6 +3740,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
                   <button className="mkt-name su-link" onClick={() => openStartup(s)} title="기업 상세 보기">{s.name}</button>
                   {catMeta(catOf(s)) && <span className="su-cat" style={{ "--c": catMeta(catOf(s)).accent }} title={catMeta(catOf(s)).handset}>{catMeta(catOf(s)).ko}</span>}
                   <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.val}` : ""}</span>
+                  {coLive && coLive[s.name] && coLive[s.name].mentions7 > 0 && <em className="su-live" title="최근 7일 언급 기사 수(크롤 자동 갱신)">{coLive[s.name].mentions7}건·7일</em>}
                   <DelUI name={s.name} />
                 </div>
                 <span className="brief-label" style={{ "--lc": LC[s.label] || "#2D6BFF" }}>{s.label}</span>
@@ -3762,6 +3767,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
                   <button className="mkt-name su-link" onClick={() => openStartup(s)} title="기업 상세 보기">{s.name}</button>
                   {catMeta(catOf(s)) && <span className="su-cat" style={{ "--c": catMeta(catOf(s)).accent }} title={catMeta(catOf(s)).handset}>{catMeta(catOf(s)).ko}</span>}
                   <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.stage}` : ""}</span>
+                  {coLive && coLive[s.name] && coLive[s.name].mentions7 > 0 && <em className="su-live" title="최근 7일 언급 기사 수(크롤 자동 갱신)">{coLive[s.name].mentions7}건·7일</em>}
                   <DelUI name={s.name} />
                 </div>
                 <span className="brief-label" style={{ "--lc": LC[s.label] || "#2D6BFF" }}>{s.label}</span>

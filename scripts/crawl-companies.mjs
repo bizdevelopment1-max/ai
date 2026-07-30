@@ -8,6 +8,10 @@
    - latest: 최신 기사 {title, url, date, source}
    - cap / capAsof: 상장사는 stocks.json 실시세 시총 연동
    하드코딩 없음 — 전부 크롤 산출물에서 유도. 매일 실행.
+
+   스타트업 분석(startups.json)의 업체도 같은 깊이(mentions·핵심활동·경영진 발언)로
+   자동 편입 — 밸류체인 기업과 스타트업의 표시 레벨을 통일. co 필드 태깅 없이도
+   기사 제목·요약 전문에서 업체명을 단어경계로 스캔(전문 매칭)해 라이브 레코드 생성.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 
@@ -47,6 +51,21 @@ const LEADERS = {
   "Databricks": ["Ali Ghodsi", "Ghodsi"],
   "SpaceX (xAI, Cursor)": ["Elon Musk", "Musk"],
   "Hugging Face": ["Clément Delangue", "Delangue"],
+  // 스타트업 창업자(COMPANY_ORG 큐레이션 대상과 정렬) — 경영진 발언 기사 자동 수집
+  "Character.AI": ["Noam Shazeer", "Shazeer"],
+  "Cognition": ["Scott Wu"],
+  "Canva": ["Melanie Perkins", "Perkins"],
+  "Notion": ["Ivan Zhao"],
+  "Grammarly": ["Rahul Roy-Chowdhury"],
+  "Poe": ["Adam D'Angelo", "D'Angelo"],
+  "Descript": ["Andrew Mason"],
+};
+// 단어경계 정규식(오탐 방지) — alias가 알파벳으로 시작/끝나면 \b 부착.
+const boundWord = s => {
+  const esc = String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const l = /^[A-Za-z0-9]/.test(s) ? "\\b" : "";
+  const r = /[A-Za-z0-9]$/.test(s) ? "\\b" : "";
+  return `${l}${esc}${r}`;
 };
 const execMentions = (co, arts) => {
   const names = LEADERS[co];
@@ -129,6 +148,30 @@ async function main() {
       companies[co] = { mentions7: 0, mentions30: 0, latest: null, cap: stocks[tk].marketCap, capAsof: stocks[tk].asOf, ticker: tk };
       joinFin(companies[co], tk);
     }
+  }
+
+  // 스타트업(startups.json)도 같은 라이브 깊이로 편입 — co 태깅 없이 기사 전문에서
+  // 업체명을 단어경계 스캔. 밸류체인 기업과 표시 레벨을 통일하는 핵심 로직.
+  let startupNames = [];
+  try {
+    const su = JSON.parse(await readFile("startups.json", "utf8"));
+    startupNames = [...(su.large || []), ...(su.small || [])].map(s => s.name).filter(Boolean);
+  } catch {}
+  for (const name of startupNames) {
+    if (companies[name]) continue;             // 이미 co 태깅으로 커버된 업체는 유지
+    const rx = new RegExp(boundWord(name), "i");
+    const arts = articles.filter(a => a.url && a.title
+      && rx.test(`${a.title} ${a.descEn || ""} ${a.summary || ""}`));
+    if (!arts.length) continue;
+    arts.sort((x, y) => (x.date < y.date ? 1 : -1));
+    const latest = arts[0];
+    companies[name] = {
+      mentions7: arts.filter(a => days(a.date) <= 7).length,
+      mentions30: arts.filter(a => days(a.date) <= 30).length,
+      latest: { title: latest.title, url: latest.url, date: latest.date, source: latest.source },
+      practices: classifyPractices(arts),
+      execNews: execMentions(name, articles),
+    };
   }
 
   const out = { generatedAt: new Date().toISOString(), companies };

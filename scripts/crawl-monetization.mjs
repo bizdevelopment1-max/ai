@@ -60,7 +60,7 @@ const bound = s => {
   const r = /[A-Za-z0-9]$/.test(s) ? "\\b" : "";
   return `${l}${esc}${r}`;
 };
-for (const c of COMPANIES) c.re = new RegExp("(?:" + c.alias.map(bound).join("|") + ")");
+const withRegex = list => list.map(c => ({ ...c, re: new RegExp("(?:" + c.alias.map(bound).join("|") + ")") }));
 
 // 7개 수익모델 유형(crawl-bizmodel과 정렬) — 위에서부터 우선 매칭
 const MODELS = [
@@ -104,6 +104,20 @@ async function main() {
   try { news = JSON.parse(await readFile("news.json", "utf8")).articles || []; }
   catch { console.log("[monetization] news.json 없음 — crawl-news.mjs 먼저 실행"); }
 
+  // 스타트업 분석(startups.json)의 업체도 스캔 대상에 자동 포함 — 밸류체인 기업과
+  // 동일한 깊이(수익모델·사업 방향)로 통일. 하드코딩 아님: 매 실행 시 startups.json에서
+  // 이름을 읽어 별칭 스캔 대상으로 편입(신규 스타트업이 추가되면 자동으로 스캔 대상에 포함).
+  let startupNames = [];
+  try {
+    const su = JSON.parse(await readFile("startups.json", "utf8"));
+    startupNames = [...(su.large || []), ...(su.small || [])];
+  } catch {}
+  const knownNames = new Set(COMPANIES.map(c => c.name));
+  const startupEntries = startupNames
+    .filter(s => s.name && !knownNames.has(s.name))
+    .map(s => ({ name: s.name, layer: "app", vertical: s.vertical || "스타트업", alias: [s.name] }));
+  const ALL_COMPANIES = withRegex([...COMPANIES, ...startupEntries]);
+
   // 기존 누적 로드 — signals는 URL 기준으로 병합(중복 방지)
   let prev = { companies: [] };
   try { const p = JSON.parse(await readFile("monetization.json", "utf8")); if (p && Array.isArray(p.companies)) prev = p; } catch {}
@@ -136,7 +150,7 @@ async function main() {
     const dHit = pickTagged(DIRECTIONS, cand);              // 사업 방향 시그널(있으면)
     if (!mHit && !dHit) continue;
 
-    for (const c of COMPANIES) {
+    for (const c of ALL_COMPANIES) {
       if (!c.re.test(hay)) continue;
       scanned++;
       const meta = { source: a.source || "", date: a.date || TODAY, url };
@@ -155,7 +169,7 @@ async function main() {
     .sort((x, y) => (x.date < y.date ? 1 : x.date > y.date ? -1 : 0))
     .slice(0, n);
 
-  const companies = COMPANIES.map(c => {
+  const companies = ALL_COMPANIES.map(c => {
     const b = buckets.get(c.name) || { monetize: new Map(), direction: new Map() };
     const monetize = recent(b.monetize, 5);
     const direction = recent(b.direction, 5);
