@@ -91,6 +91,33 @@ function SourcePipeline({ kind = "company" }) {
   );
 }
 
+// Main-page decision architecture: each startup is read with the same
+// consulting sequence before the user drills into company-specific evidence.
+// The rail describes the analysis lens, so it does not duplicate card content.
+function ConsultingDecisionRail({ accent = "#0E8F6E" }) {
+  const steps = [
+    ["01", "FACT BASE", "기업·창업자·제품"],
+    ["02", "REVENUE ENGINE", "구독·사용량·거래·광고"],
+    ["03", "STRATEGY VECTOR", "제품·고객·채널 확장"],
+    ["04", "EXECUTIVE MAP", "CEO·CTO·핵심 임원"],
+  ];
+  return (
+    <div className="consult-decision-rail" style={{ "--accent": accent }}
+      aria-label="스타트업 전략 분석 프레임">
+      {steps.map((step, index) => (
+        <React.Fragment key={step[0]}>
+          <div>
+            <em>{step[0]}</em>
+            <span>{step[1]}</span>
+            <b>{step[2]}</b>
+          </div>
+          {index < steps.length - 1 && <i aria-hidden="true" />}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
 // ---- Category company board (dense table) ----------------------
 function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) {
   const inView = useInView(sectionRef);
@@ -4240,7 +4267,9 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
         </div>
       </div>
 
-      {/* 분류 기준 — 단말 신사업 관점(직결/제휴/감시 3단계) */}
+      <ConsultingDecisionRail />
+
+      {/* 분류 기준 — 단말 신사업 관점(직결/제휴/확장 3단계) */}
       {TAX.length > 0 && (
         <div className="su-tax">
           <div className="su-tax-head">

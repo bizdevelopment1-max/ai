@@ -160,10 +160,12 @@ try {
     && dash.MOBILE_STRATEGY?.horizons?.length === 3
     && boards.includes("function MobileStrategyBoard")
     && boards.includes("function StrategyPortfolioCard")
+    && boards.includes("function ConsultingDecisionRail")
     && boards.includes("Where to Play / How to Win")
     && boards.includes("Business · Economics · Direction · Capital")
     && boards.includes('className="msf-strategy-house"')
     && boards.includes('className="vc-logic-map"')
+    && boards.includes('className="consult-decision-rail"')
     && boards.includes('className="cd-sf-link"')
     && boards.includes('className="cd-mece-route"')
     && boards.includes('className="cd-org-tier-groups"')
@@ -187,6 +189,29 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  mobile strategy and company normalization: ${error.message}`);
+}
+
+try {
+  const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
+  const consultingInteraction = boards.includes("function ConsultingDecisionRail")
+    && boards.includes('aria-label="스타트업 전략 분석 프레임"')
+    && ["FACT BASE", "REVENUE ENGINE", "STRATEGY VECTOR", "EXECUTIVE MAP"].every(label => boards.includes(label))
+    && styles.includes("CONSULTING INTERACTION SYSTEM")
+    && styles.includes("transform-style: preserve-3d")
+    && styles.includes("perspective(900px)")
+    && styles.includes("@media (hover: hover) and (pointer: fine)")
+    && styles.includes(".consult-decision-rail > i")
+    && styles.includes("border-left: 11px solid var(--consult-gold)")
+    && styles.includes("Full-surface palette reversal")
+    && styles.includes("@media (prefers-reduced-motion: reduce)")
+    && !styles.includes("filter: invert(");
+  if (!consultingInteraction) {
+    throw new Error("consulting flow, triangular arrows, full-palette reversal, and reduced-motion-safe 3D interaction are required");
+  }
+  console.log("  OK  컨설팅 의사결정 도식 · 삼각형 화살표 · 전체 색상 반전 · 3D 호버");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  consulting 3D interaction system: ${error.message}`);
 }
 
 try {
