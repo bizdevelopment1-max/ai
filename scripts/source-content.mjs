@@ -42,7 +42,8 @@ export const textSimilarity = (a, b) => {
 };
 const similarity = textSimilarity;
 
-const malformedEncoding = value => /\uFFFD|(?:Ã.|Â.|â..){2,}/.test(String(value || ""));
+const malformedEncoding = value => /\uFFFD|(?:Ã.|Â.|â[€™“”¦])|(?:ðŸ)|(?:\?[가-힣]){2,}|(?:(?:ì|ë|í|ê)[\u0080-\u00BF].){2,}/
+  .test(String(value || ""));
 
 async function fetchText(url, tries = 2) {
   let error;

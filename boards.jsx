@@ -27,6 +27,14 @@ function fmtMonthDay(ds) {
   return month && day ? `${Number(month)}/${Number(day)}` : "";
 }
 
+// Public data is UTF-8, but a publisher can still return text that was decoded
+// with the wrong charset. Never let those byte artifacts reach a visible card.
+const MALFORMED_DISPLAY_ENCODING = /\uFFFD|(?:Ã.|Â.|â[€™“”¦])|(?:ðŸ)|(?:\?[가-힣]){2,}|(?:(?:ì|ë|í|ê)[\u0080-\u00BF].){2,}/;
+function safeDisplayString(value, fallback = "") {
+  const text = String(value || "").normalize("NFC").replace(/\s+/g, " ").trim();
+  return !text || MALFORMED_DISPLAY_ENCODING.test(text) ? fallback : text;
+}
+
 // ---- Company logo (real favicon, falls back to initial) ---------
 function CoLogo({ name, domain, accent }) {
   const [failed, setFailed] = React.useState(false);
@@ -457,7 +465,7 @@ function StrategyPortfolioCard({
   const intel = c.live?.intelligence || c.intelligence || {};
   const profile = c.live?.profile || c.profile || {};
   const compact = (value, size = 126) => {
-    const text = String(value || "").replace(/\s+/g, " ").trim();
+    const text = safeDisplayString(value);
     return text.length > size ? `${text.slice(0, size - 1)}…` : text;
   };
   const occupiedCopy = [];
@@ -1290,18 +1298,23 @@ function BoldSummary({ text, roles = [] }) {
 // for evidence verification; a failed quality gate deliberately shows English.
 function displayFeedText(item) {
   const loc = item && item.localization;
-  const lines = Array.isArray(loc?.summaryLines) && loc.summaryLines.length >= 1
+  const rawLines = Array.isArray(loc?.summaryLines) && loc.summaryLines.length >= 1
     ? loc.summaryLines
     : (item?.summaryLinesKo || (item?.sum ? [item.sum] : null));
+  const lines = Array.isArray(rawLines)
+    ? rawLines.map(line => safeDisplayString(line)).filter(Boolean)
+    : null;
   const roles = Array.isArray(loc?.summaryRoles) && loc.summaryRoles.length
     ? loc.summaryRoles
     : (Array.isArray(item?.summaryRoles) ? item.summaryRoles : []);
+  const localizedTitle = safeDisplayString(loc?.title || item?.titleKo);
+  const originalTitle = safeDisplayString(item?.title);
   return {
-    title: loc?.title || item?.titleKo || item?.title || "",
-    summary: lines ? lines.join("\n") : (item?.summary || item?.desc || ""),
+    title: localizedTitle || originalTitle,
+    summary: lines?.length ? lines.join("\n") : safeDisplayString(item?.summary || item?.desc),
     lines: lines || [],
     roles,
-    translated: loc?.status === "accepted" && loc?.displayLanguage === "ko",
+    translated: !!localizedTitle && loc?.status === "accepted" && loc?.displayLanguage === "ko",
     fallback: loc?.status === "fallback-english",
   };
 }
@@ -3310,8 +3323,19 @@ function MonetizationPlaybook({ articles, dataVersion }) {
   const VC = window.DASH.VALUE_CHAIN || [];
   const models = (data && data.models) || [];
   const directions = (data && data.directions) || [];
-  const modelMeta = id => models.find(m => m.id === id) || { ko: id, accent: "#8A93A4" };
-  const dirMeta = id => directions.find(d => d.id === id) || { ko: id, accent: "#8A93A4" };
+  const professionalAccents = {
+    vertical: "#66558C", subscription: "#397A68", usage: "#3E648D",
+    ads: "#A56A35", hardware: "#6E607D", outcome: "#8B5366", enterprise: "#287A78",
+    ma: "#6E607D", invest: "#397A68", expand: "#3E648D", partner: "#A56A35",
+  };
+  const modelMeta = id => {
+    const meta = models.find(m => m.id === id) || { ko: id };
+    return { ...meta, accent: professionalAccents[id] || "#647487" };
+  };
+  const dirMeta = id => {
+    const meta = directions.find(d => d.id === id) || { ko: id };
+    return { ...meta, accent: professionalAccents[id] || "#647487" };
+  };
   const layerMeta = id => VC.find(l => l.id === id) || { ko: id, accent: "#8A93A4" };
 
   const resolve = sig => {
@@ -3332,6 +3356,9 @@ function MonetizationPlaybook({ articles, dataVersion }) {
     const modelMix = Object.entries(mix).sort((a, b) => b[1] - a[1]).map(([id, n]) => ({ id, n }));
     return { ...c, monetize, direction, modelMix };
   }).filter(c => c.monetize.length || c.direction.length);
+  const evidenceCount = new Set(companies.flatMap(company =>
+    [...company.monetize, ...company.direction].map(signal => signal.url).filter(Boolean)
+  )).size;
 
   const sourceReady = Array.isArray(articles) && articles.length > 0;
   // 돈 버는 모델(비즈니스 모델)별 그룹핑 — 밸류체인이 아니라 수익모델 기준.
@@ -3363,8 +3390,27 @@ function MonetizationPlaybook({ articles, dataVersion }) {
         <SourcePipeline kind="signal" />
       ) : (
         <React.Fragment>
+          <div className="mplay-framework" aria-label="AI 비즈니스 모델 분석 구조">
+            <div className="mplay-framework-head">
+              <span>STRATEGY EVIDENCE ARCHITECTURE</span>
+              <b>원문 근거를 수익 구조와 사업 방향으로 연결</b>
+              <p>동일 기사는 한 번만 반영하고, 기업별 수익모델과 실행 방향을 분리해 비교</p>
+            </div>
+            <div className="mplay-framework-flow">
+              <div style={{ "--step": "0" }}><em>01</em><span>FACT BASE</span><b>원문 기사</b><small>{evidenceCount}건 고유 근거</small></div>
+              <i aria-hidden="true" />
+              <div style={{ "--step": "1" }}><em>02</em><span>REVENUE ENGINE</span><b>수익 구조</b><small>{models.length}개 과금 모델</small></div>
+              <i aria-hidden="true" />
+              <div style={{ "--step": "2" }}><em>03</em><span>EXECUTION VECTOR</span><b>사업 실행</b><small>{directions.length}개 실행 유형</small></div>
+              <i aria-hidden="true" />
+              <div style={{ "--step": "3" }}><em>04</em><span>COMPANY VIEW</span><b>기업 전략</b><small>{companies.length}개사 비교</small></div>
+            </div>
+          </div>
           <div className="mplay-legend">
-            {models.map(m => <span key={m.id} className="mplay-lg"><i style={{ background: m.accent }} />{m.ko}</span>)}
+            {models.map(m => {
+              const meta = modelMeta(m.id);
+              return <span key={m.id} className="mplay-lg"><i style={{ background: meta.accent }} />{m.ko}</span>;
+            })}
           </div>
           {modelOrder.map(mid => {
             const isDir = mid === "_dir";

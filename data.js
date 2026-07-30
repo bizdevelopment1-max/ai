@@ -1333,7 +1333,7 @@ window.DASH = (function () {
   const VALUE_CHAIN = [
     {
       id: "app", ko: "AI 경험·버티컬 서비스", en: "Experience & Vertical Services",
-      accent: "#EA580C", accentSoft: "#FCEBE0", stance: "OWN", stanceKo: "직접 보유",
+      accent: "#A66B3F", accentSoft: "#F7ECE3", stance: "OWN", stanceKo: "직접 보유",
       controlPoint: "홈화면·OS·기본앱·일상 워크플로", economics: "구독·커머스·단말 프리미엄",
       risk: "킬러 유스케이스 부재·외부 앱에 고객 접점 상실",
       operatorMove: "생활·업무 버티컬 3~5개를 기본 탑재하고 계정·결제·단말 기능과 결합",
@@ -1341,7 +1341,7 @@ window.DASH = (function () {
     },
     {
       id: "agent", ko: "에이전트·오케스트레이션", en: "Agents & Orchestration",
-      accent: "#C026D3", accentSoft: "#F8E7F5", stance: "ORCHESTRATE", stanceKo: "오케스트레이션",
+      accent: "#66558C", accentSoft: "#F0EDF5", stance: "ORCHESTRATE", stanceKo: "오케스트레이션",
       controlPoint: "의도 해석·도구 호출·멀티모델 라우팅", economics: "에이전트 구독·업무 성과 과금",
       risk: "모델/OS 사업자가 오케스트레이션 계층을 선점",
       operatorMove: "개인 컨텍스트와 단말 권한을 쓰는 멀티모델 에이전트 레이어를 핵심 통제점으로 확보",
@@ -1349,7 +1349,7 @@ window.DASH = (function () {
     },
     {
       id: "service", ko: "서비스 플랫폼·수익화", en: "Service Platform & Monetization",
-      accent: "#16A34A", accentSoft: "#E3F5EA", stance: "BUILD", stanceKo: "플랫폼 구축",
+      accent: "#397A68", accentSoft: "#EAF3EF", stance: "BUILD", stanceKo: "플랫폼 구축",
       controlPoint: "배포·과금·정산·파트너 마켓플레이스", economics: "수수료·번들·B2B 라이선스·성과 과금",
       risk: "트래픽만 제공하고 서비스 마진은 파트너가 회수",
       operatorMove: "AI 서비스 스토어·번들·B2B 배포 패키지로 유통과 과금 주도권 확보",
@@ -1357,7 +1357,7 @@ window.DASH = (function () {
     },
     {
       id: "trust", ko: "데이터·컨텍스트·신뢰", en: "Data, Context & Trust",
-      accent: "#0D9488", accentSoft: "#E2F5F2", stance: "CONTROL", stanceKo: "통제권 확보",
+      accent: "#287A78", accentSoft: "#E8F3F2", stance: "CONTROL", stanceKo: "통제권 확보",
       controlPoint: "개인 컨텍스트·ID·동의·권한·평가", economics: "신뢰 프리미엄·기업 관리·데이터 서비스",
       risk: "프라이버시 사고·권한 오남용·데이터 이동성 규제",
       operatorMove: "온디바이스 개인화 금고와 기업용 정책·평가 레이어를 공통 자산으로 구축",
@@ -1365,7 +1365,7 @@ window.DASH = (function () {
     },
     {
       id: "model", ko: "모델·온디바이스 지능", en: "Models & On-device Intelligence",
-      accent: "#7A38D6", accentSoft: "#F0E9FB", stance: "PARTNER", stanceKo: "멀티소싱",
+      accent: "#5B5F8A", accentSoft: "#EEEFF5", stance: "PARTNER", stanceKo: "멀티소싱",
       controlPoint: "성능·원가·지연·프라이버시의 균형", economics: "API 사용량·라이선스·소버린 배포",
       risk: "단일 모델 종속·추론비 변동·기능 차별화 약화",
       operatorMove: "자체 경량 모델과 2개 이상 외부 모델을 라우팅해 비용·성능·규제 리스크 분산",
@@ -1373,7 +1373,7 @@ window.DASH = (function () {
     },
     {
       id: "data", ko: "개발·배포 툴링", en: "Developer & Deployment Tooling",
-      accent: "#2D6BFF", accentSoft: "#E7EEFF", stance: "ENABLE", stanceKo: "생태계 개방",
+      accent: "#3E648D", accentSoft: "#EBF0F5", stance: "ENABLE", stanceKo: "생태계 개방",
       controlPoint: "SDK·모델 허브·평가·MLOps·배포 자동화", economics: "개발자 플랫폼·호스팅·사용량",
       risk: "폐쇄형 SDK로 파트너 확장 속도 저하",
       operatorMove: "단말 API·에이전트 SDK·평가도구를 개방해 외부 서비스의 탑재 비용을 낮춤",
@@ -1381,7 +1381,7 @@ window.DASH = (function () {
     },
     {
       id: "infra", ko: "엣지·클라우드 런타임", en: "Edge & Cloud Runtime",
-      accent: "#0891B2", accentSoft: "#E0F2F7", stance: "SOURCE", stanceKo: "선택 조달",
+      accent: "#2C7180", accentSoft: "#E8F2F4", stance: "SOURCE", stanceKo: "선택 조달",
       controlPoint: "추론 원가·지연시간·가용성", economics: "컴퓨트·서빙 사용량",
       risk: "GPU·클라우드 가격과 공급 제약을 서비스 원가로 전가",
       operatorMove: "클라우드·칩을 멀티소싱하고 온디바이스 처리율을 높여 변동비를 방어",

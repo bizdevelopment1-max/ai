@@ -190,7 +190,15 @@ try {
   if (JSON.stringify(layerIds) !== JSON.stringify(expectedLayers)
     || normalized.length !== (dash.COMPANIES || []).length
     || companies.schemaVersion !== 5 || !completeCoverage || !strategyReady || !linkedinReady) {
-    throw new Error("seven-layer strategy, MECE portfolio UI, normalized profiles, or verified LinkedIn links are incomplete");
+    const causes = [
+      JSON.stringify(layerIds) !== JSON.stringify(expectedLayers) && "layer-order",
+      normalized.length !== (dash.COMPANIES || []).length && `normalized-${normalized.length}/${(dash.COMPANIES || []).length}`,
+      companies.schemaVersion !== 5 && `schema-${companies.schemaVersion}`,
+      !completeCoverage && "profile-coverage",
+      !strategyReady && "strategy-ui",
+      !linkedinReady && `linkedin-${linkedinProfiles.length}`,
+    ].filter(Boolean).join(", ");
+    throw new Error(`seven-layer strategy, MECE portfolio UI, normalized profiles, or verified LinkedIn links are incomplete (${causes})`);
   }
   console.log(`  OK  단말 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
 } catch (error) {
@@ -219,6 +227,48 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  consulting 3D interaction system: ${error.message}`);
+}
+
+try {
+  const [index, boards, styles, data, sourceContent, monetizationCrawler] = await Promise.all([
+    readFile("index.html", "utf8"),
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+    readFile("data.js", "utf8"),
+    readFile("scripts/source-content.mjs", "utf8"),
+    readFile("scripts/crawl-monetization.mjs", "utf8"),
+  ]);
+  const uiWithoutEncodingGuard = boards.replace(/const MALFORMED_DISPLAY_ENCODING = .*?;\r?\n/, "");
+  const visibleSource = `${uiWithoutEncodingGuard}\n${data}\n${index}\n${styles}`;
+  const brokenText = /\uFFFD|(?:Ã.|Â.|â[€™“”¦])|(?:ðŸ)|(?:\?[가-힣]){2,}/.test(visibleSource);
+  const utf8Ready = /<meta charset="UTF-8"/.test(index)
+    && /charset=UTF-8/.test(index)
+    && /pretendard\.min\.css/.test(index)
+    && boards.includes("function safeDisplayString")
+    && sourceContent.includes("malformed-source-encoding");
+  const professionalSystem = boards.includes('className="mplay-framework"')
+    && boards.includes("STRATEGY EVIDENCE ARCHITECTURE")
+    && ["FACT BASE", "REVENUE ENGINE", "EXECUTION VECTOR", "COMPANY VIEW"].every(label => boards.includes(label))
+    && styles.includes(".mplay-framework-flow")
+    && styles.includes("@keyframes mplayEvidenceSweep")
+    && styles.includes("grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr))")
+    && styles.includes(".mplay-card:is(:hover, :focus-within)")
+    && styles.includes("border-top: 4px solid var(--accent)")
+    && !/\.mplay-card\s*\{[^}]*border-left:/s.test(styles)
+    && ["#66558C", "#397A68", "#3E648D", "#A56A35", "#6E607D", "#8B5366", "#287A78"]
+      .every(color => monetizationCrawler.includes(color));
+  if (brokenText || !utf8Ready || !professionalSystem) {
+    const causes = [
+      brokenText && "visible-mojibake",
+      !utf8Ready && "utf8-guard",
+      !professionalSystem && "visual-system",
+    ].filter(Boolean).join(", ");
+    throw new Error(`UTF-8 guard, restrained consulting palette, evidence infographic, responsive fill, or motion-safe card interaction is incomplete (${causes})`);
+  }
+  console.log("  OK  UTF-8 표시 방어 · 전문 컨설팅 팔레트 · 근거→수익→실행→전략 인포그래픽");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  professional visual and encoding system: ${error.message}`);
 }
 
 try {
