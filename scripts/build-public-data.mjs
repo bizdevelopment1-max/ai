@@ -79,7 +79,15 @@ const views = {
   "bizmodel-view.json": { generatedAt, count: visibleSignals(bizmodel).length, groups: bizmodel.groups || [], items: visibleSignals(bizmodel) },
 };
 
-await Promise.all(Object.entries(views).map(([file, value]) => writeJson(file, value)));
+await Promise.all(Object.entries(views).map(async ([file, value]) => {
+  let previous = null;
+  try { previous = await readJson(file); } catch {}
+  const withoutTimestamp = input => JSON.stringify({ ...(input || {}), generatedAt: "" });
+  if (previous && withoutTimestamp(previous) === withoutTimestamp(value)) {
+    value.generatedAt = previous.generatedAt || generatedAt;
+  }
+  await writeJson(file, value);
+}));
 
 const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),

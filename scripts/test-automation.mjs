@@ -16,6 +16,7 @@ const required = [
   "scripts/company-sources.mjs",
   "scripts/crawl-company-officials.mjs",
   "scripts/crawl-companies.mjs",
+  "scripts/crawl-startup-organizations.mjs",
   "scripts/crawl-monetization.mjs",
   "scripts/crawl-a16z-startups.mjs",
   "scripts/crawl-strategic-ventures.mjs",
@@ -186,6 +187,49 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  mobile strategy and company normalization: ${error.message}`);
+}
+
+try {
+  const [startups, workflow, startupOrgCrawler, boards] = await Promise.all([
+    readFile("startups.json", "utf8").then(JSON.parse),
+    readFile(".github/workflows/daily-news.yml", "utf8"),
+    readFile("scripts/crawl-startup-organizations.mjs", "utf8"),
+    readFile("boards.jsx", "utf8"),
+  ]);
+  const rows = [...(startups.large || []), ...(startups.small || []), ...(startups.institutional || [])];
+  const schemaParity = rows.length >= 150 && rows.every(row =>
+    row.profile && Array.isArray(row.profile.business)
+    && row.organization && Array.isArray(row.organization.executiveTeam)
+    && Array.isArray(row.organization.officialPages)
+    && Number.isFinite(row.coverage?.profile?.score)
+    && Number.isFinite(row.coverage?.organization?.score)
+    && Number.isFinite(row.coverage?.organization?.executiveCount));
+  const supportedPeople = rows.flatMap(row => row.organization.executiveTeam || []).every(person =>
+    person.name && person.role
+    && /^(?:official-role-match|knowledge-graph-domain-match|official-page-name-match)$/.test(person.verification || "")
+    && /^https?:\/\//i.test(person.verificationUrl || ""));
+  const directProfiles = rows.flatMap(row => row.organization.executiveTeam || [])
+    .map(person => person.li).filter(Boolean);
+  const directLinkedInOnly = directProfiles.every(url =>
+    /^https:\/\/(?:(?:www|[a-z]{2})\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+\/?$/i.test(url));
+  const badExtractedNames = rows.flatMap(row => row.organization.executiveTeam || []).some(person =>
+    /(?:cookie preferences|director manager|individual admin|\b(?:CEO|CTO|CFO|COO)\b.*\b(?:CEO|CTO|CFO|COO)\b)/i.test(person.name || "")
+    || /[{};]|\/\*|\*\//.test(person.role || ""));
+  const automationReady = /crawl-startup-organizations\.mjs/.test(workflow)
+    && /STARTUP_ORG_REFRESH_BUDGET:\s*36/.test(workflow)
+    && startupOrgCrawler.includes("P856")
+    && startupOrgCrawler.includes("retained-verified-snapshot")
+    && startupOrgCrawler.includes("official-role-match")
+    && !startupOrgCrawler.includes("linkedin.com/search/results")
+    && boards.includes("s.organization")
+    && boards.includes("s.profile");
+  if (!schemaParity || !supportedPeople || !directLinkedInOnly || badExtractedNames || !automationReady) {
+    throw new Error("startup profile, founder/executive organization, evidence, or recurring refresh parity is incomplete");
+  }
+  console.log(`  OK  스타트업 ${rows.length}개 기업 개요·창업자·임원 조직도 동일 스키마 · 근거 URL·직접 LinkedIn 검증`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  startup company-depth parity: ${error.message}`);
 }
 
 try {
@@ -859,7 +903,7 @@ console.log("  정보  보조 업데이트: 수동 복구 전용(동시 쓰기 �
 
 const pipelineScripts = [
   "scripts/crawl-news.mjs", "scripts/crawl-stocks.mjs", "scripts/crawl-research.mjs",
-  "scripts/crawl-startups.mjs", "scripts/crawl-markets.mjs", "scripts/crawl-infra.mjs",
+  "scripts/crawl-startups.mjs", "scripts/crawl-startup-organizations.mjs", "scripts/crawl-markets.mjs", "scripts/crawl-infra.mjs",
   "scripts/crawl-bizmodel.mjs", "scripts/generate-briefing.mjs", "scripts/startup-radar.mjs",
   "scripts/build-insights.mjs", "scripts/crawl-companies.mjs", "scripts/crawl-monetization.mjs",
   "scripts/crawl-a16z-startups.mjs", "scripts/crawl-strategic-ventures.mjs",

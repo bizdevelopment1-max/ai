@@ -225,6 +225,35 @@ function retainSourceHistory(rows, previousRows) {
   }
 }
 
+const startupRecordKey = record => {
+  try {
+    const value = String(record?.domain || record?.profile?.officialWebsite || "");
+    if (value) return new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`).hostname.toLowerCase().replace(/^www\./, "");
+  } catch {}
+  return String(record?.name || "").trim().toLowerCase();
+};
+
+function retainVerifiedCompanyDepth(rows, previousRows) {
+  const previousByKey = new Map();
+  for (const prior of previousRows || []) {
+    const keys = [startupRecordKey(prior), `name:${String(prior?.name || "").trim().toLowerCase()}`].filter(Boolean);
+    const depth = Number(prior?.coverage?.organization?.executiveCount || prior?.organization?.executiveTeam?.length || 0);
+    for (const key of keys) {
+      const current = previousByKey.get(key);
+      const currentDepth = Number(current?.coverage?.organization?.executiveCount || current?.organization?.executiveTeam?.length || 0);
+      if (!current || depth >= currentDepth) previousByKey.set(key, prior);
+    }
+  }
+  for (const row of rows || []) {
+    const prior = previousByKey.get(startupRecordKey(row))
+      || previousByKey.get(`name:${String(row?.name || "").trim().toLowerCase()}`);
+    if (!prior) continue;
+    if (prior.profile) row.profile = prior.profile;
+    if (prior.organization) row.organization = prior.organization;
+    if (prior.coverage) row.coverage = prior.coverage;
+  }
+}
+
 async function latest(name, locale) {
   try {
     const q = `"${name.replace(/\s*\(.*\)/, "")}" AI when:21d`;
@@ -457,12 +486,19 @@ async function main() {
 
   retainSourceHistory(large, prev?.large);
   retainSourceHistory(small, prev?.small);
+  retainSourceHistory(institutional, prev?.institutional);
+  const previousCompanyRows = [...(prev?.large || []), ...(prev?.small || []), ...(prev?.institutional || [])];
+  retainVerifiedCompanyDepth(large, previousCompanyRows);
+  retainVerifiedCompanyDepth(small, previousCompanyRows);
+  retainVerifiedCompanyDepth(institutional, previousCompanyRows);
 
   const out = {
     generatedAt: new Date().toISOString(),
     weekOf: TODAY,
     engine,
     methodology: "weekly-news+publisher-pages+a16z-complete-lists+source-grounded-ai-synthesis",
+    organizationMethodology: prev?.organizationMethodology || "official-domain-jsonld-and-team-pages+wikidata-P856-domain-match+retained-verified-snapshot",
+    organizationRefresh: prev?.organizationRefresh || null,
     institutionalSource: {
       name: a16z.source,
       title: a16z.sourceTitle,

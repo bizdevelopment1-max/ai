@@ -97,6 +97,13 @@ jobs:
       - name: Crawl startup strategies and source-grounded AI synthesis (주간)
         run: node scripts/run-with-retry.mjs scripts/crawl-startups.mjs
 
+      - name: Refresh startup founders, executives and organization depth
+        run: node scripts/run-with-retry.mjs scripts/crawl-startup-organizations.mjs
+        env:
+          STARTUP_ORG_REFRESH_BUDGET: 36
+          STARTUP_ORG_MAX_AGE_DAYS: 21
+          STARTUP_ORG_CONCURRENCY: 6
+
       - name: Localise distinct source-page sentences
         run: python scripts/translate_summarize.py
 

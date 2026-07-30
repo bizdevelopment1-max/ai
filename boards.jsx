@@ -386,6 +386,10 @@ function StrategyPortfolioCard({
     ...(intel.strategyDirection?.evidence || []),
   ];
   const evidenceN = Number.isFinite(sourceCount) ? sourceCount : new Set(evidenceRows.map(item => item.url).filter(Boolean)).size;
+  const organization = c.live?.organization || c.organization || c.org || {};
+  const leaderRows = Array.isArray(organization.executiveTeam) && organization.executiveTeam.length
+    ? organization.executiveTeam : organization.leadership || [];
+  const leadership = leaderRows.slice(0, 2).map(person => person.name).filter(Boolean).join(" · ");
   const activate = () => onSelect && onSelect(c);
   return (
     <div className="sp-card" role="button" tabIndex="0" onClick={activate}
@@ -423,6 +427,7 @@ function StrategyPortfolioCard({
         </div>}
       </div>
       <div className="sp-card-foot">
+        {leadership && <span><em>창업·경영진</em>{leadership}</span>}
         {people && <span><em>인력</em>{people}</span>}
         {evidenceN > 0 && <span><em>원문 근거</em>{evidenceN}건</span>}
         <b>실적·조직·발언·원문 <i aria-hidden="true" /></b>
@@ -565,9 +570,10 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           const live = !!(lv.ceo || lv.hq || lv.employees || lv.revenueQ || lv.topHolders || lv.cap);
           const rows = [
             ["설립", p.founded],
+            ["법인·운영사", p.operator || p.legalName],
             ["경영진", ceo],
             ["본사", hq],
-            ["섹터", lv.sector || ""],
+            ["섹터", lv.sector || p.sector || ""],
              ["인력", emp ? emp + empAsof : ""],
             ["시가총액", lv.cap ? lv.cap + capAsof : ""],
             ["주주", holders],
@@ -575,7 +581,11 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           const fin = lv.revenueQ
             ? `매출 ${lv.revenueQ}${lv.netIncomeQ ? ` · 순이익 ${lv.netIncomeQ}` : ""}${lv.quarterEnd ? ` (${lv.quarterEnd} 분기)` : ""}`
             : "";
-          const profileCoverage = lv.coverage && lv.coverage.profile;
+          const profileCoverage = (lv.coverage && lv.coverage.profile) || (c.coverage && c.coverage.profile);
+          const profileSources = [...new Set([
+            p.officialWebsite,
+            ...(p.sourceUrls || []),
+          ].filter(url => /^https?:\/\//i.test(String(url || ""))))].slice(0, 6);
           return (
             <div className="cd-section cd-profile">
               <h4>기업 개요 <em>Company Profile</em>
@@ -592,6 +602,16 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                    {lv.employeesStale ? `과거 보고값 ${lv.employeesLastReported || ""} (${lv.employeesAsof || "기준일 미상"}) · 현행값으로 사용하지 않음` : `인력 출처 · ${lv.employeesSource || "공개 데이터"}`}
                  </a>
                )}
+              {profileSources.length > 0 && (
+                <div className="cd-prof-sources">
+                  <em>기업 개요 근거</em>
+                  {profileSources.map((url, index) => (
+                    <a key={url} href={url} target="_blank" rel="noopener">
+                      {index === 0 ? "공식 홈페이지" : `공식·구조화 원문 ${index + 1}`}
+                    </a>
+                  ))}
+                </div>
+              )}
               {Array.isArray(p.business) && p.business.length > 0 && (
                 <div className="cd-prof-biz"><em>주요사업</em><ul>{p.business.map((b, i) => <li key={i}>{b}</li>)}</ul></div>
               )}
@@ -804,8 +824,8 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           );
         })()}
 
-        {(c.org || (c.live && c.live.officers && c.live.officers.length)) && (() => {
-          const org = c.org || {};
+        {(c.org || c.live?.organization || (c.live && c.live.officers && c.live.officers.length)) && (() => {
+          const org = c.org || c.live?.organization || {};
           const live = c.live || {};
           const curated = Array.isArray(org.leadership) ? org.leadership : [];
           const filingOfficers = (live.officers && live.officers.length ? live.officers : org.officers || [])
@@ -870,7 +890,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
             if (!p) return "";
             return p.li || directProfiles[p.name] || directProfiles[liName(p.name)] || "";
           };
-          const coLink = (c.profile && c.profile.linkedin) || "";
+          const coLink = c.profile?.linkedin || c.live?.profile?.linkedin || "";
           const NodeBg = ({ p }) => (
             <React.Fragment>
               {(p.edu || p.education || p.career || p.bg) && <dl className="cd-org-background">
@@ -879,13 +899,13 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
               </dl>}
               <div className="cd-org-verification">
                 <span className={p.verification === "official-role-match" || p.sourceType === "market-filing" ? "verified" : "curated"}>
-                  {p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : p.sourceType === "market-filing" ? "시장·공시 원장" : "큐레이션 검토"}
+                  {p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "knowledge-graph-domain-match" ? "공식 도메인 일치 지식그래프" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : p.sourceType === "market-filing" ? "시장·공시 원장" : "큐레이션 검토"}
                 </span>
                 {p.verificationUrl && <a href={p.verificationUrl} target="_blank" rel="noopener">근거</a>}
               </div>
             </React.Fragment>
           );
-          const orgCoverage = live.coverage && live.coverage.organization;
+          const orgCoverage = (live.coverage && live.coverage.organization) || (c.coverage && c.coverage.organization);
           return (
             <React.Fragment>
               {org.mission && (
@@ -4001,27 +4021,53 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   const openStartup = (s, portfolioTier = "") => {
     if (!onSelect) return;
     const match = (companies || []).find(c => c.name === s.name || c.name.replace(/\s*\(.*\)/, "") === s.name);
-    if (match) { onSelect(match); return; }
+    if (match) {
+      const startupLive = (coLive && coLive[s.name]) || {};
+      onSelect({
+        ...match,
+        profile: s.profile || match.profile,
+        org: s.organization || match.org,
+        coverage: s.coverage || match.coverage,
+        live: {
+          ...startupLive,
+          ...(match.live || {}),
+          profile: match.live?.profile || startupLive.profile || s.profile || match.profile,
+          organization: match.live?.organization || startupLive.organization || s.organization || match.org,
+          coverage: match.live?.coverage || startupLive.coverage || s.coverage || match.coverage,
+        },
+      });
+      return;
+    }
     const institutionSource = s.institution?.url ? [{
       title: s.institution.title, url: s.institution.url, date: s.institution.publishedAt, source: s.institution.name,
     }] : [];
     const productSources = (s.sourceLinks || []).map(source => ({
       title: `${s.name} · ${source.label}`, url: source.url, date: s.institution?.publishedAt || "", source: s.institution?.name || "제품 원문",
     }));
-    const hist = [s.latest, ...(s.history || []), ...institutionSource, ...productSources]
+    const profileSources = (s.profile?.sourceUrls || []).map((url, index) => ({
+      title: `${s.name} · 기업 개요 근거 ${index + 1}`, url, date: s.profile?.sourceAsOf || "", source: "Official / structured source",
+    }));
+    const organizationSources = (s.organization?.officialPages || []).map(source => ({
+      title: source.title || `${s.name} · 조직·경영진 근거`, url: source.url, date: source.checkedAt || "", source: "Official / structured source",
+    }));
+    const hist = [s.latest, ...(s.history || []), ...institutionSource, ...productSources, ...profileSources, ...organizationSources]
       .filter(h => h && /^https?:\/\//.test(String(h.url || "")));
     const D = window.DASH || {};
     // 추적 대상이 아니어도 조직도·기업개요 큐레이션이 있으면 붙여 상세를 강화(다른 기업과 동일 뷰)
-    const org = (D.COMPANY_ORG || {})[s.name] || null;
+    const org = s.organization || (D.COMPANY_ORG || {})[s.name] || null;
     const curatedProfile = (D.COMPANY_PROFILES || {})[s.name] || null;
     const bm = s.currentBusiness || s.businessModel || s.overview || s.description || "";
-    const profile = curatedProfile || {
+    const fallbackProfile = {
       founded: s.publisher ? `제품 운영사 · ${s.publisher}` : "",
       ceo: "",
       hq: "",
       headcount: s.headcount || "",
       business: [bm].filter(Boolean),
     };
+    const verifiedStartupProfile = Object.fromEntries(Object.entries(s.profile || {}).filter(([, value]) =>
+      Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && String(value).trim() !== ""));
+    const profile = { ...fallbackProfile, ...(curatedProfile || {}), ...verifiedStartupProfile };
+    if (!Array.isArray(profile.business) || !profile.business.length) profile.business = [bm].filter(Boolean);
     const startupIntelligence = s.intelligence || {
       engine: s.intelligenceEngine || "publisher-source-synthesis",
       generatedAt: data?.generatedAt || "",
@@ -4042,9 +4088,25 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       layer: "app", vchainVertical: s.vertical || "", profile, org,
       portfolioTier,
       institution: s.institution || null,
+      coverage: s.coverage || lv?.coverage || null,
       live: lv
-        ? { ...lv, intelligence: lv.intelligence || startupIntelligence, latest: lv.latest || s.latest || null }
-        : { intelligence: startupIntelligence, latest: s.latest || null, mentions7: 0, mentions30: 0 },
+        ? {
+          ...lv,
+          profile: lv.profile || profile,
+          organization: lv.organization || org,
+          coverage: lv.coverage || s.coverage || null,
+          intelligence: lv.intelligence || startupIntelligence,
+          latest: lv.latest || s.latest || null,
+        }
+        : {
+          profile,
+          organization: org,
+          coverage: s.coverage || null,
+          intelligence: startupIntelligence,
+          latest: s.latest || null,
+          mentions7: 0,
+          mentions30: 0,
+        },
       monetize: monet ? { entry: (monet.companies || []).find(x => x.name === s.name) || null, models: monet.models || [], directions: monet.directions || [] } : null,
       sources: hist.slice(0, 10).map(h => ({ tier: "reported", label: String(h.title || "관련 기사"), asOf: h.date || "", url: h.url })),
     });
@@ -4227,7 +4289,14 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
               const meta = catMeta(catOf(s));
               const live = (coLive && coLive[s.name]) || {};
               return <StrategyPortfolioCard key={s.name}
-                company={{ name: s.name, domain: s.domain, profile: live.profile, live }}
+                company={{
+                  name: s.name,
+                  domain: s.domain,
+                  profile: live.profile || s.profile,
+                  organization: live.organization || s.organization,
+                  coverage: live.coverage || s.coverage,
+                  live: { ...live, profile: live.profile || s.profile, organization: live.organization || s.organization },
+                }}
                 accent={(meta && meta.accent) || "#0E8F6E"}
                 eyebrow={`대형 · ${(meta && meta.ko) || s.vertical || "AI 스타트업"}`}
                 badge="GROWTH"
@@ -4250,7 +4319,14 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
               const meta = catMeta(catOf(s));
               const live = (coLive && coLive[s.name]) || {};
               return <StrategyPortfolioCard key={s.name}
-                company={{ name: s.name, domain: s.domain, profile: live.profile, live }}
+                company={{
+                  name: s.name,
+                  domain: s.domain,
+                  profile: live.profile || s.profile,
+                  organization: live.organization || s.organization,
+                  coverage: live.coverage || s.coverage,
+                  live: { ...live, profile: live.profile || s.profile, organization: live.organization || s.organization },
+                }}
                 accent={(meta && meta.accent) || "#0E8F6E"}
                 eyebrow={`초기 · ${(meta && meta.ko) || s.vertical || "AI 스타트업"}`}
                 badge="EARLY"
@@ -4275,10 +4351,18 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
           <div className="startup-portfolio-grid a16z-portfolio-grid">
             {institutional.map(s => {
               const meta = catMeta(catOf(s));
+              const live = (coLive && coLive[s.name]) || {};
               const cohort = s.cohorts?.includes("web") && s.cohorts?.includes("mobile") ? "WEB + MOBILE"
                 : s.cohorts?.includes("mobile") ? "MOBILE" : "WEB";
               return <StrategyPortfolioCard key={`a16z-${s.name}`}
-                company={{ name: s.name, domain: s.domain }}
+                company={{
+                  name: s.name,
+                  domain: s.domain,
+                  profile: live.profile || s.profile,
+                  organization: live.organization || s.organization,
+                  coverage: live.coverage || s.coverage,
+                  live: { ...live, profile: live.profile || s.profile, organization: live.organization || s.organization },
+                }}
                 accent={(meta && meta.accent) || "#7A38D6"}
                 eyebrow={`a16z · ${(meta && meta.ko) || s.vertical}`}
                 badge={cohort}
@@ -4287,7 +4371,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                 revenueModel={s.revenueModel}
                 direction={s.strategyDirection}
                 execution={s.description || s.pageTitle}
-                headcount={s.headcount || "미공개"}
+                headcount={s.headcount || s.profile?.headcount || ""}
                 sourceCount={(s.sourceLinks || []).length + 1}
                 onSelect={() => openStartup(s, "institutional")}
                 accessory={<DelUI name={s.name} />} />;

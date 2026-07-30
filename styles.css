@@ -1046,6 +1046,10 @@ a[href]:hover .rainbow-on-hover,
 .cd-prof-row span { font-weight: 600; line-height: 1.45; }
 .cd-prof-source { display: inline-flex; margin-top: 7px; font-size: 10px; font-weight: 800; color: var(--accent); text-decoration: none; }
 .cd-prof-source:hover { text-decoration: underline; }
+.cd-prof-sources { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.cd-prof-sources > em { color: var(--muted); font-family: var(--mono); font-size: 8px; font-style: normal; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+.cd-prof-sources > a { border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line)); border-radius: 3px; padding: 3px 6px; color: var(--accent); background: color-mix(in srgb, var(--accent) 5%, var(--surface)); font-size: 9px; font-weight: 800; text-decoration: none; }
+.cd-prof-sources > a:hover { background: color-mix(in srgb, var(--accent) 11%, var(--surface)); }
 .cd-prof-biz { margin-top: 12px; }
 .cd-prof-biz > em { display: block; font-style: normal; font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; }
 .cd-prof-biz ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
