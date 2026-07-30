@@ -330,11 +330,16 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
     const top = [...rows].sort((a, b) => Number(b.live?.mentions30 || 0) - Number(a.live?.mentions30 || 0))[0];
     return { ...layer, rows, primary, mentions, top };
   });
-  const maxMomentum = Math.max(1, ...layerStats.map(l => l.mentions));
   const companyCount = new Set((companies || []).map(company => company.name)).size;
   const signalCount = (companies || []).reduce((sum, company) => sum + Number(company.live?.mentions30 || 0), 0);
   const leadLayer = [...layerStats].sort((a, b) => b.mentions - a.mentions)[0] || {};
   const finalHorizon = (strategy.horizons || [])[Math.max(0, (strategy.horizons || []).length - 1)] || {};
+  const controlZones = [
+    { no: "01", en: "OWN", title: "직접 보유", scope: "L1 · 고객 접점과 기본 경험" },
+    { no: "02", en: "ORCHESTRATE", title: "오케스트레이션", scope: "L2 · 의도·도구·모델 라우팅" },
+    { no: "03", en: "GOVERN", title: "플랫폼 통제", scope: "L3–L4 · 배포·수익·신뢰" },
+    { no: "04", en: "SOURCE", title: "선택 조달", scope: "L5–L7 · 모델·툴링·컴퓨트" },
+  ];
   return (
     <section className="board msf" ref={sectionRef} data-screen-label="Mobile AI Strategy Framework">
       <AnimCtx.Provider value={inView}>
@@ -390,17 +395,32 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
           <div><em>01</em><h3>밸류체인 통제 전략</h3></div>
           <p>고객 접점에서 백엔드로 갈수록 ‘직접 보유’에서 ‘선택 조달’로 자본 배분을 전환</p>
         </div>
+        <div className="msf-control-logic" aria-label="단말 사업자의 밸류체인 통제 방식 전환">
+          {controlZones.map((zone, index) => (
+            <React.Fragment key={zone.no}>
+              <div style={{ "--zone-step": index }}>
+                <em>{zone.no} · {zone.en}</em>
+                <b>{zone.title}</b>
+                <span>{zone.scope}</span>
+              </div>
+              {index < controlZones.length - 1 && <i aria-hidden="true" />}
+            </React.Fragment>
+          ))}
+        </div>
         <div className="msf-chain">
           {layerStats.map((l, i) => (
             <button className="msf-layer" key={l.id} onClick={() => onNav && onNav(l.id)}
-              style={{ "--lc": l.accent, "--momentum": `${Math.max(8, 100 * l.mentions / maxMomentum)}%` }}>
+              style={{ "--lc": l.accent, "--layer-order": i }}>
               <span className="msf-layer-no">L{i + 1}</span>
               <span className="msf-layer-role">{l.stanceKo}</span>
               <b>{l.ko}</b>
               <span className="msf-layer-control">{l.controlPoint}</span>
-              <span className="msf-layer-meter"><i /></span>
-              <span className="msf-layer-stats"><em>{l.primary}개 핵심사</em><em>{l.mentions}건·30일</em></span>
-              {l.top && <span className="msf-layer-top">Top signal · {l.top.name}</span>}
+              <span className="msf-layer-evidence">
+                <span><em>PORTFOLIO</em><b>{l.primary}개사</b></span>
+                <i aria-hidden="true" />
+                <span><em>30D EVIDENCE</em><b>{l.mentions}건</b></span>
+              </span>
+              {l.top && <span className="msf-layer-lead"><em>LEAD</em><b>{l.top.name}</b><i aria-hidden="true" /></span>}
             </button>
           ))}
         </div>
@@ -411,7 +431,7 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
         <div className="msf-choices">
           {(strategy.choices || []).map(c => (
-            <div className="msf-choice" key={c.no}>
+            <div className="msf-choice" key={c.no} tabIndex="0">
               <div className="msf-choice-top"><span>{c.no}</span><b>{c.title}</b></div>
               <dl>
                 <div><dt>WHERE</dt><dd>{c.where}</dd></div>
@@ -429,7 +449,7 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
         <div className="msf-matrix">
           <div className="msf-mrow msf-mhead"><span>계층 / 역할</span><span>통제점</span><span>수익 구조</span><span>단말 사업자 Action</span><span>핵심 리스크</span></div>
           {layers.map(l => (
-            <div className="msf-mrow" key={l.id} style={{ "--lc": l.accent }}>
+            <div className="msf-mrow" key={l.id} style={{ "--lc": l.accent }} tabIndex="0">
               <span className="msf-mname"><i /> <b>{l.ko}</b><em>{l.stanceKo}</em></span>
               <span>{l.controlPoint}</span><span>{l.economics}</span><span className="msf-maction">{l.operatorMove}</span><span>{l.risk}</span>
             </div>
@@ -442,7 +462,7 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
         <div className="msf-horizons">
           {(strategy.horizons || []).map((h, i) => (
-            <div className="msf-horizon" key={h.id}>
+            <div className="msf-horizon" key={h.id} tabIndex="0">
               <span>{h.label}</span><h4>{h.title}</h4>
               <ul>{(h.actions || []).map((a, j) => <li key={j}>{a}</li>)}</ul>
               {i < strategy.horizons.length - 1 && <i className="msf-harr" aria-hidden="true" />}
