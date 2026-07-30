@@ -1409,6 +1409,82 @@ window.DASH = (function () {
     "Apple": { mission: "프라이버시 우선 온디바이스 지능 — 최고의 개인 기기 경험", leadership: [
       { name: "Tim Cook", role: "CEO", edu: "Auburn 산업공학 · Duke MBA", career: "前 IBM · Compaq · Apple COO (2026.9 John Ternus 승계 예정)", bg: "Auburn 산업공학·Duke MBA · 前 IBM·Compaq (2026.9 John Ternus 승계 예정)" },
     ] },
+    "Microsoft": { mission: "지구상 모든 사람과 조직이 더 많은 것을 성취하도록", leadership: [
+      { name: "Satya Nadella", role: "Chairman·CEO", edu: "Manipal 전기공학 · UW-Milwaukee 컴퓨터과학 석사 · Chicago Booth MBA", career: "1992년 입사 · 前 클라우드·엔터프라이즈 총괄 · 2014~ CEO" },
+      { name: "Kevin Scott", role: "CTO·EVP(AI)", edu: "Virginia Tech 컴퓨터과학 · Wharton", career: "前 LinkedIn CTO · Google 광고 엔지니어링" },
+      { name: "Bill Gates", role: "Co-founder", edu: "Harvard 중퇴", career: "1975 공동창업 · 前 CEO·회장" },
+    ] },
+    "Amazon": { mission: "지구상 가장 고객 중심적인 회사 — 클라우드로 AI 인프라 공급", leadership: [
+      { name: "Andy Jassy", role: "CEO", edu: "Harvard · Harvard MBA", career: "1997년 입사 · AWS 창립·성장 총괄 · 2021~ CEO" },
+      { name: "Jeff Bezos", role: "Founder·Exec Chair", edu: "Princeton 전기공학·컴퓨터과학", career: "1994 창업 · 前 D.E. Shaw" },
+    ] },
+    "DeepSeek": { mission: "저비용·오픈 가중치로 프런티어 AI를 대중화", leadership: [
+      { name: "Liang Wenfeng(량원펑)", role: "Founder·CEO", edu: "Zhejiang University 정보·전자공학", career: "High-Flyer(퀀트 헤지펀드) 창업 · 2023 DeepSeek 설립" },
+    ] },
+    "Scale AI": { mission: "AI 개발을 위한 데이터 인프라(라벨링·평가) 공급", leadership: [
+      { name: "Alexandr Wang", role: "Founder", edu: "MIT 중퇴", career: "前 Quora 엔지니어 · 2016 Scale AI 창업 (2025 Meta 초지능팀 합류)" },
+      { name: "Jason Droege", role: "CEO", edu: "Xavier Univ · Kellogg MBA", career: "前 Uber Eats 창립 임원 · 2025~ Scale CEO" },
+    ] },
+    "Together AI": { mission: "오픈소스 AI를 위한 학습·추론 클라우드", leadership: [
+      { name: "Vipul Ved Prakash", role: "Co-founder·CEO", edu: "", career: "前 Topsy(Apple 인수)·Cloudmark 창업" },
+      { name: "Ce Zhang", role: "Co-founder·CTO", edu: "ETH 취리히 교수", career: "분산 ML 시스템 연구" },
+    ] },
+    "Glean": { mission: "직장의 지식을 연결하는 엔터프라이즈 AI 검색", leadership: [
+      { name: "Arvind Jain", role: "Co-founder·CEO", edu: "IIT Delhi · UW 컴퓨터과학 석사", career: "前 Google 저명 엔지니어(검색) · Rubrik 공동창업" },
+    ] },
+    "Sierra AI": { mission: "기업을 위한 대화형 고객경험 AI 에이전트", leadership: [
+      { name: "Bret Taylor", role: "Co-founder·CEO", edu: "Stanford 컴퓨터과학", career: "前 Salesforce 공동 CEO · Google Maps 공동개발 · OpenAI 이사회 의장" },
+      { name: "Clay Bavor", role: "Co-founder", edu: "Stanford", career: "前 Google VR·AR(Labs) 총괄" },
+    ] },
+    "Writer": { mission: "엔터프라이즈용 생성형 AI 플랫폼", leadership: [
+      { name: "May Habib", role: "Co-founder·CEO", edu: "Harvard 경제학", career: "前 Qordoba 창업 · WEF Young Global Leader" },
+    ] },
+    "Harvey": { mission: "법률 전문가를 위한 도메인 특화 AI", leadership: [
+      { name: "Winston Weinberg", role: "Co-founder·CEO", edu: "USC · 로스쿨", career: "前 O'Melveny 소송 변호사" },
+      { name: "Gabriel Pereyra", role: "Co-founder·President", edu: "", career: "前 DeepMind·Google Brain·Meta AI 연구" },
+    ] },
+    "Abridge": { mission: "의료 대화를 구조화된 임상 기록으로", leadership: [
+      { name: "Shiv Rao", role: "Founder·CEO", edu: "의학박사(MD)", career: "심장전문의 · 前 UPMC Enterprises" },
+    ] },
+    "Cursor": { mission: "AI 코드 에디터로 소프트웨어 개발을 재정의", leadership: [
+      { name: "Michael Truell", role: "Co-founder·CEO", edu: "MIT 컴퓨터과학·수학", career: "Anysphere(Cursor) 공동창업" },
+      { name: "Sualeh Asif", role: "Co-founder·CTO", edu: "MIT", career: "Anysphere 공동창업" },
+    ] },
+    "Replit": { mission: "누구나 브라우저에서 소프트웨어를 만들 수 있게", leadership: [
+      { name: "Amjad Masad", role: "Founder·CEO", edu: "", career: "前 Facebook·Codecademy 엔지니어" },
+    ] },
+    "Lovable": { mission: "자연어로 앱을 만드는 AI 빌더", leadership: [
+      { name: "Anton Osika", role: "Co-founder·CEO", edu: "", career: "前 Depict.ai 창업 · CERN 물리 엔지니어 · GPT-Engineer 오픈소스" },
+      { name: "Fabian Hedin", role: "Co-founder·CTO", edu: "", career: "" },
+    ] },
+    "Midjourney": { mission: "인간의 상상력을 확장하는 이미지 생성 AI", leadership: [
+      { name: "David Holz", role: "Founder·CEO", edu: "", career: "前 Leap Motion 창업 · NASA·Max Planck 연구" },
+    ] },
+    "Stability AI": { mission: "개방형 생성형 AI(이미지·영상·음성)", leadership: [
+      { name: "Prem Akkaraju", role: "CEO", edu: "", career: "前 Weta Digital CEO · 2024~ Stability CEO" },
+      { name: "Emad Mostaque", role: "Founder", edu: "Oxford 수학·컴퓨터과학", career: "前 헤지펀드 매니저 · 2019 창업(2024 사임)" },
+    ] },
+    "Runway": { mission: "창작을 위한 AI 영상·이미지 생성 도구", leadership: [
+      { name: "Cristóbal Valenzuela", role: "Co-founder·CEO", edu: "NYU ITP · 칠레 경제학", career: "Stable Diffusion 공동 개발" },
+      { name: "Anastasis Germanidis", role: "Co-founder·CTO", edu: "NYU", career: "생성 영상 연구" },
+    ] },
+    "Kling AI": { mission: "콰이쇼우(Kuaishou)의 영상 생성 AI", leadership: [
+      { name: "Cheng Yixiao(청이샤오)", role: "Kuaishou CEO", edu: "", career: "콰이쇼우 공동창업 · Kling 영상 생성 모델 총괄" },
+    ] },
+    "Hailuo (MiniMax)": { mission: "멀티모달 생성 AI(영상·음성·모델)", leadership: [
+      { name: "Yan Junjie(옌쥔제)", role: "Founder·CEO", edu: "중국과기대(USTC)·CAS 박사", career: "前 SenseTime 부총재 · 2021 MiniMax 창업" },
+    ] },
+    "Synthesia": { mission: "텍스트로 AI 아바타 영상을 생성", leadership: [
+      { name: "Victor Riparbelli", role: "Co-founder·CEO", edu: "덴마크 공대(DTU)", career: "AI 아바타 영상 플랫폼 창업" },
+      { name: "Matthias Nießner · Lourdes Agapito", role: "Co-founder(교수)", edu: "TUM · UCL", career: "컴퓨터비전 교수" },
+    ] },
+    "Suno": { mission: "누구나 음악을 만들 수 있게 하는 생성 AI", leadership: [
+      { name: "Mikey Shulman", role: "Co-founder·CEO", edu: "Harvard 물리학 박사", career: "前 Kensho 머신러닝 총괄" },
+    ] },
+    "ElevenLabs": { mission: "모든 언어·목소리를 위한 AI 음성", leadership: [
+      { name: "Mati Staniszewski", role: "Co-founder·CEO", edu: "Imperial College London", career: "前 Palantir 배포 전략가" },
+      { name: "Piotr Dąbkowski", role: "Co-founder·CTO", edu: "Imperial College London", career: "前 Google ML 엔지니어" },
+    ] },
   };
 
   // ── 투자 포트폴리오·전략 맵 ─────────────────────────────────────────

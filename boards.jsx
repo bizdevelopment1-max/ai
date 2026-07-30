@@ -394,7 +394,10 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           const roster = liveRoster || (org.leadership || []);
           const lead = roster[0];
           const reports = roster.slice(1);
-          const liUrl = name => "https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(name + " " + c.name);
+          // LinkedIn 인물 검색 — 이름의 괄호(한글 병기)·공동창업자(·) 표기를 제거해 검색 정확도↑
+          const coName = c.name.split(" (")[0];
+          const liName = name => String(name).split("(")[0].split("·")[0].replace(/[^\p{L}\p{N}\s.'-]/gu, "").trim();
+          const liUrl = name => "https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(liName(name) + " " + coName);
           const NodeBg = ({ p }) => (p.edu || p.career)
             ? <span className="cd-org-bg">{[p.edu, p.career].filter(Boolean).join(" · ")}</span>
             : (p.bg ? <span className="cd-org-bg">{p.bg}</span> : null);
@@ -2835,17 +2838,28 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
         <div className="board-head" style={{ "--accent": "#16A34A" }}>
           <span className="board-tab" style={{ background: "#16A34A" }} />
           <div className="board-titles">
-            <h2>배포·AI서비스 <span className="board-en">Value Chain L5 · Deployment & Services</span></h2>
-            <p>AI 밸류체인 5계층 중 <b>배포·AI서비스</b> 계층 — 별도 축. 모델사가 자회사·합작으로 서비스에 직접 진입하는 수직통합 딜·Forward-Deployed AI 모델·컨설팅/구축 시장·단말 제조사 진입 전략</p>
+            <h2>AI 비즈니스 모델 <span className="board-en">AI Business Models · How Companies Make Money</span></h2>
+            <p>AI로 돈 버는 비즈니스 모델 <b>전체</b> — 각 업체가 실제로 하는 것을 크롤 기사로 정리·매일 갱신. 아래 <b>배포·AI서비스(수직통합)</b>는 그 중 <b>한 가지 예시</b>.</p>
+          </div>
+        </div>
+
+        {/* 1) AI 비즈니스 모델 전체 — 기업별 수익모델·활동 + 7개 수익화 유형(모두 크롤 기반) */}
+        <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
+        <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
+          dataVersion={dataVersion} title="수익화 유형별 신호 — 7개 비즈니스 모델" sub="수직통합·구독·사용량·광고/커머스·하드웨어·성과기반·엔터프라이즈 — 원문 확인 카드만 누적 표시" />
+
+        {/* 2) 한 단계 아래 — 비즈니스 모델 심화 예시: 배포·AI서비스(수직통합) */}
+        <div className="nb-example-head">
+          <span className="nb-example-badge">예시 · 밸류체인 L5</span>
+          <div>
+            <h3>배포·AI서비스(수직통합) <em>Deployment & Services</em></h3>
+            <p>위 비즈니스 모델 중 하나 — 모델사가 자회사·합작으로 서비스에 직접 진입하는 수직통합 딜·Forward-Deployed AI 모델·컨설팅/구축 시장·단말 제조사 진입 전략</p>
           </div>
         </div>
         <NewBizDeepDive />
-        <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
         <ForwardDeployedAIModel />
         <AIConsultingBuildSection />
         <VerticalIntegrationTables />
-        <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
-          dataVersion={dataVersion} title="AI 수익화·신사업 모델 시그널" sub="수직통합·자체 서비스 등 7개 수익화 유형 · 원문 확인 카드만 누적 표시" />
       </AnimCtx.Provider>
     </section>
   );
