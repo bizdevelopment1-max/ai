@@ -378,6 +378,7 @@ async function main() {
       ...(s?.rssUrl ? {} : { rssUrl: a.url }),
       collectedAt: new Date().toISOString(),
       needsLLM: false,
+      displayEligible: isContentBacked(s),
       ...(s?.summaryVersion ? {} : {
         title: cleanTitle(a.title, a.source), titleEn: a.title, descEn: a.descEn || "",
         summary: "", summaryLinesEn: [], summaryVersion: SUMMARY_VERSION,

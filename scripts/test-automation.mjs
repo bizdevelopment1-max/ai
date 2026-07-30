@@ -504,6 +504,7 @@ try {
     || /global-sources\.mjs/.test(newsCrawler)
     || !/dedupeLatestBriefings/.test(newsCrawler)
     || !/textSimilarity/.test(newsCrawler)
+    || !/displayEligible: isContentBacked\(s\)/.test(newsCrawler)
     || !/localeCompare\(String\(left\.date/.test(newsCrawler)
     || nearDuplicatePairs.length) {
     throw new Error("daily article feed must remain English-authoritative, latest-first, and event-deduplicated");
@@ -860,8 +861,9 @@ try {
       && record.sourceContent?.status === "content-extracted"
       && /^[a-f0-9]{64}$/i.test(loc.sourceHash || "");
   };
-  if (visible.length < 10 || !visible.every(valid)) {
-    throw new Error("every visible feed row needs source-page text, one-to-three distinct source-hashed Korean or English lines, and no repeated filler");
+  const invalidVisible = visible.filter(record => !valid(record));
+  if (visible.length < 10 || invalidVisible.length) {
+    throw new Error(`every visible feed row needs source-page text, one-to-three distinct source-hashed Korean or English lines, and no repeated filler (${invalidVisible.slice(0, 3).map(record => record.titleEn || record.title || record.url).join(" | ")})`);
   }
   const translated = visible.filter(record => record.localization.status === "accepted").length;
   console.log(`  정상  본문 기반 피드 ${visible.length}건 · 한국어 ${translated}건 · 영문 폴백 ${visible.length - translated}건`);
