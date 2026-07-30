@@ -956,49 +956,62 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
         })()}
 
         {(c.org || c.live?.organization || (c.live && c.live.officers && c.live.officers.length)) && (() => {
-          const org = c.org || c.live?.organization || {};
+          const org = c.live?.organization || c.org || {};
           const live = c.live || {};
           const curated = Array.isArray(org.leadership) ? org.leadership : [];
           const filingOfficers = (live.officers && live.officers.length ? live.officers : org.officers || [])
             .map(officer => ({ ...officer, role: officer.role || officer.title || "Executive" }));
           const personKey = name => String(name || "").toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
-          const curatedByName = new Map(curated.map(person => [personKey(person.name), person]));
-          const seen = new Set();
-          const roster = [];
           const normalizedTeam = Array.isArray(org.executiveTeam) ? org.executiveTeam : [];
-          normalizedTeam.forEach(person => {
+          const detailValue = (...values) => values
+            .map(value => String(value || "").trim())
+            .filter(Boolean)
+            .sort((left, right) => right.length - left.length)[0] || "";
+          const rosterByName = new Map();
+          const mergePerson = (person, isFiling = false) => {
             const key = personKey(person.name);
-            if (!key || seen.has(key)) return;
-            seen.add(key);
-            roster.push(person);
-          });
-          filingOfficers.forEach(officer => {
-            const key = personKey(officer.name);
-            const background = curatedByName.get(key) || {};
-            if (!key || seen.has(key)) return;
-            seen.add(key);
-            roster.push({ ...background, ...officer, role: officer.role || background.role });
-          });
-          curated.forEach(person => {
-            const key = personKey(person.name);
-            if (!key || seen.has(key)) return;
-            seen.add(key);
-            roster.push(person);
-          });
-          const tierOf = person => person.tier || (
+            if (!key) return;
+            const current = rosterByName.get(key) || {};
+            const currentVerified = /^(official-role-match|official-page-name-match|knowledge-graph-domain-match)$/.test(current.verification || "");
+            const incomingVerified = /^(official-role-match|official-page-name-match|knowledge-graph-domain-match)$/.test(person.verification || "");
+            rosterByName.set(key, {
+              ...current,
+              ...person,
+              name: person.name || current.name,
+              role: isFiling ? (person.role || person.title || current.role) : (current.role || person.role || person.title),
+              edu: detailValue(current.edu, current.education, person.edu, person.education),
+              career: detailValue(current.career, current.bg, person.career, person.bg),
+              li: current.li || person.li || "",
+              linkedinVerification: current.linkedinVerification || person.linkedinVerification || "",
+              verification: currentVerified ? current.verification : incomingVerified ? person.verification : current.verification || person.verification,
+              verificationUrl: currentVerified ? current.verificationUrl : incomingVerified ? person.verificationUrl : current.verificationUrl || person.verificationUrl,
+              roleSourceType: isFiling || person.roleSourceType === "market-filing" || person.sourceType === "market-filing"
+                ? "market-filing" : current.roleSourceType || person.roleSourceType || "",
+              sourceType: isFiling ? "market-filing" : current.sourceType || person.sourceType,
+            });
+          };
+          normalizedTeam.forEach(person => mergePerson(person, person.sourceType === "market-filing"));
+          curated.forEach(person => mergePerson(person));
+          filingOfficers.forEach(person => mergePerson(person, true));
+          const roster = [...rosterByName.values()];
+          const tierOf = person => (
             /founder|co-founder|chair|board/i.test(String(person.role || "")) ? "founder-board"
-              : /chief executive|\bceo\b|president/i.test(String(person.role || "")) ? "ceo"
+              : /chief executive|\bceo\b|president/i.test(String(person.role || "")) ? "business-leadership"
                 : /chief (technology|scientist|product)|\bcto\b|\bcpo\b|research|engineering|technology|product|AI\b/i.test(String(person.role || "")) ? "product-technology"
                   : /chief financial|\bcfo\b|finance|legal|counsel|people|operations|\bcoo\b|commercial|marketing|revenue/i.test(String(person.role || "")) ? "corporate-functions"
                     : "executive-team"
           );
-          const leadIndex = roster.findIndex(person => tierOf(person) === "ceo")
-            >= 0 ? roster.findIndex(person => tierOf(person) === "ceo")
-            : roster.findIndex(person => /founder|co-founder|chief executive|\bceo\b|chair/i.test(String(person.role || "")));
+          const leadIndex = roster.findIndex(person => /chief executive|\bceo\b/i.test(String(person.role || "")))
+            >= 0 ? roster.findIndex(person => /chief executive|\bceo\b/i.test(String(person.role || "")))
+            : roster.findIndex(person => /founder|co-founder|president|chair/i.test(String(person.role || "")));
           const lead = roster[leadIndex >= 0 ? leadIndex : 0];
-          const reports = roster.filter(person => person !== lead).slice(0, 17);
+          const tierRank = { "founder-board": 0, "business-leadership": 1, "product-technology": 2, "corporate-functions": 3, "executive-team": 4 };
+          const reports = roster.filter(person => person !== lead)
+            .sort((left, right) => (tierRank[tierOf(left)] ?? 9) - (tierRank[tierOf(right)] ?? 9))
+            .slice(0, 11);
           const tierMeta = [
             ["founder-board", "창업자·이사회", "Founder & Board"],
+            ["business-leadership", "사업부·계열 리더", "Business Unit Leadership"],
             ["product-technology", "제품·기술", "Product & Technology"],
             ["corporate-functions", "재무·운영·사업", "Corporate Functions"],
             ["executive-team", "기타 임원", "Executive Team"],
@@ -1017,20 +1030,24 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
           const D = window.DASH || {};
           const directProfiles = D.LINKEDIN_PROFILES || {};
           const liName = name => String(name).split("(")[0].split("·")[0].replace(/[^\p{L}\p{N}\s.'-]/gu, "").trim();
+          const isDirectLinkedIn = value => /^https:\/\/(?:(?:www|[a-z]{2,3})\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+\/?$/i.test(String(value || ""));
           const liOf = p => {
             if (!p) return "";
-            return p.li || directProfiles[p.name] || directProfiles[liName(p.name)] || "";
+            const mapped = directProfiles[p.name] || directProfiles[liName(p.name)] || "";
+            if (isDirectLinkedIn(mapped)) return mapped;
+            const verified = /^(curated-direct-profile|official-jsonld-direct-profile|wikidata-property-direct-profile)$/.test(p.linkedinVerification || "");
+            return verified && isDirectLinkedIn(p.li) ? p.li : "";
           };
           const coLink = c.profile?.linkedin || c.live?.profile?.linkedin || "";
           const NodeBg = ({ p }) => (
             <React.Fragment>
               {(p.edu || p.education || p.career || p.bg) && <dl className="cd-org-background">
                 {(p.edu || p.education) && <div><dt>학교·전공</dt><dd>{p.edu || p.education}</dd></div>}
-                {(p.career || p.bg) && <div><dt>주요 경력</dt><dd>{p.career || p.bg}</dd></div>}
+                {(p.career || p.bg) && <div><dt>빅테크·주요 경력</dt><dd>{p.career || p.bg}</dd></div>}
               </dl>}
               <div className="cd-org-verification">
-                <span className={p.verification === "official-role-match" || p.sourceType === "market-filing" ? "verified" : "curated"}>
-                  {p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "knowledge-graph-domain-match" ? "공식 도메인 일치 지식그래프" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : p.sourceType === "market-filing" ? "시장·공시 원장" : "큐레이션 검토"}
+                <span className={p.verification === "official-role-match" || p.roleSourceType === "market-filing" ? "verified" : "curated"}>
+                  {p.roleSourceType === "market-filing" ? "최신 공시 직함" : p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "knowledge-graph-domain-match" ? "공식 도메인 일치 지식그래프" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : "큐레이션 검토"}
                 </span>
                 {p.verificationUrl && <a href={p.verificationUrl} target="_blank" rel="noopener">근거</a>}
               </div>
@@ -1080,7 +1097,6 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                       </div>
                     )}
                   </div>
-                  <p className="cd-org-note">CEO 아래 창업자·이사회, 제품·기술, 재무·운영·사업 기능으로 임원 레벨을 분리 · 최대 18명 표시 · 공식 페이지·시장 원장과 큐레이션 이력을 구분 · <b>검증된 LinkedIn 직접 프로필만 연결</b></p>
                 </div>
               )}
               {interviewRows.length > 0 && (

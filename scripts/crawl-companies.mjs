@@ -21,6 +21,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, executiveTier } from "./company-sources.mjs";
 
+const MAX_EXECUTIVES = 12;
+
 // 기업명 → 상장 티커(시총 연동용 매핑 — 데이터가 아니라 조인 키)
 const TICKER_OF = {
   "NVIDIA": "NVDA", "Microsoft": "MSFT", "Amazon": "AMZN", "Apple": "AAPL",
@@ -223,9 +225,26 @@ async function main() {
   const pct = (present, total) => Math.round((present / Math.max(total, 1)) * 100);
   const personKey = name => String(name || "").split("(")[0].split("·")[0]
     .replace(/[^\p{L}\p{N}\s.'-]/gu, "").trim();
+  const directLinkedIn = value => /^https:\/\/(?:(?:www|[a-z]{2,3})\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+\/?$/i.test(String(value || ""))
+    ? String(value) : "";
   const withDirectLinkedIn = person => {
-    const li = person && (person.li || linkedinSource[person.name] || linkedinSource[personKey(person.name)]);
-    return li ? { ...person, li } : { ...person };
+    if (!person) return person;
+    const mapped = directLinkedIn(linkedinSource[person.name] || linkedinSource[personKey(person.name)]);
+    const sourceVerified = /^(official-role-match|official-page-name-match|knowledge-graph-domain-match)$/.test(person.verification || "");
+    const embedded = sourceVerified ? directLinkedIn(person.li) : "";
+    const li = mapped || embedded;
+    const normalized = { ...person };
+    if (!li) {
+      delete normalized.li;
+      delete normalized.linkedinVerification;
+      return normalized;
+    }
+    normalized.li = li;
+    normalized.linkedinVerification = mapped
+      ? "curated-direct-profile"
+      : person.linkedinVerification || (person.verification === "knowledge-graph-domain-match"
+        ? "wikidata-property-direct-profile" : "official-jsonld-direct-profile");
+    return normalized;
   };
   const companyBaseByName = new Map(trackedCompanies.map(base => [base.name, base]));
   const startupReferenceByName = new Map((startupRegistry.trackedReferences || [])
@@ -275,8 +294,8 @@ async function main() {
     const official = officialCompanies[name] || {};
     const verificationByName = new Map((official.verifiedExecutives || []).map(person => [personKey(person.name).toLowerCase(), person]));
     const sourceLeadership = Array.isArray(o.executiveTeam) && o.executiveTeam.length ? o.executiveTeam : o.leadership;
-    const curatedLeadership = Array.isArray(sourceLeadership) ? sourceLeadership.slice(0, 18).map(withDirectLinkedIn) : [];
-    const liveOfficers = Array.isArray(rec.officers) ? rec.officers.slice(0, 18).map(withDirectLinkedIn) : [];
+    const curatedLeadership = Array.isArray(sourceLeadership) ? sourceLeadership.slice(0, MAX_EXECUTIVES).map(withDirectLinkedIn) : [];
+    const liveOfficers = Array.isArray(rec.officers) ? rec.officers.slice(0, MAX_EXECUTIVES).map(withDirectLinkedIn) : [];
     const curatedByName = new Map(curatedLeadership.map(person => [personKey(person.name).toLowerCase(), person]));
     const executiveSeen = new Set();
     const executiveTeam = [];
@@ -294,11 +313,22 @@ async function main() {
         tier: executiveTier(role),
         sourceType: liveOfficers.some(item => personKey(item.name).toLowerCase() === key)
           ? "market-filing" : person.sourceType || curated.sourceType || "curated-leadership",
+        roleSourceType: liveOfficers.some(item => personKey(item.name).toLowerCase() === key)
+          ? "market-filing" : person.roleSourceType || curated.roleSourceType || "",
         verification: verification.status || person.verification || curated.verification || "unverified",
         verificationUrl: verification.sourceUrl || person.verificationUrl || curated.verificationUrl || "",
         verifiedAt: verification.checkedAt || person.verifiedAt || curated.verifiedAt || "",
       });
     }
+    const executivePriority = person => ({
+      "founder-board": 0,
+      ceo: 1,
+      "product-technology": 2,
+      "corporate-functions": 3,
+      "executive-team": 4,
+    }[executiveTier(person.role)] ?? 9);
+    executiveTeam.sort((left, right) => executivePriority(left) - executivePriority(right));
+    executiveTeam.splice(MAX_EXECUTIVES);
     const normalizedOrg = {
       ...o,
       leadership: curatedLeadership,
@@ -336,7 +366,7 @@ async function main() {
         score: pct(orgPresent, orgChecks.length),
         executiveCount: executiveTeam.length,
         verifiedExecutiveCount: verifiedCount,
-        directLinkedInCount: executiveTeam.filter(person => /^https:\/\/(?:(?:www|[a-z]{2})\.)?linkedin\.com\/in\/[^/?#]+\/?$/i.test(person.li || "")).length,
+        directLinkedInCount: executiveTeam.filter(person => directLinkedIn(person.li) && person.linkedinVerification).length,
         officialSourceStatus: official.sourceStatus || base.coverage?.organization?.officialSourceStatus || "not-configured",
       },
       sourceMode: rec.ticker ? "market-filing+curated+news"

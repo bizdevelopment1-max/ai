@@ -22,6 +22,7 @@ const MISSING_DEPTH_ONLY = /^(1|true|yes)$/i.test(String(process.env.STARTUP_ORG
 const REFRESH_BUDGET = Math.max(1, Number(process.env.STARTUP_ORG_REFRESH_BUDGET || 36));
 const MAX_AGE_DAYS = Math.max(1, Number(process.env.STARTUP_ORG_MAX_AGE_DAYS || 21));
 const CONCURRENCY = Math.max(1, Math.min(10, Number(process.env.STARTUP_ORG_CONCURRENCY || 6)));
+const MAX_EXECUTIVES = 12;
 const NOW = new Date().toISOString();
 
 const clean = value => String(value || "")
@@ -258,7 +259,9 @@ function relevantOfficialLinks(page, domain) {
     let url;
     try { url = new URL(match[1], page.resolvedUrl || page.url).href; } catch { continue; }
     if (!sameDomain(url, domain)) continue;
-    if (!/(?:about|company|team|leadership|management|founder|who-we-are|our-story)/i.test(`${url} ${label}`)) continue;
+    const pathname = new URL(url).pathname;
+    if (!/(?:\/|^)(?:about(?:-us)?|company|team|leadership|management|who-we-are|our-story)(?:\/|$)/i.test(pathname)) continue;
+    if (/(?:blog|news|resource|customer|case-stud|use-case|press|event)/i.test(pathname)) continue;
     url = url.replace(/#.*$/, "");
     if (seen.has(url)) continue;
     seen.add(url);
@@ -305,9 +308,23 @@ const plausiblePerson = name => {
   const value = clean(name);
   if (!new RegExp(`^${namePattern}$`).test(value)) return false;
   const words = value.split(/\s+/);
+  if (words.length > 4
+    || words.some(word => word.length > 1 && word === word.toUpperCase())
+    || /[.:]|\bCo-?$|\b(?:Our|We|AI|Founder|Co-Founder|Engineering|Product|Design|Customer|Success|Investors?|Advisory|Board|Model|Privacy|Education|Systems|Security|Secureworks|Former|Previously|Company|Pitch|Hiring|Partner|Member|Vice)\b/i.test(value)) return false;
   if (words.some(word => personNameStopWords.test(word.replace(/[.,]/g, "")))) return false;
   return !/Our Team|The Team|About Us|Leadership Team|Executive Team|Chief Executive Officer/i.test(value);
 };
+const trustedLeadershipPath = value => {
+  try {
+    const pathname = new URL(value).pathname;
+    return /(?:\/|^)(?:about(?:-us)?|company|team|leadership|management|who-we-are|our-story)(?:\/|$)/i.test(pathname)
+      && !/(?:blog|news|resource|customer|case-stud|use-case|press|event)/i.test(pathname);
+  } catch {
+    return false;
+  }
+};
+const reliableExtractedPerson = person => person?.sourceType !== "official-page-extraction"
+  || (trustedLeadershipPath(person.verificationUrl) && plausiblePerson(person.name) && plausibleRole(person.role));
 const normalizedRole = role => clean(role)
   .replace(/\bChief Executive Officer\b/i, "CEO")
   .replace(/\bChief Technology Officer\b/i, "CTO")
@@ -342,11 +359,15 @@ function peopleFromOfficialPage(page) {
   for (const object of jsonLdObjects(page.html)) {
     if (!typesOf(object).some(type => /person/i.test(type))) continue;
     const linkedIn = sameAsValues(object).find(url => /linkedin\.com\/in\//i.test(url));
+    const directProfile = directLinkedIn(linkedIn);
     push(object.name, object.jobTitle || object.roleName, {
-      li: directLinkedIn(linkedIn),
+      li: directProfile,
+      linkedinVerification: directProfile ? "official-jsonld-direct-profile" : "",
       edu: [object.alumniOf].flat().map(nameFrom).filter(Boolean).join(" · "),
+      sourceType: "official-jsonld",
     });
   }
+  if (!trustedLeadershipPath(page.resolvedUrl || page.url)) return people.slice(0, MAX_EXECUTIVES);
   for (const match of String(page.html || "").matchAll(/"name"\s*:\s*"([^"\\]{3,80})"[\s\S]{0,280}?"(?:position|jobTitle|role)"\s*:\s*"([^"\\]{2,120})"/gi)) {
     push(match[1], match[2]);
   }
@@ -368,7 +389,7 @@ function peopleFromOfficialPage(page) {
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
-  }).slice(0, 18);
+  }).slice(0, MAX_EXECUTIVES);
 }
 
 function officialStructuredProfile(pages) {
@@ -391,12 +412,14 @@ function officialStructuredProfile(pages) {
       const founders = [object.founder, object.founders].flat().filter(Boolean);
       founders.forEach(founder => {
         const linkedIn = sameAsValues(founder).find(url => /linkedin\.com\/in\//i.test(url));
+        const directProfile = directLinkedIn(linkedIn);
         const name = nameFrom(founder);
         if (name) leadership.push({
           name,
           role: "Founder",
           tier: "founder-board",
-          li: directLinkedIn(linkedIn),
+          li: directProfile,
+          linkedinVerification: directProfile ? "official-jsonld-direct-profile" : "",
           sourceType: "official-jsonld",
           verification: "official-role-match",
           verificationUrl: page.resolvedUrl || page.url,
@@ -459,7 +482,7 @@ function mergePeople(...groups) {
       tier: tierOf(/\bCEO\b|chief executive/i.test(person.role) ? person.role : current.role),
     });
   }
-  return deduped.slice(0, 18);
+  return deduped.slice(0, MAX_EXECUTIVES);
 }
 
 function wikidataProfile(record, entity, entityMap) {
@@ -479,6 +502,7 @@ function wikidataProfile(record, entity, entityMap) {
     const education = entityIds(person, "P69").map(ref => labelOf(entityMap[ref])).filter(Boolean);
     const employers = entityIds(person, "P108").map(ref => labelOf(entityMap[ref])).filter(Boolean);
     const linkedInId = stringValues(person, "P6634")[0] || "";
+    const directProfile = directLinkedIn(linkedInId);
     const role = founder && ceo ? "Founder · CEO" : founder ? "Founder" : "CEO";
     return {
       name: labelOf(person),
@@ -486,7 +510,8 @@ function wikidataProfile(record, entity, entityMap) {
       tier: tierOf(role),
       edu: education.slice(0, 4).join(" · "),
       career: employers.slice(0, 4).join(" · "),
-      li: directLinkedIn(linkedInId),
+      li: directProfile,
+      linkedinVerification: directProfile ? "wikidata-property-direct-profile" : "",
       sourceType: "wikidata-domain-match",
       verification: "knowledge-graph-domain-match",
       verificationUrl: `https://www.wikidata.org/wiki/${id}`,
@@ -531,16 +556,26 @@ function retainedSnapshot(record) {
 
 function normalizeStoredDepth(record) {
   const organization = record.organization || {};
-  const executiveTeam = mergePeople(organization.executiveTeam || organization.leadership || []).map(person => {
+  const storedPeople = (organization.executiveTeam || organization.leadership || []).filter(reliableExtractedPerson);
+  const executiveTeam = mergePeople(storedPeople).map(person => {
     const li = directLinkedIn(person.li);
     const normalized = { ...person };
-    if (li) normalized.li = li;
-    else delete normalized.li;
+    const verified = /^(curated-direct-profile|official-jsonld-direct-profile|wikidata-property-direct-profile)$/.test(person.linkedinVerification || "")
+      || (li && person.verification === "knowledge-graph-domain-match")
+      || (li && person.verification === "official-role-match" && /official-(?:jsonld|page-extraction)/.test(person.sourceType || ""));
+    if (li && verified) {
+      normalized.li = li;
+      normalized.linkedinVerification ||= person.verification === "knowledge-graph-domain-match"
+        ? "wikidata-property-direct-profile" : "official-jsonld-direct-profile";
+    } else {
+      delete normalized.li;
+      delete normalized.linkedinVerification;
+    }
     return normalized;
   });
   const verifiedExecutiveCount = executiveTeam.filter(person =>
     person.verification === "official-role-match" || person.verification === "knowledge-graph-domain-match").length;
-  const directLinkedInCount = executiveTeam.filter(person => person.li).length;
+  const directLinkedInCount = executiveTeam.filter(person => person.li && person.linkedinVerification).length;
   const profile = {
     ...(record.profile || {}),
     legalName: record.profile?.legalName || record.publisher || record.name || "",
@@ -599,7 +634,7 @@ function buildEnrichment(record, wikidata, officialPages, officialSeed = "") {
 
   const executiveTeam = mergePeople(leadership);
   const officialMatched = executiveTeam.filter(person => person.verification === "official-role-match").length;
-  const directProfiles = executiveTeam.filter(person => directLinkedIn(person.li)).length;
+  const directProfiles = executiveTeam.filter(person => directLinkedIn(person.li) && person.linkedinVerification).length;
   const organization = {
     ...(prior.organization || {}),
     mission: official.mission || wikidata.mission || prior.organization?.mission || "",

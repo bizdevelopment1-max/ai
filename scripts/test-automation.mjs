@@ -310,6 +310,42 @@ try {
 }
 
 try {
+  const [boards, companies, startups, companyCrawler, startupCrawler] = await Promise.all([
+    readFile("boards.jsx", "utf8"),
+    readFile("companies.json", "utf8").then(JSON.parse),
+    readFile("startups.json", "utf8").then(JSON.parse),
+    readFile("scripts/crawl-companies.mjs", "utf8"),
+    readFile("scripts/crawl-startup-organizations.mjs", "utf8"),
+  ]);
+  const companyRows = Object.values(companies.companies || {});
+  const startupRows = [...(startups.large || []), ...(startups.small || []), ...(startups.institutional || [])];
+  const organizationRows = [...companyRows, ...startupRows].map(row => row.organization).filter(Boolean);
+  const people = organizationRows.flatMap(organization => organization.executiveTeam || []);
+  const depthReady = organizationRows.every(organization =>
+    Array.isArray(organization.executiveTeam) && organization.executiveTeam.length <= 12);
+  const directProfilesVerified = people.filter(person => person.li).every(person =>
+    /^https:\/\/(?:(?:www|[a-z]{2,3})\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+\/?$/i.test(person.li)
+    && /^(curated-direct-profile|official-jsonld-direct-profile|wikidata-property-direct-profile)$/.test(person.linkedinVerification || ""));
+  const nodeDetailReady = boards.includes(">학교·전공<")
+    && boards.includes(">빅테크·주요 경력<")
+    && boards.includes("Business Unit Leadership")
+    && boards.includes(".slice(0, 11)")
+    && !boards.includes('className="cd-org-note"');
+  const refreshReady = companyCrawler.includes("const MAX_EXECUTIVES = 12")
+    && startupCrawler.includes("const MAX_EXECUTIVES = 12")
+    && companyCrawler.includes("roleSourceType")
+    && companyCrawler.includes("linkedinVerification")
+    && startupCrawler.includes("linkedinVerification");
+  if (!depthReady || !directProfilesVerified || !nodeDetailReady || !refreshReady) {
+    throw new Error("12-person leadership merge, in-node background detail, direct-profile verification, or recurring normalization is incomplete");
+  }
+  console.log(`  OK  전체 기업 조직도 ${organizationRows.length}개 · 최대 12명 · 학교·전공·경력 노드 통합 · LinkedIn 직접 프로필 검증`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  organization depth and direct LinkedIn integrity: ${error.message}`);
+}
+
+try {
   const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
   const consultingInteraction = boards.includes("function ConsultingDecisionRail")
     && boards.includes('aria-label="스타트업 전략 분석 프레임"')
@@ -400,13 +436,15 @@ try {
   const directLinkedInOnly = directProfiles.every(url =>
     /^https:\/\/(?:(?:www|[a-z]{2})\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+\/?$/i.test(url));
   const badExtractedNames = rows.flatMap(row => row.organization.executiveTeam || []).some(person =>
-    /(?:cookie preferences|director manager|individual admin|\b(?:CEO|CTO|CFO|COO)\b.*\b(?:CEO|CTO|CFO|COO)\b)/i.test(person.name || "")
+    /(?:cookie preferences|director manager|individual admin|\b(?:CEO|CTO|CFO|COO)\b.*\b(?:CEO|CTO|CFO|COO)\b|\b(?:investors?|advisory|engineering|product|customer|company|pitch|hiring)\b)/i.test(person.name || "")
     || /[{};]|\/\*|\*\//.test(person.role || ""));
   const automationReady = /crawl-startup-organizations\.mjs/.test(workflow)
     && /STARTUP_ORG_REFRESH_BUDGET:\s*36/.test(workflow)
     && startupOrgCrawler.includes("P856")
     && startupOrgCrawler.includes("retained-verified-snapshot")
     && startupOrgCrawler.includes("official-role-match")
+    && startupOrgCrawler.includes("trustedLeadershipPath")
+    && startupOrgCrawler.includes("reliableExtractedPerson")
     && !startupOrgCrawler.includes("linkedin.com/search/results")
     && boards.includes("s.organization")
     && boards.includes("s.profile");
