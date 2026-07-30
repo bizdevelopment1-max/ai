@@ -1315,15 +1315,15 @@ window.DASH = (function () {
     "Applied Digital": { founded: "2001", hq: "미국 텍사스州 댈러스", business: ["AI·HPC 데이터센터", "GPU 클라우드 호스팅"] },
     "SK hynix": { founded: "1983", hq: "대한민국 이천", business: ["DRAM·NAND 메모리", "HBM(AI 가속기 선두)"] },
 
-    "OpenAI": { founded: "2015 · Sam Altman 等", ceo: "Sam Altman", hq: "미국 캘리포니아州 샌프란시스코", business: ["ChatGPT(소비자·기업)", "GPT 모델 API", "Deployment Company(엔터프라이즈 구축)"], shareholders: "비영리 모회사 지배 · Microsoft 등 투자" },
-    "Anthropic": { founded: "2021 · Dario·Daniela Amodei 等", ceo: "Dario Amodei", hq: "미국 캘리포니아州 샌프란시스코", business: ["Claude(모델·API)", "엔터프라이즈·Claude Code", "Ode(엔터프라이즈 AI 서비스 JV)"], shareholders: "Amazon·Google 대형 투자" },
+    "OpenAI": { founded: "2015 · Sam Altman 等", ceo: "Sam Altman", hq: "미국 캘리포니아州 샌프란시스코", headcount: "약 3,000명(2026 보도 추정)", business: ["ChatGPT(소비자·기업)", "GPT 모델 API", "Deployment Company(엔터프라이즈 구축)"], shareholders: "비영리 모회사 지배 · Microsoft 등 투자" },
+    "Anthropic": { founded: "2021 · Dario·Daniela Amodei 等", ceo: "Dario Amodei", hq: "미국 캘리포니아州 샌프란시스코", headcount: "약 2,000명(2026 보도 추정)", business: ["Claude(모델·API)", "엔터프라이즈·Claude Code", "Ode(엔터프라이즈 AI 서비스 JV)"], shareholders: "Amazon·Google 대형 투자" },
     "DeepSeek": { founded: "2023 · 항저우", hq: "중국 항저우", business: ["오픈 가중치 LLM(R1·V3)", "저비용 추론"] },
-    "Perplexity": { founded: "2022", ceo: "Aravind Srinivas", hq: "미국 캘리포니아州 샌프란시스코", business: ["AI 검색·답변 엔진", "Comet 브라우저"] },
-    "Mistral AI": { founded: "2023", ceo: "Arthur Mensch", hq: "프랑스 파리", business: ["오픈 가중치 LLM", "엔터프라이즈·소버린 AI"] },
-    "Cohere": { founded: "2019", ceo: "Aidan Gomez", hq: "캐나다 토론토", business: ["엔터프라이즈·소버린 LLM", "RAG·임베딩"] },
-    "Databricks": { founded: "2013", ceo: "Ali Ghodsi", hq: "미국 캘리포니아州 샌프란시스코", business: ["데이터·AI 레이크하우스", "Mosaic AI"] },
+    "Perplexity": { founded: "2022", ceo: "Aravind Srinivas", hq: "미국 캘리포니아州 샌프란시스코", headcount: "약 1,000명(2026 보도 추정)", business: ["AI 검색·답변 엔진", "Comet 브라우저"] },
+    "Mistral AI": { founded: "2023", ceo: "Arthur Mensch", hq: "프랑스 파리", headcount: "약 250명(2026 보도 추정)", business: ["오픈 가중치 LLM", "엔터프라이즈·소버린 AI"] },
+    "Cohere": { founded: "2019", ceo: "Aidan Gomez", hq: "캐나다 토론토", headcount: "약 400명(2026 보도 추정)", business: ["엔터프라이즈·소버린 LLM", "RAG·임베딩"] },
+    "Databricks": { founded: "2013", ceo: "Ali Ghodsi", hq: "미국 캘리포니아州 샌프란시스코", headcount: "약 8,000명(2026 보도 추정)", business: ["데이터·AI 레이크하우스", "Mosaic AI"] },
     "Scale AI": { founded: "2016", hq: "미국 캘리포니아州 샌프란시스코", business: ["데이터 라벨링·평가", "모델 파인튜닝 데이터"] },
-    "Hugging Face": { founded: "2016", ceo: "Clément Delangue", hq: "미국 뉴욕", business: ["오픈소스 모델 허브", "Transformers·개발 도구"] },
+    "Hugging Face": { founded: "2016", ceo: "Clément Delangue", hq: "미국 뉴욕", headcount: "약 500명(2026 보도 추정)", business: ["오픈소스 모델 허브", "Transformers·개발 도구"] },
     "Runway": { founded: "2018", hq: "미국 뉴욕", business: ["생성형 영상 AI(Gen 시리즈)"] },
     "Stability AI": { founded: "2019", ceo: "Prem Akkaraju", hq: "영국 런던", business: ["오픈 이미지·영상 생성(Stable Diffusion)"] },
     "ElevenLabs": { founded: "2022", ceo: "Mati Staniszewski", hq: "미국/폴란드", business: ["AI 음성 합성·더빙"] },
@@ -1347,10 +1347,13 @@ window.DASH = (function () {
   // ── 조직·리더십·미션 ────────────────────────────────────────────────
   // 창업자·핵심 경영진 배경 + 회사 미션(정적 큐레이션). 공개기업은 crawl-financials가
   // 최신 임원 명단(officers)을 companies.json에 덮어써 조직도를 자동 갱신한다.
+  // 리더십: role(창업자·CEO·CTO 구분) + edu(학교·전공) + career(前 빅테크·주요 경력).
+  // edu·career는 공개 사실 기반 큐레이션(정적). 조직도의 '현직 임원 명단'은 crawl-financials의
+  // live officers가 우선 표시되고, 창업자·배경은 아래 정적 데이터로 보완한다.
   const COMPANY_ORG = {
     "OpenAI": { mission: "AGI(범용인공지능)가 전 인류에 이롭도록 보장", leadership: [
-      { name: "Sam Altman", role: "Founder·CEO", bg: "Stanford 중퇴 · 前 Loopt 창업·Y Combinator 대표" },
-      { name: "Greg Brockman", role: "Co-founder·President", bg: "MIT·Harvard 중퇴 · 前 Stripe CTO" },
+      { name: "Sam Altman", role: "Founder·CEO", edu: "Stanford 컴퓨터과학 중퇴", career: "前 Loopt 창업 · Y Combinator 대표", bg: "Stanford 중퇴 · 前 Loopt 창업·Y Combinator 대표" },
+      { name: "Greg Brockman", role: "Co-founder·President", edu: "Harvard·MIT 중퇴", career: "前 Stripe CTO", bg: "MIT·Harvard 중퇴 · 前 Stripe CTO" },
     ], interviews: [
       { who: "Sam Altman", role: "CEO", date: "2026-05-26",
         quoteEn: "I was pretty wrong … I'm delighted to be wrong (on AI wiping out white-collar jobs). We are inside the singularity; we may need to pace the rate of AI development.",
@@ -1358,10 +1361,10 @@ window.DASH = (function () {
         source: "Fortune·Forbes", url: "https://fortune.com/2026/05/26/sam-altman-dario-amodei-walking-back-ai-jobs-apocalypse-prophecies-ipo/" },
     ] },
     "Anthropic": { mission: "신뢰·해석·통제 가능한 AI 시스템 구축 — 안전한 AI(공익법인)", leadership: [
-      { name: "Dario Amodei", role: "Founder·CEO", bg: "Stanford 물리학 박사 · 前 Google Brain·Baidu·OpenAI 연구부문 VP" },
-      { name: "Daniela Amodei", role: "Co-founder·President", bg: "前 Stripe · OpenAI 안전·정책 VP" },
-      { name: "Jared Kaplan", role: "Co-founder·Chief Science Officer", bg: "이론물리학자(Johns Hopkins 교수) · 스케일링 법칙 연구" },
-      { name: "Chris Olah", role: "Co-founder", bg: "前 Google Brain · 기계적 해석가능성(interpretability) 개척" },
+      { name: "Dario Amodei", role: "Founder·CEO", edu: "Stanford 물리학 박사", career: "前 Google Brain · Baidu · OpenAI 연구부문 VP", bg: "Stanford 물리학 박사 · 前 Google Brain·Baidu·OpenAI 연구부문 VP" },
+      { name: "Daniela Amodei", role: "Co-founder·President", edu: "UC Santa Cruz 영문학·음악", career: "前 Stripe · OpenAI 안전·정책 VP", bg: "前 Stripe · OpenAI 안전·정책 VP" },
+      { name: "Jared Kaplan", role: "Co-founder·Chief Science Officer", edu: "Harvard 물리학 박사 · Johns Hopkins 교수", career: "이론물리학자 · AI 스케일링 법칙 연구", bg: "이론물리학자(Johns Hopkins 교수) · 스케일링 법칙 연구" },
+      { name: "Chris Olah", role: "Co-founder·Interpretability", edu: "대학 중퇴 · Thiel Fellow", career: "前 Google Brain · 기계적 해석가능성(interpretability) 개척", bg: "前 Google Brain · 기계적 해석가능성(interpretability) 개척" },
     ], interviews: [
       { who: "Dario Amodei", role: "CEO", date: "2026-07-27",
         quoteEn: "AI could match or exceed Nobel-laureate capability across most disciplines by late 2026 or early 2027. Governments should be able to block or deter deployment of a model if third-party assessment finds unacceptable risks.",
@@ -1369,34 +1372,34 @@ window.DASH = (function () {
         source: "Fortune·StartupHub", url: "https://www.startuphub.ai/ai-news/ai-figures/2026/figure-dario-amodei-strategic-position-vs-peer-2026-07-27" },
     ] },
     "Google DeepMind": { mission: "AI로 과학을 발전시켜 인류 난제 해결", leadership: [
-      { name: "Demis Hassabis", role: "Co-founder·CEO(DeepMind)", bg: "Cambridge 컴공·UCL 신경과학 박사 · 체스 마스터 · 2024 노벨화학상(AlphaFold)" },
-      { name: "Sundar Pichai", role: "Alphabet·Google CEO", bg: "IIT 카라그푸르·Stanford·Wharton MBA" },
+      { name: "Demis Hassabis", role: "Co-founder·CEO(DeepMind)", edu: "Cambridge 컴퓨터과학 · UCL 인지신경과학 박사", career: "체스 마스터 · 2024 노벨화학상(AlphaFold)", bg: "Cambridge 컴공·UCL 신경과학 박사 · 체스 마스터 · 2024 노벨화학상(AlphaFold)" },
+      { name: "Sundar Pichai", role: "Alphabet·Google CEO", edu: "IIT 카라그푸르 금속공학 · Stanford MS · Wharton MBA", career: "前 McKinsey · Google 제품 총괄", bg: "IIT 카라그푸르·Stanford·Wharton MBA" },
     ] },
     "Meta AI": { mission: "오픈 모델(Llama)로 범용 AI를 대중화", leadership: [
-      { name: "Mark Zuckerberg", role: "Founder·CEO", bg: "Harvard 중퇴 · Superintelligence Labs 직접 지휘" },
-      { name: "Yann LeCun", role: "Chief AI Scientist", bg: "Sorbonne 박사 · 前 Bell Labs · NYU 교수 · 2018 튜링상(딥러닝)" },
+      { name: "Mark Zuckerberg", role: "Founder·CEO", edu: "Harvard 컴퓨터과학·심리학 중퇴", career: "Superintelligence Labs 직접 지휘", bg: "Harvard 중퇴 · Superintelligence Labs 직접 지휘" },
+      { name: "Yann LeCun", role: "Chief AI Scientist", edu: "Sorbonne(UPMC) 컴퓨터과학 박사", career: "前 Bell Labs · NYU 교수 · 2018 튜링상(딥러닝)", bg: "Sorbonne 박사 · 前 Bell Labs · NYU 교수 · 2018 튜링상(딥러닝)" },
     ] },
     "Mistral AI": { mission: "개방·주권(sovereign) AI — 유럽발 오픈 모델", leadership: [
-      { name: "Arthur Mensch", role: "Co-founder·CEO", bg: "École Polytechnique·ENS · 前 Google DeepMind 연구원" },
-      { name: "Guillaume Lample · Timothée Lacroix", role: "Co-founder", bg: "前 Meta FAIR · LLaMA 핵심 연구" },
+      { name: "Arthur Mensch", role: "Co-founder·CEO", edu: "École Polytechnique · ENS", career: "前 Google DeepMind 연구원", bg: "École Polytechnique·ENS · 前 Google DeepMind 연구원" },
+      { name: "Guillaume Lample · Timothée Lacroix", role: "Co-founder·CTO", edu: "École Polytechnique", career: "前 Meta FAIR · LLaMA 핵심 연구", bg: "前 Meta FAIR · LLaMA 핵심 연구" },
     ] },
     "Perplexity": { mission: "세상의 지식에 근거를 달아 답하는 '답변 엔진'", leadership: [
-      { name: "Aravind Srinivas", role: "Co-founder·CEO", bg: "IIT 마드라스·UC Berkeley 박사 · 前 OpenAI·DeepMind 연구원" },
+      { name: "Aravind Srinivas", role: "Co-founder·CEO", edu: "IIT 마드라스 · UC Berkeley 컴퓨터과학 박사", career: "前 OpenAI · Google DeepMind 연구원", bg: "IIT 마드라스·UC Berkeley 박사 · 前 OpenAI·DeepMind 연구원" },
     ] },
     "Cohere": { mission: "기업용·주권 LLM으로 안전한 엔터프라이즈 AI", leadership: [
-      { name: "Aidan Gomez", role: "Co-founder·CEO", bg: "Univ of Toronto · 前 Google Brain · Transformer 논문 공저자" },
+      { name: "Aidan Gomez", role: "Co-founder·CEO", edu: "Univ of Toronto 컴퓨터과학", career: "前 Google Brain · Transformer('Attention Is All You Need') 논문 공저자", bg: "Univ of Toronto · 前 Google Brain · Transformer 논문 공저자" },
     ] },
     "Hugging Face": { mission: "좋은 머신러닝을 오픈소스로 민주화", leadership: [
-      { name: "Clément Delangue", role: "Co-founder·CEO", bg: "前 Moodstocks(구글 인수) · 오픈소스 모델 허브 생태계 구축" },
+      { name: "Clément Delangue", role: "Co-founder·CEO", edu: "ESCP Business School", career: "前 Moodstocks(구글 인수) · 오픈소스 모델 허브 생태계 구축", bg: "前 Moodstocks(구글 인수) · 오픈소스 모델 허브 생태계 구축" },
     ] },
     "Databricks": { mission: "데이터+AI를 레이크하우스로 통합", leadership: [
-      { name: "Ali Ghodsi", role: "Co-founder·CEO", bg: "前 UC Berkeley 교수 · Apache Spark·AMPLab 창시 그룹" },
+      { name: "Ali Ghodsi", role: "Co-founder·CEO", edu: "KTH(스웨덴) 분산컴퓨팅 박사", career: "前 UC Berkeley 교수 · Apache Spark·AMPLab 창시 그룹", bg: "前 UC Berkeley 교수 · Apache Spark·AMPLab 창시 그룹" },
     ] },
     "SpaceX (xAI, Cursor)": { mission: "우주의 본질 이해(xAI) · 다행성 문명(SpaceX)", leadership: [
-      { name: "Elon Musk", role: "Founder·CEO", bg: "UPenn 물리·경제 · Tesla·SpaceX·xAI 창업 · Grok 총괄" },
+      { name: "Elon Musk", role: "Founder·CEO", edu: "UPenn 물리학·경제학", career: "Tesla·SpaceX·xAI 창업 · Grok 총괄", bg: "UPenn 물리·경제 · Tesla·SpaceX·xAI 창업 · Grok 총괄" },
     ] },
     "NVIDIA": { mission: "가속 컴퓨팅으로 AI 시대의 연산 플랫폼 제공", leadership: [
-      { name: "Jensen Huang", role: "Founder·CEO", bg: "Oregon State EE·Stanford MS · 前 AMD·LSI Logic · 1993 공동창업·CUDA 구축" },
+      { name: "Jensen Huang", role: "Founder·CEO", edu: "Oregon State 전기공학 · Stanford 전기공학 석사", career: "前 AMD · LSI Logic · 1993 공동창업 · CUDA 생태계 구축", bg: "Oregon State EE·Stanford MS · 前 AMD·LSI Logic · 1993 공동창업·CUDA 구축" },
     ], interviews: [
       { who: "Jensen Huang", role: "CEO", date: "2026-03-23",
         quoteEn: "Asked whether an AI could autonomously start and run a billion-dollar company within 5-20 years: I think it's now. AGI is already behind us.",
@@ -1404,7 +1407,7 @@ window.DASH = (function () {
         source: "Lex Fridman Podcast · Yahoo·AOL", url: "https://www.aol.com/nvidia-jensen-huang-says-disagrees-191239054.html" },
     ] },
     "Apple": { mission: "프라이버시 우선 온디바이스 지능 — 최고의 개인 기기 경험", leadership: [
-      { name: "Tim Cook", role: "CEO", bg: "Auburn 산업공학·Duke MBA · 前 IBM·Compaq (2026.9 John Ternus 승계 예정)" },
+      { name: "Tim Cook", role: "CEO", edu: "Auburn 산업공학 · Duke MBA", career: "前 IBM · Compaq · Apple COO (2026.9 John Ternus 승계 예정)", bg: "Auburn 산업공학·Duke MBA · 前 IBM·Compaq (2026.9 John Ternus 승계 예정)" },
     ] },
   };
 

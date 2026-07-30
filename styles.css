@@ -991,6 +991,29 @@ a[href]:hover .rainbow-on-hover,
 .cd-org-reports::before { content: ""; position: absolute; top: 0; left: 15%; right: 15%; height: 2px; background: var(--line); }
 .cd-org-founders { margin: 12px 0 0; font-size: 11.5px; font-weight: 600; line-height: 1.5; color: var(--muted); }
 .cd-org-founders b { color: var(--ink); }
+.cd-org-note { margin: 11px 0 0; font-size: 11px; font-weight: 600; line-height: 1.5; color: var(--muted); }
+.cd-org-note b { color: var(--ink); }
+
+/* 창업자·경영진 배경 카드 (학교·전공 / 빅테크 경력) */
+.cd-bio { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.cd-bio-card { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 11px 13px; background: var(--panel); }
+.cd-bio-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.cd-bio-head b { font-size: 14px; font-weight: 800; color: var(--ink); }
+.cd-bio-role { font-size: 10.5px; font-weight: 800; color: var(--accent); background: color-mix(in srgb, var(--accent) 11%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); border-radius: 20px; padding: 1px 8px; }
+.cd-bio-head .cd-org-li { margin-left: auto; }
+.cd-bio-row { display: grid; grid-template-columns: 92px 1fr; gap: 4px 8px; padding: 3px 0; }
+.cd-bio-row em { font-style: normal; font-size: 10.5px; font-weight: 800; color: var(--muted); }
+.cd-bio-row span { font-size: 12px; font-weight: 700; line-height: 1.45; color: var(--ink); word-break: keep-all; }
+
+/* 비즈니스 모델·사업 방향 (crawl) */
+.cd-bd-row { display: grid; grid-template-columns: 72px 1fr; gap: 4px 10px; padding: 5px 0; }
+.cd-bd-row em { font-style: normal; font-size: 11px; font-weight: 800; color: var(--muted); }
+.cd-bd-row span { font-size: 13px; font-weight: 700; line-height: 1.55; color: var(--ink); word-break: keep-all; }
+.cd-bd-mix { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 10px; margin: 9px 0 4px; }
+.cd-bd-mix > em { font-style: normal; font-size: 11px; font-weight: 800; color: var(--muted); }
+.cd-bd-sec { margin-top: 12px; }
+.cd-bd-sec h5 { margin: 0 0 5px; font-size: 11px; font-weight: 800; color: var(--ink-2); }
+.cd-bd-sec h5::before { content: "▪ "; color: var(--accent); }
 /* 주요 인터뷰 인사이트 */
 .cd-itv { display: flex; flex-direction: column; gap: 10px; }
 .cd-itv-item { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 11px 14px; background: var(--panel-2); }

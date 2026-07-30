@@ -160,6 +160,7 @@ function App() {
   const [llmHealth, setLlmHealth] = uS(null);
   const [collectionHealth, setCollectionHealth] = uS(null);
   const [startupsX, setStartupsX] = uS(null);
+  const [monet, setMonet] = uS(null);
   uE(() => {
     if (!dataVersion) return;
     let alive = true;
@@ -178,6 +179,8 @@ function App() {
     let alive = true;
     fetch(dataUrl("companies.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
+    fetch(dataUrl("monetization.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && Array.isArray(j.companies)) setMonet(j); }).catch(() => {});
     fetch(dataUrl("startups.json"), { cache: "force-cache" }).then(r => { if (r.ok) return r.json(); return null; })
       .then(j => { if (alive && j && (j.large || j.small)) {
         const m = {};
@@ -214,10 +217,14 @@ function App() {
     merged.vchainVertical = ly ? ly.vertical : "";
     merged.org = (D.COMPANY_ORG || {})[c.name] || null;            // 미션·창업자·리더십(정적) — 조직도는 live officers 우선
     merged.invest = (D.COMPANY_INVEST || {})[c.name] || null;      // AI SW·서비스 투자 포트폴리오·전략 맵
+    // 크롤 기반 수익모델·사업 방향(monetization.json) — 원문 링크 신호 + 밸류체인 legend
+    merged.monetize = monet
+      ? { entry: (monet.companies || []).find(x => x.name === c.name) || null, models: monet.models || [], directions: monet.directions || [] }
+      : null;
     if (lv) { merged.live = lv; if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); } }
     if (strat) merged.strategy = strat;
     return merged;
-  }), [coLive, startupsX]);
+  }), [coLive, startupsX, monet]);
   // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
   const [stockData, setStockData] = uS(null);
   uE(() => {

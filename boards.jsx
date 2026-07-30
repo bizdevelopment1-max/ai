@@ -282,7 +282,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           // 변동 항목은 크롤 값 우선(최신·출처 기반), 없으면 정적 폴백
           const ceo = lv.ceo || p.ceo;
           const hq = lv.hq || p.hq;
-          const emp = lv.employees || "";
+          const emp = lv.employees || p.headcount || "";
           const holders = lv.topHolders || p.shareholders;
           const empAsof = lv.employees && lv.employeesAsof ? ` ('${String(lv.employeesAsof).slice(2)} 기준)` : "";
           const capAsof = lv.cap && lv.capAsof ? ` ('${String(lv.capAsof).slice(2, 7)} 기준)` : "";
@@ -315,6 +315,77 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           );
         })()}
 
+        {(() => {
+          const M = c.monetize || {};
+          const entry = M.entry;
+          const modelMeta = id => (M.models || []).find(m => m.id === id) || { ko: id, accent: cat.accent };
+          const dirMeta = id => (M.directions || []).find(d => d.id === id) || { ko: id, accent: cat.accent };
+          // 원문 확인(한국어 3줄) 기사 인덱스 — 표시 게이트
+          const srcIdx = new Map();
+          (articles || []).forEach(a => {
+            const loc = a?.localization, k = signalSourceKey(a?.url);
+            if (k && loc?.status === "accepted" && loc?.displayLanguage === "ko"
+              && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3) srcIdx.set(k, a);
+          });
+          const resolve = (arr, n) => {
+            const seen = new Set(), out = [];
+            for (const s of (arr || [])) {
+              const src = srcIdx.get(signalSourceKey(s.url));
+              if (!src) continue;
+              const d = displayFeedText(src);
+              if (!d.translated || !d.title) continue;
+              const k = signalSourceKey(s.url);
+              if (seen.has(k)) continue; seen.add(k);
+              out.push({ ...s, koTitle: d.title });
+              if (out.length >= n) break;
+            }
+            return out;
+          };
+          const monetize = entry ? resolve(entry.monetize, 3) : [];
+          const direction = entry ? resolve(entry.direction, 3) : [];
+          const mix = {}; monetize.forEach(s => { if (s.model) mix[s.model] = (mix[s.model] || 0) + 1; });
+          const modelMix = Object.entries(mix).sort((a, b) => b[1] - a[1]).map(([id, n]) => ({ id, n }));
+          const hasCrawl = monetize.length || direction.length;
+          if (!c.vp && !c.direction && !hasCrawl) return null;
+          return (
+            <div className="cd-section">
+              <h4>비즈니스 모델·사업 방향 <em>Business Model & Direction</em>{hasCrawl ? <b className="cd-prof-live">LIVE · 크롤</b> : null}</h4>
+              {c.vp && <div className="cd-bd-row"><em>가치 제안</em><span>{c.vp}</span></div>}
+              {c.direction && <div className="cd-bd-row"><em>사업 방향</em><span>{c.direction}</span></div>}
+              {modelMix.length > 0 && (
+                <div className="cd-bd-mix"><em>수익 모델(크롤)</em>
+                  <div className="mplay-mix">{modelMix.map(m => { const mm = modelMeta(m.id); return <span className="mplay-model" key={m.id} style={{ "--c": mm.accent }} title={mm.ko}>{mm.ko}<i>{m.n}</i></span>; })}</div>
+                </div>
+              )}
+              {monetize.length > 0 && (
+                <div className="cd-bd-sec">
+                  <h5>돈 버는 방식 — 크롤 신호</h5>
+                  {monetize.map((s, i) => { const mm = modelMeta(s.model); return (
+                    <a className="mplay-sig" key={"m" + i} href={s.url} target="_blank" rel="noopener">
+                      <span className="mplay-tag" style={{ "--c": mm.accent }}>{mm.ko}</span>
+                      <span className="mplay-txt">{s.koTitle}</span>
+                      <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""} ↗</em>
+                    </a>
+                  ); })}
+                </div>
+              )}
+              {direction.length > 0 && (
+                <div className="cd-bd-sec">
+                  <h5>앞으로의 투자·사업 방향 — 크롤 신호</h5>
+                  {direction.map((s, i) => { const dm = dirMeta(s.kind); return (
+                    <a className="mplay-sig" key={"d" + i} href={s.url} target="_blank" rel="noopener">
+                      <span className="mplay-tag dir" style={{ "--c": dm.accent }}>{dm.ko}</span>
+                      <span className="mplay-txt">{s.koTitle}</span>
+                      <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""} ↗</em>
+                    </a>
+                  ); })}
+                </div>
+              )}
+              {hasCrawl ? <p className="cd-cp-note">수익모델·사업 방향 신호는 매일 크롤 기사에서 자동 분류·누적 · 원문 확인(한국어 3줄) 기사만 표시</p> : null}
+            </div>
+          );
+        })()}
+
         {(c.org || (c.live && c.live.officers && c.live.officers.length)) && (() => {
           const org = c.org || {};
           const live = c.live || {};
@@ -323,6 +394,11 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           const roster = liveRoster || (org.leadership || []);
           const lead = roster[0];
           const reports = roster.slice(1);
+          const liUrl = name => "https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(name + " " + c.name);
+          const NodeBg = ({ p }) => (p.edu || p.career)
+            ? <span className="cd-org-bg">{[p.edu, p.career].filter(Boolean).join(" · ")}</span>
+            : (p.bg ? <span className="cd-org-bg">{p.bg}</span> : null);
+          const founders = org.leadership || [];
           return (
             <React.Fragment>
               {org.mission && (
@@ -333,13 +409,13 @@ function CompanyDetail({ company, cats, articles, onClose }) {
               )}
               {roster.length > 0 && (
                 <div className="cd-section">
-                  <h4>조직·리더십 <em>Leadership</em>{liveRoster ? <b className="cd-prof-live">LIVE · Yahoo Finance</b> : null}</h4>
+                  <h4>조직도 <em>Org Chart</em><b className="cd-prof-live">{liveRoster ? "LIVE · Yahoo Finance 임원" : "창업·리더십"}</b></h4>
                   <div className="cd-org">
                     {lead && (
                       <div className="cd-org-node lead">
                         <b>{lead.name}</b><span className="cd-org-role">{lead.role}</span>
-                        {lead.bg && <span className="cd-org-bg">{lead.bg}</span>}
-                        <a className="cd-org-li" href={"https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(lead.name + " " + c.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
+                        <NodeBg p={lead} />
+                        <a className="cd-org-li" href={liUrl(lead.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
                       </div>
                     )}
                     {reports.length > 0 && <span className="cd-org-conn" aria-hidden="true" />}
@@ -348,16 +424,33 @@ function CompanyDetail({ company, cats, articles, onClose }) {
                         {reports.map((p, i) => (
                           <div className="cd-org-node" key={i}>
                             <b>{p.name}</b><span className="cd-org-role">{p.role}</span>
-                            {p.bg && <span className="cd-org-bg">{p.bg}</span>}
-                            <a className="cd-org-li" href={"https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(p.name + " " + c.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
+                            <NodeBg p={p} />
+                            <a className="cd-org-li" href={liUrl(p.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
                           </div>
                         ))}
                       </div>
                     )}
                   </div>
-                  {org.leadership && liveRoster && (
-                    <p className="cd-org-founders"><b>창업자·배경</b> {org.leadership.map(l => `${l.name}(${l.role}${l.bg ? " · " + l.bg : ""})`).join(" / ")}</p>
-                  )}
+                  <p className="cd-org-note">현직 임원 명단은 공시(Yahoo Finance)·뉴스 기반으로 자동 갱신 · 각 인물의 LinkedIn 프로필은 <b>in ↗</b>으로 이동</p>
+                </div>
+              )}
+              {founders.length > 0 && (
+                <div className="cd-section">
+                  <h4>창업자·경영진 배경 <em>Founders & Leadership</em></h4>
+                  <div className="cd-bio">
+                    {founders.map((p, i) => (
+                      <div className="cd-bio-card" key={i}>
+                        <div className="cd-bio-head">
+                          <b>{p.name}</b>
+                          <span className="cd-bio-role">{p.role}</span>
+                          <a className="cd-org-li" href={liUrl(p.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
+                        </div>
+                        {p.edu && <div className="cd-bio-row"><em>학교·전공</em><span>{p.edu}</span></div>}
+                        {p.career && <div className="cd-bio-row"><em>빅테크·주요 경력</em><span>{p.career}</span></div>}
+                        {!p.edu && !p.career && p.bg && <div className="cd-bio-row"><em>배경</em><span>{p.bg}</span></div>}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
               {Array.isArray(org.interviews) && org.interviews.length > 0 && (
