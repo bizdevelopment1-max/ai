@@ -1020,7 +1020,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
               )}
               {monetize.length > 0 && (
                 <div className="cd-bd-sec">
-                  <h5>돈 버는 방식 — 크롤 신호</h5>
+                  <h5>돈 버는 방식</h5>
                   {monetize.map((s, i) => { const mm = modelMeta(s.model); return (
                     <a className="mplay-sig" key={"m" + i} href={s.url} target="_blank" rel="noopener">
                       <span className="mplay-tag" style={{ "--c": mm.accent }}>{mm.ko}</span>
@@ -1032,7 +1032,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
               )}
               {direction.length > 0 && (
                 <div className="cd-bd-sec">
-                  <h5>앞으로의 투자·사업 방향 — 크롤 신호</h5>
+                  <h5>앞으로의 투자·사업 방향</h5>
                   {direction.map((s, i) => { const dm = dirMeta(s.kind); return (
                     <a className="mplay-sig" key={"d" + i} href={s.url} target="_blank" rel="noopener">
                       <span className="mplay-tag dir" style={{ "--c": dm.accent }}>{dm.ko}</span>
@@ -1042,7 +1042,6 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                   ); })}
                 </div>
               )}
-              {hasCrawl ? <p className="cd-cp-note">수익모델·사업 방향 신호는 매일 크롤 기사에서 자동 분류·누적 · 원문 확인(한국어 3줄) 기사만 표시</p> : null}
             </div>
           );
         })()}
@@ -3918,7 +3917,7 @@ function MonetizationPlaybook({ articles, dataVersion }) {
       <div className="infra-sig-head">
         <div className="isg-titles">
           <h3>AI 비즈니스 모델 — 돈 버는 방식별 업체 <em>기사 기반 자동 누적 · 매일 갱신</em></h3>
-          <p>밸류체인이 아니라 <b>돈 버는 모델(비즈니스 모델)</b> 기준으로 분류 — 각 모델을 하는 업체와 그들이 실제로 하는 것(크롤 신호). <b>배포·AI서비스(수직통합)</b>도 그 중 하나. 원문 확인(한국어 3줄) 기사만 누적</p>
+          <p>밸류체인이 아닌 <b>돈 버는 모델(비즈니스 모델)</b> 기준 분류 · 업체별 실제 활동과 원문 확인 기사 자동 누적 · <b>배포·AI서비스(수직통합)</b> 포함</p>
         </div>
         <span className="isg-total">기업 <b>{companies.length}</b></span>
       </div>
