@@ -333,7 +333,7 @@ function StrategyPortfolioCard({
   const future = compact(direction || intel.strategyDirection?.summary || c.direction || "제품·투자·제휴 발표에서 다음 사업 방향을 수집 중");
   const latestExecution = compact(execution || intel.corePractices?.[0]?.insight || intel.corePractices?.[0]?.title
     || c.live?.latest?.title || c.latest?.title || "최근 실행 근거 수집 중");
-  const rawPeople = headcount || c.live?.employees || profile.headcount || "미공개";
+  const rawPeople = headcount || c.live?.employees || profile.headcount || (c.live?.employeesStale ? "최신 공시 확인 중" : "미공개");
   const people = !headcount && c.live?.employeesAsof && rawPeople !== "미공개"
     ? `${rawPeople} · '${String(c.live.employeesAsof).slice(2, 4)}`
     : rawPeople;
@@ -515,8 +515,8 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           // 변동 항목은 크롤 값 우선(최신·출처 기반), 없으면 정적 폴백
           const ceo = lv.ceo || p.ceo;
           const hq = lv.hq || p.hq;
-          const emp = lv.employees || p.headcount || "";
-          const holders = lv.topHolders || p.shareholders;
+           const emp = lv.employees || p.headcount || "";
+           const holders = lv.topHolders || p.shareholders;
           const empAsof = lv.employees && lv.employeesAsof ? ` ('${String(lv.employeesAsof).slice(2)} 기준)` : "";
           const capAsof = lv.cap && lv.capAsof ? ` ('${String(lv.capAsof).slice(2, 7)} 기준)` : "";
           const live = !!(lv.ceo || lv.hq || lv.employees || lv.revenueQ || lv.topHolders || lv.cap);
@@ -525,7 +525,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
             ["경영진", ceo],
             ["본사", hq],
             ["섹터", lv.sector || ""],
-            ["인력", emp ? emp + empAsof : ""],
+             ["인력", emp ? emp + empAsof : (lv.employeesStale ? "최신 공시 확인 중" : "")],
             ["시가총액", lv.cap ? lv.cap + capAsof : ""],
             ["주주", holders],
           ].filter(r => r[1]);
@@ -544,11 +544,11 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                   <div className="cd-prof-row" key={i}><em>{k}</em><span>{v}</span></div>
                 ))}
               </div>
-              {lv.employeesSourceUrl && (
-                <a className="cd-prof-source" href={lv.employeesSourceUrl} target="_blank" rel="noopener">
-                  인력 출처 · {lv.employeesSource || "공개 데이터"}
-                </a>
-              )}
+               {lv.employeesSourceUrl && (
+                 <a className="cd-prof-source" href={lv.employeesSourceUrl} target="_blank" rel="noopener">
+                   {lv.employeesStale ? `과거 보고값 ${lv.employeesLastReported || ""} (${lv.employeesAsof || "기준일 미상"}) · 현행값으로 사용하지 않음` : `인력 출처 · ${lv.employeesSource || "공개 데이터"}`}
+                 </a>
+               )}
               {Array.isArray(p.business) && p.business.length > 0 && (
                 <div className="cd-prof-biz"><em>주요사업</em><ul>{p.business.map((b, i) => <li key={i}>{b}</li>)}</ul></div>
               )}
@@ -574,15 +574,30 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           const hasIntel = visibleSections.length > 0;
           if (!hasIntel) return null;
           return (
-            <div className="cd-section cd-strategy-frame">
-              <h4>비즈니스 모델·전략 분석 <em>Business · Economics · Direction · Capital</em>
-                <b className="cd-prof-live">{String(intelligence.engine || "").startsWith("github-models:") ? "AI · 원문 근거 종합" : "원문 추출 종합"}</b>
-              </h4>
-              <div className="cd-sf-grid cd-intelligence-grid">
+             <div className="cd-section cd-strategy-frame">
+               <h4>비즈니스 모델·전략 분석 <em>Business · Economics · Direction · Capital</em>
+                 <b className="cd-prof-live">{String(intelligence.engine || "").startsWith("github-models:") ? "AI · 원문 근거 종합" : "원문 추출 종합"}</b>
+               </h4>
+               <div className="cd-mece-route" aria-label="MECE 기업 전략 분석 흐름">
+                 {(intelligence.meceFramework || [
+                   { key: "currentBusiness", label: "사업 범위", question: "무엇을 제공하는가" },
+                   { key: "revenueModel", label: "수익 엔진", question: "어떻게 돈을 버는가" },
+                   { key: "strategyDirection", label: "성장 방향", question: "어디로 확장하는가" },
+                   { key: "investmentDirection", label: "자본 배분", question: "무엇에 투자하는가" },
+                 ]).map((step, index, rows) => (
+                   <React.Fragment key={step.key}>
+                     <span><em>{String(index + 1).padStart(2, "0")}</em><b>{step.label}</b><small>{step.question}</small></span>
+                     {index < rows.length - 1 && <i aria-hidden="true" />}
+                   </React.Fragment>
+                 ))}
+               </div>
+               <div className="cd-sf-grid cd-intelligence-grid">
                 {visibleSections.map((section, sectionIndex) => (
                   <React.Fragment key={section.key}>
-                    <div className={`cd-sf-card ${section.key}`} key={section.key}>
-                      <em>{section.no} · {section.ko} <i>{section.en}</i></em>
+                     <div className={`cd-sf-card ${section.key}`} key={section.key}>
+                       <em>{section.no} · {section.ko} <i>{section.en}</i>
+                         {section.item.confidence && <span className={`cd-grounding ${section.item.confidence}`}>{section.item.confidence === "high" ? "근거 충분" : section.item.confidence === "medium" ? "근거 확인" : "공개정보 제한"}</span>}
+                       </em>
                       <b>{section.summary}</b>
                       {Array.isArray(section.item.details) && section.item.details.length > 0 && (
                         <ul>{section.item.details.slice(0, 4).map((detail, index) => <li key={index}>{detail}</li>)}</ul>
@@ -601,11 +616,12 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                   </React.Fragment>
                 ))}
               </div>
-              <div className="cd-sf-evidence">
-                <span><b>갱신 주기</b>뉴스·실적 발표 후 자동 재분석</span>
-                <span><b>근거 범위</b>{intelligence.evidenceWindow || "공식 발표·원문 기사·시장 데이터"}</span>
-                <span><b>생성일</b>{String(intelligence.generatedAt || c.live?.updatedAt || generatedAt || "").slice(0, 10) || "수집 중"}</span>
-              </div>
+               <div className="cd-sf-evidence">
+                 <span><b>갱신 주기</b>뉴스·실적 발표 후 자동 재분석</span>
+                 <span><b>근거 범위</b>{intelligence.evidenceWindow || "공식 발표·원문 기사·시장 데이터"}</span>
+                 <span><b>검증</b>{intelligence.groundingStatus ? "숫자·출처 URL 자동 대조" : "원문 링크 대조"}</span>
+                 <span><b>생성일</b>{String(intelligence.generatedAt || c.live?.updatedAt || generatedAt || "").slice(0, 10) || "수집 중"}</span>
+               </div>
             </div>
           );
         })()}
@@ -753,6 +769,13 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           const curatedByName = new Map(curated.map(person => [personKey(person.name), person]));
           const seen = new Set();
           const roster = [];
+          const normalizedTeam = Array.isArray(org.executiveTeam) ? org.executiveTeam : [];
+          normalizedTeam.forEach(person => {
+            const key = personKey(person.name);
+            if (!key || seen.has(key)) return;
+            seen.add(key);
+            roster.push(person);
+          });
           filingOfficers.forEach(officer => {
             const key = personKey(officer.name);
             const background = curatedByName.get(key) || {};
@@ -766,9 +789,27 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
             seen.add(key);
             roster.push(person);
           });
-          const leadIndex = roster.findIndex(person => /founder|co-founder|chief executive|\bceo\b|chair/i.test(String(person.role || "")));
+          const tierOf = person => person.tier || (
+            /founder|co-founder|chair|board/i.test(String(person.role || "")) ? "founder-board"
+              : /chief executive|\bceo\b|president/i.test(String(person.role || "")) ? "ceo"
+                : /chief (technology|scientist|product)|\bcto\b|\bcpo\b|research|engineering|technology|product|AI\b/i.test(String(person.role || "")) ? "product-technology"
+                  : /chief financial|\bcfo\b|finance|legal|counsel|people|operations|\bcoo\b|commercial|marketing|revenue/i.test(String(person.role || "")) ? "corporate-functions"
+                    : "executive-team"
+          );
+          const leadIndex = roster.findIndex(person => tierOf(person) === "ceo")
+            >= 0 ? roster.findIndex(person => tierOf(person) === "ceo")
+            : roster.findIndex(person => /founder|co-founder|chief executive|\bceo\b|chair/i.test(String(person.role || "")));
           const lead = roster[leadIndex >= 0 ? leadIndex : 0];
-          const reports = roster.filter(person => person !== lead).slice(0, 11);
+          const reports = roster.filter(person => person !== lead).slice(0, 17);
+          const tierMeta = [
+            ["founder-board", "창업자·이사회", "Founder & Board"],
+            ["product-technology", "제품·기술", "Product & Technology"],
+            ["corporate-functions", "재무·운영·사업", "Corporate Functions"],
+            ["executive-team", "기타 임원", "Executive Team"],
+          ];
+          const tierGroups = tierMeta.map(([key, ko, en]) => ({
+            key, ko, en, people: reports.filter(person => tierOf(person) === key),
+          })).filter(group => group.people.length);
           const crawlQuotes = Array.isArray(intelligence.executiveQuotes) ? intelligence.executiveQuotes.map(quote => ({
             who: quote.speaker, role: quote.role, date: quote.date,
             quoteEn: quote.quoteOriginal, quoteKo: quote.quoteKo,
@@ -786,11 +827,19 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           };
           const coLink = (c.profile && c.profile.linkedin) || "";
           const NodeBg = ({ p }) => (
-            <dl className="cd-org-background">
-              {(p.edu || p.education) && <div><dt>학교·전공</dt><dd>{p.edu || p.education}</dd></div>}
-              {(p.career || p.bg) && <div><dt>주요 경력</dt><dd>{p.career || p.bg}</dd></div>}
-              {!p.edu && !p.education && !p.career && !p.bg && <div><dt>백그라운드</dt><dd>공시·공식 프로필 원문 수집 중</dd></div>}
-            </dl>
+            <React.Fragment>
+              <dl className="cd-org-background">
+                {(p.edu || p.education) && <div><dt>학교·전공</dt><dd>{p.edu || p.education}</dd></div>}
+                {(p.career || p.bg) && <div><dt>주요 경력</dt><dd>{p.career || p.bg}</dd></div>}
+                {!p.edu && !p.education && !p.career && !p.bg && <div><dt>백그라운드</dt><dd>공시·공식 프로필 원문 수집 중</dd></div>}
+              </dl>
+              <div className="cd-org-verification">
+                <span className={p.verification === "official-role-match" || p.sourceType === "market-filing" ? "verified" : "curated"}>
+                  {p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : p.sourceType === "market-filing" ? "시장·공시 원장" : "큐레이션 검토"}
+                </span>
+                {p.verificationUrl && <a href={p.verificationUrl} target="_blank" rel="noopener">근거</a>}
+              </div>
+            </React.Fragment>
           );
           const orgCoverage = live.coverage && live.coverage.organization;
           return (
@@ -807,28 +856,36 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                     {orgCoverage && <b className="cd-coverage">커버리지 {orgCoverage.score}%</b>}
                     {coLink && <a className="cd-org-colink" href={coLink} target="_blank" rel="noopener" title="회사 LinkedIn 페이지">회사 LinkedIn</a>}
                   </h4>
-                  <div className="cd-org">
+                  <div className="cd-org cd-org-architecture">
                     {lead && (
                       <div className="cd-org-node lead">
+                        <em className="cd-org-tier-label">CEO · EXECUTIVE LEAD</em>
                         <b>{lead.name}</b><span className="cd-org-role">{lead.role}</span>
                         <NodeBg p={lead} />
                         {liOf(lead) && <a className="cd-org-li" href={liOf(lead)} target="_blank" rel="noopener" title={`${lead.name} LinkedIn 프로필`}>LinkedIn</a>}
                       </div>
                     )}
-                    {reports.length > 0 && <span className="cd-org-conn" aria-hidden="true" />}
-                    {reports.length > 0 && (
-                      <div className="cd-org-reports">
-                        {reports.map((p, i) => (
-                          <div className="cd-org-node" key={i}>
-                            <b>{p.name}</b><span className="cd-org-role">{p.role}</span>
-                            <NodeBg p={p} />
-                            {liOf(p) && <a className="cd-org-li" href={liOf(p)} target="_blank" rel="noopener" title={`${p.name} LinkedIn 프로필`}>LinkedIn</a>}
-                          </div>
+                    {tierGroups.length > 0 && <span className="cd-org-conn" aria-hidden="true" />}
+                    {tierGroups.length > 0 && (
+                      <div className="cd-org-tier-groups">
+                        {tierGroups.map(group => (
+                          <section className="cd-org-tier" key={group.key}>
+                            <header><em>{group.en}</em><b>{group.ko}</b><span>{group.people.length}명</span></header>
+                            <div className="cd-org-reports">
+                              {group.people.map((p, i) => (
+                                <div className="cd-org-node" key={`${group.key}-${i}`}>
+                                  <b>{p.name}</b><span className="cd-org-role">{p.role}</span>
+                                  <NodeBg p={p} />
+                                  {liOf(p) && <a className="cd-org-li" href={liOf(p)} target="_blank" rel="noopener" title={`${p.name} LinkedIn 프로필`}>LinkedIn</a>}
+                                </div>
+                              ))}
+                            </div>
+                          </section>
                         ))}
                       </div>
                     )}
                   </div>
-                  <p className="cd-org-note">상장사는 최신 공시 임원과 창업·기술 리더십을 병합하고 최대 12명까지 표시 · 학교·전공·빅테크 및 주요 경력을 조직 노드 안에 통합 · <b>검증된 LinkedIn 직접 프로필만 연결</b></p>
+                  <p className="cd-org-note">CEO 아래 창업자·이사회, 제품·기술, 재무·운영·사업 기능으로 임원 레벨을 분리 · 최대 18명 표시 · 공식 페이지·시장 원장과 큐레이션 이력을 구분 · <b>검증된 LinkedIn 직접 프로필만 연결</b></p>
                 </div>
               )}
               {interviewRows.length > 0 && (
@@ -2327,14 +2384,14 @@ const NEWBIZ_DEALS = [
     ],
   },
   {
-    id: "anthropic-jv", name: "Ode with Anthropic", accent: "#DB2777",
+    id: "anthropic-jv", name: "Anthropic Enterprise AI Services Company", accent: "#DB2777",
     date: "2026.05.04", badge: "소수지분 합작(JV)",
     metrics: [
-      ["밸류·출자", "기업가치 15억달러 · Anthropic·Blackstone·H&F 각 3억달러"],
-      ["소유 구조", "Anthropic은 소수 파트너(비지배 지분) · 브랜드 'Ode with Anthropic'"],
+      ["공식 확인", "Anthropic·Blackstone·H&F·Goldman Sachs 공동 설립 발표"],
+      ["자본·소유 구조", "세부 금액·지분율은 공식 발표와 제3자 보도를 구분해 확인"],
       ["창립 파트너", "Blackstone · Hellman & Friedman · Goldman Sachs"],
       ["추가 백커", "Apollo · General Atlantic · GIC · Leonard Green · Sequoia"],
-      ["인력", "현재 엔지니어 ~100명 · Anthropic 내부 Applied AI팀과 공동 작업"],
+      ["인력", "Anthropic Applied AI 인력과 신설 회사 엔지니어가 공동 작업"],
       ["FDE 명칭·딜리버리", "Applied AI Engineer가 고객사에 상주해 밑바닥부터 커스텀 AI 시스템 구축"],
       ["타깃 산업", "금융·헬스케어·법률·정부 등 규제 산업(PE 보유 중견기업)"],
     ],
@@ -2360,7 +2417,7 @@ function NewBizDeepDive() {
     <div className="nbz-deep">
       <div className="nbz-deep-head">
         <h3>배포·AI서비스 딜 — 모델사가 'AI 서비스 회사'를 직접 세운다</h3>
-        <p>2026년 5월 4일, OpenAI와 Anthropic이 <b>같은 날</b> Wall Street·PE 자본으로 엔터프라이즈 AI 서비스 합작사를 발표 — 구조는 정반대다.</p>
+        <p>Anthropic은 2026년 5월 4일, OpenAI는 5월 11일 엔터프라이즈 AI 배포 회사를 각각 발표했다. <b>7일 간격</b>의 두 발표는 현장 배포를 수익화한다는 공통점과 지배 구조의 차이를 함께 보여준다.</p>
       </div>
       <div className="nbz-deals">
         {NEWBIZ_DEALS.map(d => (
@@ -2411,7 +2468,7 @@ function NewBizDeepDive() {
           <em>차이</em>
           <ul>
             <li>OpenAI = 과반 지배 · 법인가치 ~140억달러 · 연 17.5% 수익 보장 · 무거운 수직통합</li>
-            <li>Ode(Anthropic) = 소수지분 · 밸류 15억달러 · 엔지니어 ~100명 · 가벼운 파트너십형</li>
+            <li>Anthropic 신설 서비스 회사 = 금융 파트너 유통망 + Applied AI 인력의 파트너십형</li>
             <li>OpenAI는 컨설팅사까지 co-investor로 흡수 / Anthropic은 컨설팅과 직접 경쟁</li>
           </ul>
         </div>

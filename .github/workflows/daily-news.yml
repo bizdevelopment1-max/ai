@@ -100,6 +100,9 @@ jobs:
       - name: Localise distinct source-page sentences
         run: python scripts/translate_summarize.py
 
+      - name: Re-check official company and executive pages
+        run: node scripts/run-with-retry.mjs scripts/crawl-company-officials.mjs
+
       - name: Normalize company profiles + org coverage + live signals
         run: node scripts/run-with-retry.mjs scripts/crawl-companies.mjs
 
@@ -146,7 +149,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json financials.json stock-events.json deleted.json insights.json briefing.json radar.json research.json companies.json startups.json a16z-startups.json strategic-ventures.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
+          git add news.json stocks.json financials.json stock-events.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else
