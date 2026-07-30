@@ -108,6 +108,7 @@ const classifyPractices = (arts) => {
 
 async function main() {
   let articles = [], stocks = {}, financials = {}, previousCompanies = {}, officialCompanies = {}, startupRows = [];
+  let startupRegistry = { trackedReferences: [] };
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   try { stocks = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
   try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
@@ -116,6 +117,7 @@ async function main() {
   try {
     const startups = JSON.parse(await readFile("startups.json", "utf8"));
     startupRows = [...(startups.large || []), ...(startups.small || []), ...(startups.institutional || [])];
+    startupRegistry = startups.companyRegistry || startupRegistry;
   } catch {}
   const dash = loadDash();
   const orgSource = { ...(dash.COMPANY_ORG || {}) };
@@ -226,6 +228,8 @@ async function main() {
     return li ? { ...person, li } : { ...person };
   };
   const companyBaseByName = new Map(trackedCompanies.map(base => [base.name, base]));
+  const startupReferenceByName = new Map((startupRegistry.trackedReferences || [])
+    .map(reference => [reference.name, reference]));
   for (const startup of startupRows) {
     if (!startup?.name) continue;
     const tracked = companyBaseByName.get(startup.name);
@@ -339,7 +343,17 @@ async function main() {
         : base.coverage?.sourceMode || "official-domain+structured-knowledge-graph+news",
       checkedAt: base.coverage?.checkedAt || nowIso,
     };
+    const portfolioReference = startupReferenceByName.get(name);
+    if (portfolioReference) rec.portfolioReference = portfolioReference;
     rec.updatedAt = nowIso;
+  }
+
+  // Only canonical tracked and startup-universe names survive the company
+  // ledger.  News aliases may create temporary buckets, but never a second
+  // company record or a second card.
+  const allowedCompanyNames = new Set(companyBaseByName.keys());
+  for (const name of Object.keys(companies)) {
+    if (!allowedCompanyNames.has(name)) delete companies[name];
   }
 
   // 기업전략 종합은 별도 단계(build-company-intelligence.mjs)에서 생성한다.
@@ -355,7 +369,15 @@ async function main() {
   const out = {
     generatedAt: nowIso,
     schemaVersion: 5,
-    methodology: "normalized-company-profile+live-financials+official-executive-verification+focused-news-evidence+company-intelligence-ready",
+    methodology: "canonical-company-registry+normalized-profile+live-financials+official-executive-verification+focused-news-evidence+company-intelligence-ready",
+    companyRegistry: {
+      method: startupRegistry.method || "official-domain+operator-legal-name",
+      uniqueCompanies: Object.keys(companies).length,
+      trackedCompanies: trackedCompanies.length,
+      startupCompanies: startupRows.length,
+      aliasesDiscarded: Object.keys(previousCompanies).length > Object.keys(companies).length
+        ? Object.keys(previousCompanies).length - Object.keys(companies).length : 0,
+    },
     companies,
   };
   await writeFile("companies.json", JSON.stringify(out) + "\n");

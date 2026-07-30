@@ -33,13 +33,14 @@ const htmlToText = html => cleanText(String(html || "")
 const normal = text => cleanText(text).toLocaleLowerCase()
   .replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 
-const similarity = (a, b) => {
+export const textSimilarity = (a, b) => {
   const aa = new Set(normal(a).split(" ").filter(Boolean));
   const bb = new Set(normal(b).split(" ").filter(Boolean));
   if (!aa.size || !bb.size) return 0;
   let same = 0; for (const word of aa) if (bb.has(word)) same++;
   return same / Math.min(aa.size, bb.size);
 };
+const similarity = textSimilarity;
 
 const malformedEncoding = value => /\uFFFD|(?:Ã.|Â.|â..){2,}/.test(String(value || ""));
 

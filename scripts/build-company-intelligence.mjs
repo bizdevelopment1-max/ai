@@ -16,6 +16,24 @@ const readJson = async (file, fallback) => {
 };
 const clean = value => String(value || "").replace(/\s+/g, " ").trim();
 const first = (...values) => values.map(clean).find(Boolean) || "";
+const claimKey = value => clean(value).toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+const claimTokens = value => new Set(clean(value).toLocaleLowerCase()
+  .replace(/[^\p{L}\p{N}]+/gu, " ").split(" ").filter(token => token.length >= 2));
+const claimSimilarity = (left, right) => {
+  const a = claimTokens(left);
+  const b = claimTokens(right);
+  if (!a.size || !b.size) return 0;
+  let overlap = 0;
+  for (const token of a) if (b.has(token)) overlap++;
+  return overlap / Math.min(a.size, b.size);
+};
+const nearDuplicateClaim = (left, right) => {
+  const a = claimKey(left);
+  const b = claimKey(right);
+  if (!a || !b) return false;
+  return a === b || (Math.min(a.length, b.length) >= 24 && (a.includes(b) || b.includes(a)))
+    || claimSimilarity(left, right) >= 0.82;
+};
 const clip = (value, size = 280) => {
   const text = clean(value);
   return text.length > size ? `${text.slice(0, size - 1)}…` : text;
@@ -73,8 +91,8 @@ const evidenceFor = (name, allArticles, leaders) => {
       seen.add(key);
       return true;
     })
-    .sort((a, b) => articleFocusScore(name, b) - articleFocusScore(name, a)
-      || String(b.date || "").localeCompare(String(a.date || "")))
+    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))
+      || articleFocusScore(name, b) - articleFocusScore(name, a))
     .slice(0, 8);
   return combined.map((article, index) => ({
     id: `e${index + 1}`,
@@ -114,8 +132,8 @@ const mergeEvidence = (...groups) => {
       seen.add(key);
       return true;
     })
-    .sort((a, b) => (b.sourceTier === "official") - (a.sourceTier === "official")
-      || String(b.date || "").localeCompare(String(a.date || "")))
+    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))
+      || (b.sourceTier === "official") - (a.sourceTier === "official"))
     .slice(0, 8)
     .map((item, index) => ({ ...item, id: `e${index + 1}` }));
 };
@@ -241,6 +259,8 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
   ].filter(Boolean));
   const sectionKeys = ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"];
   const seenDetails = new Set();
+  const seenClaims = [];
+  const seenEvidenceUrls = new Set();
   const out = { ...value };
   for (const key of sectionKeys) {
     const fallbackSection = fallback[key] || blankSection();
@@ -251,17 +271,34 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
       || !supportedNumbers(body, corpus)
       || ((key === "strategyDirection" || key === "investmentDirection") && speculative(body) && refs.length === 0)
       || (candidate.evidence || []).some(ref => !allowedUrls.has(refKey(ref)));
-    const chosen = unsupported ? fallbackSection : { ...candidate, evidence: refs };
+    let chosen = unsupported ? fallbackSection : { ...candidate, evidence: refs };
+    if (seenClaims.some(previous => nearDuplicateClaim(previous, chosen.summary))) {
+      const alternative = [fallbackSection.summary, ...(chosen.details || []), ...(fallbackSection.details || [])]
+        .map(clean).find(text => text && !seenClaims.some(previous => nearDuplicateClaim(previous, text)));
+      chosen = alternative ? { ...chosen, summary: alternative } : blankSection();
+    }
+    const summary = clean(chosen.summary);
+    if (summary) seenClaims.push(summary);
     const details = (chosen.details || []).filter(detail => {
       const fingerprint = clean(detail).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
-      if (!fingerprint || seenDetails.has(fingerprint)) return false;
+      if (!fingerprint || seenDetails.has(fingerprint)
+        || seenClaims.some(previous => nearDuplicateClaim(previous, detail))) return false;
       seenDetails.add(fingerprint);
+      seenClaims.push(detail);
       return true;
     });
-    const evidenceCount = (chosen.evidence || []).length;
+    const uniqueEvidence = (chosen.evidence || []).filter(ref => {
+      const url = refKey(ref);
+      if (!url || seenEvidenceUrls.has(url)) return false;
+      seenEvidenceUrls.add(url);
+      return true;
+    });
+    const evidenceCount = uniqueEvidence.length;
     out[key] = {
       ...chosen,
+      summary,
       details,
+      evidence: uniqueEvidence,
       evidenceCount,
       confidence: evidenceCount >= 2 ? "high" : evidenceCount === 1 ? "medium" : "low",
       groundingStatus: unsupported ? "fallback-after-grounding-check"
@@ -296,13 +333,19 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
 };
 
 const normaliseAnalysis = (analysis, evidence, fallback, corpus) => {
-  const section = (value, base) => ({
-    summary: clip(value?.summary || base.summary, 360),
-    details: (Array.isArray(value?.details) ? value.details : base.details || []).map(item => clip(item, 220)).filter(Boolean).slice(0, 4),
-    evidence: evidenceRefs(value?.evidenceIds, evidence).length
-      ? evidenceRefs(value.evidenceIds, evidence)
-      : base.evidence,
-  });
+  const section = (value, base) => {
+    const refs = evidenceRefs(value?.evidenceIds, evidence);
+    // Model-authored copy is publishable only when it cites supplied evidence.
+    // Missing/invalid evidence IDs fall back to the existing source-bound
+    // extract rather than borrowing unrelated fallback links.
+    const useModel = clean(value?.summary) && refs.length > 0;
+    return {
+      summary: clip(useModel ? value.summary : base.summary, 360),
+      details: (useModel && Array.isArray(value?.details) ? value.details : base.details || [])
+        .map(item => clip(item, 220)).filter(Boolean).slice(0, 4),
+      evidence: useModel ? refs : base.evidence,
+    };
+  };
   const quoteIndex = new Map(evidence.flatMap(item => (item.quotes || []).map(quote => [`${item.id}|${quote.speaker}|${quote.quoteOriginal}`, { ...quote, evidenceId: item.id }])));
   const executiveQuotes = (analysis?.executiveQuotes || []).map(item => {
     const match = [...quoteIndex.values()].find(candidate => candidate.evidenceId === item.evidenceId
@@ -430,6 +473,8 @@ async function synthesizeBatch(inputs) {
     system: [
       "당신은 통신·스마트폰 사업자를 위한 기업전략 애널리스트다.",
       "입력된 company profile, monetization signals, publisher evidence만 사용해 회사별 현재 사업, 수익모델, 향후 사업·투자 방향, 핵심 실행, 신규 비즈니스 모델을 한국어로 구체적으로 종합한다.",
+      "MECE 원칙을 지킨다. currentBusiness는 제품·고객, revenueModel은 과금·매출원, strategyDirection은 회사가 발표하거나 실행한 확장, investmentDirection은 투자·인수·파트너 자본배분만 다룬다.",
+      "같은 문장·사실·근거 ID를 여러 섹션에 반복하지 않는다. 어느 한 섹션에만 배치하고 다른 섹션은 고유 근거가 없으면 비운다.",
       "포트폴리오 옵션, 신호 감시, 우선순위 같은 일반론을 쓰지 않는다.",
       "근거가 없는 수치·인물·인과를 만들지 않는다. 각 판단은 입력 evidence id를 연결한다.",
       "근거가 부족한 선택 항목은 빈 문자열과 빈 배열로 반환한다. '수집 중', '확인 중', '대기', '데이터 없음' 같은 운영 상태 문구를 쓰지 않는다.",

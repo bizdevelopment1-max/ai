@@ -19,6 +19,8 @@ import { llmJSON, llmAvailable } from "./llm.mjs";
 import { rotatingLocales, googleNewsUrl } from "./global-sources.mjs";
 import { isExcludedText } from "./news-policy.mjs";
 import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
+import { loadDash } from "./load-dash.mjs";
+import { canonicalizeStartupSnapshot } from "./company-identity.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -449,9 +451,17 @@ async function main() {
 
   let prev = null;
   try { prev = JSON.parse(await readFile("startups.json", "utf8")); } catch {}
-  const normalizedStoredSnapshot = normalizeStoredSnapshot(prev);
+  let normalizedStoredSnapshot = normalizeStoredSnapshot(prev);
+  if (prev) {
+    const canonical = canonicalizeStartupSnapshot(prev, loadDash().COMPANIES || []);
+    if (JSON.stringify(canonical) !== JSON.stringify(prev)) {
+      prev = canonical;
+      normalizedStoredSnapshot = true;
+    }
+  }
   const age = prev && prev.weekOf ? (Date.now() - new Date(prev.weekOf + "T00:00:00Z").getTime()) / 86400000 : 99;
-  const staleShape = !prev || !Array.isArray(prev.large) || !Array.isArray(prev.institutional);   // 구 스키마면 강제 갱신
+  const staleShape = !prev || prev.schemaVersion !== 3 || !Array.isArray(prev.large)
+    || !Array.isArray(prev.institutional) || !prev.companyRegistry;   // 구 스키마면 강제 갱신
   // 영어 문장(연속 알파벳 15자+ 포함)이 남아 있으면 강제 재생성 — 한글 개조식으로 교체
   const hasEnglish = prev && [...(prev.large || []), ...(prev.small || [])].some(x =>
     /[A-Za-z]{4,}\s+[A-Za-z]{4,}\s+[A-Za-z]{4,}/.test(`${x.partnership || ""} ${x.acqAngle || ""} ${x.revenue || ""} ${x.overview || ""}`));
@@ -492,11 +502,11 @@ async function main() {
   retainVerifiedCompanyDepth(small, previousCompanyRows);
   retainVerifiedCompanyDepth(institutional, previousCompanyRows);
 
-  const out = {
+  const out = canonicalizeStartupSnapshot({
     generatedAt: new Date().toISOString(),
     weekOf: TODAY,
     engine,
-    methodology: "weekly-news+publisher-pages+a16z-complete-lists+source-grounded-ai-synthesis",
+    methodology: "weekly-news+publisher-pages+a16z-complete-lists+source-grounded-ai-synthesis+canonical-company-registry",
     organizationMethodology: prev?.organizationMethodology || "official-domain-jsonld-and-team-pages+wikidata-P856-domain-match+retained-verified-snapshot",
     organizationRefresh: prev?.organizationRefresh || null,
     institutionalSource: {
@@ -511,7 +521,7 @@ async function main() {
     large,
     small,
     institutional,
-  };
+  }, loadDash().COMPANIES || []);
   await writeFile("startups.json", JSON.stringify(out) + "\n");
   console.log(`Wrote startups.json — large ${large.length} · small ${small.length} · a16z unique ${institutional.length} (engine: ${engine})`);
 }
