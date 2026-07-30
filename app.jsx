@@ -227,12 +227,19 @@ function App() {
   }), [coLive, startupsX, monet]);
   // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
   const [stockData, setStockData] = uS(null);
+  const [nvidiaInvestments, setNvidiaInvestments] = uS(null);
   uE(() => {
     if (!(stocksInView || active === "stocks") || !dataVersion) return;
     let alive = true;
-    fetch(dataUrl("stocks.json"), { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && j.stocks) setStockData({ ...j.stocks, __generatedAt: j.generatedAt }); })
+    Promise.all([
+      fetch(dataUrl("stocks.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null)),
+      fetch(dataUrl("nvidia-investments.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null)),
+    ])
+      .then(([stocksPayload, investmentPayload]) => {
+        if (!alive) return;
+        if (stocksPayload?.stocks) setStockData({ ...stocksPayload.stocks, __generatedAt: stocksPayload.generatedAt });
+        if (Array.isArray(investmentPayload?.portfolio)) setNvidiaInvestments(investmentPayload);
+      })
       .catch(() => {});
     return () => { alive = false; };
   }, [stocksInView, active, dataVersion]);
@@ -244,7 +251,7 @@ function App() {
     accentSoft: softTint(c.id === "native" ? t.colNative : c.id === "bigtech" ? t.colBigtech : t.colStartup, dark),
   })), [t.colNative, t.colBigtech, t.colStartup, dark]);
 
-  // AI 밸류체인 주가 카테고리(칩·메모리·하이퍼스케일러 등) — 고정 accent + 다크모드 soft tint
+  // 상장사 원래 시장 업종(칩·메모리·하이퍼스케일러 등) — 상세 보조 분류에 사용
   const stockGroups = useMemo(() => (D.STOCK_GROUPS || []).map(g => ({
     ...g,
     accentSoft: softTint(g.accent, dark),
@@ -484,7 +491,8 @@ function App() {
               <MarketBoard dataVersion={dataVersion} mode="market" />
             </LazySection>
             <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
-              <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} />
+              <StockBoard stocks={D.STOCKS} stockData={stockData} nvidiaInvestments={nvidiaInvestments}
+                cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} />
             </LazySection>
 
             <LazySection id="audit" active={active} sectionRef={refs.audit} height={520}>
