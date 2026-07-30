@@ -109,6 +109,7 @@ async function main() {
   try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
   const dash = loadDash();
   const orgSource = dash.COMPANY_ORG || {};
+  const linkedinSource = dash.LINKEDIN_PROFILES || {};
   const profileSource = dash.COMPANY_PROFILES || {};
   const trackedCompanies = dash.COMPANIES || [];
   const leaders = deriveLeaders(orgSource);
@@ -190,6 +191,12 @@ async function main() {
   // 매일 누적되는 뉴스·경영진 발언으로 변화 신호를 보완한다.
   const nowIso = new Date().toISOString();
   const pct = (present, total) => Math.round((present / Math.max(total, 1)) * 100);
+  const personKey = name => String(name || "").split("(")[0].split("·")[0]
+    .replace(/[^\p{L}\p{N}\s.'-]/gu, "").trim();
+  const withDirectLinkedIn = person => {
+    const li = person && (person.li || linkedinSource[person.name] || linkedinSource[personKey(person.name)]);
+    return li ? { ...person, li } : { ...person };
+  };
   for (const base of trackedCompanies) {
     const name = base.name;
     let rec = companies[name];
@@ -227,8 +234,8 @@ async function main() {
     };
     const normalizedOrg = {
       ...o,
-      leadership: Array.isArray(o.leadership) ? o.leadership.slice(0, 8) : [],
-      officers: Array.isArray(rec.officers) ? rec.officers.slice(0, 8) : [],
+      leadership: Array.isArray(o.leadership) ? o.leadership.slice(0, 8).map(withDirectLinkedIn) : [],
+      officers: Array.isArray(rec.officers) ? rec.officers.slice(0, 8).map(withDirectLinkedIn) : [],
       sourceMode: Array.isArray(rec.officers) && rec.officers.length ? "live-officers+curated-background" : "curated+news-monitoring",
     };
     const profileChecks = [
@@ -255,8 +262,8 @@ async function main() {
 
   const out = {
     generatedAt: nowIso,
-    schemaVersion: 2,
-    methodology: "normalized-company-profile+live-financials+news-signals",
+    schemaVersion: 3,
+    methodology: "normalized-company-profile+live-financials+verified-linkedin+news-signals",
     companies,
   };
   await writeFile("companies.json", JSON.stringify(out) + "\n");

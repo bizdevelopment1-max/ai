@@ -1495,6 +1495,25 @@ window.DASH = (function () {
     "SpaceX (xAI, Cursor)": { founded: "SpaceX 2002 · xAI 2023", ceo: "Elon Musk", hq: "미국 텍사스州", business: ["우주 발사·Starlink", "xAI(Grok) AI 모델"] },
   };
 
+  // 검증된 LinkedIn 인물 프로필. 검색 결과 URL은 저장하지 않으며, 공개 프로필을
+  // 확인한 인물만 직접 연결한다. 조직도·크롤러·상세 화면이 함께 쓰는 단일 소스.
+  const LINKEDIN_PROFILES = {
+    "Ali Ghodsi": "https://www.linkedin.com/in/alighodsi",
+    "Aravind Srinivas": "https://www.linkedin.com/in/aravind-srinivas-16051987",
+    "Dario Amodei": "https://www.linkedin.com/in/dario-amodei-3934934",
+    "Arthur Mensch": "https://www.linkedin.com/in/arthur-mensch",
+    "Aidan Gomez": "https://www.linkedin.com/in/aidangomez",
+    "Clément Delangue": "https://www.linkedin.com/in/clementdelangue",
+    "Mati Staniszewski": "https://www.linkedin.com/in/matiii",
+    "Satya Nadella": "https://www.linkedin.com/in/satyanadella",
+    "Jensen Huang": "https://www.linkedin.com/in/jenhsunhuang",
+    "Demis Hassabis": "https://www.linkedin.com/in/demishassabis",
+    "Sundar Pichai": "https://www.linkedin.com/in/sundarpichai",
+    "Amjad Masad": "https://www.linkedin.com/in/amjadmasad",
+    "Bret Taylor": "https://www.linkedin.com/in/brettaylor",
+    "Arvind Jain": "https://www.linkedin.com/in/jain-arvind",
+  };
+
   // ── 조직·리더십·미션 ────────────────────────────────────────────────
   // 창업자·핵심 경영진 배경 + 회사 미션(정적 큐레이션). 공개기업은 crawl-financials가
   // 최신 임원 명단(officers)을 companies.json에 덮어써 조직도를 자동 갱신한다.
@@ -1857,5 +1876,5 @@ window.DASH = (function () {
     },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_LAYER, COMPANY_ORG, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

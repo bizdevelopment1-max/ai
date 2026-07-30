@@ -8,7 +8,9 @@ The company universe is organized as a seven-layer mobile AI software-and-servic
 
 Each company has one current control layer plus adjacent expansion layers. The strategy view combines that placement with 30-day source-backed activity, an own/orchestrate/partner/source posture, Where-to-Play/How-to-Win choices, and a three-horizon execution roadmap.
 
-`scripts/crawl-companies.mjs` normalizes every tracked company into the same company-profile and organization schema. Public-company financials and officers are refreshed from Yahoo Finance when available; private-company baseline facts are paired with daily news, executive mentions, business-model signals, coverage scores, and visible provenance.
+The main company and startup cards use a shared consulting portfolio structure: portfolio decision, strategic move, signal strength, and evidence status. Detailed profile facts, business-model evidence, organization, executive activity, and sources appear only after selection so the main and detail views stay MECE.
+
+`scripts/crawl-companies.mjs` normalizes every tracked company into the same company-profile and organization schema. Public-company financials and officers are refreshed from Yahoo Finance when available; private-company baseline facts are paired with daily news, executive mentions, business-model signals, coverage scores, and visible provenance. `LINKEDIN_PROFILES` is the single verified-person source: only direct `/in/` profiles are rendered, never LinkedIn search-result URLs.
 
 ## Reliable collection policy
 

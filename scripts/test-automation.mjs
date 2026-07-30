@@ -140,23 +140,55 @@ try {
     && Number.isFinite(company.coverage?.profile?.score)
     && Number.isFinite(company.coverage?.organization?.score)
     && company.updatedAt);
+  const linkedinProfiles = Object.values(dash.LINKEDIN_PROFILES || {});
+  const linkedinReady = linkedinProfiles.length >= 10
+    && linkedinProfiles.every(url => /^https:\/\/(?:(?:www|[a-z]{2})\.)?linkedin\.com\/in\/[^/?#]+\/?$/.test(url))
+    && !boards.includes("linkedin.com/search/results/people")
+    && !boards.includes("linkedin.com/search/results/companies");
   const strategyReady = dash.MOBILE_STRATEGY?.choices?.length === 4
     && dash.MOBILE_STRATEGY?.horizons?.length === 3
     && boards.includes("function MobileStrategyBoard")
+    && boards.includes("function StrategyPortfolioCard")
     && boards.includes("Where to Play / How to Win")
-    && boards.includes("Current Model → Shift → Mobile Implication")
+    && boards.includes("Position → Shift → Operator Decision")
+    && boards.includes('className="vc-portfolio-grid"')
+    && boards.includes('className="startup-portfolio-grid"')
+    && !boards.includes("<h4>밸류 프로포지션")
+    && !boards.includes("<h4>방향성 · 추구 가치")
     && app.includes('id="strategy"')
     && expectedLayers.every(id => components.includes(`id: "${id}"`))
     && monetizationCrawler.includes("loadDash().COMPANY_LAYER");
   if (JSON.stringify(layerIds) !== JSON.stringify(expectedLayers)
     || normalized.length !== (dash.COMPANIES || []).length
-    || companies.schemaVersion !== 2 || !completeCoverage || !strategyReady) {
-    throw new Error("seven-layer mobile strategy, normalized company profiles, or consulting-frame UI is incomplete");
+    || companies.schemaVersion !== 3 || !completeCoverage || !strategyReady || !linkedinReady) {
+    throw new Error("seven-layer strategy, MECE portfolio UI, normalized profiles, or verified LinkedIn links are incomplete");
   }
-  console.log(`  OK  단말 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 개요/조직 정규화`);
+  console.log(`  OK  단말 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  mobile strategy and company normalization: ${error.message}`);
+}
+
+try {
+  const styles = await readFile("styles.css", "utf8");
+  const forbiddenRoundedSideAccents = [
+    /\.msf-layer\s*\{[^}]*border-top:/s,
+    /\.cd-strategy-frame\s*\{[^}]*border-top:/s,
+    /\.cd-sf-card\.action\s*\{[^}]*border-left:/s,
+    /\.cd-sf-card\.risk\s*\{[^}]*border-left:/s,
+    /\.tl-card\s*\{[^}]*border-left:/s,
+    /\.nbz-deal\s*\{[^}]*border-top:/s,
+    /\.acb-camp\s*\{[^}]*border-top:/s,
+  ];
+  if (forbiddenRoundedSideAccents.some(pattern => pattern.test(styles))
+    || !styles.includes(".sp-card")
+    || !styles.includes("border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));")) {
+    throw new Error("rounded strategy cards must use full-card border/background emphasis");
+  }
+  console.log("  OK  둥근 카드 단측 강조 제거 · 전체 테두리/배경 강조 적용");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  rounded-card emphasis rule: ${error.message}`);
 }
 
 try {
