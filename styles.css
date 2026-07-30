@@ -3645,3 +3645,304 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     animation: none !important;
   }
 }
+
+/* ============================================================
+   CONSULTING INTERACTION SYSTEM
+   Full-surface palette reversal + restrained 3D lift.
+   Logo artwork stays untouched; information surfaces, labels and rules invert.
+   ============================================================ */
+.consult-decision-rail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 7px;
+  margin: 14px 0 18px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+  border-radius: 2px;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent 34%),
+    var(--panel);
+}
+.consult-decision-rail > div {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 3px 8px;
+  padding: 11px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+  border-top: 3px solid var(--accent);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent) 3%, var(--panel));
+}
+.consult-decision-rail em {
+  grid-row: 1 / 3;
+  align-self: center;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 900;
+}
+.consult-decision-rail span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .045em;
+}
+.consult-decision-rail b {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.consult-decision-rail > i {
+  align-self: center;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 11px solid var(--consult-gold);
+  animation: consultNudge 2.4s ease-in-out infinite;
+}
+
+:is(
+  .sp-card,
+  .msf-layer,
+  .msf-choice,
+  .msf-horizon,
+  .msf-house-pillars > div,
+  .msf-synthesis-flow > div,
+  .vc-logic-map > div,
+  .consult-decision-rail > div,
+  .source-pipeline > div,
+  .cd-mece-route > span,
+  .cd-sf-card,
+  .cd-org-node,
+  .cd-org-tier,
+  .mkt-card,
+  .mkt-record,
+  .btf-card,
+  .fda-step,
+  .isg-card
+) {
+  position: relative;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, box-shadow, background-color, border-color;
+  transition:
+    transform .34s cubic-bezier(.2, .76, .2, 1),
+    box-shadow .34s cubic-bezier(.2, .76, .2, 1),
+    background-color .24s ease,
+    border-color .24s ease,
+    color .24s ease;
+}
+.sp-card,
+.vc-logic-map > div,
+.consult-decision-rail > div,
+.cd-mece-route > span,
+.cd-sf-card,
+.cd-org-node,
+.cd-org-tier { --hover-tone: var(--accent, var(--consult-navy)); }
+.msf-layer { --hover-tone: var(--lc, var(--consult-navy)); }
+.msf-choice,
+.msf-horizon,
+.msf-house-pillars > div,
+.msf-synthesis-flow > div { --hover-tone: var(--consult-navy); }
+.source-pipeline > div,
+.mkt-card,
+.mkt-record,
+.isg-card { --hover-tone: var(--consult-teal); }
+.btf-card,
+.fda-step { --hover-tone: var(--consult-blue); }
+
+.ct-row,
+.es-row {
+  position: relative;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, box-shadow;
+  transition: transform .3s cubic-bezier(.2, .76, .2, 1), box-shadow .3s ease, background .22s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(
+    .sp-card,
+    .msf-layer,
+    .msf-choice,
+    .msf-horizon,
+    .msf-house-pillars > div,
+    .msf-synthesis-flow > div,
+    .vc-logic-map > div,
+    .consult-decision-rail > div,
+    .source-pipeline > div,
+    .cd-mece-route > span,
+    .cd-sf-card,
+    .cd-org-node,
+    .cd-org-tier,
+    .mkt-card,
+    .mkt-record,
+    .btf-card,
+    .fda-step,
+    .isg-card
+  ):is(:hover, :focus-visible) {
+    z-index: 8;
+    border-color: color-mix(in srgb, var(--hover-tone) 76%, #FFFFFF) !important;
+    outline: none;
+    color: #FFFFFF;
+    background:
+      linear-gradient(138deg,
+        color-mix(in srgb, var(--hover-tone) 88%, #071521),
+        color-mix(in srgb, var(--hover-tone) 68%, #071521)) !important;
+    transform: perspective(900px) translate3d(0, -7px, 20px) rotateX(2.2deg) rotateY(-1.6deg);
+    box-shadow:
+      0 3px 0 color-mix(in srgb, var(--hover-tone) 82%, #071521),
+      0 11px 0 -4px color-mix(in srgb, var(--hover-tone) 48%, #071521),
+      0 25px 42px rgba(7, 21, 33, .30),
+      inset 0 0 0 1px rgba(255, 255, 255, .17);
+  }
+  :is(
+    .sp-card,
+    .msf-layer,
+    .msf-choice,
+    .msf-horizon,
+    .msf-house-pillars > div,
+    .msf-synthesis-flow > div,
+    .vc-logic-map > div,
+    .consult-decision-rail > div,
+    .source-pipeline > div,
+    .cd-mece-route > span,
+    .cd-sf-card,
+    .cd-org-node,
+    .cd-org-tier,
+    .mkt-card,
+    .mkt-record,
+    .btf-card,
+    .fda-step,
+    .isg-card
+  ):is(:hover, :focus-visible) :is(h2, h3, h4, p, b, strong, span, em, small, dt, dd, li, a, time) {
+    color: #FFFFFF !important;
+  }
+  .sp-card:is(:hover, :focus-visible) :is(.sp-card-badge, .sp-card-institution, .ct-rel),
+  .cd-org-node:is(:hover, :focus-visible) :is(.cd-org-role, .cd-org-li),
+  .mkt-card:is(:hover, :focus-visible) :is(.mkt-record-type, .mkt-record-locale) {
+    border-color: #FFFFFF !important;
+    background: #FFFFFF !important;
+    color: var(--hover-tone) !important;
+  }
+  .sp-card:is(:hover, :focus-visible) .sp-card-intel > div,
+  .cd-org-tier:is(:hover, :focus-visible) .cd-org-node {
+    border-color: rgba(255, 255, 255, .34) !important;
+    background: rgba(255, 255, 255, .08) !important;
+  }
+  .sp-card:is(:hover, :focus-visible) .sp-card-foot,
+  .msf-choice:is(:hover, :focus-visible) .msf-choice-top {
+    border-color: rgba(255, 255, 255, .34) !important;
+  }
+  .sp-card:is(:hover, :focus-visible) .ct-logo,
+  .msf-layer:is(:hover, :focus-visible) .msf-layer-role {
+    border-color: rgba(255, 255, 255, .72) !important;
+    background: #FFFFFF !important;
+    color: var(--hover-tone) !important;
+    transform: translateZ(18px);
+    box-shadow: 0 7px 15px rgba(7, 21, 33, .22);
+  }
+  .sp-card:is(:hover, :focus-visible) .ct-logo img {
+    filter: none;
+  }
+  .msf-layer:is(:hover, :focus-visible) .msf-layer-meter {
+    background: rgba(255, 255, 255, .22);
+  }
+  .msf-layer:is(:hover, :focus-visible) .msf-layer-meter i {
+    background: #FFFFFF;
+  }
+  .ct-row:hover,
+  .es-row:hover {
+    z-index: 5;
+    transform: perspective(1050px) translate3d(4px, -3px, 12px) rotateX(.7deg) !important;
+    box-shadow:
+      -4px 5px 0 color-mix(in srgb, var(--accent, var(--consult-teal)) 32%, transparent),
+      0 18px 30px rgba(7, 21, 33, .22);
+  }
+  :is(.vc-filter-bar button, .mkt-tools button, .su-tax-cat, .su-tax-clear):not(:disabled):hover {
+    color: #FFFFFF !important;
+    border-color: var(--c, var(--accent, var(--consult-teal))) !important;
+    background: var(--c, var(--accent, var(--consult-teal))) !important;
+    transform: perspective(700px) translate3d(0, -3px, 8px);
+    box-shadow: 0 4px 0 color-mix(in srgb, var(--c, var(--accent, var(--consult-teal))) 58%, #071521),
+      0 10px 18px rgba(7, 21, 33, .18);
+  }
+  :is(.vc-filter-bar, .consult-decision-rail, .source-pipeline, .msf-synthesis-flow):hover > i {
+    border-left-color: var(--accent, var(--consult-gold));
+    animation-duration: .8s;
+  }
+}
+
+@media (max-width: 980px) {
+  .consult-decision-rail {
+    grid-template-columns: 1fr 1fr;
+  }
+  .consult-decision-rail > i { display: none; }
+}
+@media (max-width: 620px) {
+  .consult-decision-rail {
+    grid-template-columns: 1fr;
+    margin: 10px 0 14px;
+    padding: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(
+    .sp-card,
+    .msf-layer,
+    .msf-choice,
+    .msf-horizon,
+    .msf-house-pillars > div,
+    .msf-synthesis-flow > div,
+    .vc-logic-map > div,
+    .consult-decision-rail > div,
+    .source-pipeline > div,
+    .cd-mece-route > span,
+    .cd-sf-card,
+    .cd-org-node,
+    .cd-org-tier,
+    .mkt-card,
+    .mkt-record,
+    .btf-card,
+    .fda-step,
+    .isg-card,
+    .ct-row,
+    .es-row
+  ) {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+  :is(
+    .sp-card,
+    .msf-layer,
+    .msf-choice,
+    .msf-horizon,
+    .msf-house-pillars > div,
+    .msf-synthesis-flow > div,
+    .vc-logic-map > div,
+    .consult-decision-rail > div,
+    .source-pipeline > div,
+    .cd-mece-route > span,
+    .cd-sf-card,
+    .cd-org-node,
+    .cd-org-tier,
+    .mkt-card,
+    .mkt-record,
+    .btf-card,
+    .fda-step,
+    .isg-card,
+    .ct-row,
+    .es-row
+  ):hover {
+    transform: none !important;
+  }
+}
