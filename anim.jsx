@@ -9,8 +9,8 @@ const { useState: useStateA, useRef: useRefA, useEffect: useEffectA, useContext:
 
 const AnimCtx = createCtxA(false); // legacy fallback context
 
-// 애니메이션 비활성화(사용자 요청) — 등장 리빌·카운트업·차트 필 모두 즉시 최종 상태로 렌더.
-// REDUCED 경로가 useInView→true, useProgress→1, CountUp→최종값으로 스냅시켜 모션을 제거한다.
+// 애니메이션 비활성화 — 등장 리빌·카운트업·차트 필은 즉시 최종 상태로 렌더한다.
+// 데이터 지연 로딩에 쓰이는 useInView는 모션 설정과 분리해 실제 위치를 계속 측정한다.
 const REDUCED = true;
 
 /* ============================================================
@@ -101,14 +101,30 @@ function useEyeLevel() {
 }
 
 /* ---- board-level visibility (large sections, a bit more lenient) ---- */
-function useInView(ref) {
+function useInView(ref, lead = 360) {
   const [inView, setInView] = useStateA(false);
   useEffectA(() => {
     const el = ref && ref.current;
     if (!el) return;
-    if (REDUCED) { setInView(true); return; }
-    return _register(el, setInView, 40);
-  }, []);
+    let confirmTimer = 0;
+    const update = visible => {
+      clearTimeout(confirmTimer);
+      if (!visible) { setInView(false); return; }
+      // Async first-view data can expand the boards above this element. Confirm
+      // the position after that short layout window so lower payloads are not
+      // fetched because of a transient, pre-data offset.
+      confirmTimer = setTimeout(() => {
+        const r = el.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+        const sectionId = el.closest?.("[data-section]")?.dataset?.section;
+        const navTarget = window.__DASH_NAV_TARGET;
+        const belongsToTarget = !navTarget || !sectionId || sectionId === navTarget;
+        setInView(belongsToTarget && r.top < vh * EYE_BOTTOM + lead && r.bottom > vh * EYE_TOP - lead);
+      }, 180);
+    };
+    const unregister = _register(el, update, lead);
+    return () => { clearTimeout(confirmTimer); unregister(); };
+  }, [lead]);
   return inView;
 }
 

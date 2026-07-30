@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { access, readFile } from "node:fs/promises";
-import { BUNDLE_FILE, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
+import { BUNDLE_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany } from "./company-sources.mjs";
 import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
@@ -58,6 +58,7 @@ const required = [
   "config/company-source-policy.json",
   "index.html",
   "app.bundle.js",
+  "data.bundle.js",
   "og-mobile-strategy.png",
   "assets/quant-insight-capital.webp",
   "assets/quant-insight-device.webp",
@@ -79,16 +80,47 @@ for (const file of required) {
 }
 
 try {
-  const [sources, bundle, index] = await Promise.all([readBrowserSources(), readFile(BUNDLE_FILE, "utf8"), readFile("index.html", "utf8")]);
+  const [sources, bundle, dataSource, dataBundle, index] = await Promise.all([
+    readBrowserSources(),
+    readFile(BUNDLE_FILE, "utf8"),
+    readFile(DATA_SOURCE_FILE, "utf8"),
+    readFile(DATA_BUNDLE_FILE, "utf8"),
+    readFile("index.html", "utf8"),
+  ]);
   const expected = `/* ai-dashboard-bundle:${sourceStamp(sources)} */`;
+  const expectedData = `/* ai-dashboard-data:${sourceStamp([{ file: DATA_SOURCE_FILE, source: dataSource }])} */`;
   if (!bundle.startsWith(expected)) throw new Error("bundle is stale; run npm run build:browser before publishing");
-  if (/babel\.min\.js|text\/babel/.test(index) || !/defer src="app\.bundle\.js/.test(index)) {
-    throw new Error("index must serve the precompiled browser bundle without a runtime JSX compiler");
+  if (!dataBundle.startsWith(expectedData)) throw new Error("data bundle is stale; run npm run build:browser before publishing");
+  if (/babel\.min\.js|text\/babel/.test(index)
+    || !/defer src="app\.bundle\.js/.test(index)
+    || !/defer src="data\.bundle\.js/.test(index)) {
+    throw new Error("index must serve the compact browser and data bundles without a runtime compiler");
   }
-  console.log("  정상  browser bundle is current (no runtime JSX compiler)");
+  console.log("  정상  browser and data bundles are current (no runtime compiler)");
 } catch (error) {
   failed = true;
   console.error(`  실패  browser bundle: ${error.message}`);
+}
+
+try {
+  const [app, components, anim] = await Promise.all([
+    readFile("app.jsx", "utf8"),
+    readFile("components.jsx", "utf8"),
+    readFile("anim.jsx", "utf8"),
+  ]);
+  const navIds = [...components.matchAll(/\{\s*id:\s*"([^"]+)".*?\}/g)].map(match => match[1]);
+  const sectionIds = [...app.matchAll(/(?:<LazySection\s+id=|data-section=)"([^"]+)"/g)].map(match => match[1]);
+  const missingOnRight = navIds.filter(id => !sectionIds.includes(id));
+  const missingOnLeft = sectionIds.filter(id => !navIds.includes(id));
+  if (missingOnRight.length || missingOnLeft.length
+    || !/for \(const id of NAV_SECTION_IDS\)/.test(app)
+    || /if \(REDUCED\) \{ setInView\(true\)/.test(anim)) {
+    throw new Error(`navigation mismatch left-only=${missingOnRight.join(",")} right-only=${missingOnLeft.join(",")}`);
+  }
+  console.log(`  정상  left navigation maps 1:1 to ${navIds.length} right-side sections`);
+} catch (error) {
+  failed = true;
+  console.error(`  실패  navigation mapping: ${error.message}`);
 }
 
 try {
