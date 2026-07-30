@@ -1880,7 +1880,7 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
 }
 
 // ---- Stock board: all tracked listed equities mapped to the site's 7-layer value chain ----
-function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats, groups, theme, defaultView = "group" }) {
+function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, theme, defaultView = "group" }) {
   const catMap = Object.fromEntries((cats || []).map(c => [c.id, c]));
   const groupMap = Object.fromEntries((groups || []).map(g => [g.id, g]));
   const [ticker, setTicker] = React.useState((stocks[0] || {}).ticker);
@@ -1913,7 +1913,6 @@ function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats
         <div>
           <span className="stock-region-eyebrow">{eyebrow}</span>
           <h3>{title}</h3>
-          <p>{description}</p>
         </div>
         <div className="stock-region-metrics">
           <span><b>{stocks.length}</b>개 상장사</span>
@@ -2088,7 +2087,6 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
         <StockRegionPanel
           title="전체 상장사 밸류체인 분석"
           eyebrow="ALL TRACKED LISTED EQUITIES"
-          description="63개 상장사를 사이트 공통 7계층으로 묶어 비교하고, 각 종목에서는 반도체·클라우드·소프트웨어 등 원래 시장 업종을 함께 표시합니다."
           stocks={dashStocks}
           stockData={stockData}
           cats={cats}

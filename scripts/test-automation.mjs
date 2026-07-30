@@ -1304,8 +1304,11 @@ try {
     && styles.includes(".nvi-stage")
     && styles.includes(".nvi-node:hover")
     && styles.includes("grid-template-columns: minmax(0, 1fr) auto");
+  const stockComparisonCopyRemoved = !boards.includes("<p>{description}</p>")
+    && !boards.includes('description="63개 상장사를')
+    && !boards.includes("대시보드 기업 리스트에 있는 상장사를 인프라·컴퓨트 / 파운데이션 모델 / 애플리케이션 등 밸류체인 계층으로 묶어 실제 일별 시세로 비교");
   if (!completeBoard || !completeMetadata || !sourceBackedInvestments || !dynamicInvestmentPipeline
-    || !liveHistory || !currencyAware || !responsiveUi) {
+    || !liveHistory || !currencyAware || !responsiveUi || !stockComparisonCopyRemoved) {
     throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
   console.log("  OK  63개 상장사 Stock 분석 + NVIDIA 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
