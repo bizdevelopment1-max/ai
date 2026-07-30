@@ -524,9 +524,22 @@ async function main() {
     // GitHub Models gpt-4.1 currently enforces an 8k request-body limit.
     // Evidence-heavy major companies can exceed it even in groups of three.
     // Analyse one company per request so all companies receive equal depth.
+    // Bound each workflow run so rate limiting cannot block the full crawl.
+    // Firms without a current model result go first, then the oldest result.
+    const aiBudget = Math.max(1, Number(process.env.COMPANY_INTELLIGENCE_AI_BUDGET || 10));
+    const modelQueue = prepared
+      .sort((left, right) => {
+        const leftHasPrior = !!left._priorAi;
+        const rightHasPrior = !!right._priorAi;
+        if (leftHasPrior !== rightHasPrior) return leftHasPrior ? 1 : -1;
+        const leftAt = Date.parse(left._priorAi?.generatedAt || "") || 0;
+        const rightAt = Date.parse(right._priorAi?.generatedAt || "") || 0;
+        return leftAt - rightAt || left.name.localeCompare(right.name);
+      })
+      .slice(0, aiBudget);
     const batchSize = 1;
-    for (let start = 0; start < prepared.length; start += batchSize) {
-      const batch = prepared.slice(start, start + batchSize);
+    for (let start = 0; start < modelQueue.length; start += batchSize) {
+      const batch = modelQueue.slice(start, start + batchSize);
       const publicInput = batch.map(({ _rec, _fallback, _corpus, _priorAi, ...value }) => value);
       const result = await synthesizeBatch(publicInput);
       const byName = new Map((result?.data?.companies || []).map(company => [company.name, company]));
@@ -543,14 +556,14 @@ async function main() {
       // The first schema-v5 run can refresh every company. Persist each batch
       // so a runner retry resumes from completed evidence fingerprints.
       await persistCompanyData();
-      console.log(`[company-intelligence] batch ${Math.floor(start / batchSize) + 1}/${Math.ceil(prepared.length / batchSize)} · ${result ? result.engine : "extractive fallback"}`);
+      console.log(`[company-intelligence] batch ${Math.floor(start / batchSize) + 1}/${Math.ceil(modelQueue.length / batchSize)} · ${result ? result.engine : "extractive fallback"}`);
     }
   }
 
   await persistCompanyData();
   const aiCount = Object.values(companyData.companies || {}).filter(company => company.intelligence?.engine?.startsWith("github-models:")).length;
   const total = Object.keys(companyData.companies || {}).length;
-  console.log(`[company-intelligence] wrote ${total} companies · AI ${aiCount} · extractive ${total - aiCount} · refreshed ${prepared.length}`);
+  console.log(`[company-intelligence] wrote ${total} companies · AI ${aiCount} · extractive ${total - aiCount} · eligible ${prepared.length}`);
 }
 
 main().catch(error => {
