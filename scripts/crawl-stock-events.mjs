@@ -72,11 +72,10 @@ async function main() {
       const hit = near[0];
       if (!hit) return null;                               // 개별 뉴스 미확인 변곡점 → 행 생략
       const dir = inf.pct > 0 ? "up" : "down";
-      const why = dir === "up" ? "왜 올랐나" : "왜 빠졌나";
       return {
         date: inf.date, dir, label: `${inf.pct > 0 ? "+" : ""}${(inf.pct * 100).toFixed(1)}%`,
         changePct: +(inf.pct * 100).toFixed(1),
-        reason: `${why}: ${decode(hit.title).replace(/\s+-\s+[^-]*$/, "").trim()}`,
+        reason: decode(hit.title).replace(/\s+-\s+[^-]*$/, "").trim(),
         url: hit.url, source: hit.source || "", matched: true, auto: true,
       };
     }).filter(Boolean).filter(r => !isExcludedText(r.reason))
