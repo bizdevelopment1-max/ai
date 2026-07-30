@@ -47,9 +47,16 @@ export function createSuppressionRegistry(source = {}) {
   const hasKey = (scope, value) => scopedKeys.has(`${textKey(scope || "content")}:${textKey(value)}`);
   const matches = (item, scope = "content") => {
     if (!item) return false;
-    const urlsToCheck = [item.url, item.sourceUrl, item.rssUrl, item.evidenceUrl].filter(Boolean);
+    const urlsToCheck = [
+      item.url,
+      item.sourceUrl,
+      item.rssUrl,
+      item.evidenceUrl,
+      ...(item.relatedSources || []).map(source => source.sourceUrl || source.url),
+    ].filter(Boolean);
+    const idsToCheck = [item.id, ...(item.mergedRecordIds || [])].filter(Boolean);
     return urlsToCheck.some(hasUrl)
-      || hasId(item.id)
+      || idsToCheck.some(hasId)
       || hasCompany(item.name || item.co || item.company)
       || hasKey(scope, item.key || item.id || item.url || item.name || item.title);
   };
