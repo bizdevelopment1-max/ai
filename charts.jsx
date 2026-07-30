@@ -424,7 +424,7 @@ function StockChart({ stock, rawPoints, years, marketCap, asOf, currency = "$", 
   const W = 760, H = 268, padL = 54, padR = 18, padT = 20, padB = 28;
   const iw = W - padL - padR, ih = H - padT - padB;
   if (!pts || pts.length < 2) {
-    return <div ref={ref} className="stock-empty">실시간 주가 데이터를 매일 크롤링합니다. 자동 갱신을 기다리는 중입니다.</div>;
+    return null;
   }
   const lo0 = series.min, hi0 = series.max;
   const pad = (hi0 - lo0) * 0.10 || 1;
@@ -560,7 +560,7 @@ function GroupTrendChart({ groups, stocks, stockData, years, theme }) {
     if (arr[0].t < firstT) firstT = arr[0].t;
   });
   if (!isFinite(lastT)) {
-    return <div ref={ref} className="stock-empty">밸류체인 그룹 트렌드 데이터를 매일 크롤링합니다. 자동 갱신을 기다리는 중입니다.</div>;
+    return null;
   }
   const startT = Math.max(firstT, years ? lastT - years * 365 * DAY : firstT);
   const N = 120;

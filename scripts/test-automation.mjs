@@ -2,7 +2,7 @@
 import { access, readFile } from "node:fs/promises";
 import { BUNDLE_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
 import { loadDash } from "./load-dash.mjs";
-import { articleFocusedOnCompany } from "./company-sources.mjs";
+import { articleFocusedOnCompany, directCompanyNewsMatch } from "./company-sources.mjs";
 import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
 import { textSimilarity } from "./source-content.mjs";
 
@@ -26,6 +26,7 @@ const required = [
   "scripts/crawl-a16z-startups.mjs",
   "scripts/crawl-strategic-ventures.mjs",
   "scripts/build-company-intelligence.mjs",
+  "scripts/build-company-news.mjs",
   "scripts/crawl-markets.mjs",
   "scripts/market-db.mjs",
   "scripts/refresh-market-source-content.mjs",
@@ -37,6 +38,7 @@ const required = [
   "scripts/build-public-data.mjs",
   "scripts/audit-agent.mjs",
   "news.json",
+  "company-news.json",
   "news-view.json",
   "research-view.json",
   "market-view.json",
@@ -79,6 +81,68 @@ for (const file of required) {
     failed = true;
     console.error(`  실패  ${file}: ${error.message}`);
   }
+}
+
+try {
+  const [index, news, boards, app, charts, crawler, builder, workflow, recoveryWorkflow] = await Promise.all([
+    readFile("company-news.json", "utf8").then(JSON.parse),
+    readFile("news.json", "utf8").then(JSON.parse),
+    readFile("boards.jsx", "utf8"),
+    readFile("app.jsx", "utf8"),
+    readFile("charts.jsx", "utf8"),
+    readFile("scripts/crawl-news.mjs", "utf8"),
+    readFile("scripts/build-company-news.mjs", "utf8"),
+    readFile(".github/workflows/daily-news.yml", "utf8"),
+    readFile(".github/workflows/daily-news-update.yml", "utf8"),
+  ]);
+  const registry = loadDash().COMPANIES || [];
+  const newsByUrl = new Map((news.articles || []).map(article => [article.url, article]));
+  const mappedNames = Object.keys(index.companies || {});
+  const everyCompanyMapped = mappedNames.length === registry.length
+    && registry.every(company => Array.isArray(index.companies?.[company.name]));
+  const assignments = registry.flatMap(company =>
+    (index.companies?.[company.name] || []).map(article => ({ company, article })));
+  const allDirect = assignments.every(({ company, article }) => {
+    const original = newsByUrl.get(article.url) || article;
+    const match = directCompanyNewsMatch(company.name, original, company.domain);
+    return match.matched
+      && ["headline-entity", "official-domain"].includes(article.companyMatch?.mode)
+      && article.displayEligible !== false
+      && article.summaryMode === "source-content-extractive"
+      && article.provenance?.status === "source-backed";
+  });
+  const perCompanyUnique = registry.every(company => {
+    const rows = index.companies?.[company.name] || [];
+    return rows.length <= 8
+      && new Set(rows.map(article => article.url)).size === rows.length
+      && new Set(rows.map(article => String(article.titleEn || article.title || "").toLowerCase().replace(/[^a-z0-9가-힣]+/g, ""))).size === rows.length;
+  });
+  const uiStatusCopy = /수집\s*중|자료\s*없음|정보\s*없음|데이터\s*없음|갱신을 기다|자동 갱신을 기다|관련 기사가 없습니다/i;
+  const strictUi = app.includes('fetch(dataUrl("company-news.json")')
+    && app.includes("companyNews={companyNews}")
+    && boards.includes("Array.isArray(companyNews?.[c.name])")
+    && boards.includes("기업 직접 연관 뉴스")
+    && !boards.includes(".filter(a => a.cat === c.cat)")
+    && !uiStatusCopy.test(`${app}\n${boards}\n${charts}`);
+  const automated = crawler.includes("loadDash().COMPANIES")
+    && crawler.includes("newsQueryFor(company.name)")
+    && crawler.includes("directCompanyNewsMatch")
+    && crawler.includes("pool(COMPANIES, 8")
+    && builder.includes("headline-entity-or-official-domain")
+    && workflow.includes("scripts/build-company-news.mjs")
+    && recoveryWorkflow.includes("scripts/build-company-news.mjs")
+    && workflow.includes("company-news.json")
+    && recoveryWorkflow.includes("company-news.json");
+  if (index.schemaVersion !== 1
+    || index.methodology !== "source-backed+headline-entity-or-official-domain+canonical-url-dedupe"
+    || !everyCompanyMapped || !allDirect || !perCompanyUnique || assignments.length < 10
+    || index.coverage?.companiesTracked !== registry.length || !strictUi || !automated) {
+    throw new Error("company news must be direct-entity matched, source-backed, deduplicated and generated for the complete registry");
+  }
+  console.log(`  OK  기업 직접 연관 뉴스 ${assignments.length}건 · ${index.coverage.companiesWithNews}/${registry.length}개사 · 빈 상태 문구 없음`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  company-specific news index: ${error.message}`);
 }
 
 try {

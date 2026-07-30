@@ -12,6 +12,8 @@
 import { writeFile, readFile } from "node:fs/promises";
 import { isExcludedText, newsPolicy } from "./news-policy.mjs";
 import { enrichSourceBatch, isContentBacked, textSimilarity } from "./source-content.mjs";
+import { loadDash } from "./load-dash.mjs";
+import { directCompanyNewsMatch, newsQueryFor } from "./company-sources.mjs";
 
 // Company-card facts need first-party disclosures or a named publisher report,
 // rather than an undated category page. The same policy supplies priority
@@ -54,30 +56,15 @@ const BASE_ALLOW = [
 ];
 const ALLOW = [...new Set([...BASE_ALLOW, ...(companySourcePolicy.publisherDomains || [])])];
 
-// co must match data.js COMPANIES names exactly (for per-company filtering in the feed).
-const COMPANIES = [
-  { co: "OpenAI", cat: "native", q: "OpenAI" },
-  { co: "Anthropic", cat: "native", q: "Anthropic Claude" },
-  { co: "DeepSeek", cat: "native", q: "DeepSeek AI" },
-  { co: "SpaceX (xAI, Cursor)", cat: "native", q: "(xAI OR Grok OR SpaceX OR Cursor OR Anysphere) AI" },
-  { co: "Google DeepMind", cat: "bigtech", q: "Google DeepMind Gemini" },
-  { co: "Apple", cat: "bigtech", q: "Apple Intelligence on-device AI" },
-  { co: "Microsoft", cat: "bigtech", q: "Microsoft Copilot AI" },
-  { co: "Amazon", cat: "bigtech", q: "Amazon AWS Bedrock AI" },
-  { co: "NVIDIA", cat: "bigtech", q: "Nvidia AI GPU" },
-  { co: "Meta AI", cat: "bigtech", q: "Meta Llama AI" },
-  { co: "Perplexity", cat: "startup", q: "Perplexity AI" },
-  { co: "Mistral AI", cat: "startup", q: "Mistral AI" },
-  { co: "Cohere", cat: "startup", q: "Cohere AI" },
-  { co: "Stability AI", cat: "startup", q: "Stability AI" },
-  { co: "Databricks", cat: "startup", q: "Databricks AI" },
-  { co: "Scale AI", cat: "startup", q: "Scale AI" },
-  { co: "Runway", cat: "startup", q: "Runway AI video" },
-  { co: "ElevenLabs", cat: "startup", q: "ElevenLabs voice AI" },
-  { co: "Harvey", cat: "startup", q: "Harvey legal AI" },
-  { co: "Glean", cat: "startup", q: "Glean enterprise AI" },
-  { co: "Sierra AI", cat: "startup", q: "Sierra AI agent" },
-];
+// The site registry is the single source of truth.  Adding a company to the
+// dashboard automatically adds a bounded discovery stream on the next run.
+// The query may be broad; the direct-company gate below decides attribution.
+const COMPANIES = (loadDash().COMPANIES || []).map(company => ({
+  co: company.name,
+  cat: company.cat,
+  domain: company.domain,
+  q: newsQueryFor(company.name),
+}));
 
 // Device-relevant AI topics (most material for an on-device-AI device maker).
 const TOPICS = [
@@ -276,7 +263,12 @@ async function pull(src, limit) {
       const title = rawTitle.replace(/ - [^-]*$/, "").trim() || rawTitle;
       const desc = cleanDesc(decode(tag(it, "description"))).slice(0, 240);
       const date = pubDateOf(tag(it, "pubDate"));
-      const co = src.topic ? deviceCo(title) : src.co;
+      const companyMatch = src.topic
+        ? { matched: true }
+        : directCompanyNewsMatch(src.co, { titleEn: title, url: link }, src.domain);
+      // A query label is never sufficient company evidence.  Unmatched
+      // articles may stay in the general feed but cannot enter a company panel.
+      const co = src.topic ? deviceCo(title) : (companyMatch.matched ? src.co : "");
       out.push({ date, co, cat: src.cat, source: srcName || host, title, descEn: desc, url: link, tag: src.tag || "최신" });
       if (out.length >= limit) break;
     }
@@ -332,7 +324,7 @@ function dedupeLatestBriefings(rows) {
 
 async function main() {
   console.log("Crawling authoritative English AI news… (publisher/RSS excerpts; no AI API)");
-  const companyItems = (await Promise.all(COMPANIES.map(c => pull(c, 1)))).flat();
+  const companyItems = (await pool(COMPANIES, 8, c => pull(c, 1))).flat();
   const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
   const priorityItems = (await Promise.all(PRIORITY_STREAMS.map(stream => pull(stream, stream.n || 1)))).flat();
   const directItems = (await Promise.all(DIRECT_FEEDS.map(f => pullDirect(f, 2)))).flat();

@@ -625,7 +625,7 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
 }
 
 // ---- Company detail modal (overview + all info + related news) --
-function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
+function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
   React.useEffect(() => {
     if (!company) return;
     const onKey = e => { if (e.key === "Escape") onClose(); };
@@ -638,16 +638,10 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
   const layer = (window.DASH.VALUE_CHAIN || []).find(l => l.id === c.layer) || {};
   const accent = layer.accent || cat.accent || "#2D6BFF";
   const intelligence = c.live?.intelligence || c.intelligence || {};
-  const token = c.name.split(" (")[0].toLowerCase();
-  // related news: same category, name-mentioning articles surfaced first
-  const rel = (articles || [])
-    .filter(a => a.cat === c.cat)
-    .sort((a, b) => {
-      const am = (a.title + a.summary).toLowerCase().includes(token) ? 0 : 1;
-      const bm = (b.title + b.summary).toLowerCase().includes(token) ? 0 : 1;
-      return am - bm || (a.date < b.date ? 1 : -1);
-    })
-    .slice(0, 6);
+  // Precomputed by the crawler pipeline.  Never fall back to category-level
+  // news because a shared category is not evidence that an article is about
+  // this company.
+  const rel = Array.isArray(companyNews?.[c.name]) ? companyNews[c.name] : [];
   return (
     <div className="cd-overlay" onClick={onClose}>
      <AnimCtx.Provider value={true}>
@@ -1202,10 +1196,9 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           );
         })()}
 
-        <div className="cd-section">
-          <h4>관련 뉴스 <em>{rel.length}건</em></h4>
+        {rel.length > 0 && <div className="cd-section">
+          <h4>기업 직접 연관 뉴스 <em>{rel.length}건 · 원문 식별 검증</em></h4>
           <div className="cd-news">
-            {rel.length === 0 && <span className="cd-empty">관련 기사가 없습니다</span>}
             {rel.map((a, i) => {
               const display = displayFeedText(a);
               return <a key={i} className="cd-art" href={a.url} target="_blank" rel="noopener">
@@ -1218,7 +1211,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
               </a>;
             })}
           </div>
-        </div>
+        </div>}
 
         {c.sources && c.sources.length > 0 && (
           <div className="cd-section">
@@ -1963,7 +1956,7 @@ function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats
             asOf={real.asOf} currency={real.currency || "$"} accent={accent} ink={theme.ink} muted={theme.muted} grid={theme.grid} />
         ) : (
           <div className="stock-pending">
-            <p className="stock-empty">{sel.note || "실제 일별 주가는 매일 자동 크롤링되어 표시됩니다. 첫 갱신을 기다리는 중입니다."}</p>
+            {sel.note && <p className="stock-note">{sel.note}</p>}
             {(sel.events || []).length > 0 && (
               <div className="stock-events">
                 {sel.events.slice().reverse().map((e, k) => (
