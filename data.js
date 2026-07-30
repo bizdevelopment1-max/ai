@@ -399,6 +399,60 @@ window.DASH = (function () {
     { id: "enterprise", ko: "엔터프라이즈 AI", en: "Enterprise AI", desc: "법률·CS·헬스케어·사내검색 등 도메인 특화" },
   ];
 
+  /* ---- 스타트업 상세 분류 체계 — 단말(스마트폰) 신사업 관점(AI SW·서비스·에이전트) ----
+     tier = 단말 적합도: "직결"(온디바이스·기본앱에 바로) · "제휴"(서비스·B2B 제휴) · "감시"(백엔드·장기 옵션)
+     match = startups.json vertical 문자열 → 카테고리 폴백 매핑 키워드(부분일치)                       */
+  const STARTUP_TAXONOMY = [
+    // ── 단말 직결(On-device / core-app) ──
+    { id: "ondevice", ko: "온디바이스·엣지 추론", en: "On-Device / Edge", tier: "직결", accent: "#0891B2",
+      desc: "기기에서 직접 모델을 구동 — 경량화·NPU·프라이버시", handset: "온디바이스 AI 전략 직결 — 최우선 인수·투자 각도",
+      match: ["온디바이스", "엣지", "edge"] },
+    { id: "agent", ko: "개인 AI 에이전트·비서", en: "Personal Agent", tier: "직결", accent: "#7A38D6",
+      desc: "사용자 대신 앱·웹에서 작업을 자율 수행", handset: "단말 기본 비서·에이전트 실행엔진 후보",
+      match: ["에이전트", "agent", "비서", "assistant"] },
+    { id: "search", ko: "AI 검색·답변·브라우저", en: "Search & Answer", tier: "직결", accent: "#2D6BFF",
+      desc: "질문에 근거를 달아 답하는 검색·에이전트 브라우저", handset: "단말 검색·어시스턴트 접점 경쟁축",
+      match: ["검색", "search", "답변", "브라우저"] },
+    { id: "camera", ko: "카메라·이미지 생성·편집", en: "Camera & Image", tier: "직결", accent: "#EA580C",
+      desc: "이미지 생성·편집·복원 — 카메라·갤러리 직결", handset: "카메라·갤러리 생성편집 기능 인수·제휴",
+      match: ["이미지", "image", "카메라", "사진"] },
+    { id: "voice", ko: "음성·오디오·통역", en: "Voice & Audio", tier: "직결", accent: "#16A34A",
+      desc: "음성 합성·인식·실시간 통역·오디오 편집", handset: "통화·통역·받아쓰기 등 단말 음성 UX 핵심",
+      match: ["음성", "voice", "오디오", "audio", "번역", "통역"] },
+    // ── 서비스·B2B 제휴(Service / partnership) ──
+    { id: "video", ko: "영상 생성·편집", en: "Video Gen", tier: "제휴", accent: "#DB2777",
+      desc: "영상 생성·아바타·자동 편집·클립", handset: "미디어 생성·숏폼 편집 기능 접목",
+      match: ["영상", "video", "아바타", "클립"] },
+    { id: "music", ko: "음악·크리에이티브", en: "Music & Creative", tier: "제휴", accent: "#C026D3",
+      desc: "음악·사운드 생성 — 크리에이터 도구", handset: "크리에이터·미디어 생성 기능 접목",
+      match: ["음악", "music", "사운드"] },
+    { id: "coding", ko: "코딩·앱 생성", en: "Coding & App-Builder", tier: "제휴", accent: "#4322A8",
+      desc: "코드·앱 자동 생성 — 개발자·앱 생태계", handset: "앱 생태계·개발자 온보딩 활성화 각도",
+      match: ["코딩", "coding", "앱 생성", "app", "개발"] },
+    { id: "productivity", ko: "엔터프라이즈·생산성", en: "Enterprise & Productivity", tier: "제휴", accent: "#0D9488",
+      desc: "사내 검색·문서·업무 자동화 에이전트", handset: "B2B 단말 번들·업무 서비스 제휴",
+      match: ["사내 검색", "생산성", "문서", "워크플로", "productivity"] },
+    { id: "vertical", ko: "버티컬 도메인(법률·의료·CS·금융)", en: "Vertical Domain", tier: "제휴", accent: "#B45309",
+      desc: "규제·전문 도메인 특화 AI", handset: "케어·헬스·금융 서비스 제휴 각도",
+      match: ["법률", "의료", "헬스", "금융", "고객 응대", "cs", "legal", "medical", "health"] },
+    { id: "foundation", ko: "파운데이션·오픈 모델", en: "Foundation / Open Models", tier: "제휴", accent: "#9333EA",
+      desc: "범용·오픈 가중치·소버린 모델·모델 허브", handset: "탑재 모델 멀티소싱·개방성 후보",
+      match: ["파운데이션", "모델 허브", "엔터프라이즈 llm", "오픈 모델", "llm"] },
+    // ── 백엔드·장기 옵션(Backend / long-term) ──
+    { id: "data", ko: "데이터·평가·MLOps", en: "Data / Eval / MLOps", tier: "감시", accent: "#475569",
+      desc: "학습 데이터·라벨링·모델 평가·개발 툴링", handset: "모델 품질·평가 백엔드 제휴",
+      match: ["데이터", "라벨링", "평가", "mlops", "data"] },
+    { id: "infra", ko: "추론 클라우드·서빙", en: "Inference Cloud", tier: "감시", accent: "#0369A1",
+      desc: "추론·서빙 인프라 — 토큰당 원가 절감", handset: "클라우드 추론 원가 파트너·전략 투자",
+      match: ["인프라", "추론 클라우드", "서빙", "infra", "cloud"] },
+    { id: "trust", ko: "신뢰·보안·딥페이크 탐지", en: "Trust & Safety", tier: "감시", accent: "#DC2626",
+      desc: "딥페이크·AI 생성물 탐지·모델 안전 평가", handset: "생성 AI 확대 대응 방어형 기술",
+      match: ["딥페이크", "탐지", "보안", "안전", "trust", "safety"] },
+    { id: "robotics", ko: "신폼팩터·로보틱스·웨어러블", en: "New Form Factor", tier: "감시", accent: "#65A30D",
+      desc: "휴머노이드·로봇 파운데이션·AI 웨어러블", handset: "폰 이후 신규 폼팩터 장기 옵션",
+      match: ["로봇", "휴머노이드", "웨어러블", "robot", "로보틱"] },
+  ];
+
   /* ---- 빅테크 그룹(핵심지표 성격별) ---- */
   const BIGTECH_GROUPS = [
     { id: "model", ko: "모델·어시스턴트", en: "Model & Assistant", desc: "파운데이션 모델·소비자 AI 접점 — 핵심지표는 사용자(MAU)" },
@@ -1506,5 +1560,5 @@ window.DASH = (function () {
     },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, STOCK_LAYER, COMPANY_ORG, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, STOCK_LAYER, COMPANY_ORG, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

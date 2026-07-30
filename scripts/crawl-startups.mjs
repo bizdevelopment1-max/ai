@@ -29,43 +29,85 @@ const LABELS_L = ["파트너십 기회", "전략 제휴", "탑재 후보", "모�
 const LABELS_S = ["인수 후보", "투자 검토", "기술 감시", "모니터링"];
 
 // ── 대형(밸류 ≥ $10B) — 비즈니스 모델·수익구조 시드(플레인) ──
+// cat = STARTUP_TAXONOMY(data.js) 카테고리 id — 단말 신사업 관점 분류
 const LARGE = [
-  { name: "Databricks", domain: "databricks.com", vertical: "데이터·AI 플랫폼", val: "$134B", bm: "데이터 레이크하우스 SaaS — 컴퓨트 소비량(DBU)·플랫폼 구독으로 과금", rev: "ARR $30억+ 추정, 엔터프라이즈 데이터·AI 워크로드 확대", part: "온디바이스 개인화 데이터 파이프라인·MLOps 백엔드 제휴 각도" },
+  { name: "Databricks", domain: "databricks.com", vertical: "데이터·AI 플랫폼", cat: "data", val: "$134B", bm: "데이터 레이크하우스 SaaS — 컴퓨트 소비량(DBU)·플랫폼 구독으로 과금", rev: "ARR $30억+ 추정, 엔터프라이즈 데이터·AI 워크로드 확대", part: "온디바이스 개인화 데이터 파이프라인·MLOps 백엔드 제휴 각도" },
   // (Cursor 제외 — 이미 인수 완료된 업체 · Perplexity 제외 — 사용자 요청)
-  { name: "Mistral AI", domain: "mistral.ai", vertical: "파운데이션 모델", val: "$20B", bm: "오픈 가중치 무료+엔터프라이즈 라이선스·API 사용량 과금", rev: "유럽 대표 오픈모델, Ministral 온디바이스급 경량 모델", part: "온디바이스 탑재 모델 멀티소싱 후보 — 개방성·주권 강점" },
-  { name: "Sierra AI", domain: "sierra.ai", vertical: "고객 응대 에이전트", val: "$15B+", bm: "기업 CS 에이전트 — 해결 건당 성과 기반 과금(outcome pricing)", rev: "엔터프라이즈 CS 자동화 급성장", part: "단말 케어·구독 CS 자동화 제휴 — 성과형 과금 모델 참고" },
-  { name: "Scale AI", domain: "scale.com", vertical: "데이터 라벨링·평가", val: "$14B", bm: "AI 학습 데이터 라벨링·모델 평가 서비스 — 프로젝트·시트 과금", rev: "빅테크·정부 데이터 파이프라인 핵심 공급", part: "온디바이스 모델 평가·데이터 품질 백엔드 제휴" },
-  { name: "ElevenLabs", domain: "elevenlabs.io", vertical: "음성 AI", val: "$11B", bm: "음성 합성 구독+API 문자당 과금, 크리에이터·기업 이중 채널", rev: "음성 생성 품질 선두, API 매출 급성장", part: "단말 음성 UX(TTS·더빙·통역) 핵심 기술 제휴/인수 후보" },
-  { name: "Harvey", domain: "harvey.ai", vertical: "법률 AI", val: "$11B", bm: "로펌·기업 법무 특화 SaaS — 좌석당 구독", rev: "법률 버티컬 선두, B2B 확장성 높음", part: "단말 직접 부착성 낮음 — 서비스 제휴 위주" },
+  { name: "Mistral AI", domain: "mistral.ai", vertical: "파운데이션 모델", cat: "foundation", val: "$20B", bm: "오픈 가중치 무료+엔터프라이즈 라이선스·API 사용량 과금", rev: "유럽 대표 오픈모델, Ministral 온디바이스급 경량 모델", part: "온디바이스 탑재 모델 멀티소싱 후보 — 개방성·주권 강점" },
+  { name: "Safe Superintelligence", domain: "ssi.inc", vertical: "파운데이션 모델", cat: "foundation", val: "$32B", bm: "안전 최우선 프런티어 연구소 — 상용 제품 이전 단계", rev: "Ilya Sutskever 창업, 단일 목표(안전한 초지능) 연구", part: "차세대 프런티어 모델 소싱·안전성 기술 장기 감시" },
+  { name: "Thinking Machines Lab", domain: "thinkingmachines.ai", vertical: "파운데이션 모델", cat: "foundation", val: "$12B", bm: "Mira Murati(前 OpenAI CTO) 창업 — 멀티모달·맞춤형 모델", rev: "초기 스텔스, 최상위 연구인력 결집", part: "맞춤형·온디바이스 모델 파트너십 후보 감시" },
+  { name: "Sierra AI", domain: "sierra.ai", vertical: "고객 응대 에이전트", cat: "vertical", val: "$15B+", bm: "기업 CS 에이전트 — 해결 건당 성과 기반 과금(outcome pricing)", rev: "엔터프라이즈 CS 자동화 급성장", part: "단말 케어·구독 CS 자동화 제휴 — 성과형 과금 모델 참고" },
+  { name: "Scale AI", domain: "scale.com", vertical: "데이터 라벨링·평가", cat: "data", val: "$14B", bm: "AI 학습 데이터 라벨링·모델 평가 서비스 — 프로젝트·시트 과금", rev: "빅테크·정부 데이터 파이프라인 핵심 공급", part: "온디바이스 모델 평가·데이터 품질 백엔드 제휴" },
+  { name: "ElevenLabs", domain: "elevenlabs.io", vertical: "음성 AI", cat: "voice", val: "$11B", bm: "음성 합성 구독+API 문자당 과금, 크리에이터·기업 이중 채널", rev: "음성 생성 품질 선두, API 매출 급성장", part: "단말 음성 UX(TTS·더빙·통역) 핵심 기술 제휴/인수 후보" },
+  { name: "Harvey", domain: "harvey.ai", vertical: "법률 AI", cat: "vertical", val: "$11B", bm: "로펌·기업 법무 특화 SaaS — 좌석당 구독", rev: "법률 버티컬 선두, B2B 확장성 높음", part: "단말 직접 부착성 낮음 — 서비스 제휴 위주" },
+  { name: "Figure AI", domain: "figure.ai", vertical: "휴머노이드 로봇", cat: "robotics", val: "$39B", bm: "범용 휴머노이드 로봇 — 온디바이스 AI(Helix) 탑재", rev: "물류·가정용 로봇 상용화 추진, 대형 라운드 조달", part: "폰 이후 신규 폼팩터·피지컬 AI 장기 옵션 감시" },
 ];
 
 // ── 소형/초기(< $10B or 얼리스테이지) — 개요·정량·인수/투자 관점 시드 ──
 const SMALL = [
   // data.js 소형
-  { name: "Replit", domain: "replit.com", vertical: "코딩 플랫폼", stage: "$9B", funding: "밸류 $9B", ov: "브라우저 개발환경+AI 에이전트, 교육·크리에이터 접점", acq: "개발자 온보딩·교육 생태계 확보 관점 투자 검토" },
-  { name: "Glean", domain: "glean.com", vertical: "사내 검색", stage: "$7.2B", funding: "밸류 $7.2B", ov: "엔터프라이즈 검색·어시스턴트, B2B 지식 접근", acq: "B2B 단말 번들 제휴·전략 투자 각도" },
-  { name: "Lovable", domain: "lovable.dev", vertical: "앱 생성", stage: "$6.6B", funding: "밸류 $6.6B", ov: "자연어 앱 빌더(스웨덴), 앱 생태계 롱테일 확장", acq: "스토어 생태계 활성화 관점 투자 검토" },
-  { name: "Cohere", domain: "cohere.com", vertical: "엔터프라이즈 LLM", stage: "$5.5B", funding: "밸류 $5.5B·ARR ~$2.4억", ov: "소버린·기업용 LLM(캐나다), 온프레미스 배포 강점", acq: "온디바이스 경량 모델·보안 배포 기술 감시" },
-  { name: "Suno", domain: "suno.com", vertical: "음악 생성", stage: "$5.4B", funding: "밸류 $5.4B", ov: "음악 생성 대중화, 미디어·크리에이터 기능", acq: "카메라·미디어 생성 기능 접목 관점 기술 감시" },
-  { name: "Hugging Face", domain: "huggingface.co", vertical: "모델 허브", stage: "$4.5B", funding: "밸류 $4.5B", ov: "오픈모델 유통 허브, 온디바이스 모델 소싱 채널", acq: "온디바이스 모델 소싱·개발자 채널 전략 투자" },
-  { name: "Runway", domain: "runwayml.com", vertical: "영상 생성", stage: "$4B", funding: "밸류 $4B", ov: "생성 영상 선도, 카메라·갤러리 편집 접목 여지", acq: "카메라 생성편집 기술 인수/제휴 후보" },
-  { name: "Together AI", domain: "together.ai", vertical: "AI 인프라", stage: "$3.3B", funding: "밸류 $3.3B", ov: "오픈모델 서빙 인프라, 추론 원가 절감", acq: "클라우드 추론 원가 파트너·전략 투자" },
-  { name: "Abridge", domain: "abridge.com", vertical: "의료 AI", stage: "$2.75B", funding: "밸류 $2.75B", ov: "의료 대화 기록·요약, 헬스 기기 연계 여지", acq: "웨어러블 헬스 서비스 접목 관점 투자 검토" },
-  { name: "Synthesia", domain: "synthesia.io", vertical: "영상 아바타", stage: "$2.1B", funding: "밸류 $2.1B", ov: "기업용 아바타 영상(영국), 커뮤니케이션 앱 접목", acq: "커뮤니케이션 기능 접목 기술 감시" },
-  { name: "Writer", domain: "writer.com", vertical: "엔터프라이즈 LLM", stage: "$1.9B", funding: "밸류 $1.9B", ov: "기업용 풀스택 LLM, 문서·워크플로 접목", acq: "B2B 문서 워크플로 제휴 관점" },
-  { name: "Stability AI", domain: "stability.ai", vertical: "이미지 생성", stage: "$1B", funding: "밸류 $1B", ov: "오픈 이미지 생성 모델, 온디바이스 경량화 여지", acq: "온디바이스 이미지 생성 기술 감시" },
-  // 글로벌 얼리스테이지 풀(비상장·시드~시리즈)
-  { name: "MultiOn", domain: "multion.ai", vertical: "AI 에이전트", stage: "시드", funding: "시드 $5M (2024.1)", ov: "웹에서 사용자 대신 실제 행동 수행하는 AI 에이전트(미국)", acq: "온디바이스 에이전트 실행엔진 초기 인수/투자 후보" },
-  { name: "Leonardo.Ai", domain: "leonardo.ai", vertical: "이미지·영상 생성", stage: "시리즈A", funding: "Series A $31M (2023.12)", ov: "이미지·비디오 생성 크리에이티브 스위트(호주)", acq: "카메라·갤러리 생성편집 기술 인수 후보" },
-  { name: "Music AI (Moises)", domain: "music.ai", vertical: "오디오 AI", stage: "시리즈A", funding: "Series A $40M (2025.1)", ov: "5,000만+ 크리에이터 윤리적 AI 오디오 플랫폼·API(미국)", acq: "음성·오디오 편집 기능 접목 투자 검토" },
-  { name: "Parasail", domain: "parasail.io", vertical: "AI 추론 클라우드", stage: "시리즈A", funding: "Series A $32M (2026.4)", ov: "토큰당 과금 추론 '슈퍼클라우드', 개발자 자원 제어(미국)", acq: "클라우드 추론 원가 절감 전략 투자" },
-  { name: "Mirai", domain: "getmirai.co", vertical: "온디바이스 추론", stage: "시드", funding: "시드 $10M (2026.2)", ov: "모든 아키텍처 모델을 기기에 직접 배포·구동하는 온디바이스 추론 엔진(미국)", acq: "온디바이스 AI 전략 직결 — 최우선 인수/투자 후보" },
-  { name: "Reality Defender", domain: "realitydefender.com", vertical: "딥페이크 탐지", stage: "전략투자", funding: "전략 라운드 (2025.4)", ov: "실시간 멀티모달 딥페이크·AI 생성물 탐지 플랫폼(미국)", acq: "생성 AI 확대에 따른 방어형 탐지 기술 인수 후보" },
-  { name: "AI21 Labs", domain: "ai21.com", vertical: "엔터프라이즈 LLM", stage: "시리즈C", funding: "Series C $208M (2023.11)", ov: "기업용 고급 언어 AI 모델(이스라엘)", acq: "온디바이스 경량 LLM·추론 최적화 기술 감시" },
-  { name: "1X Technologies", domain: "1x.tech", vertical: "휴머노이드 로봇", stage: "시리즈B", funding: "Series B $100M (2024.1)", ov: "가정용 휴머노이드 로봇 개발(노르웨이)", acq: "신규 폼팩터(로봇) 장기 옵션 — 기술 감시" },
-  { name: "Dyna Robotics", domain: "dyna.co", vertical: "로봇 파운데이션", stage: "시리즈A", funding: "Series A $120M (2025.9)", ov: "상용급 범용 로봇용 로보틱 파운데이션 모델(미국)", acq: "피지컬 AI 신폼팩터 관점 투자 검토" },
-  { name: "OpusClip", domain: "opus.pro", vertical: "영상 편집", stage: "시리즈A", funding: "Series A $30M", ov: "긴 영상을 AI로 짧은 바이럴 클립 변환(미국)", acq: "카메라·미디어 자동편집 기능 접목 기술 감시" },
-  { name: "Unbabel", domain: "unbabel.com", vertical: "AI 번역", stage: "시리즈B+", funding: "Series B $23M", ov: "기업용 신뢰 가능 AI 번역 서비스(포르투갈)", acq: "통역·번역 UX 기술 감시" },
+  { name: "Replit", domain: "replit.com", vertical: "코딩 플랫폼", cat: "coding", stage: "$9B", funding: "밸류 $9B", ov: "브라우저 개발환경+AI 에이전트, 교육·크리에이터 접점", acq: "개발자 온보딩·교육 생태계 확보 관점 투자 검토" },
+  { name: "Glean", domain: "glean.com", vertical: "사내 검색", cat: "productivity", stage: "$7.2B", funding: "밸류 $7.2B", ov: "엔터프라이즈 검색·어시스턴트, B2B 지식 접근", acq: "B2B 단말 번들 제휴·전략 투자 각도" },
+  { name: "Lovable", domain: "lovable.dev", vertical: "앱 생성", cat: "coding", stage: "$6.6B", funding: "밸류 $6.6B", ov: "자연어 앱 빌더(스웨덴), 앱 생태계 롱테일 확장", acq: "스토어 생태계 활성화 관점 투자 검토" },
+  { name: "Cohere", domain: "cohere.com", vertical: "엔터프라이즈 LLM", cat: "foundation", stage: "$5.5B", funding: "밸류 $5.5B·ARR ~$2.4억", ov: "소버린·기업용 LLM(캐나다), 온프레미스 배포 강점", acq: "온디바이스 경량 모델·보안 배포 기술 감시" },
+  { name: "Suno", domain: "suno.com", vertical: "음악 생성", cat: "music", stage: "$5.4B", funding: "밸류 $5.4B", ov: "음악 생성 대중화, 미디어·크리에이터 기능", acq: "카메라·미디어 생성 기능 접목 관점 기술 감시" },
+  { name: "Hugging Face", domain: "huggingface.co", vertical: "모델 허브", cat: "foundation", stage: "$4.5B", funding: "밸류 $4.5B", ov: "오픈모델 유통 허브, 온디바이스 모델 소싱 채널", acq: "온디바이스 모델 소싱·개발자 채널 전략 투자" },
+  { name: "Runway", domain: "runwayml.com", vertical: "영상 생성", cat: "video", stage: "$4B", funding: "밸류 $4B", ov: "생성 영상 선도, 카메라·갤러리 편집 접목 여지", acq: "카메라 생성편집 기술 인수/제휴 후보" },
+  { name: "Together AI", domain: "together.ai", vertical: "AI 추론 클라우드", cat: "infra", stage: "$3.3B", funding: "밸류 $3.3B", ov: "오픈모델 서빙 인프라, 추론 원가 절감", acq: "클라우드 추론 원가 파트너·전략 투자" },
+  { name: "Abridge", domain: "abridge.com", vertical: "의료 AI", cat: "vertical", stage: "$2.75B", funding: "밸류 $2.75B", ov: "의료 대화 기록·요약, 헬스 기기 연계 여지", acq: "웨어러블 헬스 서비스 접목 관점 투자 검토" },
+  { name: "Synthesia", domain: "synthesia.io", vertical: "영상 아바타", cat: "video", stage: "$2.1B", funding: "밸류 $2.1B", ov: "기업용 아바타 영상(영국), 커뮤니케이션 앱 접목", acq: "커뮤니케이션 기능 접목 기술 감시" },
+  { name: "Writer", domain: "writer.com", vertical: "엔터프라이즈 생산성", cat: "productivity", stage: "$1.9B", funding: "밸류 $1.9B", ov: "기업용 풀스택 LLM, 문서·워크플로 접목", acq: "B2B 문서 워크플로 제휴 관점" },
+  { name: "Stability AI", domain: "stability.ai", vertical: "이미지 생성", cat: "camera", stage: "$1B", funding: "밸류 $1B", ov: "오픈 이미지 생성 모델, 온디바이스 경량화 여지", acq: "온디바이스 이미지 생성 기술 감시" },
+  // ── 음성·오디오·통역(voice) — 단말 음성 UX 직결 ──
+  { name: "Cartesia", domain: "cartesia.ai", vertical: "온디바이스 음성", cat: "voice", stage: "시리즈A", funding: "Series A $27M (2025)", ov: "실시간·온디바이스 구동을 노린 초저지연 음성 모델(SSM 기반, 미국)", acq: "온디바이스 음성 UX 직결 — 최우선 인수/투자 후보" },
+  { name: "Deepgram", domain: "deepgram.com", vertical: "음성 인식", cat: "voice", stage: "시리즈B", funding: "Series B $72M", ov: "엔터프라이즈 음성 인식·STT API, 통화·자막 백엔드(미국)", acq: "통화 자막·받아쓰기 단말 기능 제휴/투자" },
+  { name: "Sesame", domain: "sesame.com", vertical: "음성 비서", cat: "voice", stage: "시드", funding: "초기 라운드", ov: "자연스러운 대화형 음성 컴패니언·AI 안경 지향(미국)", acq: "단말 대화형 음성 비서 기술 감시" },
+  { name: "Wispr Flow", domain: "wisprflow.ai", vertical: "음성 입력", cat: "voice", stage: "시리즈A", funding: "Series A $30M (2026)", ov: "말로 입력하는 AI 받아쓰기 키보드(미국)", acq: "단말 음성 입력 UX 직결 — 인수/제휴 후보" },
+  // ── 카메라·이미지(camera) — 카메라·갤러리 직결 ──
+  { name: "Black Forest Labs", domain: "bfl.ai", vertical: "이미지 생성", cat: "camera", stage: "시리즈B", funding: "밸류 ~$4B 협의(2025)", ov: "FLUX 오픈 이미지 생성 모델(독일), 편집·복원 강점", acq: "카메라·갤러리 생성편집 엔진 인수/제휴 후보" },
+  { name: "Ideogram", domain: "ideogram.ai", vertical: "이미지 생성", cat: "camera", stage: "시리즈A", funding: "Series A $80M (2024)", ov: "텍스트 렌더링 강한 이미지 생성(미국/캐나다)", acq: "카메라·크리에이티브 기능 접목 기술 감시" },
+  { name: "Photoroom", domain: "photoroom.com", vertical: "이미지 편집", cat: "camera", stage: "시리즈B", funding: "Series B $43M (2024)", ov: "온디바이스 지향 사진 배경 제거·편집 앱(프랑스)", acq: "갤러리·카메라 온디바이스 편집 직결 후보" },
+  // ── 영상(video) ──
+  { name: "Pika", domain: "pika.art", vertical: "영상 생성", cat: "video", stage: "시리즈B", funding: "Series B $80M (2024)", ov: "소비자 친화 영상 생성 앱(미국)", acq: "숏폼·미디어 생성 기능 접목 기술 감시" },
+  { name: "Luma AI", domain: "lumalabs.ai", vertical: "영상·3D 생성", cat: "video", stage: "시리즈B", funding: "Series B $43M (2024)", ov: "Dream Machine 영상 생성·3D 캡처(미국)", acq: "카메라 3D·영상 생성 기술 인수/제휴 후보" },
+  { name: "HeyGen", domain: "heygen.com", vertical: "영상 아바타", cat: "video", stage: "시리즈A", funding: "밸류 $500M (2024)", ov: "AI 아바타·립싱크 영상 생성(미국)", acq: "커뮤니케이션·아바타 기능 접목 기술 감시" },
+  { name: "Captions", domain: "captions.ai", vertical: "영상 편집", cat: "video", stage: "시리즈C", funding: "Series C $60M (2024)", ov: "촬영·편집을 자동화하는 AI 영상 앱(미국)", acq: "카메라·숏폼 자동편집 온디바이스 접목 후보" },
+  { name: "Udio", domain: "udio.com", vertical: "음악 생성", cat: "music", stage: "시리즈A", funding: "Series A $10M (2024)", ov: "고품질 음악 생성 서비스(미국)", acq: "미디어·크리에이터 음악 생성 기능 기술 감시" },
+  // ── 코딩·앱(coding) ──
+  { name: "Cognition", domain: "cognition.ai", vertical: "코딩 에이전트", cat: "coding", stage: "시리즈", funding: "밸류 ~$10B(2025)", ov: "자율 SW 엔지니어 'Devin'·Windsurf 인수(미국)", acq: "개발 생태계·에이전트 실행 기술 전략 투자" },
+  { name: "Poolside", domain: "poolside.ai", vertical: "코딩 모델", cat: "coding", stage: "시리즈B", funding: "Series B $500M (2025)", ov: "코드 특화 파운데이션 모델·엔터프라이즈 배포(미국)", acq: "온프레미스 코딩 모델·개발자 채널 기술 감시" },
+  { name: "Windsurf", domain: "windsurf.com", vertical: "코딩 플랫폼", cat: "coding", stage: "시리즈", funding: "비상장", ov: "AI 코드 에디터(前 Codeium)(미국)", acq: "개발자 온보딩·앱 생태계 관점 기술 감시" },
+  // ── 온디바이스·파운데이션(ondevice / foundation) ──
+  { name: "Liquid AI", domain: "liquid.ai", vertical: "온디바이스 추론", cat: "ondevice", stage: "시리즈A", funding: "Series A $250M (2024)", ov: "MIT 스핀오프 — 경량·효율 LFM 모델로 온디바이스 구동(미국)", acq: "온디바이스 AI 직결 — 최우선 인수/투자 후보" },
+  { name: "Mirai", domain: "getmirai.co", vertical: "온디바이스 추론", cat: "ondevice", stage: "시드", funding: "시드 $10M (2026.2)", ov: "모든 아키텍처 모델을 기기에 직접 배포·구동하는 온디바이스 추론 엔진(미국)", acq: "온디바이스 AI 전략 직결 — 최우선 인수/투자 후보" },
+  { name: "World Labs", domain: "worldlabs.ai", vertical: "공간 지능 모델", cat: "foundation", stage: "시리즈", funding: "밸류 $1B+ (2024)", ov: "Fei-Fei Li 창업 — 공간(3D) 지능 대규모 세계 모델(미국)", acq: "카메라·AR 공간 이해 기술 장기 감시" },
+  { name: "Reka AI", domain: "reka.ai", vertical: "멀티모달 모델", cat: "foundation", stage: "시리즈", funding: "$110M 라운드", ov: "효율적 멀티모달 파운데이션 모델(미국)", acq: "온디바이스 멀티모달 모델 소싱 후보" },
+  { name: "AI21 Labs", domain: "ai21.com", vertical: "엔터프라이즈 LLM", cat: "foundation", stage: "시리즈C", funding: "Series C $208M (2023.11)", ov: "기업용 고급 언어 AI 모델(이스라엘)", acq: "온디바이스 경량 LLM·추론 최적화 기술 감시" },
+  // ── 엔터프라이즈·생산성(productivity) ──
+  { name: "Hebbia", domain: "hebbia.ai", vertical: "사내 검색", cat: "productivity", stage: "시리즈B", funding: "Series B $130M (2024)", ov: "금융·전문가용 문서 검색·분석 에이전트(미국)", acq: "B2B 지식·문서 서비스 제휴 각도" },
+  { name: "Dust", domain: "dust.tt", vertical: "업무 에이전트", cat: "productivity", stage: "시리즈A", funding: "Series A $16M (2024)", ov: "사내 데이터 연결 업무 에이전트 플랫폼(프랑스)", acq: "B2B 업무 자동화 제휴 관점" },
+  // ── 버티컬 도메인(vertical) ──
+  { name: "Decagon", domain: "decagon.ai", vertical: "고객 응대 에이전트", cat: "vertical", stage: "시리즈C", funding: "밸류 $1.5B (2025)", ov: "기업 CS AI 에이전트 — 성과형 과금(미국)", acq: "단말 케어·CS 자동화 서비스 제휴" },
+  { name: "OpenEvidence", domain: "openevidence.com", vertical: "의료 AI", cat: "vertical", stage: "시리즈", funding: "밸류 $6B (2025)", ov: "의료진용 근거 기반 임상 답변 엔진(미국)", acq: "헬스·케어 서비스 제휴 각도" },
+  { name: "Hippocratic AI", domain: "hippocraticai.com", vertical: "헬스케어 음성", cat: "vertical", stage: "시리즈B", funding: "밸류 $1.6B (2025)", ov: "비진단 환자 응대 음성 AI 에이전트(미국)", acq: "웨어러블·케어 음성 서비스 접목 투자 검토" },
+  { name: "Robin AI", domain: "robinai.com", vertical: "법률 AI", cat: "vertical", stage: "시리즈B", funding: "Series C $25M (2025)", ov: "계약 검토·법무 어시스턴트(영국)", acq: "B2B 법무 서비스 제휴 관점" },
+  // ── 추론 클라우드·서빙(infra) ──
+  { name: "Fireworks AI", domain: "fireworks.ai", vertical: "AI 추론 클라우드", cat: "infra", stage: "시리즈B", funding: "밸류 $4B (2025)", ov: "빠른 오픈모델 추론·서빙 플랫폼(미국)", acq: "클라우드 추론 원가·속도 파트너 전략 투자" },
+  { name: "Baseten", domain: "baseten.co", vertical: "모델 서빙", cat: "infra", stage: "시리즈C", funding: "밸류 $2.1B (2025)", ov: "ML 모델 배포·서빙 인프라(미국)", acq: "모델 배포 백엔드 제휴 관점" },
+  { name: "Groq", domain: "groq.com", vertical: "추론 가속", cat: "infra", stage: "시리즈", funding: "밸류 $6.9B (2025)", ov: "LPU 기반 초고속 추론 칩·클라우드(미국)", acq: "저지연 추론 인프라 전략 감시" },
+  { name: "Parasail", domain: "parasail.io", vertical: "AI 추론 클라우드", cat: "infra", stage: "시리즈A", funding: "Series A $32M (2026.4)", ov: "토큰당 과금 추론 '슈퍼클라우드', 개발자 자원 제어(미국)", acq: "클라우드 추론 원가 절감 전략 투자" },
+  // ── 검색·에이전트(search / agent) ──
+  { name: "You.com", domain: "you.com", vertical: "AI 검색", cat: "search", stage: "시리즈B", funding: "밸류 $1.5B (2024)", ov: "에이전트형 AI 검색·답변 엔진(미국)", acq: "단말 검색·어시스턴트 접점 기술 감시" },
+  { name: "Genspark", domain: "genspark.ai", vertical: "AI 검색 에이전트", cat: "search", stage: "시리즈", funding: "$100M 라운드(2025)", ov: "자율 리서치·검색 에이전트(미국)", acq: "단말 검색 에이전트 UX 기술 감시" },
+  { name: "MultiOn", domain: "multion.ai", vertical: "AI 에이전트", cat: "agent", stage: "시드", funding: "시드 $5M (2024.1)", ov: "웹에서 사용자 대신 실제 행동 수행하는 AI 에이전트(미국)", acq: "온디바이스 에이전트 실행엔진 초기 인수/투자 후보" },
+  // ── 신뢰·보안(trust) ──
+  { name: "Reality Defender", domain: "realitydefender.com", vertical: "딥페이크 탐지", cat: "trust", stage: "전략투자", funding: "전략 라운드 (2025.4)", ov: "실시간 멀티모달 딥페이크·AI 생성물 탐지 플랫폼(미국)", acq: "생성 AI 확대에 따른 방어형 탐지 기술 인수 후보" },
+  { name: "Patronus AI", domain: "patronus.ai", vertical: "모델 안전·평가", cat: "trust", stage: "시리즈A", funding: "Series A $17M (2024)", ov: "LLM 오류·안전성 자동 평가·가드레일(미국)", acq: "온디바이스 모델 안전성 평가 백엔드 감시" },
+  { name: "Pindrop", domain: "pindrop.com", vertical: "음성 보안", cat: "trust", stage: "성장", funding: "성장 라운드", ov: "음성 사기·딥페이크 음성 탐지(미국)", acq: "통화 보안·음성 위변조 방어 기술 감시" },
+  // ── 신폼팩터·로보틱스(robotics) ──
+  { name: "Physical Intelligence", domain: "physicalintelligence.company", vertical: "로봇 파운데이션", cat: "robotics", stage: "시리즈", funding: "밸류 $5.6B (2025)", ov: "범용 로봇용 파운데이션 모델(π 시리즈, 미국)", acq: "피지컬 AI 신폼팩터 관점 장기 감시" },
+  { name: "1X Technologies", domain: "1x.tech", vertical: "휴머노이드 로봇", cat: "robotics", stage: "시리즈B", funding: "Series B $100M (2024.1)", ov: "가정용 휴머노이드 로봇 개발(노르웨이)", acq: "신규 폼팩터(로봇) 장기 옵션 — 기술 감시" },
+  { name: "Limitless AI", domain: "limitless.ai", vertical: "AI 웨어러블", cat: "robotics", stage: "시리즈", funding: "$33M 라운드", ov: "대화 기록·요약 AI 펜던트 웨어러블(미국)", acq: "폰 이후 AI 웨어러블 폼팩터 기술 감시" },
 ];
 
 const decode = s => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
@@ -177,8 +219,8 @@ async function enrichSmall(rows) {
 }
 
 async function main() {
-  const large = LARGE.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, val: s.val, businessModel: s.bm, revenue: s.rev, partnership: s.part, label: "모니터링" }));
-  const small = SMALL.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, stage: s.stage, funding: s.funding, overview: s.ov, acqAngle: s.acq, label: "모니터링" }));
+  const large = LARGE.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", val: s.val, businessModel: s.bm, revenue: s.rev, partnership: s.part, label: "모니터링" }));
+  const small = SMALL.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", stage: s.stage, funding: s.funding, overview: s.ov, acqAngle: s.acq, label: "모니터링" }));
 
   let prev = null;
   try { prev = JSON.parse(await readFile("startups.json", "utf8")); } catch {}

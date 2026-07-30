@@ -2661,6 +2661,28 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 /* 스타트업 분석 카드(2계층) — mkt-* 재사용 + 전용 */
 .su-fav { width: 17px; height: 17px; border-radius: 4px; flex-shrink: 0; }
 .su-meta { font-family: var(--f); font-size: 10.5px; font-weight: 600; color: var(--muted); flex: 1; word-break: keep-all; }
+.su-cat { flex: none; font-size: 9.5px; font-weight: 800; color: var(--c); background: color-mix(in srgb, var(--c) 11%, transparent); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); border-radius: 20px; padding: 1px 7px; white-space: nowrap; }
+
+/* 스타트업 분류 기준 — 단말 신사업 관점 taxonomy strip */
+.su-tax { margin: 0 0 18px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2); }
+.su-tax-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.su-tax-head b { font-size: 13px; font-weight: 800; color: var(--ink); }
+.su-tax-head em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); }
+.su-tax-clear { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--accent); background: none; border: 1px solid var(--line); border-radius: 20px; padding: 2px 10px; cursor: pointer; }
+.su-tax-tier { display: grid; grid-template-columns: 168px 1fr; gap: 8px 12px; align-items: start; padding: 7px 0; border-top: 1px solid var(--line-2); }
+.su-tax-tier:first-of-type { border-top: none; }
+.su-tax-tlabel { font-size: 11px; font-weight: 800; color: var(--ink-2); padding-left: 10px; border-left: 3px solid var(--muted); line-height: 1.4; }
+.su-tax-tlabel[data-tier="직결"] { border-left-color: #0891B2; color: #0E7490; }
+.su-tax-tlabel[data-tier="제휴"] { border-left-color: #9333EA; color: #7E22CE; }
+.su-tax-tlabel[data-tier="감시"] { border-left-color: #64748B; }
+.su-tax-cats { display: flex; flex-wrap: wrap; gap: 6px; }
+.su-tax-cat { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--ink-2); background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 3px 9px 3px 7px; cursor: pointer; transition: all .12s; }
+.su-tax-cat i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.su-tax-cat em { font-style: normal; font-size: 10px; font-weight: 800; color: var(--muted); background: var(--panel-2); border-radius: 20px; padding: 0 5px; min-width: 14px; text-align: center; }
+.su-tax-cat:hover { border-color: var(--c); color: var(--ink); }
+.su-tax-cat.on { color: #fff; background: var(--c); border-color: var(--c); }
+.su-tax-cat.on em { color: var(--c); background: #fff; }
+@media (max-width: 640px) { .su-tax-tier { grid-template-columns: 1fr; } }
 .su-row { font-family: var(--f); font-size: 12px; font-weight: 600; color: var(--ink-2); line-height: 1.55; word-break: keep-all; margin: 6px 0 0; }
 .mkt-card .brief-label { display: inline-block; margin: 6px 0 2px; }
 

@@ -3540,6 +3540,16 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   const [tier, setTier] = React.useState("all");
+  const [catFilter, setCatFilter] = React.useState("");
+  // 단말 신사업 관점 분류 체계 — cat 우선, 없으면 vertical 키워드로 폴백 매핑
+  const TAX = window.DASH.STARTUP_TAXONOMY || [];
+  const catOf = (s) => {
+    if (s.cat && TAX.some(t => t.id === s.cat)) return s.cat;
+    const v = String(s.vertical || "").toLowerCase();
+    const hit = TAX.find(t => (t.match || []).some(m => v.includes(String(m).toLowerCase())));
+    return hit ? hit.id : "";
+  };
+  const catMeta = id => TAX.find(t => t.id === id) || null;
   React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
@@ -3621,8 +3631,12 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
       && entries.some(entry => /^https?:\/\//.test(String(entry?.url || "")) && sourceMatchesStartup(s, entry));
   };
   const hasVerifiedDetails = (s) => s?.provenance?.status === "source-backed";
-  const large = ((data && data.large) || []).filter(s => hasLinkedEvidence(s) && !del[s.name]);
-  const small = ((data && data.small) || []).filter(s => hasLinkedEvidence(s) && !del[s.name]);
+  const visibleAll = [...((data && data.large) || []), ...((data && data.small) || [])].filter(s => hasLinkedEvidence(s) && !del[s.name]);
+  const catCounts = {};
+  visibleAll.forEach(s => { const cid = catOf(s); if (cid) catCounts[cid] = (catCounts[cid] || 0) + 1; });
+  const passCat = s => !catFilter || catOf(s) === catFilter;
+  const large = ((data && data.large) || []).filter(s => hasLinkedEvidence(s) && !del[s.name] && passCat(s));
+  const small = ((data && data.small) || []).filter(s => hasLinkedEvidence(s) && !del[s.name] && passCat(s));
 
   return (
     <section className="board" ref={sectionRef} data-screen-label="Startup Analysis">
@@ -3630,7 +3644,8 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
       <div className="board-head" style={{ "--accent": "#0E8F6E" }}>
         <span className="board-tab" style={{ background: "#0E8F6E" }} />
         <div className="board-titles">
-          <h2>스타트업 분석 <span className="board-en">Startup Analysis · 대형=파트너십 / 소형=인수·투자 (레이더 통합)</span></h2>
+          <h2>스타트업 분석 <span className="board-en">Startup Analysis · 단말(스마트폰) 신사업 관점 · AI SW·서비스·에이전트</span></h2>
+          <p>AI 밸류체인 스타트업을 <b>단말에서 할 만한 신사업</b> 관점으로 분류 — 카테고리를 눌러 필터. 대형=파트너십 / 소형=인수·투자.</p>
         </div>
         <div className="mkt-tools">
           <button className={tier === "all" ? "on" : ""} onClick={() => setTier("all")}>전체 {large.length + small.length}</button>
@@ -3639,6 +3654,33 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
           {Object.keys(del).length > 0 && <button onClick={reset} title="삭제 초기화">초기화</button>}
         </div>
       </div>
+
+      {/* 분류 기준 — 단말 신사업 관점(직결/제휴/감시 3단계) */}
+      {TAX.length > 0 && (
+        <div className="su-tax">
+          <div className="su-tax-head">
+            <b>분류 기준 <em>단말 신사업 적합도</em></b>
+            {catFilter && <button className="su-tax-clear" onClick={() => setCatFilter("")}>필터 해제 ✕</button>}
+          </div>
+          {[["직결", "단말 직결 — 온디바이스·기본앱에 바로"], ["제휴", "서비스·B2B 제휴"], ["감시", "백엔드·장기 옵션"]].map(([tierId, tierLabel]) => (
+            <div className="su-tax-tier" key={tierId}>
+              <span className="su-tax-tlabel" data-tier={tierId}>{tierLabel}</span>
+              <div className="su-tax-cats">
+                {TAX.filter(t => t.tier === tierId).map(t => {
+                  const n = catCounts[t.id] || 0;
+                  return (
+                    <button key={t.id} className={"su-tax-cat" + (catFilter === t.id ? " on" : "")} style={{ "--c": t.accent }}
+                      title={`${t.desc}\n▸ 단말 관점: ${t.handset}`}
+                      onClick={() => setCatFilter(catFilter === t.id ? "" : t.id)}>
+                      <i style={{ background: t.accent }} />{t.ko}<em>{n}</em>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {!data ? (
         <div className="mkt-loading">{loaded ? "스타트업 분석을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
@@ -3655,6 +3697,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
                 <div className="mkt-card-head">
                   <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
                   <button className="mkt-name su-link" onClick={() => openStartup(s)} title="기업 상세 보기">{s.name}</button>
+                  {catMeta(catOf(s)) && <span className="su-cat" style={{ "--c": catMeta(catOf(s)).accent }} title={catMeta(catOf(s)).handset}>{catMeta(catOf(s)).ko}</span>}
                   <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.val}` : ""}</span>
                   <DelUI name={s.name} />
                 </div>
@@ -3680,6 +3723,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
                 <div className="mkt-card-head">
                   <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
                   <button className="mkt-name su-link" onClick={() => openStartup(s)} title="기업 상세 보기">{s.name}</button>
+                  {catMeta(catOf(s)) && <span className="su-cat" style={{ "--c": catMeta(catOf(s)).accent }} title={catMeta(catOf(s)).handset}>{catMeta(catOf(s)).ko}</span>}
                   <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.stage}` : ""}</span>
                   <DelUI name={s.name} />
                 </div>
