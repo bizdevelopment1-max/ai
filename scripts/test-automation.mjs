@@ -5,6 +5,7 @@ import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, directCompanyNewsMatch } from "./company-sources.mjs";
 import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
 import { textSimilarity } from "./source-content.mjs";
+import { bulletizeKorean, hasKoreanProseEnding, hasKoreanSentencePeriod } from "./korean-copy.mjs";
 
 const required = [
   ".github/workflows/daily-news.yml",
@@ -36,6 +37,7 @@ const required = [
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
   "scripts/build-public-data.mjs",
+  "scripts/korean-copy.mjs",
   "scripts/audit-agent.mjs",
   "news.json",
   "company-news.json",
@@ -1269,6 +1271,61 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock value-chain board: ${error.message}`);
+}
+
+try {
+  const [components, boards, companyBuilder, startupCrawler, translator, ...views] = await Promise.all([
+    readFile("components.jsx", "utf8"),
+    readFile("boards.jsx", "utf8"),
+    readFile("scripts/build-company-intelligence.mjs", "utf8"),
+    readFile("scripts/crawl-startups.mjs", "utf8"),
+    readFile("scripts/translate_summarize.py", "utf8"),
+    ...["news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json"]
+      .map(file => readFile(file, "utf8").then(JSON.parse)),
+  ]);
+  const cases = new Map([
+    ["전략을 확대합니다. 수익화를 강화한다.", "전략을 확대함 · 수익화를 강화함"],
+    ["2026.07.30 기준 매출 10.5% 증가했습니다.", "2026-07-30 기준 매출 10.5% 증가함"],
+    ["현재 사업의 핵심입니다. 중요한 과제다.", "현재 사업의 핵심임 · 중요한 과제"],
+    ['연구 결과는 "대안이 없습니다."라고 밝힘', '연구 결과는 "대안이 없음" · 라고 밝힘'],
+    ["일자리를 늘리는 것이다: Gartner", "일자리를 늘리는 것임 · Gartner"],
+  ]);
+  for (const [input, expected] of cases) {
+    const actual = bulletizeKorean(input);
+    if (actual !== expected || hasKoreanProseEnding(actual) || hasKoreanSentencePeriod(actual)) {
+      throw new Error(`unexpected copy normalization: ${input} -> ${actual}`);
+    }
+  }
+  const publicCopy = views.flatMap(view => {
+    const records = view.articles || view.feed || view.records || view.items || [];
+    return records.flatMap(item => [
+      item.title, item.titleKo, item.desc, item.signal, item.quant, item.summary,
+      ...(item.summaryLinesKo || []),
+      item.localization?.title,
+      ...(item.localization?.summaryLines || []),
+    ]).filter(value => typeof value === "string" && /[가-힣]/.test(value));
+  });
+  if (publicCopy.some(value => bulletizeKorean(value) !== value
+      || hasKoreanProseEnding(value) || hasKoreanSentencePeriod(value))) {
+    throw new Error("public view still contains Korean sentence copy");
+  }
+  const runtimeGate = components.includes("function consultingBulletText")
+    && components.includes("React.createElement =")
+    && components.includes("CONSULTING_COPY_CACHE")
+    && boards.includes("window.consultingBulletText");
+  const generationGate = companyBuilder.includes("명사형 개조식")
+    && companyBuilder.includes("bulletizeKorean")
+    && startupCrawler.includes("명사형 개조식")
+    && startupCrawler.includes("bulletizeKorean")
+    && translator.includes('previous.get("version") == 14')
+    && translator.includes("bullet_style_valid");
+  if (!runtimeGate || !generationGate) {
+    throw new Error("browser or crawler copy-style gate is incomplete");
+  }
+  console.log(`  OK  한국어 표시 문구 ${publicCopy.length}개 · 마침표와 문장형 종결 없음 · 생성 단계 개조식 고정`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  Korean consulting-copy style: ${error.message}`);
 }
 
 if (failed) process.exit(1);

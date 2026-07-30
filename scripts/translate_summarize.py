@@ -52,13 +52,49 @@ CLAUSE_SPLIT = re.compile(r"\s*,\s+|\s*:\s+")
 # unchanged in sourceLines, while the presentation copy uses bullet-style
 # endings without sentence-final full stops or the declarative -다 style.
 BULLET_ENDINGS = (
+    (re.compile(r"하지 않았습니다$"), "하지 않음"),
+    (re.compile(r"되지 않았습니다$"), "되지 않음"),
+    (re.compile(r"있지 않았습니다$"), "있지 않음"),
     (re.compile(r"있지 않습니다$"), "있지 않음"),
+    (re.compile(r"찾지 못했습니다$"), "찾지 못함"),
     (re.compile(r"않습니다$"), "않음"),
-    (re.compile(r"것으로 보(?:입니다|인다)$"), "것으로 전망"),
-    (re.compile(r"보(?:입니다|인다)$"), "보임"),
+    (re.compile(r"것으로 보입니다$"), "것으로 전망"),
+    (re.compile(r"것으로 보인다$"), "것으로 전망"),
+    (re.compile(r"아니었습니다$"), "아니었음"),
+    (re.compile(r"아닙니다$"), "아님"),
+    (re.compile(r"아니다$"), "아님"),
+    (re.compile(r"하였습니다$"), "함"),
+    (re.compile(r"했습니다$"), "함"),
+    (re.compile(r"하였다$"), "함"),
+    (re.compile(r"했다$"), "함"),
+    (re.compile(r"되었습니다$"), "됨"),
+    (re.compile(r"됐습니다$"), "됨"),
+    (re.compile(r"되었다$"), "됨"),
+    (re.compile(r"됐다$"), "됨"),
     (re.compile(r"됩니다$"), "됨"),
+    (re.compile(r"있었습니다$"), "있었음"),
+    (re.compile(r"있었다$"), "있었음"),
+    (re.compile(r"있습니다$"), "있음"),
+    (re.compile(r"없었습니다$"), "없었음"),
+    (re.compile(r"없었다$"), "없었음"),
+    (re.compile(r"없습니다$"), "없음"),
+    (re.compile(r"이었습니다$"), "이었음"),
+    (re.compile(r"였습니다$"), "였음"),
+    (re.compile(r"이었다$"), "이었음"),
+    (re.compile(r"였다$"), "였음"),
     (re.compile(r"입니다$"), "임"),
     (re.compile(r"합니다$"), "함"),
+    (re.compile(r"보입니다$"), "보임"),
+    (re.compile(r"보인다$"), "보임"),
+    (re.compile(r"나타났습니다$"), "나타남"),
+    (re.compile(r"나타났다$"), "나타남"),
+    (re.compile(r"밝혔습니다$"), "밝힘"),
+    (re.compile(r"밝혔다$"), "밝힘"),
+    (re.compile(r"예상됩니다$"), "예상"),
+    (re.compile(r"전망됩니다$"), "전망"),
+    (re.compile(r"필요합니다$"), "필요"),
+    (re.compile(r"중요합니다$"), "중요"),
+    (re.compile(r"가능합니다$"), "가능"),
     (re.compile(r"습니다$"), "음"),
     (re.compile(r"않는다$"), "않음"),
     (re.compile(r"된다$"), "됨"),
@@ -69,8 +105,7 @@ BULLET_ENDINGS = (
     (re.compile(r"본다$"), "판단"),
     (re.compile(r"과제다$"), "과제"),
     (re.compile(r"전제다$"), "전제"),
-    (re.compile(r"됐다$"), "됨"),
-    (re.compile(r"다$"), "음"),
+    (re.compile(r"목표다$"), "목표"),
 )
 
 
@@ -89,26 +124,38 @@ def bulletize_korean(value: object) -> str:
     """
     text = clean(value)
     text = re.sub(r"\b(\d{4})\.(\d{1,2})\.(\d{1,2})\b", r"\1-\2-\3", text)
+    text = re.sub(r"\bU\.S\.", "US", text, flags=re.IGNORECASE)
+    text = re.sub(r"\bU\.K\.", "UK", text, flags=re.IGNORECASE)
+    text = re.sub(r"\bE\.U\.", "EU", text, flags=re.IGNORECASE)
+    text = re.sub(r"([가-힣])([.!?。！？]+)([\"'”’]?)(?=\s|$|라고|이라며|라는)", r"\1\3 · ", text)
+    text = re.sub(r"([가-힣])\s*[:：]\s+", r"\1 · ", text)
     text = text.replace("。", " · ")
-    # English fallbacks can contain abbreviations such as U.S.  Treat their
-    # internal dots as separators too, while retaining decimal figures.
-    text = re.sub(r"(?<=[A-Za-z])\.(?=[A-Za-z])", "·", text)
-    # Keep decimal/model-version dots, but replace sentence punctuation.
-    text = re.sub(r"([^0-9])\.(?=\s+)", r"\1 ·", text)
-    text = re.sub(r"([^0-9])\.(?=[\"”’']?\s*$)", r"\1", text)
     parts = []
     # A compact middle dot can be a decimal separator (for example 10·9%),
     # while a spaced middle dot is the presentation separator between points.
     for raw in re.split(r"\s+·\s+", text):
-        part = raw.strip(" \t\n·。.!?\"'”’")
+        part = raw.strip(" \t\n·")
         if not part:
             continue
+        closing_match = re.search(r"([\"'”’]+)$", part)
+        closing = closing_match.group(1) if closing_match else ""
+        if closing:
+            part = part[:-len(closing)].rstrip()
+        part = re.sub(r"[。.!?！？]+$", "", part).strip()
         for pattern, replacement in BULLET_ENDINGS:
             if pattern.search(part):
                 part = pattern.sub(replacement, part)
                 break
-        parts.append(part)
+        part = re.sub(r"다$", "", part).strip()
+        parts.append(f"{part}{closing}")
     return " · ".join(parts)
+
+
+def bullet_style_valid(value: str) -> bool:
+    text = str(value or "")
+    if re.search(r"[가-힣](?:다|습니다|ㅂ니다)[.!?。！？]*[\"'”’]*\s*(?:·|$)", text):
+        return False
+    return not re.search(r"[가-힣][.!?。！？]+[\"'”’]?(?=\s|$|라고|이라며|라는)", text)
 
 
 def has_korean(value: str) -> bool:
@@ -153,6 +200,8 @@ def valid_korean(text: str, source: str) -> bool:
     if len(text) < max(12, int(len(clean(source)) * 0.12)) or len(text) > max(700, len(source) * 5 + 80):
         return False
     if BAD_OUTPUT.search(text) or "�" in text or "http://" in text or "https://" in text:
+        return False
+    if not bullet_style_valid(text):
         return False
     # Do not reject a valid model/version token such as "GPT-5.x보다".
     # This still blocks a stray standalone Latin fragment glued to Hangul.
@@ -234,12 +283,12 @@ def new_localization(item: dict, title: str, excerpt: str, language: str) -> dic
     # A successful translation is cached until its source changes. A fallback
     # is deliberately retried on the next scheduled run so a transient
     # translation outage does not become permanent English display.
-    if previous.get("version") == 13 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
+    if previous.get("version") == 14 and previous.get("sourceHash") == digest and previous.get("status") == "accepted":
         if item.get("house"):
             item["displayEligible"] = item.get("sourceContent", {}).get("status") == "content-extracted"
         return previous
     return {
-        "version": 13,
+        "version": 14,
         "sourceHash": digest,
         "sourceLines": canonical_fragments(title, raw_excerpt, item.get("source", ""), item.get("date", "")),
         "checkedAt": datetime.now(timezone.utc).isoformat(),

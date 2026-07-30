@@ -21,6 +21,7 @@ import { isExcludedText } from "./news-policy.mjs";
 import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { canonicalizeStartupSnapshot } from "./company-identity.mjs";
+import { bulletizeKorean } from "./korean-copy.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -29,14 +30,12 @@ const operationalCopy = /(?:수집|확인|분석|업데이트|준비)\s*중|신�
 const scrub = s => {
   const input = String(s || "").trim();
   if (operationalCopy.test(input)) return "";
-  return input
-  .replace(/[.。]+$/, "")
-  .replace(/\.\s+/g, " · ")
+  return bulletizeKorean(input
   .replace(/기술 감시/g, "기술 적용성 검토")
   .replace(/기능 감시/g, "기능 적용성 검토")
   .replace(/제휴 감시/g, "제휴 타당성 검토")
   .replace(/모니터링/g, "사업 모델 검토")
-  .trim();
+  .trim());
 };
 const EXCLUDED = /deepseek|kling|kuaishou|hailuo|minimax|zhipu|moonshot|01\.?ai|baichuan|stepfun|sensetime|iflytek|baidu|alibaba|tencent|bytedance|naver|kakao|upstage|wrtn|hyperclova/i;
 const LABELS_L = ["파트너십 기회", "전략 제휴", "탑재 후보", "사업 모델 검토"];
@@ -426,7 +425,7 @@ async function enrichInstitutional(rows) {
       existingDirection: row.strategyDirection,
     }));
     const result = await llmJSON({
-      system: "당신은 스마트폰 사업자의 소비자 AI 신사업 애널리스트다. 입력된 a16z 선정 정보와 제품 공식 페이지 메타데이터만 사용해 각 제품의 현재 사업, 돈 버는 방식, 앞으로의 사업 방향을 한국어로 구체적으로 정리한다. 근거가 부족한 선택 항목은 빈 문자열로 반환하고 수치·가격·투자 사실을 만들지 않는다. '수집 중', '확인 중', '대기', '데이터 없음', '옵션 확보', '신호 감시', '모니터링' 같은 운영 상태·일반론은 금지한다.",
+      system: "스마트폰 사업자 관점의 소비자 AI 신사업 분석 역할 입력된 a16z 선정 정보와 제품 공식 페이지 메타데이터만 사용 각 제품의 현재 사업, 돈 버는 방식, 향후 사업 방향을 한국어로 구체화 모든 출력은 명사형 개조식으로 작성 마침표와 '~다'·'~습니다' 종결 금지 근거가 부족한 선택 항목은 빈 문자열로 반환 수치·가격·투자 사실 생성 금지 '수집 중', '확인 중', '대기', '데이터 없음', '옵션 확보', '신호 감시', '모니터링' 같은 운영 상태·일반론 금지",
       user: `다음 제품을 분석해 rows JSON으로 반환:\n${JSON.stringify(input)}`,
       maxTokens: 5_500,
       schema,

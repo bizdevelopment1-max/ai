@@ -1253,29 +1253,12 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
 // ordinary English words such as "pair" or "training".
 const BRIEF_KEYWORDS = /((?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년)|AI\s*(?:서버|인프라|에이전트|모델|칩|수요|지출)|인공지능|생성\s*AI|HBM|DRAM|NAND|SSD|GPU|NPU|ARM|x86|CapEx|데이터\s*센터|클라우드|Morgan Stanley|Goldman Sachs|JPMorgan|Bank of America|Citi|Citigroup|TrendForce|IDC|Gartner|OpenAI|Anthropic|NVIDIA|Google|Microsoft|Amazon|Meta|Apple))/gi;
 const NUMBER_TOKEN = /^(?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년))$/i;
-const BULLET_ENDINGS = [
-  [/있지 않습니다$/, "있지 않음"], [/않습니다$/, "않음"], [/됩니다$/, "됨"],
-  [/것으로 보(?:입니다|인다)$/, "것으로 전망"], [/보(?:입니다|인다)$/, "보임"],
-  [/입니다$/, "임"], [/합니다$/, "함"], [/습니다$/, "음"],
-  [/않는다$/, "않음"], [/된다$/, "됨"], [/한다$/, "함"], [/이다$/, "임"],
-  [/있다$/, "있음"], [/없다$/, "없음"], [/본다$/, "판단"], [/과제다$/, "과제"],
-  [/전제다$/, "전제"], [/됐다$/, "됨"], [/다$/, "음"],
-];
 // Display copy uses concise, non-sentence Korean. Source text and hashes stay
 // untouched in the data set, so this is a visual writing rule only.
 function bulletText(value) {
-  const compact = String(value || "")
-    .replace(/\b(\d{4})\.(\d{1,2})\.(\d{1,2})\b/g, "$1-$2-$3")
-    .replace(/。/g, " · ")
-    .replace(/([^0-9])\.(?=\s+)/g, "$1 ·")
-    .replace(/([^0-9])\.(?=["”']?\s*$)/g, "$1");
-  return compact.split(/\s+·\s+/).map(part => {
-    let out = part.trim().replace(/[。.!?"”']+$/, "");
-    for (const [ending, replacement] of BULLET_ENDINGS) {
-      if (ending.test(out)) { out = out.replace(ending, replacement); break; }
-    }
-    return out;
-  }).filter(Boolean).join(" · ");
+  return window.consultingBulletText
+    ? window.consultingBulletText(value)
+    : String(value || "").replace(/[。.!?"”']+$/, "");
 }
 function hlBrief(text, keyBase) {
   BRIEF_KEYWORDS.lastIndex = 0;

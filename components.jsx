@@ -1,6 +1,93 @@
 /* ============================================================
    components.jsx — UI building blocks
    ============================================================ */
+// Site-wide Korean display-copy gate
+// Raw evidence stays unchanged in JSON; only rendered Korean copy is converted
+// to concise consulting bullets without sentence periods or declarative -다
+const CONSULTING_COPY_CACHE = new Map();
+const CONSULTING_ENDINGS = [
+  [/하지 않았습니다$/, "하지 않음"], [/되지 않았습니다$/, "되지 않음"],
+  [/있지 않았습니다$/, "있지 않음"], [/있지 않습니다$/, "있지 않음"],
+  [/찾지 못했습니다$/, "찾지 못함"],
+  [/것으로 보입니다$/, "것으로 전망"], [/것으로 보인다$/, "것으로 전망"],
+  [/그렇지 않습니다$/, "그렇지 않음"],
+  [/아니었습니다$/, "아니었음"], [/아닙니다$/, "아님"], [/아니다$/, "아님"],
+  [/하였습니다$/, "함"], [/했습니다$/, "함"], [/합니다$/, "함"],
+  [/하였다$/, "함"], [/했다$/, "함"], [/한다$/, "함"],
+  [/되었습니다$/, "됨"], [/됐습니다$/, "됨"], [/되었다$/, "됨"],
+  [/됐다$/, "됨"], [/됩니다$/, "됨"], [/된다$/, "됨"],
+  [/있었습니다$/, "있었음"], [/있었다$/, "있었음"], [/있습니다$/, "있음"], [/있다$/, "있음"],
+  [/없었습니다$/, "없었음"], [/없었다$/, "없었음"], [/없습니다$/, "없음"], [/없다$/, "없음"],
+  [/이었습니다$/, "이었음"], [/였습니다$/, "였음"], [/이었다$/, "이었음"],
+  [/였다$/, "였음"], [/입니다$/, "임"], [/이다$/, "임"],
+  [/보입니다$/, "보임"], [/보인다$/, "보임"],
+  [/나타났습니다$/, "나타남"], [/나타났다$/, "나타남"],
+  [/밝혔습니다$/, "밝힘"], [/밝혔다$/, "밝힘"],
+  [/예상됩니다$/, "예상"], [/전망됩니다$/, "전망"],
+  [/필요합니다$/, "필요"], [/중요합니다$/, "중요"], [/가능합니다$/, "가능"],
+  [/어렵습니다$/, "어려움"], [/쉽습니다$/, "쉬움"],
+  [/높습니다$/, "높음"], [/낮습니다$/, "낮음"],
+  [/많습니다$/, "많음"], [/적습니다$/, "적음"],
+  [/큽니다$/, "큼"], [/작습니다$/, "작음"],
+  [/늘린다$/, "확대"], [/높인다$/, "제고"], [/넓힌다$/, "확대"],
+  [/줄인다$/, "축소"], [/낮춘다$/, "축소"], [/만든다$/, "구축"],
+  [/선보인다$/, "공개"], [/나타낸다$/, "나타냄"], [/받는다$/, "받음"],
+  [/않았습니다$/, "않음"], [/않습니다$/, "않음"], [/않았다$/, "않음"], [/않는다$/, "않음"],
+  [/드립니다$/, "드림"], [/습니다$/, "음"], [/는다$/, "음"],
+  [/과제다$/, "과제"], [/전제다$/, "전제"], [/목표다$/, "목표"],
+];
+function consultingBulletText(value) {
+  const source = String(value ?? "");
+  if (!source || !/[가-힣]/.test(source) || /^https?:\/\/\S+$/i.test(source.trim())) return source;
+  if (CONSULTING_COPY_CACHE.has(source)) return CONSULTING_COPY_CACHE.get(source);
+  const normalized = source
+    .replace(/\b(\d{4})\.(\d{1,2})\.(\d{1,2})\b/g, "$1-$2-$3")
+    .replace(/\bU\.S\./gi, "US").replace(/\bU\.K\./gi, "UK").replace(/\bE\.U\./gi, "EU")
+    .replace(/([가-힣])([.!?。！？]+)(["'”’]?)(?=\s|$|라고|이라며|라는)/g, "$1$3 · ")
+    .replace(/([가-힣])\s*[:：]\s+/g, "$1 · ")
+    .replace(/。/g, " · ");
+  const result = normalized.split("\n").map(line =>
+    line.split(/\s+·\s+/).map(raw => {
+      let part = raw.trim().replace(/^[·\s]+|[·\s]+$/g, "");
+      const closing = part.match(/(["'”’]+)$/)?.[1] || "";
+      if (closing) part = part.slice(0, -closing.length).trimEnd();
+      part = part.replace(/[。.!?！？]+$/g, "").trim();
+      for (const [ending, replacement] of CONSULTING_ENDINGS) {
+        if (ending.test(part)) {
+          part = part.replace(ending, replacement);
+          break;
+        }
+      }
+      return `${part.replace(/다$/u, "").trim()}${closing}`;
+    }).filter(Boolean).join(" · ")
+  ).join("\n").replace(/[ \t]{2,}/g, " ").trim();
+  if (CONSULTING_COPY_CACHE.size > 3000) CONSULTING_COPY_CACHE.clear();
+  CONSULTING_COPY_CACHE.set(source, result);
+  return result;
+}
+
+const ORIGINAL_CREATE_ELEMENT = React.createElement.bind(React);
+const normalizeDisplayChild = child => {
+  if (typeof child === "string") return consultingBulletText(child);
+  if (Array.isArray(child)) return child.map(normalizeDisplayChild);
+  return child;
+};
+React.createElement = (type, props, ...children) => {
+  const className = typeof props?.className === "string" ? props.className : "";
+  const preserve = props?.["data-preserve-copy"] || /(?:^|\s)user(?:\s|$)/.test(className);
+  const nextProps = props ? { ...props } : props;
+  if (!preserve && nextProps) {
+    for (const key of ["title", "aria-label", "placeholder"]) {
+      if (typeof nextProps[key] === "string") nextProps[key] = consultingBulletText(nextProps[key]);
+    }
+  }
+  return ORIGINAL_CREATE_ELEMENT(
+    type,
+    nextProps,
+    ...(preserve ? children : children.map(normalizeDisplayChild)),
+  );
+};
+
 const { useState, useRef, useEffect, useContext } = React;
 
 // ---- tiny icon set (stroke) ------------------------------------
@@ -590,4 +677,4 @@ function AIChatbot({ onNav }) {
   );
 }
 
-Object.assign(window, { Icon, Trend, Sidebar, TopBar, KpiStrip, NAV, BRANDS, sbBg, AIChatbot });
+Object.assign(window, { Icon, Trend, Sidebar, TopBar, KpiStrip, NAV, BRANDS, sbBg, AIChatbot, consultingBulletText });

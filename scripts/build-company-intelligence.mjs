@@ -10,6 +10,7 @@ import { createHash } from "node:crypto";
 import { loadDash } from "./load-dash.mjs";
 import { llmJSON, llmAvailable } from "./llm.mjs";
 import { aliasesFor, articleFocusScore, articleFocusedOnCompany, companyRegex, COMPANY_SOURCES } from "./company-sources.mjs";
+import { bulletizeKorean } from "./korean-copy.mjs";
 
 const readJson = async (file, fallback) => {
   try { return JSON.parse(await readFile(file, "utf8")); } catch { return fallback; }
@@ -277,9 +278,9 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
         .map(clean).find(text => text && !seenClaims.some(previous => nearDuplicateClaim(previous, text)));
       chosen = alternative ? { ...chosen, summary: alternative } : blankSection();
     }
-    const summary = clean(chosen.summary);
+    const summary = bulletizeKorean(clean(chosen.summary));
     if (summary) seenClaims.push(summary);
-    const details = (chosen.details || []).filter(detail => {
+    const details = (chosen.details || []).map(detail => bulletizeKorean(clean(detail))).filter(detail => {
       const fingerprint = clean(detail).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
       if (!fingerprint || seenDetails.has(fingerprint)
         || seenClaims.some(previous => nearDuplicateClaim(previous, detail))) return false;
@@ -315,12 +316,23 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
     const source = evidenceByUrl.get(refKey(item.evidence));
     const fingerprint = clean(item.title).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
     return source && isCompanyActionEvidenceFor(name, source) && !occupied.has(fingerprint);
-  }).slice(0, 4);
+  }).slice(0, 4).map(item => ({
+    ...item,
+    title: bulletizeKorean(item.title),
+    insight: bulletizeKorean(item.insight),
+  }));
   out.newBusinessModels = (out.newBusinessModels || []).filter(item =>
     item.evidence?.url && allowedUrls.has(refKey(item.evidence))
-    && supportedNumbers(`${item.title} ${item.model} ${item.implication}`, corpus)).slice(0, 3);
+    && supportedNumbers(`${item.title} ${item.model} ${item.implication}`, corpus)).slice(0, 3)
+    .map(item => ({
+      ...item,
+      title: bulletizeKorean(item.title),
+      model: bulletizeKorean(item.model),
+      implication: bulletizeKorean(item.implication),
+    }));
   out.executiveQuotes = (out.executiveQuotes || []).filter(item =>
-    item.evidenceUrl && allowedUrls.has(canon(item.evidenceUrl))).slice(0, 4);
+    item.evidenceUrl && allowedUrls.has(canon(item.evidenceUrl))).slice(0, 4)
+    .map(item => ({ ...item, quoteKo: bulletizeKorean(item.quoteKo) }));
   out.meceFramework = [
     { key: "currentBusiness", label: "사업 범위", question: "무엇을 제공하는가" },
     { key: "revenueModel", label: "수익 엔진", question: "어떻게 돈을 버는가" },
@@ -479,7 +491,7 @@ async function synthesizeBatch(inputs) {
       "근거가 없는 수치·인물·인과를 만들지 않는다. 각 판단은 입력 evidence id를 연결한다.",
       "근거가 부족한 선택 항목은 빈 문자열과 빈 배열로 반환한다. '수집 중', '확인 중', '대기', '데이터 없음' 같은 운영 상태 문구를 쓰지 않는다.",
       "executiveQuotes는 candidates에 있는 영문 원문을 단 한 글자도 바꾸지 말고 한국어 번역을 함께 제공한다. candidate가 없으면 빈 배열이다.",
-      "문장은 짧은 컨설팅 보고서 문체로 쓴다.",
+      "모든 한국어 출력은 마침표 없이 명사형 개조식으로 쓴다. '~다', '~습니다', '~입니다', '~합니다' 종결은 금지한다.",
     ].join(" "),
     user: `다음 기업 묶음을 분석해 JSON으로 반환:\n${JSON.stringify(inputs)}`,
     maxTokens: 3_500,
