@@ -1422,5 +1422,20 @@ try {
   console.error(`  FAIL  suppression registry: ${error.message}`);
 }
 
+try {
+  const stockReasonSources = await Promise.all([
+    "data.js",
+    "stock-events.json",
+    "scripts/crawl-stock-events.mjs",
+  ].map(file => readFile(file, "utf8")));
+  if (stockReasonSources.some(source => /왜 (?:올랐나|빠졌나)\s*:/.test(source))) {
+    throw new Error("stock event reason labels remain in source data or the crawler");
+  }
+  console.log("  OK  stock event reason labels removed");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  stock event reason copy: ${error.message}`);
+}
+
 if (failed) process.exit(1);
 console.log("자동화 구성 정상");
