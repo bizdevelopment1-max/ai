@@ -322,6 +322,30 @@ try {
     readFile("scripts/crawl-startup-organizations.mjs", "utf8"),
   ]);
   const companyRows = Object.values(companies.companies || {});
+  const executiveFeedsReady = companyRows.every(company => {
+    const feed = company.executiveFeed || {};
+    return feed.schemaVersion === 2
+      && feed.methodology === "executive-name+company-focus+nearest-speaker-direct-quote+korean-source-alignment"
+      && Number.isInteger(feed.leadersTracked)
+      && Array.isArray(feed.sourceUrls)
+      && Array.isArray(feed.quotes)
+      && Array.isArray(feed.mentions)
+      && feed.quotes.every(item =>
+        item.speaker && item.quoteOriginal && item.quoteKo
+        && /^https?:\/\//.test(String(item.evidenceUrl || ""))
+        && item.evidenceType === "direct-quote+aligned-korean-source-summary")
+      && feed.mentions.every(item =>
+        item.who && item.titleEn
+        && /^https?:\/\//.test(String(item.url || ""))
+        && item.evidenceType === "publisher-page-extractive");
+  });
+  const executiveUiReady = boards.includes("경영진 발언·인터뷰 <em>Executive Quotes</em>")
+    && boards.includes("경영진 발언·기사 <em>Executive Mentions</em>")
+    && boards.includes('className="cd-exec-flow"')
+    && boards.includes("원문 검증 · 자동 갱신")
+    && boards.includes("기업 직접 연관 · 자동 갱신")
+    && !boards.includes("interviewRows.length > 0 && (")
+    && !boards.includes("c.live && Array.isArray(c.live.execNews)");
   const startupRows = [...(startups.large || []), ...(startups.small || []), ...(startups.institutional || [])];
   const organizationRows = [...companyRows, ...startupRows].map(row => row.organization).filter(Boolean);
   const people = organizationRows.flatMap(organization => organization.executiveTeam || []);
@@ -349,10 +373,11 @@ try {
     && companyCrawler.includes("roleSourceType")
     && companyCrawler.includes("linkedinVerification")
     && startupCrawler.includes("linkedinVerification");
-  if (!depthReady || !directProfilesVerified || !nodeDetailReady || !inlineExecutiveTitlesReady || !refreshReady) {
-    throw new Error("12-person leadership merge, inline executive titles, in-node background detail, direct-profile verification, or recurring normalization is incomplete");
+  if (!depthReady || !directProfilesVerified || !nodeDetailReady || !inlineExecutiveTitlesReady
+    || !executiveFeedsReady || !executiveUiReady || !refreshReady) {
+    throw new Error("12-person leadership merge, inline executive titles, universal executive feeds, in-node background detail, direct-profile verification, or recurring normalization is incomplete");
   }
-  console.log(`  OK  전체 기업 조직도 ${organizationRows.length}개 · 최대 12명 · 학교·전공·경력 노드 통합 · LinkedIn 직접 프로필 검증`);
+  console.log(`  OK  전체 기업 조직도 ${organizationRows.length}개 · 전 기업 Executive Quotes/Mentions 스키마 · 최대 12명 · LinkedIn 직접 프로필 검증`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  organization depth and direct LinkedIn integrity: ${error.message}`);
@@ -623,7 +648,14 @@ try {
     && intelligenceBuilder.includes("persistCompanyData")
     && intelligenceBuilder.includes("COMPANY_INTELLIGENCE_AI_BUDGET")
     && intelligenceBuilder.includes("modelQueue")
+    && intelligenceBuilder.includes("rec.executiveFeed?.quotes")
+    && intelligenceBuilder.includes("nearest.distance > 220")
     && companyCrawler.includes("articleFocusedOnCompany")
+    && companyCrawler.includes("function deriveLeaders(org)")
+    && companyCrawler.includes("const buildExecutiveFeed =")
+    && companyCrawler.includes("nearest.distance > 220")
+    && companyCrawler.includes('evidenceType: "direct-quote+aligned-korean-source-summary"')
+    && companyCrawler.includes("rec.executiveFeed = executiveFeed")
     && llmClient.includes("GITHUB_MODELS_MAX_RETRY_WAIT_MS")
     && llmClient.includes("advertisedWait > 300");
   const officialReady = officials.schemaVersion === 1

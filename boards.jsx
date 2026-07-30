@@ -1110,11 +1110,19 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
           const tierGroups = tierMeta.map(([key, ko, en]) => ({
             key, ko, en, people: reports.filter(person => tierOf(person) === key),
           })).filter(group => group.people.length);
-          const crawlQuotes = Array.isArray(intelligence.executiveQuotes) ? intelligence.executiveQuotes.map(quote => ({
+          const executiveFeed = live.executiveFeed || c.executiveFeed || {};
+          const feedQuotes = Array.isArray(executiveFeed.quotes) ? executiveFeed.quotes.map(quote => ({
             who: quote.speaker, role: quote.role, date: quote.date,
             quoteEn: quote.quoteOriginal, quoteKo: quote.quoteKo,
             source: quote.source, url: quote.evidenceUrl,
           })) : [];
+          const intelligenceQuotes = Array.isArray(intelligence.executiveQuotes) ? intelligence.executiveQuotes.map(quote => ({
+            who: quote.speaker, role: quote.role, date: quote.date,
+            quoteEn: quote.quoteOriginal, quoteKo: quote.quoteKo,
+            source: quote.source, url: quote.evidenceUrl,
+          })) : [];
+          const crawlQuotes = [...feedQuotes, ...intelligenceQuotes].filter((item, index, rows) =>
+            rows.findIndex(other => `${other.who}|${other.quoteEn || other.quoteKo}` === `${item.who}|${item.quoteEn || item.quoteKo}`) === index);
           const interviewRows = [...crawlQuotes, ...(org.interviews || [])].filter((item, index, rows) =>
             rows.findIndex(other => `${other.who}|${other.quoteEn || other.quoteKo}` === `${item.who}|${item.quoteEn || item.quoteKo}`) === index).slice(0, 6);
           // 검증된 직접 프로필 URL만 연결한다. 검색 결과 페이지는 상세 링크로 사용하지 않는다.
@@ -1190,45 +1198,59 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                   </div>
                 </div>
               )}
-              {interviewRows.length > 0 && (
-                <div className="cd-section">
-                  <h4>경영진 발언·인터뷰 <em>Executive Quotes · Korean + Original</em>
-                    {crawlQuotes.length > 0 && <b className="cd-prof-live">LIVE · 원문 발언 추출</b>}
-                  </h4>
-                  <div className="cd-itv">
+              <div className="cd-section">
+                <h4>경영진 발언·인터뷰 <em>Executive Quotes</em>
+                  <b className="cd-prof-live">원문 검증 · 자동 갱신</b>
+                </h4>
+                <div className="cd-exec-flow" aria-label="경영진 발언 검증 흐름">
+                  <span><em>01</em><b>임원 실명</b></span><i aria-hidden="true" />
+                  <span><em>02</em><b>직접 인용문</b></span><i aria-hidden="true" />
+                  <span><em>03</em><b>한·영 대조</b></span><i aria-hidden="true" />
+                  <span><em>04</em><b>원문 연결</b></span>
+                </div>
+                {interviewRows.length > 0 && <div className="cd-itv">
                     {interviewRows.map((it, i) => (
                       <div className="cd-itv-item" key={i}>
                         <div className="cd-itv-who">
                           <b>{executiveDisplayName({ name: it.who, role: it.role })}</b>
                           {it.date && <span className="cd-itv-date">{it.date}</span>}
                         </div>
-                        <p className="cd-itv-ko">{it.quoteKo || it.insight}</p>
+                        {(it.quoteKo || it.insight) && <p className="cd-itv-ko">{it.quoteKo || it.insight}</p>}
                         {it.quoteEn && <p className="cd-itv-en">“{it.quoteEn}”</p>}
                         {it.url && <a className="cd-itv-src" href={it.url} target="_blank" rel="noopener">{it.source ? it.source + " · " : ""}원문 보기 <Icon name="ext" size={10} /></a>}
                       </div>
                     ))}
-                  </div>
-                </div>
-              )}
+                  </div>}
+              </div>
             </React.Fragment>
           );
         })()}
 
-        {c.live && Array.isArray(c.live.execNews) && c.live.execNews.length > 0 && (
+        {(() => {
+          const executiveFeed = c.live?.executiveFeed || c.executiveFeed || {};
+          const mentionRows = (Array.isArray(executiveFeed.mentions) && executiveFeed.mentions.length
+            ? executiveFeed.mentions : c.live?.execNews || []).slice(0, 6);
+          return (
           <div className="cd-section">
-            <h4>경영진 발언·기사 <em>Executive Mentions</em><b className="cd-prof-live">LIVE · 크롤</b></h4>
-            <div className="cd-exn">
-              {c.live.execNews.map((e, i) => (
+            <h4>경영진 발언·기사 <em>Executive Mentions</em><b className="cd-prof-live">기업 직접 연관 · 자동 갱신</b></h4>
+            <div className="cd-exec-flow" aria-label="경영진 기사 검증 흐름">
+              <span><em>01</em><b>임원 실명</b></span><i aria-hidden="true" />
+              <span><em>02</em><b>기업 직접 연관</b></span><i aria-hidden="true" />
+              <span><em>03</em><b>원문 기사</b></span><i aria-hidden="true" />
+              <span><em>04</em><b>최신순 갱신</b></span>
+            </div>
+            {mentionRows.length > 0 && <div className="cd-exn">
+              {mentionRows.map((e, i) => (
                 <a className="cd-exn-item" key={i} href={e.url} target="_blank" rel="noopener">
-                  <div className="cd-exn-top"><b>{e.who}</b><span>{e.date}{e.source ? " · " + e.source : ""}</span></div>
+                  <div className="cd-exn-top"><b>{executiveDisplayName({ name: e.who, role: e.role })}</b><span>{e.date}{e.source ? " · " + e.source : ""}</span></div>
                   {e.titleKo && <p className="cd-exn-ko">{e.titleKo}</p>}
                   <p className="cd-exn-en">{e.titleEn}</p>
                 </a>
               ))}
-            </div>
-            <p className="cd-cp-note">경영진 이름이 등장한 크롤 기사 — 한글(가능 시)·원문 병기 · 클릭 시 원문 · 매일 자동 갱신</p>
+            </div>}
           </div>
-        )}
+          );
+        })()}
 
         {((Array.isArray(intelligence.corePractices) && intelligence.corePractices.length > 0)
           || (c.live && Array.isArray(c.live.practices) && c.live.practices.length > 0)) && (() => {

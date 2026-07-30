@@ -65,7 +65,7 @@ function App() {
   const startupInView = useInView(refs.sanalysis);
   const companySectionActive = ["strategy", "app", "agent", "service", "trust", "model", "data", "infra", "sanalysis"].includes(active);
   const companyInView = strategyInView || infraInView || modelInView || dataInView || trustInView || serviceInView || agentInView || appInView || startupInView || companySectionActive;
-  const needsCompanyData = companyInView || active === "overview";
+  const needsCompanyData = companyInView || active === "overview" || !!selected;
   const articlesInView = useInView(refs.articles);
   const signalsInView = useInView(refs.signals);
   const newbizInView = useInView(refs.newbiz);
@@ -228,6 +228,11 @@ function App() {
     if (strat) merged.strategy = strat;
     return merged;
   }), [coLive, startupsX, monet]);
+  uE(() => {
+    if (!selected || !coLive) return;
+    const hydrated = companiesLive.find(company => company.name === selected.name);
+    if (hydrated && hydrated.live !== selected.live) setSelected(hydrated);
+  }, [coLive, companiesLive, selected?.name]);
   // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
   const [stockData, setStockData] = uS(null);
   const [nvidiaInvestments, setNvidiaInvestments] = uS(null);
