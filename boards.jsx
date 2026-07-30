@@ -2381,10 +2381,11 @@ const DYNAMICS_AXES = [
   { id: "supply", label: "공급", color: "#F59E0B", types: ["매출"] },
 ];
 
-function ESCompetitiveMap({ companies, cats, articles }) {
+function ESCompetitiveMap({ companies, cats, articles, active }) {
   const ref = React.useRef(null);
   const videoRef = React.useRef(null);
   const inView = useInView(ref);
+  const mediaActive = inView && active;
   const prog = useProgress(inView, 1400);
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
 
@@ -2416,7 +2417,7 @@ function ESCompetitiveMap({ companies, cats, articles }) {
   React.useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
-    if (!inView) { video.pause(); return undefined; }
+    if (!mediaActive) { video.pause(); return undefined; }
     const slowPlayback = () => {
       video.defaultPlaybackRate = 0.55;
       video.playbackRate = 0.55;
@@ -2430,7 +2431,7 @@ function ESCompetitiveMap({ companies, cats, articles }) {
       video.removeEventListener("loadedmetadata", slowPlayback);
       video.removeEventListener("play", slowPlayback);
     };
-  }, [inView]);
+  }, [mediaActive]);
 
   const selectedCompany = list.find(c => c.name === activeCompany) || list[0] || null;
   const selectedArticle = selectedCompany ? articleByCo[selectedCompany.name] : null;
@@ -2470,8 +2471,8 @@ function ESCompetitiveMap({ companies, cats, articles }) {
           />
         </div>
         <aside className="dyn-video-panel" aria-live="polite">
-          <video ref={videoRef} className="dyn-video" autoPlay muted loop playsInline preload="metadata" aria-label="AI 업계 경쟁 다이내믹스 영상">
-            <source src="assets/competitive-dynamics.mp4" type="video/mp4" />
+          <video ref={videoRef} className="dyn-video" muted loop playsInline preload="none" aria-label="AI 업계 경쟁 다이내믹스 영상">
+            {mediaActive && <source src="assets/competitive-dynamics.mp4" type="video/mp4" />}
           </video>
           <div className="dyn-video-overlay">
             <div className="dyn-video-head">

@@ -22,6 +22,8 @@ export const BROWSER_SOURCES = [
   "app.jsx",
 ];
 export const BUNDLE_FILE = "app.bundle.js";
+export const DATA_SOURCE_FILE = "data.js";
+export const DATA_BUNDLE_FILE = "data.bundle.js";
 const BABEL_URL = "https://unpkg.com/@babel/standalone@7.29.0/babel.min.js";
 
 export const sourceStamp = sources => createHash("sha256")
@@ -45,8 +47,12 @@ async function loadBabel() {
 }
 
 export async function buildBrowserBundle() {
-  const sources = await readBrowserSources();
+  const [sources, dataSource] = await Promise.all([
+    readBrowserSources(),
+    readFile(DATA_SOURCE_FILE, "utf8"),
+  ]);
   const stamp = sourceStamp(sources);
+  const dataStamp = sourceStamp([{ file: DATA_SOURCE_FILE, source: dataSource }]);
   const Babel = await loadBabel();
   const compiled = sources.map(({ file, source }) => Babel.transform(source, {
     filename: file,
@@ -57,8 +63,20 @@ export async function buildBrowserBundle() {
     compact: true,
   }).code);
   const bundle = `/* ai-dashboard-bundle:${stamp} */\n${compiled.join("\n")}\n`;
-  await writeFile(BUNDLE_FILE, bundle);
+  const compactData = Babel.transform(dataSource, {
+    filename: DATA_SOURCE_FILE,
+    babelrc: false,
+    configFile: false,
+    comments: false,
+    compact: true,
+  }).code;
+  const dataBundle = `/* ai-dashboard-data:${dataStamp} */\n${compactData}\n`;
+  await Promise.all([
+    writeFile(BUNDLE_FILE, bundle),
+    writeFile(DATA_BUNDLE_FILE, dataBundle),
+  ]);
   console.log(`[bundle] wrote ${BUNDLE_FILE} from ${sources.length} source files (${Math.round(bundle.length / 1024)} KB)`);
+  console.log(`[bundle] wrote ${DATA_BUNDLE_FILE} (${Math.round(dataBundle.length / 1024)} KB)`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

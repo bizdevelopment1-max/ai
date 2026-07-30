@@ -62,7 +62,9 @@ function App() {
   const serviceInView = useInView(refs.service);
   const agentInView = useInView(refs.agent);
   const appInView = useInView(refs.app);
-  const companyInView = strategyInView || infraInView || modelInView || dataInView || trustInView || serviceInView || agentInView || appInView;
+  const startupInView = useInView(refs.sanalysis);
+  const companySectionActive = ["strategy", "app", "agent", "service", "trust", "model", "data", "infra", "sanalysis"].includes(active);
+  const companyInView = strategyInView || infraInView || modelInView || dataInView || trustInView || serviceInView || agentInView || appInView || startupInView || companySectionActive;
   const articlesInView = useInView(refs.articles);
   const signalsInView = useInView(refs.signals);
   const newbizInView = useInView(refs.newbiz);
@@ -74,7 +76,8 @@ function App() {
   const [dataVersion, setDataVersion] = uS("");
   const [dataGeneratedAt, setDataGeneratedAt] = uS("");
   const dataUrl = file => `${file}?v=${encodeURIComponent(dataVersion || "bootstrap")}`;
-  const needsNews = articlesInView || companyInView || signalsInView || newbizInView || active === "articles" || active === "newbiz";
+  const needsNews = articlesInView || companyInView || signalsInView || newbizInView
+    || ["overview", "articles", "signals", "newbiz"].includes(active);
 
   // A tiny version manifest is the only uncacheable request. Every sizeable
   // data file is immutable for that version and can therefore be CDN-cached.
@@ -176,7 +179,7 @@ function App() {
   }, [companyInView, dataVersion]);
 
   uE(() => {
-    if (!auditInView || !dataVersion) return;
+    if (!(auditInView || active === "audit") || !dataVersion) return;
     let alive = true;
     fetch(dataUrl("audit.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
@@ -187,7 +190,7 @@ function App() {
     fetch(dataUrl("collection-health.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j) setCollectionHealth(j); }).catch(() => {});
     return () => { alive = false; };
-  }, [auditInView, dataVersion]);
+  }, [auditInView, active, dataVersion]);
   // COMPANIES에 라이브 데이터(최신 기사·언급량·실시세 시총) 병합
   const companiesLive = useMemo(() => (D.COMPANIES || []).map(c => {
     const lv = coLive && coLive[c.name];
@@ -214,14 +217,14 @@ function App() {
   // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
   const [stockData, setStockData] = uS(null);
   uE(() => {
-    if (!stocksInView || !dataVersion) return;
+    if (!(stocksInView || active === "stocks") || !dataVersion) return;
     let alive = true;
     fetch(dataUrl("stocks.json"), { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.stocks) setStockData({ ...j.stocks, __generatedAt: j.generatedAt }); })
       .catch(() => {});
     return () => { alive = false; };
-  }, [stocksInView, dataVersion]);
+  }, [stocksInView, active, dataVersion]);
 
   // category objects with tweakable accents
   const cats = useMemo(() => D.CATEGORIES.map(c => ({
@@ -247,6 +250,13 @@ function App() {
 
   // section scroll container
   const scrollRef = uR(null);
+  const navIntentRef = uR(null);
+  const navSettleTimersRef = uR([]);
+  const NAV_SCROLL_OFFSET = 14;
+
+  const sectionTop = (sc, el) => (
+    sc.scrollTop + el.getBoundingClientRect().top - sc.getBoundingClientRect().top
+  );
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
 
@@ -254,10 +264,35 @@ function App() {
   const NAV_ALIAS = { dynamics: "overview", insights: "ib", reports: "ib", bizmodel: "newbiz", native: "model", bigtech: "infra", startup: "app" };
   const navTo = rawId => {
     const id = NAV_ALIAS[rawId] || rawId;
+    if (!NAV_SECTION_IDS.includes(id)) return;
     setActive(id);
     const el = refs[id] && refs[id].current;
     const sc = scrollRef.current;
-    if (el && sc) sc.scrollTo({ top: el.offsetTop - 12, behavior: "smooth" });
+    if (!el || !sc) return;
+    navIntentRef.current = id;
+    window.__DASH_NAV_TARGET = id;
+    navSettleTimersRef.current.forEach(timer => window.clearTimeout(timer));
+    navSettleTimersRef.current = [];
+    const destination = Math.max(0, sectionTop(sc, el) - NAV_SCROLL_OFFSET);
+    const isDistant = Math.abs(destination - sc.scrollTop) > sc.clientHeight * 1.5;
+    // A long smooth traversal would activate every intermediate board and
+    // download its payload. Jump long distances; retain smooth motion locally.
+    sc.scrollTo({ top: destination, behavior: isDistant ? "auto" : "smooth" });
+    const realign = () => {
+      const target = refs[id]?.current;
+      if (target && scrollRef.current) {
+        const container = scrollRef.current;
+        container.scrollTo({ top: Math.max(0, sectionTop(container, target) - NAV_SCROLL_OFFSET), behavior: "auto" });
+      }
+    };
+    const settleDelays = isDistant ? [0, 140, 360, 760, 1400, 2400, 3600] : [520, 1100];
+    navSettleTimersRef.current = settleDelays.map((delay, index) => window.setTimeout(() => {
+      realign();
+      if (index === settleDelays.length - 1) {
+        navIntentRef.current = null;
+        if (window.__DASH_NAV_TARGET === id) window.__DASH_NAV_TARGET = "";
+      }
+    }, delay));
   };
 
   // scroll-spy
@@ -268,11 +303,18 @@ function App() {
     const onScroll = () => {
       if (frame) return;
       frame = requestAnimationFrame(() => {
-        const y = sc.scrollTop + 80;
+        if (navIntentRef.current) {
+          setActive(previous => previous === navIntentRef.current ? previous : navIntentRef.current);
+          frame = 0;
+          return;
+        }
+        const y = sc.scrollTop + NAV_SCROLL_OFFSET + 1;
         let cur = "ib", best = -1;
-        for (const id of Object.keys(refs)) {
+        for (const id of NAV_SECTION_IDS) {
           const el = refs[id].current;
-          if (el && el.offsetTop <= y && el.offsetTop > best) { best = el.offsetTop; cur = id; }
+          if (!el) continue;
+          const top = sectionTop(sc, el);
+          if (top <= y && top > best) { best = top; cur = id; }
         }
         setActive(previous => previous === cur ? previous : cur);
         frame = 0;
@@ -280,7 +322,12 @@ function App() {
     };
     sc.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    return () => { sc.removeEventListener("scroll", onScroll); cancelAnimationFrame(frame); };
+    return () => {
+      sc.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+      navSettleTimersRef.current.forEach(timer => window.clearTimeout(timer));
+      window.__DASH_NAV_TARGET = "";
+    };
   }, []);
 
   // board fold/unfold: click a board header (not its buttons) to collapse the card
@@ -363,15 +410,17 @@ function App() {
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
             {/* ── 0. 증권사 인사이트(IB Research 1페이저 + 기관 피드) ── */}
-            <IBInsightBoard research={research} reports={[]} sectionRef={refs.ib} />
+            <div className="nav-section-anchor" data-section="ib">
+              <IBInsightBoard research={research} reports={[]} sectionRef={refs.ib} />
+            </div>
 
             {/* ── 1. 개요 ── */}
-            <section ref={refs.overview} data-screen-label="Overview">
+            <section ref={refs.overview} className="nav-section-anchor" data-section="overview" data-screen-label="Overview">
               <div className="ov-head">
                 <h2 className="ov-title">전략 의사결정 브리프 <span>Executive Summary</span></h2>
               </div>
               <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
-              <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} />
+              <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
             </section>
 
             <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={860}>

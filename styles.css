@@ -5,10 +5,11 @@
 
 :root {
   --f: "Pretendard", "Noto Sans KR", -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  /* 폰트 일관성: 모든 한글 본문·제목은 단일 스택(--f)을 사용. 숫자/라틴 표시만 Space Grotesk(한글은 --f로 폴백). */
+  /* 시스템 폰트 기반 숫자 스택으로 별도 Google Fonts 요청을 제거한다. */
   --f-head: var(--f);
-  --f-display: "Space Grotesk", var(--f);
+  --f-display: var(--f);
   --f-nano: var(--f);
+  --mono: ui-monospace, "SFMono-Regular", Consolas, "Malgun Gothic", monospace;
   --brand: #183B56;
 
   /* light theme (default) */
@@ -165,7 +166,7 @@ a[href]:hover .rainbow-on-hover,
 .sb-logo-txt b { font-size: 16px; font-weight: 800; letter-spacing: .03em; }
 .sb-logo-txt span { font-size: 8.5px; letter-spacing: .26em; opacity: .68; font-weight: 600; }
 
-.sb-nav { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; margin-top: 4px; }
+.sb-nav { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; margin-top: 4px; scroll-behavior: smooth; }
 .sb-item { cursor: pointer; }
 .sb-item {
   position: relative; display: flex; align-items: center; gap: 12px;
@@ -376,7 +377,7 @@ a[href]:hover .rainbow-on-hover,
 .chatbot-go {
   align-self: flex-end; display: flex; align-items: center; gap: 4px;
   border: 1px solid #00ff4160; background: transparent; color: #00ff41;
-  font-size: 12px; font-weight: 700; font-family: "Space Grotesk", monospace;
+  font-size: 12px; font-weight: 700; font-family: var(--mono);
   padding: 7px 14px; border-radius: 6px; cursor: pointer; transition: background .15s, color .15s;
   text-shadow: 0 0 4px rgba(0,255,65,.3);
 }
@@ -387,7 +388,7 @@ a[href]:hover .rainbow-on-hover,
   background: #0a0a0a; border-radius: 10px; box-shadow: 0 0 40px rgba(0,255,65,.15), 0 8px 32px rgba(0,0,0,.7);
   width: 100%; max-width: 680px; max-height: 86vh; display: flex; flex-direction: column;
   overflow: hidden; animation: cdPop .26s cubic-bezier(.2,.8,.3,1);
-  border: 1px solid #00ff4140; position: relative; font-family: "Space Grotesk", "Courier New", monospace;
+  border: 1px solid #00ff4140; position: relative; font-family: var(--mono);
 }
 .chat-panel::before, .chat-panel::after {
   content: ""; position: absolute; top: 0; bottom: 0; width: 32px; z-index: 1; pointer-events: none;
@@ -400,7 +401,7 @@ a[href]:hover .rainbow-on-hover,
   border-bottom: 1px solid #00ff4130; font-size: 14px; flex-shrink: 0; color: #00ff41;
   background: linear-gradient(180deg, #0f1a0f, #0a0a0a);
 }
-.chat-head b { font-family: "Space Grotesk", monospace; font-weight: 800; letter-spacing: .06em; color: #00ff41; text-shadow: 0 0 8px rgba(0,255,65,.5); }
+.chat-head b { font-family: var(--mono); font-weight: 800; letter-spacing: .06em; color: #00ff41; text-shadow: 0 0 8px rgba(0,255,65,.5); }
 .chat-ava {
   width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
   color: #00ff41; background: #0a1a0a; border: 1.5px solid #00ff4150;
@@ -423,12 +424,12 @@ a[href]:hover .rainbow-on-hover,
 .chat-bubble.user {
   background: #1a2e1a; color: #7fff7f; font-size: 14px; font-weight: 700; line-height: 1.5;
   border-bottom-right-radius: 3px; border: 1px solid #00ff4130;
-  font-family: "Space Grotesk", monospace; text-shadow: 0 0 4px rgba(0,255,65,.3);
+  font-family: var(--mono); text-shadow: 0 0 4px rgba(0,255,65,.3);
 }
 .chat-bubble.bot {
   background: #0d0d0d; border: 1px solid #00ff4120;
   border-bottom-left-radius: 3px; font-size: 14.5px; line-height: 2; color: #00ff41; font-weight: 500;
-  font-family: "Space Grotesk", monospace; text-shadow: 0 0 3px rgba(0,255,65,.25);
+  font-family: var(--mono); text-shadow: 0 0 3px rgba(0,255,65,.25);
 }
 .chat-typetext { font-size: 14.5px; line-height: 2; white-space: pre-wrap; color: #00ff41; }
 .chat-para { margin: 0 0 12px; text-wrap: pretty; color: #00ff41; }
@@ -456,12 +457,12 @@ a[href]:hover .rainbow-on-hover,
 .chat-hint { font-size: 11px; color: #00ff4160; font-weight: 600; text-align: center; padding-top: 4px; font-family: monospace; }
 
 /* ---------- main scroll ---------- */
-.main { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+.main { flex: 1; overflow-y: auto; scroll-behavior: smooth; scroll-padding-top: 14px; }
 .main-inner { width: 100%; max-width: none; margin: 0; padding: 22px 26px 60px; display: flex; flex-direction: column; gap: 26px; }
 
 /* Stable navigation wrapper. Browser content-visibility defers paint while the
    complete board structure remains available without a blank placeholder. */
-.board-gate { min-width: 0; scroll-margin-top: 14px; }
+.board-gate, .nav-section-anchor { min-width: 0; scroll-margin-top: 14px; }
 
 /* ---------- overview ---------- */
 .ov-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 4px; }

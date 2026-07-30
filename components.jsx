@@ -72,7 +72,9 @@ const NAV = [
   { id: "survey", ko: "AI 관련 소비자 조사", en: "AI Consumer Surveys", icon: "target", group: "정량 데이터" },
   { id: "market", ko: "AI 관련 시장", en: "AI Market Map", icon: "grid", group: "정량 데이터" },
   { id: "stocks", ko: "주가 차트", en: "Stock Prices", icon: "up", group: "정량 데이터" },
+  { id: "audit", ko: "데이터 신뢰센터", en: "Data Trust Center", icon: "report", group: "운영·검증" },
 ];
+const NAV_SECTION_IDS = NAV.map(item => item.id);
 
 // gradient background for the sidebar, derived from a single brand color
 function sbBg(hex) {
@@ -87,8 +89,13 @@ function sbBg(hex) {
 
 function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCount, companies, cats, onSelectCompany, open, onToggle }) {
   const [openCat, setOpenCat] = useState(null);
+  const navRef = useRef(null);
   const isCat = id => id === "native" || id === "bigtech";   // startup은 하위 목록 미표시
   const stop = fn => (e) => { e.stopPropagation(); fn && fn(e); };
+  useEffect(() => {
+    const item = navRef.current?.querySelector(`[data-nav-id="${active}"]`);
+    item?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [active]);
   return (
     <>
     {open && <div className="sb-backdrop" onClick={onToggle} />}
@@ -104,7 +111,7 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
         </span>
       </div>
 
-      <nav className="sb-nav">
+      <nav className="sb-nav" ref={navRef} aria-label="대시보드 섹션">
         {NAV.map((n, idx) => {
           const cat = isCat(n.id) ? (cats || []).find(c => c.id === n.id) : null;
           const subs = cat ? (companies || []).filter(c => c.cat === n.id) : [];
@@ -115,6 +122,7 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
             <React.Fragment key={n.id}>
               {showGroup && <div className="sb-group">{n.group}</div>}
               <button className={"sb-item" + (active === n.id ? " on" : "")} title={n.ko}
+                data-nav-id={n.id} aria-current={active === n.id ? "page" : undefined}
                 onClick={stop(() => { onNav(n.id); if (cat) setOpenCat(openS ? null : n.id); })}>
                 <span className="sb-ic"><Icon name={n.icon} size={17} /></span>
                 <span className="sb-label">{n.ko}</span>
