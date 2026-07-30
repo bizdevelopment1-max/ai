@@ -3,6 +3,8 @@ import { access, readFile } from "node:fs/promises";
 import { BUNDLE_FILE, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany } from "./company-sources.mjs";
+import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
+import { textSimilarity } from "./source-content.mjs";
 
 const required = [
   ".github/workflows/daily-news.yml",
@@ -16,6 +18,8 @@ const required = [
   "scripts/company-sources.mjs",
   "scripts/crawl-company-officials.mjs",
   "scripts/crawl-companies.mjs",
+  "scripts/company-identity.mjs",
+  "scripts/normalize-company-registry.mjs",
   "scripts/crawl-startup-organizations.mjs",
   "scripts/crawl-monetization.mjs",
   "scripts/crawl-a16z-startups.mjs",
@@ -41,6 +45,7 @@ const required = [
   "stocks.json",
   "financials.json",
   "companies.json",
+  "startups.json",
   "a16z-startups.json",
   "strategic-ventures.json",
   "monetization.json",
@@ -172,6 +177,8 @@ try {
     && ["현재 사업", "Biz Model", "사업 방향", "최근 실행"].every(label => boards.includes(`>${label}<`))
     && boards.includes('className="vc-portfolio-grid"')
     && boards.includes('className="startup-portfolio-grid"')
+    && boards.includes("const rows = (companies || []).filter(c => c.layer === layerId)")
+    && boards.includes("claimUniqueCompanies")
     && !boards.includes("PORTFOLIO DECISION")
     && !boards.includes("STRATEGIC MOVE")
     && !boards.includes("옵션 확보 · 신호 감시")
@@ -222,7 +229,7 @@ try {
     readFile("boards.jsx", "utf8"),
   ]);
   const rows = [...(startups.large || []), ...(startups.small || []), ...(startups.institutional || [])];
-  const schemaParity = rows.length >= 150 && rows.every(row =>
+  const schemaParity = rows.length >= 100 && rows.every(row =>
     row.profile && Array.isArray(row.profile.business)
     && row.organization && Array.isArray(row.organization.executiveTeam)
     && Array.isArray(row.organization.officialPages)
@@ -258,6 +265,45 @@ try {
 }
 
 try {
+  const [startups, boards, startupCrawler, companyCrawler] = await Promise.all([
+    readFile("startups.json", "utf8").then(JSON.parse),
+    readFile("boards.jsx", "utf8"),
+    readFile("scripts/crawl-startups.mjs", "utf8"),
+    readFile("scripts/crawl-companies.mjs", "utf8"),
+  ]);
+  const registry = startups.companyRegistry || {};
+  const visibleRows = [...(startups.large || []), ...(startups.small || []), ...(startups.institutional || [])];
+  const ids = visibleRows.map(row => row.canonicalId).filter(Boolean);
+  const canonicalRegistryReady = startups.schemaVersion === 3
+    && registry.method === "official-domain+operator-legal-name+canonical-display-priority"
+    && registry.uniqueDisplayedCompanies === visibleRows.length
+    && registry.duplicateRecordsMerged > 0
+    && Array.isArray(registry.trackedReferences)
+    && !companyRegistryHasDuplicates(startups, loadDash().COMPANIES || [])
+    && JSON.stringify(canonicalizeStartupSnapshot(startups, loadDash().COMPANIES || [])) === JSON.stringify(startups)
+    && !sameCompany({ name: "Scale AI", domain: "scale.com" }, { name: "Nova", publisher: "SCALEUP YAZILIM HIZMETLERI" })
+    && !sameCompany({ name: "Meitu" }, { name: "Meituan" })
+    && ids.length === visibleRows.length
+    && new Set(ids).size === ids.length
+    && startupCrawler.includes("canonicalizeStartupSnapshot")
+    && companyCrawler.includes("allowedCompanyNames")
+    && boards.includes("claimUniqueCompanies")
+    && boards.includes("const trackedA16z =")
+    && boards.includes('const extensions = ["cloud", "deepmind"')
+    && boards.includes("a16z 선정 운영사")
+    && boards.includes("대표 계층")
+    && !boards.includes("Math.min(x.length, y.length) >= 4 && (x.startsWith(y) || y.startsWith(x))")
+    && !boards.includes("c.layer === layerId || (c.adjacentLayers || []).includes(layerId)");
+  if (!canonicalRegistryReady) {
+    throw new Error("company aliases and cross-portfolio records must resolve to one canonical display owner");
+  }
+  console.log(`  OK  canonical company registry · ${registry.rawStartupRecords}개 입력 → ${visibleRows.length}개 단일 배치 · ${registry.duplicateRecordsMerged}개 중복 통합`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  canonical company de-duplication: ${error.message}`);
+}
+
+try {
   const [companies, officials, startups, a16z, ventures, news, workflow, intelligenceBuilder, companyCrawler, llmClient] = await Promise.all([
     readFile("companies.json", "utf8").then(JSON.parse),
     readFile("company-officials.json", "utf8").then(JSON.parse),
@@ -275,12 +321,18 @@ try {
   const intelligenceReady = Object.entries(companies.companies || {}).every(([name, company]) => {
     const value = company.intelligence || {};
     const sections = ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"];
-    const portfolioCoverage = !portfolioNames.has(name) || (
-      value.currentBusiness?.summary && value.revenueModel?.summary && value.strategyDirection?.summary
-    );
+    // Accuracy takes precedence over artificial completeness: the company
+    // scope must be present, while revenue/strategy/capital sections may stay
+    // blank until a source-backed or profile-grounded claim exists.
+    const portfolioCoverage = !portfolioNames.has(name) || value.currentBusiness?.summary;
     const noOperationalCopy = sections.every(key =>
       !statusCopy.test(`${value[key]?.summary || ""} ${(value[key]?.details || []).join(" ")}`));
+    const groundedOrBlank = sections.every(key =>
+      !value[key]?.summary
+      || (value[key]?.evidence || []).some(ref => /^https?:\/\//.test(String(ref?.url || "")))
+      || value[key]?.groundingStatus === "profile-grounded");
     return portfolioCoverage && noOperationalCopy
+      && groundedOrBlank
       && Array.isArray(value.corePractices) && Array.isArray(value.newBusinessModels)
       && Array.isArray(value.executiveQuotes)
       && value.evidenceFingerprint
@@ -293,7 +345,8 @@ try {
   const a16zReady = a16z.web?.length === 50 && a16z.mobile?.length === 50
     && startups.institutionalSource?.webCount === 50
     && startups.institutionalSource?.mobileCount === 50
-    && (startups.institutional || []).length >= 75
+    && startups.companyRegistry?.a16zUniqueCompanies >= 70
+    && startups.institutionalSource?.uniqueCount === startups.companyRegistry?.a16zUniqueCompanies
     && startups.institutionalSource?.url === "https://a16z.com/100-gen-ai-apps-6/";
   const ventureCases = Object.values(ventures.companies || {}).flat();
   const ventureReady = ventureCases.some(item => item.id === "openai-deployco")
@@ -313,6 +366,8 @@ try {
     && intelligenceBuilder.includes("quoteOriginal")
     && intelligenceBuilder.includes("articleFocusedOnCompany")
     && intelligenceBuilder.includes("numericTokens")
+    && intelligenceBuilder.includes("nearDuplicateClaim")
+    && intelligenceBuilder.includes("const useModel = clean(value?.summary) && refs.length > 0")
     && intelligenceBuilder.includes("companies.json.checkpoint")
     && intelligenceBuilder.includes("persistCompanyData")
     && intelligenceBuilder.includes("COMPANY_INTELLIGENCE_AI_BUDGET")
@@ -332,7 +387,7 @@ try {
       })));
   if (!intelligenceReady
     || !a16zReady || !ventureReady || !workflowReady || !grounded || !officialReady || !companyEvidenceFocused) {
-    throw new Error("company intelligence, a16z 50+50, strategic ventures, or grounded synthesis automation is incomplete");
+    throw new Error("company intelligence must remain source-grounded or blank, with a16z 50+50 and strategic-venture automation intact");
   }
   console.log(`  OK  기업 인텔리전스 ${companyRows.length}개 · AI ${aiCompanies}개 · a16z Web 50/Mobile 50 · DeployCo/JV 근거 자동화`);
 } catch (error) {
@@ -427,11 +482,34 @@ try {
 }
 
 try {
-  const newsCrawler = await readFile("scripts/crawl-news.mjs", "utf8");
-  if (!/hl=en-US&gl=US&ceid=US:en/.test(newsCrawler) || /global-sources\.mjs/.test(newsCrawler)) {
-    throw new Error("daily article feed must remain independently limited to English authoritative sources");
+  const [newsCrawler, newsBundle] = await Promise.all([
+    readFile("scripts/crawl-news.mjs", "utf8"),
+    readFile("news.json", "utf8").then(JSON.parse),
+  ]);
+  const rows = newsBundle.articles || [];
+  const nearDuplicatePairs = rows.flatMap((article, index) => rows.slice(index + 1)
+    .filter(other => {
+      const articleDate = Date.parse(article.date || "") || 0;
+      const otherDate = Date.parse(other.date || "") || 0;
+      const withinThreeDays = articleDate && otherDate
+        ? Math.abs(articleDate - otherDate) <= 3 * 86_400_000
+        : true;
+      const sameSubject = article.co && other.co
+        ? article.co === other.co
+        : article.cat && article.cat === other.cat;
+      return withinThreeDays && sameSubject
+        && textSimilarity(article.titleEn || article.title, other.titleEn || other.title) >= 0.84;
+    }));
+  if (!/hl=en-US&gl=US&ceid=US:en/.test(newsCrawler)
+    || /global-sources\.mjs/.test(newsCrawler)
+    || !/dedupeLatestBriefings/.test(newsCrawler)
+    || !/textSimilarity/.test(newsCrawler)
+    || !/displayEligible: isContentBacked\(s\)/.test(newsCrawler)
+    || !/localeCompare\(String\(left\.date/.test(newsCrawler)
+    || nearDuplicatePairs.length) {
+    throw new Error("daily article feed must remain English-authoritative, latest-first, and event-deduplicated");
   }
-  console.log("  정상  기사 피드는 영문 권위 소스 제한 유지");
+  console.log("  정상  기사 피드는 영문 권위 소스 · 최신 우선 · 동일 사건 근사 중복 제거");
 } catch (error) {
   failed = true;
   console.error(`  실패  article source boundary: ${error.message}`);
@@ -783,8 +861,9 @@ try {
       && record.sourceContent?.status === "content-extracted"
       && /^[a-f0-9]{64}$/i.test(loc.sourceHash || "");
   };
-  if (visible.length < 10 || !visible.every(valid)) {
-    throw new Error("every visible feed row needs source-page text, one-to-three distinct source-hashed Korean or English lines, and no repeated filler");
+  const invalidVisible = visible.filter(record => !valid(record));
+  if (visible.length < 10 || invalidVisible.length) {
+    throw new Error(`every visible feed row needs source-page text, one-to-three distinct source-hashed Korean or English lines, and no repeated filler (${invalidVisible.slice(0, 3).map(record => record.titleEn || record.title || record.url).join(" | ")})`);
   }
   const translated = visible.filter(record => record.localization.status === "accepted").length;
   console.log(`  정상  본문 기반 피드 ${visible.length}건 · 한국어 ${translated}건 · 영문 폴백 ${visible.length - translated}건`);

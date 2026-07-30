@@ -11,7 +11,7 @@
    ============================================================ */
 import { writeFile, readFile } from "node:fs/promises";
 import { isExcludedText, newsPolicy } from "./news-policy.mjs";
-import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
+import { enrichSourceBatch, isContentBacked, textSimilarity } from "./source-content.mjs";
 
 // Company-card facts need first-party disclosures or a named publisher report,
 // rather than an undated category page. The same policy supplies priority
@@ -308,6 +308,28 @@ async function pool(items, n, fn) {
 
 const SUMMARY_VERSION = 4;
 
+function dedupeLatestBriefings(rows) {
+  const accepted = [];
+  const latestFirst = [...rows].sort((left, right) =>
+    String(right.date || "").localeCompare(String(left.date || "")));
+  for (const article of latestFirst) {
+    const articleDate = Date.parse(article.date || "") || 0;
+    const repeated = accepted.some(previous => {
+      const previousDate = Date.parse(previous.date || "") || 0;
+      const withinThreeDays = articleDate && previousDate
+        ? Math.abs(articleDate - previousDate) <= 3 * 86_400_000
+        : true;
+      const sameSubject = article.co && previous.co
+        ? article.co === previous.co
+        : article.cat && article.cat === previous.cat;
+      return withinThreeDays && sameSubject
+        && textSimilarity(article.titleEn || article.title, previous.titleEn || previous.title) >= 0.84;
+    });
+    if (!repeated) accepted.push(article);
+  }
+  return accepted;
+}
+
 async function main() {
   console.log("Crawling authoritative English AI news… (publisher/RSS excerpts; no AI API)");
   const companyItems = (await Promise.all(COMPANIES.map(c => pull(c, 1)))).flat();
@@ -356,6 +378,7 @@ async function main() {
       ...(s?.rssUrl ? {} : { rssUrl: a.url }),
       collectedAt: new Date().toISOString(),
       needsLLM: false,
+      displayEligible: isContentBacked(s),
       ...(s?.summaryVersion ? {} : {
         title: cleanTitle(a.title, a.source), titleEn: a.title, descEn: a.descEn || "",
         summary: "", summaryLinesEn: [], summaryVersion: SUMMARY_VERSION,
@@ -371,7 +394,7 @@ async function main() {
   // 제목 정규화 키 — 같은 사건을 여러 소스가 다룬 근사 중복 제거(소스 확대 시 유용)
   const tkey = a => String(a.titleEn || a.title || "").toLowerCase().replace(/[^a-z0-9가-힣]/g, "").slice(0, 48);
   const tseen = new Set();
-  const final = [...processed, ...prev.filter(a => !curUrls.has(a.rssUrl || a.url))]
+  const final = dedupeLatestBriefings([...processed, ...prev.filter(a => !curUrls.has(a.rssUrl || a.url))])
     .filter(a => !isExcludedText(JSON.stringify(a)))
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
     .filter(a => { const k = tkey(a); if (!k || tseen.has(k)) return !k; tseen.add(k); return true; })  // 제목 근사 중복 제거
