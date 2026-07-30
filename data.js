@@ -67,11 +67,11 @@ window.DASH = (function () {
     {
       cat: "bigtech", name: "Apple", group: "device", domain: "apple.com", unit: "온디바이스+PCC+외부 LLM 3단 하이브리드",
       valuation: "$3.3T", valAsof: "26.06", metric: "처리 방식", value: "온디바이스+PCC+외부모델", metricAsof: "26.06",
-      funding: "상장 (AAPL)", trend: 5, trendBasis: "자체 프런티어 포기·모델 오케스트레이터 전환",
-      note: "Apple Intelligence는 ①온디바이스 처리 ②무기명 Private Cloud Compute(PCC) ③외부 프런티어 LLM 호출을 잇는 3단 하이브리드 아키텍처. WWDC26의 핵심 전환은 Siri를 외부 모델(Google Gemini 커스텀, 연 약 $10억 라이선스 추정)로 구동하고, 멀티 AI Extensions로 ChatGPT·Claude까지 선택 가능하게 한 것 — 자체 프런티어 모델 개발을 사실상 포기하고 '모델 선택형 오케스트레이터'로 선회. 민감정보는 기기 밖으로 내보내지 않는 PCC는 유지. iOS 27 지원은 iPhone 12 이상, EU·중국은 규제로 초기 출시 제외, Tim Cook은 2026.09.01 사임·John Ternus 승계 예정.",
+      funding: "상장 (AAPL)", trend: 5, trendBasis: "온디바이스·PCC 하이브리드 고도화",
+      note: "Apple Intelligence는 온디바이스 처리와 Private Cloud Compute(PCC)를 결합해 개인 컨텍스트를 기기·Apple Silicon·클라우드 보안 경계 안에서 처리한다. 외부 모델 연동은 사용자가 선택·승인하는 보완 계층으로 두고, 핵심 통제점은 하드웨어·OS·개인 데이터 접근 권한에 둔다.",
       vp: "온디바이스+PCC로 프라이버시를 지키면서, 무거운 추론은 외부 프런티어 모델로 위임 — 하드웨어(Neural Engine)·OS·모델 선택권을 수직 통합.",
-      direction: "자체 모델 고집을 버리고 Gemini·ChatGPT·Claude를 잇는 멀티 AI 오케스트레이터로 전환 — 단말 비서의 '모델 개방' 레퍼런스.",
-      sources: ["Siri, Google Gemini 커스텀 모델로 구동 (WWDC26, 연 ~$10억 라이선스 추정)", "멀티 AI Extensions — Gemini·ChatGPT·Claude 선택 (WWDC26)", "온디바이스+PCC+외부 LLM 3단 하이브리드"],
+      direction: "기기·OS·Apple Silicon·PCC를 하나의 프라이버시 경계로 통합하고, 승인 기반 외부 모델 연동을 보완 계층으로 활용.",
+      sources: ["Apple Intelligence 공식 제품 페이지", "Private Cloud Compute 보안 아키텍처", "온디바이스·PCC 하이브리드 처리"],
       url: "https://www.apple.com/apple-intelligence/",
     },
     {
@@ -1451,7 +1451,7 @@ window.DASH = (function () {
   // 시가총액·인력·경영실적(분기 매출/순이익)은 crawl-stocks/crawl-financials가
   // 매 크롤마다 companies.json에 덮어써(app.jsx 병합) '최신 기준'으로 표시됨.
   const COMPANY_PROFILES = {
-    "Apple": { linkedin: "https://www.linkedin.com/company/apple", founded: "1976.4 · 미국 캘리포니아", ceo: "Tim Cook (26.9 John Ternus 승계 예정)", hq: "미국 캘리포니아州 쿠퍼티노", business: ["HW: iPhone·iPad·Mac·Wearable·Vision Pro", "SW: iOS·iPadOS·macOS·visionOS", "서비스: TV+·Music·iCloud·Card/Wallet"] },
+    "Apple": { linkedin: "https://www.linkedin.com/company/apple", founded: "1976.4 · 미국 캘리포니아", ceo: "Tim Cook", hq: "미국 캘리포니아州 쿠퍼티노", business: ["HW: iPhone·iPad·Mac·Wearable·Vision Pro", "SW: iOS·iPadOS·macOS·visionOS", "서비스: TV+·Music·iCloud·Card/Wallet"] },
     "Microsoft": { linkedin: "https://www.linkedin.com/company/microsoft", founded: "1975 · Bill Gates·Paul Allen", ceo: "Satya Nadella", hq: "미국 워싱턴州 레드먼드", business: ["Azure 클라우드", "Windows·M365·Office SW", "Copilot·AI(OpenAI 파트너십)", "LinkedIn·GitHub·Xbox"] },
     "NVIDIA": { linkedin: "https://www.linkedin.com/company/nvidia", founded: "1993 · Jensen Huang 等", ceo: "Jensen Huang", hq: "미국 캘리포니아州 산타클라라", business: ["데이터센터 GPU·AI 가속기", "CUDA·SW 플랫폼", "게이밍(GeForce)·프로 비주얼", "자동차·로보틱스"] },
     "Amazon": { linkedin: "https://www.linkedin.com/company/amazon", founded: "1994 · Jeff Bezos", ceo: "Andy Jassy", hq: "미국 워싱턴州 시애틀", business: ["AWS 클라우드", "이커머스·마켓플레이스", "광고", "디바이스(Alexa)·Anthropic 투자"] },
@@ -1466,15 +1466,15 @@ window.DASH = (function () {
     "Applied Digital": { founded: "2001", hq: "미국 텍사스州 댈러스", business: ["AI·HPC 데이터센터", "GPU 클라우드 호스팅"] },
     "SK hynix": { founded: "1983", hq: "대한민국 이천", business: ["DRAM·NAND 메모리", "HBM(AI 가속기 선두)"] },
 
-    "OpenAI": { linkedin: "https://www.linkedin.com/company/openai", founded: "2015 · Sam Altman 等", ceo: "Sam Altman", hq: "미국 캘리포니아州 샌프란시스코", headcount: "약 3,000명(2026 보도 추정)", business: ["ChatGPT(소비자·기업)", "GPT 모델 API", "Deployment Company(엔터프라이즈 구축)"], shareholders: "비영리 모회사 지배 · Microsoft 등 투자" },
-    "Anthropic": { linkedin: "https://www.linkedin.com/company/anthropic", founded: "2021 · Dario·Daniela Amodei 等", ceo: "Dario Amodei", hq: "미국 캘리포니아州 샌프란시스코", headcount: "약 2,000명(2026 보도 추정)", business: ["Claude(모델·API)", "엔터프라이즈·Claude Code", "Ode(엔터프라이즈 AI 서비스 JV)"], shareholders: "Amazon·Google 대형 투자" },
+    "OpenAI": { linkedin: "https://www.linkedin.com/company/openai", founded: "2015 · Sam Altman 等", ceo: "Sam Altman", hq: "미국 캘리포니아州 샌프란시스코", business: ["ChatGPT(소비자·기업)", "GPT 모델 API", "Deployment Company(엔터프라이즈 구축)"], shareholders: "비영리 모회사 지배 · Microsoft 등 투자" },
+    "Anthropic": { linkedin: "https://www.linkedin.com/company/anthropic", founded: "2021 · Dario·Daniela Amodei 等", ceo: "Dario Amodei", hq: "미국 캘리포니아州 샌프란시스코", business: ["Claude(모델·API)", "엔터프라이즈·Claude Code", "엔터프라이즈 AI 서비스 회사"], shareholders: "Amazon·Google 대형 투자" },
     "DeepSeek": { founded: "2023 · 항저우", hq: "중국 항저우", business: ["오픈 가중치 LLM(R1·V3)", "저비용 추론"] },
-    "Perplexity": { linkedin: "https://www.linkedin.com/company/perplexity-ai", founded: "2022", ceo: "Aravind Srinivas", hq: "미국 캘리포니아州 샌프란시스코", headcount: "약 1,000명(2026 보도 추정)", business: ["AI 검색·답변 엔진", "Comet 브라우저"] },
-    "Mistral AI": { linkedin: "https://www.linkedin.com/company/mistralai", founded: "2023", ceo: "Arthur Mensch", hq: "프랑스 파리", headcount: "약 250명(2026 보도 추정)", business: ["오픈 가중치 LLM", "엔터프라이즈·소버린 AI"] },
-    "Cohere": { linkedin: "https://www.linkedin.com/company/cohere-ai", founded: "2019", ceo: "Aidan Gomez", hq: "캐나다 토론토", headcount: "약 400명(2026 보도 추정)", business: ["엔터프라이즈·소버린 LLM", "RAG·임베딩"] },
-    "Databricks": { linkedin: "https://www.linkedin.com/company/databricks", founded: "2013", ceo: "Ali Ghodsi", hq: "미국 캘리포니아州 샌프란시스코", headcount: "약 8,000명(2026 보도 추정)", business: ["데이터·AI 레이크하우스", "Mosaic AI"] },
+    "Perplexity": { linkedin: "https://www.linkedin.com/company/perplexity-ai", founded: "2022", ceo: "Aravind Srinivas", hq: "미국 캘리포니아州 샌프란시스코", business: ["AI 검색·답변 엔진", "Comet 브라우저"] },
+    "Mistral AI": { linkedin: "https://www.linkedin.com/company/mistralai", founded: "2023", ceo: "Arthur Mensch", hq: "프랑스 파리", business: ["오픈 가중치 LLM", "엔터프라이즈·소버린 AI"] },
+    "Cohere": { linkedin: "https://www.linkedin.com/company/cohere-ai", founded: "2019", ceo: "Aidan Gomez", hq: "캐나다 토론토", business: ["엔터프라이즈·소버린 LLM", "RAG·임베딩"] },
+    "Databricks": { linkedin: "https://www.linkedin.com/company/databricks", founded: "2013", ceo: "Ali Ghodsi", hq: "미국 캘리포니아州 샌프란시스코", business: ["데이터·AI 레이크하우스", "Mosaic AI"] },
     "Scale AI": { linkedin: "https://www.linkedin.com/company/scaleai", founded: "2016", hq: "미국 캘리포니아州 샌프란시스코", business: ["데이터 라벨링·평가", "모델 파인튜닝 데이터"] },
-    "Hugging Face": { linkedin: "https://www.linkedin.com/company/huggingface", founded: "2016", ceo: "Clément Delangue", hq: "미국 뉴욕", headcount: "약 500명(2026 보도 추정)", business: ["오픈소스 모델 허브", "Transformers·개발 도구"] },
+    "Hugging Face": { linkedin: "https://www.linkedin.com/company/huggingface", founded: "2016", ceo: "Clément Delangue", hq: "미국 뉴욕", business: ["오픈소스 모델 허브", "Transformers·개발 도구"] },
     "Runway": { linkedin: "https://www.linkedin.com/company/runwayml", founded: "2018", hq: "미국 뉴욕", business: ["생성형 영상 AI(Gen 시리즈)"] },
     "Stability AI": { linkedin: "https://www.linkedin.com/company/stability-ai", founded: "2019", ceo: "Prem Akkaraju", hq: "영국 런던", business: ["오픈 이미지·영상 생성(Stable Diffusion)"] },
     "ElevenLabs": { linkedin: "https://www.linkedin.com/company/elevenlabs", founded: "2022", ceo: "Mati Staniszewski", hq: "미국/폴란드", business: ["AI 음성 합성·더빙"] },
@@ -1531,9 +1531,9 @@ window.DASH = (function () {
       { name: "Kevin Weil", role: "Chief Product Officer", edu: "Stanford · Harvard", career: "前 Twitter·Instagram·Planet 제품 총괄" },
     ], interviews: [
       { who: "Sam Altman", role: "CEO", date: "2026-05-26",
-        quoteEn: "I was pretty wrong … I'm delighted to be wrong (on AI wiping out white-collar jobs). We are inside the singularity; we may need to pace the rate of AI development.",
-        quoteKo: "AI가 사무직 일자리를 없앤다는 예측은 꽤 틀렸다 — 틀려서 기쁘다. 우리는 이미 '특이점' 안에 있고, 역량 단계마다 시스템을 강화하도록 'AI 개발 속도 조절'이 필요할 수 있다.",
-        source: "Fortune·Forbes", url: "https://fortune.com/2026/05/26/sam-altman-dario-amodei-walking-back-ai-jobs-apocalypse-prophecies-ipo/" },
+        quoteEn: "I'm delighted to be wrong about this. I thought there would have been more impact on entry-level white-collar jobs.",
+        quoteKo: "이 점에서 제가 틀려서 기쁘다. 지금쯤 초급 사무직 일자리에 더 큰 영향이 있었을 것이라고 생각했다.",
+        source: "Fortune", url: "https://fortune.com/2026/05/26/sam-altman-dario-amodei-walking-back-ai-jobs-apocalypse-prophecies-ipo/" },
     ] },
     "Anthropic": { mission: "신뢰·해석·통제 가능한 AI 시스템 구축 — 안전한 AI(공익법인)", leadership: [
       { name: "Dario Amodei", role: "Founder·CEO", edu: "Stanford 물리학 박사", career: "前 Google Brain · Baidu · OpenAI 연구부문 VP", bg: "Stanford 물리학 박사 · 前 Google Brain·Baidu·OpenAI 연구부문 VP" },
@@ -1544,10 +1544,10 @@ window.DASH = (function () {
       { name: "Sam McCandlish", role: "Co-founder·Chief Architect", edu: "물리학 박사", career: "前 OpenAI 스케일링 법칙 연구" },
       { name: "Krishna Rao", role: "CFO", edu: "", career: "前 Airbnb 재무 총괄" },
     ], interviews: [
-      { who: "Dario Amodei", role: "CEO", date: "2026-07-27",
-        quoteEn: "AI could match or exceed Nobel-laureate capability across most disciplines by late 2026 or early 2027. Governments should be able to block or deter deployment of a model if third-party assessment finds unacceptable risks.",
-        quoteKo: "2026년 말~2027년 초, 대부분 분야에서 '노벨상급' 역량의 AI가 나올 것. 제3자 평가로 '허용 불가 위험'이 확인되면 정부가 모델 배포를 차단·억제할 권한을 가져야 한다.",
-        source: "Fortune·StartupHub", url: "https://www.startuphub.ai/ai-news/ai-figures/2026/figure-dario-amodei-strategic-position-vs-peer-2026-07-27" },
+      { who: "Dario Amodei", role: "CEO", date: "2026-02-26",
+        quoteEn: "I believe deeply in the existential importance of using AI to defend the United States and other democracies.",
+        quoteKo: "미국과 다른 민주주의 국가를 방어하는 데 AI를 활용하는 일은 국가의 존립에 매우 중요하다고 깊이 믿는다.",
+        source: "Anthropic", url: "https://www.anthropic.com/news/statement-department-of-war" },
     ] },
     "Google DeepMind": { mission: "AI로 과학을 발전시켜 인류 난제 해결", leadership: [
       { name: "Demis Hassabis", role: "Co-founder·CEO(DeepMind)", edu: "Cambridge 컴퓨터과학 · UCL 인지신경과학 박사", career: "체스 마스터 · 2024 노벨화학상(AlphaFold)", bg: "Cambridge 컴공·UCL 신경과학 박사 · 체스 마스터 · 2024 노벨화학상(AlphaFold)" },
@@ -1566,7 +1566,8 @@ window.DASH = (function () {
     ] },
     "Mistral AI": { mission: "개방·주권(sovereign) AI — 유럽발 오픈 모델", leadership: [
       { name: "Arthur Mensch", role: "Co-founder·CEO", edu: "École Polytechnique · ENS", career: "前 Google DeepMind 연구원", bg: "École Polytechnique·ENS · 前 Google DeepMind 연구원" },
-      { name: "Guillaume Lample · Timothée Lacroix", role: "Co-founder·CTO", edu: "École Polytechnique", career: "前 Meta FAIR · LLaMA 핵심 연구", bg: "前 Meta FAIR · LLaMA 핵심 연구" },
+      { name: "Guillaume Lample", role: "Co-founder·Chief Scientist", edu: "École Polytechnique", career: "前 Meta FAIR · LLaMA 핵심 연구", bg: "前 Meta FAIR · LLaMA 핵심 연구" },
+      { name: "Timothée Lacroix", role: "Co-founder·CTO", edu: "École Polytechnique", career: "前 Meta AI 연구 엔지니어" },
     ] },
     "Perplexity": { mission: "세상의 지식에 근거를 달아 답하는 '답변 엔진'", leadership: [
       { name: "Aravind Srinivas", role: "Co-founder·CEO", edu: "IIT 마드라스 · UC Berkeley 컴퓨터과학 박사", career: "前 OpenAI · Google DeepMind 연구원", bg: "IIT 마드라스·UC Berkeley 박사 · 前 OpenAI·DeepMind 연구원" },
@@ -1590,14 +1591,14 @@ window.DASH = (function () {
       { name: "Colette Kress", role: "EVP·CFO", edu: "Arizona · Southern Methodist MBA", career: "前 Cisco·Microsoft 재무 총괄" },
       { name: "Bill Dally", role: "Chief Scientist·SVP Research", edu: "Caltech 컴퓨터과학 박사", career: "前 Stanford 컴퓨터과학 학과장" },
     ], interviews: [
-      { who: "Jensen Huang", role: "CEO", date: "2026-03-23",
-        quoteEn: "Asked whether an AI could autonomously start and run a billion-dollar company within 5-20 years: I think it's now. AGI is already behind us.",
-        quoteKo: "AI가 5~20년 안에 자율적으로 10억달러 기업을 세워 운영할 수 있느냐는 질문에 — '지금'이라고 본다. AGI는 이미 지나갔다.",
-        source: "Lex Fridman Podcast · Yahoo·AOL", url: "https://www.aol.com/nvidia-jensen-huang-says-disagrees-191239054.html" },
+      { who: "Jensen Huang", role: "CEO", date: "2026-01-21",
+        quoteEn: "AI is infrastructure. You should have AI as part of your infrastructure.",
+        quoteKo: "AI는 인프라다. 각 국가는 AI를 자국 인프라의 일부로 갖춰야 한다.",
+        source: "NVIDIA Blog · Davos", url: "https://blogs.nvidia.com/blog/davos-wef-blackrock-ceo-larry-fink-jensen-huang/" },
     ] },
     "Apple": { mission: "프라이버시 우선 온디바이스 지능 — 최고의 개인 기기 경험", leadership: [
-      { name: "Tim Cook", role: "CEO", edu: "Auburn 산업공학 · Duke MBA", career: "前 IBM · Compaq · Apple COO (2026.9 John Ternus 승계 예정)", bg: "Auburn 산업공학·Duke MBA · 前 IBM·Compaq (2026.9 John Ternus 승계 예정)" },
-      { name: "John Ternus", role: "SVP·Hardware Engineering (CEO 승계 예정)", edu: "UPenn 기계공학", career: "iPhone·iPad 하드웨어 총괄" },
+      { name: "Tim Cook", role: "CEO", edu: "Auburn 산업공학 · Duke MBA", career: "前 IBM · Compaq · Apple COO", bg: "Auburn 산업공학·Duke MBA · 前 IBM·Compaq" },
+      { name: "John Ternus", role: "SVP·Hardware Engineering", edu: "UPenn 기계공학", career: "iPhone·iPad 하드웨어 총괄" },
       { name: "Craig Federighi", role: "SVP·Software Engineering", edu: "UC Berkeley 컴퓨터과학 석사", career: "前 NeXT·Ariba" },
       { name: "John Giannandrea", role: "SVP·ML·AI Strategy", edu: "Strathclyde 컴퓨터과학", career: "前 Google 검색·AI 총괄" },
       { name: "Johny Srouji", role: "SVP·Hardware Technologies", edu: "Technion 컴퓨터과학 석사", career: "Apple Silicon 총괄 · 前 IBM·Intel" },
@@ -1673,7 +1674,8 @@ window.DASH = (function () {
     ] },
     "Synthesia": { mission: "텍스트로 AI 아바타 영상을 생성", leadership: [
       { name: "Victor Riparbelli", role: "Co-founder·CEO", edu: "덴마크 공대(DTU)", career: "AI 아바타 영상 플랫폼 창업" },
-      { name: "Matthias Nießner · Lourdes Agapito", role: "Co-founder(교수)", edu: "TUM · UCL", career: "컴퓨터비전 교수" },
+      { name: "Matthias Nießner", role: "Co-founder·Scientific Advisor", edu: "TUM", career: "TUM 컴퓨터비전 교수" },
+      { name: "Lourdes Agapito", role: "Co-founder·Scientific Advisor", edu: "UCL", career: "UCL 컴퓨터비전 교수" },
     ] },
     "Suno": { mission: "누구나 음악을 만들 수 있게 하는 생성 AI", leadership: [
       { name: "Mikey Shulman", role: "Co-founder·CEO", edu: "Harvard 물리학 박사", career: "前 Kensho 머신러닝 총괄" },

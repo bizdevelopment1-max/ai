@@ -3248,6 +3248,44 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   background:
     linear-gradient(90deg, color-mix(in srgb, var(--accent) 4%, var(--panel)), var(--panel));
 }
+.cd-mece-route {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12px minmax(0, 1fr) 12px minmax(0, 1fr) 12px minmax(0, 1fr);
+  align-items: center;
+  gap: 5px;
+  margin: 12px 0 4px;
+}
+.cd-mece-route > span {
+  min-width: 0;
+  min-height: 54px;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line));
+  border-top: 3px solid var(--accent);
+  border-radius: 2px;
+  padding: 8px 9px;
+  background: var(--panel);
+  animation: consultReveal .42s both;
+}
+.cd-mece-route > span > em {
+  float: left;
+  margin-right: 7px;
+  color: var(--consult-gold);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 900;
+}
+.cd-mece-route > span > b,
+.cd-mece-route > span > small { display: block; }
+.cd-mece-route > span > b { color: var(--consult-navy); font-size: 10.5px; font-weight: 880; }
+.cd-mece-route > span > small { margin-top: 3px; color: var(--muted); font-size: 8.5px; font-weight: 700; }
+.cd-mece-route > i {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 9px solid var(--consult-gold);
+  animation: consultNudge 2.4s ease-in-out infinite;
+}
 .cd-sf-grid.cd-intelligence-grid {
   display: flex;
   align-items: stretch;
@@ -3265,6 +3303,112 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .cd-intelligence-grid .cd-sf-card.strategyDirection { border-top-color: #7A38D6; }
 .cd-intelligence-grid .cd-sf-card.investmentDirection { border-top-color: #B45309; }
 .cd-sf-link { align-self: center; border-left-color: var(--consult-gold); }
+.cd-grounding {
+  float: right;
+  margin-left: 7px;
+  border: 1px solid var(--line);
+  padding: 1px 4px;
+  color: var(--muted);
+  font-size: 7.5px;
+  font-style: normal;
+  font-weight: 850;
+  letter-spacing: 0;
+}
+.cd-grounding.high { border-color: color-mix(in srgb, #0E8A50 45%, var(--line)); color: #0E8A50; }
+.cd-grounding.medium { border-color: color-mix(in srgb, #2D6BFF 40%, var(--line)); color: #2D6BFF; }
+
+/* Executive architecture: one full-border card per node, grouped by function. */
+.cd-org-architecture { width: 100%; }
+.cd-org-tier-label {
+  color: var(--consult-gold);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+.cd-org-tier-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  position: relative;
+  padding-top: 12px;
+}
+.cd-org-tier-groups::before {
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  background: var(--line);
+  content: "";
+}
+.cd-org-tier {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--accent);
+  border-radius: 2px;
+  padding: 9px;
+  background: color-mix(in srgb, var(--accent) 2%, var(--panel));
+  animation: consultReveal .42s both;
+}
+.cd-org-tier > header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 2px 8px;
+  padding: 0 2px 7px;
+  border-bottom: 1px solid var(--line);
+}
+.cd-org-tier > header em {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.cd-org-tier > header b { color: var(--consult-navy); font-size: 11.5px; font-weight: 880; }
+.cd-org-tier > header span { color: var(--accent); font-size: 9px; font-weight: 850; }
+.cd-org-tier .cd-org-reports {
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  padding-top: 9px;
+}
+.cd-org-tier .cd-org-reports::before { display: none; }
+.cd-org-node {
+  border-radius: 2px;
+  text-align: left;
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.cd-org-node:hover {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--line));
+  transform: translateY(-2px);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.cd-org-node.lead {
+  width: min(560px, 100%);
+  border-radius: 2px;
+  text-align: center;
+}
+.cd-org-verification {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+}
+.cd-org-verification span,
+.cd-org-verification a {
+  border: 1px solid var(--line);
+  padding: 2px 5px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.cd-org-verification span.verified { border-color: color-mix(in srgb, #0E8A50 38%, var(--line)); color: #0E8A50; }
+.cd-org-verification a { color: var(--accent); }
 
 /* 기존 흐름 도식의 문자 화살표를 삼각형 커넥터로 통일 */
 .msf-harr,
@@ -3401,6 +3545,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .vc-logic-map > i { display: none; }
   .cd-sf-grid.cd-intelligence-grid { display: grid; grid-template-columns: 1fr 1fr; }
   .cd-sf-link { display: none; }
+  .cd-mece-route { grid-template-columns: 1fr 1fr; }
+  .cd-mece-route > i { display: none; }
+  .cd-org-tier-groups { grid-template-columns: 1fr; }
+  .cd-org-tier-groups::before { left: 50%; right: auto; width: 2px; height: 12px; }
 }
 @media (max-width: 720px) {
   .msf-exec-architecture { margin: 12px 0 20px; padding: 10px; }
@@ -3413,6 +3561,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .msf-synthesis-flow > i { display: none; }
   .vc-logic-map { grid-template-columns: 1fr; margin: 9px 12px 2px; }
   .cd-sf-grid.cd-intelligence-grid { grid-template-columns: 1fr; }
+  .cd-mece-route { grid-template-columns: 1fr; }
+  .cd-mece-route > i { display: none; }
   .sp-card { min-height: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3422,6 +3572,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .sp-card-logic > i,
   .vc-logic-map > i,
   .cd-sf-link,
+  .cd-mece-route > i,
   .es-key-arr,
   .btf-arr,
   .mkt-arr,
@@ -3431,6 +3582,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .msf-house-pillars > div,
   .vc-logic-map > div,
   .sp-card,
+  .cd-mece-route > span,
+  .cd-org-tier,
   .msf-layer-meter i::after,
   .msf-layer:not(:last-child)::after {
     animation: none !important;

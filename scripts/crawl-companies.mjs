@@ -19,6 +19,7 @@
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { loadDash } from "./load-dash.mjs";
+import { articleFocusedOnCompany, executiveTier } from "./company-sources.mjs";
 
 // 기업명 → 상장 티커(시총 연동용 매핑 — 데이터가 아니라 조인 키)
 const TICKER_OF = {
@@ -79,6 +80,9 @@ const execMentions = (co, arts, leaders) => {
   const rows = [];
   for (const a of arts) {
     if (!a.title || !a.url || seen.has(a.url)) continue;
+    // A leader name alone is not company evidence. Require the company in the
+    // title/lede as well, preventing cross-company executive false positives.
+    if (!articleFocusedOnCompany(co, a)) continue;
     const hay = `${a.title} ${a.descEn || ""} ${a.summary || ""}`;
     const hit = people.find(p => p.re.test(hay));
     if (!hit) continue;
@@ -103,11 +107,12 @@ const classifyPractices = (arts) => {
 };
 
 async function main() {
-  let articles = [], stocks = {}, financials = {}, previousCompanies = {};
+  let articles = [], stocks = {}, financials = {}, previousCompanies = {}, officialCompanies = {};
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   try { stocks = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
   try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
   try { previousCompanies = JSON.parse(await readFile("companies.json", "utf8")).companies || {}; } catch {}
+  try { officialCompanies = JSON.parse(await readFile("company-officials.json", "utf8")).companies || {}; } catch {}
   const dash = loadDash();
   const orgSource = dash.COMPANY_ORG || {};
   const linkedinSource = dash.LINKEDIN_PROFILES || {};
@@ -130,13 +135,21 @@ async function main() {
       rec.employeesAsof = f.employeesAsOf || f.asOf || "";
       rec.employeesSource = f.employeesSource || "Yahoo Finance";
       rec.employeesSourceUrl = f.employeesSourceUrl || "";
+      rec.employeesStale = false;
+    } else if (f.employeesStale) {
+      delete rec.employees;
+      rec.employeesLastReported = f.employeesLastReported || "";
+      rec.employeesAsof = f.employeesAsOf || "";
+      rec.employeesSource = f.employeesSource || "";
+      rec.employeesSourceUrl = f.employeesSourceUrl || "";
+      rec.employeesStale = true;
     }
   };
 
   const byCo = {};
   for (const a of articles) {
     const co = (a.co || "").trim();
-    if (!co) continue;
+    if (!co || !articleFocusedOnCompany(co, a)) continue;
     (byCo[co] = byCo[co] || []).push(a);
   }
 
@@ -178,7 +191,8 @@ async function main() {
     if (companies[name]) continue;             // 이미 co 태깅으로 커버된 업체는 유지
     const rx = new RegExp(boundWord(name), "i");
     const arts = articles.filter(a => a.url && a.title
-      && rx.test(`${a.title} ${a.descEn || ""} ${a.summary || ""}`));
+      && rx.test(`${a.title} ${a.descEn || ""} ${a.summary || ""}`)
+      && articleFocusedOnCompany(name, a));
     if (!arts.length) continue;
     arts.sort((x, y) => (x.date < y.date ? 1 : -1));
     const latest = arts[0];
@@ -210,7 +224,8 @@ async function main() {
       const simple = String(name).replace(/\s*\(.*\)\s*$/, "").trim();
       const rx = simple ? new RegExp(boundWord(simple), "i") : null;
       const arts = rx ? articles.filter(a => a.url && a.title
-        && rx.test(`${a.title} ${a.descEn || ""} ${a.summary || ""}`)) : [];
+        && rx.test(`${a.title} ${a.descEn || ""} ${a.summary || ""}`)
+        && articleFocusedOnCompany(name, a)) : [];
       arts.sort((x, y) => (x.date < y.date ? 1 : -1));
       const latest = arts[0];
       rec = companies[name] = {
@@ -235,23 +250,52 @@ async function main() {
       ...p,
       ceo: rec.ceo || p.ceo || "",
       hq: rec.hq || p.hq || "",
-      headcount: rec.employees || p.headcount || "",
+      headcount: rec.employeesStale ? "" : (rec.employees || p.headcount || ""),
       business: Array.isArray(p.business) && p.business.length ? p.business : [base.unit].filter(Boolean),
     };
+    const official = officialCompanies[name] || {};
+    const verificationByName = new Map((official.verifiedExecutives || []).map(person => [personKey(person.name).toLowerCase(), person]));
+    const curatedLeadership = Array.isArray(o.leadership) ? o.leadership.slice(0, 18).map(withDirectLinkedIn) : [];
+    const liveOfficers = Array.isArray(rec.officers) ? rec.officers.slice(0, 18).map(withDirectLinkedIn) : [];
+    const curatedByName = new Map(curatedLeadership.map(person => [personKey(person.name).toLowerCase(), person]));
+    const executiveSeen = new Set();
+    const executiveTeam = [];
+    for (const person of [...liveOfficers, ...curatedLeadership]) {
+      const key = personKey(person.name).toLowerCase();
+      if (!key || executiveSeen.has(key)) continue;
+      executiveSeen.add(key);
+      const curated = curatedByName.get(key) || {};
+      const verification = verificationByName.get(key) || {};
+      const role = person.role || person.title || curated.role || "Executive";
+      executiveTeam.push({
+        ...curated,
+        ...person,
+        role,
+        tier: executiveTier(role),
+        sourceType: liveOfficers.some(item => personKey(item.name).toLowerCase() === key) ? "market-filing" : "curated-leadership",
+        verification: verification.status || "unverified",
+        verificationUrl: verification.sourceUrl || "",
+        verifiedAt: verification.checkedAt || "",
+      });
+    }
     const normalizedOrg = {
       ...o,
-      leadership: Array.isArray(o.leadership) ? o.leadership.slice(0, 12).map(withDirectLinkedIn) : [],
-      officers: Array.isArray(rec.officers) ? rec.officers.slice(0, 12).map(withDirectLinkedIn) : [],
-      sourceMode: Array.isArray(rec.officers) && rec.officers.length ? "live-officers+curated-background" : "curated+news-monitoring",
+      leadership: curatedLeadership,
+      officers: liveOfficers,
+      executiveTeam,
+      officialPages: official.officialPages || [],
+      sourceMode: liveOfficers.length ? "live-officers+curated-background+official-verification" : "curated+official-verification+news-monitoring",
     };
     const profileChecks = [
       normalizedProfile.founded, normalizedProfile.ceo, normalizedProfile.hq,
       normalizedProfile.headcount, normalizedProfile.business.length,
       normalizedProfile.shareholders || rec.topHolders,
     ];
+    const verifiedCount = executiveTeam.filter(person => person.verification === "official-role-match" || person.sourceType === "market-filing").length;
     const orgChecks = [
       normalizedOrg.mission,
-      normalizedOrg.officers.length || normalizedOrg.leadership.length,
+      executiveTeam.length >= 3,
+      verifiedCount >= 1,
       (rec.execNews || []).length,
     ];
     const profilePresent = profileChecks.filter(Boolean).length;
@@ -260,7 +304,14 @@ async function main() {
     rec.organization = normalizedOrg;
     rec.coverage = {
       profile: { present: profilePresent, total: profileChecks.length, score: pct(profilePresent, profileChecks.length) },
-      organization: { present: orgPresent, total: orgChecks.length, score: pct(orgPresent, orgChecks.length) },
+      organization: {
+        present: orgPresent,
+        total: orgChecks.length,
+        score: pct(orgPresent, orgChecks.length),
+        executiveCount: executiveTeam.length,
+        verifiedExecutiveCount: verifiedCount,
+        officialSourceStatus: official.sourceStatus || "not-configured",
+      },
       sourceMode: rec.ticker ? "market-filing+curated+news" : "curated+news",
     };
     rec.updatedAt = nowIso;
@@ -278,8 +329,8 @@ async function main() {
 
   const out = {
     generatedAt: nowIso,
-    schemaVersion: 4,
-    methodology: "normalized-company-profile+live-financials+verified-linkedin+news-signals+company-intelligence-ready",
+    schemaVersion: 5,
+    methodology: "normalized-company-profile+live-financials+official-executive-verification+focused-news-evidence+company-intelligence-ready",
     companies,
   };
   await writeFile("companies.json", JSON.stringify(out) + "\n");

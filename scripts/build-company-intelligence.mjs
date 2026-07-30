@@ -6,8 +6,10 @@
  * source-linked summary rather than generic portfolio labels.
  */
 import { readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { loadDash } from "./load-dash.mjs";
 import { llmJSON, llmAvailable } from "./llm.mjs";
+import { aliasesFor, articleFocusScore, articleFocusedOnCompany, companyRegex, COMPANY_SOURCES } from "./company-sources.mjs";
 
 const readJson = async (file, fallback) => {
   try { return JSON.parse(await readFile(file, "utf8")); } catch { return fallback; }
@@ -30,11 +32,6 @@ const sourceBacked = article => article?.displayEligible !== false
   && article?.summaryMode === "source-content-extractive"
   && article?.provenance?.status === "source-backed"
   && /^https?:\/\//.test(String(article?.url || ""));
-const escaped = value => String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const nameRegex = name => {
-  const simple = String(name || "").replace(/\s*\(.*\)\s*$/, "").trim();
-  return simple ? new RegExp(`\\b${escaped(simple)}\\b`, "i") : null;
-};
 const localizedTitle = article => first(article?.titleKo, article?.localization?.title, article?.titleEn, article?.title);
 const localizedLines = article => {
   const lines = article?.summaryLinesKo || article?.localization?.summaryLines || article?.summaryLinesEn || [];
@@ -67,22 +64,18 @@ const quoteCandidates = (article, leaders) => {
 };
 
 const evidenceFor = (name, allArticles, leaders) => {
-  const re = nameRegex(name);
-  const direct = allArticles.filter(article => sourceBacked(article) && article.co === name);
-  const matched = re
-    ? allArticles.filter(article => sourceBacked(article)
-      && re.test(`${article.title || ""} ${article.summary || ""} ${article.co || ""}`))
-    : [];
   const seen = new Set();
-  const combined = [...direct, ...matched]
+  const combined = allArticles
+    .filter(article => sourceBacked(article) && articleFocusedOnCompany(name, article))
     .filter(article => {
       const key = canon(article.url);
       if (!key || seen.has(key)) return false;
       seen.add(key);
       return true;
     })
-    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
-    .slice(0, 6);
+    .sort((a, b) => articleFocusScore(name, b) - articleFocusScore(name, a)
+      || String(b.date || "").localeCompare(String(a.date || "")))
+    .slice(0, 8);
   return combined.map((article, index) => ({
     id: `e${index + 1}`,
     date: article.date || "",
@@ -95,6 +88,37 @@ const evidenceFor = (name, allArticles, leaders) => {
     quotes: quoteCandidates(article, leaders),
   }));
 };
+const officialEvidenceFor = rec => (rec.organization?.officialPages || [])
+  .filter(page => page.category === "official-update"
+    && page.status === "reachable"
+    && /^https?:\/\//.test(page.resolvedUrl || page.url)
+    && clean(page.pageTitle)
+    && !/just a moment|access denied|attention required/i.test(page.pageTitle))
+  .map(page => ({
+    date: page.date || String(page.checkedAt || "").slice(0, 10),
+    source: "Official company update",
+    url: page.resolvedUrl || page.url,
+    titleKo: clip(page.titleKo || page.pageTitle, 180),
+    titleOriginal: clip(page.pageTitle, 180),
+    linesKo: [clip(page.summaryKo, 260)].filter(Boolean),
+    linesOriginal: [clip(page.description, 260)].filter(Boolean),
+    quotes: [],
+    sourceTier: "official",
+  }));
+const mergeEvidence = (...groups) => {
+  const seen = new Set();
+  return groups.flat()
+    .filter(item => {
+      const key = canon(item.url);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => (b.sourceTier === "official") - (a.sourceTier === "official")
+      || String(b.date || "").localeCompare(String(a.date || "")))
+    .slice(0, 8)
+    .map((item, index) => ({ ...item, id: `e${index + 1}` }));
+};
 
 const evidenceRefs = (ids, evidence) => {
   const wanted = new Set(Array.isArray(ids) ? ids.map(String) : []);
@@ -103,8 +127,169 @@ const evidenceRefs = (ids, evidence) => {
 };
 const allRefs = evidence => evidence.slice(0, 3)
   .map(item => ({ title: item.titleKo || item.titleOriginal, source: item.source, date: item.date, url: item.url }));
+const negativeAction = /jailbreak|escaped? (?:its )?training|hack(?:ed|ing)?|attack(?:ed|ing)?|incident|wayward|rogue|compromis|sabotage|backlash|ditching|drops?\b|abandons?|switches? from|replaces?|lawsuit|settlement|sued?\b|security flaw|data breach/i;
+const strategicAction = /launch|introduc|expand|partner|acquir|invest|build|deploy|release|open(?:ed|ing)?|available|enter(?:ed|ing)?|announc|develop|fund|raise|appoint|restructur|approval|approved|publish/i;
+const isCompanyActionEvidence = item => {
+  const text = clean(`${item?.titleOriginal || ""} ${(item?.linesOriginal || []).join(" ")}`);
+  return strategicAction.test(text) && !negativeAction.test(text);
+};
+const isCompanyActionEvidenceFor = (name, item) => {
+  if (!isCompanyActionEvidence(item)) return false;
+  const title = clean(item?.titleOriginal || item?.titleKo);
+  const match = companyRegex(name)?.exec(title);
+  if (!match) return false;
+  const prefix = title.slice(0, match.index);
+  return !(/\b(?:without|competitor|rival|beats?|versus|vs\.?)\b/i.test(prefix)
+    || /takes? (?:aim at|on)/i.test(prefix));
+};
+const officialHostsFor = name => (COMPANY_SOURCES[name]?.official || []).map(url => {
+  try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return ""; }
+}).filter(Boolean);
+const officialCompanyUrl = (name, url) => {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    return officialHostsFor(name).some(official => host === official || host.endsWith(`.${official}`));
+  } catch { return false; }
+};
 
-const normaliseAnalysis = (analysis, evidence, fallback) => {
+const signalFocusedOnCompany = (name, signal, articleByUrl, kind) => {
+  const linked = articleByUrl.get(canon(signal?.url));
+  const text = clean(signal?.signal);
+  const re = companyRegex(name);
+  let titleMatched = false;
+  if (linked) {
+    const title = clean(linked.titleEn || linked.title);
+    // Monetization and strategic ledgers require the company in the headline;
+    // a comparison in the body is context, not evidence of the company's move.
+    titleMatched = !!re?.test(title);
+    if (!titleMatched || !articleFocusedOnCompany(name, linked)) return false;
+  }
+  const match = re?.exec(text);
+  if (!match && !titleMatched) return false;
+  const prefix = match ? text.slice(0, match.index) : "";
+  if (match && (/\b(?:without|competitor|rival|beats?|versus|vs\.?)\b/i.test(prefix)
+    || /takes? (?:aim at|on)/i.test(prefix))) return false;
+  if (kind === "revenue") {
+    if (!officialCompanyUrl(name, signal?.url)) return false;
+    if (/settlement|eligible to receive|supported devices?|depend(?:s|ed)? on hardware|compatib/i.test(text)) return false;
+    const revenueLanguage = /price|pricing|subscription|paying|revenue|\bARR\b|sales|sold|contract|licen[cs]e|usage (?:fee|credit|limit)|per (?:month|year)|purchase|orders?|shipment|margin|billing|monetiz|\bfee\b|\bseat\b|enterprise (?:plan|contract|license)|cloud (?:contract|revenue)/i;
+    if (!revenueLanguage.test(text)) return false;
+  } else {
+    if (negativeAction.test(text)) return false;
+    if (!strategicAction.test(text)) return false;
+  }
+  return titleMatched || match.index <= 120 || aliasesFor(name).some(alias => text.toLowerCase().startsWith(alias.toLowerCase()));
+};
+
+const sanitiseMonetization = (name, monet, articleByUrl) => {
+  if (!monet) return null;
+  const monetize = (monet.monetize || []).filter(signal => signalFocusedOnCompany(name, signal, articleByUrl, "revenue"));
+  const direction = (monet.direction || []).filter(signal => signalFocusedOnCompany(name, signal, articleByUrl, "direction"));
+  return { ...monet, monetize, direction };
+};
+
+const numericTokens = value => (clean(value).match(/(?:[$€£₩]\s*)?(?:[A-Za-z][A-Za-z.-]*[- ]?)?\d[\d,.]*(?:\s*[%억조만배명건]|[TBMK])?/gi) || [])
+  .map(token => token.replace(/\s+/g, "").replace(/,/g, "").toLowerCase());
+const speculative = value => /가능성|예상(?:된다|되는|한)|전망(?:된다|되는|한)|할 것으로|적용될 수|추정(?:된다|되는|한)/.test(clean(value));
+const evidenceFingerprint = evidence => createHash("sha256")
+  .update(evidence.map(item => `${canon(item.url)}|${item.date}`).join("\n"))
+  .digest("hex").slice(0, 16);
+const analysisCorpus = ({ base, rec, monet, evidence }) => clean(JSON.stringify({
+  profile: rec.profile,
+  officialPages: rec.organization?.officialPages,
+  monetization: monet,
+  evidence,
+}));
+const supportedNumbers = (value, corpus) => numericTokens(value)
+  .every(token => corpus.toLowerCase().replace(/,/g, "").includes(token));
+const refKey = ref => canon(ref?.url);
+const safeFallback = (name, fallback, corpus, evidence) => {
+  const defaults = {
+    currentBusiness: "공식 회사 개요와 제품 원문을 수집 중",
+    revenueModel: "공개 가격·계약·실적 원문에서 수익 구조를 확인 중",
+    strategyDirection: (() => {
+      const action = evidence.find(item => isCompanyActionEvidenceFor(name, item));
+      return action?.titleKo || action?.titleOriginal || "최근 제품·파트너십 원문에서 사업 방향을 확인 중";
+    })(),
+    investmentDirection: "투자·제휴·인수 관련 공식 발표를 확인 중",
+  };
+  const out = { ...fallback };
+  for (const key of Object.keys(defaults)) {
+    const value = fallback[key] || {};
+    const body = `${value.summary || ""} ${(value.details || []).join(" ")}`;
+    if (supportedNumbers(body, corpus)) continue;
+    const modelPrefix = key === "revenueModel" ? clean(value.summary).split("·")[0] : "";
+    out[key] = {
+      ...value,
+      summary: modelPrefix ? `${modelPrefix} · ${defaults[key]}` : defaults[key],
+      details: [],
+      evidence: [],
+    };
+  }
+  return out;
+};
+
+const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
+  const allowedUrls = new Set([
+    ...evidence.map(item => canon(item.url)),
+    ...["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"]
+      .flatMap(key => (fallback[key]?.evidence || []).map(refKey)),
+  ].filter(Boolean));
+  const sectionKeys = ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"];
+  const seenDetails = new Set();
+  const out = { ...value };
+  for (const key of sectionKeys) {
+    const candidate = out[key] || fallback[key];
+    const refs = (candidate.evidence || []).filter(ref => allowedUrls.has(refKey(ref)));
+    const body = `${candidate.summary || ""} ${(candidate.details || []).join(" ")}`;
+    const unsupported = !supportedNumbers(body, corpus)
+      || ((key === "strategyDirection" || key === "investmentDirection") && speculative(body) && refs.length === 0)
+      || (candidate.evidence || []).some(ref => !allowedUrls.has(refKey(ref)));
+    const chosen = unsupported ? fallback[key] : { ...candidate, evidence: refs };
+    const details = (chosen.details || []).filter(detail => {
+      const fingerprint = clean(detail).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+      if (!fingerprint || seenDetails.has(fingerprint)) return false;
+      seenDetails.add(fingerprint);
+      return true;
+    });
+    const evidenceCount = (chosen.evidence || []).length;
+    out[key] = {
+      ...chosen,
+      details,
+      evidenceCount,
+      confidence: evidenceCount >= 2 ? "high" : evidenceCount === 1 ? "medium" : "low",
+      groundingStatus: unsupported ? "fallback-after-grounding-check"
+        : evidenceCount ? "source-grounded" : "profile-grounded",
+    };
+  }
+  const evidenceByUrl = new Map(evidence.map(item => [canon(item.url), item]));
+  const occupied = new Set(sectionKeys.flatMap(key => [
+    out[key]?.summary,
+    ...(out[key]?.details || []),
+  ]).map(value => clean(value).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "")).filter(Boolean));
+  out.corePractices = (out.corePractices || []).filter(item => {
+    if (!item.evidence?.url || !allowedUrls.has(refKey(item.evidence))) return false;
+    const source = evidenceByUrl.get(refKey(item.evidence));
+    const fingerprint = clean(item.title).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+    return source && isCompanyActionEvidenceFor(name, source) && !occupied.has(fingerprint);
+  }).slice(0, 4);
+  out.newBusinessModels = (out.newBusinessModels || []).filter(item =>
+    item.evidence?.url && allowedUrls.has(refKey(item.evidence))
+    && supportedNumbers(`${item.title} ${item.model} ${item.implication}`, corpus)).slice(0, 3);
+  out.executiveQuotes = (out.executiveQuotes || []).filter(item =>
+    item.evidenceUrl && allowedUrls.has(canon(item.evidenceUrl))).slice(0, 4);
+  out.meceFramework = [
+    { key: "currentBusiness", label: "사업 범위", question: "무엇을 제공하는가" },
+    { key: "revenueModel", label: "수익 엔진", question: "어떻게 돈을 버는가" },
+    { key: "strategyDirection", label: "성장 방향", question: "어디로 확장하는가" },
+    { key: "investmentDirection", label: "자본 배분", question: "무엇에 투자하는가" },
+  ];
+  out.evidenceFingerprint = evidenceFingerprint(evidence);
+  out.groundingStatus = "numeric-and-source-reference-checked";
+  return out;
+};
+
+const normaliseAnalysis = (analysis, evidence, fallback, corpus) => {
   const section = (value, base) => ({
     summary: clip(value?.summary || base.summary, 360),
     details: (Array.isArray(value?.details) ? value.details : base.details || []).map(item => clip(item, 220)).filter(Boolean).slice(0, 4),
@@ -138,7 +323,7 @@ const normaliseAnalysis = (analysis, evidence, fallback) => {
       evidence: { title: ref.titleKo || ref.titleOriginal, source: ref.source, date: ref.date, url: ref.url },
     };
   }).filter(Boolean).slice(0, 3);
-  return {
+  return finaliseIntelligence({
     currentBusiness: section(analysis?.currentBusiness, fallback.currentBusiness),
     revenueModel: section(analysis?.revenueModel, fallback.revenueModel),
     strategyDirection: section(analysis?.strategyDirection, fallback.strategyDirection),
@@ -146,7 +331,7 @@ const normaliseAnalysis = (analysis, evidence, fallback) => {
     corePractices: corePractices.length ? corePractices : fallback.corePractices,
     newBusinessModels: newBusinessModels.length ? newBusinessModels : fallback.newBusinessModels,
     executiveQuotes: executiveQuotes.length ? executiveQuotes : fallback.executiveQuotes,
-  };
+  }, { name: analysis?.name || "", evidence, fallback, corpus });
 };
 
 const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directionLabels }) => {
@@ -154,18 +339,28 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
   const revenueSignals = monet?.monetize || [];
   const directionSignals = monet?.direction || [];
   const primaryModel = modelLabels.get(monet?.primaryModel);
+  const profileScope = (profile.business || []).join(" · ");
   const currentBusiness = (profile.business || []).join(" · ") || base?.unit || localizedTitle(rec.latest) || "사업 원문 수집 중";
   const revenueSummary = primaryModel
-    ? `${primaryModel} 중심 · ${clip(first(base?.vp, revenueSignals[0]?.signal, "최신 과금 구조 근거를 수집 중"), 220)}`
-    : first(revenueSignals[0]?.signal, base?.vp, "공개 원문에서 수익 구조를 수집 중");
-  const strategySummary = first(base?.direction, directionSignals[0]?.signal, evidence[0]?.titleKo, "최신 사업 방향 원문을 수집 중");
+    ? `${primaryModel} 중심 · ${clip(first(revenueSignals[0]?.signal, profileScope ? `${profileScope} 제품군의 가격·계약 구조` : "", "최신 과금 구조 근거를 수집 중"), 220)}`
+    : first(revenueSignals[0]?.signal, profileScope ? `${profileScope} 제품군의 가격·계약 구조` : "", "공개 원문에서 수익 구조를 수집 중");
+  const actionEvidence = evidence.find(item => isCompanyActionEvidenceFor(base?.name, item));
+  const actionEvidenceRows = evidence.filter(item => isCompanyActionEvidenceFor(base?.name, item));
+  const strategySummary = first(directionSignals[0]?.signal, actionEvidence?.titleKo, actionEvidence?.titleOriginal, "최신 사업 방향 원문을 수집 중");
   const investSignal = directionSignals.find(signal => ["ma", "invest", "partner"].includes(signal.kind)) || directionSignals[0];
   const investmentSummary = investSignal
     ? `${directionLabels.get(investSignal.kind) || "사업 확장"} · ${clip(investSignal.signal, 220)}`
     : "투자·제휴·인수 관련 공식 발표를 수집 중";
   const refs = allRefs(evidence);
+  const official = (rec.organization?.officialPages || []).find(page => page.status === "reachable");
+  const officialEvidence = official ? [{
+    title: "공식 회사·리더십 페이지",
+    source: "Official company page",
+    date: String(official.checkedAt || "").slice(0, 10),
+    url: official.resolvedUrl || official.url,
+  }] : [];
   return {
-    currentBusiness: { summary: clip(currentBusiness, 360), details: (profile.business || []).slice(0, 4), evidence: refs.slice(0, 1) },
+    currentBusiness: { summary: clip(currentBusiness, 360), details: (profile.business || []).slice(0, 4), evidence: officialEvidence },
     revenueModel: {
       summary: clip(revenueSummary, 360),
       details: revenueSignals.slice(0, 3).map(signal => clip(signal.signal, 220)),
@@ -173,15 +368,19 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
     },
     strategyDirection: {
       summary: clip(strategySummary, 360),
-      details: directionSignals.slice(0, 3).map(signal => clip(signal.signal, 220)),
-      evidence: directionSignals.slice(0, 3).map(signal => ({ title: signal.signal, source: signal.source, date: signal.date, url: signal.url })),
+      details: directionSignals.length
+        ? directionSignals.slice(0, 3).map(signal => clip(signal.signal, 220))
+        : actionEvidenceRows.slice(0, 3).map(item => item.titleKo || item.titleOriginal),
+      evidence: directionSignals.length
+        ? directionSignals.slice(0, 3).map(signal => ({ title: signal.signal, source: signal.source, date: signal.date, url: signal.url }))
+        : actionEvidenceRows.slice(0, 3).map(item => ({ title: item.titleKo || item.titleOriginal, source: item.source, date: item.date, url: item.url })),
     },
     investmentDirection: {
       summary: clip(investmentSummary, 360),
       details: directionSignals.filter(signal => ["ma", "invest", "partner"].includes(signal.kind)).slice(0, 3).map(signal => clip(signal.signal, 220)),
       evidence: investSignal ? [{ title: investSignal.signal, source: investSignal.source, date: investSignal.date, url: investSignal.url }] : [],
     },
-    corePractices: evidence.slice(0, 4).map(item => ({
+    corePractices: evidence.filter(item => isCompanyActionEvidenceFor(base?.name, item)).slice(0, 8).map(item => ({
       title: item.titleKo || item.titleOriginal,
       insight: item.linesKo[1] || item.linesKo[0] || item.linesOriginal[0] || item.titleKo,
       evidence: { title: item.titleKo || item.titleOriginal, source: item.source, date: item.date, url: item.url },
@@ -247,6 +446,7 @@ async function main() {
   const dash = loadDash();
   const bases = new Map((dash.COMPANIES || []).map(company => [company.name, company]));
   const monetByName = new Map((monetData.companies || []).map(company => [company.name, company]));
+  const articleByUrl = new Map((newsData.articles || []).map(article => [canon(article.url), article]));
   const modelLabels = new Map((monetData.models || []).map(model => [model.id, model.ko]));
   const directionLabels = new Map((monetData.directions || []).map(direction => [direction.id, direction.ko]));
   const prepared = [];
@@ -259,9 +459,9 @@ async function main() {
 
   for (const [name, rec] of Object.entries(companyData.companies || {})) {
     const leaders = rec.organization?.leadership || [];
-    const evidence = evidenceFor(name, newsData.articles || [], leaders);
-    const monet = monetByName.get(name) || null;
-    const fallback = fallbackIntelligence({
+    const evidence = mergeEvidence(officialEvidenceFor(rec), evidenceFor(name, newsData.articles || [], leaders));
+    const monet = sanitiseMonetization(name, monetByName.get(name) || null, articleByUrl);
+    const fallbackRaw = fallbackIntelligence({
       base: bases.get(name),
       rec,
       monet,
@@ -269,13 +469,20 @@ async function main() {
       modelLabels,
       directionLabels,
     });
-    const priorAi = rec.intelligence?.engine?.startsWith("github-models:") ? rec.intelligence : null;
-    const refreshAi = !!engine && (!priorAi || ageDays(priorAi.generatedAt) >= maxAiAgeDays);
-    rec.intelligence = priorAi || {
+    const corpus = analysisCorpus({ base: bases.get(name), rec, monet, evidence });
+    const fallback = safeFallback(name, fallbackRaw, corpus, evidence);
+    const groundedFallback = finaliseIntelligence(fallback, { name, evidence, fallback, corpus });
+    const priorAiRaw = rec.intelligence?.engine?.startsWith("github-models:") ? rec.intelligence : null;
+    const priorAi = priorAiRaw ? finaliseIntelligence(priorAiRaw, { name, evidence, fallback: groundedFallback, corpus }) : null;
+    const currentFingerprint = evidenceFingerprint(evidence);
+    const priorMatchesEvidence = priorAi?.evidenceFingerprint === currentFingerprint
+      && priorAiRaw?.evidenceFingerprint === currentFingerprint;
+    const refreshAi = !!engine && (!priorAi || !priorMatchesEvidence || ageDays(priorAi.generatedAt) >= maxAiAgeDays);
+    rec.intelligence = priorMatchesEvidence ? priorAi : {
         generatedAt: new Date().toISOString(),
         engine: "source-extractive-synthesis",
-        evidenceWindow: "최신 원문 6건 + 누적 수익화·사업 방향 원장",
-        ...fallback,
+        evidenceWindow: "제목·리드문에서 회사가 확인된 최신 원문 8건 + 누적 수익화·사업 방향 원장",
+        ...groundedFallback,
       };
     rec.strategicVentures = ventures.companies?.[name] || [];
     if (rec.strategicVentures.length && ventures.comparison) rec.strategicVentureComparison = ventures.comparison;
@@ -300,7 +507,8 @@ async function main() {
       quoteCandidates: evidence.flatMap(item => item.quotes.map(quote => ({ ...quote, evidenceId: item.id }))).slice(0, 6),
       _rec: rec,
       _fallback: fallback,
-      _priorAi: priorAi,
+      _corpus: corpus,
+      _priorAi: priorAiRaw,
     });
   }
 
@@ -311,7 +519,7 @@ async function main() {
     const batchSize = 1;
     for (let start = 0; start < prepared.length; start += batchSize) {
       const batch = prepared.slice(start, start + batchSize);
-      const publicInput = batch.map(({ _rec, _fallback, _priorAi, ...value }) => value);
+      const publicInput = batch.map(({ _rec, _fallback, _corpus, _priorAi, ...value }) => value);
       const result = await synthesizeBatch(publicInput);
       const byName = new Map((result?.data?.companies || []).map(company => [company.name, company]));
       for (const item of batch) {
@@ -320,17 +528,17 @@ async function main() {
         item._rec.intelligence = {
           generatedAt: new Date().toISOString(),
           engine: result.engine,
-          evidenceWindow: "최신 원문 6건 + 누적 수익화·사업 방향 원장",
-          ...normaliseAnalysis(analysis, item.evidence, item._fallback),
+          evidenceWindow: "제목·리드문에서 회사가 확인된 최신 원문 8건 + 누적 수익화·사업 방향 원장",
+          ...normaliseAnalysis(analysis, item.evidence, item._fallback, item._corpus),
         };
       }
       console.log(`[company-intelligence] batch ${Math.floor(start / batchSize) + 1}/${Math.ceil(prepared.length / batchSize)} · ${result ? result.engine : "extractive fallback"}`);
     }
   }
 
-  companyData.schemaVersion = 4;
+  companyData.schemaVersion = 5;
   companyData.generatedAt = new Date().toISOString();
-  companyData.methodology = "normalized-profile+live-financials+verified-linkedin+publisher-evidence+ai-source-synthesis";
+  companyData.methodology = "normalized-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis";
   await writeFile("companies.json", `${JSON.stringify(companyData)}\n`);
   const aiCount = Object.values(companyData.companies || {}).filter(company => company.intelligence?.engine?.startsWith("github-models:")).length;
   const total = Object.keys(companyData.companies || {}).length;

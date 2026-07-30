@@ -2,6 +2,7 @@
 import { access, readFile } from "node:fs/promises";
 import { BUNDLE_FILE, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
 import { loadDash } from "./load-dash.mjs";
+import { articleFocusedOnCompany } from "./company-sources.mjs";
 
 const required = [
   ".github/workflows/daily-news.yml",
@@ -12,6 +13,8 @@ const required = [
   "scripts/reframe-source-briefs.mjs",
   "scripts/crawl-stocks.mjs",
   "scripts/crawl-financials.mjs",
+  "scripts/company-sources.mjs",
+  "scripts/crawl-company-officials.mjs",
   "scripts/crawl-companies.mjs",
   "scripts/crawl-monetization.mjs",
   "scripts/crawl-a16z-startups.mjs",
@@ -144,6 +147,8 @@ try {
   const completeCoverage = normalized.every(company => company.profile && company.organization
     && Number.isFinite(company.coverage?.profile?.score)
     && Number.isFinite(company.coverage?.organization?.score)
+    && Array.isArray(company.organization?.executiveTeam)
+    && Number.isFinite(company.coverage?.organization?.executiveCount)
     && company.updatedAt);
   const linkedinProfiles = Object.values(dash.LINKEDIN_PROFILES || {});
   const linkedinReady = linkedinProfiles.length >= 10
@@ -159,6 +164,8 @@ try {
     && boards.includes('className="msf-strategy-house"')
     && boards.includes('className="vc-logic-map"')
     && boards.includes('className="cd-sf-link"')
+    && boards.includes('className="cd-mece-route"')
+    && boards.includes('className="cd-org-tier-groups"')
     && ["현재 사업", "Biz Model", "사업 방향", "최근 실행"].every(label => boards.includes(`>${label}<`))
     && boards.includes('className="vc-portfolio-grid"')
     && boards.includes('className="startup-portfolio-grid"')
@@ -172,7 +179,7 @@ try {
     && monetizationCrawler.includes("loadDash().COMPANY_LAYER");
   if (JSON.stringify(layerIds) !== JSON.stringify(expectedLayers)
     || normalized.length !== (dash.COMPANIES || []).length
-    || companies.schemaVersion !== 4 || !completeCoverage || !strategyReady || !linkedinReady) {
+    || companies.schemaVersion !== 5 || !completeCoverage || !strategyReady || !linkedinReady) {
     throw new Error("seven-layer strategy, MECE portfolio UI, normalized profiles, or verified LinkedIn links are incomplete");
   }
   console.log(`  OK  단말 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
@@ -182,20 +189,27 @@ try {
 }
 
 try {
-  const [companies, startups, a16z, ventures, workflow, intelligenceBuilder] = await Promise.all([
+  const [companies, officials, startups, a16z, ventures, news, workflow, intelligenceBuilder, companyCrawler] = await Promise.all([
     readFile("companies.json", "utf8").then(JSON.parse),
+    readFile("company-officials.json", "utf8").then(JSON.parse),
     readFile("startups.json", "utf8").then(JSON.parse),
     readFile("a16z-startups.json", "utf8").then(JSON.parse),
     readFile("strategic-ventures.json", "utf8").then(JSON.parse),
+    readFile("news.json", "utf8").then(JSON.parse),
     readFile(".github/workflows/daily-news.yml", "utf8"),
     readFile("scripts/build-company-intelligence.mjs", "utf8"),
+    readFile("scripts/crawl-companies.mjs", "utf8"),
   ]);
   const intelligenceReady = Object.values(companies.companies || {}).every(company => {
     const value = company.intelligence || {};
     return value.currentBusiness?.summary && value.revenueModel?.summary
       && value.strategyDirection?.summary && value.investmentDirection?.summary
       && Array.isArray(value.corePractices) && Array.isArray(value.newBusinessModels)
-      && Array.isArray(value.executiveQuotes);
+      && Array.isArray(value.executiveQuotes)
+      && value.evidenceFingerprint
+      && value.groundingStatus === "numeric-and-source-reference-checked"
+      && ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"]
+        .every(key => value[key]?.confidence && value[key]?.groundingStatus);
   });
   const companyRows = Object.values(companies.companies || {});
   const aiCompanies = companyRows.filter(company => company.intelligence?.engine?.startsWith("github-models:")).length;
@@ -212,20 +226,51 @@ try {
     && ventures.comparison?.operatorMove
     && ventures.comparison?.market?.source?.url;
   const workflowReady = /models:\s*read/.test(workflow)
+    && /crawl-company-officials\.mjs/.test(workflow)
     && /crawl-a16z-startups\.mjs/.test(workflow)
     && /crawl-strategic-ventures\.mjs/.test(workflow)
     && /build-company-intelligence\.mjs/.test(workflow);
   const grounded = intelligenceBuilder.includes("evidenceIds")
     && intelligenceBuilder.includes("publisher evidence")
-    && intelligenceBuilder.includes("quoteOriginal");
+    && intelligenceBuilder.includes("quoteOriginal")
+    && intelligenceBuilder.includes("articleFocusedOnCompany")
+    && intelligenceBuilder.includes("numericTokens")
+    && companyCrawler.includes("articleFocusedOnCompany");
+  const officialReady = officials.schemaVersion === 1
+    && officials.methodology === "official-page-recrawl+exact-executive-name-and-role-context-match"
+    && Object.keys(officials.companies || {}).length >= 30;
+  const newsByUrl = new Map((news.articles || []).map(article => [article.url, article]));
+  const companyEvidenceFocused = Object.entries(companies.companies || {}).every(([name, company]) =>
+    ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"].every(key =>
+      (company.intelligence?.[key]?.evidence || []).every(ref => {
+        const article = newsByUrl.get(ref.url);
+        return !article || articleFocusedOnCompany(name, article);
+      })));
   if (!intelligenceReady || (modelExpected && aiCoverage < 0.95)
-    || !a16zReady || !ventureReady || !workflowReady || !grounded) {
+    || !a16zReady || !ventureReady || !workflowReady || !grounded || !officialReady || !companyEvidenceFocused) {
     throw new Error("company intelligence, a16z 50+50, strategic ventures, or grounded synthesis automation is incomplete");
   }
   console.log(`  OK  기업 인텔리전스 ${companyRows.length}개 · AI ${aiCompanies}개 · a16z Web 50/Mobile 50 · DeployCo/JV 근거 자동화`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  deep company intelligence automation: ${error.message}`);
+}
+
+try {
+  const [data, financialCrawler] = await Promise.all([
+    readFile("data.js", "utf8"),
+    readFile("scripts/crawl-financials.mjs", "utf8"),
+  ]);
+  if (data.includes("승계 예정") || data.includes("2026.09.01 사임")
+    || /headcount:\s*"약 [^"]+보도 추정/.test(data)
+    || !financialCrawler.includes("HEADCOUNT_MAX_AGE_MONTHS")
+    || !financialCrawler.includes("employeesStale")) {
+    throw new Error("unverified succession or stale headcount can still be presented as current");
+  }
+  console.log("  OK  비공식 승계설 제거 · 오래된 인력 수 현행값 차단");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  volatile fact freshness: ${error.message}`);
 }
 
 try {

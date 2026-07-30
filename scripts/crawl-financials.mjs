@@ -45,6 +45,11 @@ const fmtEmp = (n) => {
   if (v >= 10000) return `${(v / 10000).toFixed(1)}만명`;
   return `${v.toLocaleString("en-US")}명`;
 };
+const HEADCOUNT_MAX_AGE_MONTHS = Math.max(6, Number(process.env.HEADCOUNT_MAX_AGE_MONTHS || 24));
+const monthAge = value => {
+  const time = Date.parse(value || "");
+  return Number.isFinite(time) ? (Date.now() - time) / (30.4375 * 86_400_000) : Infinity;
+};
 const clean = (s) => {
   const t = String(s || "").trim();
   return t && !isExcludedText(t) ? t : "";     // 금지어 포함 값은 버림
@@ -118,8 +123,9 @@ async function wikidataHeadcount(ticker) {
       || String(b.asOf).localeCompare(String(a.asOf)));
     const latest = rows[0];
     if (!latest) return null;
+    const stale = monthAge(latest.asOf) > HEADCOUNT_MAX_AGE_MONTHS;
     return {
-      employees: fmtEmp(latest.amount),
+      ...(stale ? { employeesLastReported: fmtEmp(latest.amount), employeesStale: true } : { employees: fmtEmp(latest.amount) }),
       employeesAsOf: latest.asOf,
       employeesSource: `Wikidata ${entity.id}`,
       employeesSourceUrl: `https://www.wikidata.org/wiki/${entity.id}`,
@@ -157,7 +163,16 @@ function extract(ticker, r) {
   const sector = clean(ap.sector || ap.industry);
   if (sector) out.sector = sector;
 
-  if (ap.fullTimeEmployees != null) { const e = fmtEmp(ap.fullTimeEmployees); if (e) out.employees = e; }
+  if (ap.fullTimeEmployees != null) {
+    const e = fmtEmp(ap.fullTimeEmployees);
+    if (e) {
+      out.employees = e;
+      out.employeesAsOf = new Date().toISOString().slice(0, 10);
+      out.employeesSource = "Yahoo Finance assetProfile";
+      out.employeesSourceUrl = `https://finance.yahoo.com/quote/${ticker}/profile/`;
+      out.employeesStale = false;
+    }
+  }
 
   // 최신 분기 실적
   const q = r.incomeStatementHistoryQuarterly && r.incomeStatementHistoryQuarterly.incomeStatementHistory;
@@ -208,12 +223,29 @@ async function main() {
       }
     }
     if (rec) {
-      financials[ticker] = { ...prev[ticker], ...rec };
+      const merged = { ...prev[ticker], ...rec };
+      // A stale fallback must never remain presented as a current headcount.
+      if (rec.employeesStale && !rec.employees) {
+        delete merged.employees;
+        merged.employeesStale = true;
+      }
+      financials[ticker] = merged;
       fresh++;
       if (yahooRecord) yahooFresh++;
     }
     else { failed++; }                       // 실패 시 직전 값 보존(단조 최신화)
     await new Promise((res) => setTimeout(res, 250));
+  }
+
+  // Also reclassify preserved records when the upstream request failed. This
+  // prevents a once-current Wikidata value from silently aging into a current
+  // figure merely because the newest crawl was unavailable.
+  for (const record of Object.values(financials)) {
+    if (!record?.employees || !/^Wikidata\b/.test(record.employeesSource || "")
+      || monthAge(record.employeesAsOf) <= HEADCOUNT_MAX_AGE_MONTHS) continue;
+    record.employeesLastReported = record.employees;
+    delete record.employees;
+    record.employeesStale = true;
   }
 
   const out = {
