@@ -708,9 +708,10 @@ try {
     "china-design",
     "china-materials",
   ];
+  // 주가 보드는 '대시보드 리스트 상장사만 + 밸류체인 계층 그룹' 구조로 재편(글로벌/중국 이원 패널 폐지).
   const completeBoard = boards.includes("function StockRegionPanel")
-    && boards.includes("글로벌 AI·반도체 밸류체인")
-    && boards.includes("중국 A주 반도체 밸류체인")
+    && boards.includes("AI 밸류체인 상장사")
+    && boards.includes("window.DASH.STOCK_LAYER")
     && boards.includes("밸류체인 그룹 트렌드")
     && boards.includes("개별 종목");
   const completeMetadata = data.includes('ticker: "000660.KS"')
@@ -731,7 +732,7 @@ try {
   if (!completeBoard || !completeMetadata || !liveHistory || !currencyAware || !responsiveUi) {
     throw new Error("global/China stock boards, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
-  console.log("  OK  글로벌·중국 A주 밸류체인 주가 보드와 5년 실데이터 병합 수집");
+  console.log("  OK  대시보드 상장사 밸류체인 주가 보드와 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock value-chain board: ${error.message}`);

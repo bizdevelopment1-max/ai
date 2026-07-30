@@ -430,7 +430,7 @@ function App() {
             </LazySection>
 
             <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
-              <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} />
+              <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} />
             </LazySection>
             <LazySection id="survey" active={active} sectionRef={refs.survey} height={620}>
               <MarketBoard dataVersion={dataVersion} mode="survey" />

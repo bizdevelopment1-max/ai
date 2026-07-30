@@ -1281,6 +1281,9 @@ window.DASH = (function () {
     { id: "app", ko: "애플리케이션·버티컬", en: "Applications", accent: "#EA580C", accentSoft: "#FCEBE0", desc: "도메인 특화 AI 앱 — 코딩·법률·의료·검색·크리에이티브·엔터프라이즈 등 버티컬" },
     { id: "service", ko: "배포·AI서비스", en: "Deployment & Services", accent: "#16A34A", accentSoft: "#E3F5EA", desc: "FDE·컨설팅·구축 — 모델사가 자회사·합작으로 직접 서비스화(플래그십 딜: 별도 축)" },
   ];
+  // 주가 차트에 표시할 '대시보드 상장사' 티커 → 밸류체인 계층(그룹). 여기 없는 티커는 차트에서 제외.
+  const STOCK_LAYER = { MSFT: "infra", AMZN: "infra", NVDA: "infra", GOOGL: "model", META: "model", SPCX: "model", AAPL: "app" };
+
   // 33개 추적 기업의 밸류체인 계층·버티컬 매핑(MECE — 각 기업은 대표 계층 1개).
   const COMPANY_LAYER = {
     "Microsoft": { layer: "infra", vertical: "하이퍼스케일 클라우드" }, "Amazon": { layer: "infra", vertical: "하이퍼스케일 클라우드" }, "NVIDIA": { layer: "infra", vertical: "AI 가속기·칩" },
@@ -1341,5 +1344,5 @@ window.DASH = (function () {
     "SpaceX (xAI, Cursor)": { founded: "SpaceX 2002 · xAI 2023", ceo: "Elon Musk", hq: "미국 텍사스州", business: ["우주 발사·Starlink", "xAI(Grok) AI 모델"] },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, STOCK_LAYER, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

@@ -1007,13 +1007,34 @@ function StockRegionPanel({ title, eyebrow, description, stocks, stockData, cats
   );
 }
 
-function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
+function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme, dataVersion }) {
   const inView = useInView(sectionRef);
-  const globalStocks = (stocks || []).filter(stock => stock.region !== "china");
-  const chinaStocks = (stocks || []).filter(stock => stock.region === "china");
-  const globalGroups = (groups || []).filter(group => group.region !== "china");
-  const chinaGroups = (groups || []).filter(group => group.region === "china");
+  const STOCK_LAYER = window.DASH.STOCK_LAYER || {};
+  const VC = window.DASH.VALUE_CHAIN || [];
   const generatedAt = stockData?.__generatedAt ? new Date(stockData.__generatedAt).toLocaleString("ko-KR") : "";
+
+  // 변곡점 자동 설명(뉴스 크롤 근거) 로드 — 화면 진입 시 1회
+  const [autoEv, setAutoEv] = React.useState(null);
+  React.useEffect(() => {
+    if (!inView || autoEv || !dataVersion) return;
+    fetch(`stock-events.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (j && j.events) setAutoEv(j.events); })
+      .catch(() => {});
+  }, [inView, autoEv, dataVersion]);
+
+  // 대시보드 리스트(밸류체인 기업)에 있는 상장사만 + 밸류체인 계층으로 그룹핑
+  // + 에디토리얼 변곡점 설명(과거)과 뉴스 기반 자동 설명(최근)을 날짜별 병합(에디토리얼 우선)
+  const dashStocks = (stocks || [])
+    .filter(s => STOCK_LAYER[s.ticker])
+    .map(s => {
+      const merged = new Map();
+      ((autoEv && autoEv[s.ticker]) || []).forEach(e => merged.set(e.date, e));
+      (s.events || []).forEach(e => merged.set(e.date, e));   // 같은 날짜는 에디토리얼이 덮어씀
+      const events = [...merged.values()].sort((a, b) => (a.date < b.date ? -1 : 1));
+      return { ...s, group: STOCK_LAYER[s.ticker], region: undefined, events };
+    });
+  const layers = VC.filter(l => dashStocks.some(s => s.group === l.id));
 
   return (
     <section className="board stock-board-rich" ref={sectionRef} data-screen-label="Stock Prices">
@@ -1021,31 +1042,21 @@ function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme }) {
       <div className="board-head stock-master-head" style={{ "--accent": theme.accent }}>
         <span className="board-tab" style={{ background: theme.accent }} />
         <div className="board-titles">
-          <h2>주가 차트 <span className="board-en">Listed AI & Semiconductor Value Chain</span></h2>
-          <p>글로벌 AI·반도체와 중국 A주 공급망을 실제 일별 시세로 비교 · 밸류체인 그룹과 개별 종목을 동일 기준으로 분석</p>
+          <h2>주가 차트 <span className="board-en">Dashboard Companies · by AI Value Chain</span></h2>
+          <p>대시보드 기업 리스트의 상장사만 · AI 밸류체인 계층별 그룹 비교 · 변곡점(급등·급락)은 뉴스 기반으로 '왜 올랐/빠졌는지' 자동 설명</p>
         </div>
         {generatedAt && <span className="stock-generated">마지막 수집<br /><b>{generatedAt}</b></span>}
       </div>
 
       <div className="stock-region-stack">
         <StockRegionPanel
-          title="글로벌 AI·반도체 밸류체인"
-          eyebrow="GLOBAL LISTED EQUITIES"
-          description="AI 칩·메모리·파운드리·장비·패키징에서 하이퍼스케일러·데이터센터·소프트웨어까지 연결"
-          stocks={globalStocks}
+          title="AI 밸류체인 상장사"
+          eyebrow="DASHBOARD LISTED EQUITIES"
+          description="대시보드 기업 리스트에 있는 상장사를 인프라·컴퓨트 / 파운데이션 모델 / 애플리케이션 등 밸류체인 계층으로 묶어 실제 일별 시세로 비교"
+          stocks={dashStocks}
           stockData={stockData}
           cats={cats}
-          groups={globalGroups}
-          theme={theme}
-        />
-        <StockRegionPanel
-          title="중국 A주 반도체 밸류체인"
-          eyebrow="CHINA A-SHARE SEMICONDUCTOR"
-          description="CXMT를 포함한 상하이·선전 상장사를 메모리·파운드리·장비·패키징·팹리스/EDA·소재로 연결"
-          stocks={chinaStocks}
-          stockData={stockData}
-          cats={cats}
-          groups={chinaGroups}
+          groups={layers}
           theme={theme}
         />
       </div>
