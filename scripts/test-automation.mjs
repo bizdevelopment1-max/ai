@@ -56,6 +56,7 @@ const required = [
   "startups.json",
   "a16z-startups.json",
   "strategic-ventures.json",
+  "business-model-forecasts.json",
   "monetization.json",
   "quality.json",
   "history.json",
@@ -500,17 +501,19 @@ try {
 }
 
 try {
-  const [companies, officials, startups, a16z, ventures, news, workflow, intelligenceBuilder, companyCrawler, llmClient] = await Promise.all([
+  const [companies, officials, startups, a16z, ventures, forecasts, news, workflow, intelligenceBuilder, companyCrawler, llmClient, boards] = await Promise.all([
     readFile("companies.json", "utf8").then(JSON.parse),
     readFile("company-officials.json", "utf8").then(JSON.parse),
     readFile("startups.json", "utf8").then(JSON.parse),
     readFile("a16z-startups.json", "utf8").then(JSON.parse),
     readFile("strategic-ventures.json", "utf8").then(JSON.parse),
+    readFile("business-model-forecasts.json", "utf8").then(JSON.parse),
     readFile("news.json", "utf8").then(JSON.parse),
     readFile(".github/workflows/daily-news.yml", "utf8"),
     readFile("scripts/build-company-intelligence.mjs", "utf8"),
     readFile("scripts/crawl-companies.mjs", "utf8"),
     readFile("scripts/llm.mjs", "utf8"),
+    readFile("boards.jsx", "utf8"),
   ]);
   const statusCopy = /(?:수집|확인|분석|업데이트|준비)\s*중|입력되지|신호\s*(?:없음|대기)|데이터\s*없음|표시할\s+.+없/i;
   const portfolioNames = new Set((loadDash().COMPANIES || []).map(company => company.name));
@@ -549,6 +552,44 @@ try {
     && ventureCases.some(item => item.id === "anthropic-enterprise-ai-services")
     && ventures.comparison?.operatorMove
     && ventures.comparison?.market?.source?.url;
+  const forecastIds = (forecasts.models || []).map(item => item.id);
+  const forecastsReady = forecasts.schemaVersion === 1
+    && forecasts.methodology === "official-source-recrawl+observed-move-to-business-model-inference"
+    && forecasts.factForecastBoundary
+    && forecastIds.length === 7
+    && new Set(forecastIds).size === forecastIds.length
+    && forecasts.models.every(item =>
+      item.forecast
+      && item.revenueModel
+      && item.operatorMove
+      && item.evidenceStatus === "source-verified"
+      && item.observedMoves?.length >= 2
+      && item.useCases?.length >= 3
+      && item.bestPractices?.length >= 4
+      && item.watchMetrics?.length >= 4
+      && item.evidence?.some(source => /^https:\/\/(www\.)?[^/]+/.test(String(source.url || "")))
+      && !hasKoreanSentencePeriod([
+        item.forecast,
+        item.revenueModel,
+        item.operatorMove,
+        ...item.observedMoves,
+        ...item.useCases,
+        ...item.bestPractices,
+        ...item.watchMetrics,
+      ].join(" "))
+      && !hasKoreanProseEnding([
+        item.forecast,
+        item.revenueModel,
+        item.operatorMove,
+        ...item.observedMoves,
+        ...item.useCases,
+        ...item.bestPractices,
+        ...item.watchMetrics,
+      ].join(" "))
+    )
+    && boards.includes("function BusinessModelForecasts({ dataVersion })")
+    && boards.includes("business-model-forecasts.json")
+    && workflow.includes("business-model-forecasts.json");
   const workflowReady = /models:\s*read/.test(workflow)
     && /crawl-company-officials\.mjs/.test(workflow)
     && /crawl-a16z-startups\.mjs/.test(workflow)
@@ -582,10 +623,10 @@ try {
         return !article || articleFocusedOnCompany(name, article);
       })));
   if (!intelligenceReady
-    || !a16zReady || !ventureReady || !workflowReady || !grounded || !officialReady || !companyEvidenceFocused) {
+    || !a16zReady || !ventureReady || !forecastsReady || !workflowReady || !grounded || !officialReady || !companyEvidenceFocused) {
     throw new Error("company intelligence must remain source-grounded or blank, with a16z 50+50 and strategic-venture automation intact");
   }
-  console.log(`  OK  기업 인텔리전스 ${companyRows.length}개 · AI ${aiCompanies}개 · a16z Web 50/Mobile 50 · DeployCo/JV 근거 자동화`);
+  console.log(`  OK  기업 인텔리전스 ${companyRows.length}개 · AI ${aiCompanies}개 · a16z Web 50/Mobile 50 · DeployCo/JV · 신사업 예측 7개 근거 자동화`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  deep company intelligence automation: ${error.message}`);

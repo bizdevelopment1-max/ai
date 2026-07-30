@@ -90,10 +90,10 @@ await Promise.all(Object.entries(views).map(async ([file, value]) => {
 
 const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
-  ...await Promise.all(["insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  ...await Promise.all(["insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
-await writeJson("data-version.json", { version, generatedAt, assets: [...Object.keys(views), "company-news.json"] });
+await writeJson("data-version.json", { version, generatedAt, assets: [...Object.keys(views), "company-news.json", "business-model-forecasts.json"] });
 
 console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} quantified records · version ${version}`);

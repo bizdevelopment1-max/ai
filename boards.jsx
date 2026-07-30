@@ -2929,6 +2929,119 @@ function BigtechFlowGrid() {
   );
 }
 
+function BusinessModelForecasts({ dataVersion }) {
+  const [data, setData] = React.useState(null);
+  const [selectedId, setSelectedId] = React.useState("");
+
+  React.useEffect(() => {
+    let live = true;
+    fetch(`business-model-forecasts.json?v=${encodeURIComponent(dataVersion || "")}`, { cache: "force-cache" })
+      .then(response => response.ok ? response.json() : null)
+      .then(value => {
+        if (live && Array.isArray(value?.models) && value.models.length) setData(value);
+      })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [dataVersion]);
+
+  const models = data?.models || [];
+  React.useEffect(() => {
+    if (models.length && !models.some(model => model.id === selectedId)) setSelectedId(models[0].id);
+  }, [models, selectedId]);
+  if (!models.length) return null;
+
+  const selected = models.find(model => model.id === selectedId) || models[0];
+  const flow = ["기업 움직임", "수익 단위", "Use case", "Best practice", "단말·통신사 실행안"];
+  return (
+    <section className="bmf" data-section="business-model-forecasts">
+      <div className="bmf-head">
+        <div>
+          <span className="bmf-kicker">기업 움직임 기반 신사업 예측 · 7개 수익 구조</span>
+          <h3>관측 사실에서 다음 AI 비즈니스 모델로</h3>
+          <p>공식 기업 발표 재수집 · 관측 사실과 전략 예측 분리 · 수익 단위와 실행 조건까지 연결</p>
+        </div>
+        <span className="bmf-proof">공식 원문 근거 {models.length}개 모델</span>
+      </div>
+
+      <div className="bmf-flow" aria-label="신사업 분석 흐름">
+        {flow.map((label, index) => (
+          <React.Fragment key={label}>
+            <span className="bmf-flow-step"><b>{String(index + 1).padStart(2, "0")}</b>{label}</span>
+            {index < flow.length - 1 && <span className="bmf-triangle" aria-hidden="true" />}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="bmf-grid" role="tablist" aria-label="신규 AI 비즈니스 모델">
+        {models.map((model, index) => (
+          <button
+            type="button"
+            role="tab"
+            aria-selected={model.id === selected.id}
+            className={`bmf-card${model.id === selected.id ? " active" : ""}`}
+            key={model.id}
+            onClick={() => setSelectedId(model.id)}
+            style={{ "--bmf-order": index }}
+          >
+            <span className="bmf-card-top">
+              <em>{model.layer}</em>
+              <span>{model.horizon} · {model.confidence}</span>
+            </span>
+            <strong>{model.title}</strong>
+            <small>{model.en}</small>
+            <p>{model.forecast}</p>
+            <span className="bmf-revenue"><b>수익 구조</b>{model.revenueModel}</span>
+            <span className="bmf-open">상세 모델 보기<i aria-hidden="true" /></span>
+          </button>
+        ))}
+      </div>
+
+      <article className="bmf-detail" key={selected.id}>
+        <div className="bmf-detail-title">
+          <div>
+            <span>{selected.layer} · {selected.horizon}</span>
+            <h4>{selected.title} <em>{selected.en}</em></h4>
+          </div>
+          <span className="bmf-boundary">관측 사실 ≠ 전략 예측</span>
+        </div>
+        <div className="bmf-columns">
+          <div className="bmf-column observed">
+            <em>관측된 기업 움직임</em>
+            <ul>{selected.observedMoves.map((item, index) => <li key={index}>{item}</li>)}</ul>
+          </div>
+          <div className="bmf-column">
+            <em>Use case</em>
+            <ul>{selected.useCases.map((item, index) => <li key={index}>{item}</li>)}</ul>
+          </div>
+          <div className="bmf-column">
+            <em>Best practice</em>
+            <ul>{selected.bestPractices.map((item, index) => <li key={index}>{item}</li>)}</ul>
+          </div>
+        </div>
+        <div className="bmf-action">
+          <div>
+            <em>단말·통신사 실행안</em>
+            <strong>{selected.operatorMove}</strong>
+          </div>
+          <div className="bmf-metrics">
+            <em>선행 KPI</em>
+            <span>{selected.watchMetrics.join(" · ")}</span>
+          </div>
+        </div>
+        <div className="bmf-sources">
+          <em>공식 근거</em>
+          {selected.evidence.map(source => (
+            <a key={source.id || source.url} href={source.url} target="_blank" rel="noopener">
+              {source.publisher} · {source.date}<span aria-hidden="true">↗</span>
+            </a>
+          ))}
+        </div>
+      </article>
+      <p className="bmf-method">{data.factForecastBoundary}</p>
+    </section>
+  );
+}
+
 // 수직통합(모델사 자회사·합작) 신사업 트렌드 — 실사례 + 복제 경로. cats 의존 없이 재사용.
 const VI_ACCENT = { native: "#7A38D6", datacenter: "#0891B2", device: "#16A34A", software: "#DB2777" };
 
@@ -3885,6 +3998,7 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
         <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
         <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
           dataVersion={dataVersion} title="수익화 유형별 신호 — 7개 비즈니스 모델" sub="수직통합·구독·사용량·광고/커머스·하드웨어·성과기반·엔터프라이즈 — 원문 확인 카드만 누적 표시" />
+        <BusinessModelForecasts dataVersion={dataVersion} />
 
         {/* 2) 한 단계 아래 — 비즈니스 모델 심화 예시: 배포·AI서비스(수직통합) */}
         <div className="nb-example-head">
