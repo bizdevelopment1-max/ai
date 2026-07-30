@@ -1902,6 +1902,7 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, the
   const real = (stockData && stockData[sel.ticker]) || null;
   const mcap = sel.private ? sel.mcap : (real && real.marketCap);
   const visibleStocks = groupFilter === "all" ? stocks : stocks.filter(s => s.group === groupFilter);
+  const visibleGroups = groupFilter === "all" ? groups : groups.filter(g => g.id === groupFilter);
   const latestDates = stocks.map(stock => stockData?.[stock.ticker]?.asOf).filter(Boolean).sort();
   const latestDate = latestDates.at(-1) || "";
   const exchanges = [...new Set(stocks.map(stock => stock.exchange || stockData?.[stock.ticker]?.exchange).filter(Boolean))];
@@ -1934,19 +1935,7 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, the
         </div>
       </div>
 
-      {view === "group" ? (
-        <div className="stock-panel" style={{ "--accent": accent }}>
-          <div className="stock-panel-head">
-            <span className="sp-name">밸류체인 업종별 상대 추이</span>
-            <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{rangeLabel} · 시작=100</span>
-            <span className="sp-source">{exchanges.join(" · ")}</span>
-          </div>
-          <GroupTrendChart groups={groups} stocks={stocks} stockData={stockData} years={years} theme={theme} />
-          <p className="stock-updated">조정종가 우선 · 그룹별 구성 종목을 기간 시작 100으로 재환산한 동일가중 추이 · 관측 기간이 부족한 신규 종목은 개별 시세에서 확인</p>
-        </div>
-      ) : (
-      <React.Fragment>
-      <div className="stock-group-filters">
+      <div className="stock-group-filters" aria-label="상장사 밸류체인 카테고리">
         <button className={groupFilter === "all" ? "on" : ""} onClick={() => setGroupFilter("all")}>전체</button>
         {(groups || []).map(g => (
           <button key={g.id} className={groupFilter === g.id ? "on" : ""}
@@ -1960,6 +1949,18 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, the
         ))}
       </div>
 
+      {view === "group" ? (
+        <div className="stock-panel" style={{ "--accent": accent }}>
+          <div className="stock-panel-head">
+            <span className="sp-name">밸류체인 업종별 상대 추이</span>
+            <span className="sp-cat" style={{ color: accent, background: (selGroup || {}).accentSoft }}>{rangeLabel} · 시작=100</span>
+            <span className="sp-source">{exchanges.join(" · ")}</span>
+          </div>
+          <GroupTrendChart groups={visibleGroups} stocks={visibleStocks} stockData={stockData} years={years} theme={theme} />
+          <p className="stock-updated">조정종가 우선 · 그룹별 구성 종목을 기간 시작 100으로 재환산한 동일가중 추이 · 관측 기간이 부족한 신규 종목은 개별 시세에서 확인</p>
+        </div>
+      ) : (
+      <React.Fragment>
       <div className="stock-tabs">
         {visibleStocks.map(s => {
           const ac = (groupMap[s.group] || catMap[s.cat] || {}).accent || theme.accent;
@@ -2035,7 +2036,7 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
   const inView = useInView(sectionRef);
   const STOCK_LAYER = window.DASH.STOCK_LAYER || {};
   const STOCK_GROUP_LAYER = window.DASH.STOCK_GROUP_LAYER || {};
-  const VC = window.DASH.VALUE_CHAIN || [];
+  const VC = window.DASH.STOCK_VALUE_CHAIN || [];
   const marketGroupMap = Object.fromEntries((groups || []).map(group => [group.id, group]));
   const generatedAt = stockData?.__generatedAt ? new Date(stockData.__generatedAt).toLocaleString("ko-KR") : "";
 
