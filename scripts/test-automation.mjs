@@ -402,6 +402,8 @@ try {
     && sourceContent.includes("malformed-source-encoding");
   const professionalSystem = boards.includes('className="mplay-framework"')
     && boards.includes("STRATEGY EVIDENCE ARCHITECTURE")
+    && !boards.includes("크롤 신호")
+    && !boards.includes("수익모델·사업 방향 신호는 매일 크롤 기사에서 자동 분류·누적")
     && ["FACT BASE", "REVENUE ENGINE", "EXECUTION VECTOR", "COMPANY VIEW"].every(label => boards.includes(label))
     && styles.includes(".mplay-framework-flow")
     && styles.includes("@keyframes mplayEvidenceSweep")
