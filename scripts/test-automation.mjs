@@ -7,6 +7,7 @@ import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany 
 import { textSimilarity } from "./source-content.mjs";
 import { bulletizeKorean, hasKoreanProseEnding, hasKoreanSentencePeriod } from "./korean-copy.mjs";
 import { canonicalSuppressionUrl, createSuppressionRegistry } from "./suppression-registry.mjs";
+import { appendRecords, ensureMarketDatabase, hasConsumerSurveyEvidence } from "./market-db.mjs";
 
 const required = [
   ".github/workflows/daily-news.yml",
@@ -1074,9 +1075,11 @@ try {
 }
 
 try {
-  const [market, boards] = await Promise.all([
+  const [market, boards, marketCrawler, marketRefresh] = await Promise.all([
     readFile("market.json", "utf8").then(JSON.parse),
     readFile("boards.jsx", "utf8"),
+    readFile("scripts/crawl-markets.mjs", "utf8"),
+    readFile("scripts/refresh-market-source-content.mjs", "utf8"),
   ]);
   const records = market.records || [];
   const ids = new Set(records.map(record => record.id));
@@ -1109,18 +1112,84 @@ try {
   const hasNewVerticals = ["core-41", "wearxr-42"].every(id => (market.items || []).some(item => item.id === id && /^https?:\/\//.test(item.url || "")));
   const boardContract = /record\.provenance\?\.status === "source-backed"/.test(boards)
     && /sourceQuantifiedLines/.test(boards)
-    && /검색 제목·스니펫은 화면에서 제외/.test(boards);
+    && /aiDashDeletedMarketRecords/.test(boards)
+    && /rememberSuppression\(\{[\s\S]{0,180}scope: "market"/.test(boards)
+    && /X는 사용자가 선택한 항목만 숨김/.test(boards);
   const noForecastPlaceholder = /const hasForecast = numericValue\(it\.forecast\)/.test(boards)
     && /hasCurrent && hasForecast && <span className="mkt-arr" aria-hidden="true" \/>/.test(boards)
     && /hasForecast && <span className="mkt-num fut">/.test(boards);
+  const separateCollectionTracks = /const EXPANSION_QUERIES = \[/.test(marketCrawler)
+    && /track: "consumer-survey"/.test(marketCrawler)
+    && /track: "ai-market"/.test(marketCrawler)
+    && /querySetVersion: QUERY_SET_VERSION/.test(marketCrawler);
+  const suppressionPreservesLedger = /const records = Array\.isArray\(data\.records\) \? data\.records : \[\];/.test(marketRefresh)
+    && /if \(suppression\.matches\(record, "market"\)\) return record;/.test(marketRefresh)
+    && /userSuppressedPreserved: suppressedRecords\.length/.test(marketRefresh);
   if (market.database?.mode !== "append-only" || records.length < 3 || ids.size !== records.length || linked.length !== records.length
-    || !hasUserResearch || !hasNewVerticals || !sourceBoundCards || !boardContract || !noForecastPlaceholder) {
+    || !hasUserResearch || !hasNewVerticals || !sourceBoundCards || !boardContract || !noForecastPlaceholder
+    || !separateCollectionTracks || !suppressionPreservesLedger) {
     throw new Error("append-only market database requires publisher-page-backed display records and retained source links");
   }
   console.log(`  정상  market.json 누적 정량 DB ${records.length}건`);
 } catch (error) {
   failed = true;
   console.error(`  실패  market.json 누적 정량 DB: ${error.message}`);
+}
+
+try {
+  const collectedAt = "2026-07-31T00:00:00.000Z";
+  const existing = {
+    id: "market:test-existing",
+    type: "market-estimate",
+    title: "AI app market reaches $10 billion",
+    sourceUrl: "https://example.com/ai-market",
+    publishedAt: "2026-07-30",
+    values: [{ label: "시장 규모", value: "$10 billion" }],
+  };
+  const database = { records: [existing], items: [], groups: [] };
+  const duplicateAcrossTrack = {
+    ...existing,
+    id: "survey:test-duplicate",
+    type: "consumer-survey",
+    collectionTrack: "consumer-survey",
+  };
+  const freshSurvey = {
+    id: "survey:test-new",
+    type: "consumer-survey",
+    collectionTrack: "consumer-survey",
+    title: "Survey of 1,000 consumers on AI phone adoption",
+    sourceUrl: "https://example.com/ai-phone-survey",
+    publishedAt: "2026-07-31",
+    evidence: "Survey respondents included 1,000 consumers",
+    values: [{ label: "응답자", value: "1,000 consumers" }],
+  };
+  const pendingSurveyWithoutHeadlineNumber = {
+    id: "survey:test-pending-no-number",
+    type: "consumer-survey",
+    collectionTrack: "consumer-survey",
+    title: "Consumer survey on AI assistant trust",
+    sourceUrl: "https://example.com/ai-assistant-trust-survey",
+    publishedAt: "2026-07-31",
+    evidence: "Survey of consumers on trust and privacy",
+    values: [],
+    provenance: { status: "pending-source-page" },
+  };
+  const added = appendRecords(database, [duplicateAcrossTrack, freshSurvey, pendingSurveyWithoutHeadlineNumber], collectedAt);
+  const beforeMigration = database.records.length;
+  ensureMarketDatabase(database, collectedAt);
+  if (added !== 2 || beforeMigration !== 3 || !database.records.some(record => record.id === existing.id)
+    || !database.records.some(record => record.id === freshSurvey.id)
+    || !database.records.some(record => record.id === pendingSurveyWithoutHeadlineNumber.id)
+    || database.database?.mode !== "append-only"
+    || database.database?.recordSchemaVersion !== 3
+    || !hasConsumerSurveyEvidence(freshSurvey)
+    || hasConsumerSurveyEvidence({ title: "Enterprise AI adoption survey", evidence: "Survey of 500 organizations" })) {
+    throw new Error("market append-only merge or consumer-survey classification is not stable");
+  }
+  console.log("  OK  소비자 조사·AI 시장 별도 분류 · 중복 방지 · 기존 레코드 보존");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  market append-only collection contract: ${error.message}`);
 }
 
 try {

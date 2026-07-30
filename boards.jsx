@@ -4605,6 +4605,69 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
   const isSurvey = mode === "survey";
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
+  const MARKET_LS = "aiDashDeletedMarketRecords";
+  const [deleted, setDeleted] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem(MARKET_LS) || "{}"); } catch { return {}; }
+  });
+  const [deletePending, setDeletePending] = React.useState(null);
+  const [deletePw, setDeletePw] = React.useState("");
+  const [deletePwErr, setDeletePwErr] = React.useState(false);
+  const deleteKey = item => String(item?.id || item?.sourceUrl || item?.url || item?.title || item?.name || "");
+  const closeDelete = () => {
+    setDeletePending(null);
+    setDeletePw("");
+    setDeletePwErr(false);
+  };
+  const confirmDelete = () => {
+    if (!deletePending || !canDelete(deletePw)) {
+      setDeletePwErr(true);
+      return;
+    }
+    const key = deleteKey(deletePending);
+    setDeleted(current => {
+      const next = { ...current, [key]: 1 };
+      try { localStorage.setItem(MARKET_LS, JSON.stringify(next)); } catch {}
+      return next;
+    });
+    rememberSuppression({
+      scope: "market",
+      key,
+      id: deletePending.id,
+      url: deletePending.sourceUrl || deletePending.url,
+      title: deletePending.title || deletePending.name,
+    });
+    closeDelete();
+  };
+  const deleteControl = item => {
+    const key = deleteKey(item);
+    if (deleteKey(deletePending) === key) {
+      return (
+        <span className="art-del-pw mkt-delete-pw" onClick={event => event.stopPropagation()}>
+          <input type="password" inputMode="numeric" className={"art-pw-input" + (deletePwErr ? " err" : "")}
+            placeholder="비밀번호" value={deletePw} autoFocus
+            onChange={event => { setDeletePw(event.target.value); setDeletePwErr(false); }}
+            onKeyDown={event => {
+              if (event.key === "Enter") confirmDelete();
+              else if (event.key === "Escape") closeDelete();
+            }} />
+          <button className="art-pw-ok" onClick={confirmDelete}>삭제</button>
+          <button className="art-pw-cancel" onClick={closeDelete} aria-label="삭제 취소"><Icon name="x" size={12} sw={2.2} /></button>
+          {deletePwErr && <span className="art-pw-err">비밀번호 오류</span>}
+        </span>
+      );
+    }
+    return (
+      <button className="ct-del mkt-user-delete" title="사용자 선택 삭제 · 비밀번호 필요" aria-label="사용자 선택 삭제"
+        onClick={event => {
+          event.stopPropagation();
+          setDeletePending(item);
+          setDeletePw("");
+          setDeletePwErr(false);
+        }}>
+        <Icon name="x" size={12} sw={2.2} />
+      </button>
+    );
+  };
   // 화면에 들어올 때 1회만 market.json 로드 — 초기 페이지 로드에 영향 없음
   React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
@@ -4619,6 +4682,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
   // ledger, but cannot enter this view. A visible card must have a resolved
   // publisher page, source-extracted text, and literal source quantities.
   const records = ((data && data.records) || []).filter(record => record.sourceUrl
+    && !deleted[deleteKey(record)]
     && record.displayEligible === true
     && record.provenance?.status === "source-backed"
     && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
@@ -4638,7 +4702,9 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
         <span className="board-tab" style={{ background: isSurvey ? "#DB2777" : "#0891B2" }} />
         <div className="board-titles">
           <h2>{isSurvey ? "AI 관련 소비자 조사 결과" : "AI 관련 시장"} <span className="board-en">{isSurvey ? "AI Consumer Surveys" : "AI Market Map"} · 휴대폰 사업 관점</span></h2>
-          <p>{isSurvey ? "지불의사·수용도·인식 등 소비자 조사만 — 원문 확인 후 누적" : "시장 규모·예측·출하 등 정량 시장 데이터만 — 원문 확인 후 누적"}</p>
+          <p>{isSurvey
+            ? "지불의사·수용도·인식 등 소비자 조사 전용 트랙 · 신규 원문 자동 추가 · 기존 기록 유지"
+            : "시장 규모·예측·출하 등 정량 시장 전용 트랙 · 신규 원문 자동 추가 · 기존 기록 유지"}</p>
         </div>
       </div>
 
@@ -4655,7 +4721,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
           <div className="mkt-db-head">
             <div>
               <h3>{isSurvey ? "AI 소비자 조사 데이터베이스" : "AI 시장 정량 데이터베이스"}</h3>
-              <p>검색 제목·스니펫은 화면에서 제외 · 발행사 원문에서 확인된 3줄 핵심과 정량 근거만 표시 · 기존 기록을 유지하며 계속 누적</p>
+              <p>발행사 원문에서 확인된 3줄 핵심과 정량 근거만 표시 · 기존 기록 영구 보존 · X는 사용자가 선택한 항목만 숨김</p>
             </div>
           </div>
           <div className="mkt-record-grid">
@@ -4669,6 +4735,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                 <div className="mkt-record-top">
                   <span className={"mkt-record-type type-" + record.type}>{TYPE_LABEL[record.type] || "정량 관측"}</span>
                   {record.sourceRegion && <span className="mkt-record-locale">{record.sourceRegion} · {record.sourceLanguage}</span>}
+                  {deleteControl(record)}
                 </div>
                 <a className="mkt-record-title" href={record.sourceUrl} target="_blank" rel="noopener">{title} <Icon name="ext" size={11} /></a>
                 <div className="mkt-record-values">
@@ -4688,7 +4755,9 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
 
           {!isSurvey && <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>기존 시장규모·예측·CAGR 데이터는 보존되며, 상단 누적 DB에 새 수치가 추가됩니다.</em></div>}
           {!isSurvey && (data.groups || []).map(g => {
-            const rows = (data.items || []).filter(it => it.group === g.id && it.provenance?.status !== "reference-only");
+            const rows = (data.items || []).filter(it => it.group === g.id
+              && it.provenance?.status !== "reference-only"
+              && !deleted[deleteKey(it)]);
             if (!rows.length) return null;
             return (
               <div className="mkt-group" key={g.id}>
@@ -4704,7 +4773,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                     const hasCagr = numericValue(it.cagr);
                     return (
                     <div className="mkt-card" key={it.id}>
-                      <div className="mkt-card-head"><b className="mkt-name">{it.name}</b></div>
+                      <div className="mkt-card-head"><b className="mkt-name">{it.name}</b>{deleteControl(it)}</div>
                       <p className="mkt-def">{it.def}</p>
                       {(hasCurrent || hasForecast || hasCagr) && <div className="mkt-nums">
                         {hasCurrent && <span className="mkt-num"><em>현재</em>{it.size}</span>}

@@ -3496,6 +3496,9 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-record:hover { border-color: color-mix(in srgb, #0891B2 45%, var(--line)); box-shadow: var(--shadow-lg); }
 .mkt-record-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .mkt-record-locale { margin-left: auto; font-family: var(--f); font-size: 9.5px; font-weight: 700; color: #087F5B; background: color-mix(in srgb, #16A34A 10%, var(--panel)); border-radius: 5px; padding: 2px 6px; white-space: nowrap; }
+.mkt-record-top .mkt-user-delete, .mkt-card-head .mkt-user-delete { flex: 0 0 auto; margin-left: auto; }
+.mkt-record-top .mkt-record-locale + .mkt-user-delete { margin-left: 0; }
+.mkt-delete-pw { margin-left: auto; }
 .mkt-record-type { display: inline-flex; align-items: center; border-radius: 99px; padding: 3px 7px; font-family: var(--f); font-size: 9.5px; font-weight: 800; color: #0369A1; background: color-mix(in srgb, #0EA5E9 13%, var(--panel)); }
 .mkt-record-type.type-consumer-survey { color: #7C3AED; background: color-mix(in srgb, #8B5CF6 13%, var(--panel)); }
 .mkt-record-type.type-shipment { color: #047857; background: color-mix(in srgb, #10B981 13%, var(--panel)); }

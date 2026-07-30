@@ -9,7 +9,7 @@
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { cleanText, enrichSourceBatch, isContentBacked } from "./source-content.mjs";
-import { canonicalUrl } from "./market-db.mjs";
+import { canonicalUrl, hasConsumerSurveyEvidence } from "./market-db.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const limit = Number(process.env.MARKET_SOURCE_REFRESH_LIMIT || 0);
@@ -95,6 +95,21 @@ const sourceSummaryLines = (summaryLines, quantifiedLines) => {
   return chosen.slice(0, 3);
 };
 
+const verifiedRecordType = (record, enriched, quantifiedLines) => {
+  const evidence = [
+    enriched.title,
+    enriched.descEn,
+    enriched.sourceContent?.headline,
+    enriched.sourceContent?.text,
+    ...quantifiedLines.map(item => item.line),
+  ].filter(Boolean).join(" ");
+  const evidenceRecord = { ...record, title: enriched.title || record.title, evidence };
+  if (hasConsumerSurveyEvidence(evidenceRecord)) return "consumer-survey";
+  if (/\b(?:shipments?|units?)\b|출하|판매량|台|出荷|出货/i.test(evidence)) return "shipment";
+  if (/\b(?:market size|cagr|forecast|project(?:ed|ion)?|revenue|spending|sales)\b|시장\s*규모|연평균\s*성장률|전망|매출|지출/i.test(evidence)) return "market-estimate";
+  return "market-observation";
+};
+
 const asSourceInput = record => ({
   ...record,
   // enrichSourceRecord reads url while market rows use sourceUrl.
@@ -123,6 +138,7 @@ const withPublisherEvidence = (record, enriched, checkedAt) => {
   const quantities = sourceQuantities(lines);
   const summaryLinesEn = sourceSummaryLines(enriched.summaryLinesEn, lines);
   const valid = isContentBacked(enriched) && !isGoogleNews(pageUrl) && lines.length > 0 && quantities.length > 0 && summaryLinesEn.length === 3;
+  const type = verifiedRecordType(record, enriched, lines);
   const originalUrl = canonicalUrl(record.sourceUrl);
   const oldDiscovery = record.rssEvidence || record.evidence || "";
 
@@ -145,6 +161,8 @@ const withPublisherEvidence = (record, enriched, checkedAt) => {
 
   return {
     ...record,
+    type,
+    collectionTrack: type === "consumer-survey" ? "consumer-survey" : "ai-market",
     // Retain discovery data for audit/history but never render it as facts.
     ...(isGoogleNews(originalUrl) ? { rssUrl: record.rssUrl || originalUrl } : {}),
     rssEvidence: oldDiscovery,
@@ -181,18 +199,23 @@ const withPublisherEvidence = (record, enriched, checkedAt) => {
 async function main() {
   const data = JSON.parse(await readFile("market.json", "utf8"));
   const suppression = await loadSuppressionRegistry();
-  const records = (Array.isArray(data.records) ? data.records : [])
-    .filter(record => !suppression.matches(record, "market"));
-  const candidates = records.filter(needsRefresh);
+  const records = Array.isArray(data.records) ? data.records : [];
+  const suppressedRecords = records.filter(record => suppression.matches(record, "market"));
+  const candidates = records
+    .filter(record => !suppression.matches(record, "market"))
+    .filter(needsRefresh);
   const target = limit > 0 ? candidates.slice(0, limit) : candidates;
   console.log(`[market-source-refresh] ${target.length}/${records.length} records need publisher-page extraction`);
 
   const enriched = await enrichSourceBatch(target.map(asSourceInput), concurrency);
   const byId = new Map(enriched.map(row => [row.id, row]));
   const checkedAt = now();
-  const updated = records.map(record => byId.has(record.id)
-    ? withPublisherEvidence(record, byId.get(record.id), checkedAt)
-    : record);
+  const updated = records.map(record => {
+    if (suppression.matches(record, "market")) return record;
+    return byId.has(record.id)
+      ? withPublisherEvidence(record, byId.get(record.id), checkedAt)
+      : record;
+  });
   const published = updated.filter(record => record.provenance?.status === "source-backed").length;
   const withheld = updated.filter(record => record.provenance?.status !== "source-backed").length;
 
@@ -201,8 +224,9 @@ async function main() {
   data.database = {
     ...(data.database || {}),
     recordCount: updated.length,
+    retainedRecordCount: updated.length,
     lastSourceRefreshAt: checkedAt,
-    lastSourceRefresh: { attempted: target.length, sourceBacked: published, withheld, concurrency },
+    lastSourceRefresh: { attempted: target.length, sourceBacked: published, withheld, userSuppressedPreserved: suppressedRecords.length, concurrency },
   };
   await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
   console.log(`[market-source-refresh] visible source-backed ${published}; append-only retained but withheld ${withheld}`);
