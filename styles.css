@@ -1481,11 +1481,11 @@ a[href]:hover .rainbow-on-hover,
 .mplay-sec { margin-top: 12px; }
 .mplay-sec h5 { margin: 0 0 6px; color: var(--ink-2); font-size: 11px; font-weight: 850; letter-spacing: .01em; }
 .mplay-sec h5::before { display: inline-block; width: 5px; height: 5px; margin: 0 7px 2px 0; background: var(--accent); content: ""; transform: rotate(45deg); }
-.mplay-sig { display: grid; grid-template-columns: minmax(86px, auto) minmax(0, 1fr); align-items: start; gap: 4px 10px; padding: 8px 0; border-top: 1px solid var(--line-2); text-decoration: none; }
+.mplay-sig { display: grid; grid-template-columns: minmax(118px, 126px) minmax(0, 1fr); align-items: start; gap: 4px 10px; padding: 8px 0; border-top: 1px solid var(--line-2); text-decoration: none; }
 .mplay-sig:first-of-type { border-top: none; }
-.mplay-tag { grid-row: span 2; align-self: start; max-width: 92px; padding: 4px 7px; border: 1px solid color-mix(in srgb, var(--c) 34%, var(--line)); border-radius: 2px; color: var(--c); background: color-mix(in srgb, var(--c) 7%, var(--panel)); font-size: 9.5px; font-weight: 820; line-height: 1.25; text-align: center; white-space: normal; }
-.mplay-txt { color: var(--ink); font-size: 12.5px; font-weight: 720; line-height: 1.5; overflow-wrap: anywhere; word-break: keep-all; }
-.mplay-sig em { grid-column: 2; color: var(--muted); font-size: 10.5px; font-style: normal; font-weight: 620; }
+.mplay-tag { grid-row: span 2; align-self: start; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; padding: 4px 7px; border: 1px solid color-mix(in srgb, var(--c) 34%, var(--line)); border-radius: 2px; color: var(--c); background: color-mix(in srgb, var(--c) 7%, var(--panel)); font-size: 9.5px; font-weight: 820; line-height: 1.25; text-align: center; white-space: normal; overflow-wrap: anywhere; word-break: keep-all; }
+.mplay-txt { min-width: 0; color: var(--ink); font-size: 12.5px; font-weight: 720; line-height: 1.5; overflow-wrap: anywhere; word-break: keep-all; }
+.mplay-sig em { grid-column: 2; min-width: 0; color: var(--muted); font-size: 10.5px; font-style: normal; font-weight: 620; overflow-wrap: anywhere; }
 .mplay-sig:hover .mplay-txt { color: var(--accent); }
 [data-theme="dark"] .mplay-framework,
 [data-theme="dark"] .mplay-framework-flow > div,
@@ -1508,7 +1508,12 @@ a[href]:hover .rainbow-on-hover,
   .mplay-framework-head { grid-template-columns: 1fr; }
   .mplay-framework-head > span { grid-row: auto; }
   .mplay-framework-flow, .mplay-grid { grid-template-columns: 1fr; }
-  .mplay-sig { grid-template-columns: 78px minmax(0, 1fr); }
+  .mplay-sig { grid-template-columns: minmax(104px, 112px) minmax(0, 1fr); }
+}
+@media (max-width: 420px) {
+  .mplay-sig { grid-template-columns: minmax(0, 1fr); gap: 5px; }
+  .mplay-tag { grid-row: auto; width: auto; max-width: 100%; justify-self: start; }
+  .mplay-sig em { grid-column: 1; }
 }
 
 /* 기업 움직임 기반 신규 AI 비즈니스 모델 */
