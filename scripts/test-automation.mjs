@@ -189,7 +189,7 @@ try {
 }
 
 try {
-  const [companies, officials, startups, a16z, ventures, news, workflow, intelligenceBuilder, companyCrawler] = await Promise.all([
+  const [companies, officials, startups, a16z, ventures, news, workflow, intelligenceBuilder, companyCrawler, llmClient] = await Promise.all([
     readFile("companies.json", "utf8").then(JSON.parse),
     readFile("company-officials.json", "utf8").then(JSON.parse),
     readFile("startups.json", "utf8").then(JSON.parse),
@@ -199,6 +199,7 @@ try {
     readFile(".github/workflows/daily-news.yml", "utf8"),
     readFile("scripts/build-company-intelligence.mjs", "utf8"),
     readFile("scripts/crawl-companies.mjs", "utf8"),
+    readFile("scripts/llm.mjs", "utf8"),
   ]);
   const intelligenceReady = Object.values(companies.companies || {}).every(company => {
     const value = company.intelligence || {};
@@ -229,13 +230,18 @@ try {
     && /crawl-company-officials\.mjs/.test(workflow)
     && /crawl-a16z-startups\.mjs/.test(workflow)
     && /crawl-strategic-ventures\.mjs/.test(workflow)
-    && /build-company-intelligence\.mjs/.test(workflow);
+    && /build-company-intelligence\.mjs/.test(workflow)
+    && /PIPELINE_TIMEOUT_MS:\s*1200000/.test(workflow);
   const grounded = intelligenceBuilder.includes("evidenceIds")
     && intelligenceBuilder.includes("publisher evidence")
     && intelligenceBuilder.includes("quoteOriginal")
     && intelligenceBuilder.includes("articleFocusedOnCompany")
     && intelligenceBuilder.includes("numericTokens")
-    && companyCrawler.includes("articleFocusedOnCompany");
+    && intelligenceBuilder.includes("companies.json.checkpoint")
+    && intelligenceBuilder.includes("persistCompanyData")
+    && companyCrawler.includes("articleFocusedOnCompany")
+    && llmClient.includes("GITHUB_MODELS_MAX_RETRY_WAIT_MS")
+    && llmClient.includes("advertisedWait > 300");
   const officialReady = officials.schemaVersion === 1
     && officials.methodology === "official-page-recrawl+exact-executive-name-and-role-context-match"
     && Object.keys(officials.companies || {}).length >= 30;
