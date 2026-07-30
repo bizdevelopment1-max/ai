@@ -7,7 +7,7 @@ import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany 
 import { textSimilarity } from "./source-content.mjs";
 import { bulletizeKorean, hasKoreanProseEnding, hasKoreanSentencePeriod } from "./korean-copy.mjs";
 import { canonicalSuppressionUrl, createSuppressionRegistry } from "./suppression-registry.mjs";
-import { appendRecords, ensureMarketDatabase, hasConsumerSurveyEvidence } from "./market-db.mjs";
+import { appendRecords, ensureMarketDatabase, hasConsumerSurveyEvidence, sourceMetricValues } from "./market-db.mjs";
 
 const required = [
   ".github/workflows/daily-news.yml",
@@ -1095,7 +1095,12 @@ try {
     return (record.summaryLinesEn || []).length >= 2
       && (record.summaryLinesEn || []).every(line => sourceText.includes(normalize(line)))
       && record.sourceQuantifiedLines.every(item => item?.line && sourceText.includes(normalize(item.line))
-        && (item.values || []).every(value => String(item.line).includes(value)));
+        && (item.values || []).every(value => String(item.line).includes(value)))
+      && Array.isArray(record.sourceMetricValues)
+      && record.sourceMetricValues.length === record.sourceQuantities.length
+      && record.sourceMetricValues.every(metric => metric?.label && metric?.value
+        && metric?.sourceLine && normalize(metric.sourceLine).toLocaleLowerCase().includes(normalize(metric.value).toLocaleLowerCase())
+        && !/원문 수치/.test(metric.label));
   });
   const userResearchIds = [
     "survey:flipkart-counterpoint-india-ai-phone-2026",
@@ -1112,6 +1117,8 @@ try {
   const hasNewVerticals = ["core-41", "wearxr-42"].every(id => (market.items || []).some(item => item.id === id && /^https?:\/\//.test(item.url || "")));
   const boardContract = /record\.provenance\?\.status === "source-backed"/.test(boards)
     && /sourceQuantifiedLines/.test(boards)
+    && /sourceMetricValues/.test(boards)
+    && !/원문 수치|원문 정량 근거/.test(boards)
     && /aiDashDeletedMarketRecords/.test(boards)
     && /rememberSuppression\(\{[\s\S]{0,180}scope: "market"/.test(boards)
     && /X는 사용자가 선택한 항목만 숨김/.test(boards);
@@ -1134,6 +1141,25 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  실패  market.json 누적 정량 DB: ${error.message}`);
+}
+
+try {
+  const line = "The global AI note taking market size was calculated at USD 623.50 million in 2025 and is predicted to increase from USD 740.41 million in 2026 to approximately USD 3476.74 million by 2035, expanding at a CAGR of 18.75% from 2026 to 2035.";
+  const values = ["USD 623.50 million", "USD 740.41 million", "USD 3476.74 million", "18.75%", "2025", "2026", "2035"];
+  const metrics = sourceMetricValues([{ line, values }], values);
+  const byValue = value => metrics.find(metric => metric.value === value)?.label || "";
+  if (!/시장 규모.*2025/.test(byValue("USD 623.50 million"))
+    || !/시장 규모.*2026/.test(byValue("USD 740.41 million"))
+    || !/시장 규모.*2035/.test(byValue("USD 3476.74 million"))
+    || !/연평균 성장률.*2026–2035/.test(byValue("18.75%"))
+    || byValue("2025") !== "기준 연도"
+    || byValue("2035") !== "전망 연도") {
+    throw new Error(`source quantities lack contextual labels: ${JSON.stringify(metrics)}`);
+  }
+  console.log("  OK  정량 지표 의미·기준연도·전망연도 자동 명명");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  정량 지표 자동 명명: ${error.message}`);
 }
 
 try {

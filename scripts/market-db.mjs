@@ -1,6 +1,173 @@
 import { createHash } from "node:crypto";
 
 const isoNow = () => new Date().toISOString();
+const compactText = value => String(value || "").replace(/\s+/g, " ").trim();
+const escapeRegExp = value => String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const metricYears = line => [...String(line || "").matchAll(/\b20(?:1\d|2\d|3\d)\b/g)]
+  .map(match => ({ value: match[0], index: match.index || 0 }));
+
+const metricYearContext = (line, value, metric) => {
+  const years = metricYears(line);
+  if (!years.length) return "";
+  if (metric === "연평균 성장률" || metric === "시장 증가액") {
+    const metricIndex = String(line || "").toLocaleLowerCase().indexOf(String(value || "").toLocaleLowerCase());
+    const trailing = String(line || "").slice(Math.max(0, metricIndex));
+    const statedRange = trailing.match(/\bfrom\s+(20(?:1\d|2\d|3\d))\s+to\s+(20(?:1\d|2\d|3\d))\b/i)
+      || trailing.match(/\b(20(?:1\d|2\d|3\d))\s*(?:-|–|to)\s*(20(?:1\d|2\d|3\d))\b/i);
+    if (statedRange) return `${statedRange[1]}–${statedRange[2]}`;
+    const unique = [...new Set(years.map(year => year.value))].sort();
+    if (unique.length > 1) return `${unique[0]}–${unique.at(-1)}`;
+  }
+  const source = String(line || "");
+  const index = source.toLocaleLowerCase().indexOf(String(value || "").toLocaleLowerCase());
+  const tokenEnd = index + String(value || "").length;
+  const directlyQualified = years.find(year => year.index >= tokenEnd
+    && /^[^,.;]{0,28}\b(?:in|by|for|during|as of|through)\s*$/i.test(source.slice(tokenEnd, year.index)));
+  if (directlyQualified) return directlyQualified.value;
+  return years.slice().sort((a, b) => Math.abs(a.index - index) - Math.abs(b.index - index))[0]?.value || "";
+};
+
+const isForecastYear = (line, year) => {
+  const years = metricYears(line).map(item => item.value);
+  const value = String(line || "").toLocaleLowerCase();
+  const direct = new RegExp(`(?:by|through|until)\\s+\\b${escapeRegExp(year)}\\b`, "i");
+  const forecastDescriptor = new RegExp(`\\b${escapeRegExp(year)}\\b[^.]{0,40}\\bforecast\\b|\\b(?:forecast|projected)\\b[^.]{0,40}\\b${escapeRegExp(year)}\\b`, "i");
+  return direct.test(value) || forecastDescriptor.test(value)
+    || (years.length > 1 && year === years.slice().sort().at(-1)
+      && /forecast|project|expected|anticipat|will reach|to grow|increase from/i.test(value));
+};
+
+const nearestRuleMetric = (line, value, rules) => {
+  const text = String(line || "");
+  const tokenIndex = text.toLocaleLowerCase().indexOf(String(value || "").toLocaleLowerCase());
+  const tokenEnd = tokenIndex + String(value || "").length;
+  let selected = null;
+  rules.forEach(([pattern, label], priority) => {
+    const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
+    for (const match of text.matchAll(new RegExp(pattern.source, flags))) {
+      const start = match.index || 0;
+      const end = start + match[0].length;
+      const distance = end <= tokenIndex ? tokenIndex - end : start >= tokenEnd ? start - tokenEnd : 0;
+      if (!selected || distance < selected.distance || (distance === selected.distance && priority < selected.priority)) {
+        selected = { label, distance, priority };
+      }
+    }
+  });
+  return selected?.label || "";
+};
+
+const contextualMetric = (line, value) => {
+  const text = compactText(line);
+  const lower = text.toLocaleLowerCase();
+  const token = compactText(value);
+
+  if (/^20(?:1\d|2\d|3\d)$/.test(token)) {
+    const comparisonYear = new RegExp(`\\b(?:from|compared with)\\s+[^.]{0,40}\\b${escapeRegExp(token)}\\b`, "i");
+    if (comparisonYear.test(lower)
+      && !isForecastYear(lower, token)) return "비교 기준 연도";
+    return isForecastYear(lower, token) ? "전망 연도" : "기준 연도";
+  }
+  if (/\b(?:years?|months?|days?|hours?)\b/i.test(token)) {
+    if (/\b(?:past|experience|career|writing|worked|served)\b/i.test(lower)) return "경력 기간";
+    return "기간";
+  }
+  if (/\brespondents?\b/i.test(token) || /\bsurvey of\b[^.]{0,40}\brespondents?\b/i.test(lower)) return "응답자 수";
+  if (/\b(?:users?|consumers?|people|adults?)\b/i.test(token)) {
+    if (/\bmonthly active\b/i.test(lower)) return "월간 활성 이용자";
+    if (/\bpaid subscribers?\b/i.test(lower)) return "유료 가입자";
+    if (/\bsurvey|respondents?|poll\b/i.test(lower)) return "조사 인원";
+    return "이용자 수";
+  }
+  if (/\b(?:shipments?|units?|devices?)\b/i.test(token)) return "출하량";
+  if (/\btons?\b/i.test(lower) && !/%/.test(token)) return "시장 물량";
+  if (/^4k$/i.test(token)) return "영상 해상도";
+
+  const isMoney = /(?:US\$|USD|\$|€|£|¥|₩|₹|R\$)/i.test(token);
+  if (isMoney) {
+    return nearestRuleMetric(text, token, [
+      [/\bnegative free cash flow\b/i, "잉여현금흐름 적자"],
+      [/\bfree cash flow\b/i, "잉여현금흐름"],
+      [/\b(?:capital expenditures?|capex)\b/i, "설비투자"],
+      [/\bbacklog\b/i, "수주잔고"],
+      [/\brevenue\b[^.]{0,30}\b(?:every|per)\s+(?:single\s+)?day\b|\bdaily revenue\b/i, "일일 매출"],
+      [/\brevenues? guidance\b/i, "매출 가이던스"],
+      [/\brevenues?\b/i, "매출"],
+      [/\bvaluation\b/i, "기업가치"],
+      [/\b(?:funding|raised|raise)\b/i, "조달액"],
+      [/\binvestment|invested|allocated|earmarks?\b/i, "투자액"],
+      [/\bpayout|paid out|prize|reward\b/i, "지급액"],
+      [/\b(?:cost|price|income|yield)\b/i, "비용·소득 영향액"],
+      [/\b(?:spend|spending|purchases?)\b/i, "지출·거래액"],
+      [/\b(?:increase|grow|growth)\s+by\b/i, "시장 증가액"],
+      [/\bsegment\b/i, "세그먼트 규모"],
+      [/\bmarket(?:\s+size)?\b|\bworth\b|\bvalued\b|\bforecast\b|\bproject/i, "시장 규모"],
+    ]) || "금액";
+  }
+
+  const isPercent = /%|\bpercent\b|\bper cent\b|\bbasis points?\b|\bbps\b/i.test(token);
+  if (isPercent) {
+    const specialized = nearestRuleMetric(text, token, [
+      [/\b(?:cagr|compound annual growth rate)\b/i, "연평균 성장률"],
+      [/\boperating margins?\b/i, "영업이익률"],
+      [/\bmargins?\b/i, "이익률"],
+      [/\breturn rates?\b/i, "반품률"],
+      [/\blower returns?\b/i, "반품 감소율"],
+      [/\bpurchase probability|purchase intent|willing(?:ness)? to pay\b/i, "구매·지불의향"],
+      [/\btried cloud gaming\b/i, "클라우드 게이밍 경험률"],
+      [/\bpositive experience\b/i, "긍정 경험 비중"],
+      [/\bregular or heavy users?\b/i, "정기·고빈도 이용자 비중"],
+      [/\bcreated content\b/i, "콘텐츠 제작자 비중"],
+      [/\bplaying time\b/i, "플레이 시간 증가 응답"],
+      [/\bconsuming more\b/i, "이용 증가 응답"],
+      [/\bnon-compliance risks?|barriers? to adoption\b/i, "도입 장벽 응답"],
+      [/\badoption|adopted\b/i, "도입률"],
+      [/\bpenetration\b/i, "침투율"],
+      [/\brevenue (?:share|mix)|share of (?:global )?revenue\b/i, "매출 비중"],
+      [/\bmarket share|\bshare of (?:the )?(?:global )?market\b|\baccount(?:ed|ing) for\b|\brepresenting\b/i, "시장 점유율"],
+      [/\brevenues? (?:surge|growth|jump)|revenues?[^.]{0,30}\bup\b/i, "매출 성장률"],
+      [/\b(?:growth|grow|increase|higher|lift)\b/i, "성장·증가율"],
+      [/\bclientele|customers?\b/i, "고객 범위"],
+    ]);
+    if (specialized) return specialized;
+    if (/\bsurvey|respondents?|gamers?|consumers?\b/i.test(lower)) return "응답 비중";
+    return "비율";
+  }
+
+  if (/\b(?:million|billion|trillion|thousand|trn|bn|mn|k)\b/i.test(token)) {
+    if (/\bmonthly active users?\b/i.test(lower)) return "월간 활성 이용자";
+    if (/\busers?\b/i.test(lower)) return "이용자 수";
+    if (/\bapps?\b/i.test(lower)) return "앱 수";
+    if (/\bproduct trials?\b/i.test(lower)) return "제품 체험 수";
+    if (/\b(?:shipments?|units?|devices?)\b/i.test(lower)) return "출하량";
+    return "정량 지표";
+  }
+  return "정량 지표";
+};
+
+/**
+ * Bind every displayed number to a short, source-derived business label
+ * instead of exposing an unlabeled extraction token.
+ */
+export const sourceMetricValues = (lines = [], quantities = []) => {
+  const sourceLines = Array.isArray(lines) ? lines : [];
+  return (quantities || []).map(value => {
+    const candidates = sourceLines.filter(item => compactText(item?.line).toLocaleLowerCase()
+      .includes(compactText(value).toLocaleLowerCase()));
+    const businessContext = /\b(?:market size|market worth|cagr|forecast|project|growth|revenues?|sales|spend|spending|share|respondents?|survey|users?|shipments?|units?|adoption|investment|funding|valuation|backlog|capital expenditures?|capex|cash flow|margin|cost|income|payout|purchase|price)\b/i;
+    const contextual = candidates.filter(item => businessContext.test(compactText(item?.line)));
+    const source = (contextual.length ? contextual : candidates).slice()
+      .sort((a, b) => compactText(a?.line).length - compactText(b?.line).length)[0];
+    const sourceLine = compactText(source?.line);
+    const metric = contextualMetric(sourceLine, value);
+    const year = /^20(?:1\d|2\d|3\d)$/.test(compactText(value)) ? "" : metricYearContext(sourceLine, value, metric);
+    return {
+      label: `${metric}${year ? ` · ${year}` : ""}`,
+      value,
+      sourceLine,
+    };
+  });
+};
 
 export const canonicalUrl = raw => {
   try {

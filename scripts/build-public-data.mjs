@@ -50,7 +50,7 @@ const researchKeys = [
 const recordKeys = [
   "id", "type", "group", "verticalId", "title", "titleEn", "metricLabel", "values",
   "sourceName", "sourceUrl", "publishedAt", "collectedAt", "evidence", "origin",
-  "provenance", "displayEligible", "sourceQuantifiedLines", "sourceQuantities", "localization",
+  "provenance", "displayEligible", "sourceQuantifiedLines", "sourceQuantities", "sourceMetricValues", "localization",
   "summaryLinesEn", "summaryLinesKo",
 ];
 const signalKeys = ["id", "group", "title", "signal", "quant", "source", "date", "url", "sourceSummaryMode", "provenance"];

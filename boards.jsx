@@ -4690,7 +4690,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
   // 소비자 조사 / 시장 2개 축으로 분리(탭 자체가 필터). 자동 누적 데이터를 type으로 나눠 표시.
   const scoped = records.filter(record => isSurvey ? record.type === "consumer-survey" : record.type !== "consumer-survey");
   const sourceCount = new Set(scoped.map(record => record.sourceUrl)).size;
-  const quantityCount = scoped.reduce((count, record) => count + new Set(record.sourceQuantities || []).size, 0);
+  const quantityCount = scoped.reduce((count, record) => count + (record.sourceMetricValues || record.values || []).length, 0);
   const shownRecords = scoped.slice()
     .sort((a, b) => String(b.publishedAt || b.collectedAt || "").localeCompare(String(a.publishedAt || a.collectedAt || "")));
   const TYPE_LABEL = { "consumer-survey": "소비자 조사", "market-estimate": "시장 기준선", shipment: "출하량", "market-observation": "정량 관측" };
@@ -4715,7 +4715,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
           <div className="mkt-db-summary">
             <div><em>원문 검증 레코드</em><b>{scoped.length}</b><span>발행사 본문 추출 후에만 표시</span></div>
             <div><em>원문 링크</em><b>{sourceCount}</b><span>카드 제목과 하단 링크에서 원문 이동</span></div>
-            <div><em>추출 정량 수치</em><b>{quantityCount}</b><span>원문에 나온 수치와 근거 문장 전체 표시</span></div>
+            <div><em>정량 지표</em><b>{quantityCount}</b><span>항목별 의미와 발행사 근거 문장 표시</span></div>
           </div>
 
           <div className="mkt-db-head">
@@ -4739,11 +4739,13 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                 </div>
                 <a className="mkt-record-title" href={record.sourceUrl} target="_blank" rel="noopener">{title} <Icon name="ext" size={11} /></a>
                 <div className="mkt-record-values">
-                  {(record.sourceQuantities || []).map((value, index) => <span key={index}><em>원문 수치</em>{value}</span>)}
+                  {(record.sourceMetricValues || record.values || []).map((metric, index) => (
+                    <span key={`${metric.label}-${metric.value}-${index}`}><em>{metric.label}</em>{metric.value}</span>
+                  ))}
                 </div>
                 {insights.length > 0 && <ul className="mkt-record-insights">{insights.map((line, index) => <li key={index}>{line}</li>)}</ul>}
                 <details className="mkt-record-quant-evidence" open>
-                  <summary>원문 정량 근거 {record.sourceQuantifiedLines.length}개</summary>
+                  <summary>지표 근거 {record.sourceQuantifiedLines.length}개</summary>
                   <ul>{record.sourceQuantifiedLines.map((item, index) => <li key={index}>{item.line}</li>)}</ul>
                 </details>
                 <a className="mkt-record-source" href={record.sourceUrl} target="_blank" rel="noopener">원문 열기 · {record.sourceName} <Icon name="ext" size={10} /></a>
