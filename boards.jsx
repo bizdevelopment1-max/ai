@@ -2982,11 +2982,11 @@ function ExecToplines({ items, insights, onNav }) {
 
 
 // ---- AI 신사업 시장 보드: lazy-load(inView 시에만 fetch), MECE 그룹, 플레인 텍스트, 삭제/숨김 ----
-function MarketBoard({ sectionRef, dataVersion }) {
+function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
   const inView = useInView(sectionRef);
+  const isSurvey = mode === "survey";
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
-  const [recordFilter, setRecordFilter] = React.useState("all");
   // 화면에 들어올 때 1회만 market.json 로드 — 초기 페이지 로드에 영향 없음
   React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
@@ -3005,11 +3005,11 @@ function MarketBoard({ sectionRef, dataVersion }) {
     && record.provenance?.status === "source-backed"
     && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
     && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length);
-  const consumerRecords = records.filter(record => record.type === "consumer-survey");
-  const sourceCount = new Set(records.map(record => record.sourceUrl)).size;
-  const quantityCount = records.reduce((count, record) => count + new Set(record.sourceQuantities || []).size, 0);
-  const shownRecords = records
-    .filter(record => recordFilter === "all" || (recordFilter === "survey" ? record.type === "consumer-survey" : record.type !== "consumer-survey"))
+  // 소비자 조사 / 시장 2개 축으로 분리(탭 자체가 필터). 크롤 누적 데이터를 type으로 나눠 표시.
+  const scoped = records.filter(record => isSurvey ? record.type === "consumer-survey" : record.type !== "consumer-survey");
+  const sourceCount = new Set(scoped.map(record => record.sourceUrl)).size;
+  const quantityCount = scoped.reduce((count, record) => count + new Set(record.sourceQuantities || []).size, 0);
+  const shownRecords = scoped.slice()
     .sort((a, b) => String(b.publishedAt || b.collectedAt || "").localeCompare(String(a.publishedAt || a.collectedAt || "")));
   const TYPE_LABEL = { "consumer-survey": "소비자 조사", "market-estimate": "시장 기준선", shipment: "출하량", "market-observation": "정량 관측" };
 
@@ -3017,32 +3017,27 @@ function MarketBoard({ sectionRef, dataVersion }) {
     <section className="board" ref={sectionRef} data-screen-label="AI New Business Markets">
      <AnimCtx.Provider value={inView}>
       <div className="board-head">
-        <span className="board-tab" style={{ background: "#0891B2" }} />
+        <span className="board-tab" style={{ background: isSurvey ? "#DB2777" : "#0891B2" }} />
         <div className="board-titles">
-          <h2>AI 신사업 시장 <span className="board-en">AI New-Business Market Map · 휴대폰 사업 관점</span></h2>
+          <h2>{isSurvey ? "AI 관련 소비자 조사 결과" : "AI 관련 시장"} <span className="board-en">{isSurvey ? "AI Consumer Surveys" : "AI Market Map"} · 휴대폰 사업 관점</span></h2>
+          <p>{isSurvey ? "지불의사·수용도·인식 등 소비자 조사만 — 원문 확인 후 누적" : "시장 규모·예측·출하 등 정량 시장 데이터만 — 원문 확인 후 누적"}</p>
         </div>
       </div>
 
       {!data ? (
-        <div className="mkt-loading">{loaded ? "시장 데이터를 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+        <div className="mkt-loading">{loaded ? "데이터를 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
       ) : (
         <React.Fragment>
           <div className="mkt-db-summary">
-            <div><em>원문 검증 레코드</em><b>{records.length}</b><span>발행사 본문 추출 후에만 표시</span></div>
-            <div><em>소비자 조사</em><b>{consumerRecords.length}</b><span>표본·국가·관측 시점은 원문 문장으로 확인</span></div>
+            <div><em>원문 검증 레코드</em><b>{scoped.length}</b><span>발행사 본문 추출 후에만 표시</span></div>
             <div><em>원문 링크</em><b>{sourceCount}</b><span>카드 제목과 하단 링크에서 원문 이동</span></div>
             <div><em>추출 정량 수치</em><b>{quantityCount}</b><span>원문에 나온 수치와 근거 문장 전체 표시</span></div>
           </div>
 
           <div className="mkt-db-head">
             <div>
-              <h3>정량·소비자 조사 데이터베이스</h3>
-              <p>검색 제목·스니펫은 화면에서 제외 · 발행사 원문에서 확인된 3줄 핵심과 정량 근거만 표시 · 번역 품질 미달 시 영문 원문으로 표시</p>
-            </div>
-            <div className="mkt-tools">
-              <button className={recordFilter === "all" ? "on" : ""} onClick={() => setRecordFilter("all")}>전체 {records.length}</button>
-              <button className={recordFilter === "survey" ? "on" : ""} onClick={() => setRecordFilter("survey")}>소비자 조사 {consumerRecords.length}</button>
-              <button className={recordFilter === "market" ? "on" : ""} onClick={() => setRecordFilter("market")}>시장·출하</button>
+              <h3>{isSurvey ? "AI 소비자 조사 데이터베이스" : "AI 시장 정량 데이터베이스"}</h3>
+              <p>검색 제목·스니펫은 화면에서 제외 · 발행사 원문에서 확인된 3줄 핵심과 정량 근거만 표시 · 크롤로 계속 누적(기존 삭제 없음)</p>
             </div>
           </div>
           <div className="mkt-record-grid">
@@ -3073,8 +3068,8 @@ function MarketBoard({ sectionRef, dataVersion }) {
             {!shownRecords.length && <div className="mkt-loading">발행사 원문을 확인해 정량 근거를 추출 중입니다 · 검색 스니펫은 표시하지 않습니다</div>}
           </div>
 
-          <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>기존 시장규모·예측·CAGR 데이터는 보존되며, 상단 누적 DB에 새 수치가 추가됩니다.</em></div>
-          {(data.groups || []).map(g => {
+          {!isSurvey && <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>기존 시장규모·예측·CAGR 데이터는 보존되며, 상단 누적 DB에 새 수치가 추가됩니다.</em></div>}
+          {!isSurvey && (data.groups || []).map(g => {
             const rows = (data.items || []).filter(it => it.group === g.id && it.provenance?.status !== "reference-only");
             if (!rows.length) return null;
             return (

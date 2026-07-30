@@ -73,7 +73,7 @@ function App() {
   const refs = {
     ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
     infra: uR(null), model: uR(null), data: uR(null), app: uR(null),
-    sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), market: uR(null), audit: uR(null),
+    sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), survey: uR(null), market: uR(null), audit: uR(null),
   };
   const infraInView = useInView(refs.infra);
   const modelInView = useInView(refs.model);
@@ -429,11 +429,14 @@ function App() {
               <NewBizBoard articles={articles} dataVersion={dataVersion} />
             </LazySection>
 
-            <LazySection id="market" active={active} sectionRef={refs.market} height={780}>
-              <MarketBoard dataVersion={dataVersion} />
-            </LazySection>
             <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
               <StockBoard stocks={D.STOCKS} stockData={stockData} cats={cats} groups={stockGroups} theme={chartTheme} />
+            </LazySection>
+            <LazySection id="survey" active={active} sectionRef={refs.survey} height={620}>
+              <MarketBoard dataVersion={dataVersion} mode="survey" />
+            </LazySection>
+            <LazySection id="market" active={active} sectionRef={refs.market} height={780}>
+              <MarketBoard dataVersion={dataVersion} mode="market" />
             </LazySection>
 
             <LazySection id="audit" active={active} sectionRef={refs.audit} height={520}>

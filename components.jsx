@@ -66,8 +66,9 @@ const NAV = [
   { id: "sanalysis", ko: "스타트업 분석", en: "Startup Analysis", icon: "target", group: "AI 밸류체인" },
   { id: "signals", ko: "인프라·미래기술", en: "Infra & Future Tech", icon: "server", group: "심층 분석" },
   { id: "newbiz", ko: "배포·AI서비스", en: "Deployment & Services", icon: "spark", group: "심층 분석" },
-  { id: "market", ko: "AI 신사업 시장", en: "New-Biz Markets", icon: "target", group: "정량 데이터" },
   { id: "stocks", ko: "주가 차트", en: "Stock Prices", icon: "up", group: "정량 데이터" },
+  { id: "survey", ko: "AI 관련 소비자 조사", en: "AI Consumer Surveys", icon: "target", group: "정량 데이터" },
+  { id: "market", ko: "AI 관련 시장", en: "AI Market Map", icon: "grid", group: "정량 데이터" },
 ];
 
 // gradient background for the sidebar, derived from a single brand color
