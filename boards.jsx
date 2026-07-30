@@ -87,6 +87,35 @@ function safeDisplayString(value, fallback = "") {
   return !text || MALFORMED_DISPLAY_ENCODING.test(text) ? fallback : text;
 }
 
+const EXECUTIVE_TITLE_PATTERN = /\b(?:CEO|CTO|CFO|COO|CPO|CIO|CMO|CRO|CSO|Chief Executive Officer|Chief Technology Officer|Chief Financial Officer|Chief Operating Officer|Chief Product Officer|Chief Information Officer|Chief Marketing Officer|Chief Revenue Officer|Chief Strategy Officer|President|Chair(?:man|woman|person)?|Founder|Co-founder)\b/i;
+function executiveRoleLabel(value, primaryOnly = false) {
+  const role = safeDisplayString(value)
+    .replace(/\bChief Executive Officer\b/gi, "CEO")
+    .replace(/\bChief Technology Officer\b/gi, "CTO")
+    .replace(/\bChief Financial Officer\b/gi, "CFO")
+    .replace(/\bChief Operating Officer\b/gi, "COO")
+    .replace(/\bChief Product Officer\b/gi, "CPO")
+    .replace(/\bChief Information Officer\b/gi, "CIO")
+    .replace(/\bChief Marketing Officer\b/gi, "CMO")
+    .replace(/\bChief Revenue Officer\b/gi, "CRO")
+    .replace(/\bChief Strategy Officer\b/gi, "CSO")
+    .replace(/\s*[·|/]\s*/g, " · ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!role || !primaryOnly) return role;
+  const priorityTitle = role.match(/\b(?:CEO|CTO|CFO|COO|CPO|CIO|CMO|CRO|CSO)\b/i);
+  if (priorityTitle) return priorityTitle[0].toUpperCase();
+  return role.split(" · ").find(part => EXECUTIVE_TITLE_PATTERN.test(part)) || role;
+}
+function executiveDisplayName(person, primaryOnly = false) {
+  const name = safeDisplayString(person?.name);
+  if (!name) return "";
+  if (/\([^)]*(?:CEO|CTO|CFO|COO|CPO|CIO|CMO|CRO|CSO|Chief|President|Chair|Founder)[^)]*\)\s*$/i.test(name)) return name;
+  const role = executiveRoleLabel(person?.role || person?.title, primaryOnly);
+  return role ? `${name} (${role})` : name;
+}
+const executivePersonKey = value => safeDisplayString(value).toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+
 // ---- Company logo (real favicon, falls back to initial) ---------
 function CoLogo({ name, domain, accent }) {
   const [failed, setFailed] = React.useState(false);
@@ -566,7 +595,7 @@ function StrategyPortfolioCard({
   const organization = c.live?.organization || c.organization || c.org || {};
   const leaderRows = Array.isArray(organization.executiveTeam) && organization.executiveTeam.length
     ? organization.executiveTeam : organization.leadership || [];
-  const leadership = leaderRows.slice(0, 2).map(person => person.name).filter(Boolean).join(" · ");
+  const leadership = leaderRows.slice(0, 2).map(person => executiveDisplayName(person)).filter(Boolean).join(" · ");
   const activate = () => onSelect && onSelect(c);
   return (
     <div className="sp-card" role="button" tabIndex="0" onClick={activate}
@@ -737,6 +766,16 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
           const p = c.profile, lv = c.live || {};
           // 변동 항목은 크롤 값 우선(최신·출처 기반), 없으면 정적 폴백
           const ceo = lv.ceo || p.ceo;
+          const overviewOrg = lv.organization || c.organization || c.org || {};
+          const overviewTeam = Array.isArray(overviewOrg.executiveTeam) && overviewOrg.executiveTeam.length
+            ? overviewOrg.executiveTeam : overviewOrg.leadership || [];
+          const ceoKey = executivePersonKey(ceo);
+          const ceoRecord = overviewTeam.find(person => executivePersonKey(person.name) === ceoKey)
+            || overviewTeam.find(person => /chief executive|\bceo\b/i.test(String(person.role || person.title || "")));
+          const executive = executiveDisplayName({
+            name: ceo || ceoRecord?.name,
+            role: ceoRecord?.role || ceoRecord?.title || "CEO",
+          }, true);
           const hq = lv.hq || p.hq;
            const emp = lv.employees || p.headcount || "";
            const holders = lv.topHolders || p.shareholders;
@@ -746,7 +785,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
           const rows = [
             ["설립", p.founded],
             ["법인·운영사", p.operator || p.legalName],
-            ["경영진", ceo],
+            ["경영진", executive],
             ["본사", hq],
             ["섹터", lv.sector || p.sector || ""],
              ["인력", emp ? emp + empAsof : ""],
@@ -1125,7 +1164,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                     {lead && (
                       <div className="cd-org-node lead">
                         <em className="cd-org-tier-label">CEO · EXECUTIVE LEAD</em>
-                        <b>{lead.name}</b><span className="cd-org-role">{lead.role}</span>
+                        <b>{executiveDisplayName(lead)}</b>
                         <NodeBg p={lead} />
                         {liOf(lead) && <a className="cd-org-li" href={liOf(lead)} target="_blank" rel="noopener" title={`${lead.name} LinkedIn 프로필`}>LinkedIn</a>}
                       </div>
@@ -1139,7 +1178,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                             <div className="cd-org-reports">
                               {group.people.map((p, i) => (
                                 <div className="cd-org-node" key={`${group.key}-${i}`}>
-                                  <b>{p.name}</b><span className="cd-org-role">{p.role}</span>
+                                  <b>{executiveDisplayName(p)}</b>
                                   <NodeBg p={p} />
                                   {liOf(p) && <a className="cd-org-li" href={liOf(p)} target="_blank" rel="noopener" title={`${p.name} LinkedIn 프로필`}>LinkedIn</a>}
                                 </div>
@@ -1161,7 +1200,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                     {interviewRows.map((it, i) => (
                       <div className="cd-itv-item" key={i}>
                         <div className="cd-itv-who">
-                          <b>{it.who}</b>{it.role && <span className="cd-itv-role">{it.role}</span>}
+                          <b>{executiveDisplayName({ name: it.who, role: it.role })}</b>
                           {it.date && <span className="cd-itv-date">{it.date}</span>}
                         </div>
                         <p className="cd-itv-ko">{it.quoteKo || it.insight}</p>

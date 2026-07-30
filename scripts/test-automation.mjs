@@ -335,13 +335,22 @@ try {
     && boards.includes("Business Unit Leadership")
     && boards.includes(".slice(0, 11)")
     && !boards.includes('className="cd-org-note"');
+  const inlineExecutiveTitlesReady = boards.includes("function executiveRoleLabel(value, primaryOnly = false)")
+    && boards.includes("function executiveDisplayName(person, primaryOnly = false)")
+    && boards.includes("executiveDisplayName(person)).filter(Boolean).join")
+    && boards.includes('["경영진", executive]')
+    && boards.includes("<b>{executiveDisplayName(lead)}</b>")
+    && boards.includes("<b>{executiveDisplayName(p)}</b>")
+    && boards.includes("executiveDisplayName({ name: it.who, role: it.role })")
+    && !boards.includes('className="cd-org-role"')
+    && !boards.includes('className="cd-itv-role"');
   const refreshReady = companyCrawler.includes("const MAX_EXECUTIVES = 12")
     && startupCrawler.includes("const MAX_EXECUTIVES = 12")
     && companyCrawler.includes("roleSourceType")
     && companyCrawler.includes("linkedinVerification")
     && startupCrawler.includes("linkedinVerification");
-  if (!depthReady || !directProfilesVerified || !nodeDetailReady || !refreshReady) {
-    throw new Error("12-person leadership merge, in-node background detail, direct-profile verification, or recurring normalization is incomplete");
+  if (!depthReady || !directProfilesVerified || !nodeDetailReady || !inlineExecutiveTitlesReady || !refreshReady) {
+    throw new Error("12-person leadership merge, inline executive titles, in-node background detail, direct-profile verification, or recurring normalization is incomplete");
   }
   console.log(`  OK  전체 기업 조직도 ${organizationRows.length}개 · 최대 12명 · 학교·전공·경력 노드 통합 · LinkedIn 직접 프로필 검증`);
 } catch (error) {
