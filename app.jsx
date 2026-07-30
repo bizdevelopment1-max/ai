@@ -215,6 +215,7 @@ function App() {
     const ly = (D.COMPANY_LAYER || {})[c.name];                    // AI 밸류체인 계층·버티컬
     merged.layer = ly ? ly.layer : null;
     merged.vchainVertical = ly ? ly.vertical : "";
+    merged.org = (D.COMPANY_ORG || {})[c.name] || null;            // 미션·창업자·리더십(정적) — 조직도는 live officers 우선
     if (lv) { merged.live = lv; if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); } }
     if (strat) merged.strategy = strat;
     return merged;

@@ -314,6 +314,53 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           );
         })()}
 
+        {(c.org || (c.live && c.live.officers && c.live.officers.length)) && (() => {
+          const org = c.org || {};
+          const live = c.live || {};
+          const liveRoster = (live.officers && live.officers.length)
+            ? live.officers.map(o => ({ name: o.name, role: o.title, bg: "" })) : null;
+          const roster = liveRoster || (org.leadership || []);
+          const lead = roster[0];
+          const reports = roster.slice(1);
+          return (
+            <React.Fragment>
+              {org.mission && (
+                <div className="cd-section cd-mission">
+                  <h4>미션 <em>Mission</em></h4>
+                  <p className="cd-mission-txt">{org.mission}</p>
+                </div>
+              )}
+              {roster.length > 0 && (
+                <div className="cd-section">
+                  <h4>조직·리더십 <em>Leadership</em>{liveRoster ? <b className="cd-prof-live">LIVE · Yahoo Finance</b> : null}</h4>
+                  <div className="cd-org">
+                    {lead && (
+                      <div className="cd-org-node lead">
+                        <b>{lead.name}</b><span className="cd-org-role">{lead.role}</span>
+                        {lead.bg && <span className="cd-org-bg">{lead.bg}</span>}
+                      </div>
+                    )}
+                    {reports.length > 0 && <span className="cd-org-conn" aria-hidden="true" />}
+                    {reports.length > 0 && (
+                      <div className="cd-org-reports">
+                        {reports.map((p, i) => (
+                          <div className="cd-org-node" key={i}>
+                            <b>{p.name}</b><span className="cd-org-role">{p.role}</span>
+                            {p.bg && <span className="cd-org-bg">{p.bg}</span>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {org.leadership && liveRoster && (
+                    <p className="cd-org-founders"><b>창업자·배경</b> {org.leadership.map(l => `${l.name}(${l.role}${l.bg ? " · " + l.bg : ""})`).join(" / ")}</p>
+                  )}
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })()}
+
         <div className="cd-section">
           <h4>개요</h4>
           <p>{bulletText(c.note)}</p>

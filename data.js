@@ -1344,5 +1344,54 @@ window.DASH = (function () {
     "SpaceX (xAI, Cursor)": { founded: "SpaceX 2002 · xAI 2023", ceo: "Elon Musk", hq: "미국 텍사스州", business: ["우주 발사·Starlink", "xAI(Grok) AI 모델"] },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, STOCK_LAYER, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  // ── 조직·리더십·미션 ────────────────────────────────────────────────
+  // 창업자·핵심 경영진 배경 + 회사 미션(정적 큐레이션). 공개기업은 crawl-financials가
+  // 최신 임원 명단(officers)을 companies.json에 덮어써 조직도를 자동 갱신한다.
+  const COMPANY_ORG = {
+    "OpenAI": { mission: "AGI(범용인공지능)가 전 인류에 이롭도록 보장", leadership: [
+      { name: "Sam Altman", role: "공동창업·CEO", bg: "前 Y Combinator 대표 · 2015 공동창업" },
+      { name: "Greg Brockman", role: "공동창업·President", bg: "前 Stripe CTO · 인프라·시스템 총괄" },
+    ] },
+    "Anthropic": { mission: "신뢰·해석·통제 가능한 AI 시스템 구축 — 안전한 AI(공익법인)", leadership: [
+      { name: "Dario Amodei", role: "공동창업·CEO", bg: "前 OpenAI 연구부문 VP · GPT-2/3 스케일링 연구 주도" },
+      { name: "Daniela Amodei", role: "공동창업·President", bg: "前 OpenAI 안전·정책 VP" },
+      { name: "Jared Kaplan", role: "공동창업", bg: "이론물리학자 · 스케일링 법칙 연구" },
+      { name: "Chris Olah", role: "공동창업", bg: "기계적 해석가능성(interpretability) 연구" },
+    ] },
+    "Google DeepMind": { mission: "AI로 과학을 발전시켜 인류 난제 해결", leadership: [
+      { name: "Demis Hassabis", role: "CEO·공동창업(DeepMind)", bg: "신경과학 박사·체스 신동 · 2024 노벨화학상(AlphaFold)" },
+      { name: "Sundar Pichai", role: "Alphabet·Google CEO", bg: "그룹 전략·클라우드·제품 총괄" },
+    ] },
+    "Meta AI": { mission: "오픈 모델(Llama)로 범용 AI를 대중화", leadership: [
+      { name: "Mark Zuckerberg", role: "창업·CEO", bg: "Meta 창업자 · Superintelligence Labs 직접 지휘" },
+      { name: "Yann LeCun", role: "Chief AI Scientist", bg: "딥러닝(CNN) 개척 · 2018 튜링상" },
+    ] },
+    "Mistral AI": { mission: "개방·주권(sovereign) AI — 유럽발 오픈 모델", leadership: [
+      { name: "Arthur Mensch", role: "공동창업·CEO", bg: "前 Google DeepMind 연구원" },
+      { name: "Guillaume Lample · Timothée Lacroix", role: "공동창업", bg: "前 Meta FAIR · LLaMA 핵심 연구" },
+    ] },
+    "Perplexity": { mission: "세상의 지식에 근거를 달아 답하는 '답변 엔진'", leadership: [
+      { name: "Aravind Srinivas", role: "공동창업·CEO", bg: "前 OpenAI·DeepMind 연구원 · UC Berkeley 박사" },
+    ] },
+    "Cohere": { mission: "기업용·주권 LLM으로 안전한 엔터프라이즈 AI", leadership: [
+      { name: "Aidan Gomez", role: "공동창업·CEO", bg: "Transformer 논문 'Attention Is All You Need' 공저자" },
+    ] },
+    "Hugging Face": { mission: "좋은 머신러닝을 오픈소스로 민주화", leadership: [
+      { name: "Clément Delangue", role: "공동창업·CEO", bg: "오픈소스 모델 허브 생태계 구축" },
+    ] },
+    "Databricks": { mission: "데이터+AI를 레이크하우스로 통합", leadership: [
+      { name: "Ali Ghodsi", role: "공동창업·CEO", bg: "Apache Spark 창시자 그룹 · 前 UC Berkeley" },
+    ] },
+    "SpaceX (xAI, Cursor)": { mission: "우주의 본질 이해(xAI) · 다행성 문명(SpaceX)", leadership: [
+      { name: "Elon Musk", role: "창업·CEO", bg: "Tesla·SpaceX·xAI 창업 · Grok 모델 총괄" },
+    ] },
+    "NVIDIA": { mission: "가속 컴퓨팅으로 AI 시대의 연산 플랫폼 제공", leadership: [
+      { name: "Jensen Huang", role: "공동창업·CEO", bg: "1993 공동창업 · CUDA 생태계 구축" },
+    ] },
+    "Apple": { mission: "프라이버시 우선 온디바이스 지능 — 최고의 개인 기기 경험", leadership: [
+      { name: "Tim Cook", role: "CEO", bg: "운영 총괄 출신 · 2011~ (2026.9 John Ternus 승계 예정)" },
+    ] },
+  };
+
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, STOCK_LAYER, COMPANY_ORG, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

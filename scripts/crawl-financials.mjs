@@ -90,6 +90,13 @@ function extract(ticker, r) {
   const ceo = clean(ceoOfficer && ceoOfficer.name);
   if (ceo) out.ceo = ceo;
 
+  // 리더십(조직도) — 상위 임원 이름·직함(공개기업은 공시 기반으로 자동 갱신)
+  const roster = officers
+    .map(o => ({ name: clean(o.name), title: clean(o.title) }))
+    .filter(o => o.name && o.title)
+    .slice(0, 6);
+  if (roster.length) out.officers = roster;
+
   // 본사(도시 · 州 · 국가)
   const loc = [ap.city, ap.state, COUNTRY_KO[ap.country] || ap.country].map((x) => clean(x)).filter(Boolean);
   if (loc.length) out.hq = loc.join(" · ");
@@ -122,7 +129,7 @@ function extract(ticker, r) {
     if (top.length) out.topHolders = top.join(" · ");
   }
 
-  const has = out.ceo || out.hq || out.employees || out.revenueQ || out.topHolders;
+  const has = out.ceo || out.hq || out.employees || out.revenueQ || out.topHolders || (out.officers && out.officers.length);
   if (!has) return null;
   out.asOf = new Date().toISOString().slice(0, 10);
   return out;

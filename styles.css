@@ -967,6 +967,19 @@ a[href]:hover .rainbow-on-hover,
 .cd-prof-fin > span { font-size: 13.5px; font-weight: 800; letter-spacing: -.01em; }
 .cd-prof-fin > i { font-style: normal; font-size: 10px; font-weight: 700; color: var(--muted); margin-left: auto; }
 @media (max-width: 560px) { .cd-profile .cd-prof-grid { grid-template-columns: 1fr; } }
+/* 미션 · 조직도(리더십) */
+.cd-mission-txt { font-size: 14px; font-weight: 700; line-height: 1.6; padding: 11px 14px; border-left: 3px solid var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); border-radius: 0 8px 8px 0; }
+.cd-org { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.cd-org-node { border: 1px solid var(--line); border-radius: 10px; padding: 9px 13px; background: var(--panel); display: flex; flex-direction: column; gap: 2px; text-align: center; min-width: 150px; }
+.cd-org-node b { font-size: 13px; font-weight: 850; letter-spacing: -.01em; }
+.cd-org-role { font-size: 11px; font-weight: 700; color: var(--accent); }
+.cd-org-bg { font-size: 10.5px; font-weight: 600; color: var(--muted); line-height: 1.4; }
+.cd-org-node.lead { border-width: 2px; border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.cd-org-conn { width: 2px; height: 16px; background: var(--line); }
+.cd-org-reports { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; width: 100%; position: relative; padding-top: 12px; }
+.cd-org-reports::before { content: ""; position: absolute; top: 0; left: 15%; right: 15%; height: 2px; background: var(--line); }
+.cd-org-founders { margin: 12px 0 0; font-size: 11.5px; font-weight: 600; line-height: 1.5; color: var(--muted); }
+.cd-org-founders b { color: var(--ink); }
 .cd-vp {
   border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 0 8px 8px 0;
   background: color-mix(in srgb, var(--accent) 6%, var(--panel));

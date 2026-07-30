@@ -34,6 +34,7 @@ async function main() {
     if (f.hq) rec.hq = f.hq;
     if (f.sector) rec.sector = f.sector;
     if (f.topHolders) rec.topHolders = f.topHolders;
+    if (Array.isArray(f.officers) && f.officers.length) rec.officers = f.officers;
     if (f.revenueQ) { rec.revenueQ = f.revenueQ; rec.quarterEnd = f.quarterEnd || ""; }
     if (f.netIncomeQ) rec.netIncomeQ = f.netIncomeQ;
     if (f.employees) { rec.employees = f.employees; rec.employeesAsof = f.asOf || ""; }
