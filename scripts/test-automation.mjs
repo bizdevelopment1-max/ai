@@ -194,6 +194,10 @@ try {
       && Array.isArray(value.corePractices) && Array.isArray(value.newBusinessModels)
       && Array.isArray(value.executiveQuotes);
   });
+  const companyRows = Object.values(companies.companies || {});
+  const aiCompanies = companyRows.filter(company => company.intelligence?.engine?.startsWith("github-models:")).length;
+  const aiCoverage = aiCompanies / Math.max(companyRows.length, 1);
+  const modelExpected = !!(process.env.GITHUB_MODELS_TOKEN || process.env.GITHUB_TOKEN);
   const a16zReady = a16z.web?.length === 50 && a16z.mobile?.length === 50
     && startups.institutionalSource?.webCount === 50
     && startups.institutionalSource?.mobileCount === 50
@@ -211,10 +215,11 @@ try {
   const grounded = intelligenceBuilder.includes("evidenceIds")
     && intelligenceBuilder.includes("publisher evidence")
     && intelligenceBuilder.includes("quoteOriginal");
-  if (!intelligenceReady || !a16zReady || !ventureReady || !workflowReady || !grounded) {
+  if (!intelligenceReady || (modelExpected && aiCoverage < 0.95)
+    || !a16zReady || !ventureReady || !workflowReady || !grounded) {
     throw new Error("company intelligence, a16z 50+50, strategic ventures, or grounded synthesis automation is incomplete");
   }
-  console.log(`  OK  기업 인텔리전스 ${Object.keys(companies.companies || {}).length}개 · a16z Web 50/Mobile 50 · DeployCo/JV 근거 자동화`);
+  console.log(`  OK  기업 인텔리전스 ${companyRows.length}개 · AI ${aiCompanies}개 · a16z Web 50/Mobile 50 · DeployCo/JV 근거 자동화`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  deep company intelligence automation: ${error.message}`);

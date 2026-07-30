@@ -305,7 +305,10 @@ async function main() {
   }
 
   if (engine) {
-    const batchSize = 7;
+    // GitHub Models gpt-4.1 currently enforces an 8k request-body limit.
+    // Evidence-heavy major companies can exceed it in larger groups, so keep
+    // batches small enough that every company receives the same synthesis.
+    const batchSize = 3;
     for (let start = 0; start < prepared.length; start += batchSize) {
       const batch = prepared.slice(start, start + batchSize);
       const publicInput = batch.map(({ _rec, _fallback, _priorAi, ...value }) => value);
