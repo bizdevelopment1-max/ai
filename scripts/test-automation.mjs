@@ -1053,6 +1053,27 @@ try {
 }
 
 try {
+  const boards = await readFile("boards.jsx", "utf8");
+  const removedOperationalLabels = [
+    "(크롤)",
+    "LIVE · 크롤",
+    "최신 크롤 근거",
+    "크롤 인사이트 종합",
+    "매일 크롤한 원문 근거",
+    "크롤로 계속 누적",
+    "크롤 기사로 정리",
+    "크롤링 기반 업데이트 구조",
+  ];
+  if (removedOperationalLabels.some(text => boards.includes(text))) {
+    throw new Error("operational collection wording is still rendered");
+  }
+  console.log("  OK  user-facing collection labels replaced by source-evidence copy");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  user-facing collection wording cleanup: ${error.message}`);
+}
+
+try {
   const [market, boards] = await Promise.all([
     readFile("market.json", "utf8").then(JSON.parse),
     readFile("boards.jsx", "utf8"),

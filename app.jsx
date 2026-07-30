@@ -220,7 +220,7 @@ function App() {
       merged.vp = intel.revenueModel?.summary || merged.vp;
       merged.direction = intel.strategyDirection?.summary || merged.direction;
     }
-    // 크롤 기반 수익모델·사업 방향(monetization.json) — 원문 링크 신호 + 밸류체인 legend
+    // 원문 기반 수익모델·사업 방향(monetization.json) — 원문 링크 신호 + 밸류체인 legend
     merged.monetize = monet
       ? { entry: (monet.companies || []).find(x => x.name === c.name) || null, models: monet.models || [], directions: monet.directions || [] }
       : null;

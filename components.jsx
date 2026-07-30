@@ -266,7 +266,7 @@ const BRANDS = [
 ];
 
 // 상대 시간(방금 전·n분 전·n시간 전·n일 전) — 30초마다 갱신해 '살아있는 사이트'임을
-// 시각적으로 드러냄. 소스는 data-version.json의 generatedAt(매일 크롤 파이프라인 갱신).
+// 시각적으로 드러냄. 소스는 data-version.json의 generatedAt(매일 자동 갱신).
 function relTime(iso) {
   const t = Date.parse(iso || "");
   if (isNaN(t)) return "";
