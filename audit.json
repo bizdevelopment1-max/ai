@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-30T18:27:17.254Z",
-  "overall": "ok",
-  "summary": "33개 검사 · 정상 33 · 주의 0 · 실패 0",
+  "generatedAt": "2026-07-30T18:58:55.329Z",
+  "overall": "warn",
+  "summary": "33개 검사 · 정상 32 · 주의 1 · 실패 0",
   "checks": [
     {
       "file": "news.json",
@@ -9,7 +9,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 213
+      "items": 215
     },
     {
       "file": "briefing.json",
@@ -97,7 +97,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 91
+      "items": 92
     },
     {
       "file": "bizmodel.json",
@@ -137,7 +137,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 289
+      "items": 291
     },
     {
       "file": "quality.json",
@@ -145,7 +145,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "213건"
+      "items": "215건"
     },
     {
       "file": "quality.json",
@@ -153,7 +153,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "207/213건"
+      "items": "209/215건"
     },
     {
       "file": "quality.json",
@@ -161,7 +161,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "204/213건"
+      "items": "206/215건"
     },
     {
       "file": "quality.json",
@@ -169,15 +169,17 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "한국어 209 · 영문 폴백 4"
+      "items": "한국어 211 · 영문 폴백 4"
     },
     {
       "file": "quality.json",
       "tab": "수집 스트림 상태",
-      "status": "ok",
-      "issues": [],
+      "status": "warn",
+      "issues": [
+        "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다."
+      ],
       "ageDays": 0,
-      "items": "실패 0 · 빈 스트림 9"
+      "items": "실패 1 · 빈 스트림 8"
     },
     {
       "file": "quality.json",
@@ -217,7 +219,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "공개 90건 · 보존 1건"
+      "items": "공개 91건 · 보존 1건"
     },
     {
       "file": "quality.json",

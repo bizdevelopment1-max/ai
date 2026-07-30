@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T18:19:21.412Z",
+  "generatedAt": "2026-07-30T18:50:09.752Z",
   "mode": "source-content-extractive",
   "policyVersion": 2,
   "streams": {
@@ -7,7 +7,12 @@
     "directRss": 14
   },
   "acceptedCandidates": 77,
-  "failedStreams": [],
+  "failedStreams": [
+    {
+      "stream": "rss:The Register",
+      "error": "HTTP 403"
+    }
+  ],
   "emptyStreams": [
     "google-news:Sierra AI",
     "google-news:Hailuo (MiniMax)",
@@ -16,8 +21,7 @@
     "google-news:Runway",
     "google-news:Databricks 자본·인프라",
     "rss:Hugging Face",
-    "rss:VentureBeat",
-    "rss:The Register"
+    "rss:VentureBeat"
   ],
-  "status": "ok"
+  "status": "partial"
 }
