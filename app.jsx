@@ -71,7 +71,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = uS(false);
   const [collapsed, setCollapsed] = uS(false);
   const refs = {
-    ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
+    ib: uR(null), overview: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
     infra: uR(null), model: uR(null), data: uR(null), app: uR(null),
     sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), survey: uR(null), market: uR(null), audit: uR(null),
   };
@@ -80,7 +80,6 @@ function App() {
   const dataInView = useInView(refs.data);
   const appInView = useInView(refs.app);
   const companyInView = infraInView || modelInView || dataInView || appInView;
-  const briefingInView = useInView(refs.briefing);
   const articlesInView = useInView(refs.articles);
   const signalsInView = useInView(refs.signals);
   const newbizInView = useInView(refs.newbiz);
@@ -153,8 +152,6 @@ function App() {
     return () => { alive = false; };
   }, [dataVersion]);
 
-  // 매일 자동 생성되는 모닝 브리핑(briefing.json) + 주간 스타트업 레이더(radar.json)
-  const [briefing, setBriefing] = uS(null);
   // 증권사 리서치(research.json)·기업 라이브(companies.json)·데이터 감사(audit.json)
   const [research, setResearch] = uS(null);
   const [coLive, setCoLive] = uS(null);
@@ -220,19 +217,6 @@ function App() {
     if (strat) merged.strategy = strat;
     return merged;
   }), [coLive, startupsX]);
-  uE(() => {
-    if (!briefingInView || !dataVersion) return;
-    let alive = true;
-    fetch(dataUrl("briefing.json"), { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
-      .then(j => {
-        const days = (j && j.days || []).map(day => ({ ...day, items: (day.items || []).filter(item => item.provenance?.status === "evidence-linked") })).filter(day => day.items.length);
-        if (alive && days.length) setBriefing({ ...j, days });
-      })
-      .catch(() => {});
-    return () => { alive = false; };
-  }, [briefingInView, dataVersion]);
-
   // real daily stock prices + market cap (stocks.json, refreshed daily by GitHub Action)
   const [stockData, setStockData] = uS(null);
   uE(() => {
@@ -395,10 +379,6 @@ function App() {
               <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} />
             </section>
-
-            <LazySection id="briefing" active={active} sectionRef={refs.briefing} height={560}>
-              <BriefingBoard briefing={briefing} />
-            </LazySection>
 
             <LazySection id="articles" active={active} sectionRef={refs.articles} height={840}>
               <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />

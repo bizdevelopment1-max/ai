@@ -376,6 +376,30 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           );
         })()}
 
+        {c.live && Array.isArray(c.live.practices) && c.live.practices.length > 0 && (() => {
+          const ps = c.live.practices;
+          const max = Math.max(...ps.map(p => p.count), 1);
+          return (
+            <div className="cd-section">
+              <h4>핵심 활동 분석 <em>Core Practices</em><b className="cd-prof-live">LIVE · 뉴스 기반</b></h4>
+              <div className="cd-cp">
+                {ps.map((p, i) => (
+                  <div className="cd-cp-row" key={i}>
+                    <div className="cd-cp-top"><b>{p.ko}</b><span className="cd-cp-n">{p.count}건</span></div>
+                    <div className="cd-cp-bar"><i style={{ width: (12 + 88 * p.count / max) + "%", background: cat.accent }} /></div>
+                    {p.latest && p.latest.url && (
+                      <a className="cd-cp-latest" href={p.latest.url} target="_blank" rel="noopener">
+                        {p.latest.date && <em>{String(p.latest.date).slice(5)}</em>}{String(p.latest.title || "").slice(0, 70)}
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <p className="cd-cp-note">최근 60일 크롤 기사에서 활동 유형을 규칙 기반 분류 — 뉴스가 쌓이며 자동 갱신</p>
+            </div>
+          );
+        })()}
+
         <div className="cd-section">
           <h4>개요</h4>
           <p>{bulletText(c.note)}</p>
