@@ -12,8 +12,13 @@
    스타트업 분석(startups.json)의 업체도 같은 깊이(mentions·핵심활동·경영진 발언)로
    자동 편입 — 밸류체인 기업과 스타트업의 표시 레벨을 통일. co 필드 태깅 없이도
    기사 제목·요약 전문에서 업체명을 단어경계로 스캔(전문 매칭)해 라이브 레코드 생성.
+
+   경영진 발언(execMentions) 대상 인물은 data.js COMPANY_ORG에서 자동 파생 —
+   별도 하드코딩 목록을 유지하지 않는다. org 큐레이션에 인물을 추가하면 다음
+   실행부터 자동으로 경영진 발언 스캔 대상이 된다(단일 소스 원칙).
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
+import { loadDash } from "./load-dash.mjs";
 
 // 기업명 → 상장 티커(시총 연동용 매핑 — 데이터가 아니라 조인 키)
 const TICKER_OF = {
@@ -35,31 +40,6 @@ const PRACTICE = [
   { id: "safety", ko: "안전·규제", re: /safety|안전|regulat|규제|policy|정책|govern|거버넌스|lawsuit|소송|copyright|저작권|privacy|프라이버시|보안|security/i },
   { id: "talent", ko: "인재·조직", re: /\bhire\b|채용|talent|인재|\bCEO\b|executive|경영진|leadership|리더십|founder|창업|layoff|감원|조직/i },
 ];
-// 경영진 이름(뉴스 co → 리더 성/이름) — 크롤 기사에서 경영진 발언·활동을 뽑아 자동 갱신.
-const LEADERS = {
-  "OpenAI": ["Sam Altman", "Altman", "Greg Brockman", "Brockman"],
-  "Anthropic": ["Dario Amodei", "Daniela Amodei", "Amodei", "Jared Kaplan"],
-  "NVIDIA": ["Jensen Huang", "Huang"],
-  "Google DeepMind": ["Demis Hassabis", "Hassabis", "Sundar Pichai", "Pichai"],
-  "Meta AI": ["Mark Zuckerberg", "Zuckerberg", "Yann LeCun", "LeCun"],
-  "Apple": ["Tim Cook", "Tim Cook", "John Ternus", "Ternus"],
-  "Microsoft": ["Satya Nadella", "Nadella"],
-  "Amazon": ["Andy Jassy", "Jassy"],
-  "Perplexity": ["Aravind Srinivas", "Srinivas"],
-  "Mistral AI": ["Arthur Mensch", "Mensch"],
-  "Cohere": ["Aidan Gomez", "Gomez"],
-  "Databricks": ["Ali Ghodsi", "Ghodsi"],
-  "SpaceX (xAI, Cursor)": ["Elon Musk", "Musk"],
-  "Hugging Face": ["Clément Delangue", "Delangue"],
-  // 스타트업 창업자(COMPANY_ORG 큐레이션 대상과 정렬) — 경영진 발언 기사 자동 수집
-  "Character.AI": ["Noam Shazeer", "Shazeer"],
-  "Cognition": ["Scott Wu"],
-  "Canva": ["Melanie Perkins", "Perkins"],
-  "Notion": ["Ivan Zhao"],
-  "Grammarly": ["Rahul Roy-Chowdhury"],
-  "Poe": ["Adam D'Angelo", "D'Angelo"],
-  "Descript": ["Andrew Mason"],
-};
 // 단어경계 정규식(오탐 방지) — alias가 알파벳으로 시작/끝나면 \b 부착.
 const boundWord = s => {
   const esc = String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -67,22 +47,47 @@ const boundWord = s => {
   const r = /[A-Za-z0-9]$/.test(s) ? "\\b" : "";
   return `${l}${esc}${r}`;
 };
-const execMentions = (co, arts) => {
-  const names = LEADERS[co];
-  if (!names) return [];
-  const canon = names[0];   // 대표 표기(첫 항목)
-  const rx = new RegExp(names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "i");
+// 경영진 발언 스캔 대상 인물을 COMPANY_ORG에서 자동 파생 — 성만 단독 매칭은 같은
+// 성이 다른 회사에도 있으면(예: 흔한 성) 오탐 위험이 있어, 전 회사 통틀어 유일한
+// 성일 때만 보조 별칭으로 추가. 결합 표기("A · B")는 개별 인물로 분리.
+function deriveLeaders(org) {
+  const people = [];
+  for (const [co, o] of Object.entries(org || {})) {
+    for (const entry of (o.leadership || [])) {
+      for (const full of String(entry.name || "").split("·").map(s => s.trim()).filter(Boolean)) {
+        const tokens = full.split(/\s+/).filter(Boolean);
+        const last = tokens.length > 1 ? tokens[tokens.length - 1] : "";
+        people.push({ co, full, last });
+      }
+    }
+  }
+  const lastFreq = new Map();
+  for (const p of people) if (p.last) lastFreq.set(p.last, (lastFreq.get(p.last) || 0) + 1);
+  const byCo = {};
+  for (const p of people) {
+    const aliases = [p.full];
+    if (p.last && p.last.length >= 4 && lastFreq.get(p.last) === 1) aliases.push(p.last);
+    const re = new RegExp(aliases.map(boundWord).join("|"), "i");
+    (byCo[p.co] = byCo[p.co] || []).push({ full: p.full, re });
+  }
+  return byCo;
+}
+const execMentions = (co, arts, leaders) => {
+  const people = leaders[co];
+  if (!people || !people.length) return [];
   const seen = new Set();
-  return arts
-    .filter(a => a.title && a.url && rx.test(`${a.title} ${a.descEn || ""} ${a.summary || ""}`))
-    .filter(a => (seen.has(a.url) ? false : seen.add(a.url)))
-    .sort((x, y) => (x.date < y.date ? 1 : -1))
-    .slice(0, 6)
-    .map(a => {
-      const ko = a.titleKo || (a.localization && (a.localization.title
-        || (Array.isArray(a.localization.summaryLines) && a.localization.summaryLines[0]))) || "";
-      return { who: canon, titleEn: a.titleEn || a.title, titleKo: ko, date: a.date, url: a.url, source: a.source || "" };
-    });
+  const rows = [];
+  for (const a of arts) {
+    if (!a.title || !a.url || seen.has(a.url)) continue;
+    const hay = `${a.title} ${a.descEn || ""} ${a.summary || ""}`;
+    const hit = people.find(p => p.re.test(hay));
+    if (!hit) continue;
+    seen.add(a.url);
+    const ko = a.titleKo || (a.localization && (a.localization.title
+      || (Array.isArray(a.localization.summaryLines) && a.localization.summaryLines[0]))) || "";
+    rows.push({ who: hit.full, titleEn: a.titleEn || a.title, titleKo: ko, date: a.date, url: a.url, source: a.source || "" });
+  }
+  return rows.sort((x, y) => (x.date < y.date ? 1 : -1)).slice(0, 6);
 };
 const classifyPractices = (arts) => {
   const recent = arts.filter(a => days(a.date) <= 60);
@@ -102,6 +107,7 @@ async function main() {
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   try { stocks = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
   try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
+  const leaders = deriveLeaders((loadDash().COMPANY_ORG) || {});
   // 기업 개요의 변동 항목을 크롤 값으로 붙임(crawl-financials.mjs — 공시·분기 주기로 자동 최신화)
   const joinFin = (rec, tk) => {
     const f = tk && financials[tk];
@@ -132,7 +138,7 @@ async function main() {
       mentions30: arts.filter(a => days(a.date) <= 30).length,
       latest: { title: latest.title, url: latest.url, date: latest.date, source: latest.source },
       practices: classifyPractices(arts),
-      execNews: execMentions(co, articles),
+      execNews: execMentions(co, articles, leaders),
     };
     const tk = TICKER_OF[co];
     if (tk && stocks[tk] && stocks[tk].marketCap) {
@@ -170,7 +176,7 @@ async function main() {
       mentions30: arts.filter(a => days(a.date) <= 30).length,
       latest: { title: latest.title, url: latest.url, date: latest.date, source: latest.source },
       practices: classifyPractices(arts),
-      execNews: execMentions(name, articles),
+      execNews: execMentions(name, articles, leaders),
     };
   }
 

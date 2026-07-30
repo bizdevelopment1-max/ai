@@ -1623,6 +1623,109 @@ window.DASH = (function () {
       { name: "Scott Wu", role: "Co-founder·CEO", edu: "Harvard", career: "국제정보올림피아드 금메달 · 前 Lunchclub 공동창업" },
       { name: "Steven Hao · Walden Yan", role: "Co-founder", edu: "MIT·Harvard", career: "경쟁 프로그래밍·AI 엔지니어" },
     ] },
+    // ── 스타트업 분석 풀 확장 커버리지(2차) — 공개 보도 기반 검증 후 추가 ──
+    "Safe Superintelligence": { mission: "상업 압력 없이 안전한 초지능(Superintelligence)을 직선적으로 구축", leadership: [
+      { name: "Ilya Sutskever", role: "Co-founder·Chief Scientist", edu: "Univ of Toronto 컴퓨터과학 박사", career: "前 OpenAI 공동창업·수석과학자 · AlexNet 공동저자" },
+      { name: "Daniel Gross", role: "Co-founder·CEO", edu: "", career: "前 Apple AI·ML 총괄 · Cue 창업(애플 인수) · Y Combinator 파트너" },
+      { name: "Daniel Levy", role: "Co-founder", edu: "Stanford", career: "前 OpenAI 연구원" },
+    ] },
+    "Thinking Machines Lab": { mission: "인간-AI 협업을 위한 멀티모달·맞춤형 AI 시스템 구축", leadership: [
+      { name: "Mira Murati", role: "Founder·CEO", edu: "Dartmouth 기계공학", career: "前 OpenAI CTO · Tesla 프로덕트 매니저" },
+      { name: "John Schulman", role: "Co-founder", edu: "UC Berkeley 물리학·컴퓨터과학 박사", career: "前 OpenAI 공동창업 · PPO·RLHF 연구 리드" },
+      { name: "Barret Zoph", role: "Co-founder", edu: "", career: "前 OpenAI 포스트트레이닝 총괄 · Google Brain" },
+    ] },
+    "Figure AI": { mission: "노동력 부족 문제를 해결하는 범용 휴머노이드 로봇 상용화", leadership: [
+      { name: "Brett Adcock", role: "Founder·CEO", edu: "University of Florida 경영학", career: "前 Vettery 창업(Adecco 인수) · Archer Aviation 창업" },
+    ] },
+    "Black Forest Labs": { mission: "개방형 생성 미디어 모델(FLUX) 개발", leadership: [
+      { name: "Robin Rombach", role: "Co-founder·CEO", edu: "LMU 뮌헨 박사", career: "前 Stability AI · Stable Diffusion 공동 개발" },
+      { name: "Andreas Blattmann · Patrick Esser", role: "Co-founder", edu: "", career: "前 Stability AI · Stable Diffusion 공동 개발" },
+    ] },
+    "World Labs": { mission: "공간(3D) 지능 — 대규모 세계 모델로 물리적 세계 이해", leadership: [
+      { name: "Fei-Fei Li", role: "Co-founder·CEO", edu: "Princeton 물리학 · Caltech 전기공학 박사", career: "Stanford AI Lab(SAIL) 공동 소장 · ImageNet 창시 · 前 Google Cloud AI 수석과학자" },
+    ] },
+    "AI21 Labs": { mission: "기업용 고급 언어 AI로 안전하고 신뢰 가능한 생성형 AI 제공", leadership: [
+      { name: "Yoav Shoham · Ori Goshen", role: "Co-founder·Co-CEO", edu: "Stanford 컴퓨터과학 박사(Shoham)", career: "前 Stanford 교수(Shoham)" },
+      { name: "Amnon Shashua", role: "Co-founder", edu: "Tel Aviv·MIT 박사", career: "Mobileye 창업(Intel 인수) · Hebrew University 교수" },
+    ] },
+    "Groq": { mission: "결정론적 저지연 추론 전용 실리콘(LPU)으로 AI 추론 가속", leadership: [
+      { name: "Jonathan Ross", role: "Founder·CEO", edu: "", career: "前 Google — TPU(텐서처리장치) 프로젝트 창시" },
+    ] },
+    "You.com": { mission: "에이전트형 AI 검색·답변 엔진", leadership: [
+      { name: "Richard Socher", role: "Founder·CEO", edu: "Stanford 컴퓨터과학 박사", career: "前 Salesforce Chief Scientist(EVP) · MetaMind 창업(Salesforce 인수)" },
+    ] },
+    "Liquid AI": { mission: "효율적 파운데이션 모델(LFM)로 어디서나 구동되는 범용 AI", leadership: [
+      { name: "Ramin Hasani", role: "Co-founder·CEO", edu: "TU Wien 박사", career: "前 MIT CSAIL 연구원 · Liquid Neural Networks 창시" },
+      { name: "Daniela Rus", role: "Co-founder", edu: "Cornell 컴퓨터과학 박사", career: "MIT CSAIL(컴퓨터과학·AI연구소) 소장" },
+    ] },
+    "OpenEvidence": { mission: "의료진을 위한 근거 기반 임상 질의응답 엔진", leadership: [
+      { name: "Daniel Nadler", role: "Founder·CEO", edu: "Harvard 경제학 박사", career: "前 Kensho Technologies 창업(S&P Global 인수)" },
+    ] },
+    "Hippocratic AI": { mission: "비진단 환자 응대 영역의 안전한 헬스케어 AI 에이전트", leadership: [
+      { name: "Munjal Shah", role: "Co-founder·CEO", edu: "Stanford 컴퓨터과학", career: "前 Health IQ 창업 · Like.com 창업(Google 인수)" },
+    ] },
+    "Limitless AI": { mission: "대화를 기록·요약해주는 개인 AI 메모리 웨어러블", leadership: [
+      { name: "Dan Siroker", role: "Founder·CEO", edu: "Stanford 컴퓨터과학·경제학", career: "前 Optimizely 공동창업·CEO · Google 프로덕트 매니저 · 오바마 대선캠프 분석 총괄" },
+    ] },
+    "Poolside": { mission: "코드 특화 프런티어 모델로 소프트웨어 개발 자동화", leadership: [
+      { name: "Jason Warner", role: "Co-founder·CEO", edu: "", career: "前 GitHub CTO · Heroku·Canonical 엔지니어링 총괄" },
+      { name: "Eiso Kant", role: "Co-founder·CTO", edu: "", career: "前 Athenian(소프트웨어 인텔리전스) 창업" },
+    ] },
+    "Fireworks AI": { mission: "빠르고 신뢰할 수 있는 오픈모델 추론·서빙 플랫폼", leadership: [
+      { name: "Lin Qiao", role: "Co-founder·CEO", edu: "", career: "前 Meta PyTorch 총괄 엔지니어" },
+    ] },
+    "Physical Intelligence": { mission: "범용 로봇을 위한 파운데이션 모델(π 시리즈)", leadership: [
+      { name: "Sergey Levine", role: "Co-founder", edu: "Stanford 컴퓨터과학 박사", career: "UC Berkeley 교수 · 로봇 학습(RL) 연구 권위자" },
+      { name: "Chelsea Finn", role: "Co-founder", edu: "UC Berkeley 컴퓨터과학 박사", career: "Stanford 교수 · 메타러닝·로봇학습 연구" },
+      { name: "Karol Hausman · Brian Ichter", role: "Co-founder", edu: "", career: "前 Google DeepMind 로보틱스 연구원" },
+    ] },
+    "HeyGen": { mission: "AI 아바타·립싱크로 누구나 영상 콘텐츠 제작", leadership: [
+      { name: "Joshua Xu", role: "Co-founder·CEO", edu: "", career: "前 Snap 소프트웨어 엔지니어" },
+    ] },
+    "Photoroom": { mission: "온디바이스 지향 AI 사진 편집으로 전자상거래 이미지 제작 대중화", leadership: [
+      { name: "Matthieu Rouif", role: "Co-founder·CEO", edu: "École Polytechnique·MIT", career: "前 PicsArt·GoPro 제품 총괄" },
+    ] },
+    "Dust": { mission: "사내 데이터에 연결된 업무 자동화 AI 에이전트 플랫폼", leadership: [
+      { name: "Stanislas Polu", role: "Founder·CEO", edu: "École Polytechnique", career: "前 OpenAI 연구원(수학 추론·GPT-f) · Stripe 엔지니어" },
+    ] },
+    "Windsurf": { mission: "AI 네이티브 코드 에디터로 개발자 생산성 극대화", leadership: [
+      { name: "Varun Mohan", role: "Co-founder·CEO", edu: "MIT 컴퓨터과학", career: "前 Nuro 엔지니어 · Codeium(現 Windsurf) 창업" },
+      { name: "Douglas Chen", role: "Co-founder", edu: "MIT", career: "前 Nuro 엔지니어" },
+    ] },
+    "Cartesia": { mission: "실시간·온디바이스 구동을 겨냥한 초저지연 음성 생성 모델", leadership: [
+      { name: "Karan Goel", role: "Co-founder·CEO", edu: "Stanford 컴퓨터과학 박사", career: "상태공간모델(SSM) 연구 · Stanford Hazy Research 랩" },
+      { name: "Albert Gu", role: "Co-founder", edu: "Stanford 컴퓨터과학 박사", career: "Mamba(상태공간모델) 논문 공저자 · CMU 교수" },
+    ] },
+    "Deepgram": { mission: "엔터프라이즈용 실시간 음성 인식(STT) API", leadership: [
+      { name: "Scott Stephenson", role: "Founder·CEO", edu: "물리학 박사", career: "입자물리학 연구 배경 · 음성 인식 스타트업 창업" },
+    ] },
+    "Sesame": { mission: "자연스러운 대화형 음성 컴패니언 — 스마트 글라스 지향", leadership: [
+      { name: "Brendan Iribe", role: "Co-founder·CEO", edu: "", career: "Oculus VR 공동창업(Facebook에 $2B 매각)" },
+      { name: "Ankit Kumar", role: "Co-founder·CTO", edu: "", career: "음성·오디오 AI 엔지니어링" },
+    ] },
+    "Wispr Flow": { mission: "말로 입력하는 AI 받아쓰기 키보드", leadership: [
+      { name: "Tanay Kothari", role: "Co-founder·CEO", edu: "", career: "음성 입력 UX 창업" },
+      { name: "Sahaj Garg", role: "Co-founder·CTO", edu: "", career: "음성 인식 엔지니어링" },
+    ] },
+    "Reka AI": { mission: "효율적인 멀티모달 파운데이션 모델 개발", leadership: [
+      { name: "Dani Yogatama", role: "Founder·CEO", edu: "", career: "前 Google DeepMind 연구원" },
+      { name: "Yi Tay · Cyprien de Masson d'Autume · Mikel Artetxe · Qi Liu", role: "Co-founder", edu: "", career: "前 Google DeepMind·Meta·Baidu 연구원" },
+    ] },
+    "Decagon": { mission: "기업용 고객 응대 AI 에이전트", leadership: [
+      { name: "Jesse Zhang", role: "Co-founder·CEO", edu: "", career: "前 Auton(Y Combinator) 창업" },
+      { name: "Ashwin Sreenivas", role: "Co-founder·CTO", edu: "", career: "AI 엔지니어링" },
+    ] },
+    "Hebbia": { mission: "금융·전문 서비스용 문서 검색·분석 에이전트", leadership: [
+      { name: "George Sivulka", role: "Founder·CEO", edu: "Stanford 전기공학 박사(중퇴)", career: "Stanford 박사 과정 중 창업" },
+    ] },
+    "Robin AI": { mission: "AI 계약 검토·법무 어시스턴트", leadership: [
+      { name: "Richard Robinson", role: "Founder·CEO", edu: "", career: "법률 AI 스타트업 창업(영국)" },
+      { name: "James Clough", role: "Co-founder·CTO", edu: "물리학 박사", career: "AI 엔지니어링" },
+    ] },
+    "Pindrop": { mission: "음성 사기·딥페이크 탐지 보안 플랫폼", leadership: [
+      { name: "Vijay Balasubramaniyan", role: "Co-founder·CEO", edu: "Georgia Tech 컴퓨터과학 박사", career: "음성 보안 연구" },
+      { name: "Paul Judge", role: "Co-founder", edu: "Georgia Tech 박사", career: "연쇄창업가·보안 분야 투자자" },
+    ] },
   };
 
   // ── 투자 포트폴리오·전략 맵 ─────────────────────────────────────────

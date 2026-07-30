@@ -89,6 +89,7 @@ function App() {
   const D = window.DASH;
   const dark = t.dark;
   const [dataVersion, setDataVersion] = uS("");
+  const [dataGeneratedAt, setDataGeneratedAt] = uS("");
   const dataUrl = file => `${file}?v=${encodeURIComponent(dataVersion || "bootstrap")}`;
   const needsNews = articlesInView || companyInView || signalsInView || newbizInView || active === "articles" || active === "newbiz";
 
@@ -98,7 +99,7 @@ function App() {
     let alive = true;
     fetch("data-version.json", { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive) setDataVersion(j?.version || j?.generatedAt || "bootstrap"); })
+      .then(j => { if (alive) { setDataVersion(j?.version || j?.generatedAt || "bootstrap"); setDataGeneratedAt(j?.generatedAt || ""); } })
       .catch(() => { if (alive) setDataVersion("bootstrap"); });
     return () => { alive = false; };
   }, []);
@@ -372,7 +373,7 @@ function App() {
 
       <div className="shell">
         <TopBar dark={dark} onTheme={() => setTweak("dark", !dark)}
-          onMenuToggle={() => setSidebarOpen(o => !o)} onColorCycle={cycleColor} onNav={navTo} />
+          onMenuToggle={() => setSidebarOpen(o => !o)} onColorCycle={cycleColor} onNav={navTo} generatedAt={dataGeneratedAt} />
 
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
