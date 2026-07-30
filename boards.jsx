@@ -2054,8 +2054,10 @@ function OverviewCharts({ data, cats, theme }) {
 
 // ---- Dynamics Board (competitive landscape visualization) ------
 // ---- Knowledge Graph (interactive force-directed) ----
-// 경쟁 다이내믹스 전용 — 같은 시장을 두고 다투는 라이벌 구도만 표시
-const COMPETE_EDGES = [
+// 경쟁 다이내믹스의 변하지 않는 시장 구조만 보조선으로 유지한다.
+// 투자액·계약·제품 통합처럼 시점에 따라 달라지는 관계는 아래
+// deriveCompanyRelationshipEdges()가 source-backed 최신 기사에서 생성한다.
+const STRUCTURAL_COMPETE_EDGES = [
   { from: "OpenAI", to: "Anthropic", type: "경쟁", label: "LLM 플랫폼 경쟁" },
   { from: "OpenAI", to: "Google DeepMind", type: "경쟁", label: "AGI·검색 경쟁" },
   { from: "OpenAI", to: "Meta AI", type: "경쟁", label: "오픈소스 vs 클로즈드" },
@@ -2075,19 +2077,188 @@ const COMPETE_EDGES = [
   { from: "SpaceX (xAI, Cursor)", to: "OpenAI", type: "경쟁", label: "Grok·Cursor vs GPT·Codex" },
   { from: "SpaceX (xAI, Cursor)", to: "Anthropic", type: "경쟁", label: "Cursor vs Claude Code" },
   { from: "SpaceX (xAI, Cursor)", to: "Google DeepMind", type: "경쟁", label: "Grok vs Gemini" },
-  // NVIDIA — 칩 경쟁(자체 실리콘) + 공급 허브
+  // NVIDIA — 칩 경쟁(자체 실리콘)
   { from: "NVIDIA", to: "Google DeepMind", type: "경쟁", label: "GPU vs 자체 TPU" },
   { from: "NVIDIA", to: "Amazon", type: "경쟁", label: "GPU vs Trainium" },
-  { from: "NVIDIA", to: "OpenAI", type: "매출", label: "GPU 공급 · 매출" },
-  { from: "NVIDIA", to: "Anthropic", type: "매출", label: "GPU 공급 · 매출" },
-  // Apple — 단말 비서 경쟁 + 모델 파트너십
-  { from: "Apple", to: "Google DeepMind", type: "파트너십", label: "Gemini 탑재 Siri" },
-  { from: "Apple", to: "OpenAI", type: "파트너십", label: "Siri ChatGPT 연동" },
-  { from: "Apple", to: "Anthropic", type: "파트너십", label: "Claude 아이폰 선택지" },
-  // 빅테크–모델 핵심 자본 관계
-  { from: "Microsoft", to: "OpenAI", type: "투자", label: "독점 파트너십·$13B 투자" },
-  { from: "Amazon", to: "Anthropic", type: "투자", label: "투자 $13B+·AWS 약정" },
 ];
+
+const COMPANY_RELATION_ALIASES = {
+  "OpenAI": ["OpenAI", "ChatGPT"],
+  "Anthropic": ["Anthropic", "Claude"],
+  "Google DeepMind": ["Google DeepMind", "DeepMind", "Google", "Gemini"],
+  "Meta AI": ["Meta AI", "Meta", "Llama"],
+  "DeepSeek": ["DeepSeek"],
+  "Perplexity": ["Perplexity"],
+  "Microsoft": ["Microsoft", "Azure", "Copilot", "GitHub"],
+  "Amazon": ["Amazon", "AWS", "Bedrock", "Trainium"],
+  "NVIDIA": ["NVIDIA", "Nvidia", "CUDA"],
+  "Apple": ["Apple", "Siri"],
+  "Mistral AI": ["Mistral AI", "Mistral"],
+  "Cohere": ["Cohere"],
+  "Scale AI": ["Scale AI"],
+  "Runway": ["Runway"],
+  "Glean": ["Glean"],
+  "ElevenLabs": ["ElevenLabs"],
+  "Harvey": ["Harvey"],
+  "SpaceX (xAI, Cursor)": ["SpaceX", "xAI", "Grok", "Cursor"],
+};
+
+const RELATION_TYPES = [
+  {
+    type: "인수",
+    direct: [
+      (a, b) => `${a}.{0,42}\\b(?:acquir(?:e|es|ed|ing)|merge[sd]?\\s+with)\\b.{0,28}${b}`,
+      (a, b) => `${b}.{0,34}\\b(?:acquired|merged)\\b.{0,18}(?:by|with).{0,24}${a}`,
+      (a, b) => `${a}.{0,30}(?:인수|합병).{0,24}${b}`,
+    ],
+  },
+  {
+    type: "투자",
+    direct: [
+      (a, b) => `${a}.{0,38}\\b(?:invest(?:s|ed|ing)?|back(?:s|ed|ing)?|fund(?:s|ed|ing)?)\\b.{0,10}(?:in|into)\\s+(?:the\\s+)?${b}`,
+      (a, b) => `${a}.{0,34}\\b(?:makes?|announces?)\\b.{0,12}\\b(?:investment|stake)\\b.{0,10}(?:in|into)\\s+(?:the\\s+)?${b}`,
+      (a, b) => `${a}.{0,80}\\b(?:backer|backers)\\b.{0,8}of\\s+${b}`,
+      (a, b) => `${b}.{0,30}\\b(?:raises?|receives?|secures?)\\b.{0,20}\\b(?:funding|investment)\\b.{0,10}(?:from|by)\\s+${a}`,
+      (a, b) => `${a}.{0,26}${b}(?:에|에게).{0,8}투자`,
+    ],
+  },
+  {
+    type: "파트너십",
+    direct: [
+      (a, b) => `${a}.{0,52}(?:partner(?:s|ed|ing)?\\s+with|teams?\\s+with|collaborat(?:e|es|ed|ing)\\s+with|integrat(?:e|es|ed|ing)\\s+with|제휴|협력|파트너십).{0,42}${b}`,
+      (a, b) => `${a}.{0,34}(?:and|와|과|·).{0,20}${b}.{0,34}(?:partnership|collaboration|integration|alliance|제휴|협력|통합|연합)`,
+      (a, b) => `${a}.{0,10},\\s*${b}.{0,34}(?:partnership|collaboration|integration|alliance|제휴|협력|통합|연합)`,
+      (a, b) => `${b}.{0,52}(?:available\\s+on|launch(?:es|ed)?\\s+on|integrat(?:e|es|ed|ing)\\s+into|탑재|연동).{0,36}${a}`,
+    ],
+  },
+  {
+    type: "공급",
+    direct: [
+      (a, b) => `${a}.{0,48}\\b(?:suppl(?:y|ies|ied)|provide[sd]?|power(?:s|ed)?|host(?:s|ed)?)\\b.{0,42}${b}`,
+      (a, b) => `${b}.{0,46}\\b(?:select(?:s|ed)?|choose|chooses|chose|adopt(?:s|ed)?|buy(?:s|ing)?)\\b.{0,38}${a}`,
+      (a, b) => `${a}.{0,34}(?:공급|제공).{0,26}${b}`,
+      (a, b) => `${b}.{0,34}(?:구매|채택|선택).{0,26}${a}`,
+      (a, b) => `${a}.{0,34}${b}(?:에서|에).{0,12}(?:제공|출시|배포)`,
+    ],
+  },
+  {
+    type: "경쟁",
+    direct: [
+      (a, b) => `${a}.{0,30}(?:vs\\.?|versus|rival(?:s|ed)?|compete[sd]?\\s+with|대항|경쟁).{0,34}${b}`,
+      (a, b) => `${a}.{0,70}(?:switch(?:es|ed|ing)?\\s+away\\s+from|shift(?:s|ed|ing)?\\s+away\\s+from|replace[sd]?|전환|대체).{0,34}${b}`,
+    ],
+  },
+];
+
+function escapeRelationRegExp(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function relationAliasPattern(name) {
+  const aliases = COMPANY_RELATION_ALIASES[name] || [name.replace(/\s*\(.*\)/, "")];
+  return `(?:${aliases.map(alias => escapeRelationRegExp(alias)).sort((a, b) => b.length - a.length).join("|")})`;
+}
+
+function matchRelationCompany(value, companies) {
+  const text = String(value || "").toLowerCase();
+  if (!text) return null;
+  return (companies || []).find(company =>
+    (COMPANY_RELATION_ALIASES[company.name] || [company.name.replace(/\s*\(.*\)/, "")])
+      .some(alias => text === alias.toLowerCase() || text.startsWith(`${alias.toLowerCase()} `))
+  ) || null;
+}
+
+function mentionedRelationCompanies(text, companies) {
+  return (companies || []).filter(company => {
+    const aliases = COMPANY_RELATION_ALIASES[company.name] || [company.name.replace(/\s*\(.*\)/, "")];
+    return aliases.some(alias => new RegExp(`(^|[^a-z0-9])${escapeRelationRegExp(alias)}([^a-z0-9]|$)`, "i").test(text));
+  });
+}
+
+function inferExplicitRelation(text, leftName, rightName) {
+  const left = relationAliasPattern(leftName);
+  const right = relationAliasPattern(rightName);
+  for (const relation of RELATION_TYPES) {
+    const patterns = [
+      ...relation.direct.map(build => build(left, right)),
+      ...relation.direct.map(build => build(right, left)),
+    ];
+    if (patterns.some(pattern => new RegExp(pattern, "i").test(text))) return relation.type;
+  }
+  return "";
+}
+
+function deriveCompanyRelationshipEdges(articles, companies) {
+  const available = new Set((companies || []).map(company => company.name));
+  const evidenceEdges = [];
+  const seen = new Set();
+  const companyEvidence = (companies || []).flatMap(company => {
+    const intelligence = company.live?.intelligence || company.intelligence || {};
+    return ["strategyDirection", "investmentDirection", "currentBusiness"].flatMap(key =>
+      (intelligence[key]?.evidence || []).map(evidence => ({
+        co: company.name,
+        title: evidence.title,
+        titleEn: evidence.titleEn,
+        titleKo: evidence.titleKo,
+        date: evidence.date,
+        source: evidence.source,
+        url: evidence.url,
+        displayEligible: true,
+        provenance: { status: "source-backed" },
+      }))
+    );
+  });
+  const sourceRows = [...(articles || []), ...companyEvidence]
+    .filter(article => article?.provenance?.status === "source-backed" && article.displayEligible !== false && /^https?:\/\//.test(String(article.url || "")))
+    .filter((article, index, rows) => rows.findIndex(other => other.url === article.url && (other.titleEn || other.title) === (article.titleEn || article.title)) === index)
+    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+
+  sourceRows.forEach(article => {
+    const primary = matchRelationCompany(article.co, companies);
+    // 관계 판정은 제목에서 두 회사와 관계 동사가 직접 함께 등장할 때만
+    // 허용한다. 요약의 주변 문맥까지 넓히면 제3자 거래를 두 회사 간
+    // 거래로 잘못 연결할 수 있으므로 관계 분류에는 사용하지 않는다.
+    const rawTitle = article.titleEn || article.title || article.titleKo || "";
+    const primaryPattern = primary ? new RegExp(relationAliasPattern(primary.name), "i") : null;
+    const text = primary && !primaryPattern.test(rawTitle) ? `${primary.name} · ${rawTitle}` : rawTitle;
+    const mentioned = mentionedRelationCompanies(text, companies);
+    const anchors = primary ? [primary] : mentioned.slice(0, 3);
+    anchors.forEach(anchor => {
+      mentioned.filter(other => other.name !== anchor.name).forEach(other => {
+        const type = inferExplicitRelation(text, anchor.name, other.name);
+        if (!type) return;
+        const pair = [anchor.name, other.name].sort().join("|");
+        const key = `${pair}|${type}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        evidenceEdges.push({
+          from: anchor.name,
+          to: other.name,
+          type,
+          label: `${type} · ${String(article.date || "").slice(5) || "최신"}`,
+          headline: article.titleKo || article.title || article.titleEn,
+          source: article.source || "원문",
+          date: article.date || "",
+          url: article.url,
+          basis: "source-backed",
+        });
+      });
+    });
+  });
+
+  // 구조적 경쟁선은 최신 원문 관계와 같은 쌍·유형이 없을 때만 보조한다.
+  // 시점성 수치나 계약 주장은 포함하지 않는다.
+  const structural = STRUCTURAL_COMPETE_EDGES
+    .filter(edge => available.has(edge.from) && available.has(edge.to))
+    .filter(edge => {
+      const key = `${[edge.from, edge.to].sort().join("|")}|${edge.type}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .map(edge => ({ ...edge, basis: "market-structure" }));
+  return [...evidenceEdges.slice(0, 24), ...structural];
+}
 
 // 비즈니스 모델 전용 — 실제 '돈의 흐름'(투자·인수·매출·파트너십). 경쟁 관계는 제외
 const MONEY_EDGES = [
@@ -2109,7 +2280,7 @@ const MONEY_EDGES = [
   { from: "Cohere", to: "Amazon", type: "파트너십", label: "AWS·소버린 배포" },
 ];
 
-function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, onNodeSelect, initialSelected = null, compact = false, sourceOnly = false, active = true }) {
+function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges, articleByCo, onNodeSelect, initialSelected = null, compact = false, sourceOnly = false, active = true }) {
   const canvasRef = React.useRef(null);
   const containerRef = React.useRef(null);
   const [hovered, setHovered] = React.useState(null);
@@ -2130,8 +2301,8 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
     if (onNodeSelect) onNodeSelect(name);
   }, [onNodeSelect]);
 
-  const edgeColors = { "경쟁": "#FF4D4D", "투자": "#00C2A8", "매출": "#F59E0B", "파트너십": "#2D6BFF", "인수": "#C026D3", "생태계": "#FFB02E", "모회사": "#6366F1", "계열사": "#8B5CF6" };
-  const edgeDash = { "경쟁": [], "투자": [6, 4], "파트너십": [3, 3], "생태계": [8, 3], "인수": [2, 2], "모회사": [], "계열사": [4, 4], "GPU 공급": [6, 2], "서비스": [3, 3], "API 공급": [5, 3], "데이터": [4, 4], "클라우드": [6, 4], "독점": [2, 4] };
+  const edgeColors = { "경쟁": "#FF4D4D", "투자": "#00C2A8", "매출": "#F59E0B", "공급": "#F59E0B", "파트너십": "#2D6BFF", "인수": "#C026D3", "생태계": "#FFB02E", "모회사": "#6366F1", "계열사": "#8B5CF6" };
+  const edgeDash = { "경쟁": [], "투자": [6, 4], "공급": [6, 2], "파트너십": [3, 3], "생태계": [8, 3], "인수": [2, 2], "모회사": [], "계열사": [4, 4], "GPU 공급": [6, 2], "서비스": [3, 3], "API 공급": [5, 3], "데이터": [4, 4], "클라우드": [6, 4], "독점": [2, 4] };
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -2160,7 +2331,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
           cat: catMap[c.cat], fixed: false,
         };
       });
-      const EDGE_SET = sourceOnly ? [] : (mode === "dynamics" ? COMPETE_EDGES : MONEY_EDGES);
+      const EDGE_SET = sourceOnly ? [] : (relationEdges || (mode === "dynamics" ? STRUCTURAL_COMPETE_EDGES : MONEY_EDGES));
       edgesRef.current = EDGE_SET.filter(e =>
         nodesRef.current.some(n => n.id === e.from) && nodesRef.current.some(n => n.id === e.to)
       );
@@ -2257,7 +2428,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
         ctx.globalAlpha = 1;
       }
 
-      const legendItems = sourceOnly ? [] : Object.entries(edgeColors);
+      const legendItems = sourceOnly ? [] : Object.entries(edgeColors).filter(([type]) => edges.some(edge => edge.type === type));
       ctx.font = "bold 10px sans-serif"; ctx.textBaseline = "top";
       legendItems.forEach(([type, color], i) => {
         const lx = 12, ly = H - 14 - (legendItems.length - 1 - i) * 16;
@@ -2324,10 +2495,11 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
       canvas.removeEventListener("touchstart", onDown);
       canvas.removeEventListener("touchend", onUp);
     };
-  }, [companies, cats, hovered, selected, selectNode, sourceOnly, active]);
+  }, [companies, cats, hovered, selected, selectNode, sourceOnly, active, relationEdges]);
 
   const selCo = selected ? companies.find(c => c.name === selected) : null;
-  const selEdges = sourceOnly ? [] : (selected ? (mode === "dynamics" ? COMPETE_EDGES : MONEY_EDGES).filter(e => e.from === selected || e.to === selected) : []);
+  const selectedEdgeSet = relationEdges || (mode === "dynamics" ? STRUCTURAL_COMPETE_EDGES : MONEY_EDGES);
+  const selEdges = sourceOnly ? [] : (selected ? selectedEdgeSet.filter(e => e.from === selected || e.to === selected) : []);
 
   return (
     <div className="kg-wrap" style={{ opacity: Math.min(1, progress * 2) }}>
@@ -2360,9 +2532,17 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
             <div className="kg-detail-edges">
               <em>관계 네트워크</em>
               {selEdges.map((e, i) => (
-                <span key={i} className="kg-edge-tag" style={{ borderColor: edgeColors[e.type] || "#888", color: edgeColors[e.type] || "#888" }}>
-                  <b>{e.type}</b> {e.from === selected ? e.to : e.from} — {e.label}
-                </span>
+                e.url ? (
+                  <a key={i} className="kg-edge-tag" href={e.url} target="_blank" rel="noopener"
+                    style={{ borderColor: edgeColors[e.type] || "#888", color: edgeColors[e.type] || "#888" }}
+                    onClick={event => event.stopPropagation()}>
+                    <b>{e.type}</b> {e.from === selected ? e.to : e.from} — {e.label}
+                  </a>
+                ) : (
+                  <span key={i} className="kg-edge-tag" style={{ borderColor: edgeColors[e.type] || "#888", color: edgeColors[e.type] || "#888" }}>
+                    <b>{e.type}</b> {e.from === selected ? e.to : e.from} — {e.label}
+                  </span>
+                )
               ))}
             </div>
           )}
@@ -2377,8 +2557,8 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, articleByCo, 
 const DYNAMICS_AXES = [
   { id: "competition", label: "경쟁", color: "#FF4D4D", types: ["경쟁"] },
   { id: "partnership", label: "파트너십", color: "#2D6BFF", types: ["파트너십"] },
-  { id: "investment", label: "투자", color: "#00C2A8", types: ["투자"] },
-  { id: "supply", label: "공급", color: "#F59E0B", types: ["매출"] },
+  { id: "investment", label: "투자·인수", color: "#00C2A8", types: ["투자", "인수"] },
+  { id: "supply", label: "공급", color: "#F59E0B", types: ["공급", "매출"] },
 ];
 
 function ESCompetitiveMap({ companies, cats, articles, active }) {
@@ -2389,10 +2569,12 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
   const prog = useProgress(inView, 1400);
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
 
-  // 연결 관계(COMPETE_EDGES)가 있는 업체만 노드로 표시 — 관계 없는 업체는 제외. + 업체별 최신 기사 매핑
-  const { list, articleByCo } = React.useMemo(() => {
+  // 최신 source-backed 기사에서 명시적으로 확인된 관계를 먼저 만들고,
+  // 시점성 주장이 없는 시장 중첩선만 보조선으로 합친다.
+  const { list, articleByCo, dynamicEdges } = React.useMemo(() => {
+    const dynamicEdges = deriveCompanyRelationshipEdges(articles, companies);
     const connected = new Set();
-    COMPETE_EDGES.forEach(e => { connected.add(e.from); connected.add(e.to); });
+    dynamicEdges.forEach(e => { connected.add(e.from); connected.add(e.to); });
     const list = companies.filter(c => connected.has(c.name));
     const names = list.map(c => c.name);
     const matchName = (co) => names.find(n => n === co || co.startsWith(n.split(" (")[0]) || n.startsWith(co.split(" (")[0]));
@@ -2403,10 +2585,11 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
       if (!m) return;
       if (!byName[m] || a.date > byName[m].date) byName[m] = { title: a.title, url: a.url, date: a.date };
     });
-    return { list, articleByCo: byName };
+    return { list, articleByCo: byName, dynamicEdges };
   }, [companies, articles]);
 
-  const graphKey = list.map(c => c.name).join("|");   // 목록이 바뀌면 그래프 재구성
+  const edgeSignature = dynamicEdges.map(edge => `${edge.from}>${edge.to}:${edge.type}:${edge.date || ""}`).join("|");
+  const graphKey = `${list.map(c => c.name).join("|")}::${edgeSignature}`;   // 업체·관계가 바뀌면 그래프 재구성
   const defaultCompany = list.some(c => c.name === "OpenAI") ? "OpenAI" : (list[0] ? list[0].name : null);
   const [activeCompany, setActiveCompany] = React.useState(defaultCompany);
 
@@ -2437,8 +2620,16 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
   const selectedArticle = selectedCompany ? articleByCo[selectedCompany.name] : null;
   const relationshipGroups = selectedCompany ? DYNAMICS_AXES.map(axis => ({
     ...axis,
-    items: COMPETE_EDGES.filter(edge => axis.types.includes(edge.type) && (edge.from === selectedCompany.name || edge.to === selectedCompany.name))
-      .map(edge => ({ company: edge.from === selectedCompany.name ? edge.to : edge.from, label: edge.label }))
+    items: dynamicEdges.filter(edge => axis.types.includes(edge.type) && (edge.from === selectedCompany.name || edge.to === selectedCompany.name))
+      .map(edge => ({
+        company: edge.from === selectedCompany.name ? edge.to : edge.from,
+        label: edge.label,
+        headline: edge.headline || edge.label,
+        source: edge.source || "",
+        date: edge.date || "",
+        url: edge.url || "",
+        basis: edge.basis,
+      }))
       .slice(0, 3),
   })).filter(axis => axis.items.length > 0) : [];
 
@@ -2447,6 +2638,7 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
      <AnimCtx.Provider value={inView}>
       <div className="es-cm-head">
         <span className="es-cm-kicker"><em>Competitive Dynamics</em></span>
+        <span className="es-cm-live">SOURCE-BACKED · DAILY</span>
         <span className="es-cm-legend">
           <i style={{ background: "#FF4D4D" }} />경쟁
           <i style={{ background: "#2D6BFF" }} />파트너십
@@ -2463,6 +2655,7 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
             catMap={catMap}
             progress={prog}
             mode="dynamics"
+            relationEdges={dynamicEdges}
             articleByCo={articleByCo}
             initialSelected={activeCompany}
             onNodeSelect={setActiveCompany}
@@ -2495,7 +2688,17 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
                     {relationshipGroups.map(axis => (
                       <div key={axis.id} className="dyn-relationship" style={{ "--axis": axis.color }}>
                         <b>{axis.label}</b>
-                        <div>{axis.items.map(item => <span key={`${item.company}-${item.label}`}><strong>{item.company}</strong>{item.label}</span>)}</div>
+                        <div>{axis.items.map(item => item.url ? (
+                          <a key={`${item.company}-${item.label}`} href={item.url} target="_blank" rel="noopener">
+                            <strong>{item.company}</strong>
+                            <span>{item.headline}</span>
+                            <em>{item.date ? `${item.date.slice(2)} · ` : ""}{item.source}</em>
+                          </a>
+                        ) : (
+                          <span key={`${item.company}-${item.label}`}>
+                            <strong>{item.company}</strong>{item.label}<em>시장 구조</em>
+                          </span>
+                        ))}</div>
                       </div>
                     ))}
                   </div>

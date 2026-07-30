@@ -609,17 +609,28 @@ try {
 }
 
 try {
-  const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
+  const [boards, styles, app] = await Promise.all([
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+    readFile("app.jsx", "utf8"),
+  ]);
   const videoPanel = boards.includes('src="assets/competitive-dynamics.mp4"')
     && boards.includes("const DYNAMICS_AXES")
+    && boards.includes("deriveCompanyRelationshipEdges")
+    && boards.includes('article?.provenance?.status === "source-backed"')
+    && boards.includes("relationEdges={dynamicEdges}")
+    && boards.includes("SOURCE-BACKED · DAILY")
+    && !boards.includes("const COMPETE_EDGES")
     && boards.includes("onNodeSelect={setActiveCompany}")
     && boards.includes("relationshipGroups.length > 0")
     && !boards.includes("false && relationshipGroups.length > 0")
     && boards.includes("video.playbackRate = 0.55")
-    && boards.includes("compact");
+    && boards.includes("compact")
+    && app.includes('companyInView || active === "overview"');
   const interactiveLayout = styles.includes(".es-dynamics-grid")
     && styles.includes(".dyn-video-panel")
     && styles.includes(".dyn-relationship")
+    && styles.includes(".dyn-relationship > div > a")
     && styles.includes("grid-template-columns: minmax(460px, 1.25fr) minmax(340px, .85fr)")
     && styles.includes("brightness(.66)");
   if (!videoPanel || !interactiveLayout) {

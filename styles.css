@@ -1839,8 +1839,22 @@ a[href]:hover .rainbow-on-hover,
 }
 .dyn-relationship > b { color: var(--axis); font-size: 10px; font-weight: 900; }
 .dyn-relationship > div { min-width: 0; display: grid; gap: 3px; }
-.dyn-relationship span { color: #DCE8FF; font-size: 10px; line-height: 1.35; overflow-wrap: anywhere; }
-.dyn-relationship span strong { margin-right: 4px; color: #FFF; font-weight: 900; }
+.dyn-relationship > div > a, .dyn-relationship > div > span {
+  min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 5px;
+  color: #DCE8FF; font-size: 10px; line-height: 1.35; overflow-wrap: anywhere; text-decoration: none;
+  padding: 3px 4px; border-radius: 4px; transition: background .18s, transform .18s;
+}
+.dyn-relationship > div > a:hover, .dyn-relationship > div > a:focus-visible {
+  color: #FFF; background: rgba(255,255,255,.12); transform: translateX(2px); outline: none;
+}
+.dyn-relationship strong { color: #FFF; font-weight: 900; }
+.dyn-relationship a > span { min-width: 0; color: #DCE8FF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dyn-relationship em { grid-column: 2; color: #AABBE0; font-size: 8.5px; font-style: normal; font-weight: 700; }
+.es-cm-live {
+  display: inline-flex; align-items: center; margin-left: 2px; padding: 3px 7px;
+  border: 1px solid #8EDBCF; border-radius: 4px; background: #E9F8F5;
+  color: #087F6D; font-size: 9px; font-weight: 900; letter-spacing: .45px;
+}
 .dyn-source {
   margin-top: 11px; width: fit-content; display: inline-flex; gap: 7px; align-items: center; color: #FFFFFF;
   text-decoration: none; font-size: 10.5px; font-weight: 800; padding: 5px 8px; border-radius: 6px;
@@ -1866,8 +1880,9 @@ a[href]:hover .rainbow-on-hover,
   display: inline-flex; align-items: center; gap: 4px;
   font-size: 11px; font-weight: 600; padding: 3px 8px;
   border: 1.5px solid; border-radius: 6px; background: transparent;
-  line-height: 1.3;
+  line-height: 1.3; text-decoration: none;
 }
+.kg-edge-tag:hover, .kg-edge-tag:focus-visible { background: color-mix(in srgb, currentColor 9%, transparent); transform: translateY(-1px); }
 .kg-edge-tag b { font-size: 9px; font-weight: 800; text-transform: uppercase; }
 .kg-hint {
   text-align: center; font-size: 10.5px; color: var(--muted);
