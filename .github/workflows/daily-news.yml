@@ -23,6 +23,7 @@ on:
 
 permissions:
   contents: write
+  models: read
 
 concurrency:
   group: daily-news
@@ -35,6 +36,8 @@ jobs:
     env:
       RETRY_ATTEMPTS: 3
       PIPELINE_TIMEOUT_MS: 300000
+      GITHUB_MODELS_TOKEN: ${{ github.token }}
+      GITHUB_MODELS_MODEL: openai/gpt-4.1
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -88,7 +91,10 @@ jobs:
       - name: Reframe source briefs as fact, change and implication
         run: node scripts/reframe-source-briefs.mjs
 
-      - name: Crawl startup strategies (투자·협력 관점, 주간)
+      - name: Crawl complete a16z Top 100 web/mobile company lists
+        run: node scripts/run-with-retry.mjs scripts/crawl-a16z-startups.mjs
+
+      - name: Crawl startup strategies and source-grounded AI synthesis (주간)
         run: node scripts/run-with-retry.mjs scripts/crawl-startups.mjs
 
       - name: Localise distinct source-page sentences
@@ -105,6 +111,12 @@ jobs:
 
       - name: Reclassify company monetization to the 7-layer SW-service value chain
         run: node scripts/run-with-retry.mjs scripts/crawl-monetization.mjs
+
+      - name: Refresh deployment-company and AI services venture cases
+        run: node scripts/run-with-retry.mjs scripts/crawl-strategic-ventures.mjs
+
+      - name: Synthesize company business model, strategy, practices and executive quotes
+        run: node scripts/run-with-retry.mjs scripts/build-company-intelligence.mjs
 
       - name: Verify evidence, provenance and cumulative history
         run: node scripts/run-with-retry.mjs scripts/verify-pipeline.mjs
@@ -134,7 +146,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json stocks.json financials.json stock-events.json deleted.json insights.json briefing.json radar.json research.json companies.json startups.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
+          git add news.json stocks.json financials.json stock-events.json deleted.json insights.json briefing.json radar.json research.json companies.json startups.json a16z-startups.json strategic-ventures.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

@@ -14,6 +14,9 @@ const required = [
   "scripts/crawl-financials.mjs",
   "scripts/crawl-companies.mjs",
   "scripts/crawl-monetization.mjs",
+  "scripts/crawl-a16z-startups.mjs",
+  "scripts/crawl-strategic-ventures.mjs",
+  "scripts/build-company-intelligence.mjs",
   "scripts/crawl-markets.mjs",
   "scripts/market-db.mjs",
   "scripts/refresh-market-source-content.mjs",
@@ -34,6 +37,8 @@ const required = [
   "stocks.json",
   "financials.json",
   "companies.json",
+  "a16z-startups.json",
+  "strategic-ventures.json",
   "monetization.json",
   "quality.json",
   "history.json",
@@ -150,9 +155,13 @@ try {
     && boards.includes("function MobileStrategyBoard")
     && boards.includes("function StrategyPortfolioCard")
     && boards.includes("Where to Play / How to Win")
-    && boards.includes("Position → Shift → Operator Decision")
+    && boards.includes("Business → Economics → Direction")
+    && ["현재 사업", "Biz Model", "사업 방향", "최근 실행"].every(label => boards.includes(`>${label}<`))
     && boards.includes('className="vc-portfolio-grid"')
     && boards.includes('className="startup-portfolio-grid"')
+    && !boards.includes("PORTFOLIO DECISION")
+    && !boards.includes("STRATEGIC MOVE")
+    && !boards.includes("옵션 확보 · 신호 감시")
     && !boards.includes("<h4>밸류 프로포지션")
     && !boards.includes("<h4>방향성 · 추구 가치")
     && app.includes('id="strategy"')
@@ -160,13 +169,55 @@ try {
     && monetizationCrawler.includes("loadDash().COMPANY_LAYER");
   if (JSON.stringify(layerIds) !== JSON.stringify(expectedLayers)
     || normalized.length !== (dash.COMPANIES || []).length
-    || companies.schemaVersion !== 3 || !completeCoverage || !strategyReady || !linkedinReady) {
+    || companies.schemaVersion !== 4 || !completeCoverage || !strategyReady || !linkedinReady) {
     throw new Error("seven-layer strategy, MECE portfolio UI, normalized profiles, or verified LinkedIn links are incomplete");
   }
   console.log(`  OK  단말 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  mobile strategy and company normalization: ${error.message}`);
+}
+
+try {
+  const [companies, startups, a16z, ventures, workflow, intelligenceBuilder] = await Promise.all([
+    readFile("companies.json", "utf8").then(JSON.parse),
+    readFile("startups.json", "utf8").then(JSON.parse),
+    readFile("a16z-startups.json", "utf8").then(JSON.parse),
+    readFile("strategic-ventures.json", "utf8").then(JSON.parse),
+    readFile(".github/workflows/daily-news.yml", "utf8"),
+    readFile("scripts/build-company-intelligence.mjs", "utf8"),
+  ]);
+  const intelligenceReady = Object.values(companies.companies || {}).every(company => {
+    const value = company.intelligence || {};
+    return value.currentBusiness?.summary && value.revenueModel?.summary
+      && value.strategyDirection?.summary && value.investmentDirection?.summary
+      && Array.isArray(value.corePractices) && Array.isArray(value.newBusinessModels)
+      && Array.isArray(value.executiveQuotes);
+  });
+  const a16zReady = a16z.web?.length === 50 && a16z.mobile?.length === 50
+    && startups.institutionalSource?.webCount === 50
+    && startups.institutionalSource?.mobileCount === 50
+    && (startups.institutional || []).length >= 75
+    && startups.institutionalSource?.url === "https://a16z.com/100-gen-ai-apps-6/";
+  const ventureCases = Object.values(ventures.companies || {}).flat();
+  const ventureReady = ventureCases.some(item => item.id === "openai-deployco")
+    && ventureCases.some(item => item.id === "anthropic-enterprise-ai-services")
+    && ventures.comparison?.operatorMove
+    && ventures.comparison?.market?.source?.url;
+  const workflowReady = /models:\s*read/.test(workflow)
+    && /crawl-a16z-startups\.mjs/.test(workflow)
+    && /crawl-strategic-ventures\.mjs/.test(workflow)
+    && /build-company-intelligence\.mjs/.test(workflow);
+  const grounded = intelligenceBuilder.includes("evidenceIds")
+    && intelligenceBuilder.includes("publisher evidence")
+    && intelligenceBuilder.includes("quoteOriginal");
+  if (!intelligenceReady || !a16zReady || !ventureReady || !workflowReady || !grounded) {
+    throw new Error("company intelligence, a16z 50+50, strategic ventures, or grounded synthesis automation is incomplete");
+  }
+  console.log(`  OK  기업 인텔리전스 ${Object.keys(companies.companies || {}).length}개 · a16z Web 50/Mobile 50 · DeployCo/JV 근거 자동화`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  deep company intelligence automation: ${error.message}`);
 }
 
 try {
@@ -733,7 +784,7 @@ if (major < 20) {
   console.log(`  정상  Node.js ${process.version}`);
 }
 
-console.log("  정보  요약 엔진: 원문 발췌(외부 AI API 미사용)");
+console.log("  정보  기사 사실: 원문 발췌 · 기업 전략: GitHub Models 근거 제한 종합");
 console.log("  정보  기본 파이프라인: 매일 06:30 · 12:30 · 19:30 · 00:30 KST");
 console.log("  정보  보조 업데이트: 수동 복구 전용(동시 쓰기 방지)");
 
@@ -742,6 +793,8 @@ const pipelineScripts = [
   "scripts/crawl-startups.mjs", "scripts/crawl-markets.mjs", "scripts/crawl-infra.mjs",
   "scripts/crawl-bizmodel.mjs", "scripts/generate-briefing.mjs", "scripts/startup-radar.mjs",
   "scripts/build-insights.mjs", "scripts/crawl-companies.mjs", "scripts/crawl-monetization.mjs",
+  "scripts/crawl-a16z-startups.mjs", "scripts/crawl-strategic-ventures.mjs",
+  "scripts/build-company-intelligence.mjs",
 ];
 for (const file of pipelineScripts) {
   const source = await readFile(file, "utf8");
@@ -754,17 +807,19 @@ for (const file of pipelineScripts) {
 try {
   const policy = JSON.parse(await readFile("config/news-policy.json", "utf8"));
   const health = JSON.parse(await readFile("llm-health.json", "utf8"));
-  if (policy.summaryMode !== "source-content-extractive" || health.externalModelApiCalls !== 0) {
-    throw new Error("source-only policy or model API health declaration is invalid");
+  if (policy.summaryMode !== "source-content-extractive"
+    || health.companySynthesis?.policy !== "publisher-evidence-id-grounded") {
+    throw new Error("source-extractive article policy or grounded company-synthesis declaration is invalid");
   }
   const sources = await Promise.all(pipelineScripts.concat(["scripts/llm.mjs", "scripts/translate_summarize.py"]).map(file => readFile(file, "utf8")));
-  if (sources.some(source => /api\.anthropic\.com|models\.github\.ai|@anthropic-ai\/sdk/.test(source))) {
-    throw new Error("a model API endpoint or SDK remains in an active pipeline source");
+  if (sources.some(source => /api\.anthropic\.com|@anthropic-ai\/sdk/.test(source))
+    || !sources.some(source => /models\.github\.ai/.test(source))) {
+    throw new Error("company synthesis must use the approved GitHub Models endpoint only");
   }
-  console.log("  정상  source-only facts + source-bound translated display (external AI API calls: 0)");
+  console.log("  정상  기사 원문 사실 + source-bound 번역 + publisher-evidence 기반 기업전략 종합");
 } catch (error) {
   failed = true;
-  console.error(`  실패  source-only policy: ${error.message}`);
+  console.error(`  실패  source-grounded synthesis policy: ${error.message}`);
 }
 
 try {

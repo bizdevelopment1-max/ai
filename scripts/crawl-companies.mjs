@@ -103,10 +103,11 @@ const classifyPractices = (arts) => {
 };
 
 async function main() {
-  let articles = [], stocks = {}, financials = {};
+  let articles = [], stocks = {}, financials = {}, previousCompanies = {};
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   try { stocks = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
   try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
+  try { previousCompanies = JSON.parse(await readFile("companies.json", "utf8")).companies || {}; } catch {}
   const dash = loadDash();
   const orgSource = dash.COMPANY_ORG || {};
   const linkedinSource = dash.LINKEDIN_PROFILES || {};
@@ -124,7 +125,12 @@ async function main() {
     if (Array.isArray(f.officers) && f.officers.length) rec.officers = f.officers;
     if (f.revenueQ) { rec.revenueQ = f.revenueQ; rec.quarterEnd = f.quarterEnd || ""; }
     if (f.netIncomeQ) rec.netIncomeQ = f.netIncomeQ;
-    if (f.employees) { rec.employees = f.employees; rec.employeesAsof = f.asOf || ""; }
+    if (f.employees) {
+      rec.employees = f.employees;
+      rec.employeesAsof = f.employeesAsOf || f.asOf || "";
+      rec.employeesSource = f.employeesSource || "Yahoo Finance";
+      rec.employeesSourceUrl = f.employeesSourceUrl || "";
+    }
   };
 
   const byCo = {};
@@ -234,8 +240,8 @@ async function main() {
     };
     const normalizedOrg = {
       ...o,
-      leadership: Array.isArray(o.leadership) ? o.leadership.slice(0, 8).map(withDirectLinkedIn) : [],
-      officers: Array.isArray(rec.officers) ? rec.officers.slice(0, 8).map(withDirectLinkedIn) : [],
+      leadership: Array.isArray(o.leadership) ? o.leadership.slice(0, 12).map(withDirectLinkedIn) : [],
+      officers: Array.isArray(rec.officers) ? rec.officers.slice(0, 12).map(withDirectLinkedIn) : [],
       sourceMode: Array.isArray(rec.officers) && rec.officers.length ? "live-officers+curated-background" : "curated+news-monitoring",
     };
     const profileChecks = [
@@ -260,10 +266,20 @@ async function main() {
     rec.updatedAt = nowIso;
   }
 
+  // 기업전략 종합은 별도 단계(build-company-intelligence.mjs)에서 생성한다.
+  // 하루 여러 차례 회사·실적 원장을 갱신해도 마지막 근거 기반 AI 분석을 먼저
+  // 보존해 불필요한 모델 호출과 일시적인 분석 품질 하락을 막는다.
+  for (const [name, rec] of Object.entries(companies)) {
+    const previous = previousCompanies[name];
+    if (previous?.intelligence) rec.intelligence = previous.intelligence;
+    if (Array.isArray(previous?.strategicVentures)) rec.strategicVentures = previous.strategicVentures;
+    if (previous?.strategicVentureComparison) rec.strategicVentureComparison = previous.strategicVentureComparison;
+  }
+
   const out = {
     generatedAt: nowIso,
-    schemaVersion: 3,
-    methodology: "normalized-company-profile+live-financials+verified-linkedin+news-signals",
+    schemaVersion: 4,
+    methodology: "normalized-company-profile+live-financials+verified-linkedin+news-signals+company-intelligence-ready",
     companies,
   };
   await writeFile("companies.json", JSON.stringify(out) + "\n");

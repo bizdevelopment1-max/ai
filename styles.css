@@ -626,21 +626,23 @@ a[href]:hover .rainbow-on-hover,
 .vc-filter-bar button { border: 1px solid var(--line); border-radius: 6px; padding: 5px 9px; background: var(--panel); color: var(--ink-2); font-size: 10.5px; font-weight: 750; cursor: pointer; }
 .vc-filter-bar button em { margin-left: 4px; font-style: normal; color: var(--muted); }
 .vc-filter-bar button:hover, .vc-filter-bar button.on { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
-.vc-portfolio-grid, .startup-portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; padding: 12px 20px 20px; }
+.vc-portfolio-grid, .startup-portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(355px, 1fr)); gap: 12px; padding: 14px 20px 22px; }
 
-/* 공통 전략 포트폴리오 카드 — 전체 테두리/배경으로 상태를 표현하고 단측 강조선은 쓰지 않는다. */
-.sp-card { position: relative; min-width: 0; display: flex; flex-direction: column; gap: 11px; padding: 14px; border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line)); border-radius: 10px; background: color-mix(in srgb, var(--accent) 3%, var(--panel)); cursor: pointer; transition: transform .15s, border-color .15s, background .15s, box-shadow .15s; }
+/* 공통 기업 인텔리전스 카드 — 사업·수익·방향·실행을 메인에서 바로 비교. */
+.sp-card { position: relative; min-width: 0; min-height: 305px; display: flex; flex-direction: column; gap: 11px; padding: 16px; border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line)); border-radius: 10px; background: color-mix(in srgb, var(--accent) 3%, var(--panel)); cursor: pointer; transition: transform .15s, border-color .15s, background .15s, box-shadow .15s; }
 .sp-card:hover, .sp-card:focus-visible { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--panel)); box-shadow: 0 9px 22px color-mix(in srgb, var(--accent) 12%, transparent); transform: translateY(-2px); outline: none; }
 .sp-card-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .sp-card-head .ct-logo { flex: none; }
 .sp-card-company { min-width: 0; display: flex; flex: 1; flex-direction: column; gap: 1px; }
 .sp-card-company em { overflow: hidden; color: var(--muted); font-size: 9px; font-style: normal; font-weight: 800; letter-spacing: .035em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
-.sp-card-company b { overflow: hidden; color: var(--ink); font-size: 14px; font-weight: 850; letter-spacing: -.015em; text-overflow: ellipsis; white-space: nowrap; }
+.sp-card-company b { overflow: hidden; color: var(--ink); font-size: 15px; font-weight: 850; letter-spacing: -.015em; text-overflow: ellipsis; white-space: nowrap; }
 .sp-card-badge { flex: none; border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); border-radius: 5px; padding: 2px 6px; background: color-mix(in srgb, var(--accent) 11%, var(--panel)); color: var(--accent); font-family: var(--mono); font-size: 8.5px; font-weight: 900; }
-.sp-card-decision, .sp-card-route { display: grid; grid-template-columns: 92px minmax(0, 1fr); align-items: baseline; gap: 8px; }
-.sp-card-decision span, .sp-card-route span { color: var(--muted); font-family: var(--mono); font-size: 8px; font-weight: 900; letter-spacing: .04em; }
-.sp-card-decision b { color: var(--accent); font-size: 12px; font-weight: 850; line-height: 1.4; }
-.sp-card-route b { color: var(--ink-2); font-size: 11.5px; font-weight: 750; line-height: 1.4; }
+.sp-card-institution { border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line)); border-radius: 6px; padding: 6px 8px; background: color-mix(in srgb, var(--accent) 6%, var(--panel)); color: var(--accent); font-size: 9px; font-weight: 800; }
+.sp-card-intel { display: flex; flex-direction: column; gap: 7px; }
+.sp-card-intel > div { display: grid; grid-template-columns: 78px minmax(0, 1fr); align-items: start; gap: 9px; border: 1px solid color-mix(in srgb, var(--accent) 15%, var(--line)); border-radius: 7px; padding: 8px 9px; background: color-mix(in srgb, var(--accent) 2%, var(--panel)); }
+.sp-card-intel span { color: var(--muted); font-size: 9px; font-weight: 850; line-height: 1.45; text-transform: uppercase; }
+.sp-card-intel b { color: var(--ink-2); font-size: 11.3px; font-weight: 720; line-height: 1.48; text-wrap: pretty; }
+.sp-card-intel > div:nth-child(2) b { color: var(--accent); font-weight: 820; }
 .sp-card-foot { display: grid; grid-template-columns: auto auto 1fr; align-items: end; gap: 8px 12px; margin-top: auto; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line)); }
 .sp-card-foot span { display: flex; flex-direction: column; gap: 2px; color: var(--ink-2); font-size: 9.5px; font-weight: 750; }
 .sp-card-foot span em { color: var(--muted); font-family: var(--mono); font-size: 7.5px; font-style: normal; font-weight: 900; letter-spacing: .05em; }
@@ -650,6 +652,7 @@ a[href]:hover .rainbow-on-hover,
 @media (max-width: 700px) {
   .vc-portfolio-grid, .startup-portfolio-grid { grid-template-columns: 1fr; padding: 10px 12px 16px; }
   .vc-filter-bar { padding: 12px 12px 3px; }
+  .sp-card { min-height: 0; }
   .sp-card-foot { grid-template-columns: auto auto; }
   .sp-card-foot > b { grid-column: 1 / -1; justify-self: start; }
 }
@@ -1048,6 +1051,8 @@ a[href]:hover .rainbow-on-hover,
 .cd-prof-row { display: grid; grid-template-columns: 62px 1fr; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--line-2); font-size: 12.5px; }
 .cd-prof-row em { font-style: normal; font-weight: 800; color: var(--muted); }
 .cd-prof-row span { font-weight: 600; line-height: 1.45; }
+.cd-prof-source { display: inline-flex; margin-top: 7px; font-size: 10px; font-weight: 800; color: var(--accent); text-decoration: none; }
+.cd-prof-source:hover { text-decoration: underline; }
 .cd-prof-biz { margin-top: 12px; }
 .cd-prof-biz > em { display: block; font-style: normal; font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; }
 .cd-prof-biz ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
@@ -1076,10 +1081,52 @@ a[href]:hover .rainbow-on-hover,
 .cd-sf-card.shift { border-color: color-mix(in srgb, #7A38D6 36%, var(--line)); background: color-mix(in srgb, #7A38D6 3%, var(--panel)); }
 .cd-sf-card.action { border-color: color-mix(in srgb, #16A34A 48%, var(--line)); background: color-mix(in srgb, #16A34A 5%, var(--panel)); }
 .cd-sf-card.risk { border-color: color-mix(in srgb, #EA580C 48%, var(--line)); background: color-mix(in srgb, #EA580C 5%, var(--panel)); }
+.cd-intelligence-grid .cd-sf-card { padding: 14px; border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); background: color-mix(in srgb, var(--accent) 2.5%, var(--panel)); }
+.cd-intelligence-grid .cd-sf-card.revenueModel { border-color: color-mix(in srgb, #16A34A 42%, var(--line)); background: color-mix(in srgb, #16A34A 4%, var(--panel)); }
+.cd-intelligence-grid .cd-sf-card.strategyDirection { border-color: color-mix(in srgb, #7A38D6 42%, var(--line)); background: color-mix(in srgb, #7A38D6 4%, var(--panel)); }
+.cd-intelligence-grid .cd-sf-card.investmentDirection { border-color: color-mix(in srgb, #EA580C 42%, var(--line)); background: color-mix(in srgb, #EA580C 4%, var(--panel)); }
+.cd-intelligence-grid .cd-sf-card > em i { color: var(--muted); font-style: normal; font-weight: 650; }
+.cd-intelligence-grid .cd-sf-card > b { font-size: 13px; line-height: 1.55; }
+.cd-intelligence-grid .cd-sf-card ul { margin: 8px 0 0; padding-left: 17px; }
+.cd-intelligence-grid .cd-sf-card li { margin: 3px 0; color: var(--ink-2); font-size: 11px; font-weight: 620; line-height: 1.5; }
+.cd-intel-sources { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.cd-intel-sources a { border: 1px solid var(--line); border-radius: 4px; padding: 3px 6px; color: var(--accent); background: var(--panel); font-size: 9px; font-weight: 760; text-decoration: none; }
+.cd-intel-sources a:hover { border-color: var(--accent); }
 .cd-sf-evidence { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line); }
 .cd-sf-evidence span { font-size: 9.5px; font-weight: 650; color: var(--muted); }
 .cd-sf-evidence b { margin-right: 5px; color: var(--ink-2); font-weight: 850; }
 @media (max-width: 560px) { .cd-sf-grid { grid-template-columns: 1fr; }.cd-refresh { width: 100%; margin-left: 0; } }
+
+/* 신규 비즈니스 모델·deployment company 사례 */
+.cd-venture-list { display: flex; flex-direction: column; gap: 12px; }
+.cd-venture-card { border: 2px solid color-mix(in srgb, var(--accent) 42%, var(--line)); border-radius: 12px; padding: 15px; background: color-mix(in srgb, var(--accent) 3%, var(--panel)); }
+.cd-venture-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.cd-venture-head > div em { display: block; color: var(--muted); font-family: var(--mono); font-size: 9px; font-style: normal; font-weight: 800; }
+.cd-venture-head h5 { margin: 3px 0 0; color: var(--ink); font-size: 16px; font-weight: 880; letter-spacing: -.02em; }
+.cd-venture-head > span { max-width: 46%; border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line)); border-radius: 6px; padding: 6px 8px; color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--panel)); font-size: 10px; font-weight: 800; line-height: 1.45; }
+.cd-venture-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.cd-venture-facts > div { border: 1px solid var(--line); border-radius: 8px; padding: 10px 11px; background: var(--panel); }
+.cd-venture-facts > div.implication { grid-column: 1 / -1; border-color: color-mix(in srgb, var(--accent) 38%, var(--line)); background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+.cd-venture-facts em { display: block; margin-bottom: 4px; color: var(--muted); font-size: 9px; font-style: normal; font-weight: 850; text-transform: uppercase; }
+.cd-venture-facts b { display: block; color: var(--ink); font-size: 11.8px; font-weight: 780; line-height: 1.5; }
+.cd-venture-facts p { margin: 5px 0 0; color: var(--muted); font-size: 10.5px; font-weight: 620; line-height: 1.5; }
+.cd-venture-sources { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
+.cd-venture-sources a { border: 1px solid var(--line); border-radius: 4px; padding: 4px 7px; color: var(--accent); background: var(--panel); font-size: 9.5px; font-weight: 760; text-decoration: none; }
+.cd-venture-comparison { margin-top: 12px; border: 2px solid color-mix(in srgb, #1428A0 40%, var(--line)); border-radius: 10px; padding: 13px 14px; background: color-mix(in srgb, #1428A0 4%, var(--panel)); }
+.cd-venture-comparison > em { display: block; color: #1428A0; font-size: 9px; font-style: normal; font-weight: 900; }
+.cd-venture-comparison > b { display: block; margin-top: 3px; font-size: 14px; font-weight: 850; }
+.cd-venture-comparison > p { margin: 6px 0; color: var(--ink-2); font-size: 11.5px; font-weight: 650; line-height: 1.55; }
+.cd-venture-comparison > strong { display: block; color: var(--ink); font-size: 11.5px; line-height: 1.55; }
+.cd-venture-comparison > a { display: inline-block; margin-top: 8px; color: #1428A0; font-size: 10px; font-weight: 800; text-decoration: none; }
+.cd-newbm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 9px; }
+.cd-newbm-card { border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line)); border-radius: 9px; padding: 12px; background: color-mix(in srgb, var(--accent) 3%, var(--panel)); }
+.cd-newbm-card > em { color: var(--accent); font-family: var(--mono); font-size: 8px; font-style: normal; font-weight: 900; }
+.cd-newbm-card h5 { margin: 4px 0 6px; font-size: 13px; font-weight: 850; }
+.cd-newbm-card p { margin: 0; color: var(--ink-2); font-size: 11px; font-weight: 650; line-height: 1.5; }
+.cd-newbm-card strong { display: block; margin-top: 7px; color: var(--ink); font-size: 10.5px; line-height: 1.5; }
+.cd-newbm-card a { display: inline-block; margin-top: 8px; color: var(--accent); font-size: 9.5px; font-weight: 780; text-decoration: none; }
+@media (max-width: 560px) { .cd-venture-head { flex-direction: column; }.cd-venture-head > span { max-width: none; }.cd-venture-facts { grid-template-columns: 1fr; }.cd-venture-facts > div.implication { grid-column: auto; } }
+
 /* 미션 · 조직도(리더십) */
 .cd-mission-txt { font-size: 14px; font-weight: 700; line-height: 1.6; padding: 11px 14px; border-left: 3px solid var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); border-radius: 0 8px 8px 0; }
 .cd-org { display: flex; flex-direction: column; align-items: center; gap: 0; }
@@ -1087,6 +1134,10 @@ a[href]:hover .rainbow-on-hover,
 .cd-org-node b { font-size: 13px; font-weight: 850; letter-spacing: -.01em; }
 .cd-org-role { font-size: 11px; font-weight: 700; color: var(--accent); }
 .cd-org-bg { font-size: 10.5px; font-weight: 600; color: var(--muted); line-height: 1.4; }
+.cd-org-background { display: flex; flex-direction: column; gap: 4px; margin: 6px 0 0; text-align: left; }
+.cd-org-background > div { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 6px; }
+.cd-org-background dt { color: var(--muted); font-size: 8.5px; font-weight: 850; }
+.cd-org-background dd { margin: 0; color: var(--ink-2); font-size: 9.5px; font-weight: 620; line-height: 1.4; }
 .cd-org-node.lead { border-width: 2px; border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
 .cd-org-li { margin-top: 4px; font-size: 9.5px; font-weight: 900; letter-spacing: .04em; color: #0A66C2; text-decoration: none; border: 1px solid color-mix(in srgb, #0A66C2 35%, transparent); border-radius: 4px; padding: 1px 6px; }
 .cd-org-li:hover { background: color-mix(in srgb, #0A66C2 10%, transparent); }
@@ -1145,6 +1196,7 @@ a[href]:hover .rainbow-on-hover,
 .cd-cp-n { font-family: var(--mono); font-size: 11px; font-weight: 800; color: var(--muted); }
 .cd-cp-bar { height: 6px; border-radius: 3px; background: var(--line-2); overflow: hidden; }
 .cd-cp-bar i { display: block; height: 100%; border-radius: 3px; }
+.cd-cp-insight { margin: 5px 0 0; color: var(--ink-2); font-size: 11.5px; font-weight: 650; line-height: 1.5; }
 .cd-cp-latest { display: block; margin-top: 5px; font-size: 11.5px; font-weight: 600; line-height: 1.45; color: var(--ink); text-decoration: none; }
 .cd-cp-latest:hover { text-decoration: underline; }
 .cd-cp-latest em { font-style: normal; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--muted); margin-right: 6px; }

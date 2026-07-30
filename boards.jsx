@@ -276,12 +276,35 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
   );
 }
 
-// ---- 공통 전략 포트폴리오 카드 ----
-// 메인은 "어떤 판단을 내릴지"만 보여주고, 기업 개요·BM 설명·조직·근거는 상세에서만 제공한다.
+// ---- 공통 기업 인텔리전스 카드 ----
+// 메인에서 회사의 사업·수익모델·전략 방향·최근 실행을 바로 비교하고,
+// 상세 팝업은 근거·조직·실적·발언을 더 깊게 제공한다.
 function StrategyPortfolioCard({
-  company, accent, eyebrow, badge, decision, trajectory, signal, evidence, onSelect, accessory,
+  company, accent, eyebrow, badge, business, revenueModel, direction, execution,
+  headcount, sourceCount, institution, onSelect, accessory,
 }) {
   const c = company || {};
+  const intel = c.live?.intelligence || c.intelligence || {};
+  const profile = c.live?.profile || c.profile || {};
+  const compact = (value, size = 126) => {
+    const text = String(value || "").replace(/\s+/g, " ").trim();
+    return text.length > size ? `${text.slice(0, size - 1)}…` : text;
+  };
+  const currentBusiness = compact(business || intel.currentBusiness?.summary || c.note || c.vp || profile.business?.[0] || c.unit || "사업 원문 수집 중");
+  const money = compact(revenueModel || intel.revenueModel?.summary || c.revenue || "공개 원문에서 수익 구조를 수집 중");
+  const future = compact(direction || intel.strategyDirection?.summary || c.direction || "제품·투자·제휴 발표에서 다음 사업 방향을 수집 중");
+  const latestExecution = compact(execution || intel.corePractices?.[0]?.insight || intel.corePractices?.[0]?.title
+    || c.live?.latest?.title || c.latest?.title || "최근 실행 근거 수집 중");
+  const rawPeople = headcount || c.live?.employees || profile.headcount || "미공개";
+  const people = !headcount && c.live?.employeesAsof && rawPeople !== "미공개"
+    ? `${rawPeople} · '${String(c.live.employeesAsof).slice(2, 4)}`
+    : rawPeople;
+  const evidenceRows = [
+    ...(intel.currentBusiness?.evidence || []),
+    ...(intel.revenueModel?.evidence || []),
+    ...(intel.strategyDirection?.evidence || []),
+  ];
+  const evidenceN = Number.isFinite(sourceCount) ? sourceCount : new Set(evidenceRows.map(item => item.url).filter(Boolean)).size;
   const activate = () => onSelect && onSelect(c);
   return (
     <div className="sp-card" role="button" tabIndex="0" onClick={activate}
@@ -296,18 +319,29 @@ function StrategyPortfolioCard({
         {badge && <span className="sp-card-badge">{badge}</span>}
         {accessory}
       </div>
-      <div className="sp-card-decision">
-        <span>PORTFOLIO DECISION</span>
-        <b>{decision}</b>
-      </div>
-      <div className="sp-card-route">
-        <span>STRATEGIC MOVE</span>
-        <b>{trajectory}</b>
+      {institution && <div className="sp-card-institution">{institution}</div>}
+      <div className="sp-card-intel">
+        <div>
+          <span>현재 사업</span>
+          <b>{currentBusiness}</b>
+        </div>
+        <div>
+          <span>Biz Model</span>
+          <b>{money}</b>
+        </div>
+        <div>
+          <span>사업 방향</span>
+          <b>{future}</b>
+        </div>
+        <div>
+          <span>최근 실행</span>
+          <b>{latestExecution}</b>
+        </div>
       </div>
       <div className="sp-card-foot">
-        <span><em>SIGNAL</em>{signal}</span>
-        <span><em>EVIDENCE</em>{evidence}</span>
-        <b>상세 전략·근거 보기 →</b>
+        <span><em>인력</em>{people}</span>
+        <span><em>원문 근거</em>{evidenceN ? `${evidenceN}건` : "수집 중"}</span>
+        <b>실적·조직·발언·원문 →</b>
       </div>
     </div>
   );
@@ -332,19 +366,6 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
   const vkeys = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
   const visibleRows = vertical === "all" ? rows : rows.filter(c => (c.vchainVertical || "기타") === vertical);
   const primaryCount = rows.filter(c => c.layer === layerId).length;
-  const layerOf = id => allLayers.find(l => l.id === id) || {};
-  const decisionOf = c => {
-    if (c.layer === layerId && c.mobileFit === "high") return `${layer.stanceKo || "직접 통제"} · 우선순위 A`;
-    if (c.layer === layerId) return `${layer.stanceKo || "선택 관여"} · 우선순위 B`;
-    if (c.mobileFit === "high") return "인접 확장 · 제휴 우선";
-    return "옵션 확보 · 신호 감시";
-  };
-  const trajectoryOf = c => {
-    const primary = layerOf(c.layer);
-    if (c.layer !== layerId) return `${primary.ko || "현재 포지션"} → ${layer.ko || "인접 계층"}`;
-    const next = (c.adjacentLayers || []).map(layerOf).find(Boolean);
-    return next && next.ko ? `${layer.ko} → ${next.ko}` : `${layer.ko || "핵심 계층"} 내 지배력 심화`;
-  };
   return (
     <section className="board" ref={sectionRef} data-screen-label={layer.en}>
       <AnimCtx.Provider value={inView}>
@@ -368,10 +389,6 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
             <StrategyPortfolioCard key={c.name} company={c} accent={layer.accent}
               eyebrow={c.vchainVertical || "기타"}
               badge={c.layer === layerId ? "핵심" : "확장"}
-              decision={decisionOf(c)}
-              trajectory={trajectoryOf(c)}
-              signal={c.live?.mentions7 > 0 ? `${c.live.mentions7}건 · 7일` : "기준선"}
-              evidence={c.live?.coverage ? `커버리지 ${Math.round(((c.live.coverage.profile?.score || 0) + (c.live.coverage.organization?.score || 0)) / 2)}%` : "원문 축적"}
               onSelect={onSelect} />
           ))}
           {rows.length === 0 && <div className="mkt-loading">해당 계층 기업 데이터를 불러오는 중…</div>}
@@ -394,6 +411,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
   const cat = (cats.find(x => x.id === c.cat) || {});
   const layer = (window.DASH.VALUE_CHAIN || []).find(l => l.id === c.layer) || {};
   const accent = layer.accent || cat.accent || "#2D6BFF";
+  const intelligence = c.live?.intelligence || c.intelligence || {};
   const token = c.name.split(" (")[0].toLowerCase();
   // related news: same category, name-mentioning articles surfaced first
   const rel = (articles || [])
@@ -468,7 +486,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           return (
             <div className="cd-section cd-profile">
               <h4>기업 개요 <em>Company Profile</em>
-                <b className="cd-prof-live">{live ? "LIVE · 공시/시장" : "기준정보 · 뉴스 모니터링"}</b>
+                <b className="cd-prof-live">{live ? "LIVE · 공시/시장" : "기준정보 · 뉴스 기반"}</b>
                 {profileCoverage && <b className="cd-coverage">커버리지 {profileCoverage.score}%</b>}
               </h4>
               <div className="cd-prof-grid">
@@ -476,6 +494,11 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                   <div className="cd-prof-row" key={i}><em>{k}</em><span>{v}</span></div>
                 ))}
               </div>
+              {lv.employeesSourceUrl && (
+                <a className="cd-prof-source" href={lv.employeesSourceUrl} target="_blank" rel="noopener">
+                  인력 출처 · {lv.employeesSource || "공개 데이터"} ↗
+                </a>
+              )}
               {Array.isArray(p.business) && p.business.length > 0 && (
                 <div className="cd-prof-biz"><em>주요사업</em><ul>{p.business.map((b, i) => <li key={i}>{b}</li>)}</ul></div>
               )}
@@ -488,52 +511,116 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
         })()}
 
         {(() => {
-          const allLayers = window.DASH.VALUE_CHAIN || [];
-          const primary = allLayers.find(l => l.id === c.layer) || {};
-          const adjacent = (c.adjacentLayers || []).map(id => allLayers.find(l => l.id === id)).filter(Boolean);
-          const entry = c.monetize && c.monetize.entry;
-          const modelMeta = id => ((c.monetize && c.monetize.models) || []).find(m => m.id === id);
-          const primaryModel = entry && modelMeta(entry.primaryModel);
-          const practices = (c.live?.practices || []).slice(0, 3);
-          const orgCoverage = c.live?.coverage?.organization;
-          const evidenceCount = Number(c.live?.mentions30 || 0);
+          const sections = [
+            { key: "currentBusiness", no: "01", ko: "현재 비즈니스", en: "Current Business", fallback: c.note || c.vp || c.unit },
+            { key: "revenueModel", no: "02", ko: "수익 모델", en: "Revenue Engine", fallback: c.vp },
+            { key: "strategyDirection", no: "03", ko: "앞으로의 사업 방향", en: "Strategic Direction", fallback: c.direction },
+            { key: "investmentDirection", no: "04", ko: "투자·제휴 방향", en: "Investment Direction", fallback: "" },
+          ];
+          const hasIntel = sections.some(section => intelligence[section.key]?.summary || section.fallback);
+          if (!hasIntel) return null;
           return (
             <div className="cd-section cd-strategy-frame">
-              <h4>전략 진단 <em>Position → Shift → Operator Decision</em><b className="cd-prof-live">CONSULTING FRAME</b></h4>
-              <div className="cd-sf-path">
-                <span className="cd-sf-primary" style={{ "--lc": primary.accent || accent }}>{primary.ko || "분류 대기"} · 핵심</span>
-                {adjacent.slice(0, 4).map(l => <React.Fragment key={l.id}><i>→</i><span style={{ "--lc": l.accent }}>{l.ko}</span></React.Fragment>)}
-              </div>
-              <div className="cd-sf-grid">
-                <div className="cd-sf-card position">
-                  <em>현재 포지션</em>
-                  <b>{primaryModel ? primaryModel.ko : (c.unit || "원문 신호 수집 중")}</b>
-                  <p>{c.vp || "기업의 현재 가치 제안은 검증 가능한 원문 신호가 누적되는 대로 보강됩니다."}</p>
-                </div>
-                <div className="cd-sf-card shift">
-                  <em>전략적 이동</em>
-                  <b>{adjacent.length ? `${primary.ko || "현재"} → ${adjacent[0].ko}` : "핵심 계층 심화"}</b>
-                  <p>{c.direction || "투자·제품·파트너십 기사를 기준으로 변화 방향을 모니터링합니다."}</p>
-                </div>
-                <div className="cd-sf-card action">
-                  <em>권고 포트폴리오 행동</em>
-                  <b>{c.portfolioAction || primary.stanceKo || "선택적 협력"}</b>
-                  <p>{primary.operatorMove || "고객 접점·개인 컨텍스트·유통/과금 통제에 미치는 영향을 기준으로 평가합니다."}</p>
-                </div>
-                <div className="cd-sf-card risk">
-                  <em>리스크·다음 확인점</em>
-                  <b>{evidenceCount}건 · 최근 30일</b>
-                  <p>{primary.risk || "경쟁·파트너십·수익화 변화 신호를 지속 추적합니다."}</p>
-                </div>
+              <h4>비즈니스 모델·전략 분석 <em>Business → Economics → Direction</em>
+                <b className="cd-prof-live">{String(intelligence.engine || "").startsWith("github-models:") ? "AI · 원문 근거 종합" : "원문 추출 종합"}</b>
+              </h4>
+              <div className="cd-sf-grid cd-intelligence-grid">
+                {sections.map(section => {
+                  const item = intelligence[section.key] || {};
+                  const summary = item.summary || section.fallback;
+                  if (!summary) return null;
+                  return (
+                    <div className={`cd-sf-card ${section.key}`} key={section.key}>
+                      <em>{section.no} · {section.ko} <i>{section.en}</i></em>
+                      <b>{summary}</b>
+                      {Array.isArray(item.details) && item.details.length > 0 && (
+                        <ul>{item.details.slice(0, 4).map((detail, index) => <li key={index}>{detail}</li>)}</ul>
+                      )}
+                      {Array.isArray(item.evidence) && item.evidence.length > 0 && (
+                        <div className="cd-intel-sources">
+                          {item.evidence.slice(0, 3).map((source, index) => (
+                            <a key={index} href={source.url} target="_blank" rel="noopener">
+                              {source.date ? `${String(source.date).slice(2)} · ` : ""}{source.source || "원문"} ↗
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               <div className="cd-sf-evidence">
-                <span><b>관찰 축</b>{practices.length ? practices.map(p => `${p.ko} ${p.count}`).join(" · ") : "뉴스 신호 수집 중"}</span>
-                {orgCoverage && <span><b>조직 커버리지</b>{orgCoverage.score}%</span>}
-                <span><b>데이터 방식</b>{c.live?.coverage?.sourceMode || "기준정보 + 원문 뉴스"}</span>
+                <span><b>갱신 주기</b>뉴스·실적 발표 후 자동 재분석</span>
+                <span><b>근거 범위</b>{intelligence.evidenceWindow || "공식 발표·원문 기사·시장 데이터"}</span>
+                <span><b>생성일</b>{String(intelligence.generatedAt || c.live?.updatedAt || generatedAt || "").slice(0, 10) || "수집 중"}</span>
               </div>
             </div>
           );
         })()}
+
+        {Array.isArray(c.live?.strategicVentures || c.strategicVentures) && (c.live?.strategicVentures || c.strategicVentures).length > 0 && (
+          <div className="cd-section cd-venture-section">
+            <h4>신규 비즈니스 모델 확장 <em>New Business Model Expansion</em><b className="cd-prof-live">SOURCE-BACKED</b></h4>
+            <div className="cd-venture-list">
+              {(c.live?.strategicVentures || c.strategicVentures).map(venture => (
+                <article className="cd-venture-card" key={venture.id}>
+                  <div className="cd-venture-head">
+                    <div><em>{venture.announcedAt}</em><h5>{venture.title}</h5></div>
+                    <span>{venture.structure}</span>
+                  </div>
+                  <div className="cd-venture-facts">
+                    <div><em>자본·지배구조</em><b>{venture.capital}</b><p>{venture.ownership}</p></div>
+                    <div><em>운영 모델</em><b>{venture.operatingModel}</b><p>{venture.expansion}</p></div>
+                    <div><em>고객·유통망</em><b>{venture.targetCustomers}</b><p>{(venture.partners || []).join(" · ")}</p></div>
+                    <div className="implication"><em>단말 사업자 시사점</em><b>{venture.handsetImplication}</b></div>
+                  </div>
+                  <div className="cd-venture-sources">
+                    {(venture.sources || []).map((source, index) => (
+                      <a key={index} href={source.url} target="_blank" rel="noopener">{source.publisher} · {source.date} 원문 ↗</a>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+            {(c.live?.strategicVentureComparison || c.strategicVentureComparison) && (() => {
+              const comparison = c.live?.strategicVentureComparison || c.strategicVentureComparison;
+              return (
+                <div className="cd-venture-comparison">
+                  <em>핵심 인사이트</em>
+                  <b>{comparison.title}</b>
+                  <p>{comparison.insight}</p>
+                  <strong>{comparison.operatorMove}</strong>
+                  {comparison.market && (
+                    <a href={comparison.market.source?.url} target="_blank" rel="noopener">
+                      AI 컨설팅 시장 {comparison.market.value2025} → {comparison.market.forecast2030} (2030) · CAGR {comparison.market.cagr} ↗
+                    </a>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {Array.isArray(intelligence.newBusinessModels) && intelligence.newBusinessModels.length > 0 && (
+          <div className="cd-section">
+            <h4>AI 신규 수익모델 <em>Emerging AI Business Models</em><b className="cd-prof-live">CRAWL → SYNTHESIS</b></h4>
+            <div className="cd-newbm-grid">
+              {intelligence.newBusinessModels.map((model, index) => (
+                <article className="cd-newbm-card" key={index}>
+                  <em>MODEL {String(index + 1).padStart(2, "0")}</em>
+                  <h5>{model.title}</h5>
+                  <p>{model.model}</p>
+                  {model.implication && <strong>{model.implication}</strong>}
+                  {model.evidence?.url && (
+                    <a href={model.evidence.url} target="_blank" rel="noopener">
+                      {model.evidence.source || "원문"}{model.evidence.date ? ` · ${model.evidence.date}` : ""} ↗
+                    </a>
+                  )}
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
 
         {(() => {
           const M = c.monetize || {};
@@ -607,11 +694,36 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
         {(c.org || (c.live && c.live.officers && c.live.officers.length)) && (() => {
           const org = c.org || {};
           const live = c.live || {};
-          const liveRoster = (live.officers && live.officers.length)
-            ? live.officers.map(o => ({ name: o.name, role: o.title, bg: "" })) : null;
-          const roster = liveRoster || (org.leadership || []);
-          const lead = roster[0];
-          const reports = roster.slice(1);
+          const curated = Array.isArray(org.leadership) ? org.leadership : [];
+          const filingOfficers = (live.officers && live.officers.length ? live.officers : org.officers || [])
+            .map(officer => ({ ...officer, role: officer.role || officer.title || "Executive" }));
+          const personKey = name => String(name || "").toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+          const curatedByName = new Map(curated.map(person => [personKey(person.name), person]));
+          const seen = new Set();
+          const roster = [];
+          filingOfficers.forEach(officer => {
+            const key = personKey(officer.name);
+            const background = curatedByName.get(key) || {};
+            if (!key || seen.has(key)) return;
+            seen.add(key);
+            roster.push({ ...background, ...officer, role: officer.role || background.role });
+          });
+          curated.forEach(person => {
+            const key = personKey(person.name);
+            if (!key || seen.has(key)) return;
+            seen.add(key);
+            roster.push(person);
+          });
+          const leadIndex = roster.findIndex(person => /founder|co-founder|chief executive|\bceo\b|chair/i.test(String(person.role || "")));
+          const lead = roster[leadIndex >= 0 ? leadIndex : 0];
+          const reports = roster.filter(person => person !== lead).slice(0, 11);
+          const crawlQuotes = Array.isArray(intelligence.executiveQuotes) ? intelligence.executiveQuotes.map(quote => ({
+            who: quote.speaker, role: quote.role, date: quote.date,
+            quoteEn: quote.quoteOriginal, quoteKo: quote.quoteKo,
+            source: quote.source, url: quote.evidenceUrl,
+          })) : [];
+          const interviewRows = [...crawlQuotes, ...(org.interviews || [])].filter((item, index, rows) =>
+            rows.findIndex(other => `${other.who}|${other.quoteEn || other.quoteKo}` === `${item.who}|${item.quoteEn || item.quoteKo}`) === index).slice(0, 6);
           // 검증된 직접 프로필 URL만 연결한다. 검색 결과 페이지는 상세 링크로 사용하지 않는다.
           const D = window.DASH || {};
           const directProfiles = D.LINKEDIN_PROFILES || {};
@@ -621,9 +733,13 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
             return p.li || directProfiles[p.name] || directProfiles[liName(p.name)] || "";
           };
           const coLink = (c.profile && c.profile.linkedin) || "";
-          const NodeBg = ({ p }) => (p.edu || p.career)
-            ? <span className="cd-org-bg">{[p.edu, p.career].filter(Boolean).join(" · ")}</span>
-            : (p.bg ? <span className="cd-org-bg">{p.bg}</span> : null);
+          const NodeBg = ({ p }) => (
+            <dl className="cd-org-background">
+              {(p.edu || p.education) && <div><dt>학교·전공</dt><dd>{p.edu || p.education}</dd></div>}
+              {(p.career || p.bg) && <div><dt>주요 경력</dt><dd>{p.career || p.bg}</dd></div>}
+              {!p.edu && !p.education && !p.career && !p.bg && <div><dt>백그라운드</dt><dd>공시·공식 프로필 원문 수집 중</dd></div>}
+            </dl>
+          );
           const orgCoverage = live.coverage && live.coverage.organization;
           return (
             <React.Fragment>
@@ -635,7 +751,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
               )}
               {roster.length > 0 && (
                 <div className="cd-section">
-                  <h4>조직도 <em>Org Chart</em><b className="cd-prof-live">{liveRoster ? "LIVE · Yahoo Finance 임원" : "창업·리더십"}</b>
+                  <h4>상세 조직도 <em>Founders · CEO · CTO · Executive Team</em><b className="cd-prof-live">{filingOfficers.length ? "LIVE 공시 + 리더십 이력" : "창업·리더십"}</b>
                     {orgCoverage && <b className="cd-coverage">커버리지 {orgCoverage.score}%</b>}
                     {coLink && <a className="cd-org-colink" href={coLink} target="_blank" rel="noopener" title="회사 LinkedIn 페이지">회사 LinkedIn ↗</a>}
                   </h4>
@@ -660,14 +776,16 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                       </div>
                     )}
                   </div>
-                  <p className="cd-org-note">상장사는 공시 임원을 우선 반영하고 비상장사는 창업·리더십 기준정보를 사용 · 경력 정보는 조직 노드 안에 통합 · <b>검증된 LinkedIn 직접 프로필만 연결</b></p>
+                  <p className="cd-org-note">상장사는 최신 공시 임원과 창업·기술 리더십을 병합하고 최대 12명까지 표시 · 학교·전공·빅테크 및 주요 경력을 조직 노드 안에 통합 · <b>검증된 LinkedIn 직접 프로필만 연결</b></p>
                 </div>
               )}
-              {Array.isArray(org.interviews) && org.interviews.length > 0 && (
+              {interviewRows.length > 0 && (
                 <div className="cd-section">
-                  <h4>주요 인터뷰 인사이트 <em>Interview Insights</em></h4>
+                  <h4>경영진 발언·인터뷰 <em>Executive Quotes · Korean + Original</em>
+                    {crawlQuotes.length > 0 && <b className="cd-prof-live">LIVE · 원문 발언 추출</b>}
+                  </h4>
                   <div className="cd-itv">
-                    {org.interviews.map((it, i) => (
+                    {interviewRows.map((it, i) => (
                       <div className="cd-itv-item" key={i}>
                         <div className="cd-itv-who">
                           <b>{it.who}</b>{it.role && <span className="cd-itv-role">{it.role}</span>}
@@ -701,26 +819,30 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           </div>
         )}
 
-        {c.live && Array.isArray(c.live.practices) && c.live.practices.length > 0 && (() => {
-          const ps = c.live.practices;
-          const max = Math.max(...ps.map(p => p.count), 1);
+        {((Array.isArray(intelligence.corePractices) && intelligence.corePractices.length > 0)
+          || (c.live && Array.isArray(c.live.practices) && c.live.practices.length > 0)) && (() => {
+          const sourcePractices = Array.isArray(intelligence.corePractices) ? intelligence.corePractices : [];
+          const ps = sourcePractices.length ? sourcePractices : c.live.practices;
+          const max = Math.max(...ps.map(p => p.count || 1), 1);
           return (
             <div className="cd-section">
-              <h4>핵심 활동 분석 <em>Core Practices</em><b className="cd-prof-live">LIVE · 뉴스 기반</b></h4>
+              <h4>핵심 활동 분석 <em>Core Practices</em><b className="cd-prof-live">{sourcePractices.length ? "AI · 원문 종합" : "LIVE · 뉴스 기반"}</b></h4>
               <div className="cd-cp">
                 {ps.map((p, i) => (
                   <div className="cd-cp-row" key={i}>
-                    <div className="cd-cp-top"><b>{p.ko}</b><span className="cd-cp-n">{p.count}건</span></div>
-                    <div className="cd-cp-bar"><i style={{ width: (12 + 88 * p.count / max) + "%", background: cat.accent }} /></div>
-                    {p.latest && p.latest.url && (
-                      <a className="cd-cp-latest" href={p.latest.url} target="_blank" rel="noopener">
-                        {p.latest.date && <em>{String(p.latest.date).slice(5)}</em>}{String(p.latest.title || "").slice(0, 70)}
+                    <div className="cd-cp-top"><b>{p.title || p.ko}</b>{p.count && <span className="cd-cp-n">{p.count}건</span>}</div>
+                    {p.count && <div className="cd-cp-bar"><i style={{ width: (12 + 88 * p.count / max) + "%", background: cat.accent }} /></div>}
+                    {p.insight && <p className="cd-cp-insight">{p.insight}</p>}
+                    {(p.evidence?.url || p.latest?.url) && (
+                      <a className="cd-cp-latest" href={p.evidence?.url || p.latest.url} target="_blank" rel="noopener">
+                        {(p.evidence?.date || p.latest?.date) && <em>{String(p.evidence?.date || p.latest.date).slice(5)}</em>}
+                        {String(p.evidence?.title || p.latest?.title || "원문 보기").slice(0, 90)}
                       </a>
                     )}
                   </div>
                 ))}
               </div>
-              <p className="cd-cp-note">최근 60일 크롤 기사에서 활동 유형을 규칙 기반 분류 — 뉴스가 쌓이며 자동 갱신</p>
+              <p className="cd-cp-note">공식 발표와 원문 기사에서 확인된 최근 실행을 기업별로 종합 · 새 원문이 수집되면 AI가 내용과 근거 링크를 함께 갱신</p>
             </div>
           );
         })()}
@@ -3731,23 +3853,51 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
     if (!onSelect) return;
     const match = (companies || []).find(c => c.name === s.name || c.name.replace(/\s*\(.*\)/, "") === s.name);
     if (match) { onSelect(match); return; }
-    const hist = [s.latest, ...(s.history || [])].filter(h => h && /^https?:\/\//.test(String(h.url || "")));
+    const institutionSource = s.institution?.url ? [{
+      title: s.institution.title, url: s.institution.url, date: s.institution.publishedAt, source: s.institution.name,
+    }] : [];
+    const productSources = (s.sourceLinks || []).map(source => ({
+      title: `${s.name} · ${source.label}`, url: source.url, date: s.institution?.publishedAt || "", source: s.institution?.name || "제품 원문",
+    }));
+    const hist = [s.latest, ...(s.history || []), ...institutionSource, ...productSources]
+      .filter(h => h && /^https?:\/\//.test(String(h.url || "")));
     const D = window.DASH || {};
     // 추적 대상이 아니어도 조직도·기업개요 큐레이션이 있으면 붙여 상세를 강화(다른 기업과 동일 뷰)
     const org = (D.COMPANY_ORG || {})[s.name] || null;
-    const profile = (D.COMPANY_PROFILES || {})[s.name] || null;
-    const bm = s.businessModel || s.overview || "";
+    const curatedProfile = (D.COMPANY_PROFILES || {})[s.name] || null;
+    const bm = s.currentBusiness || s.businessModel || s.overview || s.description || "";
+    const profile = curatedProfile || {
+      founded: s.publisher ? `제품 운영사 · ${s.publisher}` : "",
+      ceo: "",
+      hq: "",
+      headcount: s.headcount || "",
+      business: [bm].filter(Boolean),
+    };
+    const startupIntelligence = s.intelligence || {
+      engine: s.intelligenceEngine || "publisher-source-synthesis",
+      generatedAt: data?.generatedAt || "",
+      evidenceWindow: s.institution ? `${s.institution.name} 선정 목록 + 제품 공식 페이지` : "제품 공식 페이지 + 최신 원문",
+      currentBusiness: { summary: bm, details: [], evidence: hist.slice(0, 2) },
+      revenueModel: { summary: s.revenueModel || s.revenue || "공식 가격·매출 원문 수집 중", details: [], evidence: hist.slice(0, 2) },
+      strategyDirection: { summary: s.strategyDirection || s.partnership || s.acqAngle || "제품·서비스 확장 원문 수집 중", details: [], evidence: hist.slice(0, 2) },
+      investmentDirection: { summary: s.partnership || s.acqAngle || "투자·제휴 발표 원문 수집 중", details: [], evidence: hist.slice(0, 2) },
+      corePractices: [],
+      newBusinessModels: [],
+      executiveQuotes: [],
+    };
     const lv = (coLive && coLive[s.name]) || null;    // crawl-companies.mjs 라이브 데이터(멘션·핵심활동·경영진 발언)
     onSelect({
       name: s.name, domain: s.domain, cat: "startup", unit: s.vertical || "AI 스타트업",
       note: bm || "원문 링크 기반 관찰 — 검증된 상세는 본문 확인 후 표시됩니다.",
-      vp: bm, direction: s.partnership || s.acqAngle || "",
+      vp: bm, direction: s.strategyDirection || s.partnership || s.acqAngle || "",
       layer: "app", vchainVertical: s.vertical || "", profile, org,
-      portfolioAction: s.label || (portfolioTier === "large" ? "파트너십 검토" : "투자 검토"),
       portfolioTier,
-      live: lv ? { ...lv, latest: lv.latest || s.latest || null } : { latest: s.latest || null, mentions7: 0, mentions30: 0 },
+      institution: s.institution || null,
+      live: lv
+        ? { ...lv, intelligence: lv.intelligence || startupIntelligence, latest: lv.latest || s.latest || null }
+        : { intelligence: startupIntelligence, latest: s.latest || null, mentions7: 0, mentions30: 0 },
       monetize: monet ? { entry: (monet.companies || []).find(x => x.name === s.name) || null, models: monet.models || [], directions: monet.directions || [] } : null,
-      sources: hist.slice(0, 6).map(h => ({ tier: "reported", label: String(h.title || "관련 기사"), asOf: h.date || "", url: h.url })),
+      sources: hist.slice(0, 10).map(h => ({ tier: "reported", label: String(h.title || "관련 기사"), asOf: h.date || "", url: h.url })),
     });
   };
   const [data, setData] = React.useState(null);
@@ -3851,12 +4001,17 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   // 노출 대상(hasLinkedEvidence)이면 항상 함께 보여준다. 배지는 실제 원문
   // 본문 추출 여부(evidenceType)로만 구분.
   const hasExtractedContent = (s) => s?.provenance?.evidenceType === "publisher-page-latest";
-  const visibleAll = [...((data && data.large) || []), ...((data && data.small) || [])].filter(s => hasLinkedEvidence(s) && !del[s.name]);
+  const visibleAll = [
+    ...((data && data.large) || []).filter(hasLinkedEvidence),
+    ...((data && data.small) || []).filter(hasLinkedEvidence),
+    ...((data && data.institutional) || []).filter(s => s?.provenance?.status === "source-backed"),
+  ].filter(s => !del[s.name]);
   const catCounts = {};
   visibleAll.forEach(s => { const cid = catOf(s); if (cid) catCounts[cid] = (catCounts[cid] || 0) + 1; });
   const passCat = s => !catFilter || catOf(s) === catFilter;
   const large = ((data && data.large) || []).filter(s => hasLinkedEvidence(s) && !del[s.name] && passCat(s));
   const small = ((data && data.small) || []).filter(s => hasLinkedEvidence(s) && !del[s.name] && passCat(s));
+  const institutional = ((data && data.institutional) || []).filter(s => s?.provenance?.status === "source-backed" && !del[s.name] && passCat(s));
 
   return (
     <section className="board" ref={sectionRef} data-screen-label="Startup Analysis">
@@ -3865,12 +4020,13 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
         <span className="board-tab" style={{ background: "#0E8F6E" }} />
         <div className="board-titles">
           <h2>스타트업 분석 <span className="board-en">Startup Analysis · 단말(스마트폰) 신사업 관점 · AI SW·서비스·에이전트</span></h2>
-          <p>AI 밸류체인 스타트업을 <b>단말에서 할 만한 신사업</b> 관점으로 분류 — 카테고리를 눌러 필터. 대형=파트너십 / 소형=인수·투자.</p>
+          <p>기업별 <b>현재 사업·수익모델·사업 방향</b>을 원문에서 종합하고, a16z Top 100 Web·Mobile 선정 제품 전체를 같은 구조로 비교.</p>
         </div>
         <div className="mkt-tools">
-          <button className={tier === "all" ? "on" : ""} onClick={() => setTier("all")}>전체 {large.length + small.length}</button>
+          <button className={tier === "all" ? "on" : ""} onClick={() => setTier("all")}>전체 {large.length + small.length + institutional.length}</button>
           <button className={tier === "large" ? "on" : ""} onClick={() => setTier("large")}>대형 {large.length}</button>
           <button className={tier === "small" ? "on" : ""} onClick={() => setTier("small")}>소형·초기 {small.length}</button>
+          <button className={tier === "a16z" ? "on" : ""} onClick={() => setTier("a16z")}>a16z Top 100 {institutional.length}</button>
           {Object.keys(del).length > 0 && <button onClick={reset} title="삭제 초기화">초기화</button>}
         </div>
       </div>
@@ -3882,7 +4038,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
             <b>분류 기준 <em>단말 신사업 적합도</em></b>
             {catFilter && <button className="su-tax-clear" onClick={() => setCatFilter("")}>필터 해제 ✕</button>}
           </div>
-          {[["직결", "단말 직결 — 온디바이스·기본앱에 바로"], ["제휴", "서비스·B2B 제휴"], ["감시", "백엔드·장기 옵션"]].map(([tierId, tierLabel]) => (
+          {[["직결", "단말 직결 — 온디바이스·기본앱"], ["제휴", "서비스·B2B 제휴"], ["감시", "기술·인프라 사업 확장"]].map(([tierId, tierLabel]) => (
             <div className="su-tax-tier" key={tierId}>
               <span className="su-tax-tlabel" data-tier={tierId}>{tierLabel}</span>
               <div className="su-tax-cats">
@@ -3904,7 +4060,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
 
       {!data ? (
         <div className="mkt-loading">{loaded ? "스타트업 분석을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
-      ) : !(large.length || small.length) ? (
+      ) : !(large.length || small.length || institutional.length) ? (
         catFilter ? (
           <div className="mkt-empty">
             <b>‘{catMeta(catFilter)?.ko}’ 분류에 표시할 업체가 아직 없습니다</b>
@@ -3916,45 +4072,77 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
         )
       ) : (
         <>
-        {tier !== "small" && (
+        {(tier === "all" || tier === "large") && (
         <div className="mkt-group">
-          <div className="mkt-group-head"><b>대형 업체 — 파트너십 포트폴리오</b><em>메인에는 의사결정·이동 방향·신호만 표시 · BM·조직·근거는 클릭 후 상세</em></div>
+          <div className="mkt-group-head"><b>대형 업체 — 사업·수익·제휴 방향</b><em>현재 사업과 돈 버는 방식, 최근 실행을 메인에서 비교 · 실적·조직·발언은 클릭 후 상세</em></div>
           <div className="startup-portfolio-grid">
             {large.map(s => {
               const meta = catMeta(catOf(s));
               const live = (coLive && coLive[s.name]) || {};
               return <StrategyPortfolioCard key={s.name}
-                company={{ name: s.name, domain: s.domain }}
+                company={{ name: s.name, domain: s.domain, profile: live.profile, live }}
                 accent={(meta && meta.accent) || "#0E8F6E"}
                 eyebrow={`대형 · ${(meta && meta.ko) || s.vertical || "AI 스타트업"}`}
-                badge="PARTNER"
-                decision={s.label || "파트너십 검토"}
-                trajectory={`${s.vertical || "현재 사업"} → 단말 서비스 접점`}
-                signal={live.mentions7 > 0 ? `${live.mentions7}건 · 7일` : (s.latest?.date ? fmtMonthDay(s.latest.date) : "신호 축적")}
-                evidence={hasExtractedContent(s) ? "원문 본문 확인" : "원문 링크 연결"}
+                badge="GROWTH"
+                business={s.businessModel || s.overview}
+                revenueModel={s.revenue}
+                direction={s.partnership}
+                execution={s.latest?.localization?.title || s.latest?.title}
+                sourceCount={(s.history || []).length}
                 onSelect={() => openStartup(s, "large")}
                 accessory={<DelUI name={s.name} />} />;
             })}
           </div>
         </div>
         )}
-        {tier !== "large" && (
+        {(tier === "all" || tier === "small") && (
         <div className="mkt-group">
-          <div className="mkt-group-head"><b>소형·초기 업체 — 투자·인수 옵션</b><em>메인에는 의사결정·이동 방향·신호만 표시 · 개요·펀딩·근거는 클릭 후 상세</em></div>
+          <div className="mkt-group-head"><b>소형·초기 업체 — 사업모델·투자 방향</b><em>제품·수익 구조·성장 방향을 메인에서 비교 · 창업자·경영진·원문은 클릭 후 상세</em></div>
           <div className="startup-portfolio-grid">
             {small.map(s => {
               const meta = catMeta(catOf(s));
               const live = (coLive && coLive[s.name]) || {};
               return <StrategyPortfolioCard key={s.name}
-                company={{ name: s.name, domain: s.domain }}
+                company={{ name: s.name, domain: s.domain, profile: live.profile, live }}
                 accent={(meta && meta.accent) || "#0E8F6E"}
                 eyebrow={`초기 · ${(meta && meta.ko) || s.vertical || "AI 스타트업"}`}
-                badge="OPTION"
-                decision={s.label || "투자 검토"}
-                trajectory={`${s.vertical || "현재 사업"} → 역량·IP 옵션`}
-                signal={live.mentions7 > 0 ? `${live.mentions7}건 · 7일` : (s.latest?.date ? fmtMonthDay(s.latest.date) : "신호 축적")}
-                evidence={hasExtractedContent(s) ? "원문 본문 확인" : "원문 링크 연결"}
+                badge="EARLY"
+                business={s.overview || s.businessModel}
+                revenueModel={s.revenue || live.intelligence?.revenueModel?.summary}
+                direction={s.acqAngle || s.partnership}
+                execution={s.latest?.localization?.title || s.latest?.title}
+                sourceCount={(s.history || []).length}
                 onSelect={() => openStartup(s, "small")}
+                accessory={<DelUI name={s.name} />} />;
+            })}
+          </div>
+        </div>
+        )}
+        {(tier === "all" || tier === "a16z") && institutional.length > 0 && (
+        <div className="mkt-group">
+          <div className="mkt-group-head">
+            <b>a16z Top 100 Gen AI Consumer Apps — 전체 업체 리스트</b>
+            <em>Web 50 + Mobile 50 원문 목록을 주 1회 재수집 · 중복 제품은 하나로 통합 · 제품 페이지와 함께 분석</em>
+            {data.institutionalSource?.url && <a href={data.institutionalSource.url} target="_blank" rel="noopener">a16z 원문 ↗</a>}
+          </div>
+          <div className="startup-portfolio-grid a16z-portfolio-grid">
+            {institutional.map(s => {
+              const meta = catMeta(catOf(s));
+              const cohort = s.cohorts?.includes("web") && s.cohorts?.includes("mobile") ? "WEB + MOBILE"
+                : s.cohorts?.includes("mobile") ? "MOBILE" : "WEB";
+              return <StrategyPortfolioCard key={`a16z-${s.name}`}
+                company={{ name: s.name, domain: s.domain }}
+                accent={(meta && meta.accent) || "#7A38D6"}
+                eyebrow={`a16z · ${(meta && meta.ko) || s.vertical}`}
+                badge={cohort}
+                institution={`Andreessen Horowitz · 6th Edition · ${data.institutionalSource?.publishedAt || "2026-03-09"}`}
+                business={s.currentBusiness}
+                revenueModel={s.revenueModel}
+                direction={s.strategyDirection}
+                execution={s.description || s.pageTitle}
+                headcount={s.headcount || "미공개"}
+                sourceCount={(s.sourceLinks || []).length + 1}
+                onSelect={() => openStartup(s, "institutional")}
                 accessory={<DelUI name={s.name} />} />;
             })}
           </div>

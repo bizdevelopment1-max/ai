@@ -15,7 +15,7 @@
    사이트에는 사명(삼성/MX/갤럭시) 미표기 — '단말 제조사' 관점만.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
-import { llmJSON } from "./llm.mjs";
+import { llmJSON, llmAvailable } from "./llm.mjs";
 import { rotatingLocales, googleNewsUrl } from "./global-sources.mjs";
 import { isExcludedText } from "./news-policy.mjs";
 import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
@@ -258,6 +258,129 @@ async function enrichSmall(rows) {
   return r.engine;
 }
 
+const startupCat = text => {
+  const value = String(text || "").toLowerCase();
+  if (/photo|image|video|design|camera|avatar|creative|edit|art/.test(value)) return "camera";
+  if (/voice|audio|speech|music|translate|language/.test(value)) return "voice";
+  if (/code|developer|app builder|website|programming/.test(value)) return "coding";
+  if (/search|browser|answer|knowledge/.test(value)) return "search";
+  if (/work|document|writing|meeting|productivity|office/.test(value)) return "productivity";
+  if (/health|education|math|finance|learning/.test(value)) return "vertical";
+  return "agent";
+};
+
+const buildInstitutional = (a16z, large, small) => {
+  const known = new Map([...large, ...small].map(row => [row.name.toLowerCase(), row]));
+  const merged = new Map();
+  for (const item of [...(a16z.web || []), ...(a16z.mobile || [])]) {
+    const key = String(item.name || "").toLowerCase();
+    if (!key) continue;
+    const current = merged.get(key) || {
+      name: item.name,
+      domain: item.domain || "",
+      publisher: item.publisher || "",
+      pageTitle: item.pageTitle || "",
+      description: item.description || "",
+      cohorts: [],
+      sourceLinks: [],
+    };
+    if (!current.cohorts.includes(item.cohort)) current.cohorts.push(item.cohort);
+    current.domain ||= item.domain || "";
+    current.publisher ||= item.publisher || "";
+    current.pageTitle ||= item.pageTitle || "";
+    current.description ||= item.description || "";
+    current.sourceLinks.push({
+      label: `${item.cohort === "web" ? "Web" : "Mobile"} list`,
+      listOrder: item.listOrder,
+      url: item.productUrl,
+    });
+    merged.set(key, current);
+  }
+  return [...merged.values()].map(item => {
+    const match = known.get(item.name.toLowerCase());
+    const currentBusiness = match?.businessModel || match?.overview || item.description || item.pageTitle
+      || `${item.name} 소비자 AI 제품`;
+    const revenueModel = match?.revenue || "공식 제품·가격·기업 발표에서 구독·인앱결제·광고·거래 수익 구조를 수집 중";
+    const strategyDirection = match?.partnership || match?.acqAngle
+      || `${item.cohorts.includes("mobile") ? "모바일" : "웹"} 사용자 기반을 AI 핵심 기능으로 확장`;
+    return {
+      ...item,
+      vertical: match?.vertical || (item.cohorts.includes("mobile") ? "소비자 AI 모바일 앱" : "소비자 AI 웹 서비스"),
+      cat: match?.cat || startupCat(`${currentBusiness} ${item.description}`),
+      currentBusiness: scrub(currentBusiness),
+      revenueModel: scrub(revenueModel),
+      strategyDirection: scrub(strategyDirection),
+      institution: {
+        name: a16z.source || "Andreessen Horowitz (a16z)",
+        title: a16z.sourceTitle || "The Top 100 Gen AI Consumer Apps — 6th Edition",
+        url: a16z.sourceUrl,
+        publishedAt: a16z.publishedAt || "2026-03-09",
+      },
+      provenance: {
+        status: "source-backed",
+        evidenceType: item.description ? "institution-list+publisher-metadata" : "institution-list",
+        sourceUrl: a16z.sourceUrl,
+      },
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+};
+
+async function enrichInstitutional(rows) {
+  if (!llmAvailable() || !rows.length) return "";
+  const schema = {
+    type: "object",
+    properties: {
+      rows: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            currentBusiness: { type: "string" },
+            revenueModel: { type: "string" },
+            strategyDirection: { type: "string" },
+          },
+          required: ["name", "currentBusiness", "revenueModel", "strategyDirection"],
+          additionalProperties: false,
+        },
+      },
+    },
+    required: ["rows"],
+    additionalProperties: false,
+  };
+  let engine = "";
+  for (let start = 0; start < rows.length; start += 12) {
+    const batch = rows.slice(start, start + 12);
+    const input = batch.map(row => ({
+      name: row.name,
+      cohorts: row.cohorts,
+      publisher: row.publisher,
+      pageTitle: row.pageTitle,
+      publisherDescription: row.description,
+      existingBusiness: row.currentBusiness,
+      existingRevenue: row.revenueModel,
+      existingDirection: row.strategyDirection,
+    }));
+    const result = await llmJSON({
+      system: "당신은 스마트폰 사업자의 소비자 AI 신사업 애널리스트다. 입력된 a16z 선정 정보와 제품 공식 페이지 메타데이터만 사용해 각 제품의 현재 사업, 돈 버는 방식, 앞으로의 사업 방향을 한국어로 구체적으로 정리한다. 근거가 없으면 '확인 중'이라고 명시하고 수치·가격·투자 사실을 만들지 않는다. '옵션 확보', '신호 감시', '모니터링' 같은 일반론은 금지한다.",
+      user: `다음 제품을 분석해 rows JSON으로 반환:\n${JSON.stringify(input)}`,
+      maxTokens: 5_500,
+      schema,
+    });
+    const mapped = new Map((result?.data?.rows || []).map(item => [item.name, item]));
+    for (const row of batch) {
+      const analysis = mapped.get(row.name);
+      if (!analysis) continue;
+      row.currentBusiness = scrub(analysis.currentBusiness) || row.currentBusiness;
+      row.revenueModel = scrub(analysis.revenueModel) || row.revenueModel;
+      row.strategyDirection = scrub(analysis.strategyDirection) || row.strategyDirection;
+      row.intelligenceEngine = result.engine;
+    }
+    if (result?.engine) engine = result.engine;
+  }
+  return engine;
+}
+
 async function main() {
   const large = LARGE.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", val: s.val, businessModel: s.bm, revenue: s.rev, partnership: s.part, label: "모니터링" }));
   const small = SMALL.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", stage: s.stage, funding: s.funding, overview: s.ov, acqAngle: s.acq, label: "모니터링" }));
@@ -265,11 +388,15 @@ async function main() {
   let prev = null;
   try { prev = JSON.parse(await readFile("startups.json", "utf8")); } catch {}
   const age = prev && prev.weekOf ? (Date.now() - new Date(prev.weekOf + "T00:00:00Z").getTime()) / 86400000 : 99;
-  const staleShape = !prev || !Array.isArray(prev.large);   // 구 스키마면 강제 갱신
+  const staleShape = !prev || !Array.isArray(prev.large) || !Array.isArray(prev.institutional);   // 구 스키마면 강제 갱신
   // 영어 문장(연속 알파벳 15자+ 포함)이 남아 있으면 강제 재생성 — 한글 개조식으로 교체
   const hasEnglish = prev && [...(prev.large || []), ...(prev.small || [])].some(x =>
     /[A-Za-z]{4,}\s+[A-Za-z]{4,}\s+[A-Za-z]{4,}/.test(`${x.partnership || ""} ${x.acqAngle || ""} ${x.revenue || ""} ${x.overview || ""}`));
-  if (!FORCE_REFRESH && age < 6.5 && !staleShape && prev.engine !== "rules" && !hasEnglish) { console.log(`[startups] fresh (${prev.weekOf}, ${prev.engine}) — skip`); return; }
+  const needsAiUpgrade = !!llmAvailable() && !String(prev?.engine || "").startsWith("github-models:");
+  if (!FORCE_REFRESH && age < 6.5 && !staleShape && prev.engine !== "rules" && !hasEnglish && !needsAiUpgrade) {
+    console.log(`[startups] fresh (${prev.weekOf}, ${prev.engine}) — skip`);
+    return;
+  }
 
   const locales = rotatingLocales();
   for (const [index, s] of [...large, ...small].entries()) {
@@ -279,16 +406,40 @@ async function main() {
   console.log(`[startups] large ${large.length} · small ${small.length}, globally localized latest signals attached`);
   await enrichLatestSources([...large, ...small]);
 
+  const a16z = await readFile("a16z-startups.json", "utf8").then(JSON.parse).catch(() => ({
+    source: "Andreessen Horowitz (a16z)", sourceTitle: "The Top 100 Gen AI Consumer Apps — 6th Edition",
+    sourceUrl: "https://a16z.com/100-gen-ai-apps-6/", web: [], mobile: [],
+  }));
+  const institutional = buildInstitutional(a16z, large, small);
+
   const e1 = await enrichLarge(large);
   const e2 = await enrichSmall(small);
-  const engine = e1 || e2 || "rules";
+  const e3 = await enrichInstitutional(institutional);
+  const engine = e3 || e1 || e2 || "source-extractive";
 
   retainSourceHistory(large, prev?.large);
   retainSourceHistory(small, prev?.small);
 
-  const out = { generatedAt: new Date().toISOString(), weekOf: TODAY, engine, large, small };
+  const out = {
+    generatedAt: new Date().toISOString(),
+    weekOf: TODAY,
+    engine,
+    methodology: "weekly-news+publisher-pages+a16z-complete-lists+source-grounded-ai-synthesis",
+    institutionalSource: {
+      name: a16z.source,
+      title: a16z.sourceTitle,
+      url: a16z.sourceUrl,
+      publishedAt: a16z.publishedAt,
+      webCount: (a16z.web || []).length,
+      mobileCount: (a16z.mobile || []).length,
+      uniqueCount: institutional.length,
+    },
+    large,
+    small,
+    institutional,
+  };
   await writeFile("startups.json", JSON.stringify(out) + "\n");
-  console.log(`Wrote startups.json — large ${large.length} · small ${small.length} (engine: ${engine})`);
+  console.log(`Wrote startups.json — large ${large.length} · small ${small.length} · a16z unique ${institutional.length} (engine: ${engine})`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

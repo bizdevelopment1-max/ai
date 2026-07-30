@@ -19,6 +19,14 @@ const TICKERS = [
   "ORCL", "AMD", "AVGO", "TSM", "MU", "QCOM", "ARM", "INTC",
   "PLTR", "NOW", "CRWV", "APLD",
 ];
+const COMPANY_QUERY = {
+  NVDA: "Nvidia", MSFT: "Microsoft", AMZN: "Amazon company", AAPL: "Apple Inc.",
+  GOOGL: "Alphabet Inc.", META: "Meta Platforms", ORCL: "Oracle Corporation",
+  AMD: "Advanced Micro Devices", AVGO: "Broadcom Inc.", TSM: "TSMC",
+  MU: "Micron Technology", QCOM: "Qualcomm", ARM: "Arm Holdings", INTC: "Intel",
+  PLTR: "Palantir Technologies", NOW: "ServiceNow", CRWV: "CoreWeave",
+  APLD: "Applied Digital",
+};
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
@@ -76,6 +84,51 @@ async function fetchQuoteSummary(ticker, sess) {
   return null;
 }
 
+async function wikidataHeadcount(ticker) {
+  try {
+    const search = new URL("https://www.wikidata.org/w/api.php");
+    search.searchParams.set("action", "wbsearchentities");
+    search.searchParams.set("search", COMPANY_QUERY[ticker] || ticker);
+    search.searchParams.set("language", "en");
+    search.searchParams.set("limit", "5");
+    search.searchParams.set("format", "json");
+    search.searchParams.set("origin", "*");
+    const found = await fetch(search, { headers: { "User-Agent": `${UA} AI-Strategy-Research/1.0` }, signal: AbortSignal.timeout(12_000) });
+    if (!found.ok) return null;
+    const matches = (await found.json()).search || [];
+    const entity = matches.find(item => /company|corporation|technology|semiconductor|cloud computing/i.test(item.description || ""))
+      || matches[0];
+    if (!entity?.id) return null;
+    const details = new URL("https://www.wikidata.org/w/api.php");
+    details.searchParams.set("action", "wbgetentities");
+    details.searchParams.set("ids", entity.id);
+    details.searchParams.set("props", "claims");
+    details.searchParams.set("format", "json");
+    details.searchParams.set("origin", "*");
+    const response = await fetch(details, { headers: { "User-Agent": `${UA} AI-Strategy-Research/1.0` }, signal: AbortSignal.timeout(12_000) });
+    if (!response.ok) return null;
+    const claims = (await response.json()).entities?.[entity.id]?.claims?.P1128 || [];
+    const rows = claims.map(claim => {
+      const amount = Number(claim?.mainsnak?.datavalue?.value?.amount);
+      const rawTime = claim?.qualifiers?.P585?.[0]?.datavalue?.value?.time || "";
+      const asOf = rawTime.replace(/^\+/, "").slice(0, 10).replace(/-00/g, "-01");
+      return { amount, asOf, rank: claim.rank || "normal" };
+    }).filter(row => Number.isFinite(row.amount) && row.amount > 0);
+    rows.sort((a, b) => (b.rank === "preferred") - (a.rank === "preferred")
+      || String(b.asOf).localeCompare(String(a.asOf)));
+    const latest = rows[0];
+    if (!latest) return null;
+    return {
+      employees: fmtEmp(latest.amount),
+      employeesAsOf: latest.asOf,
+      employeesSource: `Wikidata ${entity.id}`,
+      employeesSourceUrl: `https://www.wikidata.org/wiki/${entity.id}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
 const COUNTRY_KO = { "United States": "미국", "Taiwan": "대만", "South Korea": "대한민국", "Netherlands": "네덜란드", "United Kingdom": "영국", "China": "중국" };
 
 function extract(ticker, r) {
@@ -94,7 +147,7 @@ function extract(ticker, r) {
   const roster = officers
     .map(o => ({ name: clean(o.name), title: clean(o.title) }))
     .filter(o => o.name && o.title)
-    .slice(0, 6);
+    .slice(0, 12);
   if (roster.length) out.officers = roster;
 
   // 본사(도시 · 州 · 국가)
@@ -141,19 +194,38 @@ async function main() {
 
   const sess = await yahooSession();
   const financials = { ...prev };
-  let fresh = 0, failed = 0;
+  let fresh = 0, yahooFresh = 0, wikidataFallback = 0, failed = 0;
 
   for (const ticker of TICKERS) {
     const r = await fetchQuoteSummary(ticker, sess);
-    const rec = extract(ticker, r);
-    if (rec) { financials[ticker] = { ...prev[ticker], ...rec }; fresh++; }
+    const yahooRecord = extract(ticker, r);
+    let rec = yahooRecord;
+    if (!rec?.employees) {
+      const fallback = await wikidataHeadcount(ticker);
+      if (fallback) {
+        rec = { ...(rec || { ticker }), ...fallback, asOf: rec?.asOf || new Date().toISOString().slice(0, 10) };
+        wikidataFallback++;
+      }
+    }
+    if (rec) {
+      financials[ticker] = { ...prev[ticker], ...rec };
+      fresh++;
+      if (yahooRecord) yahooFresh++;
+    }
     else { failed++; }                       // 실패 시 직전 값 보존(단조 최신화)
     await new Promise((res) => setTimeout(res, 250));
   }
 
   const out = {
     generatedAt: new Date().toISOString(),
-    sourceHealth: { targetCount: TICKERS.length, freshCount: fresh, failed, source: "yahoo-quotesummary" },
+    sourceHealth: {
+      targetCount: TICKERS.length,
+      freshCount: fresh,
+      yahooFreshCount: yahooFresh,
+      wikidataHeadcountFallbackCount: wikidataFallback,
+      failed,
+      sources: ["yahoo-quotesummary", "wikidata-P1128"],
+    },
     financials,
   };
   await writeFile("financials.json", JSON.stringify(out) + "\n");

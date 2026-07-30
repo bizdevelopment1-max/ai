@@ -58,6 +58,7 @@ const insights = await readJson("insights.json", { cards: [] });
 const radar = await readJson("radar.json", { picks: [] });
 const research = await readJson("research.json", { feed: [] });
 const startups = await readJson("startups.json", { large: [], small: [] });
+const companies = await readJson("companies.json", { companies: {} });
 const market = await readJson("market.json", { items: [] });
 const infra = await readJson("infra.json", { items: [] });
 const bizmodel = await readJson("bizmodel.json", { items: [] });
@@ -408,14 +409,28 @@ news.articles = currentArticles;
 news.count = currentArticles.length;
 news.quality = { sourceBacked: backedArticles, sourceExcerpt: sourceExcerptArticles, localized: localizedArticles, localizationFallback: localizedFallbackArticles, limited: articleIssues.length, limitedRate };
 
+const companyEngineCounts = Object.values(companies.companies || {}).reduce((counts, company) => {
+  const engine = company?.intelligence?.engine || "missing";
+  counts[engine] = (counts[engine] || 0) + 1;
+  return counts;
+}, {});
+const companyAiCount = Object.entries(companyEngineCounts)
+  .filter(([engine]) => engine.startsWith("github-models:"))
+  .reduce((sum, [, count]) => sum + count, 0);
 const llmHealth = {
   generatedAt: now.toISOString(),
-  mode: "source-fragment-localization",
+  mode: companyAiCount ? "source-extractive-facts+grounded-company-synthesis" : "source-extractive-facts",
   summaryEngine: "source-content-extractive",
-  externalModelApiCalls: 0,
-  policy: "Visible facts are distinct sentences extracted from stored publisher-page text. Korean display text translates only those source sentences and retains their hash; no generative model API is used. Failed quality checks or translation errors display the original language.",
+  externalModelApiCalls: companyAiCount ? "source-grounded-company-batches" : 0,
+  policy: "Article facts remain distinct sentences extracted from stored publisher-page text. Company business-model and strategy synthesis may use GitHub Models only with supplied publisher evidence IDs; every visible company conclusion retains its source links. Failed model calls fall back to source-extractive synthesis.",
   displayLocalization: "source-fragment-translation-with-english-fallback",
   articleSummaryModes: { sourceExcerpt: sourceExcerptArticles, legacyOrLimited: currentArticles.length - sourceExcerptArticles },
+  companySynthesis: {
+    policy: "publisher-evidence-id-grounded",
+    companies: Object.keys(companies.companies || {}).length,
+    githubModelsCompanies: companyAiCount,
+    engineCounts: companyEngineCounts,
+  },
 };
 
 await Promise.all([
