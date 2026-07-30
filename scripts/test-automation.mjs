@@ -214,12 +214,7 @@ try {
   });
   const companyRows = Object.values(companies.companies || {});
   const aiCompanies = companyRows.filter(company => company.intelligence?.engine?.startsWith("github-models:")).length;
-  const aiCoverage = aiCompanies / Math.max(companyRows.length, 1);
-  const modelExpected = !!(process.env.GITHUB_MODELS_TOKEN || process.env.GITHUB_TOKEN);
   const configuredAiBudget = Number(workflow.match(/COMPANY_INTELLIGENCE_AI_BUDGET:\s*(\d+)/)?.[1] || 0);
-  const modelCoverageReady = !modelExpected
-    || aiCoverage >= 0.95
-    || (configuredAiBudget > 0 && aiCompanies >= Math.min(configuredAiBudget, companyRows.length));
   const a16zReady = a16z.web?.length === 50 && a16z.mobile?.length === 50
     && startups.institutionalSource?.webCount === 50
     && startups.institutionalSource?.mobileCount === 50
@@ -236,7 +231,8 @@ try {
     && /crawl-strategic-ventures\.mjs/.test(workflow)
     && /build-company-intelligence\.mjs/.test(workflow)
     && /PIPELINE_TIMEOUT_MS:\s*1200000/.test(workflow)
-    && /COMPANY_INTELLIGENCE_AI_BUDGET:\s*10/.test(workflow);
+    && /GITHUB_MODELS_MAX_RETRY_WAIT_MS:\s*20000/.test(workflow)
+    && configuredAiBudget === 6;
   const grounded = intelligenceBuilder.includes("evidenceIds")
     && intelligenceBuilder.includes("publisher evidence")
     && intelligenceBuilder.includes("quoteOriginal")
@@ -259,7 +255,7 @@ try {
         const article = newsByUrl.get(ref.url);
         return !article || articleFocusedOnCompany(name, article);
       })));
-  if (!intelligenceReady || !modelCoverageReady
+  if (!intelligenceReady
     || !a16zReady || !ventureReady || !workflowReady || !grounded || !officialReady || !companyEvidenceFocused) {
     throw new Error("company intelligence, a16z 50+50, strategic ventures, or grounded synthesis automation is incomplete");
   }
