@@ -20,7 +20,7 @@ window.DASH = (function () {
       funding: "$122B 라운드(2026-03-31)", trend: 0, trendBasis: "S-1 기밀 제출 · 공모 시점 미정",
       note: "2026-03-31 총 조달 $122B·post-money $852B는 보도 기준 확정 수치. OpenAI는 2026-06-08 기밀 S-1 제출을 공식 발표했으나 공모 시점은 결정하지 않았다고 명시 — 2026년 9월 상장과 $1T 공모 목표 단정은 제거. io 인수는 2025-05-21 발표된 회고성 배경이며 2026년 신규 사건으로 표시하지 않음. 월 매출·분기 손익·연환산 매출은 보도·추정치로 정의와 기준일을 분리해 해석 필요",
       vp: "최고 성능 멀티모달 모델과 9억 규모의 소비자 접점을 동시에 보유한 유일한 사업자. API·구독·엔터프라이즈로 매출 다각화.",
-      direction: "범용 인공지능과 에이전트 확장 · 기밀 S-1 제출 완료 · 공모 시점은 회사 결정 대기",
+      direction: "범용 인공지능과 에이전트 확장 · 기밀 S-1 제출 완료 · 공모 시점은 회사가 결정",
       sources: [
         { tier: "reported", label: "총 조달 $122B · $852B post-money", asOf: "2026-03-31", url: "https://www.bloomberg.com/news/articles/2026-03-31/openai-valued-at-852-billion-after-completing-122-billion-round" },
         { tier: "official", label: "기밀 S-1 제출 · 공모 시점 미정", asOf: "2026-06-08", url: "https://openai.com/index/openai-submits-confidential-s-1/" },
@@ -37,7 +37,7 @@ window.DASH = (function () {
       direction: "안전성 연구와 상업화의 균형. Amazon·Google 클라우드 파트너십으로 컴퓨트 확보, 엔터프라이즈 침투 가속.",
       sources: [
         { tier: "official", label: "Series H $65B · $965B post-money · run-rate $47B", asOf: "2026-05-28", url: "https://www.anthropic.com/news/series-h" },
-        { tier: "estimate", label: "Yipit 기반 run-rate $69B · 공식 갱신 대기", asOf: "2026-07-10", url: "https://www.nextbigfuture.com/2026/07/reports-of-69-billion-annualized-revenue-rate-for-anthropic.html" },
+        { tier: "estimate", label: "Yipit 기반 run-rate $69B · 업계 추정치", asOf: "2026-07-10", url: "https://www.nextbigfuture.com/2026/07/reports-of-69-billion-annualized-revenue-rate-for-anthropic.html" },
         { tier: "estimate", label: "Tickerplus run-rate $74.3B · 3자 추정", asOf: "2026-07-22", url: "https://x.com/tickerplus/status/2080067009388097831" }
       ],
       url: "https://anthropic.com",
@@ -101,7 +101,7 @@ window.DASH = (function () {
       cat: "bigtech", name: "NVIDIA", group: "infra", domain: "nvidia.com", unit: "AI GPU·CUDA",
       valuation: "$3.5T+", valAsof: "26.06", metric: "분기 매출", value: "$81.6B", metricAsof: "FY27 1Q",
       funding: "상장 (NVDA)", trend: 85, trendBasis: "Q1 FY27 +85% YoY · 분기 $81.6B·DC $75.2B",
-      note: "H100/B200 GPU, CUDA — AI 학습/추론 GPU 시장 80%+ 점유. 최신 공개 분기 FY2027 1Q 매출 $81.6B(+85% YoY, 2026.05.20)·EPS $0.96(추정 $0.89 대비 +8% 서프라이즈)·그로스 마진 ~75% 유지(Blackwell 풀 램프 중 마진 방어) · 데이터센터 $75.2B(NVIDIA 공식 IR, +92% YoY, 전체의 ~92%; 일부 리포트 $73.5B는 네트워킹 제외 기준). Q2 FY27 가이던스 $91.0B±2%(China DC 제외 기준). FY2026 연매출 $215.9B(+65% YoY) — Q4 FY26 $68.1B(+73%)·DC $62.3B(+75%) 포함, 직전 FY2025 연 $130.5B와 구분 필요. 데이터센터 영업이익률 ~74.9%. [업계 추정] B200 출하량은 외부 추정. 개발자 생태계 NVIDIA Developer Program 7.5M+ / CUDA-X 1M+ developers(공식) — '400M 개발자'는 근거 없음.",
+      note: "H100/B200 GPU, CUDA — AI 학습/추론 GPU 시장 80%+ 점유. 최신 공개 분기 FY2027 1Q 매출 $81.6B(+85% YoY, 2026.05.20)·EPS $0.96(추정 $0.89 대비 +8% 서프라이즈)·그로스 마진 ~75% 유지(Blackwell 풀 램프 중 마진 방어) · 데이터센터 $75.2B(NVIDIA 공식 IR, +92% YoY, 전체의 ~92%; 일부 리포트 $73.5B는 네트워킹 제외 기준). Q2 FY27 가이던스 $91.0B±2%(China DC 제외 기준). FY2026 연매출 $215.9B(+65% YoY) — Q4 FY26 $68.1B(+73%)·DC $62.3B(+75%) 포함, 직전 FY2025 연 $130.5B와 구분 필요. 데이터센터 영업이익률 ~74.9%. [업계 추정] B200 출하량은 외부 추정. 개발자 생태계 NVIDIA Developer Program 7.5M+ / CUDA-X 1M+ developers(공식) — 출처가 확인되지 않은 '400M 개발자' 수치는 제외.",
       vp: "GPU 하드웨어 80%+ 점유에 CUDA 소프트웨어 락인을 더한 이중 해자. 풀스택(칩·네트워킹·소프트웨어).",
       direction: "Blackwell(B200)·차세대 아키텍처 램프 + DGX Cloud + Omniverse. 전력·공급망이 핵심 변수.",
       sources: [

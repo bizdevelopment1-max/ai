@@ -48,6 +48,49 @@ function CompanyNote({ text }) {
   ));
 }
 
+// A stable, factual data architecture replaces transient loading/empty copy.
+// It explains how the next crawler snapshot becomes a publishable card without
+// claiming that an unsupported fact exists.
+function SourcePipeline({ kind = "company" }) {
+  const flows = {
+    company: [
+      ["01 · SOURCE", "공식 회사·제품·실적 원문"],
+      ["02 · EXTRACT", "사업·수익·실행 문장 추출"],
+      ["03 · VERIFY", "회사명·수치·URL 대조"],
+      ["04 · PUBLISH", "MECE 전략 카드 반영"],
+    ],
+    signal: [
+      ["01 · SOURCE", "기업 발표·발행사 본문"],
+      ["02 · EXTRACT", "제품·계약·제휴 행동 추출"],
+      ["03 · LOCALIZE", "한국어 핵심 3줄 정규화"],
+      ["04 · CLASSIFY", "SW·서비스 계층 분류"],
+    ],
+    market: [
+      ["01 · SOURCE", "시장조사·기업·공시 원문"],
+      ["02 · EXTRACT", "수치·정의·기준연도 추출"],
+      ["03 · VERIFY", "통화·단위·예측기간 대조"],
+      ["04 · PUBLISH", "MECE 시장 카드 반영"],
+    ],
+    startup: [
+      ["01 · UNIVERSE", "a16z·공식 제품 페이지"],
+      ["02 · EXTRACT", "사업·수익·방향 분해"],
+      ["03 · VERIFY", "운영사·원문 URL 대조"],
+      ["04 · COMPARE", "동일 전략 카드로 비교"],
+    ],
+  };
+  const rows = flows[kind] || flows.company;
+  return (
+    <div className="source-pipeline" aria-label="크롤링 기반 업데이트 구조">
+      {rows.map((row, index) => (
+        <React.Fragment key={row[0]}>
+          <div><em>{row[0]}</em><b>{row[1]}</b></div>
+          {index < rows.length - 1 && <i aria-hidden="true" />}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
 // ---- Category company board (dense table) ----------------------
 function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) {
   const inView = useInView(sectionRef);
@@ -236,7 +279,7 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
             <div className="msf-synthesis-flow">
               <div><em>01 · UNIVERSE</em><b>{companyCount}개사</b><span>SW·서비스 밸류체인</span></div>
               <i aria-hidden="true" />
-              <div><em>02 · MOMENTUM</em><b>{leadLayer.ko || "수집 중"}</b><span>{leadLayer.mentions || 0}건 · 상위 계층</span></div>
+              <div><em>02 · MOMENTUM</em><b>{leadLayer.ko || layerStats[0]?.ko}</b><span>{leadLayer.mentions || 0}건 · 상위 계층</span></div>
               <i aria-hidden="true" />
               <div><em>03 · CHOICE</em><b>{(strategy.choices || []).length}개 플레이</b><span>Where to Play / Win</span></div>
               <i aria-hidden="true" />
@@ -328,13 +371,13 @@ function StrategyPortfolioCard({
     const text = String(value || "").replace(/\s+/g, " ").trim();
     return text.length > size ? `${text.slice(0, size - 1)}…` : text;
   };
-  const currentBusiness = compact(business || intel.currentBusiness?.summary || c.note || c.vp || profile.business?.[0] || c.unit || "사업 원문 수집 중");
-  const money = compact(revenueModel || intel.revenueModel?.summary || c.revenue || "공개 원문에서 수익 구조를 수집 중");
-  const future = compact(direction || intel.strategyDirection?.summary || c.direction || "제품·투자·제휴 발표에서 다음 사업 방향을 수집 중");
+  const currentBusiness = compact(business || intel.currentBusiness?.summary || c.note || profile.business?.[0] || c.unit);
+  const money = compact(revenueModel || intel.revenueModel?.summary || c.revenue);
+  const future = compact(direction || intel.strategyDirection?.summary || c.direction);
   const latestExecution = compact(execution || intel.corePractices?.[0]?.insight || intel.corePractices?.[0]?.title
-    || c.live?.latest?.title || c.latest?.title || "최근 실행 근거 수집 중");
-  const rawPeople = headcount || c.live?.employees || profile.headcount || (c.live?.employeesStale ? "최신 공시 확인 중" : "미공개");
-  const people = !headcount && c.live?.employeesAsof && rawPeople !== "미공개"
+    || c.live?.latest?.title || c.latest?.title);
+  const rawPeople = headcount || c.live?.employees || profile.headcount || "";
+  const people = !headcount && c.live?.employeesAsof && rawPeople
     ? `${rawPeople} · '${String(c.live.employeesAsof).slice(2, 4)}`
     : rawPeople;
   const evidenceRows = [
@@ -362,26 +405,26 @@ function StrategyPortfolioCard({
         <span>BUSINESS</span><i /><span>ECONOMICS</span><i /><span>DIRECTION</span>
       </div>
       <div className="sp-card-intel">
-        <div className="business">
+        {currentBusiness && <div className="business">
           <span>현재 사업</span>
           <b>{currentBusiness}</b>
-        </div>
-        <div className="economics">
+        </div>}
+        {money && <div className="economics">
           <span>Biz Model</span>
           <b>{money}</b>
-        </div>
-        <div className="direction">
+        </div>}
+        {future && <div className="direction">
           <span>사업 방향</span>
           <b>{future}</b>
-        </div>
-        <div className="execution">
+        </div>}
+        {latestExecution && <div className="execution">
           <span>최근 실행</span>
           <b>{latestExecution}</b>
-        </div>
+        </div>}
       </div>
       <div className="sp-card-foot">
-        <span><em>인력</em>{people}</span>
-        <span><em>원문 근거</em>{evidenceN ? `${evidenceN}건` : "수집 중"}</span>
+        {people && <span><em>인력</em>{people}</span>}
+        {evidenceN > 0 && <span><em>원문 근거</em>{evidenceN}건</span>}
         <b>실적·조직·발언·원문 <i aria-hidden="true" /></b>
       </div>
     </div>
@@ -441,7 +484,7 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
               badge={c.layer === layerId ? "핵심" : "확장"}
               onSelect={onSelect} />
           ))}
-          {rows.length === 0 && <div className="mkt-loading">해당 계층 기업 데이터를 불러오는 중…</div>}
+          {rows.length === 0 && <SourcePipeline kind="company" />}
         </div>
       </AnimCtx.Provider>
     </section>
@@ -525,7 +568,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
             ["경영진", ceo],
             ["본사", hq],
             ["섹터", lv.sector || ""],
-             ["인력", emp ? emp + empAsof : (lv.employeesStale ? "최신 공시 확인 중" : "")],
+             ["인력", emp ? emp + empAsof : ""],
             ["시가총액", lv.cap ? lv.cap + capAsof : ""],
             ["주주", holders],
           ].filter(r => r[1]);
@@ -584,7 +627,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                    { key: "revenueModel", label: "수익 엔진", question: "어떻게 돈을 버는가" },
                    { key: "strategyDirection", label: "성장 방향", question: "어디로 확장하는가" },
                    { key: "investmentDirection", label: "자본 배분", question: "무엇에 투자하는가" },
-                 ]).map((step, index, rows) => (
+                 ]).filter(step => visibleSections.some(section => section.key === step.key)).map((step, index, rows) => (
                    <React.Fragment key={step.key}>
                      <span><em>{String(index + 1).padStart(2, "0")}</em><b>{step.label}</b><small>{step.question}</small></span>
                      {index < rows.length - 1 && <i aria-hidden="true" />}
@@ -620,7 +663,9 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                  <span><b>갱신 주기</b>뉴스·실적 발표 후 자동 재분석</span>
                  <span><b>근거 범위</b>{intelligence.evidenceWindow || "공식 발표·원문 기사·시장 데이터"}</span>
                  <span><b>검증</b>{intelligence.groundingStatus ? "숫자·출처 URL 자동 대조" : "원문 링크 대조"}</span>
-                 <span><b>생성일</b>{String(intelligence.generatedAt || c.live?.updatedAt || generatedAt || "").slice(0, 10) || "수집 중"}</span>
+                 {(intelligence.generatedAt || c.live?.updatedAt || generatedAt) && (
+                   <span><b>생성일</b>{String(intelligence.generatedAt || c.live?.updatedAt || generatedAt).slice(0, 10)}</span>
+                 )}
                </div>
             </div>
           );
@@ -828,11 +873,10 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
           const coLink = (c.profile && c.profile.linkedin) || "";
           const NodeBg = ({ p }) => (
             <React.Fragment>
-              <dl className="cd-org-background">
+              {(p.edu || p.education || p.career || p.bg) && <dl className="cd-org-background">
                 {(p.edu || p.education) && <div><dt>학교·전공</dt><dd>{p.edu || p.education}</dd></div>}
                 {(p.career || p.bg) && <div><dt>주요 경력</dt><dd>{p.career || p.bg}</dd></div>}
-                {!p.edu && !p.education && !p.career && !p.bg && <div><dt>백그라운드</dt><dd>공시·공식 프로필 원문 수집 중</dd></div>}
-              </dl>
+              </dl>}
               <div className="cd-org-verification">
                 <span className={p.verification === "official-role-match" || p.sourceType === "market-filing" ? "verified" : "curated"}>
                   {p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : p.sourceType === "market-filing" ? "시장·공시 원장" : "큐레이션 검토"}
@@ -1229,7 +1273,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
       )}
 
       <div className="feed-body">
-        {sorted.length === 0 && <div className="feed-empty">표시할 기사가 없습니다.</div>}
+        {sorted.length === 0 && <SourcePipeline kind="signal" />}
         <div className="feed-list">
           {shown.map((a, i) => {
             const c = catMap[a.cat] || {};
@@ -3036,10 +3080,8 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
         </div>
       </div>
 
-      {!data || !sourceReady ? (
-        <div className="mkt-loading">{loaded ? "원문 기반 한국어 3줄 요약을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
-      ) : items.length === 0 ? (
-        <div className="mkt-loading">표시할 시그널이 없습니다 · 초기화로 되돌릴 수 있습니다</div>
+      {!data || !sourceReady || items.length === 0 ? (
+        <SourcePipeline kind="signal" />
       ) : (
         <React.Fragment>
           {/* 상단 도식: 카테고리별 시그널 분포(미니 바) */}
@@ -3182,10 +3224,8 @@ function MonetizationPlaybook({ articles, dataVersion }) {
         </div>
         <span className="isg-total">기업 <b>{companies.length}</b></span>
       </div>
-      {(!data || !sourceReady) ? (
-        <div className="mkt-loading">{loaded ? "수익화 신호를 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
-      ) : companies.length === 0 ? (
-        <div className="mkt-loading">표시할 수익화 신호가 아직 없습니다 · 크롤이 쌓이면 자동 표시됩니다</div>
+      {(!data || !sourceReady || companies.length === 0) ? (
+        <SourcePipeline kind="signal" />
       ) : (
         <React.Fragment>
           <div className="mplay-legend">
@@ -3193,8 +3233,8 @@ function MonetizationPlaybook({ articles, dataVersion }) {
           </div>
           {modelOrder.map(mid => {
             const isDir = mid === "_dir";
-            const mm = isDir ? { ko: "사업 방향 관찰", accent: "#8A93A4" } : modelMeta(mid);
-            const desc = isDir ? "수익모델 신호 대기 — 투자·사업 방향 신호만 확인됨" : (MODEL_DESC[mid] || "");
+            const mm = isDir ? { ko: "사업 실행", accent: "#8A93A4" } : modelMeta(mid);
+            const desc = isDir ? "투자·제품·제휴 실행" : (MODEL_DESC[mid] || "");
             return (
               <div className="mplay-layer" key={mid} style={{ "--accent": mm.accent }}>
                 <div className="mplay-lhead"><span className="mplay-ldot" style={{ background: mm.accent }} /><b>{mm.ko}</b>{desc && <em className="mplay-ldesc">{desc}</em>}<span className="mplay-ln">{byModel[mid].length}개사</span></div>
@@ -3543,7 +3583,7 @@ function BriefingBoard({ briefing, sectionRef }) {
   const [dayIdx, setDayIdx] = React.useState(0);
   if (!days.length) return null;
   const day = days[Math.min(dayIdx, days.length - 1)];
-  const LABEL_COLOR = { "파트너십 기회": "#16A34A", "인수 후보": "#C026D3", "경쟁 위협": "#D23B3B", "시장 신호": "#2D6BFF", "공급망": "#EA580C", "규제": "#7A38D6", "모니터링": "#8A93A4" };
+  const LABEL_COLOR = { "파트너십 기회": "#16A34A", "인수 후보": "#C026D3", "경쟁 위협": "#D23B3B", "시장 신호": "#2D6BFF", "공급망": "#EA580C", "규제": "#7A38D6", "사업 모델 검토": "#8A93A4" };
   return (
     <section className="board" ref={sectionRef} data-screen-label="Morning Briefing">
      <AnimCtx.Provider value={inView}>
@@ -3614,7 +3654,7 @@ function RadarBoard({ radar, sectionRef }) {
   const [sel, setSel] = React.useState(0);
   if (!picks.length) return null;
   const AXES = [["attach", "서비스 부착"], ["enterprise", "기업 확장성"], ["partner", "파트너십 용이"], ["acquire", "인수 용이"]];
-  const LABEL_COLOR = { "파트너십 기회": "#16A34A", "인수 후보": "#C026D3", "모니터링": "#8A93A4" };
+  const LABEL_COLOR = { "파트너십 기회": "#16A34A", "인수 후보": "#C026D3", "사업 모델 검토": "#8A93A4" };
   const memo = memos[0];
   return (
     <section className="board" ref={sectionRef} data-screen-label="Startup Radar">
@@ -3769,7 +3809,7 @@ function ExecToplines({ items, insights, onNav }) {
                     {priority.label} <em>{t.score}</em>
                     <span className="es-score-tip" role="tooltip"><b>{priority.label}</b> {priority.meaning} · {priority.range}점<br />점수 = 최신성 × 출처 신뢰도 × 주제 적합도<br />당일 최고 카드 = 100으로 정규화</span>
                   </span>
-                : (t.live === false && <span className="es-score base" title={t.scoreBasis || "근거 기사 매칭 대기 — 큐레이션 기준선"}>기준선</span>)}
+                : (t.live === false && <span className="es-score base" title={t.scoreBasis || "화면 비노출 큐레이션 기준선"}>기준선</span>)}
               {typeof t.score === "number" && <span className="es-score-note">상대 중요도 · 점수 근거 보기</span>}
               {pend === t.tag ? (
                 <span className="art-del-pw" onClick={e => e.stopPropagation()}>
@@ -3861,7 +3901,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
       </div>
 
       {!data ? (
-        <div className="mkt-loading">{loaded ? "데이터를 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+        <SourcePipeline kind="market" />
       ) : (
         <React.Fragment>
           <div className="mkt-db-summary">
@@ -3901,7 +3941,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
               </article>
               );
             })}
-            {!shownRecords.length && <div className="mkt-loading">발행사 원문을 확인해 정량 근거를 추출 중입니다 · 검색 스니펫은 표시하지 않습니다</div>}
+            {!shownRecords.length && <SourcePipeline kind="market" />}
           </div>
 
           {!isSurvey && <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>기존 시장규모·예측·CAGR 데이터는 보존되며, 상단 누적 DB에 새 수치가 추가됩니다.</em></div>}
@@ -3987,9 +4027,9 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       generatedAt: data?.generatedAt || "",
       evidenceWindow: s.institution ? `${s.institution.name} 선정 목록 + 제품 공식 페이지` : "제품 공식 페이지 + 최신 원문",
       currentBusiness: { summary: bm, details: [], evidence: hist.slice(0, 2) },
-      revenueModel: { summary: s.revenueModel || s.revenue || "공식 가격·매출 원문 수집 중", details: [], evidence: hist.slice(0, 2) },
-      strategyDirection: { summary: s.strategyDirection || s.partnership || s.acqAngle || "제품·서비스 확장 원문 수집 중", details: [], evidence: hist.slice(0, 2) },
-      investmentDirection: { summary: s.partnership || s.acqAngle || "투자·제휴 발표 원문 수집 중", details: [], evidence: hist.slice(0, 2) },
+      revenueModel: { summary: s.revenueModel || s.revenue || "", details: [], evidence: hist.slice(0, 2) },
+      strategyDirection: { summary: s.strategyDirection || s.partnership || s.acqAngle || "", details: [], evidence: hist.slice(0, 2) },
+      investmentDirection: { summary: s.partnership || s.acqAngle || "", details: [], evidence: hist.slice(0, 2) },
       corePractices: [],
       newBusinessModels: [],
       executiveQuotes: [],
@@ -3997,7 +4037,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
     const lv = (coLive && coLive[s.name]) || null;    // crawl-companies.mjs 라이브 데이터(멘션·핵심활동·경영진 발언)
     onSelect({
       name: s.name, domain: s.domain, cat: "startup", unit: s.vertical || "AI 스타트업",
-      note: bm || "원문 링크 기반 관찰 — 검증된 상세는 본문 확인 후 표시됩니다.",
+      note: bm || s.vertical || "AI 소프트웨어·서비스",
       vp: bm, direction: s.strategyDirection || s.partnership || s.acqAngle || "",
       layer: "app", vchainVertical: s.vertical || "", profile, org,
       portfolioTier,
@@ -4038,8 +4078,6 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   const [pwErr, setPwErr] = React.useState(false);
   const confirmDel = (n) => { if (!canDelete(pw)) { setPwErr(true); return; } setDel(d => { const x = { ...d, [n]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); setPend(null); setPw(""); setPwErr(false); };
   const reset = () => { setDel({}); try { localStorage.removeItem(DEL_LS); } catch {} };
-  const LC = { "파트너십 기회": "#16A34A", "전략 제휴": "#2D6BFF", "탑재 후보": "#0891B2", "인수 후보": "#C026D3", "투자 검토": "#16A34A", "기술 감시": "#EA580C", "모니터링": "#8A93A4" };
-
   const DelUI = ({ name }) => (pend === name ? (
     <span className="art-del-pw" onClick={e => e.stopPropagation()}>
       <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
@@ -4155,7 +4193,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                   const n = catCounts[t.id] || 0;
                   return (
                     <button key={t.id} disabled={n === 0} className={"su-tax-cat" + (catFilter === t.id ? " on" : "") + (n === 0 ? " empty" : "")} style={{ "--c": t.accent }}
-                      title={n === 0 ? `${t.desc}\n▸ 단말 관점: ${t.handset}\n(아직 원문 확인된 업체 없음 — 크롤이 쌓이면 표시)` : `${t.desc}\n▸ 단말 관점: ${t.handset}`}
+                      title={`${t.desc}\n▸ 단말 관점: ${t.handset}`}
                       onClick={() => n > 0 && setCatFilter(catFilter === t.id ? "" : t.id)}>
                       <i style={{ background: t.accent }} />{t.ko}<em>{n}</em>
                     </button>
@@ -4168,16 +4206,16 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       )}
 
       {!data ? (
-        <div className="mkt-loading">{loaded ? "스타트업 분석을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+        <SourcePipeline kind="startup" />
       ) : !(large.length || small.length || institutional.length) ? (
         catFilter ? (
           <div className="mkt-empty">
-            <b>‘{catMeta(catFilter)?.ko}’ 분류에 표시할 업체가 아직 없습니다</b>
-            <span>이 분류의 업체는 원문 확인(한국어 3줄)이 완료되면 표시됩니다 · 크롤이 쌓이는 중</span>
-            <button className="su-tax-clear" onClick={() => setCatFilter("")}>필터 해제 ✕</button>
+            <b>‘{catMeta(catFilter)?.ko}’ 필터</b>
+            <span>a16z·공식 제품 페이지 전체 비교로 전환</span>
+            <button className="su-tax-clear" onClick={() => setCatFilter("")}>전체 보기</button>
           </div>
         ) : (
-          <div className="mkt-loading">원문 근거를 연결하는 중입니다 · 근거 없는 투자·인수 후보는 표시하지 않습니다</div>
+          <SourcePipeline kind="startup" />
         )
       ) : (
         <>
