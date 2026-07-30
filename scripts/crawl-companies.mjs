@@ -107,14 +107,27 @@ const classifyPractices = (arts) => {
 };
 
 async function main() {
-  let articles = [], stocks = {}, financials = {}, previousCompanies = {}, officialCompanies = {};
+  let articles = [], stocks = {}, financials = {}, previousCompanies = {}, officialCompanies = {}, startupRows = [];
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   try { stocks = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
   try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
   try { previousCompanies = JSON.parse(await readFile("companies.json", "utf8")).companies || {}; } catch {}
   try { officialCompanies = JSON.parse(await readFile("company-officials.json", "utf8")).companies || {}; } catch {}
+  try {
+    const startups = JSON.parse(await readFile("startups.json", "utf8"));
+    startupRows = [...(startups.large || []), ...(startups.small || []), ...(startups.institutional || [])];
+  } catch {}
   const dash = loadDash();
-  const orgSource = dash.COMPANY_ORG || {};
+  const orgSource = { ...(dash.COMPANY_ORG || {}) };
+  for (const startup of startupRows) {
+    if (!startup?.name || !startup.organization) continue;
+    const curated = orgSource[startup.name] || {};
+    orgSource[startup.name] = {
+      ...startup.organization,
+      ...curated,
+      leadership: curated.leadership || startup.organization.executiveTeam || startup.organization.leadership || [],
+    };
+  }
   const linkedinSource = dash.LINKEDIN_PROFILES || {};
   const profileSource = dash.COMPANY_PROFILES || {};
   const trackedCompanies = dash.COMPANIES || [];
@@ -182,24 +195,19 @@ async function main() {
 
   // 스타트업(startups.json)도 같은 라이브 깊이로 편입 — co 태깅 없이 기사 전문에서
   // 업체명을 단어경계 스캔. 밸류체인 기업과 표시 레벨을 통일하는 핵심 로직.
-  let startupNames = [];
-  try {
-    const su = JSON.parse(await readFile("startups.json", "utf8"));
-    startupNames = [...(su.large || []), ...(su.small || [])].map(s => s.name).filter(Boolean);
-  } catch {}
+  const startupNames = [...new Set(startupRows.map(s => s.name).filter(Boolean))];
   for (const name of startupNames) {
     if (companies[name]) continue;             // 이미 co 태깅으로 커버된 업체는 유지
     const rx = new RegExp(boundWord(name), "i");
     const arts = articles.filter(a => a.url && a.title
       && rx.test(`${a.title} ${a.descEn || ""} ${a.summary || ""}`)
       && articleFocusedOnCompany(name, a));
-    if (!arts.length) continue;
     arts.sort((x, y) => (x.date < y.date ? 1 : -1));
     const latest = arts[0];
     companies[name] = {
       mentions7: arts.filter(a => days(a.date) <= 7).length,
       mentions30: arts.filter(a => days(a.date) <= 30).length,
-      latest: { title: latest.title, url: latest.url, date: latest.date, source: latest.source },
+      latest: latest ? { title: latest.title, url: latest.url, date: latest.date, source: latest.source } : null,
       practices: classifyPractices(arts),
       execNews: execMentions(name, articles, leaders),
     };
@@ -217,7 +225,13 @@ async function main() {
     const li = person && (person.li || linkedinSource[person.name] || linkedinSource[personKey(person.name)]);
     return li ? { ...person, li } : { ...person };
   };
-  for (const base of trackedCompanies) {
+  const companyBaseByName = new Map(trackedCompanies.map(base => [base.name, base]));
+  for (const startup of startupRows) {
+    if (!startup?.name) continue;
+    const tracked = companyBaseByName.get(startup.name);
+    companyBaseByName.set(startup.name, tracked ? { ...startup, ...tracked } : startup);
+  }
+  for (const base of companyBaseByName.values()) {
     const name = base.name;
     let rec = companies[name];
     if (!rec) {
@@ -244,18 +258,20 @@ async function main() {
       joinFin(rec, tk);
     }
 
-    const p = profileSource[name] || {};
+    const p = { ...(base.profile || {}), ...(profileSource[name] || {}) };
     const o = orgSource[name] || {};
     const normalizedProfile = {
       ...p,
       ceo: rec.ceo || p.ceo || "",
       hq: rec.hq || p.hq || "",
       headcount: rec.employeesStale ? "" : (rec.employees || p.headcount || ""),
-      business: Array.isArray(p.business) && p.business.length ? p.business : [base.unit].filter(Boolean),
+      business: Array.isArray(p.business) && p.business.length ? p.business
+        : [base.currentBusiness, base.businessModel, base.overview, base.description, base.unit].filter(Boolean).slice(0, 5),
     };
     const official = officialCompanies[name] || {};
     const verificationByName = new Map((official.verifiedExecutives || []).map(person => [personKey(person.name).toLowerCase(), person]));
-    const curatedLeadership = Array.isArray(o.leadership) ? o.leadership.slice(0, 18).map(withDirectLinkedIn) : [];
+    const sourceLeadership = Array.isArray(o.executiveTeam) && o.executiveTeam.length ? o.executiveTeam : o.leadership;
+    const curatedLeadership = Array.isArray(sourceLeadership) ? sourceLeadership.slice(0, 18).map(withDirectLinkedIn) : [];
     const liveOfficers = Array.isArray(rec.officers) ? rec.officers.slice(0, 18).map(withDirectLinkedIn) : [];
     const curatedByName = new Map(curatedLeadership.map(person => [personKey(person.name).toLowerCase(), person]));
     const executiveSeen = new Set();
@@ -272,10 +288,11 @@ async function main() {
         ...person,
         role,
         tier: executiveTier(role),
-        sourceType: liveOfficers.some(item => personKey(item.name).toLowerCase() === key) ? "market-filing" : "curated-leadership",
-        verification: verification.status || "unverified",
-        verificationUrl: verification.sourceUrl || "",
-        verifiedAt: verification.checkedAt || "",
+        sourceType: liveOfficers.some(item => personKey(item.name).toLowerCase() === key)
+          ? "market-filing" : person.sourceType || curated.sourceType || "curated-leadership",
+        verification: verification.status || person.verification || curated.verification || "unverified",
+        verificationUrl: verification.sourceUrl || person.verificationUrl || curated.verificationUrl || "",
+        verifiedAt: verification.checkedAt || person.verifiedAt || curated.verifiedAt || "",
       });
     }
     const normalizedOrg = {
@@ -283,15 +300,20 @@ async function main() {
       leadership: curatedLeadership,
       officers: liveOfficers,
       executiveTeam,
-      officialPages: official.officialPages || [],
-      sourceMode: liveOfficers.length ? "live-officers+curated-background+official-verification" : "curated+official-verification+news-monitoring",
+      officialPages: (official.officialPages || []).length ? official.officialPages : o.officialPages || [],
+      sourceMode: liveOfficers.length ? "live-officers+curated-background+official-verification"
+        : o.sourceMode || "curated+official-verification+news-monitoring",
     };
     const profileChecks = [
+      normalizedProfile.legalName || normalizedProfile.operator || name,
       normalizedProfile.founded, normalizedProfile.ceo, normalizedProfile.hq,
-      normalizedProfile.headcount, normalizedProfile.business.length,
+      normalizedProfile.headcount, normalizedProfile.business.length, normalizedProfile.officialWebsite,
       normalizedProfile.shareholders || rec.topHolders,
     ];
-    const verifiedCount = executiveTeam.filter(person => person.verification === "official-role-match" || person.sourceType === "market-filing").length;
+    const verifiedCount = executiveTeam.filter(person =>
+      person.verification === "official-role-match"
+      || person.verification === "knowledge-graph-domain-match"
+      || person.sourceType === "market-filing").length;
     const orgChecks = [
       normalizedOrg.mission,
       executiveTeam.length >= 3,
@@ -310,9 +332,12 @@ async function main() {
         score: pct(orgPresent, orgChecks.length),
         executiveCount: executiveTeam.length,
         verifiedExecutiveCount: verifiedCount,
-        officialSourceStatus: official.sourceStatus || "not-configured",
+        directLinkedInCount: executiveTeam.filter(person => /^https:\/\/(?:(?:www|[a-z]{2})\.)?linkedin\.com\/in\/[^/?#]+\/?$/i.test(person.li || "")).length,
+        officialSourceStatus: official.sourceStatus || base.coverage?.organization?.officialSourceStatus || "not-configured",
       },
-      sourceMode: rec.ticker ? "market-filing+curated+news" : "curated+news",
+      sourceMode: rec.ticker ? "market-filing+curated+news"
+        : base.coverage?.sourceMode || "official-domain+structured-knowledge-graph+news",
+      checkedAt: base.coverage?.checkedAt || nowIso,
     };
     rec.updatedAt = nowIso;
   }
