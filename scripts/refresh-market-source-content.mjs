@@ -9,12 +9,13 @@
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { cleanText, enrichSourceBatch, isContentBacked } from "./source-content.mjs";
-import { canonicalUrl, hasConsumerSurveyEvidence } from "./market-db.mjs";
+import { canonicalUrl, hasConsumerSurveyEvidence, sourceMetricValues } from "./market-db.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const limit = Number(process.env.MARKET_SOURCE_REFRESH_LIMIT || 0);
 const concurrency = Math.max(1, Number(process.env.MARKET_SOURCE_REFRESH_CONCURRENCY || 4));
 const force = /^(1|true|yes)$/i.test(String(process.env.MARKET_SOURCE_REFRESH_FORCE || ""));
+const labelsOnly = /^(1|true|yes)$/i.test(String(process.env.MARKET_METRIC_LABELS_ONLY || ""));
 const now = () => new Date().toISOString();
 const NON_FACT_MARKET_COPY = /(?:license granted|custom research|request (?:a )?sample|buy now|contact us|advertise|report purchase|cookie|privacy policy|sign up|user license|access to (?:the )?product|all rights reserved|register now|newsletter)/i;
 const MARKET_FACT_TERMS = /(?:market|cagr|forecast|project(?:ed|ion)?|expect(?:ed|s)?|reach(?:ed|es)?|grow(?:th|ing)?|survey|respondents?|consumer|shipment|units?|adoption|spending|revenue|sales|demand|supply|valuation|investment|percent|million|billion|trillion|\$)/i;
@@ -129,6 +130,23 @@ const needsRefresh = record => force || !(
   && record.sourceQuantities.length
 );
 
+const withSourceMetricLabels = record => {
+  if (!Array.isArray(record.sourceQuantifiedLines) || !record.sourceQuantifiedLines.length
+    || !Array.isArray(record.sourceQuantities) || !record.sourceQuantities.length) {
+    const values = Array.isArray(record.values) ? record.values : [];
+    if (values.some(metric => /^원문 수치(?:\s+\d+)?$/.test(metric?.label || ""))) {
+      return {
+        ...record,
+        discoveryValues: (record.discoveryValues || values).filter(metric => !/^원문 수치(?:\s+\d+)?$/.test(metric?.label || "")),
+        values: values.filter(metric => !/^원문 수치(?:\s+\d+)?$/.test(metric?.label || "")),
+      };
+    }
+    return record;
+  }
+  const metrics = sourceMetricValues(record.sourceQuantifiedLines, record.sourceQuantities);
+  return metrics.length ? { ...record, sourceMetricValues: metrics, values: metrics } : record;
+};
+
 const withPublisherEvidence = (record, enriched, checkedAt) => {
   const sourceContent = enriched.sourceContent || {};
   const pageUrl = canonicalUrl(sourceContent.canonicalUrl || enriched.url || record.sourceUrl);
@@ -136,6 +154,7 @@ const withPublisherEvidence = (record, enriched, checkedAt) => {
     ? sourceQuantifiedLines(enriched.title || sourceContent.headline || record.title, sourceContent.text)
     : [];
   const quantities = sourceQuantities(lines);
+  const metrics = sourceMetricValues(lines, quantities);
   const summaryLinesEn = sourceSummaryLines(enriched.summaryLinesEn, lines);
   const valid = isContentBacked(enriched) && !isGoogleNews(pageUrl) && lines.length > 0 && quantities.length > 0 && summaryLinesEn.length === 3;
   const type = verifiedRecordType(record, enriched, lines);
@@ -149,6 +168,8 @@ const withPublisherEvidence = (record, enriched, checkedAt) => {
       sourceContent,
       sourceQuantifiedLines: [],
       sourceQuantities: [],
+      discoveryValues: (record.discoveryValues || record.values || []).filter(metric => !/^원문 수치(?:\s+\d+)?$/.test(metric?.label || "")),
+      values: (record.values || []).filter(metric => !/^원문 수치(?:\s+\d+)?$/.test(metric?.label || "")),
       provenance: {
         status: "reference-only",
         evidenceCount: 0,
@@ -181,7 +202,8 @@ const withPublisherEvidence = (record, enriched, checkedAt) => {
     sourceContent,
     sourceQuantifiedLines: lines,
     sourceQuantities: quantities,
-    values: quantities.map((value, index) => ({ label: `원문 수치 ${index + 1}`, value })),
+    sourceMetricValues: metrics,
+    values: metrics,
     // The UI may use this compact extract for an audit fallback, but it never
     // uses the Google/RSS description after source-page verification.
     evidence: (enriched.summaryLinesEn || []).join("\n"),
@@ -200,8 +222,12 @@ async function main() {
   const data = JSON.parse(await readFile("market.json", "utf8"));
   const suppression = await loadSuppressionRegistry();
   const records = Array.isArray(data.records) ? data.records : [];
-  const suppressedRecords = records.filter(record => suppression.matches(record, "market"));
-  const candidates = records
+  // Labeling is a local interpretation of already-retained source sentences,
+  // not a network refresh. Suppressed rows remain hidden and excluded from
+  // candidates while the historical ledger keeps a consistent schema.
+  const labeledRecords = records.map(withSourceMetricLabels);
+  const suppressedRecords = labeledRecords.filter(record => suppression.matches(record, "market"));
+  const candidates = (labelsOnly ? [] : labeledRecords)
     .filter(record => !suppression.matches(record, "market"))
     .filter(needsRefresh);
   const target = limit > 0 ? candidates.slice(0, limit) : candidates;
@@ -210,7 +236,7 @@ async function main() {
   const enriched = await enrichSourceBatch(target.map(asSourceInput), concurrency);
   const byId = new Map(enriched.map(row => [row.id, row]));
   const checkedAt = now();
-  const updated = records.map(record => {
+  const updated = labeledRecords.map(record => {
     if (suppression.matches(record, "market")) return record;
     return byId.has(record.id)
       ? withPublisherEvidence(record, byId.get(record.id), checkedAt)
@@ -225,8 +251,23 @@ async function main() {
     ...(data.database || {}),
     recordCount: updated.length,
     retainedRecordCount: updated.length,
-    lastSourceRefreshAt: checkedAt,
-    lastSourceRefresh: { attempted: target.length, sourceBacked: published, withheld, userSuppressedPreserved: suppressedRecords.length, concurrency },
+    ...(labelsOnly ? {
+      lastMetricLabelRefreshAt: checkedAt,
+      lastSourceRefresh: {
+        ...(data.database?.lastSourceRefresh || {}),
+        contextualMetricLabels: updated.filter(record => Array.isArray(record.sourceMetricValues) && record.sourceMetricValues.length).length,
+      },
+    } : {
+      lastSourceRefreshAt: checkedAt,
+      lastSourceRefresh: {
+        attempted: target.length,
+        sourceBacked: published,
+        withheld,
+        userSuppressedPreserved: suppressedRecords.length,
+        concurrency,
+        contextualMetricLabels: updated.filter(record => Array.isArray(record.sourceMetricValues) && record.sourceMetricValues.length).length,
+      },
+    }),
   };
   await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
   console.log(`[market-source-refresh] visible source-backed ${published}; append-only retained but withheld ${withheld}`);
