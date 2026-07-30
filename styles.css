@@ -2493,7 +2493,13 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .es-cell { position: relative; min-width: 0; padding: 37px 0 18px; font-family: var(--f); font-size: 12.5px; font-weight: 600; line-height: 1.62; color: #334f63; word-break: keep-all; }
 .es-cell::before { position: absolute; top: 18px; left: 0; color: #647887; font-family: var(--mono); font-size: 9px; font-weight: 800; letter-spacing: .1em; }
 .es-sig::before { content: "01  FACT"; }.es-ins::before { content: "02  IMPLICATION"; }.es-act::before { content: "03  DECISION"; }
-.es-sig .tl-ev-chip { display: table; margin-top: 10px; }
+.es-sig .tl-ev-chip { display: inline-flex; }
+.es-digest { margin-top: 9px; padding: 6px 9px; border-left: 2px solid var(--tl); background: rgba(23,63,95,.05); border-radius: 0 6px 6px 0; font-size: 11px; font-weight: 700; line-height: 1.5; color: #2c4a5e; letter-spacing: -.1px; }
+.es-ev-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.es-kw-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.es-kw { font-size: 10px; font-weight: 800; color: var(--tl); background: rgba(23,63,95,.07); border: 1px solid rgba(23,63,95,.14); border-radius: 20px; padding: 1px 8px; font-family: var(--mono); letter-spacing: .02em; }
+.es-row:hover .es-digest { background: rgba(255,255,255,.06); color: #cfe0ea; border-left-color: #7de3ff; }
+.es-row:hover .es-kw { color: #7de3ff; background: rgba(125,227,255,.1); border-color: rgba(125,227,255,.3); }
 .es-act { color: #102a43; font-weight: 700; }
 .es-act .tl-link { display: inline-flex; margin-top: 10px; color: #315c4a; }
 .es-arr { display: grid; min-width: 0; place-items: center; color: #6e8290; font-size: 21px; font-weight: 800; line-height: 1; }

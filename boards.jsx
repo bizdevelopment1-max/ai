@@ -3038,14 +3038,15 @@ function ExecToplines({ items, insights, onNav }) {
   };
   const usingLive = !!insights;
   const cards = (usingLive
-    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, action: c.action, evidence: c.evidence || [], score: c.score, scoreBasis: c.scoreBasis, live: c.live, updatedAt: c.updatedAt }))
-    : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, action: t.action, evidence: [], score: null })))
+    ? insights.cards.map(c => ({ tag: c.axisLabel, tone: c.tone, nav: c.nav, now: c.headline, cause: c.rootCause, decision: c.soWhat, action: c.action, evidence: c.evidence || [], digest: c.signalDigest || "", keywords: c.themeKeywords || [], signals: c.signals || [], score: c.score, scoreBasis: c.scoreBasis, live: c.live, updatedAt: c.updatedAt }))
+    : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, action: t.action, evidence: [], digest: "", keywords: [], signals: [], score: null })))
     .filter(c => !delEs[c.tag]);
   if (!cards.length) return null;
   // 엔진 provenance 배지 — 사용자가 자동/규칙/시드 생성 여부를 즉시 판별
   const eng = (insights && insights.engine) || (usingLive ? "rules" : "seed");
   const ENGINE_BADGE = {
     "llm": { ko: "LLM 자동 생성", cls: "llm" }, "llm-gh": { ko: "LLM 자동 생성", cls: "llm" },
+    "crawl-synthesis": { ko: "크롤 인사이트 종합", cls: "llm" },
     "rules": { ko: "규칙 기반 자동", cls: "rules" }, "seed": { ko: "시드(초기값)", cls: "seed" },
   };
   const eb = ENGINE_BADGE[eng] || ENGINE_BADGE.rules;
@@ -3065,7 +3066,7 @@ function ExecToplines({ items, insights, onNav }) {
         <div>
           <span className="es-brief-kicker">STRATEGIC DECISION BRIEF</span>
           <h3>핵심 신호를 의사결정으로 연결</h3>
-          <p>확인 가능한 원문 근거를 사업적 의미와 다음 실행으로 구조화</p>
+          <p>매일 크롤한 원문 근거(복수 출처·반복 신호·추출 수치)를 종합해 사업적 의미와 다음 실행으로 구조화 — 고정 문구가 아닌 크롤 결과에 따라 갱신</p>
         </div>
         <div className="es-brief-note" title="상대 중요도 0~100 = 최신성 × 출처신뢰도 × 주제적합도">
           <strong>Evidence-led</strong>
@@ -3119,14 +3120,24 @@ function ExecToplines({ items, insights, onNav }) {
               )}
             </div>
             <div className="es-cell es-sig">{hlKey(t.now)}
-              {t.evidence.slice(0, 1).map((e, k) => (
-                <a className="tl-ev-chip" key={k} href={e.url} target="_blank" rel="noopener">
-                  <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${fmtMonthDay(e.date)}` : ""}
-                </a>
-              ))}
+              {t.digest && <div className="es-digest" title="당일 크롤 근거에서 집계 — 근거 건수·반복 신호·추출 수치(매일 갱신)">{t.digest}</div>}
+              {t.evidence.length > 0 && (
+                <div className="es-ev-row">
+                  {t.evidence.slice(0, 3).map((e, k) => (
+                    <a className="tl-ev-chip" key={k} href={e.url} target="_blank" rel="noopener">
+                      <Icon name="news" size={10} /> {e.source}{e.date ? ` · ${fmtMonthDay(e.date)}` : ""}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
             <span className="es-arr" aria-hidden="true" />
-            <div className="es-cell es-ins">{hlKey(t.decision)}</div>
+            <div className="es-cell es-ins">
+              {t.keywords && t.keywords.length > 0 && (
+                <div className="es-kw-row">{t.keywords.map((k, j) => <span className="es-kw" key={j}>{k}</span>)}</div>
+              )}
+              {hlKey(t.decision)}
+            </div>
             <span className="es-arr" aria-hidden="true" />
             <div className="es-cell es-act">{hlKey(t.action || "")}
               {t.nav && <button className="tl-link" onClick={() => onNav && onNav(t.nav)}>{NAVLABEL[t.nav] || "상세"} ›</button>}

@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 /* ============================================================
-   build-insights.mjs — 규칙 기반 '오늘의 톱라인' 생성기 (결정론적)
+   build-insights.mjs — 크롤 인사이트 종합 '오늘의 톱라인' 생성기 (결정론적)
    입력: news.json  →  출력: insights.json
-   - 4개 고정 축에 기사를 매핑·점수화(최근성×출처신뢰도×키워드매치)하고
-     축마다 top 1건을 골라 headline(기사) + soWhat(축 시사점) + 근거 기사로 카드 생성.
-   - 매칭 기사가 없으면 정적 폴백 문구 사용 → 항상 4장 보장(MECE).
-   - 외부 호출/ API 키 없음. GitHub Action(클라우드)에서 매일 실행.
+   - 6개 전략 축에 크롤 기사를 매핑·점수화(최근성×출처신뢰도×주제적합도)하고,
+     축마다 다수의 근거 기사를 모아 크롤 신호를 '종합'한다:
+       · FACT      = 대표 기사 헤드라인(원문 링크)
+       · signalDigest = 근거 건수 + 반복 신호 키워드 + 원문에서 추출한 핵심 수치
+                        (매일 크롤 결과가 바뀌면 함께 갱신 — 고정 문구 아님)
+       · IMPLICATION = 데이터에서 정리한 신호 + 이를 읽는 전략 렌즈
+       · DECISION   = 권고 실행
+   - 시사점 텍스트를 매일 동일하게 박아 넣던 '규칙 기반'에서, 실제 크롤 근거
+     (반복 키워드·추출 수치·복수 출처)를 집계해 갱신되는 '크롤 종합'으로 전환.
+   - 근거 기사가 없으면 큐레이션 기준선으로 폴백 → 항상 6장 보장(MECE).
+   - 외부 호출/ API 키 없음. 모든 수치·키워드는 원문 발췌(무-할루시네이션).
    - 사명(삼성/MX/Galaxy) 미출력 — '단말 사업/온디바이스' 관점만.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
@@ -110,6 +117,38 @@ function gaejosik(s) {
   return out;
 }
 
+// ── 크롤 근거에서 정량 신호를 추출(무-할루시네이션: 원문 텍스트에 있는 토큰만) ──
+// 예: "$3.66B", "11%", "900M MAU", "12GB", "150배", "2028년 70%"
+const QUANT_RE = /(?:\$\s?\d[\d,.]*\s?(?:억|조|천만|만|billion|million|trillion|bn|B|M|K)?|\d[\d,.]*\s?(?:%|배|억|조|억원|조원|GB|TB|TOPS|MAU|DAU|bp|bps|억\s?달러|조\s?달러|billion|million|trillion|퍼센트)|\d{4}\s?년)/gi;
+function extractQuantities(text) {
+  const seen = new Set(), out = [];
+  for (const m of String(text || "").matchAll(QUANT_RE)) {
+    const raw = m[0].replace(/\s+/g, "").trim();
+    // 연도 단독(2019~2035)만 있는 토큰은 노이즈 → 제외
+    if (/^\d{4}년$/.test(raw)) continue;
+    const key = raw.toLowerCase();
+    if (raw.length < 2 || seen.has(key)) continue;
+    seen.add(key); out.push(raw);
+    if (out.length >= 4) break;
+  }
+  return out;
+}
+
+// 축에 매칭된 기사들에서 실제로 반복 등장한 키워드를 빈도순으로 — 그날의 '신호 집중' 신호.
+function themeKeywords(entries, axis) {
+  const freq = new Map();
+  for (const e of entries) for (const k of e.matched) {
+    const key = k.toLowerCase();
+    freq.set(key, (freq.get(key) || 0) + 1);
+  }
+  return [...freq.entries()]
+    // strong 키워드를 살짝 우대(주제 규정력이 큼)
+    .map(([k, n]) => [k, n + (axis.strong.some(s => s.toLowerCase() === k) ? 0.5 : 0)])
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([k]) => k);
+}
+
 async function main() {
   let articles = [];
   try { articles = (JSON.parse(await readFile("news.json", "utf8")).articles || []); } catch { articles = []; }
@@ -132,47 +171,78 @@ async function main() {
       scored.push({ axis: ax.axis, score, relevance, matched: [...strongHits, ...weakHits], a });
     }
   }
-  // 전역 최고점부터 그리디 배정 — 기사·축 중복 금지(MECE)
+  // 축별로 매칭 기사를 점수순으로 그룹화 — 대표 기사(FACT)는 MECE로 유일 배정하되,
+  // 신호 종합(digest)·복수 근거는 그 축에 매칭된 기사 전체에서 집계한다.
   scored.sort((x, y) => y.score - x.score);
-  const usedUrl = new Set(), pickByAxis = {};
+  const byAxis = {};
+  for (const s of scored) (byAxis[s.axis] = byAxis[s.axis] || []).push(s);
+  // 대표 기사 MECE 배정: 전역 최고점부터 그리디, 기사 URL 중복 금지
+  const usedUrl = new Set(), leadByAxis = {};
   for (const s of scored) {
-    if (pickByAxis[s.axis]) continue;
+    if (leadByAxis[s.axis]) continue;
     if (usedUrl.has(s.a.url)) continue;
-    pickByAxis[s.axis] = s; usedUrl.add(s.a.url);
+    leadByAxis[s.axis] = s; usedUrl.add(s.a.url);
   }
   const maxScore = scored.length ? scored[0].score : 1;
 
   const cards = AXES.map(ax => {
-    const p = pickByAxis[ax.axis];
-    if (p) {
-      const a = p.a;
+    const lead = leadByAxis[ax.axis];
+    const group = (byAxis[ax.axis] || []).slice(0, 6);     // 이 축의 상위 근거군(신호 종합용)
+    if (lead) {
+      const a = lead.a;
+      // 복수 근거: 대표 기사 + 같은 축 상위 기사(URL 중복 제거) 최대 3건 → 근거의 폭을 보여줌
+      const evRows = [];
+      const evSeen = new Set();
+      for (const s of [lead, ...group]) {
+        const u = s.a.url;
+        if (!u || evSeen.has(u)) continue;
+        evSeen.add(u);
+        evRows.push({ title: s.a.title, date: s.a.date, source: s.a.source, url: u });
+        if (evRows.length >= 3) break;
+      }
+      // 크롤 종합 신호: 반복 키워드 + 원문에서 추출한 수치(둘 다 그날 크롤 결과에서 계산 → 갱신됨)
+      const keywords = themeKeywords(group, ax);
+      const quantSource = group.map(s => `${s.a.title || ""} ${s.a.summary || ""}`).join(" · ");
+      const quantities = extractQuantities(quantSource);
+      const digestParts = [`근거 ${evRows.length}건`];
+      if (keywords.length) digestParts.push(`반복 신호: ${keywords.join(", ")}`);
+      if (quantities.length) digestParts.push(`핵심 수치: ${quantities.join(", ")}`);
+      const signalDigest = digestParts.join(" · ");
+      // 신호 종합 근거(대표 외 보조 기사) — 원문 발췌 헤드라인으로 요약
+      const signals = evRows.slice(1).map(e => ({ fact: gaejosik(e.title), source: e.source, date: e.date, url: e.url }));
       return {
         axis: ax.axis, axisLabel: ax.label, tone: ax.tone, nav: ax.nav,
         headline: gaejosik(a.title),
+        signalDigest,                       // ← 크롤 근거에서 정리한 신호(매일 갱신)
+        themeKeywords: keywords,
+        quantities,
+        signals,                            // ← 보조 근거(복수 출처)
         rootCause: ax.rootCause,
-        soWhat: ax.soWhat,
+        soWhat: ax.soWhat,                  // ← 신호를 읽는 전략 렌즈
         action: ax.action,
-        evidence: [{ title: a.title, date: a.date, source: a.source, url: a.url }],
-        score: Math.round(Math.min(p.score / maxScore, 1) * 100),
+        evidence: evRows,                   // ← 복수 근거(검증은 verify-pipeline이 수행)
+        score: Math.round(Math.min(lead.score / maxScore, 1) * 100),
         scoreBasis: "상대 중요도 0~100(최신성×출처신뢰도×주제적합도, 당일 최고 카드=100)",
-        matched: p.matched,               // 근거 기사가 이 축에 매칭된 키워드(정합성 근거)
+        matched: lead.matched,
         live: true,
         updatedAt: a.date,
       };
     }
-    // 폴백(정합성 게이트를 통과한 근거 기사 없음) — 큐레이션된 자기완결 문구 사용
+    // 폴백(정합성 게이트를 통과한 근거 기사 없음) — 큐레이션된 자기완결 기준선
     return {
       axis: ax.axis, axisLabel: ax.label, tone: ax.tone, nav: ax.nav,
-      headline: gaejosik(ax.fallback), rootCause: ax.rootCause, soWhat: ax.soWhat, action: ax.action,
+      headline: gaejosik(ax.fallback), signalDigest: "근거 매칭 대기 — 큐레이션 기준선",
+      themeKeywords: [], quantities: [], signals: [],
+      rootCause: ax.rootCause, soWhat: ax.soWhat, action: ax.action,
       evidence: [], score: null, scoreBasis: "근거 기사 매칭 대기(큐레이션 기준선 표시 중)", matched: [], live: false,
       updatedAt: new Date().toISOString().slice(0, 10),
     };
   });
 
-  const out = { generatedAt: new Date().toISOString(), engine: "rules", cards };
+  const out = { generatedAt: new Date().toISOString(), engine: "crawl-synthesis", cards };
   await writeFile("insights.json", JSON.stringify(out) + "\n");
-  console.log(`Wrote insights.json — ${cards.filter(c => c.live).length}/${AXES.length} live cards (engine: rules)`);
-  cards.forEach(c => console.log(`  [${c.axisLabel}] score ${c.score}${c.live ? "" : " (fallback)"}: ${c.headline.slice(0, 50)}`));
+  console.log(`Wrote insights.json — ${cards.filter(c => c.live).length}/${AXES.length} live cards (engine: crawl-synthesis)`);
+  cards.forEach(c => console.log(`  [${c.axisLabel}] score ${c.score}${c.live ? "" : " (fallback)"} · ${c.signalDigest} · ${c.headline.slice(0, 40)}`));
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
