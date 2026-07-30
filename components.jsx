@@ -118,7 +118,6 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
                   <span className="sb-badge">{articleCount}</span>
                 )}
                 {cat && <span className={"sb-caret" + (openS ? " open" : "")}><Icon name="chevron" size={13} sw={2.2} /></span>}
-                {active === n.id && <span className="sb-active-bar" />}
               </button>
               {cat && openS && (
                 <div className="sb-sub">

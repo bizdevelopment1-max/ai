@@ -83,7 +83,7 @@ await Promise.all(Object.entries(views).map(([file, value]) => writeJson(file, v
 
 const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
-  ...await Promise.all(["insights.json", "briefing.json", "companies.json", "stocks.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  ...await Promise.all(["insights.json", "briefing.json", "companies.json", "stocks.json", "stock-events.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
