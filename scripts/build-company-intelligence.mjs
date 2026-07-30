@@ -60,19 +60,45 @@ const englishLines = article => {
   const lines = article?.summaryLinesEn || String(article?.summary || "").split("\n");
   return Array.isArray(lines) ? lines.map(clean).filter(Boolean) : [];
 };
+const alignedQuoteTranslation = (article, quote) => {
+  const original = englishLines(article);
+  const translated = localizedLines(article);
+  const target = claimKey(quote);
+  const index = original.findIndex(line => {
+    const candidate = claimKey(line);
+    return target.length >= 24 && candidate.length >= 24
+      && (candidate.includes(target) || target.includes(candidate));
+  });
+  return index >= 0 && translated[index] ? bulletizeKorean(translated[index]) : "";
+};
 
 const quoteCandidates = (article, leaders) => {
   const paragraphs = article?.sourceContent?.paragraphs || [];
   const rows = [];
   for (const paragraph of paragraphs.slice(0, 28)) {
-    const hits = [...String(paragraph).matchAll(/[“"]([^"”]{24,420})[”"]/g)];
-    for (const hit of hits) {
-      const speaker = (leaders || []).find(person => clean(paragraph).toLowerCase().includes(clean(person.name).toLowerCase()));
-      if (!speaker) continue;
+    const rawParagraph = String(paragraph);
+    const hits = [...rawParagraph.matchAll(/[“"]([^"”]{24,420})[”"]/g)];
+    const speakerHits = (leaders || []).map(person => {
+      const index = rawParagraph.toLowerCase().indexOf(clean(person.name).toLowerCase());
+      return index >= 0 ? { person, index, length: clean(person.name).length } : null;
+    }).filter(Boolean);
+    for (const speakerHit of speakerHits) {
+      const nearest = hits.map(hit => {
+        const start = hit.index;
+        const end = start + hit[0].length;
+        const speakerStart = speakerHit.index;
+        const speakerEnd = speakerStart + speakerHit.length;
+        const distance = speakerEnd < start ? start - speakerEnd : end < speakerStart ? speakerStart - end : 0;
+        return { hit, distance };
+      }).sort((left, right) => left.distance - right.distance)[0];
+      if (!nearest || nearest.distance > 220) continue;
+      const hit = nearest.hit;
+      const speaker = speakerHit.person;
       rows.push({
         speaker: speaker.name,
         role: speaker.role || "",
         quoteOriginal: clean(hit[1]),
+        quoteKo: alignedQuoteTranslation(article, hit[1]),
         evidenceUrl: article.url,
         source: article.source || "",
         date: article.date || "",
@@ -257,6 +283,7 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
     ...evidence.map(item => canon(item.url)),
     ...["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"]
       .flatMap(key => (fallback[key]?.evidence || []).map(refKey)),
+    ...(fallback.executiveQuotes || []).map(item => canon(item.evidenceUrl)),
   ].filter(Boolean));
   const sectionKeys = ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"];
   const seenDetails = new Set();
@@ -419,6 +446,16 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
     date: String(official.checkedAt || "").slice(0, 10),
     url: official.resolvedUrl || official.url,
   }] : [];
+  const executiveQuoteSeen = new Set();
+  const executiveQuotes = [
+    ...(rec.executiveFeed?.quotes || []),
+    ...evidence.flatMap(item => item.quotes || []),
+  ].filter(item => {
+    const key = `${item.speaker}|${claimKey(item.quoteOriginal)}`;
+    if (!item.quoteOriginal || !item.quoteKo || !/^https?:\/\//.test(String(item.evidenceUrl || "")) || executiveQuoteSeen.has(key)) return false;
+    executiveQuoteSeen.add(key);
+    return true;
+  }).slice(0, 4);
   return {
     currentBusiness: { summary: clip(currentBusiness, 360), details: (profile.business || []).slice(0, 4), evidence: officialEvidence },
     revenueModel: {
@@ -451,7 +488,7 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
       implication: "제품·서비스·배포 방식의 변화가 반복 매출과 고객 접점을 확장하는지 추적",
       evidence: { title: signal.signal, source: signal.source, date: signal.date, url: signal.url },
     })),
-    executiveQuotes: [],
+    executiveQuotes,
   };
 };
 
@@ -529,7 +566,8 @@ async function main() {
   };
 
   for (const [name, rec] of Object.entries(companyData.companies || {})) {
-    const leaders = rec.organization?.leadership || [];
+    const leaders = Array.isArray(rec.organization?.executiveTeam) && rec.organization.executiveTeam.length
+      ? rec.organization.executiveTeam : rec.organization?.leadership || [];
     const evidence = mergeEvidence(officialEvidenceFor(rec), evidenceFor(name, newsData.articles || [], leaders));
     const monet = sanitiseMonetization(name, monetByName.get(name) || null, articleByUrl);
     const fallbackRaw = fallbackIntelligence({

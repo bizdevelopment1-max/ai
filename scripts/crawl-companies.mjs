@@ -21,6 +21,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, executiveTier } from "./company-sources.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
+import { bulletizeKorean } from "./korean-copy.mjs";
 
 const MAX_EXECUTIVES = 12;
 
@@ -57,11 +58,12 @@ const boundWord = s => {
 function deriveLeaders(org) {
   const people = [];
   for (const [co, o] of Object.entries(org || {})) {
-    for (const entry of (o.leadership || [])) {
+    const roster = Array.isArray(o.executiveTeam) && o.executiveTeam.length ? o.executiveTeam : o.leadership || [];
+    for (const entry of roster) {
       for (const full of String(entry.name || "").split("·").map(s => s.trim()).filter(Boolean)) {
         const tokens = full.split(/\s+/).filter(Boolean);
         const last = tokens.length > 1 ? tokens[tokens.length - 1] : "";
-        people.push({ co, full, last });
+        people.push({ co, full, last, role: entry.role || entry.title || "" });
       }
     }
   }
@@ -72,17 +74,54 @@ function deriveLeaders(org) {
     const aliases = [p.full];
     if (p.last && p.last.length >= 4 && lastFreq.get(p.last) === 1) aliases.push(p.last);
     const re = new RegExp(aliases.map(boundWord).join("|"), "i");
-    (byCo[p.co] = byCo[p.co] || []).push({ full: p.full, re });
+    (byCo[p.co] = byCo[p.co] || []).push({ full: p.full, role: p.role, re });
   }
   return byCo;
 }
+const sourceBackedArticle = article => article?.displayEligible !== false
+  && article?.summaryMode === "source-content-extractive"
+  && article?.provenance?.status === "source-backed"
+  && /^https?:\/\//.test(String(article?.url || ""));
+const canonicalUrl = value => {
+  try {
+    const url = new URL(String(value || ""));
+    url.hash = "";
+    ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"].forEach(key => url.searchParams.delete(key));
+    return url.href.replace(/[?&]$/, "").replace(/\/+$/, "");
+  } catch {
+    return String(value || "").replace(/[?#].*$/, "").replace(/\/+$/, "");
+  }
+};
+const normalizedQuote = value => String(value || "").normalize("NFKC").toLocaleLowerCase()
+  .replace(/[^\p{L}\p{N}]+/gu, "");
+const localizedTitle = article => article?.titleKo || article?.localization?.title || "";
+const alignedQuoteTranslation = (article, quote) => {
+  const en = article?.summaryLinesEn || article?.localization?.sourceLines || [];
+  const ko = article?.summaryLinesKo || article?.localization?.summaryLines || [];
+  if (!Array.isArray(en) || !Array.isArray(ko) || !ko.length) return "";
+  const target = normalizedQuote(quote);
+  const index = en.findIndex(line => {
+    const candidate = normalizedQuote(line);
+    return target.length >= 24 && candidate.length >= 24
+      && (candidate.includes(target) || target.includes(candidate));
+  });
+  return index >= 0 && ko[index] ? bulletizeKorean(ko[index]) : "";
+};
+const peopleFromTeam = team => (team || []).map(person => {
+  const full = String(person?.name || "").trim();
+  return full ? {
+    full,
+    role: person.role || person.title || "",
+    re: new RegExp(boundWord(full), "i"),
+  } : null;
+}).filter(Boolean);
 const execMentions = (co, arts, leaders) => {
-  const people = leaders[co];
+  const people = Array.isArray(leaders) ? leaders : leaders[co];
   if (!people || !people.length) return [];
   const seen = new Set();
   const rows = [];
   for (const a of arts) {
-    if (!a.title || !a.url || seen.has(a.url)) continue;
+    if (!a.title || !a.url || seen.has(a.url) || !sourceBackedArticle(a)) continue;
     // A leader name alone is not company evidence. Require the company in the
     // title/lede as well, preventing cross-company executive false positives.
     if (!articleFocusedOnCompany(co, a)) continue;
@@ -92,9 +131,102 @@ const execMentions = (co, arts, leaders) => {
     seen.add(a.url);
     const ko = a.titleKo || (a.localization && (a.localization.title
       || (Array.isArray(a.localization.summaryLines) && a.localization.summaryLines[0]))) || "";
-    rows.push({ who: hit.full, titleEn: a.titleEn || a.title, titleKo: ko, date: a.date, url: a.url, source: a.source || "" });
+    rows.push({
+      who: hit.full,
+      role: hit.role || "",
+      titleEn: a.titleEn || a.title,
+      titleKo: ko,
+      date: a.date,
+      url: a.url,
+      source: a.source || "",
+      evidenceType: "publisher-page-extractive",
+    });
   }
   return rows.sort((x, y) => (x.date < y.date ? 1 : -1)).slice(0, 6);
+};
+const executiveQuotes = (co, arts, people) => {
+  if (!people?.length) return [];
+  const rows = [];
+  const seen = new Set();
+  for (const article of arts) {
+    if (!sourceBackedArticle(article) || !articleFocusedOnCompany(co, article)) continue;
+    const paragraphs = Array.isArray(article?.sourceContent?.paragraphs) ? article.sourceContent.paragraphs.slice(0, 36) : [];
+    for (const rawParagraph of paragraphs) {
+      const paragraph = String(rawParagraph || "");
+      const quotes = [...paragraph.matchAll(/[“"]([^"”]{24,420})[”"]/g)];
+      const speakerHits = people.map(person => {
+        const match = paragraph.match(person.re);
+        return match ? { person, index: match.index, length: match[0].length } : null;
+      }).filter(Boolean);
+      if (!quotes.length || !speakerHits.length) continue;
+      for (const speakerHit of speakerHits) {
+        const nearest = quotes.map(match => {
+          const start = match.index;
+          const end = start + match[0].length;
+          const speakerStart = speakerHit.index;
+          const speakerEnd = speakerStart + speakerHit.length;
+          const distance = speakerEnd < start ? start - speakerEnd : end < speakerStart ? speakerStart - end : 0;
+          return { match, distance };
+        }).sort((left, right) => left.distance - right.distance)[0];
+        if (!nearest || nearest.distance > 220) continue;
+        const speaker = speakerHit.person;
+        const quoteOriginal = String(nearest.match[1] || "").trim();
+        const key = `${speaker.full}|${normalizedQuote(quoteOriginal)}`;
+        if (!quoteOriginal || seen.has(key)) continue;
+        const quoteKo = alignedQuoteTranslation(article, quoteOriginal);
+        if (!quoteKo) continue;
+        seen.add(key);
+        rows.push({
+          speaker: speaker.full,
+          role: speaker.role || "",
+          quoteOriginal,
+          quoteKo,
+          evidenceUrl: article.url,
+          source: article.source || "",
+          date: article.date || "",
+          evidenceType: "direct-quote+aligned-korean-source-summary",
+        });
+      }
+    }
+  }
+  return rows.sort((left, right) => String(right.date || "").localeCompare(String(left.date || ""))).slice(0, 6);
+};
+const mergeVerifiedRows = (current, previous, keyOf, limit = 6) => {
+  const seen = new Set();
+  return [...(current || []), ...(previous || [])].filter(item => {
+    if (!/^https?:\/\//.test(String(item?.url || item?.evidenceUrl || ""))) return false;
+    const key = keyOf(item);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).sort((left, right) => String(right.date || "").localeCompare(String(left.date || ""))).slice(0, limit);
+};
+const buildExecutiveFeed = (co, arts, executiveTeam, organization, previous, checkedAt) => {
+  const people = peopleFromTeam(executiveTeam);
+  const retained = previous?.schemaVersion === 2 ? previous : null;
+  const mentions = mergeVerifiedRows(
+    execMentions(co, arts, people),
+    retained?.mentions,
+    item => `${canonicalUrl(item.url)}|${item.who}`,
+  );
+  const quotes = mergeVerifiedRows(
+    executiveQuotes(co, arts, people),
+    retained?.quotes,
+    item => `${item.speaker}|${normalizedQuote(item.quoteOriginal)}`,
+  ).filter(item => item.quoteKo && item.quoteOriginal);
+  const sourceUrls = [...new Set((organization?.officialPages || [])
+    .filter(page => page.status === "reachable")
+    .map(page => page.resolvedUrl || page.url)
+    .filter(url => /^https?:\/\//.test(String(url || ""))))].slice(0, 6);
+  return {
+    schemaVersion: 2,
+    methodology: "executive-name+company-focus+nearest-speaker-direct-quote+korean-source-alignment",
+    checkedAt,
+    leadersTracked: people.length,
+    sourceUrls,
+    quotes,
+    mentions,
+  };
 };
 const classifyPractices = (arts) => {
   const recent = arts.filter(a => days(a.date) <= 60);
@@ -344,6 +476,18 @@ async function main() {
       sourceMode: liveOfficers.length ? "live-officers+curated-background+official-verification"
         : o.sourceMode || "curated+official-verification+news-monitoring",
     };
+    const feedTeam = executiveTeam.length ? executiveTeam
+      : normalizedProfile.ceo ? [{ name: normalizedProfile.ceo, role: "CEO" }] : [];
+    const executiveFeed = buildExecutiveFeed(
+      name,
+      articles,
+      feedTeam,
+      normalizedOrg,
+      previousCompanies[name]?.executiveFeed,
+      nowIso,
+    );
+    rec.execNews = executiveFeed.mentions;
+    rec.executiveFeed = executiveFeed;
     const profileChecks = [
       normalizedProfile.legalName || normalizedProfile.operator || name,
       normalizedProfile.founded, normalizedProfile.ceo, normalizedProfile.hq,
@@ -358,7 +502,7 @@ async function main() {
       normalizedOrg.mission,
       executiveTeam.length >= 3,
       verifiedCount >= 1,
-      (rec.execNews || []).length,
+      executiveFeed.mentions.length || executiveFeed.quotes.length || executiveFeed.sourceUrls.length,
     ];
     const profilePresent = profileChecks.filter(Boolean).length;
     const orgPresent = orgChecks.filter(Boolean).length;
