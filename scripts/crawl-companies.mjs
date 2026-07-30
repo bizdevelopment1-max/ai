@@ -31,6 +31,40 @@ const PRACTICE = [
   { id: "safety", ko: "안전·규제", re: /safety|안전|regulat|규제|policy|정책|govern|거버넌스|lawsuit|소송|copyright|저작권|privacy|프라이버시|보안|security/i },
   { id: "talent", ko: "인재·조직", re: /\bhire\b|채용|talent|인재|\bCEO\b|executive|경영진|leadership|리더십|founder|창업|layoff|감원|조직/i },
 ];
+// 경영진 이름(뉴스 co → 리더 성/이름) — 크롤 기사에서 경영진 발언·활동을 뽑아 자동 갱신.
+const LEADERS = {
+  "OpenAI": ["Sam Altman", "Altman", "Greg Brockman", "Brockman"],
+  "Anthropic": ["Dario Amodei", "Daniela Amodei", "Amodei", "Jared Kaplan"],
+  "NVIDIA": ["Jensen Huang", "Huang"],
+  "Google DeepMind": ["Demis Hassabis", "Hassabis", "Sundar Pichai", "Pichai"],
+  "Meta AI": ["Mark Zuckerberg", "Zuckerberg", "Yann LeCun", "LeCun"],
+  "Apple": ["Tim Cook", "Tim Cook", "John Ternus", "Ternus"],
+  "Microsoft": ["Satya Nadella", "Nadella"],
+  "Amazon": ["Andy Jassy", "Jassy"],
+  "Perplexity": ["Aravind Srinivas", "Srinivas"],
+  "Mistral AI": ["Arthur Mensch", "Mensch"],
+  "Cohere": ["Aidan Gomez", "Gomez"],
+  "Databricks": ["Ali Ghodsi", "Ghodsi"],
+  "SpaceX (xAI, Cursor)": ["Elon Musk", "Musk"],
+  "Hugging Face": ["Clément Delangue", "Delangue"],
+};
+const execMentions = (co, arts) => {
+  const names = LEADERS[co];
+  if (!names) return [];
+  const canon = names[0];   // 대표 표기(첫 항목)
+  const rx = new RegExp(names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "i");
+  const seen = new Set();
+  return arts
+    .filter(a => a.title && a.url && rx.test(`${a.title} ${a.descEn || ""} ${a.summary || ""}`))
+    .filter(a => (seen.has(a.url) ? false : seen.add(a.url)))
+    .sort((x, y) => (x.date < y.date ? 1 : -1))
+    .slice(0, 6)
+    .map(a => {
+      const ko = a.titleKo || (a.localization && (a.localization.title
+        || (Array.isArray(a.localization.summaryLines) && a.localization.summaryLines[0]))) || "";
+      return { who: canon, titleEn: a.titleEn || a.title, titleKo: ko, date: a.date, url: a.url, source: a.source || "" };
+    });
+};
 const classifyPractices = (arts) => {
   const recent = arts.filter(a => days(a.date) <= 60);
   const src = recent.length >= 3 ? recent : arts.slice(0, 12);   // 최근 60일 우선, 부족하면 최신 12건
@@ -79,6 +113,7 @@ async function main() {
       mentions30: arts.filter(a => days(a.date) <= 30).length,
       latest: { title: latest.title, url: latest.url, date: latest.date, source: latest.source },
       practices: classifyPractices(arts),
+      execNews: execMentions(co, articles),
     };
     const tk = TICKER_OF[co];
     if (tk && stocks[tk] && stocks[tk].marketCap) {

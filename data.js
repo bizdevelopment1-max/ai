@@ -1352,7 +1352,10 @@ window.DASH = (function () {
       { name: "Sam Altman", role: "Founder·CEO", bg: "Stanford 중퇴 · 前 Loopt 창업·Y Combinator 대표" },
       { name: "Greg Brockman", role: "Co-founder·President", bg: "MIT·Harvard 중퇴 · 前 Stripe CTO" },
     ], interviews: [
-      { who: "Sam Altman", insight: "2025년 'AI가 사무직 일자리를 없앤다'던 경고를 2026년 스스로 철회 — '꽤 틀렸다, 틀려서 기쁘다'. 지금을 '특이점 안'으로 규정하고, 역량 단계마다 시스템을 강화하도록 'AI 개발 속도 조절'이 필요하다고 언급.", source: "Fortune·Forbes 2026", url: "https://fortune.com/2026/05/26/sam-altman-dario-amodei-walking-back-ai-jobs-apocalypse-prophecies-ipo/" },
+      { who: "Sam Altman", role: "CEO", date: "2026-05-26",
+        quoteEn: "I was pretty wrong … I'm delighted to be wrong (on AI wiping out white-collar jobs). We are inside the singularity; we may need to pace the rate of AI development.",
+        quoteKo: "AI가 사무직 일자리를 없앤다는 예측은 꽤 틀렸다 — 틀려서 기쁘다. 우리는 이미 '특이점' 안에 있고, 역량 단계마다 시스템을 강화하도록 'AI 개발 속도 조절'이 필요할 수 있다.",
+        source: "Fortune·Forbes", url: "https://fortune.com/2026/05/26/sam-altman-dario-amodei-walking-back-ai-jobs-apocalypse-prophecies-ipo/" },
     ] },
     "Anthropic": { mission: "신뢰·해석·통제 가능한 AI 시스템 구축 — 안전한 AI(공익법인)", leadership: [
       { name: "Dario Amodei", role: "Founder·CEO", bg: "Stanford 물리학 박사 · 前 Google Brain·Baidu·OpenAI 연구부문 VP" },
@@ -1360,7 +1363,10 @@ window.DASH = (function () {
       { name: "Jared Kaplan", role: "Co-founder·Chief Science Officer", bg: "이론물리학자(Johns Hopkins 교수) · 스케일링 법칙 연구" },
       { name: "Chris Olah", role: "Co-founder", bg: "前 Google Brain · 기계적 해석가능성(interpretability) 개척" },
     ], interviews: [
-      { who: "Dario Amodei", insight: "2026년 말~2027년 초 대부분 분야에서 '노벨상급' 역량의 AI를 예상. 제3자 평가로 '허용 불가 위험'이 확인되면 정부가 모델 배포를 차단·억제할 권한을 갖자고 제안(안전 규율 우선).", source: "Fortune·StartupHub 2026", url: "https://www.startuphub.ai/ai-news/ai-figures/2026/figure-dario-amodei-strategic-position-vs-peer-2026-07-27" },
+      { who: "Dario Amodei", role: "CEO", date: "2026-07-27",
+        quoteEn: "AI could match or exceed Nobel-laureate capability across most disciplines by late 2026 or early 2027. Governments should be able to block or deter deployment of a model if third-party assessment finds unacceptable risks.",
+        quoteKo: "2026년 말~2027년 초, 대부분 분야에서 '노벨상급' 역량의 AI가 나올 것. 제3자 평가로 '허용 불가 위험'이 확인되면 정부가 모델 배포를 차단·억제할 권한을 가져야 한다.",
+        source: "Fortune·StartupHub", url: "https://www.startuphub.ai/ai-news/ai-figures/2026/figure-dario-amodei-strategic-position-vs-peer-2026-07-27" },
     ] },
     "Google DeepMind": { mission: "AI로 과학을 발전시켜 인류 난제 해결", leadership: [
       { name: "Demis Hassabis", role: "Co-founder·CEO(DeepMind)", bg: "Cambridge 컴공·UCL 신경과학 박사 · 체스 마스터 · 2024 노벨화학상(AlphaFold)" },
@@ -1388,13 +1394,14 @@ window.DASH = (function () {
     ] },
     "SpaceX (xAI, Cursor)": { mission: "우주의 본질 이해(xAI) · 다행성 문명(SpaceX)", leadership: [
       { name: "Elon Musk", role: "Founder·CEO", bg: "UPenn 물리·경제 · Tesla·SpaceX·xAI 창업 · Grok 총괄" },
-    ], interviews: [
-      { who: "Jensen Huang(관련)", insight: "AGI는 이미 지났다는 시각도 — Lex Fridman 팟캐스트에서 'AI가 자율적으로 10억달러 기업을 세워 운영'하는 시점을 '지금(now)'이라 답.", source: "Yahoo·AOL 2026", url: "https://www.aol.com/nvidia-jensen-huang-says-disagrees-191239054.html" },
     ] },
     "NVIDIA": { mission: "가속 컴퓨팅으로 AI 시대의 연산 플랫폼 제공", leadership: [
       { name: "Jensen Huang", role: "Founder·CEO", bg: "Oregon State EE·Stanford MS · 前 AMD·LSI Logic · 1993 공동창업·CUDA 구축" },
     ], interviews: [
-      { who: "Jensen Huang", insight: "Lex Fridman 팟캐스트(3/23)에서 'AI가 자율적으로 10억달러 기업을 세워 운영'하는 시점을 5~20년이 아니라 '지금(now)'이라 답. AGI는 '이미 지나갔다'는 입장.", source: "Yahoo·AOL 2026", url: "https://www.aol.com/nvidia-jensen-huang-says-disagrees-191239054.html" },
+      { who: "Jensen Huang", role: "CEO", date: "2026-03-23",
+        quoteEn: "Asked whether an AI could autonomously start and run a billion-dollar company within 5-20 years: I think it's now. AGI is already behind us.",
+        quoteKo: "AI가 5~20년 안에 자율적으로 10억달러 기업을 세워 운영할 수 있느냐는 질문에 — '지금'이라고 본다. AGI는 이미 지나갔다.",
+        source: "Lex Fridman Podcast · Yahoo·AOL", url: "https://www.aol.com/nvidia-jensen-huang-says-disagrees-191239054.html" },
     ] },
     "Apple": { mission: "프라이버시 우선 온디바이스 지능 — 최고의 개인 기기 경험", leadership: [
       { name: "Tim Cook", role: "CEO", bg: "Auburn 산업공학·Duke MBA · 前 IBM·Compaq (2026.9 John Ternus 승계 예정)" },

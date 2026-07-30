@@ -339,6 +339,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
                       <div className="cd-org-node lead">
                         <b>{lead.name}</b><span className="cd-org-role">{lead.role}</span>
                         {lead.bg && <span className="cd-org-bg">{lead.bg}</span>}
+                        <a className="cd-org-li" href={"https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(lead.name + " " + c.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
                       </div>
                     )}
                     {reports.length > 0 && <span className="cd-org-conn" aria-hidden="true" />}
@@ -348,6 +349,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
                           <div className="cd-org-node" key={i}>
                             <b>{p.name}</b><span className="cd-org-role">{p.role}</span>
                             {p.bg && <span className="cd-org-bg">{p.bg}</span>}
+                            <a className="cd-org-li" href={"https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(p.name + " " + c.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
                           </div>
                         ))}
                       </div>
@@ -364,9 +366,13 @@ function CompanyDetail({ company, cats, articles, onClose }) {
                   <div className="cd-itv">
                     {org.interviews.map((it, i) => (
                       <div className="cd-itv-item" key={i}>
-                        <div className="cd-itv-who"><b>{it.who}</b>{it.source && <span>{it.source}</span>}</div>
-                        <p className="cd-itv-insight">{it.insight}</p>
-                        {it.url && <a className="cd-itv-src" href={it.url} target="_blank" rel="noopener">원문 인터뷰 <Icon name="ext" size={10} /></a>}
+                        <div className="cd-itv-who">
+                          <b>{it.who}</b>{it.role && <span className="cd-itv-role">{it.role}</span>}
+                          {it.date && <span className="cd-itv-date">{it.date}</span>}
+                        </div>
+                        <p className="cd-itv-ko">{it.quoteKo || it.insight}</p>
+                        {it.quoteEn && <p className="cd-itv-en">“{it.quoteEn}”</p>}
+                        {it.url && <a className="cd-itv-src" href={it.url} target="_blank" rel="noopener">{it.source ? it.source + " · " : ""}원문 보기 <Icon name="ext" size={10} /></a>}
                       </div>
                     ))}
                   </div>
@@ -375,6 +381,22 @@ function CompanyDetail({ company, cats, articles, onClose }) {
             </React.Fragment>
           );
         })()}
+
+        {c.live && Array.isArray(c.live.execNews) && c.live.execNews.length > 0 && (
+          <div className="cd-section">
+            <h4>경영진 발언·기사 <em>Executive Mentions</em><b className="cd-prof-live">LIVE · 크롤</b></h4>
+            <div className="cd-exn">
+              {c.live.execNews.map((e, i) => (
+                <a className="cd-exn-item" key={i} href={e.url} target="_blank" rel="noopener">
+                  <div className="cd-exn-top"><b>{e.who}</b><span>{e.date}{e.source ? " · " + e.source : ""} ↗</span></div>
+                  {e.titleKo && <p className="cd-exn-ko">{e.titleKo}</p>}
+                  <p className="cd-exn-en">{e.titleEn}</p>
+                </a>
+              ))}
+            </div>
+            <p className="cd-cp-note">경영진 이름이 등장한 크롤 기사 — 한글(가능 시)·원문 병기 · 클릭 시 원문 · 매일 자동 갱신</p>
+          </div>
+        )}
 
         {c.live && Array.isArray(c.live.practices) && c.live.practices.length > 0 && (() => {
           const ps = c.live.practices;
