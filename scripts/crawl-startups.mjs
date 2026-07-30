@@ -130,6 +130,24 @@ const SMALL = [
   { name: "Freepik", domain: "freepik.com", vertical: "이미지·리소스 생성", cat: "camera", stage: "성장", funding: "EQT 투자", ov: "AI 이미지·리소스 생성 플랫폼(스페인)", acq: "크리에이티브 리소스 생성 기술 감시" },
   { name: "Remini", domain: "remini.ai", vertical: "사진 화질 복원", cat: "camera", stage: "인수", funding: "Bending Spoons 산하", ov: "AI 사진 화질 복원·향상 앱(이탈리아)", acq: "카메라·갤러리 복원 기능 직결 감시" },
   { name: "Fliki", domain: "fliki.ai", vertical: "영상·음성 생성", cat: "video", stage: "부트스트랩", funding: "비상장", ov: "텍스트→영상·음성 생성(미국/인도)", acq: "미디어 생성 기능 접목 감시" },
+  // ── a16z Top 100 추가 확장(2차) — 단말(통화·회의·번역·브라우저) 관점 강화 ──
+  { name: "DeepL", domain: "deepl.com", vertical: "AI 번역", cat: "voice", stage: "성장", funding: "비상장 성장기업(독일)", ov: "고품질 신경망 기계번역 서비스 — 웹·모바일·API", acq: "실시간 통역·번역 UX 기능 접목 감시" },
+  { name: "Speechify", domain: "speechify.com", vertical: "텍스트 음성 변환", cat: "voice", stage: "성장", funding: "비상장 성장기업(미국)", ov: "텍스트를 음성으로 읽어주는 리딩·접근성 앱", acq: "단말 접근성·오디오북 리딩 UX 기능 감시" },
+  { name: "Otter.ai", domain: "otter.ai", vertical: "회의 전사·요약", cat: "voice", stage: "성장", funding: "ARR $100M+ 돌파(2025.3 보도)", ov: "실시간 회의 전사·요약·AI 에이전트(미국)", acq: "통화·회의 녹취 UX 기능 접목 감시" },
+  { name: "Fireflies.ai", domain: "fireflies.ai", vertical: "회의 노트 AI", cat: "productivity", stage: "성장", funding: "비상장 성장기업(미국)", ov: "회의 녹음·전사·요약 자동화", acq: "업무 생산성 서비스 제휴 감시" },
+  { name: "Granola", domain: "granola.ai", vertical: "AI 회의 노트", cat: "productivity", stage: "시리즈B", funding: "성장 라운드(영국)", ov: "평소처럼 메모하면 AI가 회의록으로 정리", acq: "생산성 앱 번들 제휴 감시" },
+  { name: "Read AI", domain: "read.ai", vertical: "회의·메일 AI 어시스턴트", cat: "productivity", stage: "성장", funding: "비상장 성장기업(미국)", ov: "회의·이메일·메시지 요약 AI 어시스턴트", acq: "업무 통합 어시스턴트 제휴 감시" },
+  { name: "ElsaSpeak", domain: "elsaspeak.com", vertical: "AI 발음 코칭", cat: "voice", stage: "성장", funding: "비상장 성장기업(미국/베트남)", ov: "AI 기반 영어 발음·회화 코칭 앱", acq: "언어학습 음성 UX 기능 접목 감시" },
+  { name: "Speak", domain: "speak.com", vertical: "AI 언어 학습", cat: "voice", stage: "성장", funding: "성장 라운드(미국)", ov: "AI 대화형 언어 학습 튜터 앱", acq: "언어학습·음성대화 UX 기능 감시" },
+  { name: "Cleo", domain: "meetcleo.com", vertical: "AI 금융 챗봇", cat: "vertical", stage: "성장", funding: "비상장 성장기업(영국)", ov: "개인 재무관리 AI 챗봇 앱", acq: "금융 서비스 챗봇 제휴 감시" },
+  { name: "Tavus", domain: "tavus.io", vertical: "AI 비디오 아바타", cat: "video", stage: "시리즈A", funding: "성장 라운드(미국)", ov: "실시간 AI 비디오 아바타·대화 API", acq: "영상 아바타 API 기술 감시" },
+  { name: "Arcads", domain: "arcads.ai", vertical: "AI UGC 광고 영상", cat: "video", stage: "시드", funding: "초기 라운드(프랑스)", ov: "AI 아바타 기반 UGC 스타일 광고 영상 생성", acq: "광고·마케팅 영상 생성 기술 감시" },
+  { name: "Play.ht", domain: "play.ht", vertical: "AI 음성 합성 API", cat: "voice", stage: "성장", funding: "비상장 성장기업(미국)", ov: "AI 음성 합성·클로닝 API 플랫폼", acq: "단말 음성 합성 기술 인수 후보" },
+  { name: "Resemble AI", domain: "resemble.ai", vertical: "음성 클로닝", cat: "voice", stage: "성장", funding: "비상장 성장기업(캐나다)", ov: "AI 음성 클로닝·합성 플랫폼", acq: "단말 음성 클로닝 기술 감시" },
+  { name: "Murf AI", domain: "murf.ai", vertical: "AI 보이스오버", cat: "voice", stage: "성장", funding: "비상장 성장기업(미국)", ov: "AI 내레이션·보이스오버 생성 플랫폼", acq: "콘텐츠 내레이션 기능 접목 감시" },
+  { name: "Dia (The Browser Company)", domain: "diabrowser.com", vertical: "AI 브라우저", cat: "search", stage: "성장", funding: "성장 라운드(미국)", ov: "AI 네이티브 브라우저(前 Arc)", acq: "단말 브라우저·검색 어시스턴트 UX 감시" },
+  { name: "Krisp", domain: "krisp.ai", vertical: "AI 노이즈 캔슬링", cat: "voice", stage: "성장", funding: "비상장 성장기업(아르메니아/미국)", ov: "통화·회의 배경소음 제거 AI", acq: "통화 품질·회의 오디오 기능 접목 감시" },
+  { name: "D-ID", domain: "d-id.com", vertical: "AI 아바타 영상", cat: "video", stage: "성장", funding: "비상장 성장기업(이스라엘)", ov: "텍스트로 말하는 AI 아바타 영상 생성", acq: "커뮤니케이션 아바타 기능 접목 감시" },
 ];
 
 const decode = s => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")

@@ -3663,7 +3663,14 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
     return (status === "source-backed" || status === "source-linked")
       && entries.some(entry => /^https?:\/\//.test(String(entry?.url || "")) && sourceMatchesStartup(s, entry));
   };
-  const hasVerifiedDetails = (s) => s?.provenance?.status === "source-backed";
+  // provenance.status는 스타트업 레코드에서 "source-linked"까지만 나오고
+  // "source-backed"는 나오지 않는다(마켓 정량 DB 전용 등급) — 이 값으로
+  // 큐레이션된 비즈니스 모델/개요 표시를 게이팅하면 항상 false가 되어 모든
+  // 카드가 뉴스 링크만 보이는 결과가 된다. 큐레이션 설명은 기업 프로필과
+  // 같은 신뢰 등급(원문 근거 자체가 아니라 자체 작성 요약)이므로, 카드가
+  // 노출 대상(hasLinkedEvidence)이면 항상 함께 보여준다. 배지는 실제 원문
+  // 본문 추출 여부(evidenceType)로만 구분.
+  const hasExtractedContent = (s) => s?.provenance?.evidenceType === "publisher-page-latest";
   const visibleAll = [...((data && data.large) || []), ...((data && data.small) || [])].filter(s => hasLinkedEvidence(s) && !del[s.name]);
   const catCounts = {};
   visibleAll.forEach(s => { const cid = catOf(s); if (cid) catCounts[cid] = (catCounts[cid] || 0) + 1; });
@@ -3731,7 +3738,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
         <>
         {tier !== "small" && (
         <div className="mkt-group">
-          <div className="mkt-group-head"><b>대형 업체 — 원문 링크 기반 관찰</b><em>업체 분류와 누적 원문 링크 표시 · 검증되지 않은 정량 수치와 거래 해석은 제외</em></div>
+          <div className="mkt-group-head"><b>대형 업체 — 비즈니스 모델·파트너십 관점</b><em>업체 분류·비즈니스 모델·수익 구조 표시 · 누적 원문 링크 병기</em></div>
           <div className="mkt-grid">
             {large.map(s => (
               <div className="mkt-card" key={s.name}>
@@ -3739,17 +3746,15 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                   <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
                   <button className="mkt-name su-link" onClick={() => openStartup(s)} title="기업 상세 보기">{s.name}</button>
                   {catMeta(catOf(s)) && <span className="su-cat" style={{ "--c": catMeta(catOf(s)).accent }} title={catMeta(catOf(s)).handset}>{catMeta(catOf(s)).ko}</span>}
-                  <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.val}` : ""}</span>
+                  <span className="su-meta">{s.vertical}{s.val ? ` · ${s.val}` : ""}</span>
                   {coLive && coLive[s.name] && coLive[s.name].mentions7 > 0 && <em className="su-live" title="최근 7일 언급 기사 수(크롤 자동 갱신)">{coLive[s.name].mentions7}건·7일</em>}
                   <DelUI name={s.name} />
                 </div>
                 <span className="brief-label" style={{ "--lc": LC[s.label] || "#2D6BFF" }}>{s.label}</span>
-                <span className="brief-label" style={{ "--lc": hasVerifiedDetails(s) ? "#0E8F6E" : "#64748B" }}>{hasVerifiedDetails(s) ? "원문 본문 확인" : "원문 링크"}</span>
-                {hasVerifiedDetails(s) ? <>
-                  <p className="su-row"><span className="brief-k sig">비즈니스 모델</span>{s.businessModel}</p>
-                  <p className="su-row"><span className="brief-k ins">수익</span>{s.revenue}</p>
-                  <p className="su-row"><span className="brief-k act">파트너십</span>{s.partnership}</p>
-                </> : null}
+                <span className="brief-label" style={{ "--lc": hasExtractedContent(s) ? "#0E8F6E" : "#64748B" }}>{hasExtractedContent(s) ? "원문 본문 확인" : "원문 링크"}</span>
+                {s.businessModel && <p className="su-row"><span className="brief-k sig">비즈니스 모델</span>{s.businessModel}</p>}
+                {s.revenue && <p className="su-row"><span className="brief-k ins">수익</span>{s.revenue}</p>}
+                {s.partnership && <p className="su-row"><span className="brief-k act">파트너십</span>{s.partnership}</p>}
                 <SourceHistory it={s} />
               </div>
             ))}
@@ -3758,7 +3763,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
         )}
         {tier !== "large" && (
         <div className="mkt-group">
-          <div className="mkt-group-head"><b>소형·초기 업체 — 원문 링크 기반 관찰</b><em>업체 분류와 누적 원문 링크 표시 · 펀딩·밸류·인수 해석은 본문 근거 확인 후 표시</em></div>
+          <div className="mkt-group-head"><b>소형·초기 업체 — 원문 링크 기반 관찰</b><em>업체 분류·개요·투자 관점 표시 · 누적 원문 링크 병기</em></div>
           <div className="mkt-grid">
             {small.map(s => (
               <div className="mkt-card" key={s.name}>
@@ -3766,17 +3771,15 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                   <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
                   <button className="mkt-name su-link" onClick={() => openStartup(s)} title="기업 상세 보기">{s.name}</button>
                   {catMeta(catOf(s)) && <span className="su-cat" style={{ "--c": catMeta(catOf(s)).accent }} title={catMeta(catOf(s)).handset}>{catMeta(catOf(s)).ko}</span>}
-                  <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.stage}` : ""}</span>
+                  <span className="su-meta">{s.vertical}{s.stage ? ` · ${s.stage}` : ""}</span>
                   {coLive && coLive[s.name] && coLive[s.name].mentions7 > 0 && <em className="su-live" title="최근 7일 언급 기사 수(크롤 자동 갱신)">{coLive[s.name].mentions7}건·7일</em>}
                   <DelUI name={s.name} />
                 </div>
                 <span className="brief-label" style={{ "--lc": LC[s.label] || "#2D6BFF" }}>{s.label}</span>
-                <span className="brief-label" style={{ "--lc": hasVerifiedDetails(s) ? "#0E8F6E" : "#64748B" }}>{hasVerifiedDetails(s) ? "원문 본문 확인" : "원문 링크"}</span>
-                {hasVerifiedDetails(s) ? <>
-                  <p className="su-row"><span className="brief-k sig">개요</span>{s.overview}</p>
-                  <p className="su-row"><span className="brief-k ins">펀딩</span>{s.funding}</p>
-                  <p className="su-row"><span className="brief-k act">인수·투자</span>{s.acqAngle}</p>
-                </> : null}
+                <span className="brief-label" style={{ "--lc": hasExtractedContent(s) ? "#0E8F6E" : "#64748B" }}>{hasExtractedContent(s) ? "원문 본문 확인" : "원문 링크"}</span>
+                {s.overview && <p className="su-row"><span className="brief-k sig">개요</span>{s.overview}</p>}
+                {s.funding && <p className="su-row"><span className="brief-k ins">펀딩</span>{s.funding}</p>}
+                {s.acqAngle && <p className="su-row"><span className="brief-k act">인수·투자</span>{s.acqAngle}</p>}
                 <SourceHistory it={s} />
               </div>
             ))}

@@ -1726,6 +1726,22 @@ window.DASH = (function () {
       { name: "Vijay Balasubramaniyan", role: "Co-founder·CEO", edu: "Georgia Tech 컴퓨터과학 박사", career: "음성 보안 연구" },
       { name: "Paul Judge", role: "Co-founder", edu: "Georgia Tech 박사", career: "연쇄창업가·보안 분야 투자자" },
     ] },
+    // ── a16z Top 100 확장(2차) 배경 커버리지 ──
+    "DeepL": { mission: "AI로 언어 장벽 없는 세상 — 고품질 신경망 번역", leadership: [
+      { name: "Jarosław Kutyłowski", role: "Founder·CEO", edu: "TU Darmstadt 컴퓨터과학 박사", career: "前 Linguee 리서치 총괄 · 2017 DeepL 출범" },
+    ] },
+    "Otter.ai": { mission: "회의·대화를 실시간 전사·요약하는 AI 워크스페이스", leadership: [
+      { name: "Sam Liang", role: "Co-founder·CEO", edu: "Tsinghua·조지아텍 컴퓨터과학 박사", career: "前 Alohar Mobile 창업(Alibaba 인수)" },
+    ] },
+    "Speechify": { mission: "누구나 읽지 않고 들을 수 있게 — 텍스트 음성 변환 접근성", leadership: [
+      { name: "Cliff Weitzman", role: "Founder·CEO", edu: "Brown University", career: "난독증 개인 경험에서 창업 아이디어 착안" },
+    ] },
+    "D-ID": { mission: "텍스트로 말하는 AI 아바타 영상 생성", leadership: [
+      { name: "Gil Perry", role: "Co-founder·CEO", edu: "", career: "前 영상·이미지 기술 스타트업 창업 경험" },
+    ] },
+    "Krisp": { mission: "AI로 통화·회의의 배경 소음을 제거", leadership: [
+      { name: "Davit Baghdasaryan", role: "Co-founder·CEO", edu: "", career: "前 Solavei 공동창업(아르메니아 출신)" },
+    ] },
   };
 
   // ── 투자 포트폴리오·전략 맵 ─────────────────────────────────────────
