@@ -14,19 +14,19 @@ const TODAY = new Date().toISOString().slice(0, 10);
 // 7개 MECE 수익화(비즈니스 모델) 유형 — 위에서부터 우선 매칭
 // vertical 을 맨 앞에 둬 자회사·분사·수직통합 신호가 우선권을 갖도록 함(모델사가 직접 서비스화하는 신사업 트렌드).
 const GROUPS = [
-  { id: "vertical", ko: "수직통합·자체 서비스", desc: "모델사가 자회사·분사로 버티컬 AI 서비스를 직접 구축 — 앱·소비자/기업 서비스로 가치사슬 확장", accent: "#7A38D6",
+  { id: "vertical", ko: "수직통합·자체 서비스", desc: "모델사가 자회사·분사로 버티컬 AI 서비스를 직접 구축 — 앱·소비자/기업 서비스로 가치사슬 확장", accent: "#66558C",
     re: /자회사|subsidiary|분사|spin(?:s|ning)?[-\s]?off|spin(?:s|ning)?[-\s]?out|수직통합|vertical integrat|application layer|first-?party (?:app|product|service)|owns? the (?:app|stack|product)|자체 (?:앱|서비스|플랫폼)|직접 서비스/i },
-  { id: "subscription", ko: "구독·시트", desc: "월정액·좌석당 구독(SaaS) — 반복 매출", accent: "#16A34A",
+  { id: "subscription", ko: "구독·시트", desc: "월정액·좌석당 구독(SaaS) — 반복 매출", accent: "#397A68",
     re: /구독|subscription|월정액|시트당|좌석당|per-seat|seat|프리미엄 요금|premium tier|pro 요금|유료 전환|paywall|플러스 요금|멤버십/i },
-  { id: "usage", ko: "사용량·API·토큰", desc: "종량제·API 호출·토큰당 과금", accent: "#2D6BFF",
+  { id: "usage", ko: "사용량·API·토큰", desc: "종량제·API 호출·토큰당 과금", accent: "#3E648D",
     re: /\bAPI\b|토큰당|per-token|사용량 기반|usage-based|종량|pay-as-you-go|크레딧|credit|추론 단가|inference cost|호출당|메터링|metered/i },
-  { id: "ads", ko: "광고·커머스·수수료", desc: "광고·거래 수수료·커머스 중개", accent: "#EA580C",
+  { id: "ads", ko: "광고·커머스·수수료", desc: "광고·거래 수수료·커머스 중개", accent: "#A56A35",
     re: /광고|advertis|\bads\b|커머스|commerce|수수료|commission|중개|affiliate|마켓플레이스|marketplace|거래 수수료|takerate|take rate/i },
-  { id: "hardware", ko: "하드웨어·단말·번들", desc: "기기 판매·단말 프리미엄·번들 크레딧", accent: "#C026D3",
+  { id: "hardware", ko: "하드웨어·단말·번들", desc: "기기 판매·단말 프리미엄·번들 크레딧", accent: "#6E607D",
     re: /단말|디바이스|device|하드웨어|hardware|번들|bundle|기기 판매|프리미엄 폰|웨어러블|이어버드|글라스|dongle|기기 가격|가격 프리미엄/i },
-  { id: "outcome", ko: "성과·아웃컴 기반", desc: "해결 건당·ROI 성과 기반 과금", accent: "#DB2777",
+  { id: "outcome", ko: "성과·아웃컴 기반", desc: "해결 건당·ROI 성과 기반 과금", accent: "#8B5366",
     re: /성과 기반|아웃컴|outcome|해결 건당|per-resolution|성공 보수|success fee|ROI 기반|결과 기반|performance-based/i },
-  { id: "enterprise", ko: "엔터프라이즈·라이선스", desc: "온프레미스·라이선스·기업 계약·소버린", accent: "#0D9488",
+  { id: "enterprise", ko: "엔터프라이즈·라이선스", desc: "온프레미스·라이선스·기업 계약·소버린", accent: "#287A78",
     re: /엔터프라이즈|enterprise|라이선스|licen[sc]e|온프레미스|on-?prem|기업 계약|소버린|sovereign|연간 계약|annual contract|\bTCV\b|\bACV\b|B2B 계약/i },
 ];
 

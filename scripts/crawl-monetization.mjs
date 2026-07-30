@@ -72,28 +72,28 @@ const withRegex = list => list.map(c => ({ ...c, re: new RegExp("(?:" + c.alias.
 
 // 7개 수익모델 유형(crawl-bizmodel과 정렬) — 위에서부터 우선 매칭
 const MODELS = [
-  { id: "vertical", ko: "수직통합·자체 서비스", accent: "#7A38D6",
+  { id: "vertical", ko: "수직통합·자체 서비스", accent: "#66558C",
     re: /자회사|subsidiary|분사|spin(?:s|ning)?[-\s]?off|spin(?:s|ning)?[-\s]?out|수직통합|vertical integrat|first-?party (?:app|product|service)|자체 (?:앱|서비스|플랫폼)|직접 서비스/i },
-  { id: "subscription", ko: "구독·시트", accent: "#16A34A",
+  { id: "subscription", ko: "구독·시트", accent: "#397A68",
     re: /구독|subscription|월정액|시트당|좌석당|per-seat|premium tier|pro 요금|유료 전환|paywall|멤버십|플러스 요금/i },
-  { id: "usage", ko: "사용량·API·토큰", accent: "#2D6BFF",
+  { id: "usage", ko: "사용량·API·토큰", accent: "#3E648D",
     re: /\bAPI\b|토큰당|per-token|사용량 기반|usage-based|종량|pay-as-you-go|크레딧|credit|추론 단가|inference cost|호출당|metered/i },
-  { id: "ads", ko: "광고·커머스·수수료", accent: "#EA580C",
+  { id: "ads", ko: "광고·커머스·수수료", accent: "#A56A35",
     re: /광고|advertis|\bads\b|커머스|commerce|수수료|commission|중개|affiliate|마켓플레이스|marketplace|take ?rate/i },
-  { id: "hardware", ko: "하드웨어·단말·번들", accent: "#C026D3",
+  { id: "hardware", ko: "하드웨어·단말·번들", accent: "#6E607D",
     re: /단말|디바이스|device|하드웨어|hardware|번들|bundle|기기 판매|웨어러블|이어버드|글라스|가격 프리미엄/i },
-  { id: "outcome", ko: "성과·아웃컴 기반", accent: "#DB2777",
+  { id: "outcome", ko: "성과·아웃컴 기반", accent: "#8B5366",
     re: /성과 기반|아웃컴 기반|해결 건당|per-resolution|성공 보수|success fee|ROI 기반|outcome-based|outcome based|performance-based|per-outcome/i },
-  { id: "enterprise", ko: "엔터프라이즈·라이선스", accent: "#0D9488",
+  { id: "enterprise", ko: "엔터프라이즈·라이선스", accent: "#287A78",
     re: /엔터프라이즈|enterprise|라이선스|licen[sc]e|온프레미스|on-?prem|기업 계약|소버린|sovereign|연간 계약|\bTCV\b|\bACV\b/i },
 ];
 
 // 4개 사업 방향 유형 — 앞으로의 투자·사업 방향 신호
 const DIRECTIONS = [
-  { id: "ma", ko: "인수·합병", accent: "#C026D3", re: /인수|합병|acqui|merger|\bM&A\b|매입|takeover/i },
-  { id: "invest", ko: "투자·펀딩", accent: "#16A34A", re: /투자|지분|invest|stake|펀딩|funding|조달|라운드|\bround\b|밸류에이션|valuation|\bIPO\b|상장/i },
-  { id: "expand", ko: "확장·신제품", accent: "#2D6BFF", re: /출시|launch|공개|unveil|roll ?out|신제품|신규 서비스|진출|expand|확장|데이터센터|증설|capacity|신시장|entry/i },
-  { id: "partner", ko: "제휴·파트너십", accent: "#EA580C", re: /파트너십|제휴|partner|협력|collaborat|계약 체결|독점 계약|합작|joint venture/i },
+  { id: "ma", ko: "인수·합병", accent: "#6E607D", re: /인수|합병|acqui|merger|\bM&A\b|매입|takeover/i },
+  { id: "invest", ko: "투자·펀딩", accent: "#397A68", re: /투자|지분|invest|stake|펀딩|funding|조달|라운드|\bround\b|밸류에이션|valuation|\bIPO\b|상장/i },
+  { id: "expand", ko: "확장·신제품", accent: "#3E648D", re: /출시|launch|공개|unveil|roll ?out|신제품|신규 서비스|진출|expand|확장|데이터센터|증설|capacity|신시장|entry/i },
+  { id: "partner", ko: "제휴·파트너십", accent: "#A56A35", re: /파트너십|제휴|partner|협력|collaborat|계약 체결|독점 계약|합작|joint venture/i },
 ];
 
 const toLines = sm => String(sm || "").split("\n").map(l => l.replace(/^[·\-•]\s*/, "").trim()).filter(Boolean);
