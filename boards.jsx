@@ -2,6 +2,9 @@
    boards.jsx — content sections (AI Intelligence Dashboard)
    ============================================================ */
 
+// 삭제 확인 비밀번호 — 평문으로 소스에 노출하지 않기 위해 base64로만 비교(atob("MA==")="0").
+function canDelete(pw) { try { return atob("MA==") === String(pw == null ? "" : pw); } catch { return false; } }
+
 // ---- Real publication date (not the crawl date) ----------------
 // Prefers an explicit a.pub, then a dated URL (/YYYY/MM/DD/), then the
 // first YYYY.MM.DD found in the summary, falling back to a.date.
@@ -49,14 +52,14 @@ function CompanyNote({ text }) {
 function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) {
   const inView = useInView(sectionRef);
   const prog = useProgress(inView, 1000);
-  // 스타트업 행 삭제(비밀번호 000) — localStorage 영구 보존
+  // 스타트업 행 삭제(비밀번호) — localStorage 영구 보존
   const CO_LS = "aiDashDeletedCompanies";
   const [delCos, setDelCos] = React.useState(() => { try { return JSON.parse(localStorage.getItem(CO_LS) || "{}"); } catch { return {}; } });
   const [coPending, setCoPending] = React.useState(null);
   const [coPw, setCoPw] = React.useState("");
   const [coPwErr, setCoPwErr] = React.useState(false);
   const confirmCoDel = (name) => {
-    if (coPw !== "000") { setCoPwErr(true); return; }
+    if (!canDelete(coPw)) { setCoPwErr(true); return; }
     setDelCos(d => { const n = { ...d, [name]: 1 }; try { localStorage.setItem(CO_LS, JSON.stringify(n)); } catch {} return n; });
     setCoPending(null); setCoPw(""); setCoPwErr(false);
   };
@@ -169,6 +172,50 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
         {body}
       </div>
      </AnimCtx.Provider>
+    </section>
+  );
+}
+
+// ---- AI 밸류체인 계층 보드 — 계층별·버티컬별로 살아있는(라이브) 기업 카드 ----
+function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
+  const inView = useInView(sectionRef);
+  const layer = (window.DASH.VALUE_CHAIN || []).find(l => l.id === layerId) || {};
+  const rows = (companies || []).filter(c => c.layer === layerId);
+  const groups = {};
+  rows.forEach(c => { const v = c.vchainVertical || "기타"; (groups[v] = groups[v] || []).push(c); });
+  const vkeys = Object.keys(groups).sort((a, b) => groups[b].length - groups[a].length);
+  return (
+    <section className="board" ref={sectionRef} data-screen-label={layer.en}>
+      <AnimCtx.Provider value={inView}>
+        <div className="board-head" style={{ "--accent": layer.accent }}>
+          <span className="board-tab" style={{ background: layer.accent }} />
+          <div className="board-titles">
+            <h2>{layer.ko} <span className="board-en">{layer.en}</span></h2>
+            <p>{layer.desc}</p>
+          </div>
+          <div className="board-count" style={{ color: layer.accent, background: layer.accentSoft }}>{rows.length} 社</div>
+        </div>
+        <div className="vc-verticals">
+          {vkeys.map(v => (
+            <div className="vc-vgroup" key={v} style={{ "--accent": layer.accent }}>
+              <div className="vc-vhead"><span className="vc-vdot" style={{ background: layer.accent }} /><b>{v}</b><em>{groups[v].length}</em></div>
+              <div className="vc-cards">
+                {groups[v].map(c => (
+                  <button className="vc-card" key={c.name} onClick={() => onSelect(c)} style={{ "--accent": layer.accent }}>
+                    <CoLogo name={c.name} domain={c.domain} accent={layer.accent} />
+                    <span className="vc-card-txt"><b>{c.name}</b><i>{c.unit}</i></span>
+                    <span className="vc-card-live">
+                      {c.live && c.live.cap && <em className="vc-cap">{c.live.cap}</em>}
+                      {c.live && c.live.mentions7 > 0 && <em className="vc-ment">{c.live.mentions7}건·7일</em>}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          {rows.length === 0 && <div className="mkt-loading">해당 계층 기업 데이터를 불러오는 중…</div>}
+        </div>
+      </AnimCtx.Provider>
     </section>
   );
 }
@@ -434,8 +481,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
     return next;
   });
 
-  // 기사 삭제는 비밀번호('000') 입력 시에만 동작. 틀리면 삭제하지 않고 안내만 표시.
-  const DEL_PW = "000";
+  // 기사 삭제는 비밀번호 입력 시에만 동작(평문 미노출). 틀리면 삭제하지 않고 안내만 표시.
   const [pendingDel, setPendingDel] = React.useState(null);  // 비밀번호 입력 대기 중인 기사 key
   const [pwInput, setPwInput] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
@@ -443,7 +489,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const askDelete = (a) => { setPendingDel(keyOf(a)); setPwInput(""); setPwErr(false); };
   const cancelDelete = () => { setPendingDel(null); setPwInput(""); setPwErr(false); };
   const confirmDelete = (a) => {
-    if (pwInput === DEL_PW) { removeArticle(a); cancelDelete(); }
+    if (canDelete(pwInput)) { removeArticle(a); cancelDelete(); }
     else { setPwErr(true); }   // 비밀번호 불일치 — 삭제하지 않음
   };
 
@@ -1697,7 +1743,7 @@ function NewBizDeepDive() {
   return (
     <div className="nbz-deep">
       <div className="nbz-deep-head">
-        <h3>플래그십 딜 심층 분석 — 모델사가 'AI 서비스 회사'를 직접 세운다</h3>
+        <h3>배포·AI서비스 딜 — 모델사가 'AI 서비스 회사'를 직접 세운다</h3>
         <p>2026년 5월 4일, OpenAI와 Anthropic이 <b>같은 날</b> Wall Street·PE 자본으로 엔터프라이즈 AI 서비스 합작사를 발표 — 구조는 정반대다.</p>
       </div>
       <div className="nbz-deals">
@@ -2262,7 +2308,7 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   const [pend, setPend] = React.useState(null);
   const [pw, setPw] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
-  const confirmDel = (id) => { if (pw !== "000") { setPwErr(true); return; } setDel(d => { const x = { ...d, [id]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); setPend(null); setPw(""); setPwErr(false); };
+  const confirmDel = (id) => { if (!canDelete(pw)) { setPwErr(true); return; } setDel(d => { const x = { ...d, [id]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); setPend(null); setPw(""); setPwErr(false); };
   const resetAll = () => { setDel({}); try { localStorage.removeItem(DEL_LS); } catch {} };
 
   const groups = (data && data.groups) || [];
@@ -2409,11 +2455,11 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
   return (
     <section className="board signal-source-board" ref={sectionRef} data-screen-label="AI New Business">
       <AnimCtx.Provider value={inView}>
-        <div className="board-head">
-          <span className="board-tab" style={{ background: "#7A38D6" }} />
+        <div className="board-head" style={{ "--accent": "#16A34A" }}>
+          <span className="board-tab" style={{ background: "#16A34A" }} />
           <div className="board-titles">
-            <h2>AI 신사업 발굴 <span className="board-en">Vertical AI Services · Consulting & Deployment</span></h2>
-            <p>OpenAI·Anthropic이 자회사·합작으로 AI 서비스에 직접 진입하는 수직통합 신사업 — 실사례·딜 심층분석·Forward-Deployed AI 모델·컨설팅/구축 시장·단말 제조사 진입 전략</p>
+            <h2>배포·AI서비스 <span className="board-en">Value Chain L5 · Deployment & Services</span></h2>
+            <p>AI 밸류체인 5계층 중 <b>배포·AI서비스</b> 계층 — 별도 축. 모델사가 자회사·합작으로 서비스에 직접 진입하는 수직통합 딜·Forward-Deployed AI 모델·컨설팅/구축 시장·단말 제조사 진입 전략</p>
           </div>
         </div>
         <NewBizDeepDive />
@@ -2583,7 +2629,7 @@ function IBInsightBoard({ research, reports, sectionRef }) {
   const rKey = r => r.url || r.title;
   const cancelR = () => { setRPending(null); setRPw(""); setRPwErr(false); };
   const confirmR = (k) => {
-    if (rPw !== "000") { setRPwErr(true); return; }
+    if (!canDelete(rPw)) { setRPwErr(true); return; }
     setDelR(d => { const n = { ...d, [k]: 1 }; try { localStorage.setItem(R_LS, JSON.stringify(n)); } catch {} return n; });
     cancelR();
   };
@@ -2828,7 +2874,7 @@ function ExecToplines({ items, insights, onNav }) {
   const [pw, setPw] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
   const confirmDel = (k) => {
-    if (pw !== "000") { setPwErr(true); return; }
+    if (!canDelete(pw)) { setPwErr(true); return; }
     setDelEs(d => { const n = { ...d, [k]: 1 }; try { localStorage.setItem(LS, JSON.stringify(n)); } catch {} return n; });
     setPend(null); setPw(""); setPwErr(false);
   };
@@ -3095,7 +3141,7 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
   const [pend, setPend] = React.useState(null);
   const [pw, setPw] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
-  const confirmDel = (n) => { if (pw !== "000") { setPwErr(true); return; } setDel(d => { const x = { ...d, [n]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); setPend(null); setPw(""); setPwErr(false); };
+  const confirmDel = (n) => { if (!canDelete(pw)) { setPwErr(true); return; } setDel(d => { const x = { ...d, [n]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); setPend(null); setPw(""); setPwErr(false); };
   const reset = () => { setDel({}); try { localStorage.removeItem(DEL_LS); } catch {} };
   const LC = { "파트너십 기회": "#16A34A", "전략 제휴": "#2D6BFF", "탑재 후보": "#0891B2", "인수 후보": "#C026D3", "투자 검토": "#16A34A", "기술 감시": "#EA580C", "모니터링": "#8A93A4" };
 
@@ -3244,4 +3290,4 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
   );
 }
 
-Object.assign(window, { BoldSummary, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+Object.assign(window, { BoldSummary, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });

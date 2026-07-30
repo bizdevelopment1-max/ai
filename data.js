@@ -1272,6 +1272,26 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
+  // ── AI 밸류체인 5계층(MECE) ──────────────────────────────────────────
+  // 사이트 전체 기업 분류 기준. 5번째 '배포·AI서비스'는 별도 축(플래그십 딜)으로 표시.
+  const VALUE_CHAIN = [
+    { id: "infra", ko: "인프라·컴퓨트", en: "Infrastructure & Compute", accent: "#0891B2", accentSoft: "#E0F2F7", desc: "칩·파운드리·메모리·네트워킹·데이터센터·클라우드 — AI 연산을 공급하는 최하부 계층" },
+    { id: "model", ko: "파운데이션 모델", en: "Foundation Models", accent: "#7A38D6", accentSoft: "#F0E9FB", desc: "범용 LLM·멀티모달 모델을 직접 학습·개발하는 계층" },
+    { id: "data", ko: "데이터·플랫폼·툴링", en: "Data & Tooling", accent: "#2D6BFF", accentSoft: "#E7EEFF", desc: "데이터·MLOps·개발도구·모델 허브 — 모델을 제품으로 잇는 인에이블러 계층" },
+    { id: "app", ko: "애플리케이션·버티컬", en: "Applications", accent: "#EA580C", accentSoft: "#FCEBE0", desc: "도메인 특화 AI 앱 — 코딩·법률·의료·검색·크리에이티브·엔터프라이즈 등 버티컬" },
+    { id: "service", ko: "배포·AI서비스", en: "Deployment & Services", accent: "#16A34A", accentSoft: "#E3F5EA", desc: "FDE·컨설팅·구축 — 모델사가 자회사·합작으로 직접 서비스화(플래그십 딜: 별도 축)" },
+  ];
+  // 33개 추적 기업의 밸류체인 계층·버티컬 매핑(MECE — 각 기업은 대표 계층 1개).
+  const COMPANY_LAYER = {
+    "Microsoft": { layer: "infra", vertical: "하이퍼스케일 클라우드" }, "Amazon": { layer: "infra", vertical: "하이퍼스케일 클라우드" }, "NVIDIA": { layer: "infra", vertical: "AI 가속기·칩" },
+    "OpenAI": { layer: "model", vertical: "프런티어 모델" }, "Anthropic": { layer: "model", vertical: "프런티어 모델" }, "Google DeepMind": { layer: "model", vertical: "프런티어 모델" }, "Meta AI": { layer: "model", vertical: "오픈 모델" }, "DeepSeek": { layer: "model", vertical: "오픈·저비용 모델" }, "Mistral AI": { layer: "model", vertical: "오픈·소버린 모델" }, "Cohere": { layer: "model", vertical: "엔터프라이즈 모델" }, "SpaceX (xAI, Cursor)": { layer: "model", vertical: "프런티어 모델(xAI)" },
+    "Databricks": { layer: "data", vertical: "데이터·레이크하우스" }, "Scale AI": { layer: "data", vertical: "데이터 라벨링·평가" }, "Hugging Face": { layer: "data", vertical: "모델 허브·오픈소스" }, "Together AI": { layer: "data", vertical: "추론·학습 클라우드" },
+    "Apple": { layer: "app", vertical: "온디바이스·컨슈머" }, "Perplexity": { layer: "app", vertical: "검색·어시스턴트" }, "Glean": { layer: "app", vertical: "엔터프라이즈 검색" }, "Sierra AI": { layer: "app", vertical: "고객경험 에이전트" }, "Writer": { layer: "app", vertical: "엔터프라이즈 생산성" },
+    "Harvey": { layer: "app", vertical: "법률" }, "Abridge": { layer: "app", vertical: "의료" },
+    "Cursor": { layer: "app", vertical: "코딩" }, "Replit": { layer: "app", vertical: "코딩" }, "Lovable": { layer: "app", vertical: "코딩" },
+    "Midjourney": { layer: "app", vertical: "크리에이티브·이미지" }, "Stability AI": { layer: "app", vertical: "크리에이티브·이미지" }, "Runway": { layer: "app", vertical: "크리에이티브·영상" }, "Kling AI": { layer: "app", vertical: "크리에이티브·영상" }, "Hailuo (MiniMax)": { layer: "app", vertical: "크리에이티브·영상" }, "Synthesia": { layer: "app", vertical: "크리에이티브·영상" }, "Suno": { layer: "app", vertical: "크리에이티브·음악" }, "ElevenLabs": { layer: "app", vertical: "크리에이티브·음성" },
+  };
+
   // ── 기업 개요(정적 프로필) ───────────────────────────────────────────
   // 설립·경영진·본사·주요사업·주주 등 잘 바뀌지 않는 사실만 큐레이션.
   // 시가총액·인력·경영실적(분기 매출/순이익)은 crawl-stocks/crawl-financials가
@@ -1321,5 +1341,5 @@ window.DASH = (function () {
     "SpaceX (xAI, Cursor)": { founded: "SpaceX 2002 · xAI 2023", ceo: "Elon Musk", hq: "미국 텍사스州", business: ["우주 발사·Starlink", "xAI(Grok) AI 모델"] },
   };
 
-  return { CATEGORIES, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

@@ -29,6 +29,15 @@ const [news, research, market, infra, bizmodel] = await Promise.all([
   readJson("infra.json"), readJson("bizmodel.json"),
 ]);
 
+// 삭제 블록리스트(비밀번호 삭제 항목) — 뷰에서 영구 제외해 '다음 업데이트 시 안 보이게'.
+let deleted = { ids: [], urls: [] };
+try { deleted = await readJson("deleted.json"); } catch {}
+const canonUrl = u => { const s = String(u || ""); try { const p = new URL(s); p.hash = ""; p.search = ""; return p.href.replace(/\/+$/, ""); } catch { return s.replace(/[?#].*$/, "").replace(/\/+$/, ""); } };
+const deletedIds = new Set((deleted.ids || []).map(String));
+const deletedUrls = new Set((deleted.urls || []).map(canonUrl));
+const notDeleted = item => !deletedIds.has(String(item?.id))
+  && !deletedUrls.has(canonUrl(item?.url || item?.sourceUrl));
+
 const articleKeys = [
   "id", "date", "co", "cat", "source", "title", "titleEn", "titleKo", "url", "tag",
   "summary", "summaryLinesEn", "summaryLinesKo", "summaryVersion", "summaryMode",
@@ -49,16 +58,16 @@ const recordKeys = [
 ];
 const signalKeys = ["id", "group", "title", "signal", "quant", "source", "date", "url", "sourceSummaryMode", "provenance"];
 
-const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).map(item => compact(item, articleKeys));
-const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).map(item => compact(item, researchKeys));
+const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notDeleted).map(item => compact(item, articleKeys));
+const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notDeleted).map(item => compact(item, researchKeys));
 const visibleRecords = (market.records || []).filter(record => sourceBacked(record)
   && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
   && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length)
-  .filter(notBanned)
+  .filter(notBanned).filter(notDeleted)
   .map(item => compact(item, recordKeys));
 const visibleSignals = data => (data.items || [])
   .filter(item => item?.provenance?.status === "evidence-linked" && item?.sourceSummaryMode === "source-content-extractive")
-  .filter(notBanned)
+  .filter(notBanned).filter(notDeleted)
   .map(item => compact(item, signalKeys));
 
 const generatedAt = new Date().toISOString();

@@ -72,12 +72,14 @@ function App() {
   const [collapsed, setCollapsed] = uS(false);
   const refs = {
     ib: uR(null), overview: uR(null), briefing: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
+    infra: uR(null), model: uR(null), data: uR(null), app: uR(null),
     sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), market: uR(null), audit: uR(null),
   };
-  const nativeInView = useInView(refs.native);
-  const bigtechInView = useInView(refs.bigtech);
-  const startupInView = useInView(refs.startup);
-  const companyInView = nativeInView || bigtechInView || startupInView;
+  const infraInView = useInView(refs.infra);
+  const modelInView = useInView(refs.model);
+  const dataInView = useInView(refs.data);
+  const appInView = useInView(refs.app);
+  const companyInView = infraInView || modelInView || dataInView || appInView;
   const briefingInView = useInView(refs.briefing);
   const articlesInView = useInView(refs.articles);
   const signalsInView = useInView(refs.signals);
@@ -210,6 +212,9 @@ function App() {
     // append-only ledger but do not reach the public company map.
     const merged = { ...c, valuation: "—", valAsof: "", metric: "원문 기사", value: "—", metricAsof: "", funding: "—" };
     merged.profile = (D.COMPANY_PROFILES || {})[c.name] || null;   // 정적 기업 개요(설립·경영진·본사 등)
+    const ly = (D.COMPANY_LAYER || {})[c.name];                    // AI 밸류체인 계층·버티컬
+    merged.layer = ly ? ly.layer : null;
+    merged.vchainVertical = ly ? ly.vertical : "";
     if (lv) { merged.live = lv; if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); } }
     if (strat) merged.strategy = strat;
     return merged;
@@ -267,7 +272,7 @@ function App() {
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
 
   // 일부 Q&A는 통합·이동된 섹션을 가리킴: dynamics→overview(경쟁구도가 ES로 이동), insights→reports
-  const NAV_ALIAS = { dynamics: "overview", insights: "ib", reports: "ib", bizmodel: "newbiz" };
+  const NAV_ALIAS = { dynamics: "overview", insights: "ib", reports: "ib", bizmodel: "newbiz", native: "model", bigtech: "infra", startup: "app" };
   const navTo = rawId => {
     const id = NAV_ALIAS[rawId] || rawId;
     setActive(id);
@@ -399,14 +404,17 @@ function App() {
             </LazySection>
 
             {/* ── 2. 기업 동향 ── */}
-            <LazySection id="native" active={active} sectionRef={refs.native} height={740}>
-              <CompanyBoard cat={cats[0]} companies={companiesLive} density={t.density} query={query} onSelect={setSelected} />
+            <LazySection id="infra" active={active} sectionRef={refs.infra} height={620}>
+              <ValueChainBoard layerId="infra" companies={companiesLive} onSelect={setSelected} sectionRef={refs.infra} />
             </LazySection>
-            <LazySection id="bigtech" active={active} sectionRef={refs.bigtech} height={740}>
-              <CompanyBoard cat={cats[1]} companies={companiesLive} density={t.density} query={query} onSelect={setSelected} />
+            <LazySection id="model" active={active} sectionRef={refs.model} height={620}>
+              <ValueChainBoard layerId="model" companies={companiesLive} onSelect={setSelected} sectionRef={refs.model} />
             </LazySection>
-            <LazySection id="startup" active={active} sectionRef={refs.startup} height={740}>
-              <CompanyBoard cat={cats[2]} companies={companiesLive} density={t.density} query={query} onSelect={setSelected} />
+            <LazySection id="data" active={active} sectionRef={refs.data} height={520}>
+              <ValueChainBoard layerId="data" companies={companiesLive} onSelect={setSelected} sectionRef={refs.data} />
+            </LazySection>
+            <LazySection id="app" active={active} sectionRef={refs.app} height={740}>
+              <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
             </LazySection>
             <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
               <StartupScopeBoard dataVersion={dataVersion} />
