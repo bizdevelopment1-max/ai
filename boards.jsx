@@ -398,6 +398,10 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           const coName = c.name.split(" (")[0];
           const liName = name => String(name).split("(")[0].split("·")[0].replace(/[^\p{L}\p{N}\s.'-]/gu, "").trim();
           const liUrl = name => "https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(liName(name) + " " + coName);
+          // 직접 프로필 URL(li)이 있으면 우선, 없으면 이름+회사 인물 검색
+          const liOf = p => (p && p.li) ? p.li : liUrl(p ? p.name : "");
+          // 회사 LinkedIn 페이지(큐레이션) 또는 회사 검색 폴백
+          const coLink = (c.profile && c.profile.linkedin) || ("https://www.linkedin.com/search/results/companies/?keywords=" + encodeURIComponent(coName));
           const NodeBg = ({ p }) => (p.edu || p.career)
             ? <span className="cd-org-bg">{[p.edu, p.career].filter(Boolean).join(" · ")}</span>
             : (p.bg ? <span className="cd-org-bg">{p.bg}</span> : null);
@@ -412,13 +416,15 @@ function CompanyDetail({ company, cats, articles, onClose }) {
               )}
               {roster.length > 0 && (
                 <div className="cd-section">
-                  <h4>조직도 <em>Org Chart</em><b className="cd-prof-live">{liveRoster ? "LIVE · Yahoo Finance 임원" : "창업·리더십"}</b></h4>
+                  <h4>조직도 <em>Org Chart</em><b className="cd-prof-live">{liveRoster ? "LIVE · Yahoo Finance 임원" : "창업·리더십"}</b>
+                    <a className="cd-org-colink" href={coLink} target="_blank" rel="noopener" title="회사 LinkedIn 페이지">회사 LinkedIn ↗</a>
+                  </h4>
                   <div className="cd-org">
                     {lead && (
                       <div className="cd-org-node lead">
                         <b>{lead.name}</b><span className="cd-org-role">{lead.role}</span>
                         <NodeBg p={lead} />
-                        <a className="cd-org-li" href={liUrl(lead.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
+                        <a className="cd-org-li" href={liOf(lead)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
                       </div>
                     )}
                     {reports.length > 0 && <span className="cd-org-conn" aria-hidden="true" />}
@@ -428,7 +434,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
                           <div className="cd-org-node" key={i}>
                             <b>{p.name}</b><span className="cd-org-role">{p.role}</span>
                             <NodeBg p={p} />
-                            <a className="cd-org-li" href={liUrl(p.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
+                            <a className="cd-org-li" href={liOf(p)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
                           </div>
                         ))}
                       </div>
@@ -446,7 +452,7 @@ function CompanyDetail({ company, cats, articles, onClose }) {
                         <div className="cd-bio-head">
                           <b>{p.name}</b>
                           <span className="cd-bio-role">{p.role}</span>
-                          <a className="cd-org-li" href={liUrl(p.name)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
+                          <a className="cd-org-li" href={liOf(p)} target="_blank" rel="noopener" title="LinkedIn에서 보기">in ↗</a>
                         </div>
                         {p.edu && <div className="cd-bio-row"><em>학교·전공</em><span>{p.edu}</span></div>}
                         {p.career && <div className="cd-bio-row"><em>빅테크·주요 경력</em><span>{p.career}</span></div>}
@@ -2738,16 +2744,28 @@ function MonetizationPlaybook({ articles, dataVersion }) {
   }).filter(c => c.monetize.length || c.direction.length);
 
   const sourceReady = Array.isArray(articles) && articles.length > 0;
-  const byLayer = {};
-  companies.forEach(c => (byLayer[c.layer] = byLayer[c.layer] || []).push(c));
-  const layerOrder = VC.map(l => l.id).filter(id => byLayer[id]);
+  // 돈 버는 모델(비즈니스 모델)별 그룹핑 — 밸류체인이 아니라 수익모델 기준.
+  const MODEL_DESC = {
+    vertical: "모델사가 자회사·분사로 서비스에 직접 진입 — 배포·AI서비스(수직통합)",
+    subscription: "월정액·좌석당 구독(SaaS) — 반복 매출",
+    usage: "사용량·API·토큰당 종량 과금",
+    ads: "광고·거래 수수료·커머스 중개",
+    hardware: "기기·단말 판매·번들",
+    outcome: "해결 건당·성과(아웃컴) 기반 과금",
+    enterprise: "엔터프라이즈 라이선스·기업 계약·소버린",
+  };
+  const withPrimary = companies.map(c => ({ ...c, primaryModel: (c.modelMix[0] && c.modelMix[0].id) || null }));
+  const byModel = {};
+  withPrimary.forEach(c => { const k = c.primaryModel || "_dir"; (byModel[k] = byModel[k] || []).push(c); });
+  const modelOrder = models.map(m => m.id).filter(id => byModel[id]);
+  if (byModel["_dir"]) modelOrder.push("_dir");
 
   return (
     <div className="mplay" ref={ref}>
       <div className="infra-sig-head">
         <div className="isg-titles">
-          <h3>AI 수익화 플레이북 <em>기사 기반 자동 누적 · 매일 갱신</em></h3>
-          <p>기업별 ①어떻게 돈을 버는가(수익모델) ②비즈니스 모델 신호 ③앞으로의 투자·사업 방향 — 신사업 발굴 관점, 원문 확인(한국어 3줄) 기사만 누적</p>
+          <h3>AI 비즈니스 모델 — 돈 버는 방식별 업체 <em>기사 기반 자동 누적 · 매일 갱신</em></h3>
+          <p>밸류체인이 아니라 <b>돈 버는 모델(비즈니스 모델)</b> 기준으로 분류 — 각 모델을 하는 업체와 그들이 실제로 하는 것(크롤 신호). <b>배포·AI서비스(수직통합)</b>도 그 중 하나. 원문 확인(한국어 3줄) 기사만 누적</p>
         </div>
         <span className="isg-total">기업 <b>{companies.length}</b></span>
       </div>
@@ -2760,15 +2778,17 @@ function MonetizationPlaybook({ articles, dataVersion }) {
           <div className="mplay-legend">
             {models.map(m => <span key={m.id} className="mplay-lg"><i style={{ background: m.accent }} />{m.ko}</span>)}
           </div>
-          {layerOrder.map(lid => {
-            const lm = layerMeta(lid);
+          {modelOrder.map(mid => {
+            const isDir = mid === "_dir";
+            const mm = isDir ? { ko: "사업 방향 관찰", accent: "#8A93A4" } : modelMeta(mid);
+            const desc = isDir ? "수익모델 신호 대기 — 투자·사업 방향 신호만 확인됨" : (MODEL_DESC[mid] || "");
             return (
-              <div className="mplay-layer" key={lid} style={{ "--accent": lm.accent }}>
-                <div className="mplay-lhead"><span className="mplay-ldot" style={{ background: lm.accent }} /><b>{lm.ko}</b><em>{byLayer[lid].length}개사</em></div>
+              <div className="mplay-layer" key={mid} style={{ "--accent": mm.accent }}>
+                <div className="mplay-lhead"><span className="mplay-ldot" style={{ background: mm.accent }} /><b>{mm.ko}</b>{desc && <em className="mplay-ldesc">{desc}</em>}<span className="mplay-ln">{byModel[mid].length}개사</span></div>
                 <div className="mplay-grid">
-                  {byLayer[lid].map(c => (
+                  {byModel[mid].map(c => (
                     <div className="mplay-card" key={c.name}>
-                      <div className="mplay-c-head"><b>{c.name}</b><span className="mplay-vert">{c.vertical}</span></div>
+                      <div className="mplay-c-head"><b>{c.name}</b><span className="mplay-vert">{c.vchainVertical || c.vertical}</span></div>
                       {c.modelMix.length > 0 && (
                         <div className="mplay-mix">
                           {c.modelMix.map(m => { const mm = modelMeta(m.id); return <span key={m.id} className="mplay-model" style={{ "--c": mm.accent }} title={mm.ko}>{mm.ko}<i>{m.n}</i></span>; })}
@@ -3669,9 +3689,9 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
                 {TAX.filter(t => t.tier === tierId).map(t => {
                   const n = catCounts[t.id] || 0;
                   return (
-                    <button key={t.id} className={"su-tax-cat" + (catFilter === t.id ? " on" : "")} style={{ "--c": t.accent }}
-                      title={`${t.desc}\n▸ 단말 관점: ${t.handset}`}
-                      onClick={() => setCatFilter(catFilter === t.id ? "" : t.id)}>
+                    <button key={t.id} disabled={n === 0} className={"su-tax-cat" + (catFilter === t.id ? " on" : "") + (n === 0 ? " empty" : "")} style={{ "--c": t.accent }}
+                      title={n === 0 ? `${t.desc}\n▸ 단말 관점: ${t.handset}\n(아직 원문 확인된 업체 없음 — 크롤이 쌓이면 표시)` : `${t.desc}\n▸ 단말 관점: ${t.handset}`}
+                      onClick={() => n > 0 && setCatFilter(catFilter === t.id ? "" : t.id)}>
                       <i style={{ background: t.accent }} />{t.ko}<em>{n}</em>
                     </button>
                   );
@@ -3685,7 +3705,15 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
       {!data ? (
         <div className="mkt-loading">{loaded ? "스타트업 분석을 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
       ) : !(large.length || small.length) ? (
-        <div className="mkt-loading">원문 근거를 연결하는 중입니다 · 근거 없는 투자·인수 후보는 표시하지 않습니다</div>
+        catFilter ? (
+          <div className="mkt-empty">
+            <b>‘{catMeta(catFilter)?.ko}’ 분류에 표시할 업체가 아직 없습니다</b>
+            <span>이 분류의 업체는 원문 확인(한국어 3줄)이 완료되면 표시됩니다 · 크롤이 쌓이는 중</span>
+            <button className="su-tax-clear" onClick={() => setCatFilter("")}>필터 해제 ✕</button>
+          </div>
+        ) : (
+          <div className="mkt-loading">원문 근거를 연결하는 중입니다 · 근거 없는 투자·인수 후보는 표시하지 않습니다</div>
+        )
       ) : (
         <>
         {tier !== "small" && (
