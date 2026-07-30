@@ -422,6 +422,45 @@ function CompanyDetail({ company, cats, articles, onClose }) {
           );
         })()}
 
+        {c.invest && Array.isArray(c.invest.portfolio) && c.invest.portfolio.length > 0 && (() => {
+          const VC = window.DASH.VALUE_CHAIN || [];
+          const meta = id => VC.find(l => l.id === id) || { ko: id, accent: cat.accent };
+          const byLayer = {};
+          c.invest.portfolio.forEach(p => { (byLayer[p.layer] = byLayer[p.layer] || []).push(p); });
+          const order = VC.map(l => l.id).filter(id => byLayer[id]);
+          const inv = c.invest;
+          return (
+            <div className="cd-section">
+              <h4>투자 포트폴리오·전략 맵 <em>AI Investment Map</em></h4>
+              {inv.strategy && <p className="cd-inv-strat">{inv.strategy}</p>}
+              <div className="cd-inv-map">
+                {order.map(id => {
+                  const m = meta(id);
+                  return (
+                    <div className="cd-inv-col" key={id} style={{ "--accent": m.accent }}>
+                      <div className="cd-inv-lhead"><span className="cd-inv-dot" style={{ background: m.accent }} /><b>{m.ko}</b><em>{byLayer[id].length}</em></div>
+                      <div className="cd-inv-cards">
+                        {byLayer[id].map((p, i) => (
+                          <div className="cd-inv-card" key={i}>
+                            <b>{p.name}</b>
+                            {p.note && <span>{p.note}</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="cd-cp-note">
+                자사 컴퓨트 → 클라우드 → 앱으로 이어지는 밸류체인 계층별 지분 투자 맵. 지분·라운드는 공시·보도 기반 큐레이션이며, 최신 자본 활동은 위 ‘핵심 활동 분석’(크롤)이 보완.
+                {inv.source && inv.source.url && (
+                  <> · <a href={inv.source.url} target="_blank" rel="noopener">{inv.source.label || "출처"} <Icon name="ext" size={10} /></a></>
+                )}
+              </p>
+            </div>
+          );
+        })()}
+
         <div className="cd-section">
           <h4>개요</h4>
           <p>{bulletText(c.note)}</p>

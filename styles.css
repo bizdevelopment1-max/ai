@@ -1013,6 +1013,17 @@ a[href]:hover .rainbow-on-hover,
 .cd-cp-latest:hover { text-decoration: underline; }
 .cd-cp-latest em { font-style: normal; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--muted); margin-right: 6px; }
 .cd-cp-note { margin: 11px 0 0; font-size: 11px; font-weight: 600; color: var(--muted); }
+.cd-inv-strat { margin: 0 0 14px; font-size: 13px; line-height: 1.6; font-weight: 600; color: var(--ink); }
+.cd-inv-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.cd-inv-col { border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--panel); }
+.cd-inv-lhead { display: flex; align-items: center; gap: 6px; margin-bottom: 9px; font-size: 12px; }
+.cd-inv-lhead b { color: var(--ink); font-weight: 700; }
+.cd-inv-lhead em { margin-left: auto; font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); background: var(--panel-2); border-radius: 20px; padding: 1px 8px; }
+.cd-inv-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.cd-inv-cards { display: flex; flex-direction: column; gap: 6px; }
+.cd-inv-card { border-left: 3px solid var(--accent); background: var(--panel-2); border-radius: 0 7px 7px 0; padding: 7px 9px; }
+.cd-inv-card b { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.cd-inv-card span { display: block; margin-top: 2px; font-size: 11px; line-height: 1.45; font-weight: 600; color: var(--muted); }
 .cd-vp {
   border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 0 8px 8px 0;
   background: color-mix(in srgb, var(--accent) 6%, var(--panel));

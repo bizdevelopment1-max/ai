@@ -1408,5 +1408,24 @@ window.DASH = (function () {
     ] },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, STOCK_LAYER, COMPANY_ORG, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  // ── 투자 포트폴리오·전략 맵 ─────────────────────────────────────────
+  // 특정 기업이 AI SW·서비스에 투자하는 전략을 밸류체인 계층별로 도식화. 지분·라운드는
+  // 공시·보도 기반 큐레이션(포지션은 천천히 변함), 최신 자본 활동은 '핵심 활동 분석'(크롤)이 보완.
+  const COMPANY_INVEST = {
+    "NVIDIA": {
+      strategy: "AI 생태계 확장 — '게임체인저·마켓메이커'에 지분 투자. 자사 GPU → 클라우드 → AI 스타트업으로 이어지는 수직 정렬 스택을 구축해 컴퓨트 수요를 자가 강화.",
+      portfolio: [
+        { name: "CoreWeave", layer: "infra", note: "GPU 클라우드 · 약 11% 지분(~$3.66B)" },
+        { name: "Together AI", layer: "infra", note: "추론·학습 클라우드 · Series B(밸류 $3.3B)" },
+        { name: "Mistral AI", layer: "model", note: "오픈·소버린 모델 · 투자자(밸류 ~$13.8B)" },
+        { name: "Cohere", layer: "model", note: "엔터프라이즈 LLM · Series D(밸류 $6.8B)" },
+        { name: "Reka AI", layer: "model", note: "멀티모달 모델 · $110M 라운드(밸류 >$1B)" },
+        { name: "Perplexity", layer: "app", note: "AI 검색·답변 · 2023~ 반복 투자(밸류 ~$18B)" },
+        { name: "Figure AI", layer: "app", note: "휴머노이드 로보틱스 · 온디바이스 AI" },
+      ],
+      source: { label: "TechCrunch·Yahoo 2026", url: "https://techcrunch.com/2026/01/02/nvidias-ai-empire-a-look-at-its-top-startup-investments/" },
+    },
+  };
+
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, STOCK_LAYER, COMPANY_ORG, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

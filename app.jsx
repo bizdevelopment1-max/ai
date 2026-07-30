@@ -213,6 +213,7 @@ function App() {
     merged.layer = ly ? ly.layer : null;
     merged.vchainVertical = ly ? ly.vertical : "";
     merged.org = (D.COMPANY_ORG || {})[c.name] || null;            // 미션·창업자·리더십(정적) — 조직도는 live officers 우선
+    merged.invest = (D.COMPANY_INVEST || {})[c.name] || null;      // AI SW·서비스 투자 포트폴리오·전략 맵
     if (lv) { merged.live = lv; if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); } }
     if (strat) merged.strategy = strat;
     return merged;
