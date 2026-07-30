@@ -129,6 +129,10 @@ def bulletize_korean(value: object) -> str:
     text = re.sub(r"\bE\.U\.", "EU", text, flags=re.IGNORECASE)
     text = re.sub(r"([가-힣])([.!?。！？]+)([\"'”’]?)(?=\s|$|라고|이라며|라는)", r"\1\3 · ", text)
     text = re.sub(r"([가-힣])\s*[:：]\s+", r"\1 · ", text)
+    # English fallback copy is presentation text too. Preserve decimal and
+    # model-version dots, but turn sentence stops into consulting separators.
+    text = re.sub(r"([^0-9])\.(?=\s+)", r"\1 · ", text)
+    text = re.sub(r"([^0-9])\.(?=[\"'”’]?\s*$)", r"\1", text)
     text = text.replace("。", " · ")
     parts = []
     # A compact middle dot can be a decimal separator (for example 10·9%),
