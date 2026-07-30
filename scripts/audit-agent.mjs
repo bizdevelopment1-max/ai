@@ -23,6 +23,7 @@ const rules = [
   { file: "a16z-startups.json", tab: "a16z Top 100 원장", maxAge: 10, min: 100, items: d => [...(d.web || []), ...(d.mobile || [])] },
   { file: "strategic-ventures.json", tab: "AI 서비스 JV·DeployCo", maxAge: 5, min: 2, items: d => Object.values(d.companies || {}).flat() },
   { file: "companies.json", tab: "기업 동향", maxAge: 3, min: 8, items: d => Object.keys(d.companies || {}) },
+  { file: "company-news.json", tab: "기업 직접 연관 뉴스", maxAge: 3, min: 10, items: d => Object.values(d.companies || {}).filter(rows => rows.length) },
   { file: "market.json", tab: "AI 신사업 정량·소비자 DB", maxAge: 2, min: 18, items: d => d.records || d.items || [], soft: true },
   { file: "infra.json", tab: "인프라·미래기술", maxAge: 5, min: 3, items: d => d.items || [] },
   { file: "bizmodel.json", tab: "수익화 모델", maxAge: 5, min: 3, items: d => d.items || [] },

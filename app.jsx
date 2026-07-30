@@ -143,6 +143,7 @@ function App() {
   // 증권사 리서치(research.json)·기업 라이브(companies.json)·데이터 감사(audit.json)
   const [research, setResearch] = uS(null);
   const [coLive, setCoLive] = uS(null);
+  const [companyNews, setCompanyNews] = uS({});
   const [audit, setAudit] = uS(null);
   const [quality, setQuality] = uS(null);
   const [llmHealth, setLlmHealth] = uS(null);
@@ -167,6 +168,8 @@ function App() {
     let alive = true;
     fetch(dataUrl("companies.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
+    fetch(dataUrl("company-news.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
+      .then(j => { if (alive && j && j.companies) setCompanyNews(j.companies); }).catch(() => {});
     fetch(dataUrl("monetization.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && Array.isArray(j.companies)) setMonet(j); }).catch(() => {});
     fetch(dataUrl("startups.json"), { cache: "force-cache" }).then(r => { if (r.ok) return r.json(); return null; })
@@ -508,7 +511,7 @@ function App() {
         </main>
       </div>
 
-      <CompanyDetail company={selected} cats={cats} articles={articles} generatedAt={dataGeneratedAt} onClose={() => setSelected(null)} />
+      <CompanyDetail company={selected} cats={cats} companyNews={companyNews} generatedAt={dataGeneratedAt} onClose={() => setSelected(null)} />
 
       {/* Color change via palette button in TopBar */}
     </div>

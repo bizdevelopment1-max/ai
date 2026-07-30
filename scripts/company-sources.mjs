@@ -190,6 +190,77 @@ export const COMPANY_SOURCES = {
   },
 };
 
+/**
+ * Terms used to discover and publish company-specific news.
+ *
+ * These are entity identifiers, not topical keywords.  A generic word such as
+ * "writer", "scale", "runway" or "cursor" is deliberately excluded unless it
+ * is paired with the company name or a uniquely identifying product/legal
+ * name.  This keeps a broad search query from becoming a loose UI match.
+ */
+export const COMPANY_NEWS_RULES = {
+  "Microsoft": {
+    headlineAliases: ["Microsoft", "Windows", "Azure", "Copilot", "GitHub"],
+    query: '("Microsoft" OR "Windows" OR "Azure" OR "Copilot" OR "GitHub") AI',
+  },
+  "NVIDIA": {
+    headlineAliases: ["NVIDIA", "Nvidia", "CUDA", "GeForce", "Blackwell", "DGX", "Jetson"],
+    query: '("NVIDIA" OR "CUDA" OR "GeForce" OR "Blackwell" OR "DGX" OR "Jetson") AI',
+  },
+  "Apple": {
+    headlineAliases: ["Apple", "iPhone", "iPad", "MacBook", "Apple Intelligence", "Siri", "Vision Pro"],
+    query: '("Apple" OR "iPhone" OR "iPad" OR "Apple Intelligence" OR "Siri" OR "Vision Pro") AI',
+  },
+  "Google DeepMind": {
+    headlineAliases: ["Google DeepMind", "DeepMind", "Google", "Gemini", "AlphaFold", "Pixel", "Android"],
+    query: '("Google DeepMind" OR "DeepMind" OR "Google Gemini" OR "AlphaFold" OR "Pixel AI" OR "Android AI")',
+  },
+  "Amazon": {
+    headlineAliases: ["Amazon", "AWS", "Alexa", "Bedrock", "Amazon Nova"],
+    query: '("Amazon" OR "AWS" OR "Alexa" OR "Bedrock" OR "Amazon Nova") AI',
+  },
+  "Anthropic": {
+    headlineAliases: ["Anthropic", "Claude"],
+    query: '("Anthropic" OR "Claude") AI',
+  },
+  "OpenAI": {
+    headlineAliases: ["OpenAI", "ChatGPT", "GPT-5", "Codex", "Sora"],
+    query: '("OpenAI" OR "ChatGPT" OR "GPT-5" OR "Codex" OR "Sora")',
+  },
+  "SpaceX (xAI, Cursor)": {
+    headlineAliases: ["SpaceX", "xAI", "Grok"],
+    query: '("SpaceX" OR "xAI" OR "Grok") AI',
+  },
+  "Databricks": { headlineAliases: ["Databricks"], query: '"Databricks" AI' },
+  "Cursor": { headlineAliases: ["Cursor AI", "Cursor IDE", "Anysphere"], query: '("Cursor AI" OR "Cursor IDE" OR "Anysphere")' },
+  "DeepSeek": { headlineAliases: ["DeepSeek"], query: '"DeepSeek" AI' },
+  "Perplexity": { headlineAliases: ["Perplexity AI", "Perplexity"], query: '"Perplexity AI"' },
+  "Mistral AI": { headlineAliases: ["Mistral AI", "Mistral"], query: '("Mistral AI" OR "Mistral")' },
+  "Kling AI": { headlineAliases: ["Kling AI", "Kuaishou Kling"], query: '("Kling AI" OR "Kuaishou Kling")' },
+  "Sierra AI": { headlineAliases: ["Sierra AI"], query: '"Sierra AI"' },
+  "Scale AI": { headlineAliases: ["Scale AI"], query: '"Scale AI"' },
+  "Hailuo (MiniMax)": { headlineAliases: ["Hailuo AI", "MiniMax AI", "MiniMax"], query: '("Hailuo AI" OR "MiniMax AI")' },
+  "ElevenLabs": { headlineAliases: ["ElevenLabs"], query: '"ElevenLabs" AI' },
+  "Harvey": { headlineAliases: ["Harvey AI", "Harvey's AI", "Harvey’s AI"], query: '"Harvey AI" legal' },
+  "Replit": { headlineAliases: ["Replit"], query: '"Replit" AI' },
+  "Glean": { headlineAliases: ["Glean AI", "Glean"], query: '"Glean" enterprise AI' },
+  "Lovable": { headlineAliases: ["Lovable.dev", "Lovable AI", "Lovable"], query: '("Lovable.dev" OR "Lovable AI")' },
+  "Cohere": { headlineAliases: ["Cohere"], query: '"Cohere" AI' },
+  "Suno": { headlineAliases: ["Suno AI"], query: '"Suno AI"' },
+  "Hugging Face": { headlineAliases: ["Hugging Face"], query: '"Hugging Face" AI' },
+  "Runway": { headlineAliases: ["Runway AI", "Runway's AI", "Runway’s AI"], query: '"Runway AI" video' },
+  "Together AI": { headlineAliases: ["Together AI", "Together Computer"], query: '"Together AI"' },
+  "Abridge": { headlineAliases: ["Abridge AI", "Abridge"], query: '"Abridge" clinical AI' },
+  "Synthesia": { headlineAliases: ["Synthesia"], query: '"Synthesia" AI' },
+  "Writer": { headlineAliases: ["Writer.com", "Writer AI", "WRITER AI"], query: '("Writer.com" OR "Writer AI") enterprise' },
+  "Stability AI": { headlineAliases: ["Stability AI"], query: '"Stability AI"' },
+  "Meta AI": {
+    headlineAliases: ["Meta AI", "Meta", "Llama", "Facebook", "Instagram", "WhatsApp", "Zuckerberg"],
+    query: '("Meta AI" OR "Meta" OR "Llama" OR "Facebook" OR "Instagram" OR "WhatsApp") AI',
+  },
+  "Midjourney": { headlineAliases: ["Midjourney"], query: '"Midjourney" AI' },
+};
+
 const escaped = value => String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const bound = value => {
   const text = String(value || "").trim();
@@ -206,6 +277,56 @@ export function aliasesFor(name) {
 export function companyRegex(name) {
   const aliases = aliasesFor(name);
   return aliases.length ? new RegExp(aliases.map(bound).join("|"), "i") : null;
+}
+
+export function companyNewsRegex(name) {
+  const aliases = COMPANY_NEWS_RULES[name]?.headlineAliases || aliasesFor(name);
+  return aliases.length ? new RegExp(aliases.map(bound).join("|"), "i") : null;
+}
+
+export function newsQueryFor(name) {
+  return COMPANY_NEWS_RULES[name]?.query || `"${aliasesFor(name)[0] || name}" AI`;
+}
+
+const hostOf = value => {
+  try { return new URL(String(value || "")).hostname.toLowerCase().replace(/^www\./, ""); }
+  catch { return ""; }
+};
+const hostMatches = (host, domain) => {
+  const clean = String(domain || "").toLowerCase().replace(/^www\./, "");
+  return !!host && !!clean && (host === clean || host.endsWith(`.${clean}`));
+};
+const officialHostsFor = name => (COMPANY_SOURCES[name]?.official || []).map(hostOf).filter(Boolean);
+
+/**
+ * High-precision gate for the public company-news panel.
+ *
+ * A record is eligible only when the headline contains an exact entity/product
+ * identifier, or when the article itself is hosted on the company's official
+ * domain.  Body-only mentions and crawler query labels are never sufficient.
+ */
+export function directCompanyNewsMatch(name, article, domain = "") {
+  if (!article) return { matched: false, mode: "", term: "" };
+  const title = String(article.titleEn || article.title || "");
+  const aliases = COMPANY_NEWS_RULES[name]?.headlineAliases || aliasesFor(name);
+  const hits = aliases.map(alias => ({ alias, match: new RegExp(bound(alias), "i").exec(title) }))
+    .filter(row => row.match)
+    .sort((left, right) => left.match.index - right.match.index || right.alias.length - left.alias.length);
+  const hit = hits[0];
+  if (hit) {
+    const position = hit.match.index;
+    const firstAction = title.search(/\b(?:is|are|was|were|will|can|could|says?|claims?|launch(?:es|ed)?|unveil(?:s|ed)?|release(?:s|d)?|invest(?:s|ed)?|raise(?:s|d)?|acquire(?:s|d)?|buy(?:s|ing)?|build(?:s|ing)?|expand(?:s|ed)?|partner(?:s|ed)?|switch(?:es|ed)?|ditch(?:es|ed)?|add(?:s|ed|ing)?|beat(?:s|en)?|outperform(?:s|ed)?|report(?:s|ed)?|turn(?:s|ed)?|make(?:s|ing)?|shut(?:s|ting)?|cost(?:s|ing)?|deliver(?:s|ed)?|predict(?:s|ed)?|pull(?:s|ed)?|hit(?:s|ting)?|hack(?:s|ed|ing)?|breach(?:es|ed|ing)?|expose(?:s|d|ing)?|improve(?:s|d|ing)?|catch(?:es|caught|ing)?)\b/i);
+    const prefix = title.slice(Math.max(0, position - 28), position);
+    const explicitJoin = /\b(?:and|with|to|adds?|adding|acquires?|partners?\s+with|collaborates?\s+with)\s*$/i.test(prefix);
+    const comparisonOnly = /\b(?:without|against|versus|vs\.?|takes?\s+on|rival(?:s|ing)?|beats?|than|away\s+from|compared\s+with|catch|hacking?)\s*$/i.test(prefix);
+    const primary = !comparisonOnly && (firstAction < 0 || position < firstAction || explicitJoin);
+    if (primary) return { matched: true, mode: "headline-entity", term: hit.alias, position };
+  }
+
+  const host = hostOf(article.url);
+  const official = [domain, ...officialHostsFor(name)].some(candidate => hostMatches(host, candidate));
+  if (official) return { matched: true, mode: "official-domain", term: host };
+  return { matched: false, mode: "", term: "" };
 }
 
 export function articleFocusScore(name, article) {
