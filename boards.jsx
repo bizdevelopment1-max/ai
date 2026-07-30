@@ -3548,11 +3548,16 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
     const match = (companies || []).find(c => c.name === s.name || c.name.replace(/\s*\(.*\)/, "") === s.name);
     if (match) { onSelect(match); return; }
     const hist = [s.latest, ...(s.history || [])].filter(h => h && /^https?:\/\//.test(String(h.url || "")));
+    const D = window.DASH || {};
+    // 추적 대상이 아니어도 조직도·기업개요 큐레이션이 있으면 붙여 상세를 강화(다른 기업과 동일 뷰)
+    const org = (D.COMPANY_ORG || {})[s.name] || null;
+    const profile = (D.COMPANY_PROFILES || {})[s.name] || null;
+    const bm = s.businessModel || s.overview || "";
     onSelect({
       name: s.name, domain: s.domain, cat: "startup", unit: s.vertical || "AI 스타트업",
-      note: s.businessModel || s.summary || "원문 링크 기반 관찰 — 검증된 상세는 본문 확인 후 표시됩니다.",
-      vp: s.revenue ? `수익: ${s.revenue}` : "", direction: s.partnership ? `파트너십: ${s.partnership}` : "",
-      layer: "app", vchainVertical: s.vertical || "", profile: null, org: null,
+      note: bm || "원문 링크 기반 관찰 — 검증된 상세는 본문 확인 후 표시됩니다.",
+      vp: bm, direction: s.partnership || s.acqAngle || "",
+      layer: "app", vchainVertical: s.vertical || "", profile, org,
       live: { latest: s.latest || null, mentions7: 0, mentions30: 0 },
       sources: hist.slice(0, 6).map(h => ({ tier: "reported", label: String(h.title || "관련 기사"), asOf: h.date || "", url: h.url })),
     });

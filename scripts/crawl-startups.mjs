@@ -108,6 +108,28 @@ const SMALL = [
   { name: "Physical Intelligence", domain: "physicalintelligence.company", vertical: "로봇 파운데이션", cat: "robotics", stage: "시리즈", funding: "밸류 $5.6B (2025)", ov: "범용 로봇용 파운데이션 모델(π 시리즈, 미국)", acq: "피지컬 AI 신폼팩터 관점 장기 감시" },
   { name: "1X Technologies", domain: "1x.tech", vertical: "휴머노이드 로봇", cat: "robotics", stage: "시리즈B", funding: "Series B $100M (2024.1)", ov: "가정용 휴머노이드 로봇 개발(노르웨이)", acq: "신규 폼팩터(로봇) 장기 옵션 — 기술 감시" },
   { name: "Limitless AI", domain: "limitless.ai", vertical: "AI 웨어러블", cat: "robotics", stage: "시리즈", funding: "$33M 라운드", ov: "대화 기록·요약 AI 펜던트 웨어러블(미국)", acq: "폰 이후 AI 웨어러블 폼팩터 기술 감시" },
+  // ── a16z Top 100 Gen AI Consumer Apps 수록(한국·중국 제외) ──
+  { name: "Character.AI", domain: "character.ai", vertical: "AI 캐릭터·컴패니언", cat: "agent", stage: "라이선스", funding: "Google 라이선스(2024)", ov: "개인화 AI 캐릭터 대화 — 소비자 컴패니언(미국)", acq: "단말 대화형 캐릭터·컴패니언 UX 기술 감시" },
+  { name: "Poe", domain: "poe.com", vertical: "AI 모델 통합 챗", cat: "agent", stage: "Quora 산하", funding: "비상장(Quora)", ov: "여러 AI 모델을 한곳에서 쓰는 챗 앱(미국)", acq: "멀티모델 통합 어시스턴트 UX 감시" },
+  { name: "QuillBot", domain: "quillbot.com", vertical: "쓰기·패러프레이즈", cat: "productivity", stage: "인수", funding: "Learneo 산하", ov: "패러프레이즈·문법·요약 쓰기 도구(미국)", acq: "단말 쓰기 보조 서비스 제휴" },
+  { name: "Gamma", domain: "gamma.app", vertical: "프레젠테이션 생성", cat: "productivity", stage: "시리즈", funding: "밸류 $2.1B(2025)", ov: "AI 프레젠테이션·문서·웹 생성(미국)", acq: "업무 생산성 서비스 제휴" },
+  { name: "Civitai", domain: "civitai.com", vertical: "이미지 모델 커뮤니티", cat: "camera", stage: "시드", funding: "시드 $5.1M", ov: "오픈 이미지 모델·LoRA 공유 커뮤니티(미국)", acq: "온디바이스 이미지 모델 소싱 채널 감시" },
+  { name: "Leonardo.Ai", domain: "leonardo.ai", vertical: "이미지·영상 생성", cat: "camera", stage: "인수", funding: "Canva 인수(2024)", ov: "게임·크리에이터 이미지·영상 생성 스위트(호주)", acq: "카메라·갤러리 생성편집 기술 감시" },
+  { name: "Krea", domain: "krea.ai", vertical: "실시간 이미지 생성", cat: "camera", stage: "시리즈B", funding: "Series B $83M(2025)", ov: "실시간 이미지·영상 생성·편집(미국)", acq: "온디바이스 실시간 생성 UX 기술 감시" },
+  { name: "NightCafe", domain: "nightcafe.studio", vertical: "이미지 생성", cat: "camera", stage: "부트스트랩", funding: "비상장", ov: "AI 아트 이미지 생성 커뮤니티(호주)", acq: "크리에이티브 이미지 생성 기능 감시" },
+  { name: "Veed", domain: "veed.io", vertical: "영상 편집", cat: "video", stage: "시리즈A", funding: "Series A $35M", ov: "브라우저 기반 AI 영상 편집(영국)", acq: "숏폼·영상 자동편집 기능 감시" },
+  { name: "Descript", domain: "descript.com", vertical: "오디오·영상 편집", cat: "video", stage: "시리즈C", funding: "Series C · OpenAI 투자", ov: "문서 편집식 오디오·영상 편집(미국)", acq: "미디어 자동편집·음성 편집 기술 감시" },
+  { name: "invideo", domain: "invideo.io", vertical: "영상 생성", cat: "video", stage: "시리즈A", funding: "Series A $15M", ov: "텍스트로 영상 생성·편집(인도)", acq: "영상 자동생성 기능 접목 감시" },
+  { name: "Merlin", domain: "getmerlin.in", vertical: "AI 어시스턴트", cat: "agent", stage: "부트스트랩", funding: "비상장", ov: "브라우저 전역 AI 어시스턴트(미국/인도)", acq: "단말 전역 어시스턴트 UX 감시" },
+  { name: "iAsk", domain: "iask.ai", vertical: "AI 검색", cat: "search", stage: "부트스트랩", funding: "비상장", ov: "AI 검색·답변 엔진(미국)", acq: "단말 검색·답변 접점 기술 감시" },
+  { name: "Photomath", domain: "photomath.com", vertical: "교육(수학)", cat: "vertical", stage: "인수", funding: "Google 인수(2022)", ov: "카메라로 수학 문제 풀이 교육 앱(크로아티아)", acq: "카메라 기반 교육 서비스 제휴 감시" },
+  { name: "Grammarly", domain: "grammarly.com", vertical: "쓰기 어시스턴트", cat: "productivity", stage: "성장", funding: "밸류 $13B(2021)", ov: "AI 쓰기·커뮤니케이션 어시스턴트(미국)", acq: "단말 키보드·쓰기 보조 서비스 제휴" },
+  { name: "Canva", domain: "canva.com", vertical: "디자인 플랫폼", cat: "camera", stage: "성장", funding: "밸류 $42B(2025)", ov: "AI 통합 디자인·이미지 생성 플랫폼(호주)", acq: "크리에이티브·디자인 생성 기능 제휴" },
+  { name: "Notion", domain: "notion.so", vertical: "생산성 워크스페이스", cat: "productivity", stage: "성장", funding: "밸류 $10B(2021)", ov: "AI 통합 올인원 워크스페이스(미국)", acq: "업무 생산성 서비스 번들 제휴" },
+  { name: "Picsart", domain: "picsart.com", vertical: "이미지 편집", cat: "camera", stage: "성장", funding: "밸류 $1.5B(2021)", ov: "AI 사진·이미지 편집 앱(미국)", acq: "갤러리·카메라 편집 기능 제휴 감시" },
+  { name: "Freepik", domain: "freepik.com", vertical: "이미지·리소스 생성", cat: "camera", stage: "성장", funding: "EQT 투자", ov: "AI 이미지·리소스 생성 플랫폼(스페인)", acq: "크리에이티브 리소스 생성 기술 감시" },
+  { name: "Remini", domain: "remini.ai", vertical: "사진 화질 복원", cat: "camera", stage: "인수", funding: "Bending Spoons 산하", ov: "AI 사진 화질 복원·향상 앱(이탈리아)", acq: "카메라·갤러리 복원 기능 직결 감시" },
+  { name: "Fliki", domain: "fliki.ai", vertical: "영상·음성 생성", cat: "video", stage: "부트스트랩", funding: "비상장", ov: "텍스트→영상·음성 생성(미국/인도)", acq: "미디어 생성 기능 접목 감시" },
 ];
 
 const decode = s => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")

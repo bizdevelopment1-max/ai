@@ -1566,6 +1566,60 @@ window.DASH = (function () {
       { name: "Mati Staniszewski", role: "Co-founder·CEO", edu: "Imperial College London", career: "前 Palantir 배포 전략가" },
       { name: "Piotr Dąbkowski", role: "Co-founder·CTO", edu: "Imperial College London", career: "前 Google ML 엔지니어" },
     ] },
+    // ── a16z Top 100 Gen AI Consumer Apps 수록 스타트업(한국·중국 제외) — 조직도·창업 배경 ──
+    "Character.AI": { mission: "누구나 개인화된 AI 캐릭터와 대화", leadership: [
+      { name: "Noam Shazeer", role: "Founder", edu: "Duke · 스탠퍼드", career: "前 Google · Transformer('Attention Is All You Need') 공저자 (2024 Google 복귀)" },
+      { name: "Daniel De Freitas", role: "Co-founder", edu: "", career: "前 Google Brain · LaMDA 대화모델 리드 (2024 Google 복귀)" },
+      { name: "Dominic Perella", role: "CEO(interim)", edu: "", career: "前 Character.AI 법무총괄(General Counsel)" },
+    ] },
+    "Ideogram": { mission: "텍스트 렌더링에 강한 이미지 생성", leadership: [
+      { name: "Mohammad Norouzi", role: "Co-founder·CEO", edu: "Univ of Toronto 컴퓨터과학 박사", career: "前 Google Brain · Imagen·이미지 생성 연구 리드" },
+      { name: "Jonathan Ho", role: "Co-founder", edu: "UC Berkeley", career: "확산모델(DDPM) 논문 저자 · 前 Google" },
+      { name: "William Chan · Chitwan Saharia", role: "Co-founder", edu: "", career: "前 Google Brain 연구원" },
+    ] },
+    "Luma AI": { mission: "영상·3D를 만드는 멀티모달 생성 AI", leadership: [
+      { name: "Amit Jain", role: "Co-founder·CEO", edu: "USC", career: "前 Apple · 카메라·3D 컴퓨터비전 엔지니어" },
+      { name: "Alberto Taiuti", role: "Co-founder·CTO", edu: "에든버러대", career: "3D·그래픽스 엔지니어" },
+    ] },
+    "Pika": { mission: "누구나 쉽게 만드는 영상 생성 앱", leadership: [
+      { name: "Demi Guo", role: "Co-founder·CEO", edu: "Stanford AI 박사 중퇴 · Harvard", career: "前 Meta AI 연구 인턴" },
+      { name: "Chenlin Meng", role: "Co-founder·CTO", edu: "Stanford AI 박사", career: "확산모델 연구(SDEdit 등)" },
+    ] },
+    "Gamma": { mission: "AI로 만드는 프레젠테이션·문서", leadership: [
+      { name: "Grant Lee", role: "Co-founder·CEO", edu: "", career: "前 Optimizely 성장 총괄" },
+      { name: "Jon Noronha", role: "Co-founder·Product", edu: "", career: "前 Microsoft·Optimizely 제품" },
+      { name: "James Fox", role: "Co-founder·CTO", edu: "", career: "엔지니어링 리드" },
+    ] },
+    "Krea": { mission: "실시간 생성·편집 크리에이티브 도구", leadership: [
+      { name: "Victor Perez", role: "Co-founder·CEO", edu: "", career: "실시간 이미지 생성 도구 창업" },
+      { name: "Diego Rodriguez", role: "Co-founder·CTO", edu: "", career: "생성 그래픽스 엔지니어" },
+    ] },
+    "Leonardo.Ai": { mission: "게임·크리에이터용 이미지·영상 생성", leadership: [
+      { name: "JJ Fiasson", role: "Co-founder·CEO", edu: "", career: "크리에이티브 생성 플랫폼 창업(호주, 2024 Canva 인수)" },
+    ] },
+    "Poe": { mission: "여러 AI 모델을 한곳에서(Quora)", leadership: [
+      { name: "Adam D'Angelo", role: "Founder·CEO(Quora)", edu: "Caltech 컴퓨터과학", career: "前 Facebook CTO · OpenAI 이사" },
+    ] },
+    "Descript": { mission: "문서 편집하듯 다루는 오디오·영상 편집", leadership: [
+      { name: "Andrew Mason", role: "Founder·CEO", edu: "노스웨스턴대 음악", career: "前 Groupon 창업·CEO" },
+    ] },
+    "Grammarly": { mission: "쓰기를 돕는 AI 커뮤니케이션 어시스턴트", leadership: [
+      { name: "Max Lytvyn · Alex Shevchenko", role: "Co-founder", edu: "", career: "2009 창업(우크라이나 출신)" },
+      { name: "Rahul Roy-Chowdhury", role: "CEO", edu: "Stanford · Harvard MBA", career: "前 Google Chrome·프라이버시 제품 총괄" },
+    ] },
+    "Canva": { mission: "누구나 디자인할 수 있게 — AI 통합 디자인 플랫폼", leadership: [
+      { name: "Melanie Perkins", role: "Co-founder·CEO", edu: "Univ of Western Australia", career: "2013 공동창업" },
+      { name: "Cliff Obrecht", role: "Co-founder·COO", edu: "Univ of Western Australia", career: "공동창업" },
+      { name: "Cameron Adams", role: "Co-founder·CPO", edu: "", career: "前 Google 디자이너(Wave)" },
+    ] },
+    "Notion": { mission: "문서·지식·업무를 잇는 올인원 워크스페이스(AI)", leadership: [
+      { name: "Ivan Zhao", role: "Co-founder·CEO", edu: "Univ of British Columbia 인지과학", career: "2013 공동창업" },
+      { name: "Simon Last", role: "Co-founder", edu: "", career: "엔지니어링 공동창업" },
+    ] },
+    "Cognition": { mission: "자율 소프트웨어 엔지니어(Devin)", leadership: [
+      { name: "Scott Wu", role: "Co-founder·CEO", edu: "Harvard", career: "국제정보올림피아드 금메달 · 前 Lunchclub 공동창업" },
+      { name: "Steven Hao · Walden Yan", role: "Co-founder", edu: "MIT·Harvard", career: "경쟁 프로그래밍·AI 엔지니어" },
+    ] },
   };
 
   // ── 투자 포트폴리오·전략 맵 ─────────────────────────────────────────
