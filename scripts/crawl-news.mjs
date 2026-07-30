@@ -14,6 +14,7 @@ import { isExcludedText, newsPolicy } from "./news-policy.mjs";
 import { enrichSourceBatch, isContentBacked, textSimilarity } from "./source-content.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { directCompanyNewsMatch, newsQueryFor } from "./company-sources.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 // Company-card facts need first-party disclosures or a named publisher report,
 // rather than an undated category page. The same policy supplies priority
@@ -324,30 +325,25 @@ function dedupeLatestBriefings(rows) {
 
 async function main() {
   console.log("Crawling authoritative English AI news… (publisher/RSS excerpts; no AI API)");
-  const companyItems = (await pool(COMPANIES, 8, c => pull(c, 1))).flat();
+  const suppression = await loadSuppressionRegistry();
+  const activeCompanies = COMPANIES.filter(company => !suppression.hasCompany(company.name || company.co || company));
+  const companyItems = (await pool(activeCompanies, 8, c => pull(c, 1))).flat();
   const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
   const priorityItems = (await Promise.all(PRIORITY_STREAMS.map(stream => pull(stream, stream.n || 1)))).flat();
   const directItems = (await Promise.all(DIRECT_FEEDS.map(f => pullDirect(f, 2)))).flat();
 
   // 삭제 블록리스트(비밀번호 삭제) — 해당 URL은 다시 크롤하지 않음
-  let deletedUrls = new Set();
-  try {
-    const del = JSON.parse(await readFile("deleted.json", "utf8"));
-    const canon = u => { const s = String(u || ""); try { const p = new URL(s); p.hash = ""; p.search = ""; return p.href.replace(/\/+$/, ""); } catch { return s.replace(/[?#].*$/, "").replace(/\/+$/, ""); } };
-    deletedUrls = new Set((del.urls || []).map(canon));
-    var isDeletedUrl = u => { const s = String(u || ""); try { const p = new URL(s); p.hash = ""; p.search = ""; return deletedUrls.has(p.href.replace(/\/+$/, "")); } catch { return deletedUrls.has(s.replace(/[?#].*$/, "").replace(/\/+$/, "")); } };
-  } catch { var isDeletedUrl = () => false; }
-
   // de-dupe this run by URL
   const seen = new Set();
   const raw = [...companyItems, ...topicItems, ...priorityItems, ...directItems]
     .filter(a => a.url && !seen.has(a.url) && seen.add(a.url))
     .filter(a => !isExcludedText(`${a.title} ${a.descEn || ""}`))
-    .filter(a => !isDeletedUrl(a.url));
+    .filter(a => !suppression.hasUrl(a.url) && !suppression.hasCompany(a.co));
 
   // previously stored articles — reuse their summaries so we never re-crawl/re-summarize duplicates
   let prev = [];
-  try { prev = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
+  try { prev = (JSON.parse(await readFile("news.json", "utf8")).articles || [])
+    .filter(article => !suppression.matches(article, "article")); } catch {}
   const prevByUrl = new Map(prev.flatMap(a => [[a.url, a], ...(a.rssUrl ? [[a.rssUrl, a]] : [])]));
   // 영문 원제목(titleEn)으로도 매칭 — URL이 리다이렉트/이미지로 바뀌어도 수동 보정 요약을 보존
   const prevByTitleEn = new Map(prev.filter(a => a.titleEn).map(a => [a.titleEn, a]));

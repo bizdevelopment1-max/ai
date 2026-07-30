@@ -11,6 +11,7 @@
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 
 // 5개 MECE 카테고리 — 단말(스마트폰) 관점의 AI SW·서비스 기술(위에서부터 우선)
@@ -41,15 +42,19 @@ const canonUrl = u => {
 const idOf = (url, title) => "if_" + Buffer.from(canonUrl(url) || String(title || "")).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(-16);
 
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   let news = [];
-  try { news = JSON.parse(await readFile("news.json", "utf8")).articles || []; }
+  try {
+    news = (JSON.parse(await readFile("news.json", "utf8")).articles || [])
+      .filter(article => !suppression.matches(article, "article"));
+  }
   catch { console.log("[infra] news.json 없음 — crawl-news.mjs 먼저 실행"); }
 
   // 이전 누적본 로드 — 새 분류 체계(SW·서비스)로 재분류하고, 어느 그룹에도 안 맞으면 제거.
   // (반도체·데이터센터 하드웨어 전용 신호는 자연스럽게 소거되어 SW·서비스 관점으로 수렴)
   let prev = { groups: GROUPS.map(({ re, ...g }) => g), items: [] };
   try { const p = JSON.parse(await readFile("infra.json", "utf8")); if (p && Array.isArray(p.items)) prev = p; } catch {}
-  const reclassified = prev.items.map(it => {
+  const reclassified = prev.items.filter(item => !suppression.matches(item, "infra-signal")).map(it => {
     const g = classify(`${it.title || ""} ${it.signal || ""}`);
     return g ? { ...it, group: g } : null;
   }).filter(Boolean);

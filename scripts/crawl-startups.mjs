@@ -22,6 +22,7 @@ import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { canonicalizeStartupSnapshot } from "./company-identity.mjs";
 import { bulletizeKorean } from "./korean-copy.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -445,11 +446,17 @@ async function enrichInstitutional(rows) {
 }
 
 async function main() {
-  const large = LARGE.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", val: s.val, businessModel: scrub(s.bm), revenue: scrub(s.rev), partnership: scrub(s.part), label: "사업 모델 검토" }));
-  const small = SMALL.filter(s => !EXCLUDED.test(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", stage: s.stage, funding: s.funding, overview: scrub(s.ov), acqAngle: scrub(s.acq), label: "사업 모델 검토" }));
+  const suppression = await loadSuppressionRegistry();
+  const large = LARGE.filter(s => !EXCLUDED.test(s.name) && !suppression.hasCompany(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", val: s.val, businessModel: scrub(s.bm), revenue: scrub(s.rev), partnership: scrub(s.part), label: "사업 모델 검토" }));
+  const small = SMALL.filter(s => !EXCLUDED.test(s.name) && !suppression.hasCompany(s.name)).map(s => ({ name: s.name, domain: s.domain, vertical: s.vertical, cat: s.cat || "", stage: s.stage, funding: s.funding, overview: scrub(s.ov), acqAngle: scrub(s.acq), label: "사업 모델 검토" }));
 
   let prev = null;
   try { prev = JSON.parse(await readFile("startups.json", "utf8")); } catch {}
+  if (prev) {
+    prev.large = (prev.large || []).filter(row => !suppression.hasCompany(row.name));
+    prev.small = (prev.small || []).filter(row => !suppression.hasCompany(row.name));
+    prev.institutional = (prev.institutional || []).filter(row => !suppression.hasCompany(row.name));
+  }
   let normalizedStoredSnapshot = normalizeStoredSnapshot(prev);
   if (prev) {
     const canonical = canonicalizeStartupSnapshot(prev, loadDash().COMPANIES || []);
@@ -486,7 +493,8 @@ async function main() {
     source: "Andreessen Horowitz (a16z)", sourceTitle: "The Top 100 Gen AI Consumer Apps — 6th Edition",
     sourceUrl: "https://a16z.com/100-gen-ai-apps-6/", web: [], mobile: [],
   }));
-  const institutional = buildInstitutional(a16z, large, small);
+  const institutional = buildInstitutional(a16z, large, small)
+    .filter(row => !suppression.hasCompany(row.name));
 
   const e1 = await enrichLarge(large);
   const e2 = await enrichSmall(small);

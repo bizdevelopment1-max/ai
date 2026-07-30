@@ -13,6 +13,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { globalLocales, googleNewsUrl } from "./global-sources.mjs";
 import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -107,6 +108,7 @@ async function llmOnepager(feed, articles) {
 }
 
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   let articles = [];
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   let prev = {};
@@ -115,10 +117,13 @@ async function main() {
   // 1) 기관별 피드 크롤
   const raw = (await Promise.all(HOUSES.map(pullHouse))).flat();
   const reviewedByUrl = new Map((prev.feed || [])
+    .filter(item => !suppression.matches(item, "research"))
     .filter(isContentBacked)
     .flatMap(item => [[item.url, item], ...(item.rssUrl ? [[item.rssUrl, item]] : [])]));
   const seen = new Set();
-  const freshCandidates = raw.filter(a => a.url && !seen.has(a.url) && seen.add(a.url)).map(item => {
+  const freshCandidates = raw
+    .filter(item => !suppression.matches(item, "research"))
+    .filter(a => a.url && !seen.has(a.url) && seen.add(a.url)).map(item => {
     const reviewed = reviewedByUrl.get(item.url);
     return reviewed || item;
   });
@@ -127,7 +132,9 @@ async function main() {
   const byRssUrl = new Map(refreshed.map(item => [item.rssUrl || item.url, item]));
   const fresh = freshCandidates.map(item => byRssUrl.get(item.rssUrl || item.url) || item);
   // 이전 피드와 병합(30일 보존), 최신순
-  const prevFeed = (prev.feed || []).filter(a => !seen.has(a.rssUrl || a.url) && seen.add(a.rssUrl || a.url));
+  const prevFeed = (prev.feed || [])
+    .filter(item => !suppression.matches(item, "research"))
+    .filter(a => !seen.has(a.rssUrl || a.url) && seen.add(a.rssUrl || a.url));
   let feed = [...fresh, ...prevFeed]
     .filter(a => !isExcludedText(JSON.stringify(a || {})))   // 금지어(삼성·갤럭시 등) 포함 리서치 제외
     .filter(a => (Date.now() - new Date(a.date).getTime()) / 86400000 < 120)   // 누적 보존 확대

@@ -13,6 +13,7 @@
  *   never creates a person, role, school or employer with model inference.
  */
 import { readFile, writeFile } from "node:fs/promises";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const DATA_FILE = "startups.json";
 const UA = "AI-Strategy-Research/1.0 (+https://bizdevelopment1-max.github.io/ai/)";
@@ -699,8 +700,10 @@ function buildEnrichment(record, wikidata, officialPages, officialSeed = "") {
 }
 
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   const data = JSON.parse(await readFile(DATA_FILE, "utf8"));
-  const allRecords = [...(data.large || []), ...(data.small || []), ...(data.institutional || [])];
+  const allRecords = [...(data.large || []), ...(data.small || []), ...(data.institutional || [])]
+    .filter(record => !suppression.hasCompany(record.name));
   const unique = new Map();
   for (const record of allRecords) {
     const key = recordKey(record);
@@ -769,7 +772,7 @@ async function main() {
     enrichments.set(recordKey(record), buildEnrichment(record, wiki, pages, effectiveRecord.resolvedOfficialWebsite || ""));
   });
 
-  const apply = rows => (rows || []).map(record => {
+  const apply = rows => (rows || []).filter(record => !suppression.hasCompany(record.name)).map(record => {
     const enrichment = enrichments.get(recordKey(record));
     return normalizeStoredDepth(enrichment ? { ...record, ...enrichment } : record);
   });

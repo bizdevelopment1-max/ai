@@ -9,6 +9,7 @@
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 
 // 7개 MECE 수익화(비즈니스 모델) 유형 — 위에서부터 우선 매칭
@@ -45,13 +46,19 @@ const canonUrl = u => {
 const idOf = (url, title) => "bm_" + Buffer.from(canonUrl(url) || String(title || "")).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(-16);
 
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   let news = [];
-  try { news = JSON.parse(await readFile("news.json", "utf8")).articles || []; }
+  try {
+    news = (JSON.parse(await readFile("news.json", "utf8")).articles || [])
+      .filter(article => !suppression.matches(article, "article"));
+  }
   catch { console.log("[bizmodel] news.json 없음 — crawl-news.mjs 먼저 실행"); }
 
   let prev = { groups: GROUPS.map(({ re, ...g }) => g), items: [] };
   try { const p = JSON.parse(await readFile("bizmodel.json", "utf8")); if (p && Array.isArray(p.items)) prev = p; } catch {}
-  const byUrl = new Map(prev.items.map(it => [canonUrl(it.url), it]));
+  const byUrl = new Map(prev.items
+    .filter(item => !suppression.matches(item, "bizmodel-signal"))
+    .map(it => [canonUrl(it.url), it]));
 
   let added = 0;
   for (const a of news) {

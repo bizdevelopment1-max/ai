@@ -20,6 +20,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, executiveTier } from "./company-sources.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const MAX_EXECUTIVES = 12;
 
@@ -109,16 +110,21 @@ const classifyPractices = (arts) => {
 };
 
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   let articles = [], stocks = {}, financials = {}, previousCompanies = {}, officialCompanies = {}, startupRows = [];
   let startupRegistry = { trackedReferences: [] };
-  try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
+  try {
+    articles = (JSON.parse(await readFile("news.json", "utf8")).articles || [])
+      .filter(article => !suppression.matches(article, "article"));
+  } catch {}
   try { stocks = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
   try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
   try { previousCompanies = JSON.parse(await readFile("companies.json", "utf8")).companies || {}; } catch {}
   try { officialCompanies = JSON.parse(await readFile("company-officials.json", "utf8")).companies || {}; } catch {}
   try {
     const startups = JSON.parse(await readFile("startups.json", "utf8"));
-    startupRows = [...(startups.large || []), ...(startups.small || []), ...(startups.institutional || [])];
+    startupRows = [...(startups.large || []), ...(startups.small || []), ...(startups.institutional || [])]
+      .filter(startup => !suppression.hasCompany(startup.name));
     startupRegistry = startups.companyRegistry || startupRegistry;
   } catch {}
   const dash = loadDash();
@@ -134,7 +140,7 @@ async function main() {
   }
   const linkedinSource = dash.LINKEDIN_PROFILES || {};
   const profileSource = dash.COMPANY_PROFILES || {};
-  const trackedCompanies = dash.COMPANIES || [];
+  const trackedCompanies = (dash.COMPANIES || []).filter(company => !suppression.hasCompany(company.name));
   const leaders = deriveLeaders(orgSource);
   // 기업 개요의 변동 항목을 크롤 값으로 붙임(crawl-financials.mjs — 공시·분기 주기로 자동 최신화)
   const joinFin = (rec, tk) => {
