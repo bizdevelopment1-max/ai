@@ -191,6 +191,10 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
     return { ...layer, rows, primary, mentions, top };
   });
   const maxMomentum = Math.max(1, ...layerStats.map(l => l.mentions));
+  const companyCount = new Set((companies || []).map(company => company.name)).size;
+  const signalCount = (companies || []).reduce((sum, company) => sum + Number(company.live?.mentions30 || 0), 0);
+  const leadLayer = [...layerStats].sort((a, b) => b.mentions - a.mentions)[0] || {};
+  const finalHorizon = (strategy.horizons || [])[Math.max(0, (strategy.horizons || []).length - 1)] || {};
   return (
     <section className="board msf" ref={sectionRef} data-screen-label="Mobile AI Strategy Framework">
       <AnimCtx.Provider value={inView}>
@@ -203,9 +207,43 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
           <div className="board-count msf-live">LIVE · 30일 신호</div>
         </div>
 
-        <div className="msf-north">
-          <span>North Star</span>
-          <p>{strategy.northStar}</p>
+        <div className="msf-exec-architecture">
+          <div className="msf-strategy-house">
+            <div className="msf-house-roof">
+              <span>NORTH STAR</span>
+              <p>{strategy.northStar}</p>
+            </div>
+            <div className="msf-house-pillars">
+              {(strategy.choices || []).slice(0, 4).map((choice, index) => (
+                <div key={choice.no}>
+                  <em>0{index + 1}</em>
+                  <b>{choice.title}</b>
+                  <span>{choice.where}</span>
+                </div>
+              ))}
+            </div>
+            <div className="msf-house-foundation">
+              <em>FOUNDATION</em>
+              <b>단말 · OS · 계정 · 결제 · 개인 컨텍스트</b>
+            </div>
+          </div>
+
+          <div className="msf-exec-synthesis">
+            <div className="msf-synthesis-head">
+              <span>EXECUTIVE SYNTHESIS</span>
+              <b>시장 근거에서 실행 우선순위까지</b>
+            </div>
+            <div className="msf-synthesis-flow">
+              <div><em>01 · UNIVERSE</em><b>{companyCount}개사</b><span>SW·서비스 밸류체인</span></div>
+              <i aria-hidden="true" />
+              <div><em>02 · MOMENTUM</em><b>{leadLayer.ko || "수집 중"}</b><span>{leadLayer.mentions || 0}건 · 상위 계층</span></div>
+              <i aria-hidden="true" />
+              <div><em>03 · CHOICE</em><b>{(strategy.choices || []).length}개 플레이</b><span>Where to Play / Win</span></div>
+              <i aria-hidden="true" />
+              <div><em>04 · END STATE</em><b>{finalHorizon.title || "플랫폼 확장"}</b><span>{signalCount}건 · 30일 근거</span></div>
+            </div>
+            <p>직접 보유할 통제점과 파트너 조달 영역을 분리하고, 반복 매출이 발생하는 서비스 계층에 자본과 실행 조직을 집중합니다.</p>
+          </div>
         </div>
 
         <div className="msf-section-head">
@@ -260,14 +298,14 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
 
         <div className="msf-section-head">
           <div><em>04</em><h3>실행 로드맵</h3></div>
-          <p>기준선 확보 → 통제점 제품화 → 플랫폼 확장</p>
+          <p>기준선 확보 · 통제점 제품화 · 플랫폼 확장</p>
         </div>
         <div className="msf-horizons">
           {(strategy.horizons || []).map((h, i) => (
             <div className="msf-horizon" key={h.id}>
               <span>{h.label}</span><h4>{h.title}</h4>
               <ul>{(h.actions || []).map((a, j) => <li key={j}>{a}</li>)}</ul>
-              {i < strategy.horizons.length - 1 && <i className="msf-harr" aria-hidden="true">→</i>}
+              {i < strategy.horizons.length - 1 && <i className="msf-harr" aria-hidden="true" />}
             </div>
           ))}
         </div>
@@ -320,20 +358,23 @@ function StrategyPortfolioCard({
         {accessory}
       </div>
       {institution && <div className="sp-card-institution">{institution}</div>}
+      <div className="sp-card-logic" aria-hidden="true">
+        <span>BUSINESS</span><i /><span>ECONOMICS</span><i /><span>DIRECTION</span>
+      </div>
       <div className="sp-card-intel">
-        <div>
+        <div className="business">
           <span>현재 사업</span>
           <b>{currentBusiness}</b>
         </div>
-        <div>
+        <div className="economics">
           <span>Biz Model</span>
           <b>{money}</b>
         </div>
-        <div>
+        <div className="direction">
           <span>사업 방향</span>
           <b>{future}</b>
         </div>
-        <div>
+        <div className="execution">
           <span>최근 실행</span>
           <b>{latestExecution}</b>
         </div>
@@ -341,7 +382,7 @@ function StrategyPortfolioCard({
       <div className="sp-card-foot">
         <span><em>인력</em>{people}</span>
         <span><em>원문 근거</em>{evidenceN ? `${evidenceN}건` : "수집 중"}</span>
-        <b>실적·조직·발언·원문 →</b>
+        <b>실적·조직·발언·원문 <i aria-hidden="true" /></b>
       </div>
     </div>
   );
@@ -383,6 +424,15 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
         <div className="vc-filter-bar" aria-label={`${layer.ko} 세부 영역 필터`}>
           <button className={vertical === "all" ? "on" : ""} onClick={() => setVertical("all")}>전체 <em>{rows.length}</em></button>
           {vkeys.map(v => <button key={v} className={vertical === v ? "on" : ""} onClick={() => setVertical(v)}>{v} <em>{counts[v]}</em></button>)}
+        </div>
+        <div className="vc-logic-map" aria-label={`${layer.ko} 전략 논리`}>
+          <div><em>01 · CONTROL POINT</em><b>{layer.controlPoint}</b><span>어디를 통제할 것인가</span></div>
+          <i aria-hidden="true" />
+          <div><em>02 · ECONOMICS</em><b>{layer.economics}</b><span>어떻게 반복 수익을 만드는가</span></div>
+          <i aria-hidden="true" />
+          <div><em>03 · OPERATOR MOVE</em><b>{layer.operatorMove}</b><span>단말 사업자가 무엇을 실행할 것인가</span></div>
+          <i aria-hidden="true" />
+          <div className="risk"><em>04 · GUARDRAIL</em><b>{layer.risk}</b><span>투자 전 확인할 핵심 리스크</span></div>
         </div>
         <div className="vc-portfolio-grid">
           {visibleRows.map(c => (
@@ -496,7 +546,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
               </div>
               {lv.employeesSourceUrl && (
                 <a className="cd-prof-source" href={lv.employeesSourceUrl} target="_blank" rel="noopener">
-                  인력 출처 · {lv.employeesSource || "공개 데이터"} ↗
+                  인력 출처 · {lv.employeesSource || "공개 데이터"}
                 </a>
               )}
               {Array.isArray(p.business) && p.business.length > 0 && (
@@ -517,37 +567,39 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
             { key: "strategyDirection", no: "03", ko: "앞으로의 사업 방향", en: "Strategic Direction", fallback: c.direction },
             { key: "investmentDirection", no: "04", ko: "투자·제휴 방향", en: "Investment Direction", fallback: "" },
           ];
-          const hasIntel = sections.some(section => intelligence[section.key]?.summary || section.fallback);
+          const visibleSections = sections.map(section => {
+            const item = intelligence[section.key] || {};
+            return { ...section, item, summary: item.summary || section.fallback };
+          }).filter(section => section.summary);
+          const hasIntel = visibleSections.length > 0;
           if (!hasIntel) return null;
           return (
             <div className="cd-section cd-strategy-frame">
-              <h4>비즈니스 모델·전략 분석 <em>Business → Economics → Direction</em>
+              <h4>비즈니스 모델·전략 분석 <em>Business · Economics · Direction · Capital</em>
                 <b className="cd-prof-live">{String(intelligence.engine || "").startsWith("github-models:") ? "AI · 원문 근거 종합" : "원문 추출 종합"}</b>
               </h4>
               <div className="cd-sf-grid cd-intelligence-grid">
-                {sections.map(section => {
-                  const item = intelligence[section.key] || {};
-                  const summary = item.summary || section.fallback;
-                  if (!summary) return null;
-                  return (
+                {visibleSections.map((section, sectionIndex) => (
+                  <React.Fragment key={section.key}>
                     <div className={`cd-sf-card ${section.key}`} key={section.key}>
                       <em>{section.no} · {section.ko} <i>{section.en}</i></em>
-                      <b>{summary}</b>
-                      {Array.isArray(item.details) && item.details.length > 0 && (
-                        <ul>{item.details.slice(0, 4).map((detail, index) => <li key={index}>{detail}</li>)}</ul>
+                      <b>{section.summary}</b>
+                      {Array.isArray(section.item.details) && section.item.details.length > 0 && (
+                        <ul>{section.item.details.slice(0, 4).map((detail, index) => <li key={index}>{detail}</li>)}</ul>
                       )}
-                      {Array.isArray(item.evidence) && item.evidence.length > 0 && (
+                      {Array.isArray(section.item.evidence) && section.item.evidence.length > 0 && (
                         <div className="cd-intel-sources">
-                          {item.evidence.slice(0, 3).map((source, index) => (
+                          {section.item.evidence.slice(0, 3).map((source, index) => (
                             <a key={index} href={source.url} target="_blank" rel="noopener">
-                              {source.date ? `${String(source.date).slice(2)} · ` : ""}{source.source || "원문"} ↗
+                              {source.date ? `${String(source.date).slice(2)} · ` : ""}{source.source || "원문"}
                             </a>
                           ))}
                         </div>
                       )}
                     </div>
-                  );
-                })}
+                    {sectionIndex < visibleSections.length - 1 && <i className="cd-sf-link" aria-hidden="true" />}
+                  </React.Fragment>
+                ))}
               </div>
               <div className="cd-sf-evidence">
                 <span><b>갱신 주기</b>뉴스·실적 발표 후 자동 재분석</span>
@@ -576,7 +628,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                   </div>
                   <div className="cd-venture-sources">
                     {(venture.sources || []).map((source, index) => (
-                      <a key={index} href={source.url} target="_blank" rel="noopener">{source.publisher} · {source.date} 원문 ↗</a>
+                      <a key={index} href={source.url} target="_blank" rel="noopener">{source.publisher} · {source.date} 원문</a>
                     ))}
                   </div>
                 </article>
@@ -592,7 +644,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                   <strong>{comparison.operatorMove}</strong>
                   {comparison.market && (
                     <a href={comparison.market.source?.url} target="_blank" rel="noopener">
-                      AI 컨설팅 시장 {comparison.market.value2025} → {comparison.market.forecast2030} (2030) · CAGR {comparison.market.cagr} ↗
+                      AI 컨설팅 시장 2025 {comparison.market.value2025} · 2030 {comparison.market.forecast2030} · CAGR {comparison.market.cagr}
                     </a>
                   )}
                 </div>
@@ -603,7 +655,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
 
         {Array.isArray(intelligence.newBusinessModels) && intelligence.newBusinessModels.length > 0 && (
           <div className="cd-section">
-            <h4>AI 신규 수익모델 <em>Emerging AI Business Models</em><b className="cd-prof-live">CRAWL → SYNTHESIS</b></h4>
+            <h4>AI 신규 수익모델 <em>Emerging AI Business Models</em><b className="cd-prof-live">CRAWL · SYNTHESIS</b></h4>
             <div className="cd-newbm-grid">
               {intelligence.newBusinessModels.map((model, index) => (
                 <article className="cd-newbm-card" key={index}>
@@ -613,7 +665,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                   {model.implication && <strong>{model.implication}</strong>}
                   {model.evidence?.url && (
                     <a href={model.evidence.url} target="_blank" rel="noopener">
-                      {model.evidence.source || "원문"}{model.evidence.date ? ` · ${model.evidence.date}` : ""} ↗
+                      {model.evidence.source || "원문"}{model.evidence.date ? ` · ${model.evidence.date}` : ""}
                     </a>
                   )}
                 </article>
@@ -669,7 +721,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                     <a className="mplay-sig" key={"m" + i} href={s.url} target="_blank" rel="noopener">
                       <span className="mplay-tag" style={{ "--c": mm.accent }}>{mm.ko}</span>
                       <span className="mplay-txt">{s.koTitle}</span>
-                      <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""} ↗</em>
+                      <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""}</em>
                     </a>
                   ); })}
                 </div>
@@ -681,7 +733,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                     <a className="mplay-sig" key={"d" + i} href={s.url} target="_blank" rel="noopener">
                       <span className="mplay-tag dir" style={{ "--c": dm.accent }}>{dm.ko}</span>
                       <span className="mplay-txt">{s.koTitle}</span>
-                      <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""} ↗</em>
+                      <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""}</em>
                     </a>
                   ); })}
                 </div>
@@ -753,14 +805,14 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                 <div className="cd-section">
                   <h4>상세 조직도 <em>Founders · CEO · CTO · Executive Team</em><b className="cd-prof-live">{filingOfficers.length ? "LIVE 공시 + 리더십 이력" : "창업·리더십"}</b>
                     {orgCoverage && <b className="cd-coverage">커버리지 {orgCoverage.score}%</b>}
-                    {coLink && <a className="cd-org-colink" href={coLink} target="_blank" rel="noopener" title="회사 LinkedIn 페이지">회사 LinkedIn ↗</a>}
+                    {coLink && <a className="cd-org-colink" href={coLink} target="_blank" rel="noopener" title="회사 LinkedIn 페이지">회사 LinkedIn</a>}
                   </h4>
                   <div className="cd-org">
                     {lead && (
                       <div className="cd-org-node lead">
                         <b>{lead.name}</b><span className="cd-org-role">{lead.role}</span>
                         <NodeBg p={lead} />
-                        {liOf(lead) && <a className="cd-org-li" href={liOf(lead)} target="_blank" rel="noopener" title={`${lead.name} LinkedIn 프로필`}>LinkedIn ↗</a>}
+                        {liOf(lead) && <a className="cd-org-li" href={liOf(lead)} target="_blank" rel="noopener" title={`${lead.name} LinkedIn 프로필`}>LinkedIn</a>}
                       </div>
                     )}
                     {reports.length > 0 && <span className="cd-org-conn" aria-hidden="true" />}
@@ -770,7 +822,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                           <div className="cd-org-node" key={i}>
                             <b>{p.name}</b><span className="cd-org-role">{p.role}</span>
                             <NodeBg p={p} />
-                            {liOf(p) && <a className="cd-org-li" href={liOf(p)} target="_blank" rel="noopener" title={`${p.name} LinkedIn 프로필`}>LinkedIn ↗</a>}
+                            {liOf(p) && <a className="cd-org-li" href={liOf(p)} target="_blank" rel="noopener" title={`${p.name} LinkedIn 프로필`}>LinkedIn</a>}
                           </div>
                         ))}
                       </div>
@@ -809,7 +861,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
             <div className="cd-exn">
               {c.live.execNews.map((e, i) => (
                 <a className="cd-exn-item" key={i} href={e.url} target="_blank" rel="noopener">
-                  <div className="cd-exn-top"><b>{e.who}</b><span>{e.date}{e.source ? " · " + e.source : ""} ↗</span></div>
+                  <div className="cd-exn-top"><b>{e.who}</b><span>{e.date}{e.source ? " · " + e.source : ""}</span></div>
                   {e.titleKo && <p className="cd-exn-ko">{e.titleKo}</p>}
                   <p className="cd-exn-en">{e.titleEn}</p>
                 </a>
@@ -877,7 +929,7 @@ function CompanyDetail({ company, cats, articles, generatedAt, onClose }) {
                 })}
               </div>
               <p className="cd-cp-note">
-                자사 컴퓨트 → 클라우드 → 앱으로 이어지는 밸류체인 계층별 지분 투자 맵. 지분·라운드는 공시·보도 기반 큐레이션이며, 최신 자본 활동은 위 ‘핵심 활동 분석’(크롤)이 보완.
+                자사 컴퓨트·클라우드·앱으로 이어지는 밸류체인 계층별 지분 투자 맵. 지분·라운드는 공시·보도 기반 큐레이션이며, 최신 자본 활동은 위 ‘핵심 활동 분석’(크롤)이 보완.
                 {inv.source && inv.source.url && (
                   <> · <a href={inv.source.url} target="_blank" rel="noopener">{inv.source.label || "출처"} <Icon name="ext" size={10} /></a></>
                 )}
@@ -1652,7 +1704,7 @@ function QuantInsightSlider({ data }) {
     {
       image: "assets/quant-insight-infra.webp",
       eyebrow: "MARKET SCALE",
-      metric: `$${market2026?.size || 540}B → $${market2030?.size || 1812}B`,
+      metric: `$${market2026?.size || 540}B / $${market2030?.size || 1812}B`,
       title: "AI 시장 성장의 병목은 인프라 실행력",
       lines: [
         `${market2026?.year || "2026E"}에서 ${market2030?.year || "2030E"}까지 시장 규모 전망`,
@@ -1777,8 +1829,8 @@ const COMPETE_EDGES = [
   // NVIDIA — 칩 경쟁(자체 실리콘) + 공급 허브
   { from: "NVIDIA", to: "Google DeepMind", type: "경쟁", label: "GPU vs 자체 TPU" },
   { from: "NVIDIA", to: "Amazon", type: "경쟁", label: "GPU vs Trainium" },
-  { from: "NVIDIA", to: "OpenAI", type: "매출", label: "GPU 공급 → 매출" },
-  { from: "NVIDIA", to: "Anthropic", type: "매출", label: "GPU 공급 → 매출" },
+  { from: "NVIDIA", to: "OpenAI", type: "매출", label: "GPU 공급 · 매출" },
+  { from: "NVIDIA", to: "Anthropic", type: "매출", label: "GPU 공급 · 매출" },
   // Apple — 단말 비서 경쟁 + 모델 파트너십
   { from: "Apple", to: "Google DeepMind", type: "파트너십", label: "Gemini 탑재 Siri" },
   { from: "Apple", to: "OpenAI", type: "파트너십", label: "Siri ChatGPT 연동" },
@@ -1795,10 +1847,10 @@ const MONEY_EDGES = [
   { from: "NVIDIA", to: "Perplexity", type: "투자", label: "전략 투자(NVIDIA)" },
   { from: "NVIDIA", to: "ElevenLabs", type: "투자", label: "전략 투자(NVIDIA)" },
   { from: "NVIDIA", to: "Mistral AI", type: "투자", label: "전략 투자(NVIDIA)" },
-  { from: "OpenAI", to: "NVIDIA", type: "매출", label: "GPU 구매 → NVIDIA 매출" },
-  { from: "Microsoft", to: "NVIDIA", type: "매출", label: "GPU 구매 → NVIDIA 매출" },
-  { from: "Amazon", to: "NVIDIA", type: "매출", label: "GPU 구매 → NVIDIA 매출" },
-  { from: "Meta AI", to: "NVIDIA", type: "매출", label: "GPU 구매 → NVIDIA 매출" },
+  { from: "OpenAI", to: "NVIDIA", type: "매출", label: "GPU 구매 · NVIDIA 매출" },
+  { from: "Microsoft", to: "NVIDIA", type: "매출", label: "GPU 구매 · NVIDIA 매출" },
+  { from: "Amazon", to: "NVIDIA", type: "매출", label: "GPU 구매 · NVIDIA 매출" },
+  { from: "Meta AI", to: "NVIDIA", type: "매출", label: "GPU 구매 · NVIDIA 매출" },
   { from: "Anthropic", to: "Amazon", type: "매출", label: "AWS 클라우드 $100B 약정" },
   { from: "OpenAI", to: "Microsoft", type: "매출", label: "Azure 컴퓨트 비용" },
   { from: "OpenAI", to: "Scale AI", type: "매출", label: "데이터·평가 구매" },
@@ -2200,7 +2252,7 @@ function ESCompetitiveMap({ companies, cats, articles }) {
                 )}
                 {selectedArticle && (
                   <a className="dyn-source" href={selectedArticle.url} target="_blank" rel="noopener">
-                    <span>연결 기사 원문</span><b>↗</b>
+                    <span>연결 기사 원문</span><b aria-hidden="true" />
                   </a>
                 )}
               </div>
@@ -2215,7 +2267,7 @@ function ESCompetitiveMap({ companies, cats, articles }) {
 
 // ---- Biz Model Board (monetization / revenue model per company) ----
 const BIGTECH_FLOWS = [
-  { name: "Microsoft", flow: ["기업 사용자", "M365·Copilot 구독($30/월)", "Azure AI 클라우드 과금", "AI 런레이트 $37B"], note: "오피스 번들 락인 → 좌석당 추가 과금 + 클라우드 종량제" },
+  { name: "Microsoft", flow: ["기업 사용자", "M365·Copilot 구독($30/월)", "Azure AI 클라우드 과금", "AI 런레이트 $37B"], note: "오피스 번들 락인으로 좌석당 추가 과금과 클라우드 종량제를 결합" },
   { name: "Google", flow: ["소비자·광고주", "검색·유튜브 광고", "Gemini 구독 + Cloud 과금", "광고가 AI 투자 재원"], note: "광고 본업이 AI 개발비를 조달 — AI로 광고 타기팅 강화 순환" },
   { name: "Apple", flow: ["단말 구매자", "프리미엄 하드웨어 마진", "서비스 구독(iCloud+ 등)", "AI는 단말 판매 촉진"], note: "AI 직접 과금 없이 교체수요·서비스 ARPU로 회수" },
   { name: "Amazon", flow: ["기업 고객", "AWS Bedrock 모델 호스팅", "컴퓨트·스토리지 종량제", "멀티모델 중립 수수료"], note: "어느 모델이 이겨도 클라우드 사용량으로 수익화" },
@@ -2232,7 +2284,7 @@ function BigtechFlowGrid() {
             {f.flow.map((s, i) => (
               <React.Fragment key={i}>
                 <span className={"btf-step" + (i === f.flow.length - 1 ? " last" : "")}>{s}</span>
-                {i < f.flow.length - 1 && <span className="btf-arr">→</span>}
+                {i < f.flow.length - 1 && <span className="btf-arr" aria-hidden="true" />}
               </React.Fragment>
             ))}
           </div>
@@ -2255,9 +2307,9 @@ const NEWBIZ_DEALS = [
       ["조달·밸류", "40억달러+ 조달 · 법인가치 약 140억달러"],
       ["소유 구조", "OpenAI 과반 소유·지배(슈퍼보팅 주식) · 델라웨어 법인"],
       ["재무 투자자(19)", "TPG(주도) · Advent · Bain Capital · Brookfield · Dragoneer · SoftBank"],
-      ["컨설팅 공동투자자", "McKinsey · Bain & Company · Capgemini(경쟁자→co-investor)"],
+      ["컨설팅 공동투자자", "McKinsey · Bain & Company · Capgemini(경쟁자에서 co-investor로 전환)"],
       ["수익 보장", "PE 백커에 5년간 연 17.5% 우선 수익 보장(우선주)"],
-      ["창립 인수", "Tomoro(Edinburgh) 인수 → FDE ~150명 · 12개월 매출 10배"],
+      ["창립 인수", "Tomoro(Edinburgh) 인수 · FDE ~150명 · 12개월 매출 10배"],
       ["Tomoro 고객", "Mattel · Red Bull · Tesco · NBA"],
       ["타깃 산업", "헬스케어 · 물류 · 제조 · 금융 · 리테일"],
     ],
@@ -2283,14 +2335,14 @@ const NEWBIZ_DEALS = [
       ["창립 파트너", "Blackstone · Hellman & Friedman · Goldman Sachs"],
       ["추가 백커", "Apollo · General Atlantic · GIC · Leonard Green · Sequoia"],
       ["인력", "현재 엔지니어 ~100명 · Anthropic 내부 Applied AI팀과 공동 작업"],
-      ["FDE 명칭·딜리버리", "Applied AI Engineer가 고객사 상주 → 밑바닥부터 커스텀 AI 시스템 구축"],
+      ["FDE 명칭·딜리버리", "Applied AI Engineer가 고객사에 상주해 밑바닥부터 커스텀 AI 시스템 구축"],
       ["타깃 산업", "금융·헬스케어·법률·정부 등 규제 산업(PE 보유 중견기업)"],
     ],
     facts: [
       "핵심 주장: '엔터프라이즈 AI의 가치는 모델이 아니라 구현(implementation)에 있다' — Claude를 핵심 업무에 직접 이식",
       "목표는 라이선스 판매가 아니라 '핵심 비즈니스 프로세스 재설계 + 프로덕션 시스템 구축' — PoC에서 실서비스로 전환",
       "Wipro·Cognizant·ServiceNow·phData 등 SI 파트너가 Claude FDE를 대량 훈련·공급해 배포 인력을 확장",
-      "OpenAI와 같은 날(5/4) 발표했지만 지배구조는 정반대 — 소수지분 vs 과반 지배",
+      "Anthropic은 5월 4일, OpenAI는 5월 11일 발표했으며 지배구조는 소수지분과 과반 지배로 정반대",
     ],
     insight: "자본·지배는 덜 쥐고 파트너십으로 확장하는 가벼운 수직통합. 안전성 브랜드 + 규제산업 침투 + SI 파트너 FDE 풀로 배포를 스케일 — OpenAI보다 자본 부담이 작은 구조.",
     articles: [
@@ -2349,17 +2401,17 @@ function NewBizDeepDive() {
         <div className="nbz-take-col">
           <em>공통점</em>
           <ul>
-            <li>같은 날(5/4) 발표 · Wall Street·PE 자본 동원</li>
+            <li>7일 간격으로 발표 · Wall Street·PE 자본 동원</li>
             <li>Palantir式 포워드 디플로이드 엔지니어 — 고객사 상주</li>
             <li>백커의 포트폴리오사를 전속 유통망으로 확보</li>
-            <li>모델→서비스 수직통합으로 도입·운영 마진 장악</li>
+            <li>모델에서 서비스까지 수직통합해 도입·운영 마진 장악</li>
           </ul>
         </div>
         <div className="nbz-take-col">
           <em>차이</em>
           <ul>
-            <li>OpenAI = 과반 지배 · 법인가치 ~140억달러 · 연 17.5% 수익 보장 → 무거운 수직통합</li>
-            <li>Ode(Anthropic) = 소수지분 · 밸류 15억달러 · 엔지니어 ~100명 → 가벼운 파트너십형</li>
+            <li>OpenAI = 과반 지배 · 법인가치 ~140억달러 · 연 17.5% 수익 보장 · 무거운 수직통합</li>
+            <li>Ode(Anthropic) = 소수지분 · 밸류 15억달러 · 엔지니어 ~100명 · 가벼운 파트너십형</li>
             <li>OpenAI는 컨설팅사까지 co-investor로 흡수 / Anthropic은 컨설팅과 직접 경쟁</li>
           </ul>
         </div>
@@ -2370,8 +2422,8 @@ function NewBizDeepDive() {
 
 // AI 컨설팅·엔터프라이즈 구축 신사업 — 시장 계층·FDE 경제학·경쟁 지형·수요 실증·과금 모델·진입 플레이북.
 const ACB_LAYERS = [
-  { k: "엔터프라이즈 에이전틱 AI", v: "$6.8B(2025) → $46B(2030)", g: "CAGR 47%", src: "MarketsandMarkets", u: "https://www.marketsandmarkets.com/Market-Reports/enterprise-agentic-ai-market-219711254.html" },
-  { k: "AI 컨설팅·서비스", v: "→ $49B(2032) · $215B(2033)", g: "CAGR ~24%", src: "SNS Insider", u: "https://www.globenewswire.com/de/news-release/2025/08/06/3128409/0/en/AI-Consulting-Services-Market-Size-to-Hit-USD-49-11-Billion-by-2032-Driven-by-Enterprise-AI-Adoption-Custom-Strategy-and-Regulatory-Demand-SNS-Insider.html" },
+  { k: "엔터프라이즈 에이전틱 AI", v: "$6.8B(2025) / $46B(2030)", g: "CAGR 47%", src: "MarketsandMarkets", u: "https://www.marketsandmarkets.com/Market-Reports/enterprise-agentic-ai-market-219711254.html" },
+  { k: "AI 컨설팅·서비스", v: "$49B(2032) · $215B(2033)", g: "CAGR ~24%", src: "SNS Insider", u: "https://www.globenewswire.com/de/news-release/2025/08/06/3128409/0/en/AI-Consulting-Services-Market-Size-to-Hit-USD-49-11-Billion-by-2032-Driven-by-Enterprise-AI-Adoption-Custom-Strategy-and-Regulatory-Demand-SNS-Insider.html" },
   { k: "배포 모델 구성", v: "Ready-to-deploy(최대 점유)·Build-your-own(최고 성장)·SI", g: "커스텀 수요 급증", src: "Grand View", u: "https://www.grandviewresearch.com/industry-analysis/enterprise-agentic-ai-market-report" },
 ];
 const ACB_CAMPS = [
@@ -2384,7 +2436,7 @@ const ACB_PROOF = [
   ["Q1 FY26 매출", "$1.1B · +120%"], ["대형딜 AI 침투", "80%"], ["AI·데이터 인력", "77,000명"],
 ];
 const ACB_BMODELS = [
-  ["임베디드 FDE(포워드 디플로이드)", "선투자 배포비 → 무제한·확장 토큰/소비 annuity", "OpenAI DeployCo · Anthropic JV · Palantir", "온디바이스·기업 fleet에 상주 엔지니어 조직"],
+  ["임베디드 FDE(포워드 디플로이드)", "선투자 배포비로 무제한·확장 토큰/소비 annuity 확보", "OpenAI DeployCo · Anthropic JV · Palantir", "온디바이스·기업 fleet에 상주 엔지니어 조직"],
   ["아웃컴·성과 기반", "ROI·절감액 연동 성공보수", "에이전트 전환율 4~7배 · 비용 70%↓ · ROI 171%", "검증 쉬운 버티컬부터 성공보수형 도입"],
   ["Ready-to-deploy 에이전트", "구독·시트·사용량(반복 매출)", "CS·영업·데이터 자동화 기성 에이전트", "단말 기본 탑재 에이전트를 구독화"],
   ["Build-your-own 플랫폼", "플랫폼 라이선스 + 사용량", "도메인 특화 커스텀 에이전트(최고 성장)", "파트너·기업이 온디바이스 에이전트 제작"],
@@ -2481,17 +2533,17 @@ function ForwardDeployedAIModel() {
             <span className="fda-step-n">{s.n}</span>
             <b className="fda-step-k">{s.k}</b>
             <span className="fda-step-d">{s.d}</span>
-            {i < FDA_STEPS.length - 1 && <span className="fda-arrow" aria-hidden="true">→</span>}
+            {i < FDA_STEPS.length - 1 && <span className="fda-arrow" aria-hidden="true" />}
           </div>
         ))}
       </div>
 
       <div className="acb-fde">
-        <div className="acb-fde-head"><b>FDE 유닛 이코노믹스 — 왜 상주 비용이 정당화되나</b><span>선투자 배포비 → 반복 소비 매출로 회수</span></div>
+        <div className="acb-fde-head"><b>FDE 유닛 이코노믹스 — 왜 상주 비용이 정당화되나</b><span>선투자 배포비를 반복 소비 매출로 회수</span></div>
         <ul className="acb-fde-list">
           <li><em>위치</em>FDE는 로드맵 상류(upstream)에서 <b>내부 구축</b>, 컨설턴트는 계약 하류(downstream) — 제품 발굴 메커니즘도 겸함</li>
           <li><em>수익원</em>선투자 배포비용이 <b>좌석 구독이 아니라 무제한·확장되는 토큰/소비 annuity</b>를 산다 — 엔지니어가 소비를 극대화</li>
-          <li><em>마진</em>Anthropic 추론 마진 <b>~70%</b>(전년 38%→) — 고마진 반복 소비가 상주 비용을 정당화. 단 전문서비스가 매출 <b>18~20%</b>면 마진 희석 리스크</li>
+          <li><em>마진</em>Anthropic 추론 마진 <b>~70%</b>(전년 38% 대비 상승) — 고마진 반복 소비가 상주 비용을 정당화. 단 전문서비스가 매출 <b>18~20%</b>면 마진 희석 리스크</li>
           <li><em>실적</em>Palantir는 FDE 모델로 <b>640% 주가 수익</b> · 배포 학습을 플랫폼에 재사용해 다음 고객 비용을 절감</li>
         </ul>
       </div>
@@ -2527,7 +2579,7 @@ function VerticalIntegrationTables() {
   const paths = [
     { who: "파운데이션 모델사", how: "자회사·분사(spin-off)로 앱·소비자/기업 서비스를 모델 위에 직접 구축", asset: "최신 모델·추론 원가·연구 인재", impl: "가장 빠르게 앱 계층까지 장악 — 단말은 이 계층에 종속되지 않도록 자체 서비스 축 필요", tone: "native" },
     { who: "클라우드·플랫폼", how: "모델 호스팅 + 버티컬 SaaS를 사내/합작으로 병행(멀티모델 중립)", asset: "컴퓨트·유통·기업 고객 계약", impl: "인프라는 빌려 쓰되, 사용자 접점·과금은 단말이 직접 소유해야 마진 확보", tone: "datacenter" },
-    { who: "단말 제조사(우리)", how: "온디바이스 AI + 버티컬 서비스를 자회사·조인트벤처로 분리 구축(오픈모델·파트너 모델 병용)", asset: "단말·OS·유통·결제·개인 컨텍스트 데이터", impl: "역방향 통합(단말→서비스): 배포·과금 채널이 이미 있어 모델만 조달하면 수직통합 성립", tone: "device" },
+    { who: "단말 제조사(우리)", how: "온디바이스 AI + 버티컬 서비스를 자회사·조인트벤처로 분리 구축(오픈모델·파트너 모델 병용)", asset: "단말·OS·유통·결제·개인 컨텍스트 데이터", impl: "역방향 통합(단말에서 서비스로): 배포·과금 채널이 이미 있어 모델만 조달하면 수직통합 성립", tone: "device" },
     { who: "버티컬 SaaS·스타트업", how: "특정 도메인(법률·의료·CS)에 파운데이션 모델을 얹어 성과기반 과금", asset: "도메인 데이터·워크플로 락인", impl: "인수·지분투자·번들 탑재로 단말 서비스 포트폴리오를 빠르게 확장하는 통로", tone: "software" },
   ];
   return (
@@ -2548,7 +2600,7 @@ function VerticalIntegrationTables() {
             );
           })}
         </div>
-        <p className="pt-foot"><b>핵심:</b> 모델사는 '모델 → 앱'으로 내려오고, 단말 제조사는 '단말 → 서비스'로 올라가는 <b>역방향 수직통합</b>이 가능하다. 파운데이션 모델을 직접 만들 필요 없이 <b>오픈모델·파트너 모델을 조달</b>하고, 이미 보유한 <b>배포·결제 채널과 온디바이스 개인 컨텍스트</b>를 해자로 삼아 <b>자회사·합작</b> 구조로 리스크를 격리하며 버티컬 AI 서비스를 신사업화할 수 있다.</p>
+        <p className="pt-foot"><b>핵심:</b> 모델사는 모델에서 앱으로 내려오고, 단말 제조사는 단말에서 서비스로 올라가는 <b>역방향 수직통합</b>이 가능하다. 파운데이션 모델을 직접 만들 필요 없이 <b>오픈모델·파트너 모델을 조달</b>하고, 이미 보유한 <b>배포·결제 채널과 온디바이스 개인 컨텍스트</b>를 해자로 삼아 <b>자회사·합작</b> 구조로 리스크를 격리하며 버티컬 AI 서비스를 신사업화할 수 있다.</p>
       </div>
     </React.Fragment>
   );
@@ -2574,7 +2626,7 @@ function BizModelBoard({ companies, cats, sectionRef, theme, articles }) {
           <p>투자·인수·GPU/클라우드/데이터 <b>매출</b> 등 실제 '돈의 흐름'을 도식화 · 초록=투자 · 주황=매출 · 파랑=파트너십</p>
         </div>
       <div className="btf-wrap">
-        <h3 className="btf-h">빅테크 머니 플로우 <em>누가 → 무엇에 → 어떻게 지불하나</em></h3>
+        <h3 className="btf-h">빅테크 머니 플로우 <em>고객 · 제공가치 · 과금 · 회수 구조</em></h3>
         <BigtechFlowGrid />
       </div>
       </div>
@@ -2735,7 +2787,7 @@ function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
       </div>
       {revDeltas.length > 0 && (
         <div className="monthly-delta">
-          <b>핵심 변화 (Δ {revMonths[0]}→{revMonths[revMonths.length - 1]}):</b>
+          <b>핵심 변화 (Δ {revMonths[0]} / {revMonths[revMonths.length - 1]}):</b>
           {revDeltas.slice(0, 3).map((d, i) => (
             <span className="md-item" key={i}>{d.name} <em className={d.pct >= 0 ? "up" : "down"}>{d.pct >= 0 ? "+" : ""}{d.pct}%</em></span>
           ))}
@@ -3105,7 +3157,7 @@ function MonetizationPlaybook({ articles, dataVersion }) {
                             <a className="mplay-sig" key={"m" + i} href={s.url} target="_blank" rel="noopener">
                               <span className="mplay-tag" style={{ "--c": mm.accent }}>{mm.ko}</span>
                               <span className="mplay-txt">{s.koTitle}</span>
-                              <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""} ↗</em>
+                              <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""}</em>
                             </a>
                           ); })}
                         </div>
@@ -3117,7 +3169,7 @@ function MonetizationPlaybook({ articles, dataVersion }) {
                             <a className="mplay-sig" key={"d" + i} href={s.url} target="_blank" rel="noopener">
                               <span className="mplay-tag dir" style={{ "--c": dm.accent }}>{dm.ko}</span>
                               <span className="mplay-txt">{s.koTitle}</span>
-                              <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""} ↗</em>
+                              <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""}</em>
                             </a>
                           ); })}
                         </div>
@@ -3204,25 +3256,25 @@ function LegacySignalBoard({ data, theme, sectionRef, articles }) {
   const decisionReadouts = [
     {
       no: "01", label: "CAPEX", metric: capexNow.size ? `$${capexNow.size}B` : "—",
-      fact: `${capexPrev.year || "직전"} ${capexPrev.size ? `$${capexPrev.size}B` : "—"} → ${capexNow.year || "최신"} ${capexNow.size ? `$${capexNow.size}B` : "—"} · ${capexNow.growth ? `성장률 ${capexNow.growth}%` : ""}`,
+      fact: `${capexPrev.year || "직전"} ${capexPrev.size ? `$${capexPrev.size}B` : "—"} · ${capexNow.year || "최신"} ${capexNow.size ? `$${capexNow.size}B` : "—"} · ${capexNow.growth ? `성장률 ${capexNow.growth}%` : ""}`,
       insight: "전력·부지·메모리 조달이 투자 집행을 따라가는지 공급 제약을 별도 점검",
       src: capexNow.src,
     },
     {
       no: "02", label: "MEMORY", metric: hbmNow.size ? `$${hbmNow.size}B` : "—",
-      fact: `${hbmNow.year || "최신"} ${hbmNow.size ? `$${hbmNow.size}B` : "—"} → ${hbmNext.year || "다음"} ${hbmNext.size ? `$${hbmNext.size}B` : "—"} · ${hbmNow.growth ? `성장률 ${hbmNow.growth}%` : ""}`,
+      fact: `${hbmNow.year || "최신"} ${hbmNow.size ? `$${hbmNow.size}B` : "—"} · ${hbmNext.year || "다음"} ${hbmNext.size ? `$${hbmNext.size}B` : "—"} · ${hbmNow.growth ? `성장률 ${hbmNow.growth}%` : ""}`,
       insight: "메모리 확보 시점이 모델 배포와 서버 증설의 선행 지표인지 확인",
       src: hbmNow.src,
     },
     {
       no: "03", label: "COMPUTE", metric: chipNow.custom != null ? `${chipNow.custom}%` : "—",
-      fact: `${chipNow.period || "최신"} 커스텀 실리콘 ${chipNow.custom ?? "—"}% → ${chipNext.period || "다음"} ${chipNext.custom ?? "—"}%`,
+      fact: `${chipNow.period || "최신"} 커스텀 실리콘 ${chipNow.custom ?? "—"}% · ${chipNext.period || "다음"} ${chipNext.custom ?? "—"}%`,
       insight: "GPU 단일 조달이 아닌 멀티실리콘 호환성과 소프트웨어 이식성을 검토",
       src: chipNow.src,
     },
     {
       no: "04", label: "NETWORK", metric: opticalNext.pen != null ? `${opticalNext.pen}%` : "—",
-      fact: `${opticalNow.year || "최신"} 침투율 ${opticalNow.pen ?? "—"}% → ${opticalNext.year || "전망"} ${opticalNext.pen ?? "—"}%`,
+      fact: `${opticalNow.year || "최신"} 침투율 ${opticalNow.pen ?? "—"}% · ${opticalNext.year || "전망"} ${opticalNext.pen ?? "—"}%`,
       insight: "광통신 전환 시점과 전력 효율 개선이 데이터센터 설계에 반영되는지 추적",
       src: opticalNext.src,
     },
@@ -3441,7 +3493,7 @@ function BriefingBoard({ briefing, sectionRef }) {
       <div className="board-head" style={{ "--accent": "#2D6BFF" }}>
         <span className="board-tab" style={{ background: "#2D6BFF" }} />
         <div className="board-titles">
-          <h2>모닝 브리핑 <span className="board-en">Weekly Synthesis · Signal → Insight → Action</span></h2>
+          <h2>모닝 브리핑 <span className="board-en">Weekly Synthesis · Signal · Insight · Action</span></h2>
           <p>Source 기반 규칙 해석 · 신사업 기회 스코어(1~5)</p>
         </div>
         <div className="brief-days">
@@ -3633,9 +3685,9 @@ function ExecToplines({ items, insights, onNav }) {
       </header>
       <div className="es-framework-key" aria-label="전략 브리프 읽는 순서">
         <span><b>01</b> FACT <em>원문 근거</em></span>
-        <i aria-hidden="true">→</i>
+        <i className="es-key-arr" aria-hidden="true" />
         <span><b>02</b> IMPLICATION <em>사업 의미</em></span>
-        <i aria-hidden="true">→</i>
+        <i className="es-key-arr" aria-hidden="true" />
         <span><b>03</b> DECISION <em>권고 실행</em></span>
       </div>
       <div className="es-info-head" aria-hidden="true">
@@ -3817,7 +3869,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                       <p className="mkt-def">{it.def}</p>
                       {(hasCurrent || hasForecast || hasCagr) && <div className="mkt-nums">
                         {hasCurrent && <span className="mkt-num"><em>현재</em>{it.size}</span>}
-                        {hasCurrent && hasForecast && <span className="mkt-arr">→</span>}
+                        {hasCurrent && hasForecast && <span className="mkt-arr" aria-hidden="true" />}
                         {hasForecast && <span className="mkt-num fut"><em>예측</em>{it.forecast}</span>}
                         {hasCagr && <span className="mkt-cagr">CAGR {it.cagr}</span>}
                       </div>}
@@ -4123,7 +4175,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
           <div className="mkt-group-head">
             <b>a16z Top 100 Gen AI Consumer Apps — 전체 업체 리스트</b>
             <em>Web 50 + Mobile 50 원문 목록을 주 1회 재수집 · 중복 제품은 하나로 통합 · 제품 페이지와 함께 분석</em>
-            {data.institutionalSource?.url && <a href={data.institutionalSource.url} target="_blank" rel="noopener">a16z 원문 ↗</a>}
+            {data.institutionalSource?.url && <a href={data.institutionalSource.url} target="_blank" rel="noopener">a16z 원문</a>}
           </div>
           <div className="startup-portfolio-grid a16z-portfolio-grid">
             {institutional.map(s => {
