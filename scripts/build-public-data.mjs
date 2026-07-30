@@ -10,6 +10,7 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { isExcludedText } from "./news-policy.mjs";
+import { normalizeLocalizedRecord } from "./korean-copy.mjs";
 
 const root = process.cwd();
 const readJson = async file => JSON.parse(await readFile(resolve(root, file), "utf8"));
@@ -58,17 +59,19 @@ const recordKeys = [
 ];
 const signalKeys = ["id", "group", "title", "signal", "quant", "source", "date", "url", "sourceSummaryMode", "provenance"];
 
-const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notDeleted).map(item => compact(item, articleKeys));
-const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notDeleted).map(item => compact(item, researchKeys));
+const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notDeleted)
+  .map(item => normalizeLocalizedRecord(compact(item, articleKeys)));
+const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notDeleted)
+  .map(item => normalizeLocalizedRecord(compact(item, researchKeys)));
 const visibleRecords = (market.records || []).filter(record => sourceBacked(record)
   && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
   && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length)
   .filter(notBanned).filter(notDeleted)
-  .map(item => compact(item, recordKeys));
+  .map(item => normalizeLocalizedRecord(compact(item, recordKeys)));
 const visibleSignals = data => (data.items || [])
   .filter(item => item?.provenance?.status === "evidence-linked" && item?.sourceSummaryMode === "source-content-extractive")
   .filter(notBanned).filter(notDeleted)
-  .map(item => compact(item, signalKeys));
+  .map(item => normalizeLocalizedRecord(compact(item, signalKeys)));
 
 const generatedAt = new Date().toISOString();
 const views = {
