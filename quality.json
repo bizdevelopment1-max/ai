@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T06:10:49.267Z",
+  "generatedAt": "2026-07-30T06:35:05.196Z",
   "overall": "ok",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 16개 · 정상 16 · 주의 0 · 실패 0",
@@ -80,7 +80,7 @@
       "id": "research-localization",
       "label": "리서치 3줄 표시",
       "status": "ok",
-      "value": "한국어 52 · 영문 폴백 1"
+      "value": "한국어 51 · 영문 폴백 2"
     },
     {
       "id": "market-source",
@@ -115,8 +115,8 @@
     "linkedInfra": 47,
     "linkedBizmodel": 13,
     "linkedResearch": 29,
-    "localizedResearch": 52,
-    "localizedFallbackResearch": 1,
+    "localizedResearch": 51,
+    "localizedFallbackResearch": 2,
     "archivedMarketBaselines": 43,
     "linkedMarketRecords": 86,
     "consumerSurveyRecords": 8
@@ -124,11 +124,11 @@
   "sources": {
     "news": {
       "TechCrunch": 34,
+      "The Verge": 15,
       "The Decoder": 19,
+      "ZDNet": 12,
       "Wired": 11,
       "Engadget": 15,
-      "ZDNet": 12,
-      "The Verge": 15,
       "IEEE Spectrum": 6,
       "MIT Tech Review": 7,
       "Business Insider": 4,
@@ -140,8 +140,8 @@
       "CNET": 1,
       "Shaping Europe’s digital future": 1,
       "9to5Mac": 1,
-      "The Register": 4,
       "Microsoft Source": 3,
+      "The Register": 4,
       "CNBC": 5,
       "Databricks": 1,
       "Yahoo Finance": 1,
@@ -150,8 +150,8 @@
       "Yahoo Finance UK": 1,
       "South China Morning Post": 1,
       "Reuters": 1,
-      "Fortune": 2,
       "Anthropic": 3,
+      "Fortune": 2,
       "US News (Reuters)": 1,
       "BNN Bloomberg (Reuters)": 1,
       "WXYZ Detroit": 1,
@@ -168,12 +168,12 @@
       "nasdaq": 34,
       "naver": 1,
       "Yahoo Finance history": 2,
-      "sina": 25,
-      "eastmoney": 1
+      "eastmoney": 22,
+      "sina": 4
     }
   },
   "collection": {
-    "generatedAt": "2026-07-30T06:06:56.886Z",
+    "generatedAt": "2026-07-30T06:32:34.420Z",
     "mode": "source-content-extractive",
     "policyVersion": 2,
     "streams": {
@@ -185,8 +185,8 @@
     "emptyStreams": [
       "google-news:Databricks 자본·인프라",
       "rss:Hugging Face",
-      "rss:SiliconANGLE",
       "rss:VentureBeat",
+      "rss:SiliconANGLE",
       "rss:The Register"
     ],
     "status": "ok"
