@@ -15,8 +15,12 @@ export const canonicalUrl = raw => {
 
 const hash = text => createHash("sha256").update(text).digest("hex").slice(0, 20);
 const hasSource = record => Boolean(canonicalUrl(record?.sourceUrl));
-const identity = record => `${record.type || "metric"}|${canonicalUrl(record.sourceUrl)}|${String(record.title || "").trim()}|${String(record.publishedAt || "")}`;
+// A publisher page must enter the append-only ledger once even when several
+// collection tracks discover it. Classification can be refined after source
+// extraction without creating a second historical record.
+const identity = record => `${canonicalUrl(record.sourceUrl)}|${String(record.title || "").trim()}|${String(record.publishedAt || "")}`;
 const SURVEY_EVIDENCE = /\b(?:survey|respondents?|poll|questionnaire|interviews?|sample(?:\s+size|\s+of)?|adults?\s+surveyed|sondage|enquête|encuesta|entrevista|pesquisa|entrevista|befragung|umfrage|teilnehmer)\b|설문|조사(?:대상|응답자|표본)?|응답자|표본|アンケート|調査対象|回答者|調査|调查|受访者|样本/i;
+const CONSUMER_POPULATION = /\b(?:consumer|respondents?|people|person|adults?|users?|households?|shoppers?|buyers?|owners?|patients?|students?|workers?|employees?|travelers?|creators?|parents?|teens?|americans?|britons?|koreans?|japanese|participants?)\b|소비자|응답자|이용자|사용자|구매자|일반인|성인|청소년|학생|직장인|환자|가구|쇼핑객|여행객|참여자|生活者|消費者|回答者|利用者|用户|消费者|受访者/i;
 
 // "consumer" and "adoption" alone are not survey evidence. Keeping this
 // predicate shared prevents a market headline from being presented as a
@@ -28,9 +32,22 @@ export const hasSurveyEvidence = record => SURVEY_EVIDENCE.test([
   record?.metricLabel,
 ].filter(Boolean).join(" "));
 
+export const hasConsumerSurveyEvidence = record => {
+  const fields = [
+    record?.title,
+    record?.evidence,
+    record?.scope,
+    record?.metricLabel,
+  ].filter(Boolean);
+  if (!hasSurveyEvidence(record)) return false;
+  const windows = fields.flatMap(field => String(field).split(/(?<=[.!?。！？])\s+|\n+/).filter(Boolean));
+  return windows.some(window => SURVEY_EVIDENCE.test(window) && CONSUMER_POPULATION.test(window));
+};
+
 const baselineRecord = (item, collectedAt) => ({
   id: `baseline:${item.id}`,
   type: "market-estimate",
+  collectionTrack: "ai-market",
   group: item.group,
   verticalId: item.id,
   title: item.name,
@@ -317,9 +334,12 @@ export function appendRecords(data, candidates = [], collectedAt = isoNow()) {
   let added = 0;
   for (const candidate of candidates) {
     const sourceUrl = canonicalUrl(candidate.sourceUrl);
-    if (!sourceUrl || !candidate.title || !Array.isArray(candidate.values) || !candidate.values.length) continue;
+    const values = Array.isArray(candidate.values) ? candidate.values : [];
+    const pendingSourcePage = candidate.provenance?.status === "pending-source-page";
+    if (!sourceUrl || !candidate.title || (!values.length && !pendingSourcePage)) continue;
     const record = {
       ...candidate,
+      collectionTrack: candidate.collectionTrack || (candidate.type === "consumer-survey" ? "consumer-survey" : "ai-market"),
       id: candidate.id || `crawl:${hash(`${candidate.type}|${sourceUrl}|${candidate.title}|${candidate.publishedAt || ""}`)}`,
       sourceUrl,
       collectedAt: candidate.collectedAt || collectedAt,
@@ -344,11 +364,13 @@ export function appendRecords(data, candidates = [], collectedAt = isoNow()) {
 
 export function ensureMarketDatabase(data, collectedAt = isoNow()) {
   let changed = false;
-  data.schemaVersion = Math.max(Number(data.schemaVersion || 1), 3);
+  data.schemaVersion = Math.max(Number(data.schemaVersion || 1), 4);
   data.database = {
     ...(data.database || {}),
     mode: "append-only",
-    recordSchemaVersion: 2,
+    recordSchemaVersion: 3,
+    retentionPolicy: "Canonical records are never removed by automation. User suppression hides matching records from public views and future collection while preserving the historical ledger.",
+    collectionTracks: ["consumer-survey", "ai-market"],
     sourcePolicy: "Every visible quantitative record requires a resolved publisher page, extracted source text, and source-bound quantities. RSS discovery rows remain append-only but hidden until verified.",
     migratedAt: data.database?.migratedAt || collectedAt,
   };
@@ -366,8 +388,14 @@ export function ensureMarketDatabase(data, collectedAt = isoNow()) {
   // Correct an older crawler classification without removing or replacing any
   // record. Its source, values, and provenance remain append-only history.
   for (const record of data.records) {
-    if (record.origin === "rss-quantitative-crawl" && record.type === "consumer-survey" && !hasSurveyEvidence(record)) {
+    if (record.origin === "rss-quantitative-crawl" && record.type === "consumer-survey" && !hasConsumerSurveyEvidence(record)) {
       record.type = "market-observation";
+      record.collectionTrack = "ai-market";
+      changed = true;
+    }
+    const expectedTrack = record.type === "consumer-survey" ? "consumer-survey" : "ai-market";
+    if (record.collectionTrack !== expectedTrack) {
+      record.collectionTrack = expectedTrack;
       changed = true;
     }
   }

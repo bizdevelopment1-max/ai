@@ -7,9 +7,10 @@
  * extract the publisher page before a record is allowed onto the site.
  */
 import { readFile, writeFile } from "node:fs/promises";
-import { appendRecords, ensureMarketDatabase, hasSurveyEvidence } from "./market-db.mjs";
+import { appendRecords, ensureMarketDatabase, hasConsumerSurveyEvidence } from "./market-db.mjs";
 import { googleNewsUrl, rotatingLocales } from "./global-sources.mjs";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const UA = "Mozilla/5.0 (compatible; AI-Intelligence-Market-DB/1.0)";
 const now = () => new Date().toISOString();
@@ -21,7 +22,7 @@ const decode = raw => String(raw || "")
 const tag = (xml, name) => (xml.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`, "i")) || [])[1] || "";
 const cleanTitle = title => decode(title).replace(/\s+-\s+[^-]{2,}$/, "").trim();
 
-const QUERIES = [
+const BASE_QUERIES = [
   { id: "ai-phone", group: "core", verticalId: "core-0", topic: "생성형 AI폰 시장·출하", query: "generative AI smartphone market size forecast shipments" },
   { id: "device-ai", group: "core", verticalId: "core-1", topic: "온디바이스 AI·AI PC", query: "on-device AI AI PC market size forecast" },
   { id: "agents", group: "assistant", verticalId: "assistant-0", topic: "AI 에이전트·어시스턴트", query: "AI agent consumer adoption market size survey" },
@@ -77,6 +78,30 @@ const QUERIES = [
   { id: "ai-services-si", group: "service", verticalId: "service-0", topic: "AI 도입 SI·파트너 생태계", query: "enterprise Claude deployment system integrator Wipro Cognizant partner" },
 ];
 
+const EXPANSION_QUERIES = [
+  // AI 관련 소비자 조사 결과 — 이용·지불의사·신뢰·위임·폼팩터 수용도를 별도 추적
+  { id: "survey-genai-frequency", track: "consumer-survey", group: "assistant", verticalId: "assistant-0", topic: "생성형 AI 이용 빈도·유료 전환", query: "consumer generative AI usage frequency paid subscription survey respondents 2026" },
+  { id: "survey-ai-phone-wtp", track: "consumer-survey", group: "core", verticalId: "core-0", topic: "AI 스마트폰 구매의향·지불의사", query: "AI smartphone features purchase intention willingness to pay consumer survey 2026" },
+  { id: "survey-ondevice-privacy", track: "consumer-survey", group: "trust", verticalId: "trust-0", topic: "온디바이스 AI 개인정보·신뢰", query: "on-device AI privacy trust consent smartphone consumer survey respondents" },
+  { id: "survey-agent-delegation", track: "consumer-survey", group: "assistant", verticalId: "assistant-0", topic: "AI 에이전트 업무 위임 수용도", query: "consumers willing to delegate shopping travel tasks AI agent survey respondents" },
+  { id: "survey-ai-wearables", track: "consumer-survey", group: "wearxr", verticalId: "wearxr-1", topic: "AI 웨어러블·스마트글라스 수용도", query: "AI smart glasses wearable purchase interest consumer survey respondents" },
+  { id: "survey-creator-use", track: "consumer-survey", group: "creative", verticalId: "creative-0", topic: "생성형 AI 콘텐츠 제작 이용", query: "consumers creators use generative AI image video tools survey respondents" },
+  // AI 관련 시장 — 매출·지출·출하·시장규모를 소비자 조사와 분리 추적
+  { id: "market-consumer-ai-apps", track: "ai-market", group: "assistant", verticalId: "assistant-0", topic: "소비자 AI 앱 매출·구독", query: "consumer generative AI apps revenue subscriptions spending market forecast 2026" },
+  { id: "market-mobile-ai-apps", track: "ai-market", group: "creative", verticalId: "creative-0", topic: "모바일 AI 앱 다운로드·매출", query: "mobile generative AI app downloads revenue market forecast" },
+  { id: "market-ondevice-silicon", track: "ai-market", group: "core", verticalId: "core-1", topic: "온디바이스 AI 반도체 시장", query: "on-device AI chipset smartphone PC market size revenue forecast CAGR" },
+  { id: "market-agent-software", track: "ai-market", group: "assistant", verticalId: "assistant-0", topic: "AI 에이전트 소프트웨어 시장", query: "AI agent software market size spending forecast CAGR enterprise consumer" },
+  { id: "market-ai-wearables", track: "ai-market", group: "wearxr", verticalId: "wearxr-1", topic: "AI 웨어러블·스마트글라스 출하", query: "AI smart glasses wearable shipments revenue market forecast units" },
+  { id: "market-answer-engines", track: "ai-market", group: "service", verticalId: "service-0", topic: "AI 검색·답변 엔진 수익시장", query: "AI search answer engine advertising subscription revenue market forecast" },
+];
+
+const SURVEY_QUERY_HINT = /\b(?:survey|respondents?|poll|consumer awareness|willingness to pay|purchase intention)\b/i;
+const collectionTrackOf = config => config.track
+  || (SURVEY_QUERY_HINT.test(config.query) ? "consumer-survey" : "ai-market");
+const QUERIES = [...EXPANSION_QUERIES, ...BASE_QUERIES]
+  .map(config => ({ ...config, track: collectionTrackOf(config) }));
+const QUERY_SET_VERSION = 3;
+
 const quantified = text => {
   const found = [
     ...String(text || "").matchAll(/(?:US\$|USD|\$|EUR|€|GBP|£|JPY|CNY|CN¥|¥|KRW|₩|INR|₹|BRL|R\$)\s?\d[\d,.]*(?:\s?(?:trillion|billion|million|trn|bn|mn|T|B|M|조|억|만|억엔|億元|亿|万))?/gi),
@@ -87,7 +112,7 @@ const quantified = text => {
   return [...new Set(found)].slice(0, 4);
 };
 
-const kindOf = record => hasSurveyEvidence(record)
+const kindOf = (record, track) => track === "consumer-survey" && hasConsumerSurveyEvidence(record)
   ? "consumer-survey"
   : /\b(?:shipments?|units?)\b|출하|판매량|台|出荷|出货/i.test(`${record.title || ""} ${record.evidence || ""}`) ? "shipment" : "market-observation";
 
@@ -122,8 +147,10 @@ async function main() {
 
   const startedAt = now();
   const migration = ensureMarketDatabase(data, startedAt);
+  const suppression = await loadSuppressionRegistry();
   const ageHours = data.database?.lastCrawledAt ? (Date.now() - Date.parse(data.database.lastCrawledAt)) / 3_600_000 : 999;
-  if (ageHours < 20 && process.env.MARKET_FORCE !== "1") {
+  const querySetChanged = Number(data.database?.querySetVersion || 0) !== QUERY_SET_VERSION;
+  if (ageHours < 20 && !querySetChanged && process.env.MARKET_FORCE !== "1") {
     if (migration.changed) {
       data.generatedAt = startedAt;
       await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
@@ -146,9 +173,16 @@ async function main() {
           const combined = `${row.title} ${row.evidence}`;
           if (isExcludedText(`${combined} ${row.sourceName}`)) continue;
           const values = quantified(combined).map((value, index) => ({ label: index === 0 ? "공개 수치" : "추가 수치", value }));
-          if (!values.length) continue;
+          const surveyDiscovery = config.track === "consumer-survey" && hasConsumerSurveyEvidence({
+            title: row.title,
+            evidence: row.evidence,
+            metricLabel: config.topic,
+          });
+          if (!values.length && !surveyDiscovery) continue;
           const record = {
-            type: kindOf(row),
+            type: kindOf(row, config.track),
+            collectionTrack: config.track,
+            discoveryQueryId: config.id,
             group: config.group,
             verticalId: config.verticalId,
             topic: config.topic,
@@ -179,6 +213,7 @@ async function main() {
             sourceLanguage: row.language,
             sourceLocale: row.locale,
           };
+          if (suppression.matches(record, "market")) continue;
           candidates.push(record);
           if (!latestByVertical.has(config.verticalId)) latestByVertical.set(config.verticalId, row);
         }
@@ -192,7 +227,18 @@ async function main() {
   }
 
   if (!fetched && failures === QUERIES.length * locales.length) throw new Error("All global market-data sources failed; refusing to mark the database refreshed");
+  const existingIds = new Set((data.records || []).map(record => record.id));
   const added = appendRecords(data, candidates, startedAt);
+  const appendedRecords = (data.records || []).filter(record => !existingIds.has(record.id));
+  const streamSummary = Object.fromEntries(["consumer-survey", "ai-market"].map(track => {
+    const configs = QUERIES.filter(config => config.track === track);
+    return [track, {
+      queries: configs.length,
+      discovered: candidates.filter(record => record.collectionTrack === track).length,
+      appended: appendedRecords.filter(record => record.collectionTrack === track).length,
+      retained: (data.records || []).filter(record => (record.collectionTrack || (record.type === "consumer-survey" ? "consumer-survey" : "ai-market")) === track).length,
+    }];
+  }));
   for (const item of data.items || []) {
     const latest = latestByVertical.get(item.id);
     if (latest) item.latest = { title: latest.title, url: latest.sourceUrl, source: latest.sourceName, date: latest.publishedAt };
@@ -200,8 +246,17 @@ async function main() {
   data.database = {
     ...(data.database || {}),
     recordCount: data.records.length,
+    retainedRecordCount: data.records.length,
+    querySetVersion: QUERY_SET_VERSION,
     lastCrawledAt: startedAt,
-    lastCrawl: { queries: QUERIES.length, locales: locales.map(locale => ({ id: locale.id, region: locale.region, language: locale.language })), rssRows: fetched, appended: added, failures },
+    lastCrawl: {
+      queries: QUERIES.length,
+      locales: locales.map(locale => ({ id: locale.id, region: locale.region, language: locale.language })),
+      rssRows: fetched,
+      appended: added,
+      failures,
+      streams: streamSummary,
+    },
   };
   data.freshAt = startedAt;
   data.generatedAt = startedAt;
