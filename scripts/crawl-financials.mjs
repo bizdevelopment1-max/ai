@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 /* ============================================================
-   crawl-financials.mjs — 상장 기업 최신 실적·인력 크롤러(키 없음)
-   목적: 기업 개요의 '경영 실적(분기 매출·순이익)'과 '인력(임직원 수)'을
-         실적 발표 주기에 맞춰 자동 최신화. 시가총액은 crawl-stocks.mjs 담당.
-   소스: Yahoo Finance quoteSummary v10 (cookie+crumb 세션 — crawl-stocks와 동일 방식)
+   crawl-financials.mjs — 상장 기업 개요·실적 크롤러(키 없음)
+   목적: 기업 개요의 변동성 큰 항목을 '실제 최신 정보'로 자동 채움 —
+         할루시네이션(하드코딩 추정치) 대신 출처(Yahoo Finance)에서 크롤.
+   소스: Yahoo Finance quoteSummary v10 (cookie+crumb 세션 — crawl-stocks와 동일)
+     · assetProfile               → 경영진(CEO)·본사(도시/州/국가)·섹터·임직원 수
      · incomeStatementHistoryQuarterly → 최신 분기 매출·순이익·분기말
-     · assetProfile → 임직원 수(fullTimeEmployees)
-   병합: 단조 최신화 — 새 크롤이 실패하면 직전 값 보존(실적은 분기마다만 바뀜).
+     · institutionOwnership       → 주요 기관 주주 Top3(지분율)
+   병합: 단조 최신화 — 새 크롤 실패 시 직전 값 보존(분기·공시 주기로만 변동).
    출력: financials.json { generatedAt, financials: { [ticker]: {...} } }
    ============================================================ */
 import { writeFile, readFile } from "node:fs/promises";
+import { isExcludedText } from "./news-policy.mjs";
 
 // 크롤 대상 상장 티커(기업 탭에 매핑되는 상장사) — 조인 키일 뿐 데이터가 아님
 const TICKERS = [
@@ -20,7 +22,6 @@ const TICKERS = [
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
-// $ 금액 포맷(달러 원값 → $X.XXT / $XXX.XB / $XXXM)
 const fmtUsd = (raw) => {
   const n = Number(raw);
   if (!isFinite(n) || n === 0) return "";
@@ -35,6 +36,10 @@ const fmtEmp = (n) => {
   if (!isFinite(v) || v <= 0) return "";
   if (v >= 10000) return `${(v / 10000).toFixed(1)}만명`;
   return `${v.toLocaleString("en-US")}명`;
+};
+const clean = (s) => {
+  const t = String(s || "").trim();
+  return t && !isExcludedText(t) ? t : "";     // 금지어 포함 값은 버림
 };
 
 async function yahooSession() {
@@ -53,7 +58,7 @@ async function yahooSession() {
 }
 
 async function fetchQuoteSummary(ticker, sess) {
-  const modules = "incomeStatementHistoryQuarterly,assetProfile";
+  const modules = "assetProfile,incomeStatementHistoryQuarterly,institutionOwnership";
   for (const h of ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]) {
     try {
       const q = sess && sess.crumb ? `&crumb=${encodeURIComponent(sess.crumb)}` : "";
@@ -71,9 +76,30 @@ async function fetchQuoteSummary(ticker, sess) {
   return null;
 }
 
+const COUNTRY_KO = { "United States": "미국", "Taiwan": "대만", "South Korea": "대한민국", "Netherlands": "네덜란드", "United Kingdom": "영국", "China": "중국" };
+
 function extract(ticker, r) {
   if (!r) return null;
   const out = { ticker };
+  const ap = r.assetProfile || {};
+
+  // 경영진(CEO) — companyOfficers 중 CEO/대표 직함
+  const officers = Array.isArray(ap.companyOfficers) ? ap.companyOfficers : [];
+  const ceoOfficer = officers.find((o) => /chief executive|(^|\W)ceo(\W|$)/i.test(String(o.title || "")))
+    || officers.find((o) => /chair.*ceo|founder.*ceo/i.test(String(o.title || "")));
+  const ceo = clean(ceoOfficer && ceoOfficer.name);
+  if (ceo) out.ceo = ceo;
+
+  // 본사(도시 · 州 · 국가)
+  const loc = [ap.city, ap.state, COUNTRY_KO[ap.country] || ap.country].map((x) => clean(x)).filter(Boolean);
+  if (loc.length) out.hq = loc.join(" · ");
+
+  const sector = clean(ap.sector || ap.industry);
+  if (sector) out.sector = sector;
+
+  if (ap.fullTimeEmployees != null) { const e = fmtEmp(ap.fullTimeEmployees); if (e) out.employees = e; }
+
+  // 최신 분기 실적
   const q = r.incomeStatementHistoryQuarterly && r.incomeStatementHistoryQuarterly.incomeStatementHistory;
   const latest = Array.isArray(q) ? q[0] : null;
   if (latest) {
@@ -84,10 +110,20 @@ function extract(ticker, r) {
     if (ni != null) out.netIncomeQ = fmtUsd(ni);
     if (end) out.quarterEnd = end;
   }
-  const emp = r.assetProfile && r.assetProfile.fullTimeEmployees;
-  if (emp != null) out.employees = fmtEmp(emp);
-  // 매출/인력 어느 것도 못 얻으면 무의미
-  if (!out.revenueQ && !out.employees) return null;
+
+  // 주요 기관 주주 Top3(지분율)
+  const own = r.institutionOwnership && r.institutionOwnership.ownershipList;
+  if (Array.isArray(own) && own.length) {
+    const top = own.slice(0, 3).map((o) => {
+      const org = clean(o.organization);
+      const pct = o.pctHeld && typeof o.pctHeld.raw === "number" ? `${(o.pctHeld.raw * 100).toFixed(1)}%` : "";
+      return org ? `${org} ${pct}`.trim() : "";
+    }).filter(Boolean);
+    if (top.length) out.topHolders = top.join(" · ");
+  }
+
+  const has = out.ceo || out.hq || out.employees || out.revenueQ || out.topHolders;
+  if (!has) return null;
   out.asOf = new Date().toISOString().slice(0, 10);
   return out;
 }
@@ -105,12 +141,12 @@ async function main() {
     const rec = extract(ticker, r);
     if (rec) { financials[ticker] = { ...prev[ticker], ...rec }; fresh++; }
     else { failed++; }                       // 실패 시 직전 값 보존(단조 최신화)
-    await new Promise((res) => setTimeout(res, 250));   // 레이트리밋 배려
+    await new Promise((res) => setTimeout(res, 250));
   }
 
   const out = {
     generatedAt: new Date().toISOString(),
-    sourceHealth: { targetCount: TICKERS.length, freshCount: fresh, failed },
+    sourceHealth: { targetCount: TICKERS.length, freshCount: fresh, failed, source: "yahoo-quotesummary" },
     financials,
   };
   await writeFile("financials.json", JSON.stringify(out) + "\n");

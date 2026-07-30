@@ -28,7 +28,6 @@ const TICKERS = [
   // ── 메모리 ──
   { t: "MU", y: "MU", s: "mu.us" },
   { t: "000660.KS", y: "000660.KS", currency: "₩", market: "KRX" },
-  { t: "005930.KS", y: "005930.KS", currency: "₩", market: "KRX" },
   { t: "SNDK", y: "SNDK", s: "sndk.us" },
   { t: "WDC", y: "WDC", s: "wdc.us" },
   { t: "285A.T", y: "285A.T", currency: "¥", market: "TSE" },

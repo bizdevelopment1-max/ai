@@ -12,6 +12,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { globalLocales, googleNewsUrl } from "./global-sources.mjs";
 import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
+import { isExcludedText } from "./news-policy.mjs";
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -128,6 +129,7 @@ async function main() {
   // 이전 피드와 병합(30일 보존), 최신순
   const prevFeed = (prev.feed || []).filter(a => !seen.has(a.rssUrl || a.url) && seen.add(a.rssUrl || a.url));
   let feed = [...fresh, ...prevFeed]
+    .filter(a => !isExcludedText(JSON.stringify(a || {})))   // 금지어(삼성·갤럭시 등) 포함 리서치 제외
     .filter(a => (Date.now() - new Date(a.date).getTime()) / 86400000 < 120)   // 누적 보존 확대
     .sort((x, y) => (x.date < y.date ? 1 : -1)).slice(0, 150);
   await koSummarize([]);

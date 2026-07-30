@@ -26,10 +26,14 @@ async function main() {
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   try { stocks = JSON.parse(await readFile("stocks.json", "utf8")).stocks || {}; } catch {}
   try { financials = JSON.parse(await readFile("financials.json", "utf8")).financials || {}; } catch {}
-  // 실적·인력을 기업 레코드에 붙임(crawl-financials.mjs 산출물 — 분기 발표 주기로 자동 최신화)
+  // 기업 개요의 변동 항목을 크롤 값으로 붙임(crawl-financials.mjs — 공시·분기 주기로 자동 최신화)
   const joinFin = (rec, tk) => {
     const f = tk && financials[tk];
     if (!f) return;
+    if (f.ceo) rec.ceo = f.ceo;
+    if (f.hq) rec.hq = f.hq;
+    if (f.sector) rec.sector = f.sector;
+    if (f.topHolders) rec.topHolders = f.topHolders;
     if (f.revenueQ) { rec.revenueQ = f.revenueQ; rec.quarterEnd = f.quarterEnd || ""; }
     if (f.netIncomeQ) rec.netIncomeQ = f.netIncomeQ;
     if (f.employees) { rec.employees = f.employees; rec.employeesAsof = f.asOf || ""; }

@@ -231,23 +231,29 @@ function CompanyDetail({ company, cats, articles, onClose }) {
 
         {c.profile && (() => {
           const p = c.profile, lv = c.live || {};
-          const emp = lv.employees || p.employeesStatic;
+          // 변동 항목은 크롤 값 우선(최신·출처 기반), 없으면 정적 폴백
+          const ceo = lv.ceo || p.ceo;
+          const hq = lv.hq || p.hq;
+          const emp = lv.employees || "";
+          const holders = lv.topHolders || p.shareholders;
           const empAsof = lv.employees && lv.employeesAsof ? ` ('${String(lv.employeesAsof).slice(2)} 기준)` : "";
           const capAsof = lv.cap && lv.capAsof ? ` ('${String(lv.capAsof).slice(2, 7)} 기준)` : "";
+          const live = !!(lv.ceo || lv.hq || lv.employees || lv.revenueQ || lv.topHolders || lv.cap);
           const rows = [
             ["설립", p.founded],
-            ["경영진", p.ceo],
-            ["본사", p.hq],
+            ["경영진", ceo],
+            ["본사", hq],
+            ["섹터", lv.sector || ""],
             ["인력", emp ? emp + empAsof : ""],
             ["시가총액", lv.cap ? lv.cap + capAsof : ""],
-            ["주주", p.shareholders],
+            ["주주", holders],
           ].filter(r => r[1]);
           const fin = lv.revenueQ
             ? `매출 ${lv.revenueQ}${lv.netIncomeQ ? ` · 순이익 ${lv.netIncomeQ}` : ""}${lv.quarterEnd ? ` (${lv.quarterEnd} 분기)` : ""}`
             : "";
           return (
             <div className="cd-section cd-profile">
-              <h4>기업 개요 <em>Company Profile</em></h4>
+              <h4>기업 개요 <em>Company Profile</em>{live && <b className="cd-prof-live">LIVE · Yahoo Finance</b>}</h4>
               <div className="cd-prof-grid">
                 {rows.map(([k, v], i) => (
                   <div className="cd-prof-row" key={i}><em>{k}</em><span>{v}</span></div>

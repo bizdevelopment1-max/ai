@@ -9,10 +9,14 @@
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { isExcludedText } from "./news-policy.mjs";
 
 const root = process.cwd();
 const readJson = async file => JSON.parse(await readFile(resolve(root, file), "utf8"));
 const writeJson = (file, value) => writeFile(resolve(root, file), `${JSON.stringify(value)}\n`);
+// 표시 최종 게이트: 금지어(삼성·samsung·갤럭시·galaxy·MX)가 조금이라도 포함된 레코드는
+// 원장에 남아 있어도 절대 공개 뷰(*-view.json)에 내보내지 않음 — 사이트 노출 금지 보장.
+const notBanned = item => !isExcludedText(JSON.stringify(item || {}));
 const sourceBacked = item => item?.displayEligible !== false
   && item?.summaryMode === "source-content-extractive"
   && item?.provenance?.status === "source-backed";
@@ -45,14 +49,16 @@ const recordKeys = [
 ];
 const signalKeys = ["id", "group", "title", "signal", "quant", "source", "date", "url", "sourceSummaryMode", "provenance"];
 
-const visibleArticles = (news.articles || []).filter(sourceBacked).map(item => compact(item, articleKeys));
-const visibleResearch = (research.feed || []).filter(sourceBacked).map(item => compact(item, researchKeys));
+const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).map(item => compact(item, articleKeys));
+const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).map(item => compact(item, researchKeys));
 const visibleRecords = (market.records || []).filter(record => sourceBacked(record)
   && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
   && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length)
+  .filter(notBanned)
   .map(item => compact(item, recordKeys));
 const visibleSignals = data => (data.items || [])
   .filter(item => item?.provenance?.status === "evidence-linked" && item?.sourceSummaryMode === "source-content-extractive")
+  .filter(notBanned)
   .map(item => compact(item, signalKeys));
 
 const generatedAt = new Date().toISOString();
