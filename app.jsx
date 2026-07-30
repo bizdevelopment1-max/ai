@@ -65,6 +65,7 @@ function App() {
   const startupInView = useInView(refs.sanalysis);
   const companySectionActive = ["strategy", "app", "agent", "service", "trust", "model", "data", "infra", "sanalysis"].includes(active);
   const companyInView = strategyInView || infraInView || modelInView || dataInView || trustInView || serviceInView || agentInView || appInView || startupInView || companySectionActive;
+  const needsCompanyData = companyInView || active === "overview";
   const articlesInView = useInView(refs.articles);
   const signalsInView = useInView(refs.signals);
   const newbizInView = useInView(refs.newbiz);
@@ -162,7 +163,7 @@ function App() {
   // Lower sections do not compete with the first viewport. The largest live
   // files are requested only when their respective section is near the reader.
   uE(() => {
-    if (!companyInView || !dataVersion) return;
+    if (!needsCompanyData || !dataVersion) return;
     let alive = true;
     fetch(dataUrl("companies.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
@@ -176,7 +177,7 @@ function App() {
         setStartupsX(m);
       } }).catch(() => {});
     return () => { alive = false; };
-  }, [companyInView, dataVersion]);
+  }, [needsCompanyData, dataVersion]);
 
   uE(() => {
     if (!(auditInView || active === "audit") || !dataVersion) return;
@@ -206,6 +207,16 @@ function App() {
     merged.mobileFit = ly ? ly.fit || "medium" : "medium";
     merged.org = (lv && lv.organization) || (D.COMPANY_ORG || {})[c.name] || null; // 정규화 조직: live officers + 큐레이션 배경
     merged.invest = (D.COMPANY_INVEST || {})[c.name] || null;      // AI SW·서비스 투자 포트폴리오·전략 맵
+    // 메인 카드도 상세 팝업과 같은 최신 원문 합성 결과를 우선한다.
+    // 정적 레지스트리는 회사명·분류·도메인만 담당하고, 사업/수익/방향은
+    // daily pipeline의 source-grounded intelligence가 매 실행마다 교체한다.
+    const intel = lv && lv.intelligence;
+    if (intel) {
+      merged.intelligence = intel;
+      merged.note = intel.currentBusiness?.summary || merged.note;
+      merged.vp = intel.revenueModel?.summary || merged.vp;
+      merged.direction = intel.strategyDirection?.summary || merged.direction;
+    }
     // 크롤 기반 수익모델·사업 방향(monetization.json) — 원문 링크 신호 + 밸류체인 legend
     merged.monetize = monet
       ? { entry: (monet.companies || []).find(x => x.name === c.name) || null, models: monet.models || [], directions: monet.directions || [] }

@@ -468,8 +468,8 @@ function AIChatbot({ onNav }) {
       // 키워드 매칭이 약해도 가장 가까운 Q&A로 답한다 (항상 답변)
       typeOut(scored[0].qa.a, scored[0].qa.nav);
     } else {
-      // 최후 폴백: 핵심 요약을 제시하고 길잡이를 준다
-      const fb = "정확히 일치하는 항목을 찾지 못했지만, 핵심을 요약하면: OpenAI 밸류 $852B(ARR ~$35B), NVIDIA 분기 $57B, Microsoft AI 런레이트 $37B, SpaceX가 Cursor를 $60B에 인수했습니다. 기업명(OpenAI·Anthropic·NVIDIA·Cursor 등)이나 '주가', '추론 비용', '에이전트', '반독점', '할루시네이션' 같은 키워드로 다시 질문해 보세요.";
+      // 근거를 찾지 못한 질의에는 숫자·거래를 추정해서 답하지 않는다.
+      const fb = "현재 공개된 원문 근거에서 정확히 일치하는 항목을 찾지 못했습니다. 기업명(OpenAI·Anthropic·NVIDIA·Apple 등)이나 '수익 모델', '사업 방향', '에이전트', '조직도'처럼 범위를 좁혀 다시 질문해 주세요. 최신 기업 상세에서는 원문 링크와 생성일을 함께 확인할 수 있습니다.";
       typeOut(fb, "overview");
     }
   };
