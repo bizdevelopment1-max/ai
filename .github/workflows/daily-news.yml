@@ -120,6 +120,11 @@ jobs:
 
       - name: Synthesize company business model, strategy, practices and executive quotes
         run: node scripts/run-with-retry.mjs scripts/build-company-intelligence.mjs
+        env:
+          # A first schema rollout may need one rate-limited request per company.
+          # Later runs reuse evidence fingerprints and refresh only changed firms.
+          PIPELINE_TIMEOUT_MS: 1200000
+          GITHUB_MODELS_MAX_RETRY_WAIT_MS: 120000
 
       - name: Verify evidence, provenance and cumulative history
         run: node scripts/run-with-retry.mjs scripts/verify-pipeline.mjs

@@ -11,6 +11,10 @@ const MODEL = process.env.GITHUB_MODELS_MODEL || "openai/gpt-4.1";
 const ENDPOINT = process.env.GITHUB_MODELS_ENDPOINT || "https://models.github.ai/inference/chat/completions";
 const TIMEOUT_MS = Math.max(15_000, Number(process.env.GITHUB_MODELS_TIMEOUT_MS || 90_000));
 const MIN_REQUEST_INTERVAL_MS = Math.max(0, Number(process.env.GITHUB_MODELS_MIN_INTERVAL_MS || 16_000));
+const MAX_RATE_LIMIT_WAIT_MS = Math.max(
+  MIN_REQUEST_INTERVAL_MS,
+  Number(process.env.GITHUB_MODELS_MAX_RETRY_WAIT_MS || 120_000),
+);
 let lastRequestAt = 0;
 
 export function llmAvailable() {
@@ -61,9 +65,13 @@ export async function llmJSON({ system, user, maxTokens = 3000, schema } = {}) {
         signal: AbortSignal.timeout(TIMEOUT_MS),
       });
       if (response.status === 429 && attempt < 3) {
+        const advertisedWait = Number(response.headers.get("retry-after") || 20);
+        const advertisedWaitMs = Number.isFinite(advertisedWait)
+          ? (advertisedWait > 300 ? advertisedWait : advertisedWait * 1000)
+          : 20_000;
         const retryAfter = Math.max(
           MIN_REQUEST_INTERVAL_MS,
-          Number(response.headers.get("retry-after") || 20) * 1000,
+          Math.min(MAX_RATE_LIMIT_WAIT_MS, advertisedWaitMs),
         );
         console.warn(`[llm] GitHub Models rate limited · retry ${attempt}/3 in ${Math.ceil(retryAfter / 1000)}s`);
         await new Promise(resolve => setTimeout(resolve, retryAfter));

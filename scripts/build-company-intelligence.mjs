@@ -5,7 +5,7 @@
  * IDs. If model inference is unavailable, the site receives an extractive
  * source-linked summary rather than generic portfolio labels.
  */
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, rename, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { loadDash } from "./load-dash.mjs";
 import { llmJSON, llmAvailable } from "./llm.mjs";
@@ -451,6 +451,14 @@ async function main() {
   const directionLabels = new Map((monetData.directions || []).map(direction => [direction.id, direction.ko]));
   const prepared = [];
   const engine = llmAvailable();
+  const persistCompanyData = async () => {
+    companyData.schemaVersion = 5;
+    companyData.generatedAt = new Date().toISOString();
+    companyData.methodology = "normalized-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis";
+    const checkpoint = "companies.json.checkpoint";
+    await writeFile(checkpoint, `${JSON.stringify(companyData)}\n`);
+    await rename(checkpoint, "companies.json");
+  };
   const maxAiAgeDays = Math.max(0.25, Number(process.env.COMPANY_INTELLIGENCE_MAX_AGE_DAYS || 0.8));
   const ageDays = value => {
     const time = Date.parse(value || "");
@@ -532,14 +540,14 @@ async function main() {
           ...normaliseAnalysis(analysis, item.evidence, item._fallback, item._corpus),
         };
       }
+      // The first schema-v5 run can refresh every company. Persist each batch
+      // so a runner retry resumes from completed evidence fingerprints.
+      await persistCompanyData();
       console.log(`[company-intelligence] batch ${Math.floor(start / batchSize) + 1}/${Math.ceil(prepared.length / batchSize)} · ${result ? result.engine : "extractive fallback"}`);
     }
   }
 
-  companyData.schemaVersion = 5;
-  companyData.generatedAt = new Date().toISOString();
-  companyData.methodology = "normalized-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis";
-  await writeFile("companies.json", `${JSON.stringify(companyData)}\n`);
+  await persistCompanyData();
   const aiCount = Object.values(companyData.companies || {}).filter(company => company.intelligence?.engine?.startsWith("github-models:")).length;
   const total = Object.keys(companyData.companies || {}).length;
   console.log(`[company-intelligence] wrote ${total} companies · AI ${aiCount} · extractive ${total - aiCount} · refreshed ${prepared.length}`);
