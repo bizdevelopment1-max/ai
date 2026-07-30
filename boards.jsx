@@ -3236,8 +3236,23 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
 
 
 // ---- 스타트업 분석 보드(2계층·lazy-load): 대형=파트너십 / 소형=인수·투자 ----
-function StartupScopeBoard({ sectionRef, dataVersion }) {
+function StartupScopeBoard({ sectionRef, dataVersion, companies, onSelect }) {
   const inView = useInView(sectionRef);
+  // 업체명 클릭 → 다른 기업과 동일한 상세 모달. 추적 기업이면 전체 프로필, 아니면 원문 링크 기반 최소 정보.
+  const openStartup = (s) => {
+    if (!onSelect) return;
+    const match = (companies || []).find(c => c.name === s.name || c.name.replace(/\s*\(.*\)/, "") === s.name);
+    if (match) { onSelect(match); return; }
+    const hist = [s.latest, ...(s.history || [])].filter(h => h && /^https?:\/\//.test(String(h.url || "")));
+    onSelect({
+      name: s.name, domain: s.domain, cat: "startup", unit: s.vertical || "AI 스타트업",
+      note: s.businessModel || s.summary || "원문 링크 기반 관찰 — 검증된 상세는 본문 확인 후 표시됩니다.",
+      vp: s.revenue ? `수익: ${s.revenue}` : "", direction: s.partnership ? `파트너십: ${s.partnership}` : "",
+      layer: "app", vchainVertical: s.vertical || "", profile: null, org: null,
+      live: { latest: s.latest || null, mentions7: 0, mentions30: 0 },
+      sources: hist.slice(0, 6).map(h => ({ tier: "reported", label: String(h.title || "관련 기사"), asOf: h.date || "", url: h.url })),
+    });
+  };
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   const [tier, setTier] = React.useState("all");
@@ -3355,7 +3370,7 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
               <div className="mkt-card" key={s.name}>
                 <div className="mkt-card-head">
                   <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
-                  <b className="mkt-name">{s.name}</b>
+                  <button className="mkt-name su-link" onClick={() => openStartup(s)} title="기업 상세 보기">{s.name}</button>
                   <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.val}` : ""}</span>
                   <DelUI name={s.name} />
                 </div>
@@ -3380,7 +3395,7 @@ function StartupScopeBoard({ sectionRef, dataVersion }) {
               <div className="mkt-card" key={s.name}>
                 <div className="mkt-card-head">
                   <img className="su-fav" src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
-                  <b className="mkt-name">{s.name}</b>
+                  <button className="mkt-name su-link" onClick={() => openStartup(s)} title="기업 상세 보기">{s.name}</button>
                   <span className="su-meta">{s.vertical}{hasVerifiedDetails(s) ? ` · ${s.stage}` : ""}</span>
                   <DelUI name={s.name} />
                 </div>

@@ -398,7 +398,7 @@ function App() {
               <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
             </LazySection>
             <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
-              <StartupScopeBoard dataVersion={dataVersion} />
+              <StartupScopeBoard dataVersion={dataVersion} companies={companiesLive} onSelect={setSelected} />
             </LazySection>
 
             {/* ── 3. 심층 분석 ── */}

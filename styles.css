@@ -2558,6 +2558,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-card.hid { opacity: .5; }
 .mkt-card-head { display: flex; align-items: center; gap: 8px; }
 .mkt-name { font-family: var(--f); font-size: 13.5px; font-weight: 800; color: var(--ink); flex: 1; word-break: keep-all; }
+.su-link { text-align: left; cursor: pointer; border: 0; background: none; padding: 0; transition: color .15s; }
+.su-link:hover { color: var(--accent); text-decoration: underline; }
 .mkt-actions { display: flex; gap: 2px; flex-shrink: 0; }
 .mkt-hide { background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px; border-radius: 5px; }
 .mkt-hide:hover { color: #0891B2; background: color-mix(in srgb, #0891B2 10%, transparent); }
