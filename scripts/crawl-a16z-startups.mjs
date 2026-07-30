@@ -8,6 +8,7 @@
  * without a hand-maintained company allow-list.
  */
 import { readFile, writeFile } from "node:fs/promises";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const SOURCE_URL = "https://a16z.com/100-gen-ai-apps-6/";
 const SOURCE_TITLE = "The Top 100 Gen AI Consumer Apps — 6th Edition";
@@ -116,13 +117,14 @@ async function mapLimit(rows, limit, fn) {
 }
 
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   let previous = null;
   try { previous = JSON.parse(await readFile("a16z-startups.json", "utf8")); } catch {}
   const age = previous?.generatedAt
     ? (Date.now() - new Date(previous.generatedAt).getTime()) / 86_400_000
     : 999;
   if (!FORCE && age < FRESH_DAYS && previous?.sourceUrl === SOURCE_URL
-    && previous?.web?.length === 50 && previous?.mobile?.length === 50) {
+    && previous?.sourceCounts?.web === 50 && previous?.sourceCounts?.mobile === 50) {
     console.log(`[a16z] fresh ${age.toFixed(1)}d — 50 web + 50 mobile retained`);
     return;
   }
@@ -146,8 +148,8 @@ async function main() {
     return prior?.description ? prior : fetchMeta(item);
   };
   const [webRich, mobileRich] = await Promise.all([
-    mapLimit(web.map(item => ({ ...item, cohort: "web" })), 10, enrich),
-    mapLimit(mobile.map(item => ({ ...item, cohort: "mobile" })), 10, enrich),
+    mapLimit(web.filter(item => !suppression.hasCompany(item.name)).map(item => ({ ...item, cohort: "web" })), 10, enrich),
+    mapLimit(mobile.filter(item => !suppression.hasCompany(item.name)).map(item => ({ ...item, cohort: "mobile" })), 10, enrich),
   ]);
 
   const publishedAt = html.match(/article:published_time["'][^>]+content=["']([^"']+)/i)?.[1]?.slice(0, 10) || "2026-03-09";
@@ -159,6 +161,7 @@ async function main() {
     sourceUrl: SOURCE_URL,
     publishedAt,
     methodology: "publisher-page-complete-link-lists+linked-product-metadata",
+    sourceCounts: { web: web.length, mobile: mobile.length },
     web: webRich,
     mobile: mobileRich,
   };

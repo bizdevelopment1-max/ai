@@ -5,6 +5,58 @@
 // 삭제 확인 비밀번호 — 평문으로 소스에 노출하지 않기 위해 base64로만 비교(atob("MA==")="0").
 function canDelete(pw) { try { return atob("MA==") === String(pw == null ? "" : pw); } catch { return false; } }
 
+const SUPPRESSION_LS = "aiDashSuppressionRegistryV2";
+function readClientSuppressions() {
+  try {
+    const rows = JSON.parse(localStorage.getItem(SUPPRESSION_LS) || "[]");
+    return Array.isArray(rows) ? rows : [];
+  } catch {
+    return [];
+  }
+}
+function rememberSuppression(record) {
+  const normalized = {
+    scope: String(record?.scope || "content").trim(),
+    key: String(record?.key || record?.id || record?.url || record?.name || "").trim(),
+    id: String(record?.id || "").trim(),
+    url: String(record?.url || "").trim(),
+    name: String(record?.name || "").trim(),
+    title: String(record?.title || "").trim(),
+    deletedAt: new Date().toISOString()
+  };
+  if (!normalized.key && !normalized.url && !normalized.name) return;
+  try {
+    const rows = readClientSuppressions();
+    const identity = `${normalized.scope}|${normalized.key}|${normalized.url}|${normalized.name}`.toLocaleLowerCase();
+    const next = rows.filter(item =>
+      `${item.scope || "content"}|${item.key || ""}|${item.url || ""}|${item.name || ""}`.toLocaleLowerCase() !== identity
+    );
+    next.push(normalized);
+    localStorage.setItem(SUPPRESSION_LS, JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent("dash-suppression-change", { detail: normalized }));
+  } catch {}
+}
+function migrateLegacySuppressions() {
+  const mappings = [
+    ["aiDashDeletedCompanies", "startup"],
+    ["aiDashDeletedArticles", "article"],
+    ["aiDashDeletedInfra", "infra-signal"],
+    ["aiDashDeletedBiz", "bizmodel-signal"],
+    ["aiDashDeletedReports", "research"],
+    ["aiDashDeletedES", "insight-axis"],
+    ["aiDashDeletedStartups", "startup"]
+  ];
+  mappings.forEach(([storageKey, scope]) => {
+    try {
+      const legacy = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      Object.keys(legacy || {}).filter(key => legacy[key]).forEach(key =>
+        rememberSuppression({ scope, key, name: scope === "startup" ? key : "" })
+      );
+    } catch {}
+  });
+}
+migrateLegacySuppressions();
+
 // ---- Real publication date (not the crawl date) ----------------
 // Prefers an explicit a.pub, then a dated URL (/YYYY/MM/DD/), then the
 // first YYYY.MM.DD found in the summary, falling back to a.date.
@@ -201,6 +253,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
   const confirmCoDel = (name) => {
     if (!canDelete(coPw)) { setCoPwErr(true); return; }
     setDelCos(d => { const n = { ...d, [name]: 1 }; try { localStorage.setItem(CO_LS, JSON.stringify(n)); } catch {} return n; });
+    rememberSuppression({ scope: "startup", key: name, name });
     setCoPending(null); setCoPw(""); setCoPwErr(false);
   };
   const isStartup = cat.id === "startup";
@@ -1344,6 +1397,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const removeArticle = (a) => setDeleted(d => {
     const next = { ...d, [keyOf(a)]: 1 };
     try { localStorage.setItem(LS_KEY, JSON.stringify(next)); } catch {}
+    rememberSuppression({ scope: "article", key: keyOf(a), id: a.id, url: a.url, name: a.co, title: a.title });
     return next;
   });
 
@@ -3505,8 +3559,8 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   const [pend, setPend] = React.useState(null);
   const [pw, setPw] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
-  const confirmDel = (id) => { if (!canDelete(pw)) { setPwErr(true); return; } setDel(d => { const x = { ...d, [id]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); setPend(null); setPw(""); setPwErr(false); };
-  const resetAll = () => { setDel({}); try { localStorage.removeItem(DEL_LS); } catch {} };
+  const signalScope = delKey === "aiDashDeletedInfra" ? "infra-signal" : "bizmodel-signal";
+  const confirmDel = (id) => { if (!canDelete(pw)) { setPwErr(true); return; } setDel(d => { const x = { ...d, [id]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); rememberSuppression({ scope: signalScope, key: id, id }); setPend(null); setPw(""); setPwErr(false); };
 
   const groups = (data && data.groups) || [];
   const sourceByUrl = React.useMemo(() => {
@@ -3556,7 +3610,6 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
         </div>
         <div className="isg-tools">
           <span className="isg-total">누적 <b>{items.length}</b></span>
-          <button onClick={resetAll} title="삭제 초기화(다시 누적 반영)">초기화</button>
         </div>
       </div>
 
@@ -4006,17 +4059,19 @@ function IBInsightBoard({ research, reports, sectionRef }) {
   const [rPwErr, setRPwErr] = React.useState(false);
   const rKey = r => r.url || r.title;
   const cancelR = () => { setRPending(null); setRPw(""); setRPwErr(false); };
-  const confirmR = (k) => {
+  const confirmR = (item) => {
+    const k = rKey(item);
     if (!canDelete(rPw)) { setRPwErr(true); return; }
     setDelR(d => { const n = { ...d, [k]: 1 }; try { localStorage.setItem(R_LS, JSON.stringify(n)); } catch {} return n; });
+    rememberSuppression({ scope: "research", key: k, id: item.id, url: item.url, title: item.title });
     cancelR();
   };
   const DelBtn = ({ item }) => (rPending === rKey(item) ? (
     <span className="art-del-pw" onClick={e => { e.preventDefault(); e.stopPropagation(); }}>
       <input type="password" inputMode="numeric" className={"art-pw-input" + (rPwErr ? " err" : "")} placeholder="비밀번호" value={rPw} autoFocus
         onChange={e => { setRPw(e.target.value); setRPwErr(false); }}
-        onKeyDown={e => { if (e.key === "Enter") confirmR(rKey(item)); else if (e.key === "Escape") cancelR(); }} />
-      <button className="art-pw-ok" onClick={e => { e.preventDefault(); confirmR(rKey(item)); }}>삭제</button>
+        onKeyDown={e => { if (e.key === "Enter") confirmR(item); else if (e.key === "Escape") cancelR(); }} />
+      <button className="art-pw-ok" onClick={e => { e.preventDefault(); confirmR(item); }}>삭제</button>
       <button className="art-pw-cancel" onClick={e => { e.preventDefault(); cancelR(); }}><Icon name="x" size={12} sw={2.2} /></button>
       {rPwErr && <span className="art-pw-err">비밀번호가 틀렸습니다.</span>}
     </span>
@@ -4254,6 +4309,7 @@ function ExecToplines({ items, insights, onNav }) {
   const confirmDel = (k) => {
     if (!canDelete(pw)) { setPwErr(true); return; }
     setDelEs(d => { const n = { ...d, [k]: 1 }; try { localStorage.setItem(LS, JSON.stringify(n)); } catch {} return n; });
+    rememberSuppression({ scope: "insight-axis", key: k });
     setPend(null); setPw(""); setPwErr(false);
   };
   const usingLive = !!insights;
@@ -4643,8 +4699,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   const [pend, setPend] = React.useState(null);
   const [pw, setPw] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
-  const confirmDel = (n) => { if (!canDelete(pw)) { setPwErr(true); return; } setDel(d => { const x = { ...d, [n]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); setPend(null); setPw(""); setPwErr(false); };
-  const reset = () => { setDel({}); try { localStorage.removeItem(DEL_LS); } catch {} };
+  const confirmDel = (n) => { if (!canDelete(pw)) { setPwErr(true); return; } setDel(d => { const x = { ...d, [n]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); rememberSuppression({ scope: "startup", key: n, name: n }); setPend(null); setPw(""); setPwErr(false); };
   const DelUI = ({ name }) => (pend === name ? (
     <span className="art-del-pw" onClick={e => e.stopPropagation()}>
       <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
@@ -4782,7 +4837,6 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
           <button className={tier === "large" ? "on" : ""} onClick={() => setTier("large")}>대형 {large.length}</button>
           <button className={tier === "small" ? "on" : ""} onClick={() => setTier("small")}>소형·초기 {small.length}</button>
           <button className={tier === "a16z" ? "on" : ""} onClick={() => setTier("a16z")}>a16z 선정 운영사 {a16zPortfolio.length + trackedA16z.length}</button>
-          {Object.keys(del).length > 0 && <button onClick={reset} title="삭제 초기화">초기화</button>}
         </div>
       </div>
 

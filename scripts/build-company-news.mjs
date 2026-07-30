@@ -9,6 +9,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { loadDash } from "./load-dash.mjs";
 import { directCompanyNewsMatch } from "./company-sources.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const readJson = async (file, fallback = null) => {
   try { return JSON.parse(await readFile(file, "utf8")); }
@@ -46,8 +47,11 @@ const compact = (article, match) => {
 
 const news = await readJson("news.json", { articles: [] });
 const previous = await readJson("company-news.json", null);
-const companies = loadDash().COMPANIES || [];
-const eligible = (news.articles || []).filter(sourceBacked);
+const suppression = await loadSuppressionRegistry();
+const companies = (loadDash().COMPANIES || []).filter(company => !suppression.hasCompany(company.name));
+const eligible = (news.articles || [])
+  .filter(article => !suppression.matches(article, "article"))
+  .filter(sourceBacked);
 const companyIndex = {};
 
 for (const company of companies) {

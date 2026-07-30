@@ -15,6 +15,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
 import { loadDash } from "./load-dash.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 
 // 대시보드 기업 별칭. 계층·버티컬은 data.js COMPANY_LAYER에서 매 실행 시
@@ -108,8 +109,12 @@ const pickTagged = (list, lines) => {
 const canonUrl = u => { const s = String(u || ""); try { const p = new URL(s); p.hash = ""; p.search = ""; return p.href.replace(/\/+$/, ""); } catch { return s.replace(/[?#].*$/, "").replace(/\/+$/, ""); } };
 
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   let news = [];
-  try { news = JSON.parse(await readFile("news.json", "utf8")).articles || []; }
+  try {
+    news = (JSON.parse(await readFile("news.json", "utf8")).articles || [])
+      .filter(article => !suppression.matches(article, "article"));
+  }
   catch { console.log("[monetization] news.json 없음 — crawl-news.mjs 먼저 실행"); }
 
   // 스타트업 분석(startups.json)의 업체도 스캔 대상에 자동 포함 — 밸류체인 기업과
@@ -118,7 +123,8 @@ async function main() {
   let startupNames = [];
   try {
     const su = JSON.parse(await readFile("startups.json", "utf8"));
-    startupNames = [...(su.large || []), ...(su.small || [])];
+    startupNames = [...(su.large || []), ...(su.small || [])]
+      .filter(startup => !suppression.hasCompany(startup.name));
   } catch {}
   const knownNames = new Set(COMPANIES.map(c => c.name));
   const startupEntries = startupNames
@@ -129,12 +135,15 @@ async function main() {
       vertical: DASH_LAYER[s.name]?.vertical || s.vertical || "스타트업",
       alias: [s.name],
     }));
-  const ALL_COMPANIES = withRegex([...COMPANIES, ...startupEntries]);
+  const ALL_COMPANIES = withRegex([...COMPANIES, ...startupEntries]
+    .filter(company => !suppression.hasCompany(company.name)));
 
   // 기존 누적 로드 — signals는 URL 기준으로 병합(중복 방지)
   let prev = { companies: [] };
   try { const p = JSON.parse(await readFile("monetization.json", "utf8")); if (p && Array.isArray(p.companies)) prev = p; } catch {}
-  const prevByName = new Map(prev.companies.map(c => [c.name, c]));
+  const prevByName = new Map(prev.companies
+    .filter(company => !suppression.hasCompany(company.name))
+    .map(c => [c.name, c]));
 
   // 기업별 시그널 버킷: url -> signal (누적 병합)
   const buckets = new Map();     // name -> { monetize: Map(url->sig), direction: Map(url->sig), modelMix: {id:n} }

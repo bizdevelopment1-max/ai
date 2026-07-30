@@ -10,6 +10,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { cleanText, enrichSourceBatch, isContentBacked } from "./source-content.mjs";
 import { canonicalUrl } from "./market-db.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const limit = Number(process.env.MARKET_SOURCE_REFRESH_LIMIT || 0);
 const concurrency = Math.max(1, Number(process.env.MARKET_SOURCE_REFRESH_CONCURRENCY || 4));
@@ -179,7 +180,9 @@ const withPublisherEvidence = (record, enriched, checkedAt) => {
 
 async function main() {
   const data = JSON.parse(await readFile("market.json", "utf8"));
-  const records = Array.isArray(data.records) ? data.records : [];
+  const suppression = await loadSuppressionRegistry();
+  const records = (Array.isArray(data.records) ? data.records : [])
+    .filter(record => !suppression.matches(record, "market"));
   const candidates = records.filter(needsRefresh);
   const target = limit > 0 ? candidates.slice(0, limit) : candidates;
   console.log(`[market-source-refresh] ${target.length}/${records.length} records need publisher-page extraction`);

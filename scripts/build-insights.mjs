@@ -17,6 +17,7 @@
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 // 각 축: strong = 그 주제를 명확히 규정하는 핵심 키워드(1개만 맞아도 주제 성립),
 //        weak   = 보조 키워드(단독으로는 우연의 일치일 수 있어 2개 이상 필요).
@@ -150,9 +151,12 @@ function themeKeywords(entries, axis) {
 }
 
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   let articles = [];
   try { articles = (JSON.parse(await readFile("news.json", "utf8")).articles || []); } catch { articles = []; }
-  articles = articles.filter(a => a.displayEligible !== false && a.summaryMode === "source-content-extractive" && !isExcludedText(`${a.title || ""} ${a.summary || ""}`));
+  articles = articles
+    .filter(article => !suppression.matches(article, "article"))
+    .filter(a => a.displayEligible !== false && a.summaryMode === "source-content-extractive" && !isExcludedText(`${a.title || ""} ${a.summary || ""}`));
 
   // 각 (기사,축) 점수 계산 — 근거 기사↔축 주제 정합성 게이트 적용
   const scored = [];
@@ -185,7 +189,7 @@ async function main() {
   }
   const maxScore = scored.length ? scored[0].score : 1;
 
-  const cards = AXES.map(ax => {
+  const cards = AXES.filter(ax => !suppression.hasKey("insight-axis", ax.label)).map(ax => {
     const lead = leadByAxis[ax.axis];
     const group = (byAxis[ax.axis] || []).slice(0, 6);     // 이 축의 상위 근거군(신호 종합용)
     if (lead) {

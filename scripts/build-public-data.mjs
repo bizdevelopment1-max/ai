@@ -11,6 +11,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { isExcludedText } from "./news-policy.mjs";
 import { normalizeLocalizedRecord } from "./korean-copy.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const root = process.cwd();
 const readJson = async file => JSON.parse(await readFile(resolve(root, file), "utf8"));
@@ -31,13 +32,8 @@ const [news, research, market, infra, bizmodel] = await Promise.all([
 ]);
 
 // 삭제 블록리스트(비밀번호 삭제 항목) — 뷰에서 영구 제외해 '다음 업데이트 시 안 보이게'.
-let deleted = { ids: [], urls: [] };
-try { deleted = await readJson("deleted.json"); } catch {}
-const canonUrl = u => { const s = String(u || ""); try { const p = new URL(s); p.hash = ""; p.search = ""; return p.href.replace(/\/+$/, ""); } catch { return s.replace(/[?#].*$/, "").replace(/\/+$/, ""); } };
-const deletedIds = new Set((deleted.ids || []).map(String));
-const deletedUrls = new Set((deleted.urls || []).map(canonUrl));
-const notDeleted = item => !deletedIds.has(String(item?.id))
-  && !deletedUrls.has(canonUrl(item?.url || item?.sourceUrl));
+const suppression = await loadSuppressionRegistry(root);
+const notDeleted = scope => item => !suppression.matches(item, scope);
 
 const articleKeys = [
   "id", "date", "co", "cat", "source", "title", "titleEn", "titleKo", "url", "tag",
@@ -59,18 +55,18 @@ const recordKeys = [
 ];
 const signalKeys = ["id", "group", "title", "signal", "quant", "source", "date", "url", "sourceSummaryMode", "provenance"];
 
-const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notDeleted)
+const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notDeleted("article"))
   .map(item => normalizeLocalizedRecord(compact(item, articleKeys)));
-const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notDeleted)
+const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notDeleted("research"))
   .map(item => normalizeLocalizedRecord(compact(item, researchKeys)));
 const visibleRecords = (market.records || []).filter(record => sourceBacked(record)
   && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
   && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length)
-  .filter(notBanned).filter(notDeleted)
+  .filter(notBanned).filter(notDeleted("market"))
   .map(item => normalizeLocalizedRecord(compact(item, recordKeys)));
-const visibleSignals = data => (data.items || [])
+const visibleSignals = (data, scope) => (data.items || [])
   .filter(item => item?.provenance?.status === "evidence-linked" && item?.sourceSummaryMode === "source-content-extractive")
-  .filter(notBanned).filter(notDeleted)
+  .filter(notBanned).filter(notDeleted(scope))
   .map(item => normalizeLocalizedRecord(compact(item, signalKeys)));
 
 const generatedAt = new Date().toISOString();
@@ -78,8 +74,8 @@ const views = {
   "news-view.json": { generatedAt, count: visibleArticles.length, articles: visibleArticles },
   "research-view.json": { generatedAt, count: visibleResearch.length, feed: visibleResearch },
   "market-view.json": { generatedAt, engine: market.engine, groups: market.groups || [], records: visibleRecords },
-  "infra-view.json": { generatedAt, count: visibleSignals(infra).length, groups: infra.groups || [], items: visibleSignals(infra) },
-  "bizmodel-view.json": { generatedAt, count: visibleSignals(bizmodel).length, groups: bizmodel.groups || [], items: visibleSignals(bizmodel) },
+  "infra-view.json": { generatedAt, count: visibleSignals(infra, "infra-signal").length, groups: infra.groups || [], items: visibleSignals(infra, "infra-signal") },
+  "bizmodel-view.json": { generatedAt, count: visibleSignals(bizmodel, "bizmodel-signal").length, groups: bizmodel.groups || [], items: visibleSignals(bizmodel, "bizmodel-signal") },
 };
 
 await Promise.all(Object.entries(views).map(async ([file, value]) => {

@@ -6,6 +6,7 @@ import { articleFocusedOnCompany, directCompanyNewsMatch } from "./company-sourc
 import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
 import { textSimilarity } from "./source-content.mjs";
 import { bulletizeKorean, hasKoreanProseEnding, hasKoreanSentencePeriod } from "./korean-copy.mjs";
+import { canonicalSuppressionUrl, createSuppressionRegistry } from "./suppression-registry.mjs";
 
 const required = [
   ".github/workflows/daily-news.yml",
@@ -37,6 +38,7 @@ const required = [
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
   "scripts/build-public-data.mjs",
+  "scripts/suppression-registry.mjs",
   "scripts/korean-copy.mjs",
   "scripts/audit-agent.mjs",
   "news.json",
@@ -58,6 +60,7 @@ const required = [
   "quality.json",
   "history.json",
   "llm-health.json",
+  "deleted.json",
   "collection-health.json",
   "config/news-policy.json",
   "config/global-source-policy.json",
@@ -129,7 +132,7 @@ try {
   const automated = crawler.includes("loadDash().COMPANIES")
     && crawler.includes("newsQueryFor(company.name)")
     && crawler.includes("directCompanyNewsMatch")
-    && crawler.includes("pool(COMPANIES, 8")
+    && (crawler.includes("pool(COMPANIES, 8") || crawler.includes("pool(activeCompanies, 8"))
     && builder.includes("headline-entity-or-official-domain")
     && workflow.includes("scripts/build-company-news.mjs")
     && recoveryWorkflow.includes("scripts/build-company-news.mjs")
@@ -1364,6 +1367,59 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  Korean consulting-copy style: ${error.message}`);
+}
+
+try {
+  const registry = createSuppressionRegistry({
+    schemaVersion: 2,
+    ids: ["signal-42"],
+    urls: ["https://example.com/story?utm_source=feed"],
+    companies: ["Deleted Startup"],
+    records: [
+      { scope: "insight-axis", key: "수익 모델" },
+      { scope: "article", key: "story-1", name: "NVIDIA" },
+    ],
+  });
+  if (!registry.hasId("SIGNAL-42")
+    || !registry.hasUrl("https://example.com/story?utm_campaign=daily")
+    || !registry.hasCompany("deleted startup")
+    || registry.hasCompany("NVIDIA")
+    || !registry.hasKey("insight-axis", "수익 모델")
+    || canonicalSuppressionUrl("https://example.com/story?utm_source=x") !== "https://example.com/story") {
+    throw new Error("suppression registry identity matching is incomplete");
+  }
+
+  const [boards, publicBuilder, ...crawlerSources] = await Promise.all([
+    readFile("boards.jsx", "utf8"),
+    readFile("scripts/build-public-data.mjs", "utf8"),
+    ...[
+      "scripts/crawl-news.mjs",
+      "scripts/crawl-research.mjs",
+      "scripts/crawl-startups.mjs",
+      "scripts/crawl-startup-organizations.mjs",
+      "scripts/crawl-companies.mjs",
+      "scripts/crawl-infra.mjs",
+      "scripts/crawl-bizmodel.mjs",
+      "scripts/crawl-monetization.mjs",
+      "scripts/refresh-source-content.mjs",
+      "scripts/refresh-market-source-content.mjs",
+    ].map(file => readFile(file, "utf8")),
+  ]);
+  const scopes = ["article", "startup", "infra-signal", "bizmodel-signal", "research", "insight-axis"];
+  const browserGate = boards.includes("aiDashSuppressionRegistryV2")
+    && boards.includes("rememberSuppression")
+    && scopes.every(scope => boards.includes(`scope: "${scope}"`) || boards.includes(`"${scope}"`))
+    && !boards.includes("const resetAll = () => { setDel({})")
+    && !boards.includes("const reset = () => { setDel({})");
+  const pipelineGate = publicBuilder.includes("loadSuppressionRegistry")
+    && crawlerSources.every(source => source.includes("loadSuppressionRegistry"));
+  if (!browserGate || !pipelineGate) {
+    throw new Error("X deletion is not connected to every browser and crawler publication gate");
+  }
+  console.log("  OK  X 삭제 영구 제외 레지스트리 · 공개 데이터·크롤러 재유입 차단");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  suppression registry: ${error.message}`);
 }
 
 if (failed) process.exit(1);
