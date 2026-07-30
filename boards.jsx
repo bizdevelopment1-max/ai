@@ -231,7 +231,7 @@ function SourcePipeline({ kind = "company" }) {
   };
   const rows = flows[kind] || flows.company;
   return (
-    <div className="source-pipeline" aria-label="크롤링 기반 업데이트 구조">
+    <div className="source-pipeline" aria-label="원문 기반 자동 업데이트 구조">
       {rows.map((row, index) => (
         <React.Fragment key={row[0]}>
           <div><em>{row[0]}</em><b>{row[1]}</b></div>
@@ -764,7 +764,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
 
         {c.profile && (() => {
           const p = c.profile, lv = c.live || {};
-          // 변동 항목은 크롤 값 우선(최신·출처 기반), 없으면 정적 폴백
+          // 변동 항목은 자동 수집 값 우선(최신·출처 기반), 없으면 정적 폴백
           const ceo = lv.ceo || p.ceo;
           const overviewOrg = lv.organization || c.organization || c.org || {};
           const overviewTeam = Array.isArray(overviewOrg.executiveTeam) && overviewOrg.executiveTeam.length
@@ -1012,9 +1012,9 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
           if (!hasCrawl) return null;
           return (
             <div className="cd-section">
-              <h4>수익화·사업 변화 근거 <em>Economics & Strategic Evidence</em><b className="cd-prof-live">LIVE · 크롤</b></h4>
+              <h4>수익화·사업 변화 근거 <em>Economics & Strategic Evidence</em><b className="cd-prof-live">LIVE · 원문 검증</b></h4>
               {modelMix.length > 0 && (
-                <div className="cd-bd-mix"><em>수익 모델(크롤)</em>
+                <div className="cd-bd-mix"><em>수익 모델</em>
                   <div className="mplay-mix">{modelMix.map(m => { const mm = modelMeta(m.id); return <span className="mplay-model" key={m.id} style={{ "--c": mm.accent }} title={mm.ko}>{mm.ko}<i>{m.n}</i></span>; })}</div>
                 </div>
               )}
@@ -1316,7 +1316,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                 })}
               </div>
               <p className="cd-cp-note">
-                자사 컴퓨트·클라우드·앱으로 이어지는 밸류체인 계층별 지분 투자 맵. 지분·라운드는 공시·보도 기반 큐레이션이며, 최신 자본 활동은 위 ‘핵심 활동 분석’(크롤)이 보완.
+                자사 컴퓨트·클라우드·앱으로 이어지는 밸류체인 계층별 지분 투자 맵 · 지분·라운드는 공시·보도 기반 큐레이션 · 최신 자본 활동은 위 ‘핵심 활동 분석’의 원문 근거로 보완
                 {inv.source && inv.source.url && (
                   <> · <a href={inv.source.url} target="_blank" rel="noopener">{inv.source.label || "출처"} <Icon name="ext" size={10} /></a></>
                 )}
@@ -1925,7 +1925,7 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
           </div>
           {latest?.summary && (
             <div className="nvi-latest">
-              <span>최신 크롤 근거 · {latest.date}</span>
+              <span>최신 원문 근거 · {latest.date}</span>
               <p>{latest.summary}</p>
             </div>
           )}
@@ -2100,7 +2100,7 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
   const marketGroupMap = Object.fromEntries((groups || []).map(group => [group.id, group]));
   const generatedAt = stockData?.__generatedAt ? new Date(stockData.__generatedAt).toLocaleString("ko-KR") : "";
 
-  // 변곡점 자동 설명(뉴스 크롤 근거) 로드 — 화면 진입 시 1회
+  // 변곡점 자동 설명(뉴스 원문 근거) 로드 — 화면 진입 시 1회
   const [autoEv, setAutoEv] = React.useState(null);
   React.useEffect(() => {
     if (!inView || autoEv || !dataVersion) return;
@@ -3523,7 +3523,7 @@ function BizModelBoard({ companies, cats, sectionRef, theme, articles }) {
 }
 
 // ---- Monthly Revenue Trends Board ----
-// 앱 다운로드(SensorTower) 차트는 무료로 크롤링 가능한 실데이터 소스가 없어(유료 전용) 삭제함.
+// 앱 다운로드(SensorTower) 차트는 무료로 자동 수집 가능한 실데이터 소스가 없어(유료 전용) 삭제함.
 // 매출 추이는 공시/ARR·run-rate 기반 모델값이라 유지하되 성격을 명시한다.
 function MonthlyTrendsBoard({ data, cats, theme, sectionRef }) {
   const inView = useInView(sectionRef);
@@ -3850,7 +3850,7 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   );
 }
 
-// AI 수익화 플레이북 — 기업별 ①수익모델 ②BM 신호 ③투자·사업 방향을 크롤 기사로 누적.
+// AI 수익화 플레이북 — 기업별 ①수익모델 ②BM 신호 ③투자·사업 방향을 원문 기사로 누적.
 // monetization.json(crawl-monetization.mjs) 소비. 표시는 원문 확인(한국어 3줄) 기사만.
 function MonetizationPlaybook({ articles, dataVersion }) {
   const ref = React.useRef(null);
@@ -4050,11 +4050,11 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
           <span className="board-tab" style={{ background: "#16A34A" }} />
           <div className="board-titles">
             <h2>AI 비즈니스 모델 <span className="board-en">AI Business Models · How Companies Make Money</span></h2>
-            <p>AI로 돈 버는 비즈니스 모델 <b>전체</b> — 각 업체가 실제로 하는 것을 크롤 기사로 정리·매일 갱신. 아래 <b>배포·AI서비스(수직통합)</b>는 그 중 <b>한 가지 예시</b>.</p>
+            <p>AI로 돈 버는 비즈니스 모델 <b>전체</b> · 업체별 실제 활동을 원문 기사로 정리해 매일 갱신 · 아래 <b>배포·AI서비스(수직통합)</b>는 그중 <b>한 가지 예시</b></p>
           </div>
         </div>
 
-        {/* 1) AI 비즈니스 모델 전체 — 기업별 수익모델·활동 + 7개 수익화 유형(모두 크롤 기반) */}
+        {/* 1) AI 비즈니스 모델 전체 — 기업별 수익모델·활동 + 7개 수익화 유형(모두 원문 기반) */}
         <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
         <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
           dataVersion={dataVersion} title="수익화 유형별 신호 — 7개 비즈니스 모델" sub="수직통합·구독·사용량·광고/커머스·하드웨어·성과기반·엔터프라이즈 — 원문 확인 카드만 누적 표시" />
@@ -4495,7 +4495,7 @@ function ExecToplines({ items, insights, onNav }) {
   const eng = (insights && insights.engine) || (usingLive ? "rules" : "seed");
   const ENGINE_BADGE = {
     "llm": { ko: "LLM 자동 생성", cls: "llm" }, "llm-gh": { ko: "LLM 자동 생성", cls: "llm" },
-    "crawl-synthesis": { ko: "크롤 인사이트 종합", cls: "llm" },
+    "crawl-synthesis": { ko: "원문 인사이트 종합", cls: "llm" },
     "rules": { ko: "규칙 기반 자동", cls: "rules" }, "seed": { ko: "시드(초기값)", cls: "seed" },
   };
   const eb = ENGINE_BADGE[eng] || ENGINE_BADGE.rules;
@@ -4515,7 +4515,7 @@ function ExecToplines({ items, insights, onNav }) {
         <div>
           <span className="es-brief-kicker">STRATEGIC DECISION BRIEF</span>
           <h3>핵심 신호를 의사결정으로 연결</h3>
-          <p>매일 크롤한 원문 근거(복수 출처·반복 신호·추출 수치)를 종합해 사업적 의미와 다음 실행으로 구조화 — 고정 문구가 아닌 크롤 결과에 따라 갱신</p>
+          <p>매일 확인한 원문 근거(복수 출처·반복 신호·추출 수치)를 종합해 사업적 의미와 다음 실행으로 구조화 · 고정 문구가 아닌 최신 원문에 따라 갱신</p>
         </div>
         <div className="es-brief-note" title="상대 중요도 0~100 = 최신성 × 출처신뢰도 × 주제적합도">
           <strong>Evidence-led</strong>
@@ -4569,7 +4569,7 @@ function ExecToplines({ items, insights, onNav }) {
               )}
             </div>
             <div className="es-cell es-sig">{hlKey(t.now)}
-              {t.digest && <div className="es-digest" title="당일 크롤 근거에서 집계 — 근거 건수·반복 신호·추출 수치(매일 갱신)">{t.digest}</div>}
+              {t.digest && <div className="es-digest" title="당일 원문 근거에서 집계 · 근거 건수·반복 신호·추출 수치 · 매일 갱신">{t.digest}</div>}
               {t.evidence.length > 0 && (
                 <div className="es-ev-row">
                   {t.evidence.slice(0, 3).map((e, k) => (
@@ -4623,7 +4623,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
     && record.provenance?.status === "source-backed"
     && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
     && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length);
-  // 소비자 조사 / 시장 2개 축으로 분리(탭 자체가 필터). 크롤 누적 데이터를 type으로 나눠 표시.
+  // 소비자 조사 / 시장 2개 축으로 분리(탭 자체가 필터). 자동 누적 데이터를 type으로 나눠 표시.
   const scoped = records.filter(record => isSurvey ? record.type === "consumer-survey" : record.type !== "consumer-survey");
   const sourceCount = new Set(scoped.map(record => record.sourceUrl)).size;
   const quantityCount = scoped.reduce((count, record) => count + new Set(record.sourceQuantities || []).size, 0);
@@ -4655,7 +4655,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
           <div className="mkt-db-head">
             <div>
               <h3>{isSurvey ? "AI 소비자 조사 데이터베이스" : "AI 시장 정량 데이터베이스"}</h3>
-              <p>검색 제목·스니펫은 화면에서 제외 · 발행사 원문에서 확인된 3줄 핵심과 정량 근거만 표시 · 크롤로 계속 누적(기존 삭제 없음)</p>
+              <p>검색 제목·스니펫은 화면에서 제외 · 발행사 원문에서 확인된 3줄 핵심과 정량 근거만 표시 · 기존 기록을 유지하며 계속 누적</p>
             </div>
           </div>
           <div className="mkt-record-grid">
@@ -4737,7 +4737,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
 // ---- 스타트업 분석 보드(2계층·lazy-load): 대형=파트너십 / 소형=인수·투자 ----
 function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, onSelect }) {
   const inView = useInView(sectionRef);
-  // 업체명 클릭 → 다른 기업과 동일한 상세 모달. 추적 기업이면 전체 프로필, 아니면 크롤 라이브 데이터로 강화.
+  // 업체명 클릭 → 다른 기업과 동일한 상세 모달. 추적 기업이면 전체 프로필, 아니면 최신 라이브 데이터로 강화.
   // 밸류체인 기업·스타트업 모두 companies.json(핵심활동·경영진 발언)·monetization.json(수익모델·사업방향)에서
   // 같은 방식으로 채워지므로, 표시 레벨(정보 깊이)이 통일된다.
   const openStartup = (s, portfolioTier = "") => {

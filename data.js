@@ -979,7 +979,7 @@ window.DASH = (function () {
   ];
 
   /* ============================================================
-     STOCKS — listed AI companies. 실제 일별 주가는 매일 크롤링되어
+     STOCKS — listed AI companies. 실제 일별 주가는 매일 자동 수집되어
      stocks.json 으로 제공됩니다(scripts/crawl-stocks.mjs · Stooq).
      group = AI 밸류체인 카테고리(STOCK_GROUPS 참조). 여기에는 메타데이터 +
      변곡점 설명(에디토리얼)만 둡니다.
@@ -1295,12 +1295,12 @@ window.DASH = (function () {
     },
   ];
 
-  // 시총 표시용 발행주식수(근사, 십억 주) — 크롤러 마켓캡 미수신 시 lastPrice×shares 로 추정
+  // 시총 표시용 발행주식수(근사, 십억 주) — 자동 수집 마켓캡 미수신 시 lastPrice×shares 로 추정
   const STOCK_SHARES = { NVDA: 24.4, MSFT: 7.43, AMZN: 10.6, AAPL: 14.8, GOOGL: 12.2, META: 2.53 };
 
   const DAY = 86400000;
 
-  // 실제 크롤링된 일별 종가(points: [{d, p}])를 받아 변곡점(events)을 가까운
+  // 실제 수집된 일별 종가(points: [{d, p}])를 받아 변곡점(events)을 가까운
   // 거래일에 스냅하고 min/max 를 계산한다. years 로 최근 구간만 자른다.
   function attachStockEvents(rawPoints, events, years) {
     const all = (rawPoints || [])
@@ -1469,7 +1469,7 @@ window.DASH = (function () {
   // ── 기업 개요(정적 프로필) ───────────────────────────────────────────
   // 설립·경영진·본사·주요사업·주주 등 잘 바뀌지 않는 사실만 큐레이션.
   // 시가총액·인력·경영실적(분기 매출/순이익)은 crawl-stocks/crawl-financials가
-  // 매 크롤마다 companies.json에 덮어써(app.jsx 병합) '최신 기준'으로 표시됨.
+  // 매 자동 갱신마다 companies.json에 덮어써(app.jsx 병합) '최신 기준'으로 표시됨.
   const COMPANY_PROFILES = {
     "Apple": { linkedin: "https://www.linkedin.com/company/apple", founded: "1976.4 · 미국 캘리포니아", ceo: "Tim Cook", hq: "미국 캘리포니아州 쿠퍼티노", business: ["HW: iPhone·iPad·Mac·Wearable·Vision Pro", "SW: iOS·iPadOS·macOS·visionOS", "서비스: TV+·Music·iCloud·Card/Wallet"] },
     "Microsoft": { linkedin: "https://www.linkedin.com/company/microsoft", founded: "1975 · Bill Gates·Paul Allen", ceo: "Satya Nadella", hq: "미국 워싱턴州 레드먼드", business: ["Azure 클라우드", "Windows·M365·Office SW", "Copilot·AI(OpenAI 파트너십)", "LinkedIn·GitHub·Xbox"] },
@@ -1516,7 +1516,7 @@ window.DASH = (function () {
   };
 
   // 검증된 LinkedIn 인물 프로필. 검색 결과 URL은 저장하지 않으며, 공개 프로필을
-  // 확인한 인물만 직접 연결한다. 조직도·크롤러·상세 화면이 함께 쓰는 단일 소스.
+  // 확인한 인물만 직접 연결한다. 조직도·자동화 엔진·상세 화면이 함께 쓰는 단일 소스.
   const LINKEDIN_PROFILES = {
     "Ali Ghodsi": "https://www.linkedin.com/in/alighodsi",
     "Aravind Srinivas": "https://www.linkedin.com/in/aravind-srinivas-16051987",
@@ -1881,7 +1881,7 @@ window.DASH = (function () {
 
   // ── 투자 포트폴리오·전략 맵 ─────────────────────────────────────────
   // 특정 기업이 AI SW·서비스에 투자하는 전략을 밸류체인 계층별로 도식화. 지분·라운드는
-  // 공시·보도 기반 큐레이션(포지션은 천천히 변함), 최신 자본 활동은 '핵심 활동 분석'(크롤)이 보완.
+  // 공시·보도 기반 큐레이션(포지션은 천천히 변함), 최신 자본 활동은 '핵심 활동 분석'의 원문 근거가 보완.
   const COMPANY_INVEST = {
     "NVIDIA": {
       strategy: "AI 생태계 확장 — 컴퓨트 공급, 모델 개발, 최종 애플리케이션을 잇는 기업에 투자해 NVIDIA 시스템의 학습·추론 수요처를 넓히는 자본 배분.",
