@@ -1280,7 +1280,11 @@ try {
     && data.includes('ticker: "688825.SS"')
     && chinaGroups.every(group => data.includes(`id: "${group}"`))
     && dash.STOCKS.length === 63
-    && dash.STOCKS.every(stock => dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group]);
+    && dash.STOCK_VALUE_CHAIN.length === 7
+    && dash.STOCKS.every(stock => dash.STOCK_VALUE_CHAIN.some(layer =>
+      layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])))
+    && dash.STOCK_VALUE_CHAIN.every(layer => dash.STOCKS.some(stock =>
+      layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])));
   const sourceBackedInvestments = investmentData.portfolio?.length === 8
     && new Set(investmentData.portfolio.map(item => item.name)).size === investmentData.portfolio.length
     && investmentData.portfolio.every(item => item.why && item.strategicFit
@@ -1307,8 +1311,12 @@ try {
   const stockComparisonCopyRemoved = !boards.includes("<p>{description}</p>")
     && !boards.includes('description="63개 상장사를')
     && !boards.includes("대시보드 기업 리스트에 있는 상장사를 인프라·컴퓨트 / 파운데이션 모델 / 애플리케이션 등 밸류체인 계층으로 묶어 실제 일별 시세로 비교");
+  const initialSevenCategoryView = data.includes("const STOCK_VALUE_CHAIN = [")
+    && boards.includes("window.DASH.STOCK_VALUE_CHAIN")
+    && boards.includes('aria-label="상장사 밸류체인 카테고리"')
+    && boards.includes("groups={visibleGroups} stocks={visibleStocks}");
   if (!completeBoard || !completeMetadata || !sourceBackedInvestments || !dynamicInvestmentPipeline
-    || !liveHistory || !currencyAware || !responsiveUi || !stockComparisonCopyRemoved) {
+    || !liveHistory || !currencyAware || !responsiveUi || !stockComparisonCopyRemoved || !initialSevenCategoryView) {
     throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
   console.log("  OK  63개 상장사 Stock 분석 + NVIDIA 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");

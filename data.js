@@ -1388,18 +1388,27 @@ window.DASH = (function () {
       desc: "단말·엣지·클라우드에서 모델을 실행하는 런타임과 컴퓨트 — 차별화보다 원가·안정성 관리가 핵심",
     },
   ];
-  // Stock 분석은 수집 중인 상장사 전체를 사이트의 7계층 SW·서비스 밸류체인으로 재분류한다.
-  // STOCK_GROUP_LAYER는 시장 업종의 기본 연결, STOCK_LAYER는 사업모델이 더 명확한 개별 기업의 우선 분류다.
+  // Stock 분석 전용 7계층 — 현재 추적 중인 상장사 63개의 실제 사업 영역을 하류에서 상류 순으로 재분류
+  const STOCK_VALUE_CHAIN = [
+    { id: "applications", ko: "애플리케이션·디바이스", en: "Applications & Devices", accent: "#E54B4B", accentSoft: "#FDECEC" },
+    { id: "enterprise", ko: "에이전트·엔터프라이즈 SW", en: "Agents & Enterprise Software", accent: "#C026D3", accentSoft: "#FAE8FF" },
+    { id: "foundation", ko: "파운데이션 모델", en: "Foundation Models", accent: "#7A38D6", accentSoft: "#F1EBFC" },
+    { id: "cloud", ko: "클라우드·데이터센터", en: "Cloud & Data Centers", accent: "#2563EB", accentSoft: "#EAF0FF" },
+    { id: "compute", ko: "인프라·AI 컴퓨트", en: "Infrastructure & AI Compute", accent: "#0D9488", accentSoft: "#E5F7F4" },
+    { id: "memory-network", ko: "메모리·네트워크", en: "Memory & Networking", accent: "#EA580C", accentSoft: "#FFF0E6" },
+    { id: "manufacturing", ko: "제조·장비·소재", en: "Manufacturing, Equipment & Materials", accent: "#475569", accentSoft: "#EEF2F6" },
+  ];
+  // STOCK_GROUP_LAYER는 시장 업종의 기본 연결, STOCK_LAYER는 복합 사업자의 주력 수익모델 기준 우선 분류
   const STOCK_GROUP_LAYER = {
-    chip: "infra", memory: "infra", foundry: "infra", equipment: "infra",
-    packaging: "infra", network: "infra", hyperscaler: "infra", datacenter: "infra",
-    software: "service", device: "app", native: "model",
-    "china-memory": "infra", "china-foundry": "infra", "china-equipment": "infra",
-    "china-packaging": "infra", "china-design": "infra", "china-materials": "infra",
+    chip: "compute", memory: "memory-network", foundry: "manufacturing", equipment: "manufacturing",
+    packaging: "manufacturing", network: "memory-network", hyperscaler: "cloud", datacenter: "cloud",
+    software: "enterprise", device: "applications", native: "foundation",
+    "china-memory": "memory-network", "china-foundry": "manufacturing", "china-equipment": "manufacturing",
+    "china-packaging": "manufacturing", "china-design": "compute", "china-materials": "manufacturing",
   };
   const STOCK_LAYER = {
-    MSFT: "service", AMZN: "infra", NVDA: "infra", GOOGL: "model", META: "model",
-    ORCL: "service", PLTR: "agent", NOW: "service", SPCX: "model", AAPL: "app",
+    MSFT: "enterprise", AMZN: "cloud", NVDA: "compute", GOOGL: "foundation", META: "foundation",
+    ORCL: "enterprise", PLTR: "enterprise", NOW: "enterprise", SPCX: "foundation", AAPL: "applications",
   };
 
   // 33개 추적 기업의 대표 계층·인접 확장 계층·단말 사업 적합도.
@@ -1890,5 +1899,5 @@ window.DASH = (function () {
     },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_GROUP_LAYER, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_VALUE_CHAIN, STOCK_GROUP_LAYER, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();
