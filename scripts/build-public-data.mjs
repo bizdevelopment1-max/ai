@@ -11,6 +11,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { isExcludedText } from "./news-policy.mjs";
 import { normalizeLocalizedRecord } from "./korean-copy.mjs";
+import { consolidateMarketRecords } from "./market-consolidation.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const root = process.cwd();
@@ -51,7 +52,8 @@ const recordKeys = [
   "id", "type", "group", "verticalId", "title", "titleEn", "metricLabel", "values",
   "sourceName", "sourceUrl", "publishedAt", "collectedAt", "evidence", "origin",
   "provenance", "displayEligible", "sourceQuantifiedLines", "sourceQuantities", "sourceMetricValues", "localization",
-  "summaryLinesEn", "summaryLinesKo",
+  "summaryLinesEn", "summaryLinesKo", "consolidatedTitle", "consolidatedInsights",
+  "relatedSources", "mergedRecordIds", "mergedRecordCount", "duplicateRecordCount", "consolidation",
 ];
 const signalKeys = ["id", "group", "title", "signal", "quant", "source", "date", "url", "sourceSummaryMode", "provenance"];
 
@@ -59,11 +61,13 @@ const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBan
   .map(item => normalizeLocalizedRecord(compact(item, articleKeys)));
 const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notDeleted("research"))
   .map(item => normalizeLocalizedRecord(compact(item, researchKeys)));
-const visibleRecords = (market.records || []).filter(record => sourceBacked(record)
+const visibleRecordSources = (market.records || []).filter(record => sourceBacked(record)
   && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
   && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length)
-  .filter(notBanned).filter(notDeleted("market"))
+  .filter(notBanned).filter(notDeleted("market"));
+const visibleRecords = consolidateMarketRecords(visibleRecordSources)
   .map(item => normalizeLocalizedRecord(compact(item, recordKeys)));
+const consolidatedDuplicateCount = visibleRecords.reduce((count, record) => count + Number(record.duplicateRecordCount || 0), 0);
 const visibleSignals = (data, scope) => (data.items || [])
   .filter(item => item?.provenance?.status === "evidence-linked" && item?.sourceSummaryMode === "source-content-extractive")
   .filter(notBanned).filter(notDeleted(scope))
@@ -73,7 +77,15 @@ const generatedAt = new Date().toISOString();
 const views = {
   "news-view.json": { generatedAt, count: visibleArticles.length, articles: visibleArticles },
   "research-view.json": { generatedAt, count: visibleResearch.length, feed: visibleResearch },
-  "market-view.json": { generatedAt, engine: market.engine, groups: market.groups || [], records: visibleRecords },
+  "market-view.json": {
+    generatedAt,
+    engine: market.engine,
+    groups: market.groups || [],
+    sourceRecordCount: visibleRecordSources.length,
+    insightCount: visibleRecords.length,
+    consolidatedDuplicateCount,
+    records: visibleRecords,
+  },
   "infra-view.json": { generatedAt, count: visibleSignals(infra, "infra-signal").length, groups: infra.groups || [], items: visibleSignals(infra, "infra-signal") },
   "bizmodel-view.json": { generatedAt, count: visibleSignals(bizmodel, "bizmodel-signal").length, groups: bizmodel.groups || [], items: visibleSignals(bizmodel, "bizmodel-signal") },
 };
@@ -96,4 +108,4 @@ const versionInputs = [
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
 await writeJson("data-version.json", { version, generatedAt, assets: [...Object.keys(views), "company-news.json", "business-model-forecasts.json"] });
 
-console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} quantified records · version ${version}`);
+console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} market insights · ${consolidatedDuplicateCount} duplicate records consolidated · version ${version}`);

@@ -8,6 +8,7 @@ import { textSimilarity } from "./source-content.mjs";
 import { bulletizeKorean, hasKoreanProseEnding, hasKoreanSentencePeriod } from "./korean-copy.mjs";
 import { canonicalSuppressionUrl, createSuppressionRegistry } from "./suppression-registry.mjs";
 import { appendRecords, ensureMarketDatabase, hasConsumerSurveyEvidence, sourceMetricValues } from "./market-db.mjs";
+import { consolidateMarketRecords, sameMarketStory } from "./market-consolidation.mjs";
 
 const required = [
   ".github/workflows/daily-news.yml",
@@ -32,6 +33,7 @@ const required = [
   "scripts/build-company-news.mjs",
   "scripts/crawl-markets.mjs",
   "scripts/market-db.mjs",
+  "scripts/market-consolidation.mjs",
   "scripts/refresh-market-source-content.mjs",
   "scripts/global-sources.mjs",
   "scripts/build-browser-bundle.mjs",
@@ -1132,10 +1134,22 @@ try {
   const suppressionPreservesLedger = /const records = Array\.isArray\(data\.records\) \? data\.records : \[\];/.test(marketRefresh)
     && /if \(suppression\.matches\(record, "market"\)\) return record;/.test(marketRefresh)
     && /userSuppressedPreserved: suppressedRecords\.length/.test(marketRefresh);
-  if (market.database?.mode !== "append-only" || records.length < 3 || ids.size !== records.length || linked.length !== records.length
-    || !hasUserResearch || !hasNewVerticals || !sourceBoundCards || !boardContract || !noForecastPlaceholder
-    || !separateCollectionTracks || !suppressionPreservesLedger) {
-    throw new Error("append-only market database requires publisher-page-backed display records and retained source links");
+  const marketChecks = {
+    appendOnly: market.database?.mode === "append-only",
+    recordCount: records.length >= 3,
+    uniqueIds: ids.size === records.length,
+    linked: linked.length === records.length,
+    userResearch: hasUserResearch,
+    verticals: hasNewVerticals,
+    sourceBoundCards,
+    boardContract,
+    forecastDisplay: noForecastPlaceholder,
+    separateCollectionTracks,
+    suppressionPreservesLedger,
+  };
+  const failedMarketChecks = Object.entries(marketChecks).filter(([, value]) => !value).map(([key]) => key);
+  if (failedMarketChecks.length) {
+    throw new Error(`append-only market database requires publisher-page-backed display records and retained source links: ${failedMarketChecks.join(", ")}`);
   }
   console.log(`  정상  market.json 누적 정량 DB ${records.length}건`);
 } catch (error) {
@@ -1160,6 +1174,65 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  정량 지표 자동 명명: ${error.message}`);
+}
+
+try {
+  const base = {
+    id: "market:original",
+    type: "market-observation",
+    title: "Google's $205 Billion AI Bet Terrified Investors",
+    titleEn: "Google's $205 Billion AI Bet Terrified Investors",
+    sourceName: "Original Publisher",
+    sourceUrl: "https://example.com/original",
+    publishedAt: "2026-07-26",
+    sourceMetricValues: [
+      { label: "설비투자", value: "$205 billion", sourceLine: "Capital expenditure reached $205 billion" },
+      { label: "수주잔고", value: "$514 billion", sourceLine: "Cloud backlog reached $514 billion" },
+    ],
+    sourceQuantities: ["$205 billion", "$514 billion"],
+    sourceQuantifiedLines: [
+      { line: "Capital expenditure reached $205 billion", values: ["$205 billion"] },
+      { line: "Cloud backlog reached $514 billion", values: ["$514 billion"] },
+    ],
+    summaryLinesEn: ["Cloud revenue accelerated", "Capital expenditure expanded", "Backlog pre-sold future capacity"],
+    localization: {
+      status: "accepted",
+      title: "Google AI 투자 확대",
+      summaryLines: ["클라우드 매출 가속", "설비투자 확대", "수주잔고 기반 선판매"],
+    },
+  };
+  const syndicated = {
+    ...base,
+    id: "market:syndicated",
+    title: "Google’s $205 Billion AI Bet Terrified Investors - AOL",
+    titleEn: "Google’s $205 Billion AI Bet Terrified Investors - AOL",
+    sourceName: "AOL",
+    sourceUrl: "https://aol.example.com/syndicated",
+  };
+  const distinct = {
+    ...base,
+    id: "market:distinct",
+    title: "AI gaming market reaches $205 billion",
+    titleEn: "AI gaming market reaches $205 billion",
+    sourceName: "Research House",
+    sourceUrl: "https://research.example.com/gaming",
+    sourceMetricValues: [{ label: "시장 규모", value: "$205 billion", sourceLine: "AI gaming market reaches $205 billion" }],
+    sourceQuantities: ["$205 billion"],
+    sourceQuantifiedLines: [{ line: "AI gaming market reaches $205 billion", values: ["$205 billion"] }],
+  };
+  const consolidated = consolidateMarketRecords([base, syndicated, distinct]);
+  const merged = consolidated.find(record => record.mergedRecordCount === 2);
+  if (!sameMarketStory(base, syndicated) || sameMarketStory(base, distinct)
+    || consolidated.length !== 2 || !merged
+    || merged.relatedSources.length !== 2
+    || merged.sourceMetricValues.length !== 2
+    || merged.consolidatedInsights.length !== 3) {
+    throw new Error("same-story sources were not consolidated into one MECE insight");
+  }
+  console.log("  OK  동일 기사·재배포 통합 · 수치·근거 중복 제거 · 3줄 인사이트");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  시장 인사이트 중복 통합: ${error.message}`);
 }
 
 try {
@@ -1389,15 +1462,26 @@ try {
     readFile("market-view.json", "utf8").then(JSON.parse),
   ]);
   const safe = list => list.every(item => item.displayEligible !== false && item.provenance?.status === "source-backed");
+  const marketRecords = publicMarket.records || [];
+  const remainingMarketDuplicates = marketRecords.some((record, index) =>
+    marketRecords.slice(index + 1).some(other => sameMarketStory(record, other)));
+  const mergedMarketRecordsValid = marketRecords.every(record =>
+    Number(record.mergedRecordCount || 1) >= 1
+    && Number(record.duplicateRecordCount || 0) === Number(record.mergedRecordCount || 1) - 1
+    && Array.isArray(record.relatedSources) && record.relatedSources.length >= 1
+    && Array.isArray(record.consolidatedInsights) && record.consolidatedInsights.length >= 1
+    && record.consolidatedInsights.length <= 3);
   if (!version.version || !/data-version\.json/.test(appSource)
     || !/news-view\.json/.test(appSource) || !/research-view\.json/.test(appSource)
     || !/market-view\.json/.test(boardsSource) || /Math\.floor\(Date\.now\s*\/\s*60000\)/.test(`${appSource}\n${boardsSource}`)
     || /setInterval\(_queueScan,\s*600\)/.test(animSource)
     || !/build-public-data\.mjs/.test(workflowSource)
-    || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(publicMarket.records || [])) {
+    || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(marketRecords)
+    || remainingMarketDuplicates || !mergedMarketRecordsValid
+    || Number(publicMarket.sourceRecordCount || 0) - marketRecords.length !== Number(publicMarket.consolidatedDuplicateCount || 0)) {
     throw new Error("public views must be versioned, source-backed, and free of minute cache busting");
   }
-  console.log(`  OK  versioned source-only public views ${publicNews.count}/${publicResearch.count}/${publicMarket.records.length}`);
+  console.log(`  OK  versioned source-only public views ${publicNews.count}/${publicResearch.count}/${marketRecords.length} · 시장 중복 ${publicMarket.consolidatedDuplicateCount || 0}건 통합`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  source-only public views: ${error.message}`);
@@ -1599,6 +1683,7 @@ try {
     || !registry.hasCompany("deleted startup")
     || registry.hasCompany("NVIDIA")
     || !registry.hasKey("insight-axis", "수익 모델")
+    || !registry.matches({ relatedSources: [{ sourceUrl: "https://example.com/story?utm_medium=syndication" }] }, "market")
     || canonicalSuppressionUrl("https://example.com/story?utm_source=x") !== "https://example.com/story") {
     throw new Error("suppression registry identity matching is incomplete");
   }

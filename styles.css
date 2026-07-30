@@ -3502,6 +3502,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-record-type { display: inline-flex; align-items: center; border-radius: 99px; padding: 3px 7px; font-family: var(--f); font-size: 9.5px; font-weight: 800; color: #0369A1; background: color-mix(in srgb, #0EA5E9 13%, var(--panel)); }
 .mkt-record-type.type-consumer-survey { color: #7C3AED; background: color-mix(in srgb, #8B5CF6 13%, var(--panel)); }
 .mkt-record-type.type-shipment { color: #047857; background: color-mix(in srgb, #10B981 13%, var(--panel)); }
+.mkt-record-merged { display: inline-flex; align-items: center; border: 1px solid color-mix(in srgb, #0891B2 24%, var(--line)); border-radius: 5px; padding: 2px 6px; font-family: var(--f); font-size: 9px; font-weight: 800; color: #0369A1; background: color-mix(in srgb, #0EA5E9 8%, var(--panel)); white-space: nowrap; }
 .mkt-record-top time { font-family: var(--mono); font-size: 10px; color: var(--muted); white-space: nowrap; }
 .mkt-record-title { display: inline-flex; align-items: flex-start; gap: 4px; margin-top: 8px; font-family: var(--f); font-size: 13px; font-weight: 800; line-height: 1.4; color: var(--ink); text-decoration: none; word-break: keep-all; }
 .mkt-record-title:hover { color: #0891B2; text-decoration: underline; }
@@ -3509,7 +3510,9 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-record-values { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
 .mkt-record-values span { display: inline-flex; flex-direction: column; gap: 2px; max-width: 100%; padding: 5px 7px; border: 1px solid color-mix(in srgb, #0891B2 20%, var(--line)); border-radius: 7px; font-family: var(--mono); font-size: 11px; font-weight: 800; color: var(--ink); background: var(--panel); }
 .mkt-record-values em { overflow: hidden; text-overflow: ellipsis; font-family: var(--f); font-style: normal; font-size: 8.5px; font-weight: 800; color: var(--muted); white-space: nowrap; }
-.mkt-record-insights { display: grid; gap: 5px; margin: 10px 0 0; padding: 0; list-style: none; font-family: var(--f); font-size: 10.75px; font-weight: 650; line-height: 1.5; color: var(--ink-2); word-break: keep-all; }
+.mkt-record-insight-block { margin-top: 10px; padding: 9px 10px; border: 1px solid color-mix(in srgb, #0891B2 16%, var(--line)); border-radius: 8px; background: color-mix(in srgb, #0891B2 4%, var(--panel)); }
+.mkt-record-insight-block > b { display: block; margin-bottom: 5px; font-family: var(--f); font-size: 9px; font-weight: 850; color: #087F5B; }
+.mkt-record-insights { display: grid; gap: 5px; margin: 0; padding: 0; list-style: none; font-family: var(--f); font-size: 10.75px; font-weight: 650; line-height: 1.5; color: var(--ink-2); word-break: keep-all; }
 .mkt-record-insights li { position: relative; padding-left: 10px; }
 .mkt-record-insights li::before { content: ""; position: absolute; top: .62em; left: 0; width: 4px; height: 4px; border-radius: 99px; background: #0891B2; }
 .mkt-record-quant-evidence { margin-top: 11px; border-top: 1px solid color-mix(in srgb, #0891B2 18%, var(--line)); padding-top: 8px; color: var(--ink-2); }
@@ -3518,6 +3521,11 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-record-quant-evidence li::marker { color: #0891B2; }
 .mkt-record-source { display: inline-flex; align-items: center; gap: 4px; margin-top: auto; padding-top: 10px; font-family: var(--f); font-size: 10.5px; font-weight: 800; color: #0891B2; text-decoration: none; }
 .mkt-record-source:hover { text-decoration: underline; }
+.mkt-record-sources { margin-top: auto; padding-top: 10px; }
+.mkt-record-sources > b { display: block; margin-bottom: 5px; font-family: var(--f); font-size: 9px; font-weight: 800; color: var(--muted); }
+.mkt-record-sources nav { display: flex; flex-wrap: wrap; gap: 5px; }
+.mkt-record-sources a { display: inline-flex; align-items: center; gap: 3px; padding: 3px 6px; border: 1px solid color-mix(in srgb, #0891B2 20%, var(--line)); border-radius: 5px; font-family: var(--f); font-size: 9.5px; font-weight: 800; color: #0891B2; text-decoration: none; background: var(--panel); }
+.mkt-record-sources a:hover { border-color: #0891B2; background: color-mix(in srgb, #0891B2 9%, var(--panel)); }
 .mkt-baseline-head { display: flex; align-items: baseline; gap: 9px; margin: 0 20px 2px; padding-top: 7px; border-top: 1px solid var(--line); }
 .mkt-baseline-head b { font-family: var(--f); font-size: 13px; font-weight: 800; color: var(--ink); }
 .mkt-baseline-head em { font-family: var(--f); font-style: normal; font-size: 10.5px; font-weight: 600; color: var(--muted); word-break: keep-all; }
@@ -4511,10 +4519,15 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   }
   .sp-card:is(:hover, :focus-visible) :is(.sp-card-badge, .sp-card-institution, .ct-rel),
   .cd-org-node:is(:hover, :focus-visible) .cd-org-li,
-  .mkt-card:is(:hover, :focus-visible) :is(.mkt-record-type, .mkt-record-locale) {
+  .mkt-card:is(:hover, :focus-visible) :is(.mkt-record-type, .mkt-record-locale),
+  .mkt-record:is(:hover, :focus-visible) :is(.mkt-record-type, .mkt-record-locale, .mkt-record-merged, .mkt-record-sources a) {
     border-color: #FFFFFF !important;
     background: #FFFFFF !important;
     color: var(--hover-tone) !important;
+  }
+  .mkt-record:is(:hover, :focus-visible) .mkt-record-insight-block {
+    border-color: rgba(255, 255, 255, .34) !important;
+    background: rgba(255, 255, 255, .08) !important;
   }
   .sp-card:is(:hover, :focus-visible) .sp-card-intel > div,
   .cd-org-tier:is(:hover, :focus-visible) .cd-org-node {

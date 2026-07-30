@@ -4629,13 +4629,16 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
       try { localStorage.setItem(MARKET_LS, JSON.stringify(next)); } catch {}
       return next;
     });
-    rememberSuppression({
+    const suppressionTargets = deletePending.relatedSources?.length
+      ? deletePending.relatedSources
+      : [{ id: deletePending.id, sourceUrl: deletePending.sourceUrl || deletePending.url }];
+    suppressionTargets.forEach(target => rememberSuppression({
       scope: "market",
-      key,
-      id: deletePending.id,
-      url: deletePending.sourceUrl || deletePending.url,
+      key: target.id || target.sourceUrl || key,
+      id: target.id,
+      url: target.sourceUrl,
       title: deletePending.title || deletePending.name,
-    });
+    }));
     closeDelete();
   };
   const deleteControl = item => {
@@ -4689,8 +4692,11 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
     && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length);
   // 소비자 조사 / 시장 2개 축으로 분리(탭 자체가 필터). 자동 누적 데이터를 type으로 나눠 표시.
   const scoped = records.filter(record => isSurvey ? record.type === "consumer-survey" : record.type !== "consumer-survey");
-  const sourceCount = new Set(scoped.map(record => record.sourceUrl)).size;
+  const sourceCount = new Set(scoped.flatMap(record =>
+    (record.relatedSources?.length ? record.relatedSources.map(source => source.sourceUrl) : [record.sourceUrl])
+  ).filter(Boolean)).size;
   const quantityCount = scoped.reduce((count, record) => count + (record.sourceMetricValues || record.values || []).length, 0);
+  const duplicateCount = scoped.reduce((count, record) => count + Number(record.duplicateRecordCount || 0), 0);
   const shownRecords = scoped.slice()
     .sort((a, b) => String(b.publishedAt || b.collectedAt || "").localeCompare(String(a.publishedAt || a.collectedAt || "")));
   const TYPE_LABEL = { "consumer-survey": "소비자 조사", "market-estimate": "시장 기준선", shipment: "출하량", "market-observation": "정량 관측" };
@@ -4713,27 +4719,36 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
       ) : (
         <React.Fragment>
           <div className="mkt-db-summary">
-            <div><em>원문 검증 레코드</em><b>{scoped.length}</b><span>발행사 본문 추출 후에만 표시</span></div>
-            <div><em>원문 링크</em><b>{sourceCount}</b><span>카드 제목과 하단 링크에서 원문 이동</span></div>
+            <div><em>통합 인사이트</em><b>{scoped.length}</b><span>동일 기사·재배포를 하나의 분석으로 통합</span></div>
+            <div><em>검증 출처</em><b>{sourceCount}</b><span>통합 카드 안에서 관련 원문 개별 확인</span></div>
             <div><em>정량 지표</em><b>{quantityCount}</b><span>항목별 의미와 발행사 근거 문장 표시</span></div>
+            <div><em>중복 통합</em><b>{duplicateCount}</b><span>반복 카드 제거 후 근거·수치만 병합</span></div>
           </div>
 
           <div className="mkt-db-head">
             <div>
               <h3>{isSurvey ? "AI 소비자 조사 데이터베이스" : "AI 시장 정량 데이터베이스"}</h3>
-              <p>발행사 원문에서 확인된 3줄 핵심과 정량 근거만 표시 · 기존 기록 영구 보존 · X는 사용자가 선택한 항목만 숨김</p>
+              <p>동일 사건은 하나의 3줄 인사이트로 통합 · 정량 지표와 관련 원문은 중복 없이 병합 · 기존 기록 영구 보존 · X는 사용자가 선택한 항목만 숨김</p>
             </div>
           </div>
           <div className="mkt-record-grid">
             {shownRecords.map(record => {
               const localized = record.localization?.status === "accepted" || record.localization?.status === "fallback-english"
                 ? record.localization : null;
-              const title = localized?.title || record.titleEn || record.title;
-              const insights = localized?.summaryLines?.length ? localized.summaryLines : (record.summaryLinesEn || []);
+              const title = record.consolidatedTitle || localized?.title || record.titleEn || record.title;
+              const insights = record.consolidatedInsights?.length
+                ? record.consolidatedInsights
+                : localized?.summaryLines?.length ? localized.summaryLines : (record.summaryLinesEn || []);
+              const relatedSources = record.relatedSources?.length
+                ? record.relatedSources
+                : [{ sourceName: record.sourceName, sourceUrl: record.sourceUrl, publishedAt: record.publishedAt }];
               return (
               <article className="mkt-record" key={record.id}>
                 <div className="mkt-record-top">
                   <span className={"mkt-record-type type-" + record.type}>{TYPE_LABEL[record.type] || "정량 관측"}</span>
+                  {record.mergedRecordCount > 1 && <span className="mkt-record-merged">
+                    {relatedSources.length > 1 ? `${relatedSources.length}개 출처 통합` : `${record.mergedRecordCount}개 중복 통합`}
+                  </span>}
                   {record.sourceRegion && <span className="mkt-record-locale">{record.sourceRegion} · {record.sourceLanguage}</span>}
                   {deleteControl(record)}
                 </div>
@@ -4743,12 +4758,22 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                     <span key={`${metric.label}-${metric.value}-${index}`}><em>{metric.label}</em>{metric.value}</span>
                   ))}
                 </div>
-                {insights.length > 0 && <ul className="mkt-record-insights">{insights.map((line, index) => <li key={index}>{line}</li>)}</ul>}
+                {insights.length > 0 && <div className="mkt-record-insight-block">
+                  <b>{record.mergedRecordCount > 1 ? "통합 인사이트" : "핵심 인사이트"}</b>
+                  <ul className="mkt-record-insights">{insights.map((line, index) => <li key={index}>{line}</li>)}</ul>
+                </div>}
                 <details className="mkt-record-quant-evidence" open>
                   <summary>지표 근거 {record.sourceQuantifiedLines.length}개</summary>
                   <ul>{record.sourceQuantifiedLines.map((item, index) => <li key={index}>{item.line}</li>)}</ul>
                 </details>
-                <a className="mkt-record-source" href={record.sourceUrl} target="_blank" rel="noopener">원문 열기 · {record.sourceName} <Icon name="ext" size={10} /></a>
+                <div className="mkt-record-sources">
+                  <b>관련 출처 {relatedSources.length}개</b>
+                  <nav>{relatedSources.map((source, index) => (
+                    <a key={`${source.sourceUrl}-${index}`} href={source.sourceUrl} target="_blank" rel="noopener">
+                      {source.sourceName || `출처 ${index + 1}`} <Icon name="ext" size={9} />
+                    </a>
+                  ))}</nav>
+                </div>
               </article>
               );
             })}
