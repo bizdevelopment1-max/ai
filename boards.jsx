@@ -2588,6 +2588,132 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   );
 }
 
+// AI 수익화 플레이북 — 기업별 ①수익모델 ②BM 신호 ③투자·사업 방향을 크롤 기사로 누적.
+// monetization.json(crawl-monetization.mjs) 소비. 표시는 원문 확인(한국어 3줄) 기사만.
+function MonetizationPlaybook({ articles, dataVersion }) {
+  const ref = React.useRef(null);
+  const inView = useInView(ref);
+  const [data, setData] = React.useState(null);
+  const [loaded, setLoaded] = React.useState(false);
+  React.useEffect(() => {
+    if (!inView || loaded || !dataVersion) return;
+    setLoaded(true);
+    fetch(`monetization.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (j && Array.isArray(j.companies)) setData(j); })
+      .catch(() => {});
+  }, [inView, loaded, dataVersion]);
+
+  // 원문 확인(한국어 3줄) 기사 인덱스 — SignalInfographic과 동일 게이트
+  const srcByUrl = React.useMemo(() => {
+    const idx = new Map();
+    (articles || []).forEach(a => {
+      const loc = a?.localization, key = signalSourceKey(a?.url);
+      if (key && loc?.status === "accepted" && loc?.displayLanguage === "ko"
+        && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3) idx.set(key, a);
+    });
+    return idx;
+  }, [articles]);
+
+  const VC = window.DASH.VALUE_CHAIN || [];
+  const models = (data && data.models) || [];
+  const directions = (data && data.directions) || [];
+  const modelMeta = id => models.find(m => m.id === id) || { ko: id, accent: "#8A93A4" };
+  const dirMeta = id => directions.find(d => d.id === id) || { ko: id, accent: "#8A93A4" };
+  const layerMeta = id => VC.find(l => l.id === id) || { ko: id, accent: "#8A93A4" };
+
+  const resolve = sig => {
+    const src = srcByUrl.get(signalSourceKey(sig.url));
+    if (!src) return null;
+    const disp = displayFeedText(src);
+    if (!disp.translated || !disp.title) return null;
+    return { ...sig, koTitle: disp.title };
+  };
+  const companies = ((data && data.companies) || []).map(c => {
+    const seen = new Set();
+    const uniq = arr => (arr || []).map(resolve).filter(Boolean).filter(s => {
+      const k = signalSourceKey(s.url); if (seen.has(k)) return false; seen.add(k); return true;
+    });
+    const monetize = uniq(c.monetize).slice(0, 3);
+    const direction = uniq(c.direction).slice(0, 3);
+    const mix = {}; monetize.forEach(s => { if (s.model) mix[s.model] = (mix[s.model] || 0) + 1; });
+    const modelMix = Object.entries(mix).sort((a, b) => b[1] - a[1]).map(([id, n]) => ({ id, n }));
+    return { ...c, monetize, direction, modelMix };
+  }).filter(c => c.monetize.length || c.direction.length);
+
+  const sourceReady = Array.isArray(articles) && articles.length > 0;
+  const byLayer = {};
+  companies.forEach(c => (byLayer[c.layer] = byLayer[c.layer] || []).push(c));
+  const layerOrder = VC.map(l => l.id).filter(id => byLayer[id]);
+
+  return (
+    <div className="mplay" ref={ref}>
+      <div className="infra-sig-head">
+        <div className="isg-titles">
+          <h3>AI 수익화 플레이북 <em>기사 기반 자동 누적 · 매일 갱신</em></h3>
+          <p>기업별 ①어떻게 돈을 버는가(수익모델) ②비즈니스 모델 신호 ③앞으로의 투자·사업 방향 — 신사업 발굴 관점, 원문 확인(한국어 3줄) 기사만 누적</p>
+        </div>
+        <span className="isg-total">기업 <b>{companies.length}</b></span>
+      </div>
+      {(!data || !sourceReady) ? (
+        <div className="mkt-loading">{loaded ? "수익화 신호를 불러오는 중…" : "스크롤하면 로드됩니다"}</div>
+      ) : companies.length === 0 ? (
+        <div className="mkt-loading">표시할 수익화 신호가 아직 없습니다 · 크롤이 쌓이면 자동 표시됩니다</div>
+      ) : (
+        <React.Fragment>
+          <div className="mplay-legend">
+            {models.map(m => <span key={m.id} className="mplay-lg"><i style={{ background: m.accent }} />{m.ko}</span>)}
+          </div>
+          {layerOrder.map(lid => {
+            const lm = layerMeta(lid);
+            return (
+              <div className="mplay-layer" key={lid} style={{ "--accent": lm.accent }}>
+                <div className="mplay-lhead"><span className="mplay-ldot" style={{ background: lm.accent }} /><b>{lm.ko}</b><em>{byLayer[lid].length}개사</em></div>
+                <div className="mplay-grid">
+                  {byLayer[lid].map(c => (
+                    <div className="mplay-card" key={c.name}>
+                      <div className="mplay-c-head"><b>{c.name}</b><span className="mplay-vert">{c.vertical}</span></div>
+                      {c.modelMix.length > 0 && (
+                        <div className="mplay-mix">
+                          {c.modelMix.map(m => { const mm = modelMeta(m.id); return <span key={m.id} className="mplay-model" style={{ "--c": mm.accent }} title={mm.ko}>{mm.ko}<i>{m.n}</i></span>; })}
+                        </div>
+                      )}
+                      {c.monetize.length > 0 && (
+                        <div className="mplay-sec">
+                          <h5>돈 버는 방식</h5>
+                          {c.monetize.map((s, i) => { const mm = modelMeta(s.model); return (
+                            <a className="mplay-sig" key={"m" + i} href={s.url} target="_blank" rel="noopener">
+                              <span className="mplay-tag" style={{ "--c": mm.accent }}>{mm.ko}</span>
+                              <span className="mplay-txt">{s.koTitle}</span>
+                              <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""} ↗</em>
+                            </a>
+                          ); })}
+                        </div>
+                      )}
+                      {c.direction.length > 0 && (
+                        <div className="mplay-sec">
+                          <h5>투자·사업 방향</h5>
+                          {c.direction.map((s, i) => { const dm = dirMeta(s.kind); return (
+                            <a className="mplay-sig" key={"d" + i} href={s.url} target="_blank" rel="noopener">
+                              <span className="mplay-tag dir" style={{ "--c": dm.accent }}>{dm.ko}</span>
+                              <span className="mplay-txt">{s.koTitle}</span>
+                              <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""} ↗</em>
+                            </a>
+                          ); })}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
 function SignalBoard({ sectionRef, articles, dataVersion }) {
   const inView = useInView(sectionRef);
   return (
@@ -2621,6 +2747,7 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
           </div>
         </div>
         <NewBizDeepDive />
+        <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
         <ForwardDeployedAIModel />
         <AIConsultingBuildSection />
         <VerticalIntegrationTables />

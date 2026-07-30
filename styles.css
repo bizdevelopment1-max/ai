@@ -1024,6 +1024,36 @@ a[href]:hover .rainbow-on-hover,
 .cd-inv-card { border-left: 3px solid var(--accent); background: var(--panel-2); border-radius: 0 7px 7px 0; padding: 7px 9px; }
 .cd-inv-card b { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink); }
 .cd-inv-card span { display: block; margin-top: 2px; font-size: 11px; line-height: 1.45; font-weight: 600; color: var(--muted); }
+
+/* ── AI 수익화 플레이북 (MonetizationPlaybook) ── */
+.mplay { margin-top: 26px; }
+.mplay-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 4px 0 16px; padding: 10px 12px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; }
+.mplay-lg { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--ink-2); }
+.mplay-lg i { width: 9px; height: 9px; border-radius: 3px; }
+.mplay-layer { margin-bottom: 18px; }
+.mplay-lhead { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; padding-bottom: 7px; border-bottom: 2px solid var(--accent); }
+.mplay-lhead b { font-size: 14px; font-weight: 800; color: var(--ink); }
+.mplay-lhead em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); }
+.mplay-ldot { width: 10px; height: 10px; border-radius: 50%; }
+.mplay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.mplay-card { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; padding: 13px 15px; background: var(--panel); }
+.mplay-c-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
+.mplay-c-head b { font-size: 15px; font-weight: 800; color: var(--ink); }
+.mplay-vert { font-size: 11px; font-weight: 700; color: var(--muted); }
+.mplay-mix { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 11px; }
+.mplay-model { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; color: var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); border: 1px solid color-mix(in srgb, var(--c) 32%, transparent); border-radius: 20px; padding: 1px 5px 1px 9px; }
+.mplay-model i { font-style: normal; font-size: 9.5px; font-weight: 800; color: #fff; background: var(--c); border-radius: 20px; padding: 0 5px; min-width: 15px; text-align: center; }
+.mplay-sec { margin-top: 10px; }
+.mplay-sec h5 { margin: 0 0 6px; font-size: 11px; font-weight: 800; letter-spacing: .01em; color: var(--ink-2); text-transform: none; }
+.mplay-sec h5::before { content: "▪ "; color: var(--accent); }
+.mplay-sig { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: 4px 8px; padding: 6px 0; border-top: 1px solid var(--line-2); text-decoration: none; }
+.mplay-sig:first-of-type { border-top: none; }
+.mplay-tag { grid-row: span 2; align-self: center; font-size: 9.5px; font-weight: 800; color: var(--c); background: color-mix(in srgb, var(--c) 11%, transparent); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); border-radius: 6px; padding: 3px 6px; white-space: nowrap; text-align: center; line-height: 1.2; max-width: 76px; }
+.mplay-txt { font-size: 12px; font-weight: 700; line-height: 1.45; color: var(--ink); word-break: keep-all; }
+.mplay-sig em { grid-column: 2; font-style: normal; font-size: 10.5px; font-weight: 600; color: var(--muted); }
+.mplay-sig:hover .mplay-txt { color: var(--accent); }
+@media (max-width: 720px) { .mplay-grid { grid-template-columns: 1fr; } }
+
 .cd-vp {
   border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 0 8px 8px 0;
   background: color-mix(in srgb, var(--accent) 6%, var(--panel));

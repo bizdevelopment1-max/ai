@@ -24,6 +24,7 @@ const rules = [
   { file: "market.json", tab: "AI 신사업 정량·소비자 DB", maxAge: 2, min: 18, items: d => d.records || d.items || [], soft: true },
   { file: "infra.json", tab: "인프라·미래기술", maxAge: 5, min: 3, items: d => d.items || [] },
   { file: "bizmodel.json", tab: "수익화 모델", maxAge: 5, min: 3, items: d => d.items || [] },
+  { file: "monetization.json", tab: "AI 수익화 플레이북", maxAge: 5, min: 3, items: d => d.companies || [], soft: true },
   { file: "stocks.json", tab: "주가 차트", maxAge: 4, min: 8, items: d => Object.values(d.stocks || {}) },
   { file: "history.json", tab: "누적 데이터", maxAge: 2, min: 20, items: d => d.articles || [] },
 ];
