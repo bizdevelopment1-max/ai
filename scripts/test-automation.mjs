@@ -155,7 +155,10 @@ try {
     && boards.includes("function MobileStrategyBoard")
     && boards.includes("function StrategyPortfolioCard")
     && boards.includes("Where to Play / How to Win")
-    && boards.includes("Business → Economics → Direction")
+    && boards.includes("Business · Economics · Direction · Capital")
+    && boards.includes('className="msf-strategy-house"')
+    && boards.includes('className="vc-logic-map"')
+    && boards.includes('className="cd-sf-link"')
     && ["현재 사업", "Biz Model", "사업 방향", "최근 실행"].every(label => boards.includes(`>${label}<`))
     && boards.includes('className="vc-portfolio-grid"')
     && boards.includes('className="startup-portfolio-grid"')
@@ -585,7 +588,7 @@ try {
     && /sourceQuantifiedLines/.test(boards)
     && /검색 제목·스니펫은 화면에서 제외/.test(boards);
   const noForecastPlaceholder = /const hasForecast = numericValue\(it\.forecast\)/.test(boards)
-    && /hasCurrent && hasForecast && <span className="mkt-arr">→<\/span>/.test(boards)
+    && /hasCurrent && hasForecast && <span className="mkt-arr" aria-hidden="true" \/>/.test(boards)
     && /hasForecast && <span className="mkt-num fut">/.test(boards);
   if (market.database?.mode !== "append-only" || records.length < 3 || ids.size !== records.length || linked.length !== records.length
     || !hasUserResearch || !hasNewVerticals || !sourceBoundCards || !boardContract || !noForecastPlaceholder) {

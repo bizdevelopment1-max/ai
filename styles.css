@@ -2899,3 +2899,540 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 @media (max-width: 640px) {
   .audit-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ============================================================
+   CONSULTING VISUAL SYSTEM
+   Executive thesis → economics → strategic choice → execution
+   ============================================================ */
+:root {
+  --consult-navy: #102A43;
+  --consult-blue: #173F5F;
+  --consult-teal: #007F78;
+  --consult-gold: #B58A42;
+  --consult-paper: #FCFCFA;
+  --consult-rule: #D7DDE0;
+}
+
+/* 보고서 페이지처럼 각 보드의 전체 상단을 강조한다. */
+.board {
+  border-color: var(--consult-rule);
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(16, 42, 67, .055);
+}
+.board-head {
+  border-top: 4px solid var(--accent);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 5%, var(--panel)), var(--panel) 46%);
+}
+.board-tab { display: none; }
+.board-head::after {
+  width: 0;
+  height: 0;
+  margin: 0 5px;
+  border: 0;
+  border-top: 7px solid var(--muted);
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  transform: none;
+}
+.board-head:hover::after { border-top-color: var(--accent); }
+.board.folded .board-head::after {
+  margin: 0 5px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid var(--accent);
+  border-right: 0;
+  transform: none;
+}
+.board-titles h2 { color: var(--consult-navy); font-weight: 880; letter-spacing: -.025em; }
+[data-theme="dark"] .board-titles h2 { color: var(--ink); }
+.board-en { font-family: var(--mono); font-size: 9.5px; font-weight: 800; letter-spacing: .08em; }
+.board-count {
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+  background: color-mix(in srgb, var(--accent) 6%, var(--panel)) !important;
+}
+
+/* 전략 하우스 + Executive synthesis */
+.msf-exec-architecture {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  gap: 14px;
+  margin: 18px 0 27px;
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid #C9D2D8;
+  border-radius: 2px;
+  background:
+    linear-gradient(135deg, rgba(16, 42, 67, .035), transparent 42%),
+    var(--consult-paper);
+}
+.msf-exec-architecture::before,
+.msf-exec-architecture::after {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  pointer-events: none;
+}
+.msf-exec-architecture::before {
+  top: -35px;
+  right: 18%;
+  width: 80px;
+  height: 80px;
+  border: 1px solid rgba(181, 138, 66, .32);
+  transform: rotate(45deg);
+  animation: consultFloat 8s ease-in-out infinite;
+}
+.msf-exec-architecture::after {
+  right: 28px;
+  bottom: -32px;
+  width: 72px;
+  height: 72px;
+  border: 1px solid rgba(0, 127, 120, .22);
+  border-radius: 50%;
+  animation: consultOrbit 10s linear infinite;
+}
+.msf-strategy-house,
+.msf-exec-synthesis { position: relative; z-index: 1; min-width: 0; }
+.msf-strategy-house {
+  display: flex;
+  flex-direction: column;
+  min-height: 310px;
+}
+.msf-house-roof {
+  display: flex;
+  min-height: 128px;
+  padding: 42px 40px 24px;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #FFF;
+  background: linear-gradient(128deg, #102A43, #173F5F 68%, #235E73);
+  clip-path: polygon(50% 0, 100% 38%, 100% 100%, 0 100%, 0 38%);
+}
+.msf-house-roof span,
+.msf-synthesis-head span {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+.msf-house-roof span { color: #9ED7D2; }
+.msf-house-roof p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  font-weight: 820;
+  line-height: 1.45;
+  letter-spacing: -.018em;
+  text-align: center;
+  text-wrap: balance;
+}
+.msf-house-pillars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  padding: 0 22px;
+  background: #C9D2D8;
+}
+.msf-house-pillars > div {
+  display: flex;
+  min-width: 0;
+  min-height: 115px;
+  padding: 12px 10px;
+  flex-direction: column;
+  gap: 4px;
+  background: #FFF;
+  text-align: center;
+}
+.msf-house-pillars em {
+  color: var(--consult-gold);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 900;
+}
+.msf-house-pillars b { color: var(--consult-navy); font-size: 10.5px; font-weight: 850; line-height: 1.35; }
+.msf-house-pillars span { color: #687B89; font-size: 9px; font-weight: 620; line-height: 1.4; }
+.msf-house-foundation {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  margin-top: 1px;
+  padding: 12px 18px;
+  color: #FFF;
+  background: var(--consult-teal);
+}
+.msf-house-foundation em {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: .08em;
+  opacity: .72;
+}
+.msf-house-foundation b { font-size: 11px; font-weight: 820; }
+.msf-exec-synthesis {
+  display: flex;
+  padding: 20px;
+  flex-direction: column;
+  border: 1px solid #C9D2D8;
+  background: rgba(255, 255, 255, .9);
+}
+.msf-synthesis-head {
+  padding-bottom: 13px;
+  border-bottom: 2px solid var(--consult-navy);
+}
+.msf-synthesis-head span { color: var(--consult-gold); }
+.msf-synthesis-head b {
+  display: block;
+  margin-top: 4px;
+  color: var(--consult-navy);
+  font-size: 17px;
+  font-weight: 880;
+  letter-spacing: -.025em;
+}
+.msf-synthesis-flow {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  margin-top: 16px;
+}
+.msf-synthesis-flow > div {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  padding: 11px 8px;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid #D7DDE0;
+  background: #FCFCFA;
+}
+.msf-synthesis-flow em { color: #728292; font-family: var(--mono); font-size: 7px; font-style: normal; font-weight: 900; }
+.msf-synthesis-flow b { color: var(--consult-navy); font-size: 10.5px; font-weight: 850; line-height: 1.35; }
+.msf-synthesis-flow span { color: #6D7D89; font-size: 8.5px; font-weight: 650; line-height: 1.35; }
+.msf-synthesis-flow > i,
+.sp-card-logic > i,
+.vc-logic-map > i,
+.cd-sf-link,
+.es-key-arr,
+.btf-arr,
+.mkt-arr {
+  width: 0;
+  height: 0;
+  flex: 0 0 auto;
+  align-self: center;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid var(--consult-gold);
+  font-size: 0;
+  animation: consultNudge 2.4s ease-in-out infinite;
+}
+.msf-exec-synthesis > p {
+  margin: auto 0 0;
+  padding: 14px 0 0;
+  color: #496170;
+  font-size: 11px;
+  font-weight: 680;
+  line-height: 1.55;
+}
+[data-theme="dark"] .msf-exec-architecture,
+[data-theme="dark"] .msf-exec-synthesis,
+[data-theme="dark"] .msf-synthesis-flow > div,
+[data-theme="dark"] .msf-house-pillars > div {
+  border-color: var(--line);
+  background: var(--panel);
+}
+[data-theme="dark"] .msf-house-pillars { background: var(--line); }
+[data-theme="dark"] .msf-house-pillars b,
+[data-theme="dark"] .msf-synthesis-head b,
+[data-theme="dark"] .msf-synthesis-flow b { color: var(--ink); }
+
+/* 밸류체인 전략 논리: 통제점 → 수익 → 실행 → 가드레일 */
+.vc-logic-map {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin: 12px 20px 2px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent) 2.5%, var(--panel));
+}
+.vc-logic-map > div {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  padding: 10px 11px;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+.vc-logic-map > div.risk { background: color-mix(in srgb, #B45309 5%, var(--panel)); }
+.vc-logic-map em { color: var(--accent); font-family: var(--mono); font-size: 7.5px; font-style: normal; font-weight: 900; letter-spacing: .035em; }
+.vc-logic-map b { color: var(--ink); font-size: 11px; font-weight: 800; line-height: 1.4; }
+.vc-logic-map span { color: var(--muted); font-size: 8.5px; font-weight: 650; line-height: 1.35; }
+.vc-logic-map > i { border-left-color: var(--accent); }
+
+/* 기업 카드: 동일한 strategic logic rail을 모든 대기업·스타트업에 적용 */
+.sp-card {
+  min-height: 338px;
+  border-width: 1.5px;
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 2px 7px rgba(16, 42, 67, .045);
+}
+.sp-card::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  background: var(--accent);
+  content: "";
+}
+.sp-card-logic {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent) 3%, var(--panel));
+}
+.sp-card-logic > span {
+  flex: 1;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: .055em;
+  text-align: center;
+}
+.sp-card-logic > i { border-width: 4px 0 4px 6px; border-style: solid; border-color: transparent transparent transparent var(--accent); }
+.sp-card-intel > div {
+  position: relative;
+  grid-template-columns: 74px minmax(0, 1fr);
+  border-radius: 2px;
+  background: var(--panel);
+}
+.sp-card-intel > div::before {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 0;
+  width: 3px;
+  background: color-mix(in srgb, var(--accent) 68%, #FFF);
+  content: "";
+}
+.sp-card-intel > div.economics::before { background: #0E8A50; }
+.sp-card-intel > div.direction::before { background: #7A38D6; }
+.sp-card-intel > div.execution {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  background: color-mix(in srgb, var(--accent) 5%, var(--panel));
+}
+.sp-card-intel > div.execution::before { background: var(--consult-gold); }
+.sp-card-foot > b { display: inline-flex; align-items: center; gap: 6px; }
+.sp-card-foot > b i {
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid var(--accent);
+  animation: consultNudge 2.4s ease-in-out infinite;
+}
+
+/* 상세 팝업도 하나의 논리 흐름으로 읽히도록 4단계를 연결 */
+.cd-strategy-frame {
+  border-radius: 2px;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 4%, var(--panel)), var(--panel));
+}
+.cd-sf-grid.cd-intelligence-grid {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 14px;
+}
+.cd-intelligence-grid .cd-sf-card {
+  flex: 1 1 0;
+  border-radius: 2px;
+  border-top-width: 4px;
+  background: var(--panel);
+}
+.cd-intelligence-grid .cd-sf-card.currentBusiness { border-top-color: var(--accent); }
+.cd-intelligence-grid .cd-sf-card.revenueModel { border-top-color: #0E8A50; }
+.cd-intelligence-grid .cd-sf-card.strategyDirection { border-top-color: #7A38D6; }
+.cd-intelligence-grid .cd-sf-card.investmentDirection { border-top-color: #B45309; }
+.cd-sf-link { align-self: center; border-left-color: var(--consult-gold); }
+
+/* 기존 흐름 도식의 문자 화살표를 삼각형 커넥터로 통일 */
+.msf-harr,
+.fda-arrow {
+  width: 0;
+  height: 0;
+  border: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 12px solid var(--consult-gold);
+  border-radius: 0;
+  background: transparent;
+  color: transparent;
+  animation: consultNudge 2.4s ease-in-out infinite;
+}
+.msf-harr { right: -13px; margin-top: -8px; }
+.fda-arrow { right: -10px; }
+.btf-card,
+.fda-step {
+  border-radius: 2px;
+  border-top: 3px solid var(--consult-blue);
+}
+.btf-arr { border-left-color: var(--consult-gold); }
+.es-framework-key > .es-key-arr {
+  display: block;
+  border-left-color: var(--consult-gold);
+}
+.es-arr::after {
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 10px solid currentColor;
+  content: "";
+}
+.mkt-arr { margin: 0 3px; border-left-color: var(--consult-gold); }
+
+/* 외부 원문 링크는 꺾인 화살표 대신 작은 삼각형으로 표시 */
+.cd-prof-source::after,
+.cd-intel-sources a::after,
+.cd-venture-sources a::after,
+.cd-venture-comparison > a::after,
+.cd-newbm-card a::after,
+.cd-org-colink::after,
+.cd-org-li::after,
+.mplay-sig em::after,
+.cd-exn-top span::after,
+.mkt-group-head > a::after {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid currentColor;
+  content: "";
+}
+.dyn-source b {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid #8AB5FF;
+  font-size: 0;
+}
+
+/* 컨설팅 도식 모션: 의미 있는 방향만 표현하고 접근성 설정에서는 정지 */
+@keyframes consultNudge {
+  0%, 100% { transform: translateX(0); opacity: .72; }
+  50% { transform: translateX(3px); opacity: 1; }
+}
+@keyframes consultFloat {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(10px) rotate(53deg); }
+}
+@keyframes consultOrbit {
+  from { transform: rotate(0deg) translateX(5px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(5px) rotate(-360deg); }
+}
+@keyframes consultReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.msf-house-pillars > div,
+.vc-logic-map > div,
+.sp-card {
+  animation: consultReveal .42s both;
+}
+.msf-house-pillars > div:nth-child(2),
+.vc-logic-map > div:nth-of-type(2),
+.sp-card:nth-child(2) { animation-delay: .05s; }
+.msf-house-pillars > div:nth-child(3),
+.vc-logic-map > div:nth-of-type(3),
+.sp-card:nth-child(3) { animation-delay: .1s; }
+.msf-house-pillars > div:nth-child(4),
+.vc-logic-map > div:nth-of-type(4),
+.sp-card:nth-child(4) { animation-delay: .15s; }
+.msf-layer-meter i {
+  position: relative;
+  overflow: hidden;
+}
+.msf-layer-meter i::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent);
+  content: "";
+  transform: translateX(-100%);
+  animation: consultSweep 3.8s ease-in-out infinite;
+}
+@keyframes consultSweep {
+  0%, 45% { transform: translateX(-100%); }
+  75%, 100% { transform: translateX(100%); }
+}
+
+@media (min-width: 1181px) {
+  .msf-layer:not(:last-child)::after {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    right: -9px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid var(--consult-gold);
+    content: "";
+    animation: consultNudge 2.4s ease-in-out infinite;
+  }
+}
+@media (max-width: 1120px) {
+  .msf-exec-architecture { grid-template-columns: 1fr; }
+  .msf-strategy-house { min-height: 0; }
+  .vc-logic-map { display: grid; grid-template-columns: 1fr 1fr; }
+  .vc-logic-map > i { display: none; }
+  .cd-sf-grid.cd-intelligence-grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .cd-sf-link { display: none; }
+}
+@media (max-width: 720px) {
+  .msf-exec-architecture { margin: 12px 0 20px; padding: 10px; }
+  .msf-house-roof { min-height: 112px; padding: 38px 23px 18px; }
+  .msf-house-roof p { font-size: 12px; }
+  .msf-house-pillars { grid-template-columns: 1fr 1fr; padding: 0 10px; }
+  .msf-house-pillars > div { min-height: 102px; }
+  .msf-house-foundation { grid-template-columns: 1fr; gap: 3px; }
+  .msf-synthesis-flow { display: grid; grid-template-columns: 1fr 1fr; }
+  .msf-synthesis-flow > i { display: none; }
+  .vc-logic-map { grid-template-columns: 1fr; margin: 9px 12px 2px; }
+  .cd-sf-grid.cd-intelligence-grid { grid-template-columns: 1fr; }
+  .sp-card { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .msf-exec-architecture::before,
+  .msf-exec-architecture::after,
+  .msf-synthesis-flow > i,
+  .sp-card-logic > i,
+  .vc-logic-map > i,
+  .cd-sf-link,
+  .es-key-arr,
+  .btf-arr,
+  .mkt-arr,
+  .msf-harr,
+  .fda-arrow,
+  .sp-card-foot > b i,
+  .msf-house-pillars > div,
+  .vc-logic-map > div,
+  .sp-card,
+  .msf-layer-meter i::after,
+  .msf-layer:not(:last-child)::after {
+    animation: none !important;
+  }
+}
