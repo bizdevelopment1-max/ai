@@ -1368,13 +1368,8 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                 <h4>경영진 발언·인터뷰 <em>Executive Quotes</em>
                   <b className="cd-prof-live">원문 검증 · 자동 갱신</b>
                 </h4>
-                <div className="cd-exec-flow" aria-label="경영진 발언 검증 흐름">
-                  <span><em>01</em><b>임원 실명</b></span><i aria-hidden="true" />
-                  <span><em>02</em><b>직접 인용문</b></span><i aria-hidden="true" />
-                  <span><em>03</em><b>한·영 대조</b></span><i aria-hidden="true" />
-                  <span><em>04</em><b>원문 연결</b></span>
-                </div>
-                {interviewRows.length > 0 && <div className="cd-itv">
+                {interviewRows.length > 0 ? (
+                  <div className="cd-itv">
                     {interviewRows.map((it, i) => (
                       <div className="cd-itv-item" key={i}>
                         <div className="cd-itv-who">
@@ -1386,7 +1381,8 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                         {it.url && <a className="cd-itv-src" href={it.url} target="_blank" rel="noopener">{it.source ? it.source + " · " : ""}원문 보기 <Icon name="ext" size={10} /></a>}
                       </div>
                     ))}
-                  </div>}
+                  </div>
+                ) : <p className="cd-outline-empty">임원 실명과 직접 인용문이 함께 확인되는 원문 기사가 아직 확보되지 않았습니다 · 크롤 누적으로 자동 보완</p>}
               </div>
             </React.Fragment>
           );
@@ -1399,21 +1395,17 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           return (
           <div className="cd-section">
             <h4>경영진 발언·기사 <em>Executive Mentions</em><b className="cd-prof-live">기업 직접 연관 · 자동 갱신</b></h4>
-            <div className="cd-exec-flow" aria-label="경영진 기사 검증 흐름">
-              <span><em>01</em><b>임원 실명</b></span><i aria-hidden="true" />
-              <span><em>02</em><b>기업 직접 연관</b></span><i aria-hidden="true" />
-              <span><em>03</em><b>원문 기사</b></span><i aria-hidden="true" />
-              <span><em>04</em><b>최신순 갱신</b></span>
-            </div>
-            {mentionRows.length > 0 && <div className="cd-exn">
-              {mentionRows.map((e, i) => (
-                <a className="cd-exn-item" key={i} href={e.url} target="_blank" rel="noopener">
-                  <div className="cd-exn-top"><b>{executiveDisplayName({ name: e.who, role: e.role })}</b><span>{e.date}{e.source ? " · " + e.source : ""}</span></div>
-                  {e.titleKo && <p className="cd-exn-ko">{e.titleKo}</p>}
-                  <p className="cd-exn-en">{e.titleEn}</p>
-                </a>
-              ))}
-            </div>}
+            {mentionRows.length > 0 ? (
+              <div className="cd-exn">
+                {mentionRows.map((e, i) => (
+                  <a className="cd-exn-item" key={i} href={e.url} target="_blank" rel="noopener">
+                    <div className="cd-exn-top"><b>{executiveDisplayName({ name: e.who, role: e.role })}</b><span>{e.date}{e.source ? " · " + e.source : ""}</span></div>
+                    {e.titleKo && <p className="cd-exn-ko">{e.titleKo}</p>}
+                    <p className="cd-exn-en">{e.titleEn}</p>
+                  </a>
+                ))}
+              </div>
+            ) : <p className="cd-outline-empty">임원 실명이 기업 관련 원문 기사에서 함께 확인된 사례가 아직 확보되지 않았습니다 · 크롤 누적으로 자동 보완</p>}
           </div>
           );
         })()}

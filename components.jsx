@@ -36,6 +36,30 @@ const CONSULTING_ENDINGS = [
   [/드립니다$/, "드림"], [/습니다$/, "음"], [/는다$/, "음"],
   [/과제다$/, "과제"], [/전제다$/, "전제"], [/목표다$/, "목표"],
 ];
+// CONSULTING_ENDINGS above only lists verbs seen so far; any other -ㅂ니다(formal)/
+// -ㄴ다(plain present) verb still needs a correct noun-form ending. Blindly
+// cutting the final -다 breaks the stem (e.g. "가져옵니다" -> "가져옵니"), so shift
+// the stem's own batchim (ㅂ or ㄴ) to ㅁ instead, which is how Korean actually
+// nominalizes these.
+const HANGUL_BASE = 0xac00, HANGUL_LAST = 0xd7a3, JONG_COUNT = 28;
+const JONG_NIEUN = 4, JONG_MIEUM = 16, JONG_BIEUP = 17;
+const jongseongOf = ch => {
+  const code = ch.codePointAt(0);
+  return code >= HANGUL_BASE && code <= HANGUL_LAST ? (code - HANGUL_BASE) % JONG_COUNT : -1;
+};
+const withJongseong = (ch, jong) => String.fromCodePoint(ch.codePointAt(0) - jongseongOf(ch) + jong);
+const nominalizeStatementEnding = clause => {
+  if (clause.endsWith("니다") && clause.length >= 3) {
+    const stem = clause.slice(0, -2);
+    const last = stem.slice(-1);
+    return jongseongOf(last) === JONG_BIEUP ? stem.slice(0, -1) + withJongseong(last, JONG_MIEUM) : null;
+  }
+  if (clause.endsWith("다") && clause.length >= 2) {
+    const last = clause.slice(-2, -1);
+    if (jongseongOf(last) === JONG_NIEUN) return clause.slice(0, -2) + withJongseong(last, JONG_MIEUM);
+  }
+  return null;
+};
 function consultingBulletText(value) {
   const source = String(value ?? "");
   if (!source || !/[가-힣]/.test(source) || /^https?:\/\/\S+$/i.test(source.trim())) return source;
@@ -58,7 +82,8 @@ function consultingBulletText(value) {
           break;
         }
       }
-      return `${part.replace(/다$/u, "").trim()}${closing}`;
+      if (/다$/u.test(part)) part = (nominalizeStatementEnding(part) || part.replace(/다$/u, "")).trim();
+      return `${part}${closing}`;
     }).filter(Boolean).join(" · ")
   ).join("\n").replace(/[ \t]{2,}/g, " ").trim();
   if (CONSULTING_COPY_CACHE.size > 3000) CONSULTING_COPY_CACHE.clear();

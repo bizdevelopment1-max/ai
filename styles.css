@@ -1276,11 +1276,6 @@ a[href]:hover .rainbow-on-hover,
 .cd-org-li { margin-top: 4px; font-size: 9.5px; font-weight: 900; letter-spacing: .04em; color: #0A66C2; text-decoration: none; border: 1px solid color-mix(in srgb, #0A66C2 35%, transparent); border-radius: 4px; padding: 1px 6px; }
 .cd-org-li:hover { background: color-mix(in srgb, #0A66C2 10%, transparent); }
 /* 경영진 발언·기사 */
-.cd-exec-flow { display: grid; grid-template-columns: minmax(100px, 1fr) 22px minmax(100px, 1fr) 22px minmax(100px, 1fr) 22px minmax(100px, 1fr); align-items: center; margin: 2px 0 12px; }
-.cd-exec-flow > span { min-height: 46px; box-sizing: border-box; padding: 8px 10px; border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line)); border-radius: 4px; background: color-mix(in srgb, var(--accent) 5%, var(--panel)); display: flex; align-items: center; gap: 8px; }
-.cd-exec-flow > span > em { color: var(--accent); font-family: var(--mono); font-size: 9px; font-style: normal; font-weight: 900; }
-.cd-exec-flow > span > b { color: var(--ink); font-size: 10.5px; font-weight: 820; line-height: 1.3; }
-.cd-exec-flow > i { width: 0; height: 0; margin: auto; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid var(--accent); }
 .cd-exn { display: flex; flex-direction: column; gap: 8px; }
 .cd-exn-item { display: block; border: 1px solid var(--line); border-radius: 8px; padding: 10px 13px; background: var(--panel); text-decoration: none; transition: border-color .15s; }
 .cd-exn-item:hover { border-color: var(--accent); }
@@ -1326,14 +1321,6 @@ a[href]:hover .rainbow-on-hover,
 .cd-itv-en { margin: 6px 0 0; font-size: 11.8px; font-weight: 500; font-style: italic; line-height: 1.55; color: var(--muted); padding-left: 10px; border-left: 2px solid var(--line-2); }
 .cd-itv-src { display: inline-block; margin-top: 7px; font-size: 11px; font-weight: 700; color: var(--accent); text-decoration: none; }
 .cd-itv-src:hover { text-decoration: underline; }
-@media (max-width: 680px) {
-  .cd-exec-flow { grid-template-columns: 1fr 16px 1fr; gap: 6px 0; }
-  .cd-exec-flow > i:nth-of-type(2) { display: none; }
-}
-@media (max-width: 420px) {
-  .cd-exec-flow { grid-template-columns: 1fr; gap: 5px; }
-  .cd-exec-flow > i { display: none; }
-}
 /* Core Practices(핵심 활동 분석) */
 .cd-cp { display: flex; flex-direction: column; gap: 11px; }
 .cd-cp-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
