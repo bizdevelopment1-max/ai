@@ -1651,6 +1651,10 @@ a[href]:hover .rainbow-on-hover,
 .cd-src-link { color: inherit; text-decoration: none; cursor: pointer; }
 .cd-src-text { flex: 1; min-width: 0; font-size: 11.5px; color: var(--ink-2); font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; }
 .cd-src-tier { flex: 0 0 auto; padding: 2px 6px; border-radius: 4px; font-size: 9.5px; font-weight: 800; line-height: 1.2; }
+/* 원문 링크가 없는 인용(문자열만 있는 sources) — 클릭 가능해 보이지 않게 시각적으로 구분 */
+.cd-src-item.cd-src-nolink { cursor: default; opacity: .72; }
+.cd-src-item.cd-src-nolink:hover { background: var(--panel-2); border-color: var(--line-2); }
+.cd-src-nolink-tag { flex: 0 0 auto; font-size: 9px; font-weight: 700; color: var(--muted); white-space: nowrap; }
 .tier-official { color: #0F766E; background: #DDF7F1; }
 .tier-reported { color: #225CC5; background: #E8F0FF; }
 .tier-estimate { color: #9A5A00; background: #FFF2CB; }

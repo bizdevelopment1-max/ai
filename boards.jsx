@@ -985,7 +985,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
           const dirMeta = id => (M.directions || []).find(d => d.id === id) || { ko: id, accent: cat.accent };
           // 원문 확인(한국어 3줄) 기사 인덱스 — 표시 게이트
           const srcIdx = new Map();
-          (articles || []).forEach(a => {
+          (rel || []).forEach(a => {
             const loc = a?.localization, k = signalSourceKey(a?.url);
             if (k && loc?.status === "accepted" && loc?.displayLanguage === "ko"
               && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3) srcIdx.set(k, a);
@@ -1342,9 +1342,11 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
           </div>
         </div>}
 
-        {c.sources && c.sources.length > 0 && (
+        {c.sources && c.sources.length > 0 && (() => {
+          const anyLinked = c.sources.some(item => typeof item === "object" && item.url);
+          return (
           <div className="cd-section">
-            <h4>출처 <em>{c.sources.length}건 · 원문 이동</em></h4>
+            <h4>출처 <em>{c.sources.length}건{anyLinked ? " · 클릭 시 원문 이동" : " · 원문 링크 미확보(인용만)"}</em></h4>
             <div className="cd-sources">
               {c.sources.map((item, i) => {
                 const source = typeof item === "string" ? { label: item } : item;
@@ -1353,19 +1355,20 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                   <span className={"cd-src-tier tier-" + (source.tier || "reported")}>{tier}</span>
                   <span className="cd-src-text">{source.label || source.title || "출처"}</span>
                   {source.asOf && <span className="cd-src-asof">{source.asOf}</span>}
-                  {source.url && <Icon name="ext" size={12} />}
+                  {source.url ? <Icon name="ext" size={12} /> : <span className="cd-src-nolink-tag">링크 없음</span>}
                 </>;
                 return source.url ? (
                   <a key={i} className="cd-src-item cd-src-link" href={source.url} target="_blank" rel="noopener">
                     {content}
                   </a>
                 ) : (
-                  <div key={i} className="cd-src-item">{content}</div>
+                  <div key={i} className="cd-src-item cd-src-nolink" title="원문 링크가 아직 확보되지 않은 인용 — 클릭 동작 없음">{content}</div>
                 );
               })}
             </div>
           </div>
-        )}
+          );
+        })()}
 
         <a className="cd-source" href={c.url} target="_blank" rel="noopener">
           공식 출처 보기 <Icon name="ext" size={13} />
