@@ -919,17 +919,31 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
             </a>
           ); };
 
-          // 경쟁 구도 — 같은 밸류체인 계층에 속한 다른 추적 기업(자체 큐레이션 · 실시간 순위 아님)
+          // 경쟁 구도 — 같은 밸류체인 계층에 속한 다른 추적 기업(자체 큐레이션 · 실시간 순위 아님).
+          // 밸류에이션·펀딩 단계를 함께 붙여 이름만 나열하지 않고 비교 가능하게 구성.
           const layerMap = D.COMPANY_LAYER || {};
+          const companyByName = new Map((D.COMPANIES || []).map(company => [company.name, company]));
           const peers = c.layer ? Object.entries(layerMap)
             .filter(([name, info]) => name !== c.name && info?.layer === c.layer)
-            .map(([name, info]) => ({ name, vertical: info.vertical || "" })) : [];
+            .map(([name, info]) => {
+              const base = companyByName.get(name) || {};
+              return { name, vertical: info.vertical || "", valuation: base.valuation, funding: base.funding, unit: base.unit };
+            }) : [];
 
           // 사업 영역
           const businessRows = uniqueMECEValues(Array.isArray(c.profile?.business) ? c.profile.business : []);
 
-          // 경영 실적
+          // 경영 실적 — 매출·순이익이 모두 숫자로 확인되면 순이익률을 직접 계산(추정치 아님, 사칙연산)
           const lv = c.live || {};
+          const parseUsd = value => {
+            const m = String(value || "").match(/\$([\d.]+)\s*([TBM])/i);
+            if (!m) return null;
+            const scale = { T: 1e12, B: 1e9, M: 1e6 }[m[2].toUpperCase()];
+            return parseFloat(m[1]) * scale;
+          };
+          const revenueNum = parseUsd(lv.revenueQ);
+          const netIncomeNum = parseUsd(lv.netIncomeQ);
+          const netMarginPct = revenueNum && netIncomeNum != null ? (netIncomeNum / revenueNum * 100) : null;
           const fin = lv.revenueQ
             ? `매출 ${lv.revenueQ}${lv.netIncomeQ ? ` · 순이익 ${lv.netIncomeQ}` : ""}${lv.quarterEnd ? ` (${lv.quarterEnd} 분기)` : ""}`
             : "";
@@ -988,8 +1002,19 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                   <h4><b className="cd-outline-no">3)</b>경쟁 구도 <em>Competitive Landscape</em></h4>
                   {peers.length > 0 ? (
                     <React.Fragment>
-                      <div className="cd-outline-peers">{peers.slice(0, 8).map(p => <span key={p.name}>{p.name}</span>)}</div>
-                      <p className="cd-outline-text">{layer.ko || "동일 계층"}에서 함께 추적 중인 기업 · 사업 영역·수익 모델은 각사 상세에서 확인</p>
+                      <p className="cd-outline-text">{layer.ko || "동일 계층"}에 {peers.length}개사가 함께 추적 중 · 밸류에이션·펀딩 단계는 최근 확인된 기준정보</p>
+                      <div className="cd-outline-peer-grid">
+                        {peers.slice(0, 8).map(p => (
+                          <div className="cd-outline-peer" key={p.name}>
+                            <b>{p.name}</b>
+                            {p.unit && <span className="cd-outline-peer-unit">{p.unit}</span>}
+                            <div className="cd-outline-peer-facts">
+                              {!empty(p.valuation) && <em>{p.valuation}</em>}
+                              {!empty(p.funding) && <em>{p.funding}</em>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </React.Fragment>
                   ) : <Empty text="동일 밸류체인 계층에서 함께 추적 중인 타사가 아직 없습니다." />}
                 </div>
@@ -999,10 +1024,14 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                   {(fin || capLine || empLine) ? (
                     <div className="cd-outline-facts">
                       {fin && <span><em>실적</em><b>{fin}</b></span>}
+                      {netMarginPct != null && <span><em>순이익률</em><b>{netMarginPct.toFixed(1)}%</b></span>}
                       {capLine && <span><em>시가총액</em><b>{capLine.replace(/^시가총액 /, "")}</b></span>}
                       {empLine && <span><em>인력</em><b>{empLine.replace(/^인력 /, "")}</b></span>}
                     </div>
                   ) : <Empty text="분기 실적·시가총액이 공시되는 상장사 또는 공개 재무 정보가 있는 기업만 표시됩니다." />}
+                  {netMarginPct != null && (
+                    <p className="cd-outline-text">해당 분기 매출 대비 순이익 비중 {netMarginPct.toFixed(1)}% · 매출·순이익 공시 수치로 직접 계산(추정 아님)</p>
+                  )}
                   {fin && <i className="cd-outline-note">실적 발표 주기로 자동 갱신</i>}
                 </div>
               </div>

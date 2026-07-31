@@ -7,6 +7,7 @@
 import { writeFile } from "node:fs/promises";
 import { loadDash } from "./load-dash.mjs";
 import { COMPANY_SOURCES } from "./company-sources.mjs";
+import { isExcludedText } from "./news-policy.mjs";
 
 const UA = "Mozilla/5.0 (compatible; AI-Strategy-Research/1.0; +https://bizdevelopment1-max.github.io/ai/)";
 const clean = value => String(value || "").replace(/\s+/g, " ").trim();
@@ -124,10 +125,16 @@ async function main() {
         checkedAt: page?.checkedAt || "",
       };
     });
+    // A curated or live-fetched page can concern a third company (e.g. a
+    // partner-deployment press release) whose name must never surface on
+    // this dashboard. Drop the whole page rather than scrub individual
+    // fields — a partially-redacted entry would still leak via its URL.
+    const safePages = pages.filter(page => !isExcludedText(
+      [page.titleKo, page.summaryKo, page.pageTitle, page.description, page.url].filter(Boolean).join(" ")));
     companies[company.name] = {
-      officialPages: pages.map(({ body, ...page }) => page),
+      officialPages: safePages.map(({ body, ...page }) => page),
       verifiedExecutives,
-      sourceStatus: pages.some(page => page.status === "reachable") ? "official-source-reachable" : "official-source-unavailable",
+      sourceStatus: safePages.some(page => page.status === "reachable") ? "official-source-reachable" : "official-source-unavailable",
     };
     }
   };

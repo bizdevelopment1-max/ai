@@ -338,7 +338,7 @@ try {
       && feed.quotes.every(item =>
         item.speaker && item.quoteOriginal && item.quoteKo
         && /^https?:\/\//.test(String(item.evidenceUrl || ""))
-        && /^direct-quote\+(?:aligned-korean-source-summary|model-translated)$/.test(item.evidenceType || ""))
+        && /^direct-quote\+(?:aligned-korean-source-summary|machine-translated)$/.test(item.evidenceType || ""))
       && feed.mentions.every(item =>
         item.who && item.titleEn
         && /^https?:\/\//.test(String(item.url || ""))
@@ -660,7 +660,7 @@ try {
     && companyCrawler.includes("const buildExecutiveFeed =")
     && companyCrawler.includes("nearest.distance > 220")
     && companyCrawler.includes('"direct-quote+aligned-korean-source-summary"')
-    && companyCrawler.includes('"direct-quote+model-translated"')
+    && companyCrawler.includes('"direct-quote+machine-translated"')
     && companyCrawler.includes("translateQuoteToKorean")
     && companyCrawler.includes("QUOTE_TRANSLATION_BUDGET")
     && companyCrawler.includes("rec.executiveFeed = executiveFeed")
@@ -1739,6 +1739,70 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock event reason copy: ${error.message}`);
+}
+
+try {
+  const { newsPolicy } = await import("./news-policy.mjs");
+  const terms = newsPolicy.excludedTerms || [];
+  if (!terms.length) throw new Error("config/news-policy.json has no excludedTerms configured");
+  const escape = term => String(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Data files: full case-insensitive policy match (identical to
+  // isExcludedText, since these files have no code-identifier risk).
+  const dataRe = new RegExp(terms.map(escape).join("|"), "gi");
+  // Source files: same, except "MX" is matched case-sensitively (no "i") in
+  // a separate pass. Lowercase "mx"/"my" is an extremely common mouse-x/
+  // mouse-y coordinate variable name in this codebase's canvas/graph code —
+  // a real identifier, never literal user-facing text — so a case-
+  // insensitive scan there is pure noise, not a genuine leak (identifiers
+  // never render as text).
+  const otherTerms = terms.filter(t => t !== "MX");
+  const sourceRes = [
+    ...(otherTerms.length ? [new RegExp(otherTerms.map(escape).join("|"), "gi")] : []),
+    ...(terms.includes("MX") ? [new RegExp("\\bMX\\b", "g")] : []),
+  ];
+  // Only the JSON the browser actually fetches (dataUrl(...)/fetch(...) call
+  // sites in app.jsx/boards.jsx), plus the JS/JSX the browser ships. Raw
+  // append-only ledgers (market.json, news.json, research.json, ...) are
+  // intentionally excluded: per config/news-policy.json's own documented
+  // design, the exclusion rule applies at collection time going forward and
+  // existing raw-ledger history is retained, never re-scrubbed — those
+  // records never reach a "-view.json" or a directly-fetched file, which are
+  // the only surfaces a user can actually see.
+  const jsonFiles = [
+    "audit.json", "collection-health.json", "companies.json", "company-news.json", "insights.json",
+    "llm-health.json", "monetization.json", "news-view.json", "nvidia-investments.json", "quality.json",
+    "research-view.json", "startups.json", "stocks.json", "business-model-forecasts.json",
+    "market-view.json", "stock-events.json",
+  ];
+  const sourceFiles = ["boards.jsx", "app.jsx", "components.jsx", "charts.jsx", "anim.jsx", "tweaks-panel.jsx", "data.js"];
+  const hits = [];
+  // A URL (base64-encoded Google News redirect links especially) is not
+  // display text a user reads — it is a link target — and a long opaque
+  // base64 run has a real chance of containing any given short substring
+  // purely by coincidence. Blank URLs out before matching so only text a
+  // user could actually see (titles, summaries, labels, ...) is scanned.
+  const stripUrls = text => text.replace(/https?:\/\/[^\s"'<>]+/g, "");
+  const scan = async (file, re, transform = t => t) => {
+    let text;
+    try { text = transform(await readFile(file, "utf8")); } catch { return; }
+    re.lastIndex = 0;
+    let match;
+    while ((match = re.exec(text)) && hits.length < 20) {
+      hits.push(`${file}: "${text.slice(Math.max(0, match.index - 40), match.index + match[0].length + 40).replace(/\s+/g, " ")}"`);
+    }
+  };
+  for (const file of jsonFiles) { if (hits.length >= 20) break; await scan(file, dataRe, stripUrls); }
+  for (const file of sourceFiles) {
+    for (const re of sourceRes) {
+      if (hits.length >= 20) break;
+      await scan(file, re);
+    }
+  }
+  if (hits.length) throw new Error(`banned term(s) found —\n    ${hits.join("\n    ")}`);
+  console.log(`  OK  금지어(${terms.join("/")}) 전 공개 데이터·소스 스캔 — 검출 없음`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  banned-term sweep: ${error.message}`);
 }
 
 if (failed) process.exit(1);

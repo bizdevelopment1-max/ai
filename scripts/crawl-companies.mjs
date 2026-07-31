@@ -22,37 +22,59 @@ import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, executiveTier } from "./company-sources.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { bulletizeKorean } from "./korean-copy.mjs";
-import { llmJSON } from "./llm.mjs";
 
 const MAX_EXECUTIVES = 12;
 // A found direct quote+speaker match with no free exact-substring alignment
 // to the article's own curated summary lines used to be dropped entirely —
 // the curated summary rarely happens to preserve the exact quote sentence,
 // so nearly every real quote was silently discarded. Translate the leftover
-// ones with a small, bounded, cheap GitHub Models call instead of dropping
-// them: it is asked to translate the exact extracted quote only, so the
-// model cannot introduce claims beyond what the source article already says.
+// ones instead of dropping them, using the same free public-source
+// translation endpoint scripts/translate_summarize.py already uses for
+// every other displayed Korean line on this site (GitHub Models was fully
+// retired 2026-07-30, so no LLM call is used here — this is a literal
+// translation of the exact extracted quote, not synthesis, so there is
+// nothing for a model to hallucinate even in principle).
 // A quote once translated is retained across runs (see mergeVerifiedRows),
 // so this budget only pays for genuinely NEW quotes each day.
-const QUOTE_TRANSLATION_BUDGET = Math.max(0, Number(process.env.EXEC_QUOTE_TRANSLATION_BUDGET || 30));
+const QUOTE_TRANSLATION_BUDGET = Math.max(0, Number(process.env.EXEC_QUOTE_TRANSLATION_BUDGET || 150));
+const TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single";
+const TRANSLATE_PACE_MS = Math.max(0, Number(process.env.EXEC_QUOTE_TRANSLATE_PACE_MS || 400));
+const BAD_TRANSLATION = /<unk>|<\/?s>|\b(?:nan|none|undefined)\b/i;
 let quoteTranslationBudgetLeft = QUOTE_TRANSLATION_BUDGET;
+let lastTranslateAt = 0;
+const validKoreanTranslation = (text, source) => {
+  const t = String(text || "").trim();
+  const s = String(source || "").trim();
+  if (t.length < Math.max(12, Math.floor(s.length * 0.12)) || t.length > Math.max(200, s.length * 5 + 80)) return false;
+  if (BAD_TRANSLATION.test(t) || t.includes("�") || t.includes("http://") || t.includes("https://")) return false;
+  const letters = t.match(/[A-Za-z가-힣]/g) || [];
+  const hangul = t.match(/[가-힣]/g) || [];
+  return letters.length > 0 && hangul.length >= 2 && (hangul.length / letters.length) >= 0.12;
+};
 async function translateQuoteToKorean(quoteOriginal) {
-  if (quoteTranslationBudgetLeft <= 0) return "";
+  const text = String(quoteOriginal || "").trim();
+  if (!text || quoteTranslationBudgetLeft <= 0) return "";
   quoteTranslationBudgetLeft--;
-  const result = await llmJSON({
-    system: "You translate a single English direct quotation into natural, faithful Korean for a business intelligence dashboard. "
-      + "Preserve the meaning exactly — do not add, omit, soften, or editorialize anything the speaker did not say. "
-      + "Return strict JSON only.",
-    user: `Translate this exact quotation to Korean:\n\n"${quoteOriginal}"`,
-    maxTokens: 300,
-    schema: {
-      type: "object",
-      properties: { ko: { type: "string" } },
-      required: ["ko"],
-      additionalProperties: false,
-    },
-  });
-  return String(result?.data?.ko || "").trim();
+  const params = new URLSearchParams({ client: "gtx", sl: "en", tl: "ko", dt: "t", q: text });
+  for (let attempt = 0; attempt < 4; attempt++) {
+    try {
+      const wait = TRANSLATE_PACE_MS - (Date.now() - lastTranslateAt);
+      if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+      lastTranslateAt = Date.now();
+      const response = await fetch(`${TRANSLATE_URL}?${params}`, {
+        headers: { "User-Agent": "Mozilla/5.0 (compatible; AI-Strategy-Research/1.0)", Accept: "application/json" },
+        signal: AbortSignal.timeout(20_000),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      const translated = (payload?.[0] || []).map(part => String(part?.[0] || "")).join("").trim();
+      return validKoreanTranslation(translated, text) ? translated : "";
+    } catch {
+      if (attempt === 3) return "";
+      await new Promise(resolve => setTimeout(resolve, Math.min(800 * (2 ** attempt), 8_000)));
+    }
+  }
+  return "";
 }
 
 // 기업명 → 상장 티커(시총 연동용 매핑 — 데이터가 아니라 조인 키)
@@ -155,7 +177,14 @@ const execMentions = (co, arts, leaders) => {
     // A leader name alone is not company evidence. Require the company in the
     // title/lede as well, preventing cross-company executive false positives.
     if (!articleFocusedOnCompany(co, a)) continue;
-    const hay = `${a.title} ${a.descEn || ""} ${a.summary || ""}`;
+    // Search the same lede window articleFocusedOnCompany already treats as
+    // "about this company" — title/desc/summary alone missed an executive
+    // named only in the opening paragraphs of an otherwise on-topic article.
+    const hay = [
+      a.title, a.descEn, a.summary,
+      ...(Array.isArray(a.summaryLinesEn) ? a.summaryLinesEn.slice(0, 2) : []),
+      ...(Array.isArray(a.sourceContent?.paragraphs) ? a.sourceContent.paragraphs.slice(0, 2) : []),
+    ].filter(Boolean).join(" ");
     const hit = people.find(p => p.re.test(hay));
     if (!hit) continue;
     seen.add(a.url);
@@ -227,7 +256,7 @@ const executiveQuotes = async (co, arts, people, retainedQuotes) => {
     let evidenceType = cached?.evidenceType || "direct-quote+aligned-korean-source-summary";
     if (!quoteKo) {
       quoteKo = await translateQuoteToKorean(quoteOriginal);
-      if (quoteKo) evidenceType = "direct-quote+model-translated";
+      if (quoteKo) evidenceType = "direct-quote+machine-translated";
     }
     if (!quoteKo) continue;
     rows.push({

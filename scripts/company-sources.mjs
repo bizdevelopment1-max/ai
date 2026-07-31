@@ -23,12 +23,6 @@ export const COMPANY_SOURCES = {
         summaryKo: "소규모 파일럿에서 검증한 업무 방식을 조직 전반으로 확장하는 엔터프라이즈 전환 사례.",
       },
       {
-        date: "2026-06-21",
-        url: "https://openai.com/index/samsung-electronics-chatgpt-codex-deployment/",
-        titleKo: "삼성전자, 한국 전 임직원과 글로벌 DX 조직에 ChatGPT·Codex 배포",
-        summaryKo: "대규모 제조·디바이스 기업의 전사 업무와 개발 워크플로에 ChatGPT Enterprise와 Codex를 배포.",
-      },
-      {
         date: "2026-06-01",
         url: "https://openai.com/index/openai-frontier-models-and-codex-are-now-available-on-aws/",
         titleKo: "OpenAI 프런티어 모델·Codex, AWS에서 정식 제공",
