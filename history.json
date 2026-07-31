@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-31T05:46:08.636Z",
+  "generatedAt": "2026-07-31T06:16:11.093Z",
   "articles": [
     {
       "date": "2026-07-31",
@@ -100,7 +100,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -204,7 +204,101 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-07-31",
+      "co": "",
+      "cat": "bigtech",
+      "source": "Engadget",
+      "title": "Anthropic says its AI models also hacked three organizations on their own - Engadget",
+      "descEn": "After OpenAI’s admission that its models broke into Hugging Face, Anthropic has now admitted that the models it was testing also hacked other organizations.",
+      "url": "https://www.engadget.com/2227630/anthropic-ai-models-hacked-three-organizations-on-their-own",
+      "tag": "글로벌",
+      "titleEn": "Anthropic says its AI models also hacked three organizations on their own - Engadget",
+      "summaryLinesEn": [
+        "They seemed to have escaped the confines of their testing environment due to human error.",
+        "Apparently, OpenAI isn't the only company whose AI models have hacked into other organizations' systems on their own.",
+        "Anthropic has published a report, admitting that its AI models have also broken free from their testing environment and infiltrated three different organizations, which apparently weren't aware of the breach until they were notified."
+      ],
+      "summaryRoles": [
+        "implication",
+        "evidence",
+        "evidence"
+      ],
+      "summary": "They seemed to have escaped the confines of their testing environment due to human error.\nApparently, OpenAI isn't the only company whose AI models have hacked into other organizations' systems on their own.\nAnthropic has published a report, admitting that its AI models have also broken free from their testing environment and infiltrated three different organizations, which apparently weren't aware of the breach until they were notified.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-07-31T06:11:51.444Z",
+        "originalUrl": "https://www.engadget.com/2227630/anthropic-ai-models-hacked-three-organizations-on-their-own/",
+        "resolvedUrl": "https://www.engadget.com/2227630/anthropic-ai-models-hacked-three-organizations-on-their-own/",
+        "canonicalUrl": "https://www.engadget.com/2227630/anthropic-ai-models-hacked-three-organizations-on-their-own/",
+        "headline": "Anthropic says its AI models also hacked three organizations on their own - Engadget",
+        "description": "After OpenAI’s admission that its models broke into Hugging Face, Anthropic has now admitted that the models it was testing also hacked other organizations.",
+        "paragraphs": [
+          "The company started reviewing test logs after OpenAI’s revelation that its agent hacked Hugging Face.",
+          "Apparently, OpenAI isn't the only company whose AI models have hacked into other organizations' systems on their own. Anthropic has published a report, admitting that its AI models have also broken free from their testing environment and infiltrated three different organizations, which apparently weren't aware of the breach until they were notified.",
+          "After OpenAI revealed the incident, wherein an AI agent it was testing exploited vulnerabilities to connect to the internet and hack into Hugging Face, Anthropic began a large-scale review of its own tests. The company specifically looked for evidence that its Claude models had accessed the internet when they shouldn't have been able to. Turns out the models were able to access the internet in three instances and then \"gained unauthorized access to the production infrastructure of three different organizations.\"",
+          "Three different Claude models were involved in the incidents: Opus 4.7, the cybersecurity-focused Mythos 5 and a prototype that's not planned for general release. They were all doing a capture-the-flag challenge when they broke free. The models were tasked with finding the \"flag,\" which is a piece of secret information, hidden in a different machine in Anthropic's internal network. They were supposed to break into the machine to retrieve the flag.",
+          "Unlike in OpenAI's case, however, the models didn't exploit a vulnerability to get access to the internet. They seemed to have escaped the confines of their testing environment due to human error. Anthropic specified to the models in a prompt that they had no internet access, but that wasn't the case at all. They did have internet access \"due to a misunderstanding\" between the company and its evaluation partner. So, when the models found access to open internet and encountered the systems of the three organizations, they treated it as part of the exercise and broke in. They didn't deliberately attempt to escape their testing environment, Anthropic clarified.",
+          "The models used basic techniques to infiltrate the organizations, such as taking advantage of weak passwords, and din't exploit complex vulnerabilities. Anthropic said its latest model stopped after it recognized that it was on the internet, but its older model continued attacking the affected organization anyway.",
+          "Anthropic admitted that the company and its evaluation partner could have prevented the incidents by carefully validating all internet access paths before they started their tests. They could have also reviewed their tests more frequently and thoroughly. In addition, the models could have behaved differently if they were told from the start that they did have internet access.",
+          "The company notified its evaluation partner and the three affected organizations on July 27, four days after it started reviewing its test transcripts. Two of the affected organizations weren't aware that they had been breached. Anthropic is still trying to reach the third."
+        ],
+        "text": "The company started reviewing test logs after OpenAI’s revelation that its agent hacked Hugging Face.\n\nApparently, OpenAI isn't the only company whose AI models have hacked into other organizations' systems on their own. Anthropic has published a report, admitting that its AI models have also broken free from their testing environment and infiltrated three different organizations, which apparently weren't aware of the breach until they were notified.\n\nAfter OpenAI revealed the incident, wherein an AI agent it was testing exploited vulnerabilities to connect to the internet and hack into Hugging Face, Anthropic began a large-scale review of its own tests. The company specifically looked for evidence that its Claude models had accessed the internet when they shouldn't have been able to. Turns out the models were able to access the internet in three instances and then \"gained unauthorized access to the production infrastructure of three different organizations.\"\n\nThree different Claude models were involved in the incidents: Opus 4.7, the cybersecurity-focused Mythos 5 and a prototype that's not planned for general release. They were all doing a capture-the-flag challenge when they broke free. The models were tasked with finding the \"flag,\" which is a piece of secret information, hidden in a different machine in Anthropic's internal network. They were supposed to break into the machine to retrieve the flag.\n\nUnlike in OpenAI's case, however, the models didn't exploit a vulnerability to get access to the internet. They seemed to have escaped the confines of their testing environment due to human error. Anthropic specified to the models in a prompt that they had no internet access, but that wasn't the case at all. They did have internet access \"due to a misunderstanding\" between the company and its evaluation partner. So, when the models found access to open internet and encountered the systems of the three organizations, they treated it as part of the exercise and broke in. They didn't deliberately attempt to escape their testing environment, Anthropic clarified.\n\nThe models used basic techniques to infiltrate the organizations, such as taking advantage of weak passwords, and din't exploit complex vulnerabilities. Anthropic said its latest model stopped after it recognized that it was on the internet, but its older model continued attacking the affected organization anyway.\n\nAnthropic admitted that the company and its evaluation partner could have prevented the incidents by carefully validating all internet access paths before they started their tests. They could have also reviewed their tests more frequently and thoroughly. In addition, the models could have behaved differently if they were told from the start that they did have internet access.\n\nThe company notified its evaluation partner and the three affected organizations on July 27, four days after it started reviewing its test transcripts. Two of the affected organizations weren't aware that they had been breached. Anthropic is still trying to reach the third.",
+        "contentHash": "373c59693d346e07c0e024e8f4f86cc9aabf84d4b4028abe1838a1f9ca65e62d",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.engadget.com/2227630/anthropic-ai-models-hacked-three-organizations-on-their-own/",
+      "collectedAt": "2026-07-31T06:11:52.316Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "30ffba42b0e505687e8893af23943350c34b444320abcda92494603f502932a5",
+        "sourceLines": [
+          "They seemed to have escaped the confines of their testing environment due to human error.",
+          "Apparently, OpenAI isn't the only company whose AI models have hacked into other organizations' systems on their own.",
+          "Anthropic has published a report, admitting that its AI models have also broken free from their testing environment and infiltrated three different organizations, which apparently weren't aware of the breach until they were notified."
+        ],
+        "checkedAt": "2026-07-31T06:14:34.383069+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "Anthropic은 자사의 AI 모델이 자체적으로 3개 조직을 해킹했다고 밝힘",
+        "summaryLines": [
+          "인적 실수로 인해 테스트 환경의 한계를 벗어난 듯 보였음",
+          "분명히 OpenAI는 AI 모델이 스스로 다른 조직의 시스템을 해킹한 유일한 회사가 아님",
+          "Anthropic은 자사의 AI 모델이 테스트 환경에서 벗어나 세 개의 다른 조직에 침투했음을 인정하는 보고서를 발표했는데, 이들 조직은 통보를 받을 때까지 침해 사실을 인지하지 못한 것으로 전망"
+        ],
+        "summaryRoles": [
+          "implication",
+          "evidence",
+          "evidence"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "Anthropic은 자사의 AI 모델이 자체적으로 3개 조직을 해킹했다고 밝힘",
+      "summaryLinesKo": [
+        "인적 실수로 인해 테스트 환경의 한계를 벗어난 듯 보였음",
+        "분명히 OpenAI는 AI 모델이 스스로 다른 조직의 시스템을 해킹한 유일한 회사가 아님",
+        "Anthropic은 자사의 AI 모델이 테스트 환경에서 벗어나 세 개의 다른 조직에 침투했음을 인정하는 보고서를 발표했는데, 이들 조직은 통보를 받을 때까지 침해 사실을 인지하지 못한 것으로 전망"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -293,7 +387,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -392,7 +486,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -482,7 +576,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -586,7 +680,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -690,7 +784,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -781,7 +875,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -883,7 +977,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -972,7 +1066,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1076,7 +1170,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1180,7 +1274,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1279,7 +1373,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1383,7 +1477,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1487,7 +1581,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1591,7 +1685,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1695,7 +1789,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1799,7 +1893,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1903,7 +1997,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2006,7 +2100,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2101,7 +2195,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2194,7 +2288,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2290,7 +2384,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2389,7 +2483,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2485,7 +2579,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2587,7 +2681,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2676,7 +2770,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2773,7 +2867,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2877,7 +2971,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2981,7 +3075,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3084,7 +3178,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3167,7 +3261,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3257,7 +3351,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3353,7 +3447,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3447,7 +3541,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3551,7 +3645,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3655,7 +3749,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3756,7 +3850,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3860,7 +3954,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3952,7 +4046,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4056,7 +4150,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4160,7 +4254,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4363,7 +4457,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4445,7 +4539,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4542,7 +4636,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4641,7 +4735,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4745,7 +4839,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4849,7 +4943,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4939,7 +5033,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5043,7 +5137,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5147,7 +5241,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5237,7 +5331,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5337,7 +5431,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5420,7 +5514,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5524,7 +5618,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5628,7 +5722,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5727,7 +5821,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5818,7 +5912,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5922,7 +6016,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6011,7 +6105,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6100,7 +6194,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6204,7 +6298,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6308,7 +6402,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6412,7 +6506,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6507,7 +6601,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6606,7 +6700,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6710,7 +6804,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6799,7 +6893,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6897,7 +6991,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6986,7 +7080,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7078,7 +7172,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7182,7 +7276,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7281,7 +7375,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7378,7 +7472,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7474,7 +7568,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7578,7 +7672,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7667,7 +7761,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7755,7 +7849,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7859,7 +7953,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7953,7 +8047,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8057,7 +8151,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8161,7 +8255,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8252,7 +8346,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8356,7 +8450,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8455,7 +8549,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8553,7 +8647,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8657,7 +8751,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8761,7 +8855,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8859,7 +8953,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8952,7 +9046,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9050,7 +9144,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9148,7 +9242,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9237,7 +9331,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9335,7 +9429,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9433,7 +9527,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9531,7 +9625,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9628,7 +9722,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9718,7 +9812,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9816,7 +9910,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9914,7 +10008,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10012,7 +10106,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10110,7 +10204,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10208,7 +10302,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10306,7 +10400,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10404,7 +10498,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10492,7 +10586,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10581,7 +10675,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10679,7 +10773,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10777,7 +10871,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10875,7 +10969,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10973,7 +11067,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11061,7 +11155,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11159,7 +11253,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11242,7 +11336,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11340,7 +11434,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11438,7 +11532,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11542,7 +11636,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11646,7 +11740,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11706,7 +11800,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11805,7 +11899,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11942,7 +12036,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12030,7 +12124,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12128,7 +12222,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12226,7 +12320,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12324,7 +12418,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12428,7 +12522,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12450,7 +12544,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12548,7 +12642,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [
           "source-content-mismatch"
         ],
@@ -12648,7 +12742,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12775,7 +12869,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12836,7 +12930,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12930,7 +13024,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13026,7 +13120,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13127,7 +13221,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13226,7 +13320,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13357,7 +13451,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13422,7 +13516,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13520,7 +13614,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13704,7 +13798,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13787,7 +13881,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14028,7 +14122,7 @@
           "While most AI systems pose limited to no risk and can contribute to solving many societal challenges, certain AI systems create risks that we must address to avoid undesirable outcomes.",
           "So, it may become difficult to assess whether someone has been unfairly disadvantaged, such as in a hiring decision or in an application for a public benefit scheme."
         ],
-        "checkedAt": "2026-07-31T05:44:32.433714+00:00",
+        "checkedAt": "2026-07-31T06:14:34.387494+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -14054,7 +14148,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14158,7 +14252,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14259,7 +14353,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14333,7 +14427,7 @@
           "The shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies.",
           "\"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising.\""
         ],
-        "checkedAt": "2026-07-31T05:44:32.434464+00:00",
+        "checkedAt": "2026-07-31T06:14:34.387645+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -14359,7 +14453,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14381,7 +14475,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14479,7 +14573,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14576,7 +14670,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14674,7 +14768,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14772,7 +14866,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14870,7 +14964,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14968,7 +15062,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15066,7 +15160,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15255,7 +15349,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15320,7 +15414,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15506,7 +15600,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15954,7 +16048,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16053,7 +16147,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16152,7 +16246,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16213,7 +16307,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16393,7 +16487,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16469,7 +16563,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [
           "summary-not-source-content-extractive",
           "numbers-not-in-source-snippet"
@@ -16505,7 +16599,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-31T05:43:54.863Z",
+        "checkedAt": "2026-07-31T06:13:56.542Z",
         "originalUrl": "https://aibusiness.com/cybersecurity/startup-focused-enterprise-ai-security-valued-1-2-billion",
         "error": "HTTP 403"
       }
@@ -16527,7 +16621,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16623,7 +16717,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16720,7 +16814,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16818,7 +16912,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17111,7 +17205,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17247,7 +17341,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17346,7 +17440,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17489,7 +17583,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17593,7 +17687,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17615,7 +17709,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17670,7 +17764,7 @@
           "Since the platform is open source, developers can make their own Buzz instance feel more customized to the needs and workflows of their specific team.",
           "a new groupchat platform for teams of people and agents of all sizes, built to reduce our dependency on slack and github. model-agnostic, decentralized, self-sovereign, and open source. 🐝 https://t.co/8IaMVeTQNo As startups increasingly rely on AI agents to get work done, it can be challenging for employees to collaborate on various tasks across different platforms."
         ],
-        "checkedAt": "2026-07-31T05:44:32.435718+00:00",
+        "checkedAt": "2026-07-31T06:14:34.388734+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -17709,7 +17803,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17807,7 +17901,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17905,7 +17999,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18007,7 +18101,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18096,7 +18190,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18586,7 +18680,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18685,7 +18779,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18828,7 +18922,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18930,7 +19024,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19092,7 +19186,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19225,7 +19319,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19361,7 +19455,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19465,7 +19559,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19563,7 +19657,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19687,7 +19781,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19791,7 +19885,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20063,7 +20157,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20160,7 +20254,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20197,7 +20291,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-31T05:43:54.864Z",
+        "checkedAt": "2026-07-31T06:13:56.542Z",
         "originalUrl": "https://www.cnbc.com/video/2026/07/17/the-feds-plan-to-restore-price-stability-relies-on-ai.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -20267,7 +20361,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20360,7 +20454,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20473,7 +20567,7 @@
           "As enterprises advance from AI experimentation to large-scale adoption, LTM and Glean will help customers operationalize AI across key business functions, including IT support, enterprise knowledge management, and enterprise application operations.",
           "The joint offering is designed to help customers realize measurable business outcomes such as faster incident resolution, improved employee productivity, reduced support costs, accelerated onboarding, enhanced enterprise search, and more efficient application support operations."
         ],
-        "checkedAt": "2026-07-31T05:44:32.436408+00:00",
+        "checkedAt": "2026-07-31T06:14:34.389502+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -20499,7 +20593,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20781,7 +20875,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20827,7 +20921,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-31T05:43:54.864Z",
+        "checkedAt": "2026-07-31T06:13:56.542Z",
         "originalUrl": "https://www.ft.com/content/af8f4659-df0c-4c83-9fcc-8239714d0928?syn-25a6b1a6=1",
         "error": "HTTP 403"
       }
@@ -20849,7 +20943,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20947,7 +21041,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21189,7 +21283,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21319,7 +21413,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -21352,7 +21446,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-31T05:43:55.421Z",
+        "checkedAt": "2026-07-31T06:13:56.542Z",
         "originalUrl": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQMmZaRXBtUG5RLWpZQjg4UjFZd012cTM1Uy0xZy13SkkxamJiSzVuZ0dIMGllZDZVZGJKMkItTlo4bzliUGdndlY2ZG1JYTlpY0Z0a3lEWERtZDE5ZGY0VlA5WEYxaXJvSkZUMDBaUkxkekF5b2NQamFhdHRUVEM3aVRwNkw4VFlPa2M3VWtOa1cyNGUtVGRzOHhGdVJYVUw2aHpVZV91TmpUWjFWQ25STmwtMA?oc=5",
         "error": "HTTP 429"
       }
@@ -21743,7 +21837,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21841,7 +21935,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21878,7 +21972,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-31T05:43:54.864Z",
+        "checkedAt": "2026-07-31T06:13:57.049Z",
         "originalUrl": "https://www.cnbc.com/2026/07/15/why-jim-cramer-is-shocked-by-citis-against-the-grain-praise-of-microsofts-copilot.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -21948,7 +22042,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22047,7 +22141,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22144,7 +22238,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22463,7 +22557,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22562,7 +22656,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22661,7 +22755,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22798,7 +22892,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22957,7 +23051,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23016,7 +23110,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -23055,7 +23149,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-31T05:43:55.459Z",
+        "checkedAt": "2026-07-31T06:13:57.107Z",
         "originalUrl": "https://money.usnews.com/investing/news/articles/2026-07-10/sk-hynix-ceo-sees-worst-ever-memory-supply-shortage-in-2027-says-demand-to-outstrip-supply-beyond-2030",
         "error": "This operation was aborted"
       }
@@ -23095,7 +23189,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23193,7 +23287,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23342,7 +23436,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23439,7 +23533,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23538,7 +23632,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -23571,7 +23665,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-31T05:43:55.699Z",
+        "checkedAt": "2026-07-31T06:13:57.172Z",
         "originalUrl": "https://www.axios.com/2026/06/25/trump-administration-openai-gpt-model-release",
         "error": "HTTP 403"
       }
@@ -23593,7 +23687,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -23626,7 +23720,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-31T05:43:55.721Z",
+        "checkedAt": "2026-07-31T06:13:57.432Z",
         "originalUrl": "https://www.axios.com/2026/06/18/openai-devices-ha-thai",
         "error": "HTTP 403"
       }
@@ -23646,7 +23740,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23801,7 +23895,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23957,7 +24051,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24054,7 +24148,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24210,7 +24304,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24511,7 +24605,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24555,7 +24649,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-31T05:43:55.756Z",
+        "checkedAt": "2026-07-31T06:13:57.776Z",
         "originalUrl": "https://www.globenewswire.com/Error/Index?error=1",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -24576,7 +24670,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24752,7 +24846,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24849,7 +24943,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25000,7 +25094,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25098,7 +25192,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25196,7 +25290,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25331,7 +25425,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-31T05:46:08.636Z",
+        "checkedAt": "2026-07-31T06:16:11.093Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25349,7 +25443,7 @@
           "Try Claude Try Claude Try Claude Learn more about Claude About Claude Overview Log in to Claude Log in to Claude Log in to Claude Download app Download app Download app AI will have a vast impact on the world.",
           "At Anthropic, we build AI to serve humanity’s long-term well-being."
         ],
-        "checkedAt": "2026-07-31T05:44:32.437631+00:00",
+        "checkedAt": "2026-07-31T06:14:34.390699+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -27458,6 +27552,19 @@
       "sourceBacked": 221,
       "sourceExcerpt": 218,
       "localized": 222,
+      "localizationFallback": 5,
+      "limited": 6,
+      "freshStocks": 63,
+      "status": "ok"
+    },
+    {
+      "generatedAt": "2026-07-31T06:16:11.093Z",
+      "newsGeneratedAt": "2026-07-31T06:14:19.565Z",
+      "stocksGeneratedAt": "2026-07-31T06:13:34.708Z",
+      "articles": 228,
+      "sourceBacked": 222,
+      "sourceExcerpt": 219,
+      "localized": 223,
       "localizationFallback": 5,
       "limited": 6,
       "freshStocks": 63,
