@@ -22,8 +22,38 @@ import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, executiveTier } from "./company-sources.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { bulletizeKorean } from "./korean-copy.mjs";
+import { llmJSON } from "./llm.mjs";
 
 const MAX_EXECUTIVES = 12;
+// A found direct quote+speaker match with no free exact-substring alignment
+// to the article's own curated summary lines used to be dropped entirely —
+// the curated summary rarely happens to preserve the exact quote sentence,
+// so nearly every real quote was silently discarded. Translate the leftover
+// ones with a small, bounded, cheap GitHub Models call instead of dropping
+// them: it is asked to translate the exact extracted quote only, so the
+// model cannot introduce claims beyond what the source article already says.
+// A quote once translated is retained across runs (see mergeVerifiedRows),
+// so this budget only pays for genuinely NEW quotes each day.
+const QUOTE_TRANSLATION_BUDGET = Math.max(0, Number(process.env.EXEC_QUOTE_TRANSLATION_BUDGET || 30));
+let quoteTranslationBudgetLeft = QUOTE_TRANSLATION_BUDGET;
+async function translateQuoteToKorean(quoteOriginal) {
+  if (quoteTranslationBudgetLeft <= 0) return "";
+  quoteTranslationBudgetLeft--;
+  const result = await llmJSON({
+    system: "You translate a single English direct quotation into natural, faithful Korean for a business intelligence dashboard. "
+      + "Preserve the meaning exactly — do not add, omit, soften, or editorialize anything the speaker did not say. "
+      + "Return strict JSON only.",
+    user: `Translate this exact quotation to Korean:\n\n"${quoteOriginal}"`,
+    maxTokens: 300,
+    schema: {
+      type: "object",
+      properties: { ko: { type: "string" } },
+      required: ["ko"],
+      additionalProperties: false,
+    },
+  });
+  return String(result?.data?.ko || "").trim();
+}
 
 // 기업명 → 상장 티커(시총 연동용 매핑 — 데이터가 아니라 조인 키)
 const TICKER_OF = {
@@ -144,9 +174,17 @@ const execMentions = (co, arts, leaders) => {
   }
   return rows.sort((x, y) => (x.date < y.date ? 1 : -1)).slice(0, 6);
 };
-const executiveQuotes = (co, arts, people) => {
+const executiveQuotes = async (co, arts, people, retainedQuotes) => {
   if (!people?.length) return [];
-  const rows = [];
+  // The same article stays in news.json's append-only ledger indefinitely,
+  // so without this lookup the exact same quote would burn LLM translation
+  // budget again on every single daily run once it has already been
+  // translated once.
+  const alreadyTranslated = new Map((retainedQuotes || [])
+    .filter(item => item.quoteKo)
+    .map(item => [`${item.speaker}|${normalizedQuote(item.quoteOriginal)}`,
+      { quoteKo: item.quoteKo, evidenceType: item.evidenceType || "direct-quote+aligned-korean-source-summary" }]));
+  const candidates = [];
   const seen = new Set();
   for (const article of arts) {
     if (!sourceBackedArticle(article) || !articleFocusedOnCompany(co, article)) continue;
@@ -173,21 +211,35 @@ const executiveQuotes = (co, arts, people) => {
         const quoteOriginal = String(nearest.match[1] || "").trim();
         const key = `${speaker.full}|${normalizedQuote(quoteOriginal)}`;
         if (!quoteOriginal || seen.has(key)) continue;
-        const quoteKo = alignedQuoteTranslation(article, quoteOriginal);
-        if (!quoteKo) continue;
         seen.add(key);
-        rows.push({
-          speaker: speaker.full,
-          role: speaker.role || "",
-          quoteOriginal,
-          quoteKo,
-          evidenceUrl: article.url,
-          source: article.source || "",
-          date: article.date || "",
-          evidenceType: "direct-quote+aligned-korean-source-summary",
-        });
+        candidates.push({ article, speaker, quoteOriginal });
       }
     }
+  }
+  const rows = [];
+  for (const { article, speaker, quoteOriginal } of candidates) {
+    const cacheKey = `${speaker.full}|${normalizedQuote(quoteOriginal)}`;
+    // Free paths first — reuse a translation this quote already earned on a
+    // prior run, then an exact match against the article's own curated
+    // summary lines — and only spend LLM translation budget when both fail.
+    const cached = alreadyTranslated.get(cacheKey);
+    let quoteKo = cached?.quoteKo || alignedQuoteTranslation(article, quoteOriginal);
+    let evidenceType = cached?.evidenceType || "direct-quote+aligned-korean-source-summary";
+    if (!quoteKo) {
+      quoteKo = await translateQuoteToKorean(quoteOriginal);
+      if (quoteKo) evidenceType = "direct-quote+model-translated";
+    }
+    if (!quoteKo) continue;
+    rows.push({
+      speaker: speaker.full,
+      role: speaker.role || "",
+      quoteOriginal,
+      quoteKo,
+      evidenceUrl: article.url,
+      source: article.source || "",
+      date: article.date || "",
+      evidenceType,
+    });
   }
   return rows.sort((left, right) => String(right.date || "").localeCompare(String(left.date || ""))).slice(0, 6);
 };
@@ -201,7 +253,7 @@ const mergeVerifiedRows = (current, previous, keyOf, limit = 6) => {
     return true;
   }).sort((left, right) => String(right.date || "").localeCompare(String(left.date || ""))).slice(0, limit);
 };
-const buildExecutiveFeed = (co, arts, executiveTeam, organization, previous, checkedAt) => {
+const buildExecutiveFeed = async (co, arts, executiveTeam, organization, previous, checkedAt) => {
   const people = peopleFromTeam(executiveTeam);
   const retained = previous?.schemaVersion === 2 ? previous : null;
   const mentions = mergeVerifiedRows(
@@ -210,7 +262,7 @@ const buildExecutiveFeed = (co, arts, executiveTeam, organization, previous, che
     item => `${canonicalUrl(item.url)}|${item.who}`,
   );
   const quotes = mergeVerifiedRows(
-    executiveQuotes(co, arts, people),
+    await executiveQuotes(co, arts, people, retained?.quotes),
     retained?.quotes,
     item => `${item.speaker}|${normalizedQuote(item.quoteOriginal)}`,
   ).filter(item => item.quoteKo && item.quoteOriginal);
@@ -481,7 +533,7 @@ async function main() {
     };
     const feedTeam = executiveTeam.length ? executiveTeam
       : normalizedProfile.ceo ? [{ name: normalizedProfile.ceo, role: "CEO" }] : [];
-    const executiveFeed = buildExecutiveFeed(
+    const executiveFeed = await buildExecutiveFeed(
       name,
       articles,
       feedTeam,

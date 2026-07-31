@@ -336,7 +336,7 @@ try {
       && feed.quotes.every(item =>
         item.speaker && item.quoteOriginal && item.quoteKo
         && /^https?:\/\//.test(String(item.evidenceUrl || ""))
-        && item.evidenceType === "direct-quote+aligned-korean-source-summary")
+        && /^direct-quote\+(?:aligned-korean-source-summary|model-translated)$/.test(item.evidenceType || ""))
       && feed.mentions.every(item =>
         item.who && item.titleEn
         && /^https?:\/\//.test(String(item.url || ""))
@@ -657,7 +657,10 @@ try {
     && companyCrawler.includes("function deriveLeaders(org)")
     && companyCrawler.includes("const buildExecutiveFeed =")
     && companyCrawler.includes("nearest.distance > 220")
-    && companyCrawler.includes('evidenceType: "direct-quote+aligned-korean-source-summary"')
+    && companyCrawler.includes('"direct-quote+aligned-korean-source-summary"')
+    && companyCrawler.includes('"direct-quote+model-translated"')
+    && companyCrawler.includes("translateQuoteToKorean")
+    && companyCrawler.includes("QUOTE_TRANSLATION_BUDGET")
     && companyCrawler.includes("rec.executiveFeed = executiveFeed")
     && llmClient.includes("GITHUB_MODELS_MAX_RETRY_WAIT_MS")
     && llmClient.includes("advertisedWait > 300");
