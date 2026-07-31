@@ -1190,35 +1190,39 @@ a[href]:hover .rainbow-on-hover,
 .cd-prof-fin > i { font-style: normal; font-size: 10px; font-weight: 700; color: var(--muted); margin-left: auto; }
 @media (max-width: 560px) { .cd-profile .cd-prof-grid { grid-template-columns: 1fr; } }
 
-.cd-strategy-frame { padding: 15px; border: 2px solid color-mix(in srgb, var(--accent) 48%, var(--line)); border-radius: 12px; background: color-mix(in srgb, var(--accent) 4%, var(--panel)); }
-.cd-sf-path { display: flex; align-items: center; gap: 5px; overflow-x: auto; padding-bottom: 3px; }
-.cd-sf-path span { flex: none; font-size: 9.5px; font-weight: 850; color: var(--lc); background: color-mix(in srgb, var(--lc) 9%, transparent); border: 1px solid color-mix(in srgb, var(--lc) 28%, transparent); border-radius: 999px; padding: 2px 8px; }
-.cd-sf-path span.cd-sf-primary { color: #fff; background: var(--lc); border-color: var(--lc); }
-.cd-sf-path i { flex: none; font-style: normal; font-size: 10px; color: var(--muted); }
-.cd-sf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 11px; }
-.cd-sf-card { min-width: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); }
-.cd-sf-card > em { display: block; margin-bottom: 4px; font-style: normal; font-size: 9.5px; font-weight: 850; color: var(--muted); }
-.cd-sf-card > b { display: block; margin-bottom: 5px; font-size: 12.5px; line-height: 1.35; font-weight: 850; color: var(--ink); }
-.cd-sf-card > p { margin: 0; font-size: 11px; line-height: 1.5; font-weight: 600; color: var(--ink-2); text-wrap: pretty; }
-.cd-sf-card.position { border-color: color-mix(in srgb, var(--accent) 34%, var(--line)); background: color-mix(in srgb, var(--accent) 3%, var(--panel)); }
-.cd-sf-card.shift { border-color: color-mix(in srgb, #7A38D6 36%, var(--line)); background: color-mix(in srgb, #7A38D6 3%, var(--panel)); }
-.cd-sf-card.action { border-color: color-mix(in srgb, #16A34A 48%, var(--line)); background: color-mix(in srgb, #16A34A 5%, var(--panel)); }
-.cd-sf-card.risk { border-color: color-mix(in srgb, #EA580C 48%, var(--line)); background: color-mix(in srgb, #EA580C 5%, var(--panel)); }
-.cd-intelligence-grid .cd-sf-card { padding: 14px; border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); background: color-mix(in srgb, var(--accent) 2.5%, var(--panel)); }
-.cd-intelligence-grid .cd-sf-card.revenueModel { border-color: color-mix(in srgb, #16A34A 42%, var(--line)); background: color-mix(in srgb, #16A34A 4%, var(--panel)); }
-.cd-intelligence-grid .cd-sf-card.strategyDirection { border-color: color-mix(in srgb, #7A38D6 42%, var(--line)); background: color-mix(in srgb, #7A38D6 4%, var(--panel)); }
-.cd-intelligence-grid .cd-sf-card.investmentDirection { border-color: color-mix(in srgb, #EA580C 42%, var(--line)); background: color-mix(in srgb, #EA580C 4%, var(--panel)); }
-.cd-intelligence-grid .cd-sf-card > em i { color: var(--muted); font-style: normal; font-weight: 650; }
-.cd-intelligence-grid .cd-sf-card > b { font-size: 13px; line-height: 1.55; }
-.cd-intelligence-grid .cd-sf-card ul { margin: 8px 0 0; padding-left: 17px; }
-.cd-intelligence-grid .cd-sf-card li { margin: 3px 0; color: var(--ink-2); font-size: 11px; font-weight: 620; line-height: 1.5; }
-.cd-intel-sources { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
-.cd-intel-sources a { border: 1px solid var(--line); border-radius: 4px; padding: 3px 6px; color: var(--accent); background: var(--panel); font-size: 9px; font-weight: 760; text-decoration: none; }
-.cd-intel-sources a:hover { border-color: var(--accent); }
-.cd-sf-evidence { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line); }
-.cd-sf-evidence span { font-size: 9.5px; font-weight: 650; color: var(--muted); }
-.cd-sf-evidence b { margin-right: 5px; color: var(--ink-2); font-weight: 850; }
-@media (max-width: 560px) { .cd-sf-grid { grid-template-columns: 1fr; }.cd-refresh { width: 100%; margin-left: 0; } }
+/* 상세 개요 고정 아웃라인 — 1.사업현황 / 2.전략방향·역량 / 3.시사점 */
+.cd-outline-group { margin-top: 26px; padding-top: 18px; border-top: 2px solid var(--line); }
+.cd-outline-group:first-of-type { margin-top: 22px; }
+.cd-outline-head {
+  display: flex; align-items: baseline; gap: 8px; margin: 0 0 14px;
+  font-size: 16px; font-weight: 900; letter-spacing: -.01em; color: var(--ink);
+}
+.cd-outline-head em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); }
+.cd-outline-sub { margin-top: 16px; padding: 13px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.cd-outline-sub:first-of-type { margin-top: 0; }
+.cd-outline-no { flex: none; color: var(--accent); font-weight: 900; }
+.cd-outline-text { margin: 8px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--ink-2); font-weight: 600; text-wrap: pretty; }
+.cd-outline-list { margin: 8px 0 0; padding-left: 17px; }
+.cd-outline-list li { margin: 3px 0; color: var(--ink-2); font-size: 12px; font-weight: 620; line-height: 1.5; }
+.cd-outline-facts { display: flex; flex-wrap: wrap; gap: 8px; }
+.cd-outline-facts span {
+  display: flex; align-items: baseline; gap: 5px; padding: 5px 9px; border: 1px solid var(--line-2);
+  border-radius: 6px; background: var(--panel-2); font-size: 11.5px;
+}
+.cd-outline-facts em { font-style: normal; font-weight: 800; color: var(--muted); }
+.cd-outline-facts b { font-weight: 800; color: var(--ink); }
+.cd-outline-facts i { font-style: normal; font-size: 9.5px; color: var(--muted); }
+.cd-outline-peers { display: flex; flex-wrap: wrap; gap: 6px; }
+.cd-outline-peers span { padding: 4px 9px; border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line)); border-radius: 999px; background: color-mix(in srgb, var(--accent) 6%, var(--panel-2)); font-size: 11px; font-weight: 750; color: var(--ink-2); }
+.cd-outline-empty { margin: 6px 0 0; padding: 9px 11px; border: 1px dashed var(--line-2); border-radius: 7px; color: var(--muted); font-size: 11.5px; font-weight: 600; line-height: 1.5; background: var(--panel-2); }
+.cd-outline-implication { margin-top: 8px; padding: 9px 11px; border-left: 3px solid var(--accent); background: var(--panel-2); border-radius: 0 7px 7px 0; }
+.cd-outline-implication em { display: block; margin-bottom: 3px; font-style: normal; font-size: 10px; font-weight: 800; color: var(--muted); }
+.cd-outline-implication p { margin: 0; font-size: 12px; font-weight: 650; line-height: 1.55; color: var(--ink-2); }
+.cd-outline-note-line { margin: 8px 0 0; font-size: 10px; }
+.cd-outline-note-line a { color: var(--accent); font-weight: 800; text-decoration: none; }
+.cd-outline-note-line a:hover { text-decoration: underline; }
+.cd-outline-sub .cd-bd-sec { margin-top: 10px; }
+@media (max-width: 560px) { .cd-outline-facts { flex-direction: column; align-items: flex-start; } }
 
 /* 신규 비즈니스 모델·deployment company 사례 */
 .cd-venture-list { display: flex; flex-direction: column; gap: 12px; }

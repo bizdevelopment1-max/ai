@@ -840,157 +840,62 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
         })()}
 
         {(() => {
-          const sections = [
-            { key: "currentBusiness", no: "01", ko: "현재 비즈니스", en: "Current Business", fallback: c.note || c.vp || c.unit },
-            { key: "revenueModel", no: "02", ko: "수익 모델", en: "Revenue Engine", fallback: c.vp },
-            { key: "strategyDirection", no: "03", ko: "앞으로의 사업 방향", en: "Strategic Direction", fallback: c.direction },
-            { key: "investmentDirection", no: "04", ko: "투자·제휴 방향", en: "Investment Direction", fallback: "" },
-          ];
+          const D = window.DASH || {};
+          const VC = D.VALUE_CHAIN || [];
+          const empty = v => !v || v === "—" || String(v).trim() === "";
+
+          // MECE 기업 지능 — 1)사업영역·2-1)제품·2-6)투자현황·3)시사점에서 재사용
+          const meceKeys = ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"];
+          const meceFallback = { currentBusiness: c.note || c.vp || c.unit, revenueModel: c.vp, strategyDirection: c.direction, investmentDirection: "" };
           const occupied = [];
-          const visibleSections = sections.map(section => {
-            const item = intelligence[section.key] || {};
-            const candidates = [item.summary || section.fallback, ...(item.details || [])];
+          const mece = {};
+          meceKeys.forEach(key => {
+            const item = intelligence[key] || {};
+            const candidates = [item.summary || meceFallback[key], ...(item.details || [])];
             const summary = uniqueMECEValues(candidates, occupied)[0] || "";
-            if (!summary) return null;
-            occupied.push(summary);
+            if (summary) occupied.push(summary);
             const details = uniqueMECEValues(item.details || [], occupied);
             occupied.push(...details);
-            return { ...section, item: { ...item, details }, summary };
-          }).filter(Boolean);
-          const hasIntel = visibleSections.length > 0;
-          if (!hasIntel) return null;
-          return (
-             <div className="cd-section cd-strategy-frame">
-               <h4>비즈니스 모델·전략 분석 <em>Business · Economics · Direction · Capital</em>
-                 <b className="cd-prof-live">{String(intelligence.engine || "").startsWith("github-models:") ? "AI · 원문 근거 종합" : "원문 추출 종합"}</b>
-               </h4>
-               <div className="cd-mece-route" aria-label="MECE 기업 전략 분석 흐름">
-                 {(intelligence.meceFramework || [
-                   { key: "currentBusiness", label: "사업 범위", question: "무엇을 제공하는가" },
-                   { key: "revenueModel", label: "수익 엔진", question: "어떻게 돈을 버는가" },
-                   { key: "strategyDirection", label: "성장 방향", question: "어디로 확장하는가" },
-                   { key: "investmentDirection", label: "자본 배분", question: "무엇에 투자하는가" },
-                 ]).filter(step => visibleSections.some(section => section.key === step.key)).map((step, index, rows) => (
-                   <React.Fragment key={step.key}>
-                     <span><em>{String(index + 1).padStart(2, "0")}</em><b>{step.label}</b><small>{step.question}</small></span>
-                     {index < rows.length - 1 && <i aria-hidden="true" />}
-                   </React.Fragment>
-                 ))}
-               </div>
-               <div className="cd-sf-grid cd-intelligence-grid">
-                {visibleSections.map((section, sectionIndex) => (
-                  <React.Fragment key={section.key}>
-                     <div className={`cd-sf-card ${section.key}`} key={section.key}>
-                       <em>{section.no} · {section.ko} <i>{section.en}</i>
-                         {section.item.confidence && <span className={`cd-grounding ${section.item.confidence}`}>{section.item.confidence === "high" ? "근거 충분" : section.item.confidence === "medium" ? "근거 확인" : "공개정보 제한"}</span>}
-                       </em>
-                      <b>{section.summary}</b>
-                      {Array.isArray(section.item.details) && section.item.details.length > 0 && (
-                        <ul>{section.item.details.slice(0, 4).map((detail, index) => <li key={index}>{detail}</li>)}</ul>
-                      )}
-                      {Array.isArray(section.item.evidence) && section.item.evidence.length > 0 && (
-                        <div className="cd-intel-sources">
-                          {section.item.evidence.slice(0, 3).map((source, index) => (
-                            <a key={index} href={source.url} target="_blank" rel="noopener">
-                              {source.date ? `${String(source.date).slice(2)} · ` : ""}{source.source || "원문"}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    {sectionIndex < visibleSections.length - 1 && <i className="cd-sf-link" aria-hidden="true" />}
-                  </React.Fragment>
-                ))}
-              </div>
-               <div className="cd-sf-evidence">
-                 <span><b>갱신 주기</b>뉴스·실적 발표 후 자동 재분석</span>
-                 <span><b>근거 범위</b>{intelligence.evidenceWindow || "공식 발표·원문 기사·시장 데이터"}</span>
-                 <span><b>검증</b>{intelligence.groundingStatus ? "숫자·출처 URL 자동 대조" : "원문 링크 대조"}</span>
-                 {(intelligence.generatedAt || c.live?.updatedAt || generatedAt) && (
-                   <span><b>생성일</b>{String(intelligence.generatedAt || c.live?.updatedAt || generatedAt).slice(0, 10)}</span>
-                 )}
-               </div>
-            </div>
-          );
-        })()}
+            mece[key] = { ...item, summary, details };
+          });
+          const hasIntel = meceKeys.some(key => mece[key].summary);
 
-        {Array.isArray(c.live?.strategicVentures || c.strategicVentures) && (c.live?.strategicVentures || c.strategicVentures).length > 0 && (
-          <div className="cd-section cd-venture-section">
-            <h4>신규 비즈니스 모델 확장 <em>New Business Model Expansion</em><b className="cd-prof-live">SOURCE-BACKED</b></h4>
-            <div className="cd-venture-list">
-              {(c.live?.strategicVentures || c.strategicVentures).map(venture => (
-                <article className="cd-venture-card" key={venture.id}>
-                  <div className="cd-venture-head">
-                    <div><em>{venture.announcedAt}</em><h5>{venture.title}</h5></div>
-                    <span>{venture.structure}</span>
-                  </div>
-                  <div className="cd-venture-facts">
-                    <div><em>자본·지배구조</em><b>{venture.capital}</b><p>{venture.ownership}</p></div>
-                    <div><em>운영 모델</em><b>{venture.operatingModel}</b><p>{venture.expansion}</p></div>
-                    <div><em>고객·유통망</em><b>{venture.targetCustomers}</b><p>{(venture.partners || []).join(" · ")}</p></div>
-                    <div className="implication"><em>단말 사업자 시사점</em><b>{venture.handsetImplication}</b></div>
-                  </div>
-                  <div className="cd-venture-sources">
-                    {(venture.sources || []).map((source, index) => (
-                      <a key={index} href={source.url} target="_blank" rel="noopener">{source.publisher} · {source.date} 원문</a>
-                    ))}
-                  </div>
-                </article>
-              ))}
+          // 핵심 활동(원문 근거 실행 실적) — 2)제품/개발·기술/생산/영업에서 재사용
+          const sourcePractices = Array.isArray(intelligence.corePractices) ? intelligence.corePractices : [];
+          const practiceCopy = [];
+          const practiceRows = (sourcePractices.length ? sourcePractices : (c.live?.practices || [])).filter(practice => {
+            const text = `${practice.title || practice.ko || ""} ${practice.insight || ""}`.trim();
+            if (!text || practiceCopy.some(previous => isRepeatedMECEText(previous, text))) return false;
+            practiceCopy.push(text);
+            return true;
+          });
+          // PRACTICE id: model=모델·연구, product=제품·서비스출시, partner=파트너십·생태계,
+          // infra=인프라·컴퓨트, capital=자본·M&A, safety=안전·규제, talent=인재·조직
+          const practiceOf = id => practiceRows.find(p => p.id === id) || null;
+          const PracticeBlock = ({ practice, fallback }) => practice ? (
+            <div className="cd-cp-row">
+              <div className="cd-cp-top"><b>{practice.title || practice.ko}</b>{practice.count && <span className="cd-cp-n">{practice.count}건</span>}</div>
+              {practice.insight && <p className="cd-cp-insight">{practice.insight}</p>}
+              {(practice.evidence?.url || practice.latest?.url) && (
+                <a className="cd-cp-latest" href={practice.evidence?.url || practice.latest.url} target="_blank" rel="noopener">
+                  {(practice.evidence?.date || practice.latest?.date) && <em>{String(practice.evidence?.date || practice.latest.date).slice(5)}</em>}
+                  {String(practice.evidence?.title || practice.latest?.title || "원문 보기").slice(0, 90)}
+                </a>
+              )}
             </div>
-            {(c.live?.strategicVentureComparison || c.strategicVentureComparison) && (() => {
-              const comparison = c.live?.strategicVentureComparison || c.strategicVentureComparison;
-              return (
-                <div className="cd-venture-comparison">
-                  <em>핵심 인사이트</em>
-                  <b>{comparison.title}</b>
-                  <p>{comparison.insight}</p>
-                  <strong>{comparison.operatorMove}</strong>
-                  {comparison.market && (
-                    <a href={comparison.market.source?.url} target="_blank" rel="noopener">
-                      AI 컨설팅 시장 2025 {comparison.market.value2025} · 2030 {comparison.market.forecast2030} · CAGR {comparison.market.cagr}
-                    </a>
-                  )}
-                </div>
-              );
-            })()}
-          </div>
-        )}
+          ) : <p className="cd-outline-empty">{fallback}</p>;
 
-        {Array.isArray(intelligence.newBusinessModels) && intelligence.newBusinessModels.length > 0 && (
-          <div className="cd-section">
-            <h4>AI 신규 수익모델 <em>Emerging AI Business Models</em><b className="cd-prof-live">CRAWL · SYNTHESIS</b></h4>
-            <div className="cd-newbm-grid">
-              {intelligence.newBusinessModels.map((model, index) => (
-                <article className="cd-newbm-card" key={index}>
-                  <em>MODEL {String(index + 1).padStart(2, "0")}</em>
-                  <h5>{model.title}</h5>
-                  <p>{model.model}</p>
-                  {model.implication && <strong>{model.implication}</strong>}
-                  {model.evidence?.url && (
-                    <a href={model.evidence.url} target="_blank" rel="noopener">
-                      {model.evidence.source || "원문"}{model.evidence.date ? ` · ${model.evidence.date}` : ""}
-                    </a>
-                  )}
-                </article>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {(() => {
+          // 원문 신호(한국어 3줄 검증분) — 2-4)영업/2-6)투자현황에서 재사용
           const M = c.monetize || {};
-          const entry = M.entry;
           const modelMeta = id => (M.models || []).find(m => m.id === id) || { ko: id, accent: cat.accent };
           const dirMeta = id => (M.directions || []).find(d => d.id === id) || { ko: id, accent: cat.accent };
-          // 원문 확인(한국어 3줄) 기사 인덱스 — 표시 게이트
           const srcIdx = new Map();
           (rel || []).forEach(a => {
             const loc = a?.localization, k = signalSourceKey(a?.url);
             if (k && loc?.status === "accepted" && loc?.displayLanguage === "ko"
               && Array.isArray(loc.summaryLines) && loc.summaryLines.length === 3) srcIdx.set(k, a);
           });
-          const resolve = (arr, n) => {
+          const resolveSignals = (arr, n) => {
             const seen = new Set(), out = [];
             for (const s of (arr || [])) {
               const src = srcIdx.get(signalSourceKey(s.url));
@@ -1004,45 +909,220 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
             }
             return out;
           };
-          const monetize = entry ? resolve(entry.monetize, 3) : [];
-          const direction = entry ? resolve(entry.direction, 3) : [];
-          const mix = {}; monetize.forEach(s => { if (s.model) mix[s.model] = (mix[s.model] || 0) + 1; });
-          const modelMix = Object.entries(mix).sort((a, b) => b[1] - a[1]).map(([id, n]) => ({ id, n }));
-          const hasCrawl = monetize.length || direction.length;
-          if (!hasCrawl) return null;
+          const monetizeSignals = M.entry ? resolveSignals(M.entry.monetize, 4) : [];
+          const directionSignals = M.entry ? resolveSignals(M.entry.direction, 4) : [];
+          const SignalRow = ({ s, meta, dir }) => { const mm = meta(dir ? s.kind : s.model); return (
+            <a className="mplay-sig" href={s.url} target="_blank" rel="noopener">
+              <span className={"mplay-tag" + (dir ? " dir" : "")} style={{ "--c": mm.accent }}>{mm.ko}</span>
+              <span className="mplay-txt">{s.koTitle}</span>
+              <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""}</em>
+            </a>
+          ); };
+
+          // 경쟁 구도 — 같은 밸류체인 계층에 속한 다른 추적 기업(자체 큐레이션 · 실시간 순위 아님)
+          const layerMap = D.COMPANY_LAYER || {};
+          const peers = c.layer ? Object.entries(layerMap)
+            .filter(([name, info]) => name !== c.name && info?.layer === c.layer)
+            .map(([name, info]) => ({ name, vertical: info.vertical || "" })) : [];
+
+          // 사업 영역
+          const businessRows = uniqueMECEValues(Array.isArray(c.profile?.business) ? c.profile.business : []);
+
+          // 경영 실적
+          const lv = c.live || {};
+          const fin = lv.revenueQ
+            ? `매출 ${lv.revenueQ}${lv.netIncomeQ ? ` · 순이익 ${lv.netIncomeQ}` : ""}${lv.quarterEnd ? ` (${lv.quarterEnd} 분기)` : ""}`
+            : "";
+          const capLine = lv.cap ? `시가총액 ${lv.cap}${lv.capAsof ? ` ('${String(lv.capAsof).slice(2, 7)} 기준)` : ""}` : "";
+          const empLine = (lv.employees || c.profile?.headcount)
+            ? `인력 ${lv.employees || c.profile.headcount}${lv.employees && lv.employeesAsof ? ` ('${String(lv.employeesAsof).slice(2)} 기준)` : ""}` : "";
+
+          // 관계사 협력 · 스타트업/JV 투자
+          const ventures = c.live?.strategicVentures || c.strategicVentures || [];
+          const ventureComparison = c.live?.strategicVentureComparison || c.strategicVentureComparison;
+          const investPortfolio = (c.invest && Array.isArray(c.invest.portfolio)) ? c.invest.portfolio : [];
+          const investByLayer = {};
+          investPortfolio.forEach(p => { (investByLayer[p.layer] = investByLayer[p.layer] || []).push(p); });
+          const investOrder = VC.map(l => l.id).filter(id => investByLayer[id]);
+          const vcMeta = id => VC.find(l => l.id === id) || { ko: id, accent: cat.accent };
+
+          const Empty = ({ text = "공개된 원문 근거가 아직 확보되지 않았습니다 · 크롤 누적으로 자동 보완" }) => <p className="cd-outline-empty">{text}</p>;
+
           return (
-            <div className="cd-section">
-              <h4>수익화·사업 변화 근거 <em>Economics & Strategic Evidence</em><b className="cd-prof-live">LIVE · 원문 검증</b></h4>
-              {modelMix.length > 0 && (
-                <div className="cd-bd-mix"><em>수익 모델</em>
-                  <div className="mplay-mix">{modelMix.map(m => { const mm = modelMeta(m.id); return <span className="mplay-model" key={m.id} style={{ "--c": mm.accent }} title={mm.ko}>{mm.ko}<i>{m.n}</i></span>; })}</div>
+            <React.Fragment>
+              <div className="cd-outline-group">
+                <h3 className="cd-outline-head">1. 사업 현황 <em>Business Status</em></h3>
+
+                {(() => {
+                  const businessJoined = businessRows.join(" · ");
+                  const summaryIsBusinessRows = businessJoined && mece.currentBusiness.summary
+                    && isRepeatedMECEText(businessJoined, mece.currentBusiness.summary);
+                  const domainDetails = uniqueMECEValues(mece.currentBusiness.details, businessRows);
+                  return (
+                    <div className="cd-section cd-outline-sub">
+                      <h4><b className="cd-outline-no">1)</b>사업 영역 <em>Business Domain</em></h4>
+                      {businessRows.length > 0 && <ul className="cd-outline-list">{businessRows.map((b, i) => <li key={i}>{b}</li>)}</ul>}
+                      {mece.currentBusiness.summary && !summaryIsBusinessRows && <p className="cd-outline-text">{mece.currentBusiness.summary}</p>}
+                      {domainDetails.length > 0 && (
+                        <ul className="cd-outline-list">{domainDetails.slice(0, 3).map((d, i) => <li key={i}>{d}</li>)}</ul>
+                      )}
+                      {!businessRows.length && !mece.currentBusiness.summary && <Empty />}
+                    </div>
+                  );
+                })()}
+
+                <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">2)</b>참여 시장 현황 <em>Market Position</em></h4>
+                  <div className="cd-outline-facts">
+                    {cat.ko && <span><em>기업 분류</em><b>{cat.ko}</b></span>}
+                    {layer.ko && <span><em>밸류체인 계층</em><b>{layer.ko}</b></span>}
+                    {c.vchainVertical && <span><em>버티컬</em><b>{c.vchainVertical}</b></span>}
+                    {!empty(c.valuation) && <span><em>밸류에이션</em><b>{c.valuation}</b>{c.valAsof && <i>'{c.valAsof} 기준</i>}</span>}
+                    {!empty(c.value) && c.metric && c.metric !== "원문 기사" && <span><em>{c.metric}</em><b>{c.value}</b>{c.metricAsof && <i>{c.metricAsof} 기준</i>}</span>}
+                    {!empty(c.funding) && <span><em>펀딩 단계</em><b>{c.funding}</b></span>}
+                  </div>
+                  {!cat.ko && !layer.ko && !c.vchainVertical && empty(c.valuation) && empty(c.value) && empty(c.funding) && <Empty />}
                 </div>
-              )}
-              {monetize.length > 0 && (
-                <div className="cd-bd-sec">
-                  <h5>돈 버는 방식</h5>
-                  {monetize.map((s, i) => { const mm = modelMeta(s.model); return (
-                    <a className="mplay-sig" key={"m" + i} href={s.url} target="_blank" rel="noopener">
-                      <span className="mplay-tag" style={{ "--c": mm.accent }}>{mm.ko}</span>
-                      <span className="mplay-txt">{s.koTitle}</span>
-                      <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""}</em>
-                    </a>
-                  ); })}
+
+                <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">3)</b>경쟁 구도 <em>Competitive Landscape</em></h4>
+                  {peers.length > 0 ? (
+                    <React.Fragment>
+                      <div className="cd-outline-peers">{peers.slice(0, 8).map(p => <span key={p.name}>{p.name}</span>)}</div>
+                      <p className="cd-outline-text">{layer.ko || "동일 계층"}에서 함께 추적 중인 기업 · 사업 영역·수익 모델은 각사 상세에서 확인</p>
+                    </React.Fragment>
+                  ) : <Empty text="동일 밸류체인 계층에서 함께 추적 중인 타사가 아직 없습니다." />}
                 </div>
-              )}
-              {direction.length > 0 && (
-                <div className="cd-bd-sec">
-                  <h5>앞으로의 투자·사업 방향</h5>
-                  {direction.map((s, i) => { const dm = dirMeta(s.kind); return (
-                    <a className="mplay-sig" key={"d" + i} href={s.url} target="_blank" rel="noopener">
-                      <span className="mplay-tag dir" style={{ "--c": dm.accent }}>{dm.ko}</span>
-                      <span className="mplay-txt">{s.koTitle}</span>
-                      <em>{s.source}{s.date ? " · " + String(s.date).slice(5) : ""}</em>
-                    </a>
-                  ); })}
+
+                <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">4)</b>경영 실적 <em>Financial Performance</em></h4>
+                  {(fin || capLine || empLine) ? (
+                    <div className="cd-outline-facts">
+                      {fin && <span><em>실적</em><b>{fin}</b></span>}
+                      {capLine && <span><em>시가총액</em><b>{capLine.replace(/^시가총액 /, "")}</b></span>}
+                      {empLine && <span><em>인력</em><b>{empLine.replace(/^인력 /, "")}</b></span>}
+                    </div>
+                  ) : <Empty text="분기 실적·시가총액이 공시되는 상장사 또는 공개 재무 정보가 있는 기업만 표시됩니다." />}
+                  {fin && <i className="cd-outline-note">실적 발표 주기로 자동 갱신</i>}
                 </div>
-              )}
-            </div>
+              </div>
+
+              <div className="cd-outline-group">
+                <h3 className="cd-outline-head">2. 사업 전략 방향 및 주요 역량 <em>Strategy &amp; Capabilities</em></h3>
+
+                <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">1)</b>제품 <em>Product</em></h4>
+                  <PracticeBlock practice={practiceOf("product")} fallback="제품·서비스 출시 관련 원문 근거가 아직 확보되지 않았습니다." />
+                  {mece.revenueModel.summary && <p className="cd-outline-text">{mece.revenueModel.summary}</p>}
+                </div>
+
+                <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">2)</b>개발/기술 <em>R&amp;D · Technology</em></h4>
+                  <PracticeBlock practice={practiceOf("model")} fallback="모델·연구 관련 원문 근거가 아직 확보되지 않았습니다." />
+                </div>
+
+                <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">3)</b>생산 <em>Infrastructure &amp; Production</em></h4>
+                  <PracticeBlock practice={practiceOf("infra")} fallback="데이터센터·컴퓨트 등 생산 능력 관련 원문 근거가 아직 확보되지 않았습니다." />
+                </div>
+
+                <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">4)</b>영업 <em>Go-to-Market</em></h4>
+                  <PracticeBlock practice={practiceOf("partner")} fallback="파트너십·생태계 확대 관련 원문 근거가 아직 확보되지 않았습니다." />
+                  {monetizeSignals.length > 0 && (
+                    <div className="cd-bd-sec"><h5>돈 버는 방식 원문 신호</h5>
+                      {monetizeSignals.map((s, i) => <SignalRow key={"m" + i} s={s} meta={modelMeta} />)}
+                    </div>
+                  )}
+                </div>
+
+                <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">5)</b>관계사 협력 <em>Partnerships</em></h4>
+                  {ventures.length > 0 ? (
+                    <div className="cd-venture-list">
+                      {ventures.map(venture => (
+                        <article className="cd-venture-card" key={venture.id}>
+                          <div className="cd-venture-head">
+                            <div><em>{venture.announcedAt}</em><h5>{venture.title}</h5></div>
+                            <span>{venture.structure}</span>
+                          </div>
+                          <div className="cd-venture-facts">
+                            <div><em>자본·지배구조</em><b>{venture.capital}</b><p>{venture.ownership}</p></div>
+                            <div><em>운영 모델</em><b>{venture.operatingModel}</b><p>{venture.expansion}</p></div>
+                            <div><em>고객·유통망</em><b>{venture.targetCustomers}</b><p>{(venture.partners || []).join(" · ")}</p></div>
+                          </div>
+                          <div className="cd-venture-sources">
+                            {(venture.sources || []).map((source, index) => (
+                              <a key={index} href={source.url} target="_blank" rel="noopener">{source.publisher} · {source.date} 원문</a>
+                            ))}
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  ) : practiceOf("partner") ? null : <Empty text="공식 발표된 제휴·JV 형태의 사업 확장 사례가 아직 확보되지 않았습니다." />}
+                </div>
+
+                <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">6)</b>스타트업, J/V 투자 현황 <em>Startup &amp; JV Investment</em></h4>
+                  {investPortfolio.length > 0 && (
+                    <React.Fragment>
+                      {c.invest.strategy && <p className="cd-outline-text">{c.invest.strategy}</p>}
+                      <div className="cd-inv-map">
+                        {investOrder.map(id => {
+                          const m = vcMeta(id);
+                          return (
+                            <div className="cd-inv-col" key={id} style={{ "--accent": m.accent }}>
+                              <div className="cd-inv-lhead"><span className="cd-inv-dot" style={{ background: m.accent }} /><b>{m.ko}</b><em>{investByLayer[id].length}</em></div>
+                              <div className="cd-inv-cards">
+                                {investByLayer[id].map((p, i) => (
+                                  <div className="cd-inv-card" key={i}><b>{p.name}</b>{p.note && <span>{p.note}</span>}</div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {c.invest.source?.url && (
+                        <p className="cd-outline-note-line"><a href={c.invest.source.url} target="_blank" rel="noopener">{c.invest.source.label || "출처"} <Icon name="ext" size={10} /></a></p>
+                      )}
+                    </React.Fragment>
+                  )}
+                  {mece.investmentDirection.summary && <p className="cd-outline-text">{mece.investmentDirection.summary}</p>}
+                  {directionSignals.length > 0 && (
+                    <div className="cd-bd-sec"><h5>앞으로의 투자·사업 방향 원문 신호</h5>
+                      {directionSignals.map((s, i) => <SignalRow key={"d" + i} s={s} meta={dirMeta} dir />)}
+                    </div>
+                  )}
+                  {!investPortfolio.length && !mece.investmentDirection.summary && !directionSignals.length && (
+                    <Empty text="지분 투자·JV 형태의 스타트업 투자 활동이 공개 원문으로 아직 확인되지 않았습니다." />
+                  )}
+                </div>
+              </div>
+
+              <div className="cd-outline-group">
+                <h3 className="cd-outline-head">3. 시사점 <em>Implications</em></h3>
+                <div className="cd-section cd-outline-sub">
+                  {mece.strategyDirection.summary && <p className="cd-outline-text">{mece.strategyDirection.summary}</p>}
+                  {mece.strategyDirection.details.length > 0 && (
+                    <ul className="cd-outline-list">{mece.strategyDirection.details.slice(0, 3).map((d, i) => <li key={i}>{d}</li>)}</ul>
+                  )}
+                  {ventureComparison && (
+                    <div className="cd-venture-comparison">
+                      <em>단말 사업자 시사점</em>
+                      <b>{ventureComparison.title}</b>
+                      <p>{ventureComparison.insight}</p>
+                      <strong>{ventureComparison.operatorMove}</strong>
+                    </div>
+                  )}
+                  {ventures.filter(v => v.handsetImplication).map(v => (
+                    <div className="cd-outline-implication" key={v.id}><em>{v.title}</em><p>{v.handsetImplication}</p></div>
+                  ))}
+                  {!mece.strategyDirection.summary && !ventureComparison && !ventures.some(v => v.handsetImplication) && (
+                    <Empty text="사업 방향·전략 시사점이 원문 근거로 아직 종합되지 않았습니다." />
+                  )}
+                </div>
+              </div>
+            </React.Fragment>
           );
         })()}
 
@@ -1252,78 +1332,6 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
           );
         })()}
 
-        {((Array.isArray(intelligence.corePractices) && intelligence.corePractices.length > 0)
-          || (c.live && Array.isArray(c.live.practices) && c.live.practices.length > 0)) && (() => {
-          const sourcePractices = Array.isArray(intelligence.corePractices) ? intelligence.corePractices : [];
-          const practiceCopy = [];
-          const ps = (sourcePractices.length ? sourcePractices : c.live.practices).filter(practice => {
-            const text = `${practice.title || practice.ko || ""} ${practice.insight || ""}`.trim();
-            if (!text || practiceCopy.some(previous => isRepeatedMECEText(previous, text))) return false;
-            practiceCopy.push(text);
-            return true;
-          });
-          const max = Math.max(...ps.map(p => p.count || 1), 1);
-          return (
-            <div className="cd-section">
-              <h4>핵심 활동 분석 <em>Core Practices</em><b className="cd-prof-live">{sourcePractices.length ? "AI · 원문 종합" : "LIVE · 뉴스 기반"}</b></h4>
-              <div className="cd-cp">
-                {ps.map((p, i) => (
-                  <div className="cd-cp-row" key={i}>
-                    <div className="cd-cp-top"><b>{p.title || p.ko}</b>{p.count && <span className="cd-cp-n">{p.count}건</span>}</div>
-                    {p.count && <div className="cd-cp-bar"><i style={{ width: (12 + 88 * p.count / max) + "%", background: cat.accent }} /></div>}
-                    {p.insight && <p className="cd-cp-insight">{p.insight}</p>}
-                    {(p.evidence?.url || p.latest?.url) && (
-                      <a className="cd-cp-latest" href={p.evidence?.url || p.latest.url} target="_blank" rel="noopener">
-                        {(p.evidence?.date || p.latest?.date) && <em>{String(p.evidence?.date || p.latest.date).slice(5)}</em>}
-                        {String(p.evidence?.title || p.latest?.title || "원문 보기").slice(0, 90)}
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <p className="cd-cp-note">공식 발표와 원문 기사에서 확인된 최근 실행을 기업별로 종합 · 새 원문이 수집되면 AI가 내용과 근거 링크를 함께 갱신</p>
-            </div>
-          );
-        })()}
-
-        {c.invest && Array.isArray(c.invest.portfolio) && c.invest.portfolio.length > 0 && (() => {
-          const VC = window.DASH.VALUE_CHAIN || [];
-          const meta = id => VC.find(l => l.id === id) || { ko: id, accent: cat.accent };
-          const byLayer = {};
-          c.invest.portfolio.forEach(p => { (byLayer[p.layer] = byLayer[p.layer] || []).push(p); });
-          const order = VC.map(l => l.id).filter(id => byLayer[id]);
-          const inv = c.invest;
-          return (
-            <div className="cd-section">
-              <h4>투자 포트폴리오·전략 맵 <em>AI Investment Map</em></h4>
-              {inv.strategy && <p className="cd-inv-strat">{inv.strategy}</p>}
-              <div className="cd-inv-map">
-                {order.map(id => {
-                  const m = meta(id);
-                  return (
-                    <div className="cd-inv-col" key={id} style={{ "--accent": m.accent }}>
-                      <div className="cd-inv-lhead"><span className="cd-inv-dot" style={{ background: m.accent }} /><b>{m.ko}</b><em>{byLayer[id].length}</em></div>
-                      <div className="cd-inv-cards">
-                        {byLayer[id].map((p, i) => (
-                          <div className="cd-inv-card" key={i}>
-                            <b>{p.name}</b>
-                            {p.note && <span>{p.note}</span>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <p className="cd-cp-note">
-                자사 컴퓨트·클라우드·앱으로 이어지는 밸류체인 계층별 지분 투자 맵 · 지분·라운드는 공시·보도 기반 큐레이션 · 최신 자본 활동은 위 ‘핵심 활동 분석’의 원문 근거로 보완
-                {inv.source && inv.source.url && (
-                  <> · <a href={inv.source.url} target="_blank" rel="noopener">{inv.source.label || "출처"} <Icon name="ext" size={10} /></a></>
-                )}
-              </p>
-            </div>
-          );
-        })()}
 
         {rel.length > 0 && <div className="cd-section">
           <h4>기업 직접 연관 뉴스 <em>{rel.length}건 · 원문 식별 검증</em></h4>
