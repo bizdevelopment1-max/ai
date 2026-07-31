@@ -348,8 +348,6 @@ try {
     && boards.includes("경영진 발언·기사 <em>Executive Mentions</em>")
     && boards.includes("원문 검증 · 자동 갱신")
     && boards.includes("기업 직접 연관 · 자동 갱신")
-    && boards.includes("임원 실명과 직접 인용문이 함께 확인되는 원문 기사가 아직 확보되지 않았습니다")
-    && boards.includes("임원 실명이 기업 관련 원문 기사에서 함께 확인된 사례가 아직 확보되지 않았습니다")
     && !boards.includes('className="cd-exec-flow"')
     && !boards.includes("interviewRows.length > 0 && (")
     && !boards.includes("c.live && Array.isArray(c.live.execNews)");

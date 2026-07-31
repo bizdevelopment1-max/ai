@@ -874,7 +874,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           // PRACTICE id: model=모델·연구, product=제품·서비스출시, partner=파트너십·생태계,
           // infra=인프라·컴퓨트, capital=자본·M&A, safety=안전·규제, talent=인재·조직
           const practiceOf = id => practiceRows.find(p => p.id === id) || null;
-          const PracticeBlock = ({ practice, fallback }) => practice ? (
+          const PracticeBlock = ({ practice }) => practice ? (
             <div className="cd-cp-row">
               <div className="cd-cp-top"><b>{practice.title || practice.ko}</b>{practice.count && <span className="cd-cp-n">{practice.count}건</span>}</div>
               {practice.insight && <p className="cd-cp-insight">{practice.insight}</p>}
@@ -885,7 +885,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                 </a>
               )}
             </div>
-          ) : <p className="cd-outline-empty">{fallback}</p>;
+          ) : <p className="cd-outline-empty">—</p>;
 
           // 원문 신호(한국어 3줄 검증분) — 2-4)영업/2-6)투자현황에서 재사용
           const M = c.monetize || {};
@@ -975,7 +975,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           const investOrder = VC.map(l => l.id).filter(id => investByLayer[id]);
           const vcMeta = id => VC.find(l => l.id === id) || { ko: id, accent: cat.accent };
 
-          const Empty = ({ text = "공개된 원문 근거가 아직 확보되지 않았습니다 · 크롤 누적으로 자동 보완" }) => <p className="cd-outline-empty">{text}</p>;
+          const Empty = () => <p className="cd-outline-empty">—</p>;
 
           return (
             <React.Fragment>
@@ -1040,7 +1040,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                     </React.Fragment>
                   ) : null}
                   {!peers.length && !segmentShare.length && !rivalRows.length && !supplyRows.length && (
-                    <Empty text="동일 밸류체인 계층·경쟁/공급 관계에서 확보된 원문 근거가 아직 없습니다." />
+                    <Empty />
                   )}
                   {rivalRows.length > 0 && (
                     <div className="cd-bd-sec">
@@ -1081,7 +1081,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                       {capLine && <span><em>시가총액</em><b>{capLine.replace(/^시가총액 /, "")}</b></span>}
                       {empLine && <span><em>인력</em><b>{empLine.replace(/^인력 /, "")}</b></span>}
                     </div>
-                  ) : <Empty text="분기 실적·시가총액이 공시되는 상장사 또는 공개 재무 정보가 있는 기업만 표시됩니다." />}
+                  ) : <Empty />}
                   {netMarginPct != null && (
                     <p className="cd-outline-text">해당 분기 매출 대비 순이익 비중 {netMarginPct.toFixed(1)}% · 매출·순이익 공시 수치로 직접 계산(추정 아님)</p>
                   )}
@@ -1094,18 +1094,18 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
 
                 <div className="cd-section cd-outline-sub">
                   <h4><b className="cd-outline-no">1)</b>제품 <em>Product</em></h4>
-                  <PracticeBlock practice={practiceOf("product")} fallback="제품·서비스 출시 관련 원문 근거가 아직 확보되지 않았습니다." />
+                  <PracticeBlock practice={practiceOf("product")} />
                   {mece.revenueModel.summary && <p className="cd-outline-text">{mece.revenueModel.summary}</p>}
                 </div>
 
                 <div className="cd-section cd-outline-sub">
                   <h4><b className="cd-outline-no">2)</b>개발/기술 <em>R&amp;D · Technology</em></h4>
-                  <PracticeBlock practice={practiceOf("model")} fallback="모델·연구 관련 원문 근거가 아직 확보되지 않았습니다." />
+                  <PracticeBlock practice={practiceOf("model")} />
                 </div>
 
                 <div className="cd-section cd-outline-sub">
                   <h4><b className="cd-outline-no">3)</b>생산 <em>Infrastructure &amp; Production</em></h4>
-                  <PracticeBlock practice={practiceOf("infra")} fallback="데이터센터·컴퓨트 등 생산 능력 관련 원문 근거가 아직 확보되지 않았습니다." />
+                  <PracticeBlock practice={practiceOf("infra")} />
                 </div>
 
                 <div className="cd-section cd-outline-sub">
@@ -1114,7 +1114,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                     <div className="cd-bd-sec"><h5>돈 버는 방식 원문 신호</h5>
                       {monetizeSignals.map((s, i) => <SignalRow key={"m" + i} s={s} meta={modelMeta} />)}
                     </div>
-                  ) : <Empty text="영업·고객 채널 관련 원문 근거가 아직 확보되지 않았습니다." />}
+                  ) : <Empty />}
                 </div>
 
                 {/* 파트너십·생태계 실행 신호(practiceOf partner)는 영업이 아니라 여기 하나에서만 —
@@ -1144,7 +1144,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                       ))}
                     </div>
                   ) : (
-                    <PracticeBlock practice={practiceOf("partner")} fallback="공식 발표된 제휴·JV 형태의 사업 확장 사례가 아직 확보되지 않았습니다." />
+                    <PracticeBlock practice={practiceOf("partner")} />
                   )}
                 </div>
 
@@ -1180,7 +1180,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                     </div>
                   )}
                   {!investPortfolio.length && !mece.investmentDirection.summary && !directionSignals.length && (
-                    <Empty text="지분 투자·JV 형태의 스타트업 투자 활동이 공개 원문으로 아직 확인되지 않았습니다." />
+                    <Empty />
                   )}
                 </div>
               </div>
@@ -1204,7 +1204,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                     <div className="cd-outline-implication" key={v.id}><em>{v.title}</em><p>{v.handsetImplication}</p></div>
                   ))}
                   {!mece.strategyDirection.summary && !ventureComparison && !ventures.some(v => v.handsetImplication) && (
-                    <Empty text="사업 방향·전략 시사점이 원문 근거로 아직 종합되지 않았습니다." />
+                    <Empty />
                   )}
                 </div>
               </div>
@@ -1382,7 +1382,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                       </div>
                     ))}
                   </div>
-                ) : <p className="cd-outline-empty">임원 실명과 직접 인용문이 함께 확인되는 원문 기사가 아직 확보되지 않았습니다 · 크롤 누적으로 자동 보완</p>}
+                ) : <p className="cd-outline-empty">—</p>}
               </div>
             </React.Fragment>
           );
@@ -1405,7 +1405,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                   </a>
                 ))}
               </div>
-            ) : <p className="cd-outline-empty">임원 실명이 기업 관련 원문 기사에서 함께 확인된 사례가 아직 확보되지 않았습니다 · 크롤 누적으로 자동 보완</p>}
+            ) : <p className="cd-outline-empty">—</p>}
           </div>
           );
         })()}
