@@ -516,7 +516,8 @@ function App() {
         </main>
       </div>
 
-      <CompanyDetail company={selected} cats={cats} companyNews={companyNews} generatedAt={dataGeneratedAt} onClose={() => setSelected(null)} />
+      <CompanyDetail company={selected} cats={cats} companyNews={companyNews} generatedAt={dataGeneratedAt}
+        articles={articles} companies={companiesLive} onClose={() => setSelected(null)} />
 
       {/* Color change via palette button in TopBar */}
     </div>

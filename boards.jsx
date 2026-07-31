@@ -707,13 +707,15 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
 }
 
 // ---- Company detail modal (overview + all info + related news) --
-function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
+function CompanyDetail({ company, cats, companyNews, generatedAt, articles, companies, onClose }) {
   React.useEffect(() => {
     if (!company) return;
     const onKey = e => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [company]);
+  // 원문 근거 기반 관계(경쟁·공급 등) — Executive Summary 경쟁 다이내믹스와 동일 소스.
+  const relationEdges = React.useMemo(() => deriveCompanyRelationshipEdges(articles, companies), [articles, companies]);
   if (!company) return null;
   const c = company;
   const cat = (cats.find(x => x.id === c.cat) || {});
@@ -930,6 +932,19 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
               return { name, vertical: info.vertical || "", valuation: base.valuation, funding: base.funding, unit: base.unit };
             }) : [];
 
+          // 경쟁사 경쟁 현황 · 업체 공급 — 원문 기사(source-backed) 또는 시장구조
+          // 큐레이션(market-structure)에서 파생된 관계선 중 이 기업이 관여된 것만 표시.
+          const companyEdges = (relationEdges || []).filter(edge => edge.from === c.name || edge.to === c.name);
+          const edgeCounterparty = edge => edge.from === c.name ? edge.to : edge.from;
+          const rivalRows = companyEdges.filter(edge => edge.type === "경쟁")
+            .sort((a, b) => (b.basis === "source-backed") - (a.basis === "source-backed"));
+          const supplyRows = companyEdges.filter(edge => edge.type === "공급")
+            .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+
+          // 제품별 시장 점유율 — 기업별 실측치가 아닌, 이 기업이 속한 세그먼트의
+          // 출처 명시 점유율(Gartner/IDC/Grand View 등). 개별 제품 점유율로 과장 표기하지 않음.
+          const segmentShare = (D.SHARE || []).filter(s => s.cat === c.cat);
+
           // 사업 영역
           const businessRows = uniqueMECEValues(Array.isArray(c.profile?.business) ? c.profile.business : []);
 
@@ -1000,6 +1015,13 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
 
                 <div className="cd-section cd-outline-sub">
                   <h4><b className="cd-outline-no">3)</b>경쟁 구도 <em>Competitive Landscape</em></h4>
+                  {segmentShare.length > 0 && (
+                    <div className="cd-outline-facts">
+                      {segmentShare.map((s, i) => (
+                        <span key={i}><em>{s.label} 세그먼트 점유율</em><b>{s.value}%</b><i>{s.src}</i></span>
+                      ))}
+                    </div>
+                  )}
                   {peers.length > 0 ? (
                     <React.Fragment>
                       <p className="cd-outline-text">{layer.ko || "동일 계층"}에 {peers.length}개사가 함께 추적 중 · 밸류에이션·펀딩 단계는 최근 확인된 기준정보</p>
@@ -1016,7 +1038,38 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                         ))}
                       </div>
                     </React.Fragment>
-                  ) : <Empty text="동일 밸류체인 계층에서 함께 추적 중인 타사가 아직 없습니다." />}
+                  ) : null}
+                  {!peers.length && !segmentShare.length && !rivalRows.length && !supplyRows.length && (
+                    <Empty text="동일 밸류체인 계층·경쟁/공급 관계에서 확보된 원문 근거가 아직 없습니다." />
+                  )}
+                  {rivalRows.length > 0 && (
+                    <div className="cd-bd-sec">
+                      <h5>경쟁사 경쟁 현황</h5>
+                      <ul className="cd-outline-list cd-rival-list">
+                        {rivalRows.slice(0, 6).map((e, i) => (
+                          <li key={i}>
+                            <b>{edgeCounterparty(e)}</b> · {(e.label || "").replace(/^경쟁 · /, "") || "경쟁 관계"}
+                            {e.basis === "source-backed" && e.url ? (
+                              <a href={e.url} target="_blank" rel="noopener"> — {e.source}{e.date ? ` (${String(e.date).slice(5)})` : ""}</a>
+                            ) : <span className="cd-rival-structural"> — 시장구조 기준</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {supplyRows.length > 0 && (
+                    <div className="cd-bd-sec">
+                      <h5>업체 공급 관계</h5>
+                      <ul className="cd-outline-list cd-rival-list">
+                        {supplyRows.slice(0, 6).map((e, i) => (
+                          <li key={i}>
+                            <b>{e.from}</b> → <b>{e.to}</b> · {(e.label || "").replace(/^공급 · /, "") || "공급 관계"}
+                            {e.url && <a href={e.url} target="_blank" rel="noopener"> — {e.source}{e.date ? ` (${String(e.date).slice(5)})` : ""}</a>}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
                 <div className="cd-section cd-outline-sub">
