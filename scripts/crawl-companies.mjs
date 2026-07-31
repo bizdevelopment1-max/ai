@@ -104,29 +104,44 @@ const boundWord = s => {
   const r = /[A-Za-z0-9]$/.test(s) ? "\\b" : "";
   return `${l}${esc}${r}`;
 };
-// 경영진 발언 스캔 대상 인물을 COMPANY_ORG에서 자동 파생 — 성만 단독 매칭은 같은
-// 성이 다른 회사에도 있으면(예: 흔한 성) 오탐 위험이 있어, 전 회사 통틀어 유일한
-// 성일 때만 보조 별칭으로 추가. 결합 표기("A · B")는 개별 인물로 분리.
-function deriveLeaders(org) {
-  const people = [];
-  for (const [co, o] of Object.entries(org || {})) {
+// 전 회사 통틀어 유일한 성만 보조 별칭으로 안전하게 쓸 수 있어 빈도를 먼저 계산 —
+// 흔한 성을 단독 매칭하면 다른 회사 임원과 오탐될 위험이 있다.
+function computeLastNameFrequency(org) {
+  const lastFreq = new Map();
+  for (const o of Object.values(org || {})) {
     const roster = Array.isArray(o.executiveTeam) && o.executiveTeam.length ? o.executiveTeam : o.leadership || [];
     for (const entry of roster) {
       for (const full of String(entry.name || "").split("·").map(s => s.trim()).filter(Boolean)) {
         const tokens = full.split(/\s+/).filter(Boolean);
         const last = tokens.length > 1 ? tokens[tokens.length - 1] : "";
-        people.push({ co, full, last, role: entry.role || entry.title || "" });
+        if (last) lastFreq.set(last, (lastFreq.get(last) || 0) + 1);
       }
     }
   }
-  const lastFreq = new Map();
-  for (const p of people) if (p.last) lastFreq.set(p.last, (lastFreq.get(p.last) || 0) + 1);
+  return lastFreq;
+}
+const aliasesForName = (full, lastFreq) => {
+  const tokens = full.split(/\s+/).filter(Boolean);
+  const last = tokens.length > 1 ? tokens[tokens.length - 1] : "";
+  const aliases = [full];
+  if (last && last.length >= 4 && lastFreq.get(last) === 1) aliases.push(last);
+  return aliases;
+};
+// 경영진 발언 스캔 대상 인물을 COMPANY_ORG에서 자동 파생 — 성만 단독 매칭은 같은
+// 성이 다른 회사에도 있으면(예: 흔한 성) 오탐 위험이 있어, 전 회사 통틀어 유일한
+// 성일 때만 보조 별칭으로 추가. 결합 표기("A · B")는 개별 인물로 분리.
+function deriveLeaders(org) {
+  const lastFreq = computeLastNameFrequency(org);
   const byCo = {};
-  for (const p of people) {
-    const aliases = [p.full];
-    if (p.last && p.last.length >= 4 && lastFreq.get(p.last) === 1) aliases.push(p.last);
-    const re = new RegExp(aliases.map(boundWord).join("|"), "i");
-    (byCo[p.co] = byCo[p.co] || []).push({ full: p.full, role: p.role, re });
+  for (const [co, o] of Object.entries(org || {})) {
+    const roster = Array.isArray(o.executiveTeam) && o.executiveTeam.length ? o.executiveTeam : o.leadership || [];
+    for (const entry of roster) {
+      for (const full of String(entry.name || "").split("·").map(s => s.trim()).filter(Boolean)) {
+        const aliases = aliasesForName(full, lastFreq);
+        const re = new RegExp(aliases.map(boundWord).join("|"), "i");
+        (byCo[co] = byCo[co] || []).push({ full, role: entry.role || entry.title || "", re });
+      }
+    }
   }
   return byCo;
 }
@@ -159,13 +174,15 @@ const alignedQuoteTranslation = (article, quote) => {
   });
   return index >= 0 && ko[index] ? bulletizeKorean(ko[index]) : "";
 };
-const peopleFromTeam = team => (team || []).map(person => {
+const peopleFromTeam = (team, lastFreq) => (team || []).map(person => {
   const full = String(person?.name || "").trim();
-  return full ? {
+  if (!full) return null;
+  const aliases = lastFreq ? aliasesForName(full, lastFreq) : [full];
+  return {
     full,
     role: person.role || person.title || "",
-    re: new RegExp(boundWord(full), "i"),
-  } : null;
+    re: new RegExp(aliases.map(boundWord).join("|"), "i"),
+  };
 }).filter(Boolean);
 const execMentions = (co, arts, leaders) => {
   const people = Array.isArray(leaders) ? leaders : leaders[co];
@@ -282,8 +299,8 @@ const mergeVerifiedRows = (current, previous, keyOf, limit = 6) => {
     return true;
   }).sort((left, right) => String(right.date || "").localeCompare(String(left.date || ""))).slice(0, limit);
 };
-const buildExecutiveFeed = async (co, arts, executiveTeam, organization, previous, checkedAt) => {
-  const people = peopleFromTeam(executiveTeam);
+const buildExecutiveFeed = async (co, arts, executiveTeam, organization, previous, checkedAt, lastFreq) => {
+  const people = peopleFromTeam(executiveTeam, lastFreq);
   const retained = previous?.schemaVersion === 2 ? previous : null;
   const mentions = mergeVerifiedRows(
     execMentions(co, arts, people),
@@ -355,6 +372,7 @@ async function main() {
   const profileSource = dash.COMPANY_PROFILES || {};
   const trackedCompanies = (dash.COMPANIES || []).filter(company => !suppression.hasCompany(company.name));
   const leaders = deriveLeaders(orgSource);
+  const lastFreq = computeLastNameFrequency(orgSource);
   // 기업 개요의 변동 항목을 크롤 값으로 붙임(crawl-financials.mjs — 공시·분기 주기로 자동 최신화)
   const joinFin = (rec, tk, name) => {
     // Public companies join by ticker (Yahoo Finance); private tracked
@@ -569,6 +587,7 @@ async function main() {
       normalizedOrg,
       previousCompanies[name]?.executiveFeed,
       nowIso,
+      lastFreq,
     );
     rec.execNews = executiveFeed.mentions;
     rec.executiveFeed = executiveFeed;
