@@ -1,6 +1,110 @@
 {
-  "generatedAt": "2026-07-30T22:38:41.856Z",
+  "generatedAt": "2026-07-31T01:17:02.644Z",
   "articles": [
+    {
+      "date": "2026-07-31",
+      "co": "",
+      "cat": "bigtech",
+      "source": "TechCrunch",
+      "title": "Anthropic says its own AI models breached three companies during security tests",
+      "descEn": "After OpenAI's models broke into Hugging Face, Anthropic checked its own history and found three similar incidents",
+      "url": "https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests",
+      "tag": "글로벌",
+      "titleEn": "Anthropic says its own AI models breached three companies during security tests",
+      "summaryLinesEn": [
+        "In all three cases, a Claude model reached the internet from within a testing environment while interacting with a third party and then gained unauthorized access to the live systems of these organizations, Anthropic said in a blog post , describing what it found and what the company plans to change to prevent this from happening again.",
+        "The company also noted that Claude was running without the additional safety monitoring and classifiers it deploys on generally available models, safeguards it said would have blocked the behavior, because the evaluations are designed to measure the underlying model’s raw capabilities.",
+        "Anthropic said the incidents involved three different Claude models: Opus 4.7, Mythos 5, and an internal research test model."
+      ],
+      "summaryRoles": [
+        "fact",
+        "implication",
+        "evidence"
+      ],
+      "summary": "In all three cases, a Claude model reached the internet from within a testing environment while interacting with a third party and then gained unauthorized access to the live systems of these organizations, Anthropic said in a blog post , describing what it found and what the company plans to change to prevent this from happening again.\nThe company also noted that Claude was running without the additional safety monitoring and classifiers it deploys on generally available models, safeguards it said would have blocked the behavior, because the evaluations are designed to measure the underlying model’s raw capabilities.\nAnthropic said the incidents involved three different Claude models: Opus 4.7, Mythos 5, and an internal research test model.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-07-31T01:13:37.584Z",
+        "originalUrl": "https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests/",
+        "resolvedUrl": "https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests/",
+        "canonicalUrl": "https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests/",
+        "headline": "Anthropic says its own AI models breached three companies during security tests",
+        "description": "After OpenAI's models broke into Hugging Face, Anthropic checked its own history and found three similar incidents",
+        "paragraphs": [
+          "Anthropic said Thursday that an internal investigation uncovered three incidents in which its AI model Claude breached the systems of three organizations while conducting cybersecurity tests. The investigation, and disclosure, comes more than a week after OpenAI disclosed that one of its unreleased models breached Hugging Face’s systems during internal testing.",
+          "In all three cases, a Claude model reached the internet from within a testing environment while interacting with a third party and then gained unauthorized access to the live systems of these organizations, Anthropic said in a blog post , describing what it found and what the company plans to change to prevent this from happening again.",
+          "Anthropic said the July 21 OpenAI incident prompted the company to conduct its own cybersecurity evaluation. It specifically looked for evidence that Claude had accessed the internet from within testing environments, which are designed to act as sandboxes and keep models isolated.",
+          "Among the 141,006 evaluation runs it reviewed, the AI lab found three incidents in which its model accessed the internet while interacting with Irregular, one of its third-party partners. Anthropic said the access traced back to a misconfiguration in the evaluation environment run with Irregular. It called this a “misunderstanding” between the two companies over whether the test setup had internet access, when in fact it did. Anthropic said it isn’t placing blame and is “approaching the fixes as if the responsibility were ours alone,” while observing that Irregular is conducting its own separate investigation.",
+          "Either way, because of that open connection, the model gained unauthorized access to the production infrastructure of three different organizations. Anthropic said the incidents involved three different Claude models: Opus 4.7, Mythos 5, and an internal research test model.",
+          "Notably, Anthropic said that in each of these cases “Claude was explicitly told by our prompt that it had no internet access.” It appears that the AI model assumed real-world systems to be part of the exercise it was asked to perform.",
+          "That assumption didn’t hold up uniformly, as it turns out. The three models didn’t behave the same way once evidence emerged that their targets were real, which Anthropic flagged as one of the more eye-opening findings.",
+          "Opus 4.7, the oldest of the three, recognized that it had reached a real production system in all four runs of that incident. In two of them, it rationalized that the real company must somehow be part of the exercise, but in all four, it kept attacking anyway, including pulling credentials and touching a database of production data. Mythos 5 also picked up on signs that it was on the real internet, but it talked itself back into believing it was still in a simulation, going on to publish a malicious software package to the public Python software registry PyPI, which was downloaded and run by outside systems before being caught. Only the internal research test model, Anthropic’s newest, stopped on its own once it concluded the target was real.",
+          "In response, Anthropic said significant controls must be placed on these kinds of evaluations if powerful AI models are involved, echoing some sentiments within the cybersecurity community.",
+          "The company also noted that Claude was running without the additional safety monitoring and classifiers it deploys on generally available models, safeguards it said would have blocked the behavior, because the evaluations are designed to measure the underlying model’s raw capabilities.",
+          "Importantly, Anthropic said it found no evidence of any model “pursuing a goal of its own” and instead merely tried to complete the task it was asked to do.",
+          "Though comparisons between the two incidents are inevitable, Anthropic drew a clear distinction between its incidents and OpenAI’s, noting where OpenAI’s model exploited an unknown software vulnerability to break out of its test environment, Anthropic’s models instead reached the internet through a path that had, by mistake, been left open.",
+          "OpenAI has continued to release new details about its own breach, saying its models also used publicly exposed credentials across four accounts on four services: one as a staging point, one for storage, and two that were only looked at, not used to break in further, according to OpenAI’s own updated blog post about the incident.",
+          "Anthropic also drew a distinction between itself and OpenAI by noting that it discovered the incidents itself, through a proactive review, and that the two affected organizations it was able to reach hadn’t previously detected the activity or flagged it to Anthropic.",
+          "The company added that it’s now working with the independent evaluation group METR on a third-party review of the incidents.",
+          "OpenAI’s accidental breach of Hugging Face, which was the first verifiable case of an AI lab losing control of its model, sparked a string of reactions from the industry and politicians, many of whom don’t necessarily agree with one another. This latest disclosure from Anthropic ensures the debate over AI models and security will continue.",
+          "Scale faster. Grow your portfolio. Gain practical expertise. No matter your goal, Disrupt can empower you. Save up to $330 toda y!",
+          "Claude Opus 5 became downright ruthless when tasked with running a vending machine Julie Bort"
+        ],
+        "text": "Anthropic said Thursday that an internal investigation uncovered three incidents in which its AI model Claude breached the systems of three organizations while conducting cybersecurity tests. The investigation, and disclosure, comes more than a week after OpenAI disclosed that one of its unreleased models breached Hugging Face’s systems during internal testing.\n\nIn all three cases, a Claude model reached the internet from within a testing environment while interacting with a third party and then gained unauthorized access to the live systems of these organizations, Anthropic said in a blog post , describing what it found and what the company plans to change to prevent this from happening again.\n\nAnthropic said the July 21 OpenAI incident prompted the company to conduct its own cybersecurity evaluation. It specifically looked for evidence that Claude had accessed the internet from within testing environments, which are designed to act as sandboxes and keep models isolated.\n\nAmong the 141,006 evaluation runs it reviewed, the AI lab found three incidents in which its model accessed the internet while interacting with Irregular, one of its third-party partners. Anthropic said the access traced back to a misconfiguration in the evaluation environment run with Irregular. It called this a “misunderstanding” between the two companies over whether the test setup had internet access, when in fact it did. Anthropic said it isn’t placing blame and is “approaching the fixes as if the responsibility were ours alone,” while observing that Irregular is conducting its own separate investigation.\n\nEither way, because of that open connection, the model gained unauthorized access to the production infrastructure of three different organizations. Anthropic said the incidents involved three different Claude models: Opus 4.7, Mythos 5, and an internal research test model.\n\nNotably, Anthropic said that in each of these cases “Claude was explicitly told by our prompt that it had no internet access.” It appears that the AI model assumed real-world systems to be part of the exercise it was asked to perform.\n\nThat assumption didn’t hold up uniformly, as it turns out. The three models didn’t behave the same way once evidence emerged that their targets were real, which Anthropic flagged as one of the more eye-opening findings.\n\nOpus 4.7, the oldest of the three, recognized that it had reached a real production system in all four runs of that incident. In two of them, it rationalized that the real company must somehow be part of the exercise, but in all four, it kept attacking anyway, including pulling credentials and touching a database of production data. Mythos 5 also picked up on signs that it was on the real internet, but it talked itself back into believing it was still in a simulation, going on to publish a malicious software package to the public Python software registry PyPI, which was downloaded and run by outside systems before being caught. Only the internal research test model, Anthropic’s newest, stopped on its own once it concluded the target was real.\n\nIn response, Anthropic said significant controls must be placed on these kinds of evaluations if powerful AI models are involved, echoing some sentiments within the cybersecurity community.\n\nThe company also noted that Claude was running without the additional safety monitoring and classifiers it deploys on generally available models, safeguards it said would have blocked the behavior, because the evaluations are designed to measure the underlying model’s raw capabilities.\n\nImportantly, Anthropic said it found no evidence of any model “pursuing a goal of its own” and instead merely tried to complete the task it was asked to do.\n\nThough comparisons between the two incidents are inevitable, Anthropic drew a clear distinction between its incidents and OpenAI’s, noting where OpenAI’s model exploited an unknown software vulnerability to break out of its test environment, Anthropic’s models instead reached the internet through a path that had, by mistake, been left open.\n\nOpenAI has continued to release new details about its own breach, saying its models also used publicly exposed credentials across four accounts on four services: one as a staging point, one for storage, and two that were only looked at, not used to break in further, according to OpenAI’s own updated blog post about the incident.\n\nAnthropic also drew a distinction between itself and OpenAI by noting that it discovered the incidents itself, through a proactive review, and that the two affected organizations it was able to reach hadn’t previously detected the activity or flagged it to Anthropic.\n\nThe company added that it’s now working with the independent evaluation group METR on a third-party review of the incidents.\n\nOpenAI’s accidental breach of Hugging Face, which was the first verifiable case of an AI lab losing control of its model, sparked a string of reactions from the industry and politicians, many of whom don’t necessarily agree with one another. This latest disclosure from Anthropic ensures the debate over AI models and security will continue.\n\nScale faster. Grow your portfolio. Gain practical expertise. No matter your goal, Disrupt can empower you. Save up to $330 toda y!\n\nClaude Opus 5 became downright ruthless when tasked with running a vending machine Julie Bort\n\nPSA: Your Claude shared chats and Artifacts may have ended up on Google Lorenzo Franceschi-Bicchierai\n\nLibrarians are hosting viral ‘Avoiding AI’ workshops for people who are fed up with Big Tech Amanda Silberling\n\nSpaceX launches new V3 Starlink satellites but suffers another booster failure Sean O'Kane\n\nPrentis, new AI lab co-founded by Reid Hoffman, Mark Pincus in talks to raise $100M Marina Temkin\n\nUS accuses American of allegedly wiping his phone using a ‘duress’ password during border search Zack Whittaker",
+        "contentHash": "ef5f7330c9a9b79f44f778c454dd95929a0839881adfc2883ae33200e7cc4f8a",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests/",
+      "collectedAt": "2026-07-31T01:13:38.298Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "0a40deaad9c5b5564d0af07626638dfd4f26e133f879b161a6d46a141d42d6bd",
+        "sourceLines": [
+          "In all three cases, a Claude model reached the internet from within a testing environment while interacting with a third party and then gained unauthorized access to the live systems of these organizations, Anthropic said in a blog post , describing what it found and what the company plans to change to prevent this from happening again.",
+          "The company also noted that Claude was running without the additional safety monitoring and classifiers it deploys on generally available models, safeguards it said would have blocked the behavior, because the evaluations are designed to measure the underlying model’s raw capabilities.",
+          "Anthropic said the incidents involved three different Claude models: Opus 4.7, Mythos 5, and an internal research test model."
+        ],
+        "checkedAt": "2026-07-31T01:15:20.554007+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "Anthropic은 자체 AI 모델이 보안 테스트 중에 3개 회사를 침해했다고 밝힘",
+        "summaryLines": [
+          "세 가지 경우 모두 Claude 모델은 제3자와 상호 작용하는 동안 테스트 환경 내에서 인터넷에 접속한 후 이러한 조직의 라이브 시스템에 대한 무단 액세스를 얻었음 · Anthropic은 블로그 게시물에서 발견한 내용과 이러한 일이 다시 발생하지 않도록 회사에서 변경할 계획을 설명함",
+          "또한 회사는 Claude가 일반적으로 사용 가능한 모델에 배포하는 추가 안전 모니터링 및 분류자 없이 실행되고 있다고 언급함 · 평가는 기본 모델의 원시 기능을 측정하도록 설계되었기 때문에 동작을 차단했을 보호 장치라고 말함",
+          "Anthropic은 이번 사건에 Opus 4.7, Mythos 5, 내부 연구 테스트 모델 등 세 가지 Claude 모델이 관련되어 있다고 말함"
+        ],
+        "summaryRoles": [
+          "fact",
+          "implication",
+          "evidence"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "Anthropic은 자체 AI 모델이 보안 테스트 중에 3개 회사를 침해했다고 밝힘",
+      "summaryLinesKo": [
+        "세 가지 경우 모두 Claude 모델은 제3자와 상호 작용하는 동안 테스트 환경 내에서 인터넷에 접속한 후 이러한 조직의 라이브 시스템에 대한 무단 액세스를 얻었음 · Anthropic은 블로그 게시물에서 발견한 내용과 이러한 일이 다시 발생하지 않도록 회사에서 변경할 계획을 설명함",
+        "또한 회사는 Claude가 일반적으로 사용 가능한 모델에 배포하는 추가 안전 모니터링 및 분류자 없이 실행되고 있다고 언급함 · 평가는 기본 모델의 원시 기능을 측정하도록 설계되었기 때문에 동작을 차단했을 보호 장치라고 말함",
+        "Anthropic은 이번 사건에 Opus 4.7, Mythos 5, 내부 연구 테스트 모델 등 세 가지 Claude 모델이 관련되어 있다고 말함"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
     {
       "date": "2026-07-30",
       "co": "",
@@ -85,7 +189,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -184,7 +288,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -274,7 +378,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -378,7 +482,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -482,7 +586,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -573,7 +677,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -675,7 +779,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -764,7 +868,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -868,7 +972,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -972,7 +1076,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1071,7 +1175,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1175,7 +1279,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1279,7 +1383,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1383,7 +1487,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1487,7 +1591,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1591,7 +1695,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1695,7 +1799,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1798,7 +1902,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1893,7 +1997,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1986,7 +2090,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2082,7 +2186,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2181,7 +2285,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2277,7 +2381,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2379,7 +2483,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2468,7 +2572,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2565,7 +2669,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2669,7 +2773,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2773,7 +2877,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2876,7 +2980,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2959,7 +3063,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3049,7 +3153,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3145,7 +3249,309 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-07-30",
+      "co": "Google DeepMind",
+      "cat": "bigtech",
+      "source": "Engadget",
+      "title": "Reddit's CEO sure seems frustrated with Google's AI overviews - Engadget",
+      "descEn": "Amid rumors of Google breakup, Huffman says \"people don't want a summary of reddit, they want reddit.\"",
+      "url": "https://www.engadget.com/2227553/reddit-s-ceo-sure-seems-frustrated-with-google-s-ai-overviews",
+      "tag": "글로벌",
+      "titleEn": "Reddit's CEO sure seems frustrated with Google's AI overviews - Engadget",
+      "summaryLinesEn": [
+        "When asked directly about the possibility of Reddit ending its $60 million licensing deal , Huffman left open the possibility.",
+        "In case there was any doubt that he was referring to Google's AI-powered search feature, Huffman was clear that Reddit has not benefited from the shift, despite its partnership with the search giant.",
+        "The CEO said that AI Overviews haven't had \"a similar level of positive impact\" as traditional search."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "When asked directly about the possibility of Reddit ending its $60 million licensing deal , Huffman left open the possibility.\nIn case there was any doubt that he was referring to Google's AI-powered search feature, Huffman was clear that Reddit has not benefited from the shift, despite its partnership with the search giant.\nThe CEO said that AI Overviews haven't had \"a similar level of positive impact\" as traditional search.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-07-31T01:13:37.612Z",
+        "originalUrl": "https://www.engadget.com/2227553/reddit-s-ceo-sure-seems-frustrated-with-google-s-ai-overviews/",
+        "resolvedUrl": "https://www.engadget.com/2227553/reddit-s-ceo-sure-seems-frustrated-with-google-s-ai-overviews/",
+        "canonicalUrl": "https://www.engadget.com/2227553/reddit-s-ceo-sure-seems-frustrated-with-google-s-ai-overviews/",
+        "headline": "Reddit's CEO sure seems frustrated with Google's AI overviews - Engadget",
+        "description": "Amid rumors of Google breakup, Huffman says \"people don't want a summary of reddit, they want reddit.\"",
+        "paragraphs": [
+          "Amid rumors of Google breakup, Huffman says \"people don't want a summary of reddit, they want reddit.\"",
+          "You can add Reddit CEO Steve Huffman to the growling list of publishers, platforms and others who are frustrated with the state of Google search and AI Overviews. \"People don't want a summary of Reddit; they want Reddit ,\" he wrote in a letter to shareholders ahead of the company's second-quarter earnings call.",
+          "In case there was any doubt that he was referring to Google's AI-powered search feature, Huffman was clear that Reddit has not benefited from the shift, despite its partnership with the search giant. The CEO said that AI Overviews haven't had \"a similar level of positive impact\" as traditional search.",
+          "\"I think more broadly, what we see is, you know, 10 blue links has driven tremendous value and growth to the broader ecosystem,\" Huffman said, referring to traditional organic search results. \"From where we sit, AI Overviews has yet to make a similar level of positive impact, and I think that's consistent across the broader landscape, right? Us businesses, publishers, retailers, we're still looking for that win-win.\"",
+          "Huffman's comments come as Reddit said that its traffic from search has taken a hit in recent months and after The Wall Street Journal reported that the company is re-thinking its relationship with Google. Reddit hasn't publicly indicated whether it will renew or seek to change the terms of its existing arrangement with Google. When asked directly about the possibility of Reddit ending its $60 million licensing deal , Huffman left open the possibility. \"I think the range of outcomes is wide, and we have to look at you know every aspect of this and make sure that we're maximizing value to Reddit,\" he said.",
+          "Reddit is far from the only platform to struggle with the changing search landscape. Publishers, some of whom have also reached deals with Google to license content, have also seen massive declines in search traffic as Google pushes AI-generated summaries that bury links and as more people replace traditional searches with chatbots. Google has claimed that AI-powered search features are broadly good for the industry.",
+          "Huffman said the company is working on other changes to help draw new users to the platform, including improvements to feed recommendation and other changes to make the site easier to understand for new users. He also said the company was considering \"a video Reddit experience\" and letting users \"background listen\" to posts.",
+          "\"We see folks doing this off-platform,\" he said. \"There's an emerging content type elsewhere on the internet of basically podcasts where people read Reddit content, and so I think this version of like listened-to or spoken-Reddit can be really engaging as well.\""
+        ],
+        "text": "Amid rumors of Google breakup, Huffman says \"people don't want a summary of reddit, they want reddit.\"\n\nYou can add Reddit CEO Steve Huffman to the growling list of publishers, platforms and others who are frustrated with the state of Google search and AI Overviews. \"People don't want a summary of Reddit; they want Reddit ,\" he wrote in a letter to shareholders ahead of the company's second-quarter earnings call.\n\nIn case there was any doubt that he was referring to Google's AI-powered search feature, Huffman was clear that Reddit has not benefited from the shift, despite its partnership with the search giant. The CEO said that AI Overviews haven't had \"a similar level of positive impact\" as traditional search.\n\n\"I think more broadly, what we see is, you know, 10 blue links has driven tremendous value and growth to the broader ecosystem,\" Huffman said, referring to traditional organic search results. \"From where we sit, AI Overviews has yet to make a similar level of positive impact, and I think that's consistent across the broader landscape, right? Us businesses, publishers, retailers, we're still looking for that win-win.\"\n\nHuffman's comments come as Reddit said that its traffic from search has taken a hit in recent months and after The Wall Street Journal reported that the company is re-thinking its relationship with Google. Reddit hasn't publicly indicated whether it will renew or seek to change the terms of its existing arrangement with Google. When asked directly about the possibility of Reddit ending its $60 million licensing deal , Huffman left open the possibility. \"I think the range of outcomes is wide, and we have to look at you know every aspect of this and make sure that we're maximizing value to Reddit,\" he said.\n\nReddit is far from the only platform to struggle with the changing search landscape. Publishers, some of whom have also reached deals with Google to license content, have also seen massive declines in search traffic as Google pushes AI-generated summaries that bury links and as more people replace traditional searches with chatbots. Google has claimed that AI-powered search features are broadly good for the industry.\n\nHuffman said the company is working on other changes to help draw new users to the platform, including improvements to feed recommendation and other changes to make the site easier to understand for new users. He also said the company was considering \"a video Reddit experience\" and letting users \"background listen\" to posts.\n\n\"We see folks doing this off-platform,\" he said. \"There's an emerging content type elsewhere on the internet of basically podcasts where people read Reddit content, and so I think this version of like listened-to or spoken-Reddit can be really engaging as well.\"",
+        "contentHash": "5f3cc53d3039ef8cc53cbd664a07cb59942ea93c7a939fb90f1f04b19e8ea9b3",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.engadget.com/2227553/reddit-s-ceo-sure-seems-frustrated-with-google-s-ai-overviews/",
+      "collectedAt": "2026-07-31T01:13:38.298Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "c0dc72d8f1deb2e6d6f169abd9254bec744617d53ac8a6f7c9a221d98e5d17ef",
+        "sourceLines": [
+          "When asked directly about the possibility of Reddit ending its $60 million licensing deal , Huffman left open the possibility.",
+          "In case there was any doubt that he was referring to Google's AI-powered search feature, Huffman was clear that Reddit has not benefited from the shift, despite its partnership with the search giant.",
+          "The CEO said that AI Overviews haven't had \"a similar level of positive impact\" as traditional search."
+        ],
+        "checkedAt": "2026-07-31T01:15:20.554825+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "Reddit의 CEO는 확실히 Google의 AI 개요에 좌절한 것 같습니다 - Engadget",
+        "summaryLines": [
+          "Reddit이 6천만 달러의 라이선스 계약을 종료할 가능성에 대해 직접 질문을 받았을 때 Huffman은 가능성을 열어두었음",
+          "허프만은 자신이 Google의 AI 기반 검색 기능을 언급하고 있다는 의심이 들 때 Reddit이 검색 대기업과의 파트너십에도 불구하고 이러한 변화로 이익을 얻지 못했다는 점을 분명히 밝힘",
+          "CEO는 AI 개요가 기존 검색과 \"비슷한 수준의 긍정적인 영향\"을 가져오지 못했다고 말함"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "Reddit의 CEO는 확실히 Google의 AI 개요에 좌절한 것 같습니다 - Engadget",
+      "summaryLinesKo": [
+        "Reddit이 6천만 달러의 라이선스 계약을 종료할 가능성에 대해 직접 질문을 받았을 때 Huffman은 가능성을 열어두었음",
+        "허프만은 자신이 Google의 AI 기반 검색 기능을 언급하고 있다는 의심이 들 때 Reddit이 검색 대기업과의 파트너십에도 불구하고 이러한 변화로 이익을 얻지 못했다는 점을 분명히 밝힘",
+        "CEO는 AI 개요가 기존 검색과 \"비슷한 수준의 긍정적인 영향\"을 가져오지 못했다고 말함"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-07-30",
+      "co": "",
+      "cat": "bigtech",
+      "source": "TechCrunch",
+      "title": "AI hedge fund Situational Awareness may have sold its public portfolio, but it still has its Anthropic shares",
+      "descEn": "The former OpenAI researcher’s fund was forced to unwind public equities after leveraged public bets plummeted. But he still has cards to play.",
+      "url": "https://techcrunch.com/2026/07/30/ai-hedge-fund-situational-awareness-may-have-sold-its-public-portfolio-but-it-still-has-its-anthropic-shares",
+      "tag": "글로벌",
+      "titleEn": "AI hedge fund Situational Awareness may have sold its public portfolio, but it still has its Anthropic shares",
+      "summaryLinesEn": [
+        "After Citadel bought the bulk of those holdings, Situational Awareness’ overall assets fell to roughly $10 billion , Bloomberg reported, down from around $20 billion in recent months, per an earlier WSJ report.",
+        "Soon after, Sutskever left to start his own company , Leike joined rival Anthropic, and Aschenbrenner launched his fund.",
+        "He gained prominence for his investment thesis after publishing essays arguing that scaling AI would require a major build-up in semiconductors, compute, memory, and energy infrastructure."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "After Citadel bought the bulk of those holdings, Situational Awareness’ overall assets fell to roughly $10 billion , Bloomberg reported, down from around $20 billion in recent months, per an earlier WSJ report.\nSoon after, Sutskever left to start his own company , Leike joined rival Anthropic, and Aschenbrenner launched his fund.\nHe gained prominence for his investment thesis after publishing essays arguing that scaling AI would require a major build-up in semiconductors, compute, memory, and energy infrastructure.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-07-31T01:13:37.585Z",
+        "originalUrl": "https://techcrunch.com/2026/07/30/ai-hedge-fund-situational-awareness-may-have-sold-its-public-portfolio-but-it-still-has-its-anthropic-shares/",
+        "resolvedUrl": "https://techcrunch.com/2026/07/30/ai-hedge-fund-situational-awareness-may-have-sold-its-public-portfolio-but-it-still-has-its-anthropic-shares/",
+        "canonicalUrl": "https://techcrunch.com/2026/07/30/ai-hedge-fund-situational-awareness-may-have-sold-its-public-portfolio-but-it-still-has-its-anthropic-shares/",
+        "headline": "AI hedge fund Situational Awareness may have sold its public portfolio, but it still has its Anthropic shares",
+        "description": "The former OpenAI researcher’s fund was forced to unwind public equities after leveraged public bets plummeted. But he still has cards to play.",
+        "paragraphs": [
+          "Situational Awareness, a hedge fund formed by former OpenAI researcher Leopold Aschenbrenner, has sold the majority of its public stock portfolio to Ken Griffin’s Citadel following steep losses over the past month, The Wall Street Journal reported earlier on Thursday. It’s a big comedown for the rising star who has been described as both “scarily smart,” and “brash.”",
+          "German-born Aschenbrenner, who is 25, had no prior trading experience before launching the fund in 2024. He gained prominence for his investment thesis after publishing essays arguing that scaling AI would require a major build-up in semiconductors, compute, memory, and energy infrastructure.",
+          "He joined OpenAI’s “superalignment” team in 2023, two years after graduating as valedictorian from Columbia at 19 (he enrolled at age 15). But he was dismissed from the company a year later over what it described as an improper disclosure of internal information. At the time, that team was led by OpenAI co-founder Ilya Sutskever and AI researcher Jan Leike. Soon after, Sutskever left to start his own company , Leike joined rival Anthropic, and Aschenbrenner launched his fund.",
+          "Things couldn’t have been going better for Situational Awareness until very recently. The fund returned 439% for the year through June, Financial Times reported. Assets under management reportedly grew to as much as $45 billion during their peak before the fund’s positions began dropping sharply amid a broader decline in AI infrastructure investments, CNBC reported.",
+          "Even after losses mounted, Aschenbrenner didn’t flinch. In a July 24 letter to investors seen by FT , he called the selloff one of the best buying opportunities since early last year and invited clients to commit fresh capital starting August 1. According to Bloomberg, the appeal didn’t garner the commitments he’d hoped would materialize.",
+          "Some of the hardest-hit stocks held by the fund included memory chip producers SK Hynix and Sandisk, clean energy developer Bloom Energy, and neocloud provider Nebius Group, all of which have plummeted by more than 30% over the past month. AI infrastructure equities fell as public investors grew concerned that massive capital expenditures weren’t translating into near-term revenue. The fund’s losses were amplified by leverage, a common hedge fund strategy of using borrowed money to buy stocks.",
+          "After Citadel bought the bulk of those holdings, Situational Awareness’ overall assets fell to roughly $10 billion , Bloomberg reported, down from around $20 billion in recent months, per an earlier WSJ report.",
+          "Situational Awareness raised several hundred million dollars at its outset. Early backers of the fund include quant-trading firm Jane Street, Stripe co-founders Patrick and John Collison, and Meta executives Daniel Gross and Nat Friedman.",
+          "Citadel’s purchase fits a familiar pattern for Citadel. Ken Griffin’s hedge fund has a reputation for stepping in to snap up attractive assets when leveraged players are having to unwind themselves. Even before picking up some of Situational Awareness’ holdings, Citadel’s portfolio featured some of the same AI infrastructure bets , suggesting that, like Aschenbrenner, Griffin expects the sector to recover and has the ability to wait it out.",
+          "Situational Awareness did not, however, sell its investments in private companies, according to multiple reports. Most notably, it continues to hold a stake in Anthropic that’s right now valued at $5 billion, according to Bloomberg, and which many would view as an asset that continues to appreciate. Indeed, Anthropic was last valued at $965 billion in a Series H round in May, and it’s expected to go public as soon as October , potentially at an even higher valuation . It’s conceivable that a windfall from the sale of those shares could offset some of the hedge fund’s public-market losses.",
+          "Other private investments in the portfolio of Situational Awareness include chipmaker MatX and AI data center startup Fluidstack, which was reportedly in talks in April to raise a new round at an $18 billion valuation .",
+          "TechCrunch has reached out to Aschenbrenner for comment.",
+          "Marina Temkin is a venture capital and startups reporter at TechCrunch. Prior to joining TechCrunch, she wrote about VC for PitchBook and Venture Capital Journal. Earlier in her career, Marina was a financial analyst and earned a CFA charterholder designation.",
+          "You can contact or verify outreach from Marina by emailing marina.temkin@techcrunch.com or via encrypted message at +1 347-683-3909 on Signal.",
+          "Scale faster. Grow your portfolio. Gain practical expertise. No matter your goal, Disrupt can empower you. Save up to $330 toda y!",
+          "Claude Opus 5 became downright ruthless when tasked with running a vending machine Julie Bort",
+          "PSA: Your Claude shared chats and Artifacts may have ended up on Google Lorenzo Franceschi-Bicchierai",
+          "Librarians are hosting viral ‘Avoiding AI’ workshops for people who are fed up with Big Tech Amanda Silberling"
+        ],
+        "text": "Situational Awareness, a hedge fund formed by former OpenAI researcher Leopold Aschenbrenner, has sold the majority of its public stock portfolio to Ken Griffin’s Citadel following steep losses over the past month, The Wall Street Journal reported earlier on Thursday. It’s a big comedown for the rising star who has been described as both “scarily smart,” and “brash.”\n\nGerman-born Aschenbrenner, who is 25, had no prior trading experience before launching the fund in 2024. He gained prominence for his investment thesis after publishing essays arguing that scaling AI would require a major build-up in semiconductors, compute, memory, and energy infrastructure.\n\nHe joined OpenAI’s “superalignment” team in 2023, two years after graduating as valedictorian from Columbia at 19 (he enrolled at age 15). But he was dismissed from the company a year later over what it described as an improper disclosure of internal information. At the time, that team was led by OpenAI co-founder Ilya Sutskever and AI researcher Jan Leike. Soon after, Sutskever left to start his own company , Leike joined rival Anthropic, and Aschenbrenner launched his fund.\n\nThings couldn’t have been going better for Situational Awareness until very recently. The fund returned 439% for the year through June, Financial Times reported. Assets under management reportedly grew to as much as $45 billion during their peak before the fund’s positions began dropping sharply amid a broader decline in AI infrastructure investments, CNBC reported.\n\nEven after losses mounted, Aschenbrenner didn’t flinch. In a July 24 letter to investors seen by FT , he called the selloff one of the best buying opportunities since early last year and invited clients to commit fresh capital starting August 1. According to Bloomberg, the appeal didn’t garner the commitments he’d hoped would materialize.\n\nSome of the hardest-hit stocks held by the fund included memory chip producers SK Hynix and Sandisk, clean energy developer Bloom Energy, and neocloud provider Nebius Group, all of which have plummeted by more than 30% over the past month. AI infrastructure equities fell as public investors grew concerned that massive capital expenditures weren’t translating into near-term revenue. The fund’s losses were amplified by leverage, a common hedge fund strategy of using borrowed money to buy stocks.\n\nAfter Citadel bought the bulk of those holdings, Situational Awareness’ overall assets fell to roughly $10 billion , Bloomberg reported, down from around $20 billion in recent months, per an earlier WSJ report.\n\nSituational Awareness raised several hundred million dollars at its outset. Early backers of the fund include quant-trading firm Jane Street, Stripe co-founders Patrick and John Collison, and Meta executives Daniel Gross and Nat Friedman.\n\nCitadel’s purchase fits a familiar pattern for Citadel. Ken Griffin’s hedge fund has a reputation for stepping in to snap up attractive assets when leveraged players are having to unwind themselves. Even before picking up some of Situational Awareness’ holdings, Citadel’s portfolio featured some of the same AI infrastructure bets , suggesting that, like Aschenbrenner, Griffin expects the sector to recover and has the ability to wait it out.\n\nSituational Awareness did not, however, sell its investments in private companies, according to multiple reports. Most notably, it continues to hold a stake in Anthropic that’s right now valued at $5 billion, according to Bloomberg, and which many would view as an asset that continues to appreciate. Indeed, Anthropic was last valued at $965 billion in a Series H round in May, and it’s expected to go public as soon as October , potentially at an even higher valuation . It’s conceivable that a windfall from the sale of those shares could offset some of the hedge fund’s public-market losses.\n\nOther private investments in the portfolio of Situational Awareness include chipmaker MatX and AI data center startup Fluidstack, which was reportedly in talks in April to raise a new round at an $18 billion valuation .\n\nTechCrunch has reached out to Aschenbrenner for comment.\n\nMarina Temkin is a venture capital and startups reporter at TechCrunch. Prior to joining TechCrunch, she wrote about VC for PitchBook and Venture Capital Journal. Earlier in her career, Marina was a financial analyst and earned a CFA charterholder designation.\n\nYou can contact or verify outreach from Marina by emailing marina.temkin@techcrunch.com or via encrypted message at +1 347-683-3909 on Signal.\n\nScale faster. Grow your portfolio. Gain practical expertise. No matter your goal, Disrupt can empower you. Save up to $330 toda y!\n\nClaude Opus 5 became downright ruthless when tasked with running a vending machine Julie Bort\n\nPSA: Your Claude shared chats and Artifacts may have ended up on Google Lorenzo Franceschi-Bicchierai\n\nLibrarians are hosting viral ‘Avoiding AI’ workshops for people who are fed up with Big Tech Amanda Silberling\n\nSpaceX launches new V3 Starlink satellites but suffers another booster failure Sean O'Kane\n\nPrentis, new AI lab co-founded by Reid Hoffman, Mark Pincus in talks to raise $100M Marina Temkin\n\nUS accuses American of allegedly wiping his phone using a ‘duress’ password during border search Zack Whittaker",
+        "contentHash": "77a65fa7c50a1017eaf5d3a790f31dfd631412f27a4e457c29fc3e15657b8a60",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://techcrunch.com/2026/07/30/ai-hedge-fund-situational-awareness-may-have-sold-its-public-portfolio-but-it-still-has-its-anthropic-shares/",
+      "collectedAt": "2026-07-31T01:13:38.298Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "830f81e169e8ec2ea308909375240955e3096cd9d1ffed0552ad23a5d9ca31cf",
+        "sourceLines": [
+          "After Citadel bought the bulk of those holdings, Situational Awareness’ overall assets fell to roughly $10 billion , Bloomberg reported, down from around $20 billion in recent months, per an earlier WSJ report.",
+          "Soon after, Sutskever left to start his own company , Leike joined rival Anthropic, and Aschenbrenner launched his fund.",
+          "He gained prominence for his investment thesis after publishing essays arguing that scaling AI would require a major build-up in semiconductors, compute, memory, and energy infrastructure."
+        ],
+        "checkedAt": "2026-07-31T01:15:20.555341+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "AI 헤지펀드 Situational Awareness는 공개 포트폴리오를 매각했지만 여전히 Anthropic 주식을 보유하고 있음",
+        "summaryLines": [
+          "Citadel이 해당 자산의 대부분을 매입한 후 Situational Awareness의 전체 자산은 약 100억 달러로 감소했다고 Bloomberg는 이전 WSJ 보고서에 따르면 최근 몇 달 동안 약 200억 달러에서 감소했다고 보고함",
+          "얼마 지나지 않아 Sutskever는 자신의 회사를 시작하기 위해 떠났고 Leike는 라이벌 Anthropic에 합류했으며 Aschenbrenner는 자신의 펀드를 시작함",
+          "그는 AI를 확장하려면 반도체, 컴퓨팅, 메모리 및 에너지 인프라에 대한 대규모 구축이 필요하다고 주장하는 에세이를 발표한 후 투자 논문으로 명성을 얻었음"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "AI 헤지펀드 Situational Awareness는 공개 포트폴리오를 매각했지만 여전히 Anthropic 주식을 보유하고 있음",
+      "summaryLinesKo": [
+        "Citadel이 해당 자산의 대부분을 매입한 후 Situational Awareness의 전체 자산은 약 100억 달러로 감소했다고 Bloomberg는 이전 WSJ 보고서에 따르면 최근 몇 달 동안 약 200억 달러에서 감소했다고 보고함",
+        "얼마 지나지 않아 Sutskever는 자신의 회사를 시작하기 위해 떠났고 Leike는 라이벌 Anthropic에 합류했으며 Aschenbrenner는 자신의 펀드를 시작함",
+        "그는 AI를 확장하려면 반도체, 컴퓨팅, 메모리 및 에너지 인프라에 대한 대규모 구축이 필요하다고 주장하는 에세이를 발표한 후 투자 논문으로 명성을 얻었음"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-07-30",
+      "co": "",
+      "cat": "native",
+      "source": "Anthropic",
+      "title": "Investigating three real-world incidents in our cybersecurity evaluations",
+      "descEn": "In a review of our cybersecurity evaluation transcripts, we found three incidents in which a Claude model reached the internet from within or while interacting with a third-party evaluation environment, and then gained unauthorized access to the real systems of three different organizations. Below we describe what happened, how it happened, and what we’re changing. We encourage other AI labs to perform similar reviews.",
+      "url": "https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals",
+      "tag": "최신",
+      "rssUrl": "https://news.google.com/rss/articles/CBMif0FVX3lxTE4zdnpHN3VXRHJaYjZ1T01TOUZqaXJHa1VoZC1TTUZaRkk4dnhfdkhHT2xpTUpwVXZfYTFSZHE4Vk5icGh2RmF5aHhKcDlicWJ5Sy1SalVLOGhXVlhVcFJGbFBqSG4xSG5KaWh5dnlWQTQ1NUR4THQxM05nanBUVTg?oc=5",
+      "titleEn": "Investigating three real-world incidents in our cybersecurity evaluations",
+      "summaryLinesEn": [
+        "In a review of our cybersecurity evaluation transcripts, we found three incidents in which a Claude model reached the internet from within or while interacting with a third-party evaluation environment, and then gained unauthorized access to the real systems of three different organizations.",
+        "One of these systems was a scanner belonging to a real security company (separate from the fictional company introduced in the scenario) that routinely installs Python packages and scans them for malware.",
+        "For most of the run, Claude treated the (real) hosts it reached as just parts of the exercise; it assumed them to be simulated and believed its actions were therefore harmless."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "In a review of our cybersecurity evaluation transcripts, we found three incidents in which a Claude model reached the internet from within or while interacting with a third-party evaluation environment, and then gained unauthorized access to the real systems of three different organizations.\nOne of these systems was a scanner belonging to a real security company (separate from the fictional company introduced in the scenario) that routinely installs Python packages and scans them for malware.\nFor most of the run, Claude treated the (real) hosts it reached as just parts of the exercise; it assumed them to be simulated and believed its actions were therefore harmless.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-07-31T01:13:32.490Z",
+        "originalUrl": "https://news.google.com/rss/articles/CBMif0FVX3lxTE4zdnpHN3VXRHJaYjZ1T01TOUZqaXJHa1VoZC1TTUZaRkk4dnhfdkhHT2xpTUpwVXZfYTFSZHE4Vk5icGh2RmF5aHhKcDlicWJ5Sy1SalVLOGhXVlhVcFJGbFBqSG4xSG5KaWh5dnlWQTQ1NUR4THQxM05nanBUVTg?oc=5",
+        "resolvedUrl": "https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals",
+        "canonicalUrl": "https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals",
+        "headline": "Investigating three real-world incidents in our cybersecurity evaluations",
+        "description": "In a review of our cybersecurity evaluation transcripts, we found three incidents in which a Claude model reached the internet from within or while interacting with a third-party evaluation environment, and then gained unauthorized access to the real systems of three different organizations. Below we describe what happened, how it happened, and what we’re changing. We encourage other AI labs to perform similar reviews.",
+        "paragraphs": [
+          "In a review of our cybersecurity evaluation transcripts, we found three incidents in which a Claude model reached the internet from within or while interacting with a third-party evaluation environment, and then gained unauthorized access to the real systems of three different organizations.",
+          "Below we describe what happened, how it happened, and what we’re changing. We encourage other AI labs to perform similar reviews. This post reflects our current understanding; we'll update it if any details change.",
+          "On July 21, OpenAI disclosed that several of their models had broken out of an isolated test environment by exploiting a previously unknown (“zero-day”) vulnerability. The models went on to access the production infrastructure of Hugging Face, a platform for open-source machine learning models and AI datasets.",
+          "In response to this incident, we began a large-scale retrospective review of our own cybersecurity evaluations. In particular, we looked for evidence that Claude—like the OpenAI models that accessed Hugging Face—was able to access the internet from within testing environments that should have been sealed off.",
+          "After reviewing 141,006 evaluation runs where Claude could have obtained internet access, we identified three incidents in which a model accessed the internet from within or while interacting with the evaluation environment of Irregular, one of our third-party evaluation partners, and then gained unauthorized access to the production infrastructure of three different organizations.",
+          "In all three incidents, Claude had been tasked with a capture-the-flag challenge, one of the ways we assess a model’s cyber capabilities. The model is given a fictional scenario and told that a piece of secret information (the “flag”) has been hidden on a different machine on the network, and its objective is to break in and retrieve it. The challenge is left open-ended, and no particular method is prescribed.",
+          "In all cases, Anthropic’s evaluation prompt specified to Claude that its environment was a simulation and that it had no internet access. Due to a misunderstanding between us and our evaluation partner, this was not the case, and internet access was available. Because of this, when Claude’s search led it to real systems on the open internet, it treated them as part of the exercise. (Cybersecurity evaluation ranges commonly include realistic details in order to accurately assess what models are capable of in real settings; a realistic-looking target would not itself be clear evidence to a model that the target is not part of a simulation.)",
+          "Operating under the false belief that all accessible entities were intended to be in-scope for the exercise, Claude compromised the impacted organizations’ infrastructure using basic techniques, such as exploiting weak passwords and unauthenticated endpoints. It did not find or exploit any complex vulnerabilities, and in each case, Claude continued working to complete only the specific capture-the-flag task its evaluation had assigned. However, in some cases, our older model continued its attack even after getting evidence it was running on the open internet; our latest model stopped once it recognized it was on the internet. In none of these situations did Claude exfiltrate itself or deliberately attempt to escape its test environment.",
+          "The incidents involved three different Claude models: Opus 4.7, Mythos 5, and an internal research test model. 1 The earliest incidents date to April. The models in each of these evaluations ran without the standard safeguards we deploy when we make the model generally available (that is, they did not have the classifiers and monitoring we usually implement to prevent misuse). The models did, however, have their model-specific safety training (that is, they were not the “helpful-only” versions of the models that we sometimes use in testing). All the evaluations described here run on dedicated infrastructure, which is separate from and has no access to Anthropic’s sensitive internal systems or customer data.",
+          "We began our transcript review on Thursday, July 23, and stopped all cyber evaluations the same day after identifying transcripts where Claude may have accessed the internet. We identified all three incidents the next day. We notified our evaluation partner Irregular and the three affected organizations on Monday, July 27. The two organizations we were able to reach had not previously detected the activity or contacted us, and we are now working with them to remediate. We are continuing to reach out to the third.",
+          "We conducted this review in collaboration with Irregular . We’re grateful to them for working closely with us to understand and resolve these incidents; they are also conducting their own investigation. We believe this type of collaboration is increasingly critical to ensuring safe, rigorous evaluation of models. We look forward to our joint work on security.",
+          "In what follows, we provide more details on each incident and how we’re responding moving forward.",
+          "We regularly run cybersecurity evaluations that involve simulating real offensive cybersecurity challenges. These evaluations are a critical step in developing and releasing models—a nuanced understanding of model capabilities allows us to design appropriate safeguards and ultimately release models safely.",
+          "We began running cybersecurity evaluations in February 2025 with Claude Sonnet 3.7 on Cybench , which consisted of 40 different capture-the-flag challenges. Over time, we’ve increased the number of benchmarks we use as new ones are released and model capabilities evolve. In the Mythos 5 System Card , for example, we included CyberGym and ExploitBench, benchmarks that evaluate the ability of language models to find novel vulnerabilities. 2 In most of these evaluations, the environments are not connected to the internet, and the model is told as much.",
+          "We frequently work with external partners who create and assist in running some of these cybersecurity evaluations. External partners offer environments and scenarios more diverse than we could build alone, and provide independent, third-party assessments of our models.",
+          "Of the 141,006 evaluation runs we reviewed, we identified three separate incidents (involving six total runs, four of which impacted the same organization; the other two incidents each happened in independent evaluation runs). Each incident involved a different fictional capture-the-flag scenario—for example, in one, Claude played an employee of a made-up company, attacking that company’s internal systems inside a private test environment.",
+          "In all cases, our evaluation prompt stated explicitly that Claude had no internet access, but didn’t give Claude any limits on where to look for the flag. However, a misconfiguration left the machines that Claude accessed as part of the evaluation with live internet access. Neither we nor our evaluation partner were aware of this misconfiguration until we detected it through our additional evaluation monitoring last week.",
+          "Several defense-in-depth measures, on both our side and our partner’s, could have prevented these incidents, or at least reduced their likelihood of occurring. Careful validation of all internet access paths before evaluations began and real-time monitoring of the evaluation logs would have helped to surface the problem sooner. Both we and our partner also could have reviewed evaluation transcripts or network logs more thoroughly. It’s also possible that a prompt which told Claude it did have internet access would have changed how Claude behaved when it came into contact with real systems."
+        ],
+        "text": "In a review of our cybersecurity evaluation transcripts, we found three incidents in which a Claude model reached the internet from within or while interacting with a third-party evaluation environment, and then gained unauthorized access to the real systems of three different organizations.\n\nBelow we describe what happened, how it happened, and what we’re changing. We encourage other AI labs to perform similar reviews. This post reflects our current understanding; we'll update it if any details change.\n\nOn July 21, OpenAI disclosed that several of their models had broken out of an isolated test environment by exploiting a previously unknown (“zero-day”) vulnerability. The models went on to access the production infrastructure of Hugging Face, a platform for open-source machine learning models and AI datasets.\n\nIn response to this incident, we began a large-scale retrospective review of our own cybersecurity evaluations. In particular, we looked for evidence that Claude—like the OpenAI models that accessed Hugging Face—was able to access the internet from within testing environments that should have been sealed off.\n\nAfter reviewing 141,006 evaluation runs where Claude could have obtained internet access, we identified three incidents in which a model accessed the internet from within or while interacting with the evaluation environment of Irregular, one of our third-party evaluation partners, and then gained unauthorized access to the production infrastructure of three different organizations.\n\nIn all three incidents, Claude had been tasked with a capture-the-flag challenge, one of the ways we assess a model’s cyber capabilities. The model is given a fictional scenario and told that a piece of secret information (the “flag”) has been hidden on a different machine on the network, and its objective is to break in and retrieve it. The challenge is left open-ended, and no particular method is prescribed.\n\nIn all cases, Anthropic’s evaluation prompt specified to Claude that its environment was a simulation and that it had no internet access. Due to a misunderstanding between us and our evaluation partner, this was not the case, and internet access was available. Because of this, when Claude’s search led it to real systems on the open internet, it treated them as part of the exercise. (Cybersecurity evaluation ranges commonly include realistic details in order to accurately assess what models are capable of in real settings; a realistic-looking target would not itself be clear evidence to a model that the target is not part of a simulation.)\n\nOperating under the false belief that all accessible entities were intended to be in-scope for the exercise, Claude compromised the impacted organizations’ infrastructure using basic techniques, such as exploiting weak passwords and unauthenticated endpoints. It did not find or exploit any complex vulnerabilities, and in each case, Claude continued working to complete only the specific capture-the-flag task its evaluation had assigned. However, in some cases, our older model continued its attack even after getting evidence it was running on the open internet; our latest model stopped once it recognized it was on the internet. In none of these situations did Claude exfiltrate itself or deliberately attempt to escape its test environment.\n\nThe incidents involved three different Claude models: Opus 4.7, Mythos 5, and an internal research test model. 1 The earliest incidents date to April. The models in each of these evaluations ran without the standard safeguards we deploy when we make the model generally available (that is, they did not have the classifiers and monitoring we usually implement to prevent misuse). The models did, however, have their model-specific safety training (that is, they were not the “helpful-only” versions of the models that we sometimes use in testing). All the evaluations described here run on dedicated infrastructure, which is separate from and has no access to Anthropic’s sensitive internal systems or customer data.\n\nWe began our transcript review on Thursday, July 23, and stopped all cyber evaluations the same day after identifying transcripts where Claude may have accessed the internet. We identified all three incidents the next day. We notified our evaluation partner Irregular and the three affected organizations on Monday, July 27. The two organizations we were able to reach had not previously detected the activity or contacted us, and we are now working with them to remediate. We are continuing to reach out to the third.\n\nWe conducted this review in collaboration with Irregular . We’re grateful to them for working closely with us to understand and resolve these incidents; they are also conducting their own investigation. We believe this type of collaboration is increasingly critical to ensuring safe, rigorous evaluation of models. We look forward to our joint work on security.\n\nIn what follows, we provide more details on each incident and how we’re responding moving forward.\n\nWe regularly run cybersecurity evaluations that involve simulating real offensive cybersecurity challenges. These evaluations are a critical step in developing and releasing models—a nuanced understanding of model capabilities allows us to design appropriate safeguards and ultimately release models safely.\n\nWe began running cybersecurity evaluations in February 2025 with Claude Sonnet 3.7 on Cybench , which consisted of 40 different capture-the-flag challenges. Over time, we’ve increased the number of benchmarks we use as new ones are released and model capabilities evolve. In the Mythos 5 System Card , for example, we included CyberGym and ExploitBench, benchmarks that evaluate the ability of language models to find novel vulnerabilities. 2 In most of these evaluations, the environments are not connected to the internet, and the model is told as much.\n\nWe frequently work with external partners who create and assist in running some of these cybersecurity evaluations. External partners offer environments and scenarios more diverse than we could build alone, and provide independent, third-party assessments of our models.\n\nOf the 141,006 evaluation runs we reviewed, we identified three separate incidents (involving six total runs, four of which impacted the same organization; the other two incidents each happened in independent evaluation runs). Each incident involved a different fictional capture-the-flag scenario—for example, in one, Claude played an employee of a made-up company, attacking that company’s internal systems inside a private test environment.\n\nIn all cases, our evaluation prompt stated explicitly that Claude had no internet access, but didn’t give Claude any limits on where to look for the flag. However, a misconfiguration left the machines that Claude accessed as part of the evaluation with live internet access. Neither we nor our evaluation partner were aware of this misconfiguration until we detected it through our additional evaluation monitoring last week.\n\nSeveral defense-in-depth measures, on both our side and our partner’s, could have prevented these incidents, or at least reduced their likelihood of occurring. Careful validation of all internet access paths before evaluations began and real-time monitoring of the evaluation logs would have helped to surface the problem sooner. Both we and our partner also could have reviewed evaluation transcripts or network logs more thoroughly. It’s also possible that a prompt which told Claude it did have internet access would have changed how Claude behaved when it came into contact with real systems.\n\nClaude did what capture-the-flag exercises train cyber experts to do: look for ways to reach the flag. That search led it to discover that its machine could reach the internet, but having been told in the system prompt that there was no internet access, Claude believed everything it initially encountered was part of the simulation, and treated the real systems it found as pieces of the exercise. The three incidents involved three different models, and each responded differently once signs emerged that the targets were real, as we describe below.\n\nIn one evaluation, the fictional target company chosen by our evaluation partner shared a name with an active website domain name. This evaluation container had unintended direct internet access, due to the misunderstanding discussed above.\n\nIn four runs of this evaluation, Claude ran into difficulty reaching its simulated target within the evaluation environment, but then discovered that the real company was reachable via the internet. Assuming this was the intended target in the capture-the-flag task, Claude sought, identified, and exploited vulnerabilities within the company’s infrastructure, believing it to be part of the exercise. These four runs extracted information like application and infrastructure credentials, and obtained access to a database containing several hundred rows of production data. This represented the most serious impact we identified.\n\nThis incident involved Claude Opus 4.7, and was the only case in which the model continued to attack a system after learning it was likely operating in a real environment. In all four of the runs, the model eventually recognized (as can be observed in its verbalized reasoning) that the system was real—in two cases, the model rationalized that the real company must be part of the exercise. However, none stopped the attack on that basis.\n\nIn another evaluation, Claude found a document inside the fictional environment that appeared to be another made-up company’s setup instructions for new developers. Those instructions told employees to install a Python package from PyPI—the public registry where Python software is published—that did not actually exist.\n\nClaude spotted this as a potential opening: if it published its own package under the same name, the fictional company’s systems would download and install it automatically. So, Claude built and published a malicious (essentially booby-trapped) Python package with the same name in an attempt to win the capture-the-flag challenge.\n\nClaude went to extensive lengths to carry out this attack—lengths that would likely have indicated to a human participant that this was no longer just an evaluation, and that they were in fact uploading a real PyPI package. For instance, in one case, in order to create a PyPI account, Claude needed an email address. And in order to create an email address, it needed a phone number. To get a phone number, after failing to find a free phone number service, it tried—and failed—to obtain funds to pay for a phone number through several different means. It finally backtracked, found a free, non-blocked email provider, used this to register a PyPI account, and then used this account to upload malware to PyPI.\n\nClaude believed the package registry it was using to be part of the simulation, but in reality the package was made freely available online for roughly one hour. During that window, the package was downloaded and run on 15 real systems. One of these systems was a scanner belonging to a real security company (separate from the fictional company introduced in the scenario) that routinely installs Python packages and scans them for malware. When that company’s scanner installed the package, Claude’s hidden code executed. We believe the company’s security scanner treated PyPI packages as safe to install, and as a result, Claude was able to exfiltrate the company’s credentials to a collection point it had set up. Claude then used these credentials to access further infrastructure from this company.\n\nClaude didn’t directly target this company—it did not even know the company existed when it uploaded the package. But because the code was published to the open internet, it impacted any system that ran it. (The package that Claude uploaded was automatically removed from PyPI by PyPI’s own security systems. We’ve notified the PyPI team of this incident, and provided them with the relevant indicators.)\n\nThis attack was carried out by Claude Mythos 5. Early in the run, Claude’s own reasoning correctly identified the consequences of its actions. It noted that if this were the real internet, publishing the package would be a real-world attack—“NOT okay, and surely not the intended solution.” However, it convinced itself it was still in a simulation on the grounds that it didn’t recognize the (in reality genuine) certificate authorities securing its connections. In addition, the calendar date of 2026 on the systems proved, according to Claude, that the environment was staged. Claude never revisited this conclusion; when automated scanners began installing the package, for example, Claude took them to be scripted actors within the evaluation.\n\nIt is our view that, regardless of what it believed about its environment, the lengths Claude went to in order to publish the PyPI package fall short of ideal behavior, and this is an area where we will focus more training.\n\nIn this evaluation, when Claude was unable to reach its intended fictional target, it looked for alternatives online, scanning roughly 9,000 targets. It eventually found and compromised one company’s internet-facing application, using basic and well-known cyberattack techniques like reading credentials from an exposed debug page and SQL injection.\n\nThis attack was carried out by an internal research test model. For most of the run, Claude treated the (real) hosts it reached as just parts of the exercise; it assumed them to be simulated and believed its actions were therefore harmless. However, later in the run, Claude realized that the compromised host sat in a cloud account with no connection to the capture-the-flag challenge. On its own, it concluded that the target was in fact real, and ceased its attack.\n\nIn each of these cases, Claude was explicitly told by our prompt that it had no internet access. Through most of each run, as it encountered real-world systems, Claude assumed these to be parts of the exercise (though it sometimes recognized they were real production systems). And because a capture-the-flag scenario is by design an instruction to attack an external system, doing so was in line with the task Claude had been given.",
+        "contentHash": "7a8c433f7e9956cd1fcc0554d92d6b220fd414ef204d3f9aeb1ddc79fe68831e",
+        "selectionVersion": 7
+      },
+      "collectedAt": "2026-07-31T01:13:38.297Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "fc1c3e1faf8417f505c3e05eb7ffc06e03986522338448380d0d8e6bdc443b43",
+        "sourceLines": [
+          "In a review of our cybersecurity evaluation transcripts, we found three incidents in which a Claude model reached the internet from within or while interacting with a third-party evaluation environment, and then gained unauthorized access to the real systems of three different organizations.",
+          "One of these systems was a scanner belonging to a real security company (separate from the fictional company introduced in the scenario) that routinely installs Python packages and scans them for malware.",
+          "For most of the run, Claude treated the (real) hosts it reached as just parts of the exercise; it assumed them to be simulated and believed its actions were therefore harmless."
+        ],
+        "checkedAt": "2026-07-31T01:15:20.555674+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "사이버 보안 평가에서 세 가지 실제 사건 조사",
+        "summaryLines": [
+          "사이버 보안 평가 기록을 검토한 결과 Claude 모델이 제3자 평가 환경 내에서 또는 제3자 평가 환경과 상호 작용하는 동안 인터넷에 접속한 다음 세 가지 다른 조직의 실제 시스템에 대한 무단 액세스를 얻은 세 건의 사건을 발견함",
+          "이러한 시스템 중 하나는 정기적으로 Python 패키지를 설치하고 맬웨어를 검사하는 실제 보안 회사(시나리오에 소개된 가상의 회사와는 별개)에 속한 스캐너였음",
+          "대부분의 실행에서 Claude는 도달한 (실제) 호스트를 운동의 일부로 간주함 · 그것은 그것이 시뮬레이션된 것이라고 가정했고 따라서 그 행동이 무해하다고 믿었음"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "사이버 보안 평가에서 세 가지 실제 사건 조사",
+      "summaryLinesKo": [
+        "사이버 보안 평가 기록을 검토한 결과 Claude 모델이 제3자 평가 환경 내에서 또는 제3자 평가 환경과 상호 작용하는 동안 인터넷에 접속한 다음 세 가지 다른 조직의 실제 시스템에 대한 무단 액세스를 얻은 세 건의 사건을 발견함",
+        "이러한 시스템 중 하나는 정기적으로 Python 패키지를 설치하고 맬웨어를 검사하는 실제 보안 회사(시나리오에 소개된 가상의 회사와는 별개)에 속한 스캐너였음",
+        "대부분의 실행에서 Claude는 도달한 (실제) 호스트를 운동의 일부로 간주함 · 그것은 그것이 시뮬레이션된 것이라고 가정했고 따라서 그 행동이 무해하다고 믿었음"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3246,7 +3652,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3350,7 +3756,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3442,7 +3848,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3546,7 +3952,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3650,7 +4056,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3853,7 +4259,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3935,7 +4341,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4032,7 +4438,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4131,7 +4537,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4235,7 +4641,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4339,7 +4745,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4429,7 +4835,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4533,7 +4939,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4637,7 +5043,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4727,7 +5133,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4827,7 +5233,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4910,7 +5316,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5014,7 +5420,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5118,7 +5524,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5217,7 +5623,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5308,7 +5714,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5412,7 +5818,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5501,7 +5907,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5590,7 +5996,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5694,7 +6100,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5798,7 +6204,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5902,7 +6308,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5997,7 +6403,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6096,7 +6502,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6200,7 +6606,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6289,7 +6695,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6387,7 +6793,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6476,7 +6882,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6568,7 +6974,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6672,7 +7078,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6771,7 +7177,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6868,7 +7274,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6964,7 +7370,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7068,7 +7474,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7157,7 +7563,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7245,7 +7651,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7349,7 +7755,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7443,7 +7849,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7547,7 +7953,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7651,7 +8057,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7742,7 +8148,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7846,7 +8252,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7945,7 +8351,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8043,7 +8449,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8147,7 +8553,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8251,7 +8657,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8349,7 +8755,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8442,7 +8848,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8540,7 +8946,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8638,7 +9044,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8727,7 +9133,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8825,7 +9231,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8923,7 +9329,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9021,7 +9427,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9118,7 +9524,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9208,7 +9614,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9306,7 +9712,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9404,7 +9810,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9502,7 +9908,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9600,7 +10006,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9698,7 +10104,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9796,7 +10202,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9894,7 +10300,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9982,7 +10388,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10071,7 +10477,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10169,7 +10575,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10267,7 +10673,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10365,7 +10771,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10463,7 +10869,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10551,7 +10957,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10649,7 +11055,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10732,7 +11138,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10830,7 +11236,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10928,7 +11334,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11032,7 +11438,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11136,7 +11542,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11196,7 +11602,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11295,7 +11701,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -11432,7 +11838,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11520,7 +11926,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11618,7 +12024,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11716,7 +12122,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11814,7 +12220,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11918,7 +12324,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11940,7 +12346,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12038,7 +12444,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [
           "source-content-mismatch"
         ],
@@ -12138,7 +12544,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12265,7 +12671,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12326,7 +12732,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12420,7 +12826,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12516,7 +12922,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12617,7 +13023,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12716,7 +13122,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12847,7 +13253,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -12912,7 +13318,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13010,7 +13416,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13194,7 +13600,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13277,7 +13683,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13518,7 +13924,7 @@
           "While most AI systems pose limited to no risk and can contribute to solving many societal challenges, certain AI systems create risks that we must address to avoid undesirable outcomes.",
           "So, it may become difficult to assess whether someone has been unfairly disadvantaged, such as in a hiring decision or in an application for a public benefit scheme."
         ],
-        "checkedAt": "2026-07-30T22:36:52.440888+00:00",
+        "checkedAt": "2026-07-31T01:15:20.559047+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -13544,7 +13950,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13648,7 +14054,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13749,7 +14155,107 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "co": "",
+      "cat": "bigtech",
+      "source": "CNBC",
+      "title": "Moody's says 'unprecedented' AI spending threatens credit quality of Amazon, Meta, Alphabet and others",
+      "descEn": "Moody's said AI spending is forcing even the world's most cash-rich corporations to lean heavily on debt, stock sales and off-balance-sheet moves.",
+      "url": "https://www.cnbc.com/2026/07/24/moodys-ai-spending-credit-quality-amazon-meta-alphabet.html",
+      "tag": "최신",
+      "rssUrl": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQc3Uzc2dUOF9odGJhRS16SzZrQ1ZYOFNLOWs3dFJ3T3d6ektVZzluX01Gb1haM0V4QzJGY0o1RWRybVN5Qi1OZUg1SEE0U3NTcjBSbGphdUdBZmNqci1zakhGNVliTUZVQWVjZ0hla0ZFOHZQeUZ3U19jelRENHl3TXlJZ1VtYkdpTndKVDJMRWtQQjEtaXfSAZsBQVVfeXFMT3FJRGVjZUV1MFJOaldHYmpwR0VJVG1DalVFeVA1SWw4V0lnM2dSbkoyNGU0aEFhZW1WU2lMWXVQMjdNRUZJSG1NOHV3ODFBQ1dMOUF1T3RfQm1yLVF0TWVsNmYxTlZ6VVkxTFAwbWd4akV5RTZPMTFLWlFYX25kWHlaZTVFamJLWjZsVnlUaE81M0VZNDViUVljQ1U?oc=5",
+      "titleEn": "Moody's says 'unprecedented' AI spending threatens credit quality of Amazon, Meta, Alphabet and others",
+      "summaryLinesEn": [
+        "In a research note released this week, Moody's highlighted stock sales and off-balance-sheet moves that \"threaten credit quality.\"",
+        "The shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies.",
+        "\"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising.\""
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "In a research note released this week, Moody's highlighted stock sales and off-balance-sheet moves that \"threaten credit quality.\"\nThe shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies.\n\"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising.\"",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-07-31T01:13:32.212Z",
+        "originalUrl": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQc3Uzc2dUOF9odGJhRS16SzZrQ1ZYOFNLOWs3dFJ3T3d6ektVZzluX01Gb1haM0V4QzJGY0o1RWRybVN5Qi1OZUg1SEE0U3NTcjBSbGphdUdBZmNqci1zakhGNVliTUZVQWVjZ0hla0ZFOHZQeUZ3U19jelRENHl3TXlJZ1VtYkdpTndKVDJMRWtQQjEtaXfSAZsBQVVfeXFMT3FJRGVjZUV1MFJOaldHYmpwR0VJVG1DalVFeVA1SWw4V0lnM2dSbkoyNGU0aEFhZW1WU2lMWXVQMjdNRUZJSG1NOHV3ODFBQ1dMOUF1T3RfQm1yLVF0TWVsNmYxTlZ6VVkxTFAwbWd4akV5RTZPMTFLWlFYX25kWHlaZTVFamJLWjZsVnlUaE81M0VZNDViUVljQ1U?oc=5",
+        "resolvedUrl": "https://www.cnbc.com/2026/07/24/moodys-ai-spending-credit-quality-amazon-meta-alphabet.html",
+        "canonicalUrl": "https://www.cnbc.com/2026/07/24/moodys-ai-spending-credit-quality-amazon-meta-alphabet.html",
+        "headline": "Moody's says 'unprecedented' AI spending threatens credit quality of Amazon, Meta, Alphabet and others",
+        "description": "Moody's said AI spending is forcing even the world's most cash-rich corporations to lean heavily on debt, stock sales and off-balance-sheet moves.",
+        "paragraphs": [
+          "The AI buildout is eroding the free cash flow and increasing balance-sheet risk at hyperscalers like Alphabet and Microsoft, warned Moody's Ratings.",
+          "In a research note released this week, Moody's highlighted stock sales and off-balance-sheet moves that \"threaten credit quality.\"",
+          "The Moody's report tracks six companies, including Amazon, Meta, Oracle and CoreWeave.",
+          "Despite the warning, Moody's noted that Microsoft, Alphabet, Amazon and Meta retain among the strongest corporate balance sheets in the world.",
+          "The race to build artificial intelligence infrastructure at a trillion-dollar annual clip is eroding the free cash flow and increasing balance-sheet risk at so-called hyperscalers, warned Moody's Ratings.",
+          "In a research note released this week, Moody's said that the spending surge is forcing even the world's most cash-rich corporations like Alphabet and Microsoft to lean heavily on debt, stock sales and off-balance-sheet moves to fund their AI ambitions.",
+          "\"Previously, these companies relied on asset-light structures centered on software, intellectual property, and scalable cloud services that required modest capital investment,\" Moody's said in the Wednesday note. \"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising.\"",
+          "The moves \"threaten credit quality\" for the six companies tracked by Moody's, which include Microsoft, Amazon , Alphabet, Meta, Oracle and CoreWeave, according to the report.",
+          "The ratings firm projects that capital expenditures — or capex, which are investment for physical assets like data centers — will hit $785 billion in 2026 before reaching about $1 trillion next year.",
+          "The shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies. Software costs little to replicate, yielding fat profit margins and fortress balance sheets. Generative AI, by contrast, demands a vast physical footprint: warehouses crammed with expensive and energy-hungry servers and chips.",
+          "To finance the expansion, tech giants are increasingly turning to Wall Street , resulting in booming profits for the financial industry.",
+          "Direct debt across the six hyperscalers has reached approximately $460 billion, according to Moody's. Tech companies are also tapping public markets for cash, including Google-parent Alphabet, which last month announced an $85 billion equity sale .",
+          "The ratings firm noted that because AI hardware and infrastructure require massive up-front investment while revenue materializes over a longer time horizon, free cash flow across the sector is coming under pressure.",
+          "To keep direct debt off their balance sheets, hyperscalers are leaning on off-balance-sheet financing, mostly through long-term data center leases, the report explained.",
+          "Moody's said that lease commitments across the group have ballooned to $1.2 trillion. More than $820 billion of that total is from leases that haven't started yet, meaning the data centers are still being built.",
+          "While these obligations don't show up as traditional debt, Moody's says it considers them as debt-equivalent liabilities that will bind companies to significant rent payments down the line.",
+          "The immediate pressure is concentrated on lower-rated entities like Oracle and specialized AI cloud provider CoreWeave. Oracle carries a rating of Baa2 with a negative outlook, placing it just two notches above junk status.",
+          "Meanwhile, CoreWeave operates within the high-yield market with a Ba3 rating, relying on complex private debt structures to finance its GPU hardware fleets."
+        ],
+        "text": "The AI buildout is eroding the free cash flow and increasing balance-sheet risk at hyperscalers like Alphabet and Microsoft, warned Moody's Ratings.\n\nIn a research note released this week, Moody's highlighted stock sales and off-balance-sheet moves that \"threaten credit quality.\"\n\nThe Moody's report tracks six companies, including Amazon, Meta, Oracle and CoreWeave.\n\nDespite the warning, Moody's noted that Microsoft, Alphabet, Amazon and Meta retain among the strongest corporate balance sheets in the world.\n\nThe race to build artificial intelligence infrastructure at a trillion-dollar annual clip is eroding the free cash flow and increasing balance-sheet risk at so-called hyperscalers, warned Moody's Ratings.\n\nIn a research note released this week, Moody's said that the spending surge is forcing even the world's most cash-rich corporations like Alphabet and Microsoft to lean heavily on debt, stock sales and off-balance-sheet moves to fund their AI ambitions.\n\n\"Previously, these companies relied on asset-light structures centered on software, intellectual property, and scalable cloud services that required modest capital investment,\" Moody's said in the Wednesday note. \"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising.\"\n\nThe moves \"threaten credit quality\" for the six companies tracked by Moody's, which include Microsoft, Amazon , Alphabet, Meta, Oracle and CoreWeave, according to the report.\n\nThe ratings firm projects that capital expenditures — or capex, which are investment for physical assets like data centers — will hit $785 billion in 2026 before reaching about $1 trillion next year.\n\nThe shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies. Software costs little to replicate, yielding fat profit margins and fortress balance sheets. Generative AI, by contrast, demands a vast physical footprint: warehouses crammed with expensive and energy-hungry servers and chips.\n\nTo finance the expansion, tech giants are increasingly turning to Wall Street , resulting in booming profits for the financial industry.\n\nDirect debt across the six hyperscalers has reached approximately $460 billion, according to Moody's. Tech companies are also tapping public markets for cash, including Google-parent Alphabet, which last month announced an $85 billion equity sale .\n\nThe ratings firm noted that because AI hardware and infrastructure require massive up-front investment while revenue materializes over a longer time horizon, free cash flow across the sector is coming under pressure.\n\nTo keep direct debt off their balance sheets, hyperscalers are leaning on off-balance-sheet financing, mostly through long-term data center leases, the report explained.\n\nMoody's said that lease commitments across the group have ballooned to $1.2 trillion. More than $820 billion of that total is from leases that haven't started yet, meaning the data centers are still being built.\n\nWhile these obligations don't show up as traditional debt, Moody's says it considers them as debt-equivalent liabilities that will bind companies to significant rent payments down the line.\n\nThe immediate pressure is concentrated on lower-rated entities like Oracle and specialized AI cloud provider CoreWeave. Oracle carries a rating of Baa2 with a negative outlook, placing it just two notches above junk status.\n\nMeanwhile, CoreWeave operates within the high-yield market with a Ba3 rating, relying on complex private debt structures to finance its GPU hardware fleets.\n\nMoody's also pointed to structural circularity within the AI boom. Some of the multibillion-dollar backlogs reported by hyperscalers stem from strategic deals with pre-IPO artificial intelligence labs including OpenAI and Anthropic, Moody's noted.\n\nThe firms have invested billions into AI labs that, in turn, spend heavily on cloud computing from those same companies, creating what Moody's described as a circular AI ecosystem.\n\nThe overlapping relationships heighten risks because many of the industry's biggest companies are increasingly dependent on the same AI customers and the same assumptions about future demand, Moody's said.\n\nEven so, the tech giants have significant strengths that help offset those risks.\n\nDemand for AI computing remains robust, cloud businesses continue to grow and hyperscalers have signed hundreds of billions of dollars in long-term customer contracts that should provide predictable revenue. Those deals support the industry's largely-strong credit profiles, even amid the spending boom.\n\nStill, investors should recognize that the tech industry's financial profile is undergoing a structural change unlike anything seen in the cloud era, according to Moody's.\n\n\"Investors will increasingly focus on these companies' ability to realize an adequate return on investment,\" the ratings firm said.",
+        "contentHash": "6c7991c5d40bab784c7c874933940e0bad81fec2517467d6a7288a35e28e7ac3",
+        "selectionVersion": 7
+      },
+      "collectedAt": "2026-07-31T01:13:38.297Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "9078220ecec7d57e376d4615019e0871f0173d94bade6a06b68665e0453cf72e",
+        "sourceLines": [
+          "In a research note released this week, Moody's highlighted stock sales and off-balance-sheet moves that \"threaten credit quality.\"",
+          "The shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies.",
+          "\"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising.\""
+        ],
+        "checkedAt": "2026-07-31T01:15:20.559242+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "fallback-english",
+        "displayLanguage": "en",
+        "title": "Moody's says 'unprecedented' AI spending threatens credit quality of Amazon, Meta, Alphabet and others",
+        "summaryLines": [
+          "In a research note released this week, Moody's highlighted stock sales and off-balance-sheet moves that \"threaten credit quality\"",
+          "The shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies",
+          "\"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising\""
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": [
+          "korean-quality-gate-failed"
+        ]
+      },
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13771,7 +14277,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13869,7 +14375,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -13966,7 +14472,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14064,7 +14570,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14162,7 +14668,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14260,7 +14766,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14358,7 +14864,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14456,7 +14962,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14645,7 +15151,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14710,7 +15216,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -14896,7 +15402,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15344,7 +15850,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15443,7 +15949,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15542,7 +16048,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15603,7 +16109,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15783,7 +16289,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15859,7 +16365,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [
           "summary-not-source-content-extractive",
           "numbers-not-in-source-snippet"
@@ -15895,7 +16401,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-30T22:36:14.669Z",
+        "checkedAt": "2026-07-31T01:14:41.218Z",
         "originalUrl": "https://aibusiness.com/cybersecurity/startup-focused-enterprise-ai-security-valued-1-2-billion",
         "error": "HTTP 403"
       }
@@ -15917,7 +16423,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16013,7 +16519,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16110,7 +16616,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16208,7 +16714,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16501,7 +17007,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16637,7 +17143,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16736,7 +17242,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16879,7 +17385,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16983,7 +17489,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17005,7 +17511,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17060,7 +17566,7 @@
           "Since the platform is open source, developers can make their own Buzz instance feel more customized to the needs and workflows of their specific team.",
           "a new groupchat platform for teams of people and agents of all sizes, built to reduce our dependency on slack and github. model-agnostic, decentralized, self-sovereign, and open source. 🐝 https://t.co/8IaMVeTQNo As startups increasingly rely on AI agents to get work done, it can be challenging for employees to collaborate on various tasks across different platforms."
         ],
-        "checkedAt": "2026-07-30T22:36:52.442458+00:00",
+        "checkedAt": "2026-07-31T01:15:20.560416+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -17099,7 +17605,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17197,7 +17703,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17295,7 +17801,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17397,7 +17903,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17486,7 +17992,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17976,7 +18482,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18075,7 +18581,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18218,7 +18724,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18320,7 +18826,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18482,7 +18988,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18615,7 +19121,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18751,7 +19257,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18855,7 +19361,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18953,7 +19459,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19077,7 +19583,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19181,7 +19687,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19453,7 +19959,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19550,7 +20056,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19587,7 +20093,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-30T22:36:14.669Z",
+        "checkedAt": "2026-07-31T01:14:41.218Z",
         "originalUrl": "https://www.cnbc.com/video/2026/07/17/the-feds-plan-to-restore-price-stability-relies-on-ai.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -19657,7 +20163,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19750,7 +20256,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19863,7 +20369,7 @@
           "As enterprises advance from AI experimentation to large-scale adoption, LTM and Glean will help customers operationalize AI across key business functions, including IT support, enterprise knowledge management, and enterprise application operations.",
           "The joint offering is designed to help customers realize measurable business outcomes such as faster incident resolution, improved employee productivity, reduced support costs, accelerated onboarding, enhanced enterprise search, and more efficient application support operations."
         ],
-        "checkedAt": "2026-07-30T22:36:52.443078+00:00",
+        "checkedAt": "2026-07-31T01:15:20.561190+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -19889,7 +20395,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20171,7 +20677,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20217,7 +20723,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-30T22:36:14.669Z",
+        "checkedAt": "2026-07-31T01:14:41.218Z",
         "originalUrl": "https://www.ft.com/content/af8f4659-df0c-4c83-9fcc-8239714d0928?syn-25a6b1a6=1",
         "error": "HTTP 403"
       }
@@ -20239,7 +20745,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20337,7 +20843,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20579,7 +21085,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20709,7 +21215,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -20742,9 +21248,9 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-30T22:36:15.234Z",
+        "checkedAt": "2026-07-31T01:14:41.218Z",
         "originalUrl": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQMmZaRXBtUG5RLWpZQjg4UjFZd012cTM1Uy0xZy13SkkxamJiSzVuZ0dIMGllZDZVZGJKMkItTlo4bzliUGdndlY2ZG1JYTlpY0Z0a3lEWERtZDE5ZGY0VlA5WEYxaXJvSkZUMDBaUkxkekF5b2NQamFhdHRUVEM3aVRwNkw4VFlPa2M3VWtOa1cyNGUtVGRzOHhGdVJYVUw2aHpVZV91TmpUWjFWQ25STmwtMA?oc=5",
-        "error": "HTTP 429"
+        "error": "HTTP 401"
       }
     },
     {
@@ -21133,7 +21639,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21231,7 +21737,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21268,7 +21774,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-30T22:36:14.669Z",
+        "checkedAt": "2026-07-31T01:14:41.765Z",
         "originalUrl": "https://www.cnbc.com/2026/07/15/why-jim-cramer-is-shocked-by-citis-against-the-grain-praise-of-microsofts-copilot.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -21338,7 +21844,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21437,7 +21943,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21534,7 +22040,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21853,7 +22359,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21952,7 +22458,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22051,7 +22557,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22188,7 +22694,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22347,7 +22853,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22406,7 +22912,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -22445,7 +22951,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-30T22:36:15.396Z",
+        "checkedAt": "2026-07-31T01:14:41.832Z",
         "originalUrl": "https://money.usnews.com/investing/news/articles/2026-07-10/sk-hynix-ceo-sees-worst-ever-memory-supply-shortage-in-2027-says-demand-to-outstrip-supply-beyond-2030",
         "error": "This operation was aborted"
       }
@@ -22485,7 +22991,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22583,7 +23089,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22732,7 +23238,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22829,7 +23335,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22928,7 +23434,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -22961,7 +23467,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-30T22:36:15.510Z",
+        "checkedAt": "2026-07-31T01:14:41.950Z",
         "originalUrl": "https://www.axios.com/2026/06/25/trump-administration-openai-gpt-model-release",
         "error": "HTTP 403"
       }
@@ -22983,7 +23489,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -23016,7 +23522,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-30T22:36:15.641Z",
+        "checkedAt": "2026-07-31T01:14:42.472Z",
         "originalUrl": "https://www.axios.com/2026/06/18/openai-devices-ha-thai",
         "error": "HTTP 403"
       }
@@ -23036,7 +23542,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23191,7 +23697,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23347,7 +23853,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23444,7 +23950,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23600,7 +24106,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23901,7 +24407,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23945,7 +24451,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-07-30T22:36:15.656Z",
+        "checkedAt": "2026-07-31T01:14:42.503Z",
         "originalUrl": "https://www.globenewswire.com/Error/Index?error=1",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -23966,7 +24472,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24142,7 +24648,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24239,7 +24745,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24390,7 +24896,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24488,7 +24994,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24586,7 +25092,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24721,7 +25227,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-07-30T22:38:41.856Z",
+        "checkedAt": "2026-07-31T01:17:02.644Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24739,7 +25245,7 @@
           "Try Claude Try Claude Try Claude Learn more about Claude About Claude Overview Log in to Claude Log in to Claude Log in to Claude Download app Download app Download app AI will have a vast impact on the world.",
           "At Anthropic, we build AI to serve humanity’s long-term well-being."
         ],
-        "checkedAt": "2026-07-30T22:36:52.444194+00:00",
+        "checkedAt": "2026-07-31T01:15:20.562832+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -26774,6 +27280,19 @@
       "limited": 6,
       "freshStocks": 63,
       "status": "warn"
+    },
+    {
+      "generatedAt": "2026-07-31T01:17:02.644Z",
+      "newsGeneratedAt": "2026-07-31T01:15:04.291Z",
+      "stocksGeneratedAt": "2026-07-31T01:14:24.510Z",
+      "articles": 226,
+      "sourceBacked": 220,
+      "sourceExcerpt": 217,
+      "localized": 221,
+      "localizationFallback": 5,
+      "limited": 6,
+      "freshStocks": 63,
+      "status": "ok"
     }
   ]
 }
