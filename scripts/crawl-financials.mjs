@@ -12,6 +12,7 @@
    ============================================================ */
 import { writeFile, readFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadDash } from "./load-dash.mjs";
 
 // 크롤 대상 상장 티커(기업 탭에 매핑되는 상장사) — 조인 키일 뿐 데이터가 아님
 const TICKERS = [
@@ -89,11 +90,23 @@ async function fetchQuoteSummary(ticker, sess) {
   return null;
 }
 
-async function wikidataHeadcount(ticker) {
+// hostFrom + domainMatches: for ambiguous, non-brand-name private companies
+// (e.g. "Harvey", "Writer", "Glean" collide with common-word Wikidata entries),
+// only trust a match whose own official-website claim (P856) resolves to the
+// domain already curated for that company in data.js. Well-known tickers skip
+// this check — their COMPANY_QUERY search term is already unambiguous.
+const hostFrom = value => { try { return new URL(value).hostname.replace(/^www\./, "").toLowerCase(); } catch { return ""; } };
+const domainMatches = (host, expected) => {
+  if (!host || !expected) return false;
+  const e = expected.replace(/^www\./, "").toLowerCase();
+  return host === e || host.endsWith(`.${e}`);
+};
+
+async function wikidataHeadcount(query, expectedDomain) {
   try {
     const search = new URL("https://www.wikidata.org/w/api.php");
     search.searchParams.set("action", "wbsearchentities");
-    search.searchParams.set("search", COMPANY_QUERY[ticker] || ticker);
+    search.searchParams.set("search", COMPANY_QUERY[query] || query);
     search.searchParams.set("language", "en");
     search.searchParams.set("limit", "5");
     search.searchParams.set("format", "json");
@@ -101,38 +114,52 @@ async function wikidataHeadcount(ticker) {
     const found = await fetch(search, { headers: { "User-Agent": `${UA} AI-Strategy-Research/1.0` }, signal: AbortSignal.timeout(12_000) });
     if (!found.ok) return null;
     const matches = (await found.json()).search || [];
-    const entity = matches.find(item => /company|corporation|technology|semiconductor|cloud computing/i.test(item.description || ""))
-      || matches[0];
-    if (!entity?.id) return null;
-    const details = new URL("https://www.wikidata.org/w/api.php");
-    details.searchParams.set("action", "wbgetentities");
-    details.searchParams.set("ids", entity.id);
-    details.searchParams.set("props", "claims");
-    details.searchParams.set("format", "json");
-    details.searchParams.set("origin", "*");
-    const response = await fetch(details, { headers: { "User-Agent": `${UA} AI-Strategy-Research/1.0` }, signal: AbortSignal.timeout(12_000) });
-    if (!response.ok) return null;
-    const claims = (await response.json()).entities?.[entity.id]?.claims?.P1128 || [];
-    const rows = claims.map(claim => {
-      const amount = Number(claim?.mainsnak?.datavalue?.value?.amount);
-      const rawTime = claim?.qualifiers?.P585?.[0]?.datavalue?.value?.time || "";
-      const asOf = rawTime.replace(/^\+/, "").slice(0, 10).replace(/-00/g, "-01");
-      return { amount, asOf, rank: claim.rank || "normal" };
-    }).filter(row => Number.isFinite(row.amount) && row.amount > 0);
-    rows.sort((a, b) => (b.rank === "preferred") - (a.rank === "preferred")
-      || String(b.asOf).localeCompare(String(a.asOf)));
-    const latest = rows[0];
-    if (!latest) return null;
-    const stale = monthAge(latest.asOf) > HEADCOUNT_MAX_AGE_MONTHS;
-    return {
-      ...(stale ? { employeesLastReported: fmtEmp(latest.amount), employeesStale: true } : { employees: fmtEmp(latest.amount) }),
-      employeesAsOf: latest.asOf,
-      employeesSource: `Wikidata ${entity.id}`,
-      employeesSourceUrl: `https://www.wikidata.org/wiki/${entity.id}`,
-    };
+    const candidates = matches.filter(item => /company|corporation|technology|semiconductor|cloud computing|startup|software/i.test(item.description || ""));
+    const pool = candidates.length ? candidates : matches;
+    for (const entity of expectedDomain ? pool : pool.slice(0, 1)) {
+      if (!entity?.id) continue;
+      const details = new URL("https://www.wikidata.org/w/api.php");
+      details.searchParams.set("action", "wbgetentities");
+      details.searchParams.set("ids", entity.id);
+      details.searchParams.set("props", "claims");
+      details.searchParams.set("format", "json");
+      details.searchParams.set("origin", "*");
+      const response = await fetch(details, { headers: { "User-Agent": `${UA} AI-Strategy-Research/1.0` }, signal: AbortSignal.timeout(12_000) });
+      if (!response.ok) continue;
+      const entityClaims = (await response.json()).entities?.[entity.id]?.claims || {};
+      if (expectedDomain) {
+        const site = entityClaims.P856?.[0]?.mainsnak?.datavalue?.value || "";
+        if (!domainMatches(hostFrom(site), expectedDomain)) continue;
+      }
+      const result = headcountFromClaims(entityClaims.P1128 || [], entity.id);
+      if (result) return result;
+      if (expectedDomain) continue;      // right entity, no headcount claim — try next candidate only when unverified
+      return null;
+    }
+    return null;
   } catch {
     return null;
   }
+}
+
+function headcountFromClaims(claims, entityId) {
+  const rows = claims.map(claim => {
+    const amount = Number(claim?.mainsnak?.datavalue?.value?.amount);
+    const rawTime = claim?.qualifiers?.P585?.[0]?.datavalue?.value?.time || "";
+    const asOf = rawTime.replace(/^\+/, "").slice(0, 10).replace(/-00/g, "-01");
+    return { amount, asOf, rank: claim.rank || "normal" };
+  }).filter(row => Number.isFinite(row.amount) && row.amount > 0);
+  rows.sort((a, b) => (b.rank === "preferred") - (a.rank === "preferred")
+    || String(b.asOf).localeCompare(String(a.asOf)));
+  const latest = rows[0];
+  if (!latest) return null;
+  const stale = monthAge(latest.asOf) > HEADCOUNT_MAX_AGE_MONTHS;
+  return {
+    ...(stale ? { employeesLastReported: fmtEmp(latest.amount), employeesStale: true } : { employees: fmtEmp(latest.amount) }),
+    employeesAsOf: latest.asOf,
+    employeesSource: `Wikidata ${entityId}`,
+    employeesSourceUrl: `https://www.wikidata.org/wiki/${entityId}`,
+  };
 }
 
 const COUNTRY_KO = { "United States": "미국", "Taiwan": "대만", "South Korea": "대한민국", "Netherlands": "네덜란드", "United Kingdom": "영국", "China": "중국" };
@@ -237,6 +264,40 @@ async function main() {
     await new Promise((res) => setTimeout(res, 250));
   }
 
+  // Non-tickered tracked companies (private: OpenAI, Anthropic, Databricks,
+  // most startups' large-company peers, etc.) have no Yahoo Finance quote to
+  // join, so their headcount was frozen at whatever was curated once in
+  // data.js. Give them the same Wikidata fallback, keyed by company display
+  // name instead of ticker. Ambiguous, common-word company names (Harvey,
+  // Writer, Glean, ...) only accept a match whose own official-website claim
+  // resolves to the domain already curated for that company — otherwise skip
+  // rather than risk attaching a different company's headcount.
+  //
+  // Tracked company display names already covered by the ticker pass above
+  // (kept in sync with crawl-companies.mjs's TICKER_OF — a join key, not data).
+  const TICKERED_NAMES = new Set([
+    "NVIDIA", "Microsoft", "Amazon", "Apple", "Google DeepMind", "Meta AI",
+    "Oracle", "AMD", "Broadcom", "TSMC", "Micron", "CoreWeave", "Applied Digital",
+  ]);
+  const dash = loadDash();
+  const untickeredCompanies = (dash.COMPANIES || [])
+    .filter(company => company?.name && !TICKERED_NAMES.has(company.name));
+  let nameKeyedFresh = 0, nameKeyedFailed = 0;
+  for (const company of untickeredCompanies) {
+    const name = company.name;
+    const fallback = await wikidataHeadcount(name, company.domain || "");
+    if (fallback) {
+      const merged = { ...prev[name], ...fallback, asOf: new Date().toISOString().slice(0, 10) };
+      if (fallback.employeesStale && !fallback.employees) {
+        delete merged.employees;
+        merged.employeesStale = true;
+      }
+      financials[name] = merged;
+      nameKeyedFresh++;
+    } else { nameKeyedFailed++; }              // 실패 시 직전 값 보존(단조 최신화)
+    await new Promise((res) => setTimeout(res, 250));
+  }
+
   // Also reclassify preserved records when the upstream request failed. This
   // prevents a once-current Wikidata value from silently aging into a current
   // figure merely because the newest crawl was unavailable.
@@ -256,12 +317,15 @@ async function main() {
       yahooFreshCount: yahooFresh,
       wikidataHeadcountFallbackCount: wikidataFallback,
       failed,
+      untickeredCompanyCount: untickeredCompanies.length,
+      untickeredFreshCount: nameKeyedFresh,
+      untickeredFailed: nameKeyedFailed,
       sources: ["yahoo-quotesummary", "wikidata-P1128"],
     },
     financials,
   };
   await writeFile("financials.json", JSON.stringify(out) + "\n");
-  console.log(`Wrote financials.json — ${Object.keys(financials).length} tickers (${fresh} fresh, ${failed} preserved)`);
+  console.log(`Wrote financials.json — ${Object.keys(financials).length} entries (${fresh} ticker-fresh, ${nameKeyedFresh}/${untickeredCompanies.length} private-company headcount, ${failed + nameKeyedFailed} preserved)`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

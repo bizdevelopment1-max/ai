@@ -275,8 +275,11 @@ async function main() {
   const trackedCompanies = (dash.COMPANIES || []).filter(company => !suppression.hasCompany(company.name));
   const leaders = deriveLeaders(orgSource);
   // 기업 개요의 변동 항목을 크롤 값으로 붙임(crawl-financials.mjs — 공시·분기 주기로 자동 최신화)
-  const joinFin = (rec, tk) => {
-    const f = tk && financials[tk];
+  const joinFin = (rec, tk, name) => {
+    // Public companies join by ticker (Yahoo Finance); private tracked
+    // companies have no ticker, so fall back to the name-keyed Wikidata
+    // headcount crawl-financials.mjs also produces for them.
+    const f = (tk && financials[tk]) || (name && financials[name]);
     if (!f) return;
     if (f.ceo) rec.ceo = f.ceo;
     if (f.hq) rec.hq = f.hq;
@@ -325,13 +328,13 @@ async function main() {
       companies[co].capAsof = stocks[tk].asOf;
       companies[co].ticker = tk;
     }
-    joinFin(companies[co], tk);
+    joinFin(companies[co], tk, co);
   }
   // 뉴스 co에 없는 상장사도 시총·실적은 제공(티커 역방향)
   for (const [co, tk] of Object.entries(TICKER_OF)) {
     if (!companies[co] && stocks[tk] && stocks[tk].marketCap) {
       companies[co] = { mentions7: 0, mentions30: 0, latest: null, cap: stocks[tk].marketCap, capAsof: stocks[tk].asOf, ticker: tk };
-      joinFin(companies[co], tk);
+      joinFin(companies[co], tk, co);
     }
   }
 
@@ -416,7 +419,7 @@ async function main() {
         rec.capAsof = stocks[tk].asOf;
         rec.ticker = tk;
       }
-      joinFin(rec, tk);
+      joinFin(rec, tk, name);
     }
 
     const p = { ...(base.profile || {}), ...(profileSource[name] || {}) };
