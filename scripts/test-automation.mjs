@@ -344,10 +344,9 @@ try {
         && /^https?:\/\//.test(String(item.url || ""))
         && item.evidenceType === "publisher-page-extractive");
   });
-  const executiveUiReady = boards.includes("경영진 발언·인터뷰 <em>Executive Quotes</em>")
-    && boards.includes("경영진 발언·기사 <em>Executive Mentions</em>")
-    && boards.includes("원문 검증 · 자동 갱신")
-    && boards.includes("기업 직접 연관 · 자동 갱신")
+  const executiveUiReady = boards.includes("경영진 발언·활동 <em>Executive Voice</em>")
+    && boards.includes("원문 검증 · 기업 직접 연관 · 자동 갱신")
+    && boards.includes("직접 인용 {quoteCount}건 · 기사 언급 {mentionCount}건")
     && !boards.includes('className="cd-exec-flow"')
     && !boards.includes("interviewRows.length > 0 && (")
     && !boards.includes("c.live && Array.isArray(c.live.execNews)");
@@ -370,7 +369,7 @@ try {
     && boards.includes('["경영진", executive]')
     && boards.includes("<b>{executiveDisplayName(lead)}</b>")
     && boards.includes("<b>{executiveDisplayName(p)}</b>")
-    && boards.includes("executiveDisplayName({ name: it.who, role: it.role })")
+    && boards.includes("executiveDisplayName({ name: row.who, role: row.role })")
     && !boards.includes('className="cd-org-role"')
     && !boards.includes('className="cd-itv-role"');
   const refreshReady = companyCrawler.includes("const MAX_EXECUTIVES = 12")

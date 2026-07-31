@@ -1276,21 +1276,6 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           const tierGroups = tierMeta.map(([key, ko, en]) => ({
             key, ko, en, people: reports.filter(person => tierOf(person) === key),
           })).filter(group => group.people.length);
-          const executiveFeed = live.executiveFeed || c.executiveFeed || {};
-          const feedQuotes = Array.isArray(executiveFeed.quotes) ? executiveFeed.quotes.map(quote => ({
-            who: quote.speaker, role: quote.role, date: quote.date,
-            quoteEn: quote.quoteOriginal, quoteKo: quote.quoteKo,
-            source: quote.source, url: quote.evidenceUrl,
-          })) : [];
-          const intelligenceQuotes = Array.isArray(intelligence.executiveQuotes) ? intelligence.executiveQuotes.map(quote => ({
-            who: quote.speaker, role: quote.role, date: quote.date,
-            quoteEn: quote.quoteOriginal, quoteKo: quote.quoteKo,
-            source: quote.source, url: quote.evidenceUrl,
-          })) : [];
-          const crawlQuotes = [...feedQuotes, ...intelligenceQuotes].filter((item, index, rows) =>
-            rows.findIndex(other => `${other.who}|${other.quoteEn || other.quoteKo}` === `${item.who}|${item.quoteEn || item.quoteKo}`) === index);
-          const interviewRows = [...crawlQuotes, ...(org.interviews || [])].filter((item, index, rows) =>
-            rows.findIndex(other => `${other.who}|${other.quoteEn || other.quoteKo}` === `${item.who}|${item.quoteEn || item.quoteKo}`) === index).slice(0, 6);
           // 검증된 직접 프로필 URL만 연결한다. 검색 결과 페이지는 상세 링크로 사용하지 않는다.
           const D = window.DASH || {};
           const directProfiles = D.LINKEDIN_PROFILES || {};
@@ -1364,49 +1349,75 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                   </div>
                 </div>
               )}
-              <div className="cd-section">
-                <h4>경영진 발언·인터뷰 <em>Executive Quotes</em>
-                  <b className="cd-prof-live">원문 검증 · 자동 갱신</b>
-                </h4>
-                {interviewRows.length > 0 ? (
-                  <div className="cd-itv">
-                    {interviewRows.map((it, i) => (
-                      <div className="cd-itv-item" key={i}>
-                        <div className="cd-itv-who">
-                          <b>{executiveDisplayName({ name: it.who, role: it.role })}</b>
-                          {it.date && <span className="cd-itv-date">{it.date}</span>}
-                        </div>
-                        {(it.quoteKo || it.insight) && <p className="cd-itv-ko">{it.quoteKo || it.insight}</p>}
-                        {it.quoteEn && <p className="cd-itv-en">“{it.quoteEn}”</p>}
-                        {it.url && <a className="cd-itv-src" href={it.url} target="_blank" rel="noopener">{it.source ? it.source + " · " : ""}원문 보기 <Icon name="ext" size={10} /></a>}
-                      </div>
-                    ))}
-                  </div>
-                ) : <p className="cd-outline-empty">—</p>}
-              </div>
             </React.Fragment>
           );
         })()}
 
         {(() => {
+          const org = c.live?.organization || c.org || {};
           const executiveFeed = c.live?.executiveFeed || c.executiveFeed || {};
-          const mentionRows = (Array.isArray(executiveFeed.mentions) && executiveFeed.mentions.length
-            ? executiveFeed.mentions : c.live?.execNews || []).slice(0, 6);
+          const feedQuotes = Array.isArray(executiveFeed.quotes) ? executiveFeed.quotes.map(quote => ({
+            who: quote.speaker, role: quote.role, date: quote.date,
+            quoteEn: quote.quoteOriginal, quoteKo: quote.quoteKo,
+            source: quote.source, url: quote.evidenceUrl,
+          })) : [];
+          const intelligenceQuotes = Array.isArray(intelligence.executiveQuotes) ? intelligence.executiveQuotes.map(quote => ({
+            who: quote.speaker, role: quote.role, date: quote.date,
+            quoteEn: quote.quoteOriginal, quoteKo: quote.quoteKo,
+            source: quote.source, url: quote.evidenceUrl,
+          })) : [];
+          const quoteRows = [...feedQuotes, ...intelligenceQuotes, ...(org.interviews || [])]
+            .filter((item, index, rows) =>
+              rows.findIndex(other => `${other.who}|${other.quoteEn || other.quoteKo}` === `${item.who}|${item.quoteEn || item.quoteKo}`) === index)
+            .map(item => ({ ...item, kind: "quote" }));
+          const mentionSource = Array.isArray(executiveFeed.mentions) && executiveFeed.mentions.length
+            ? executiveFeed.mentions : c.live?.execNews || [];
+          // 인용문으로 이미 확보된 기사(url)가 있으면 언급 카드로 중복 노출하지 않는다 — 직접
+          // 인용이 더 강한 근거라 같은 기사면 인용 쪽만 보여준다.
+          const quoteUrls = new Set(quoteRows.map(row => row.url).filter(Boolean));
+          const mentionRows = mentionSource
+            .filter(item => !item.url || !quoteUrls.has(item.url))
+            .map(item => ({ ...item, kind: "mention" }));
+          const execRows = [...quoteRows, ...mentionRows]
+            .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
+            .slice(0, 10);
+          const quoteCount = execRows.filter(row => row.kind === "quote").length;
+          const mentionCount = execRows.length - quoteCount;
           return (
-          <div className="cd-section">
-            <h4>경영진 발언·기사 <em>Executive Mentions</em><b className="cd-prof-live">기업 직접 연관 · 자동 갱신</b></h4>
-            {mentionRows.length > 0 ? (
-              <div className="cd-exn">
-                {mentionRows.map((e, i) => (
-                  <a className="cd-exn-item" key={i} href={e.url} target="_blank" rel="noopener">
-                    <div className="cd-exn-top"><b>{executiveDisplayName({ name: e.who, role: e.role })}</b><span>{e.date}{e.source ? " · " + e.source : ""}</span></div>
-                    {e.titleKo && <p className="cd-exn-ko">{e.titleKo}</p>}
-                    <p className="cd-exn-en">{e.titleEn}</p>
-                  </a>
-                ))}
-              </div>
-            ) : <p className="cd-outline-empty">—</p>}
-          </div>
+            <div className="cd-section">
+              <h4>경영진 발언·활동 <em>Executive Voice</em>
+                <b className="cd-prof-live">원문 검증 · 기업 직접 연관 · 자동 갱신</b>
+              </h4>
+              {execRows.length > 0 ? (
+                <React.Fragment>
+                  <p className="cd-outline-text">직접 인용 {quoteCount}건 · 기사 언급 {mentionCount}건 · 최신순</p>
+                  <div className="cd-itv">
+                    {execRows.map((row, i) => row.kind === "quote" ? (
+                      <div className="cd-itv-item" key={i}>
+                        <div className="cd-itv-who">
+                          <b>{executiveDisplayName({ name: row.who, role: row.role })}</b>
+                          <span className="cd-itv-kind">직접 인용</span>
+                          {row.date && <span className="cd-itv-date">{row.date}</span>}
+                        </div>
+                        {(row.quoteKo || row.insight) && <p className="cd-itv-ko">{row.quoteKo || row.insight}</p>}
+                        {row.quoteEn && <p className="cd-itv-en">“{row.quoteEn}”</p>}
+                        {row.url && <a className="cd-itv-src" href={row.url} target="_blank" rel="noopener">{row.source ? row.source + " · " : ""}원문 보기 <Icon name="ext" size={10} /></a>}
+                      </div>
+                    ) : (
+                      <a className="cd-itv-item cd-itv-mention" key={i} href={row.url} target="_blank" rel="noopener">
+                        <div className="cd-itv-who">
+                          <b>{executiveDisplayName({ name: row.who, role: row.role })}</b>
+                          <span className="cd-itv-kind cd-itv-kind-mention">기사 언급</span>
+                          <span className="cd-itv-date">{row.date}{row.source ? " · " + row.source : ""}</span>
+                        </div>
+                        {row.titleKo && <p className="cd-itv-ko">{row.titleKo}</p>}
+                        {row.titleEn && <p className="cd-itv-en">{row.titleEn}</p>}
+                      </a>
+                    ))}
+                  </div>
+                </React.Fragment>
+              ) : <p className="cd-outline-empty">—</p>}
+            </div>
           );
         })()}
 
