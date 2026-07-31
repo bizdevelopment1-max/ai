@@ -1572,7 +1572,7 @@ try {
       layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])))
     && dash.STOCK_VALUE_CHAIN.every(layer => dash.STOCKS.some(stock =>
       layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])));
-  const sourceBackedInvestments = investmentData.portfolio?.length === 8
+  const sourceBackedInvestments = investmentData.portfolio?.length >= 8
     && new Set(investmentData.portfolio.map(item => item.name)).size === investmentData.portfolio.length
     && investmentData.portfolio.every(item => item.why && item.strategicFit
       && /^https?:\/\//.test(item.source?.url || "") && item.source?.date && item.layer);

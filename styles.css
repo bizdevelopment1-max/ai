@@ -1640,7 +1640,7 @@ a[href]:hover .rainbow-on-hover,
   border-radius: 9px; background: var(--accent); color: #fff; font-size: 12.5px; font-weight: 700;
   transition: opacity .14s;
 }
-.cd-source:hover { opacity: .88; }
+.cd-source:hover { opacity: .88; color: #fff; }
 .cd-sources { display: flex; flex-direction: column; gap: 4px; }
 .cd-src-item {
   padding: 8px 12px; background: var(--panel-2); border: 1px solid var(--line-2);
@@ -2083,7 +2083,7 @@ a[href]:hover .rainbow-on-hover,
   text-decoration: none; font-size: 10.5px; font-weight: 800; padding: 5px 8px; border-radius: 6px;
   background: rgba(255,255,255,.11); border: 1px solid rgba(255,255,255,.24); transition: background .18s, transform .18s;
 }
-.dyn-source:hover, .dyn-source:focus-visible { background: rgba(255,255,255,.24); transform: translateY(-1px); }
+.dyn-source:hover, .dyn-source:focus-visible { background: rgba(255,255,255,.24); transform: translateY(-1px); color: #fff; }
 .dyn-source b { color: #8AB5FF; font-size: 13px; }
 @media (max-width: 980px) {
   .es-dynamics-grid { grid-template-columns: 1fr; }

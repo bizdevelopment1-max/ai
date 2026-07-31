@@ -1852,11 +1852,12 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
   const layerMap = Object.fromEntries((layers || []).map(layer => [layer.id, layer]));
   const selected = portfolio.find(item => item.id === selectedId) || portfolio[0];
   const selectedLayer = layerMap[selected.layer] || {};
-  const positions = [
-    { x: 50, y: 12 }, { x: 76, y: 20 }, { x: 87, y: 48 }, { x: 73, y: 79 },
-    { x: 50, y: 88 }, { x: 26, y: 79 }, { x: 13, y: 48 }, { x: 27, y: 20 },
-  ];
-  const graphNodes = portfolio.map((item, index) => ({ ...item, ...(positions[index] || positions[index % positions.length]) }));
+  // Evenly distribute N nodes around an ellipse (12 o'clock, clockwise) so the
+  // ring stays correct as the source-backed portfolio grows or shrinks.
+  const graphNodes = portfolio.map((item, index) => {
+    const angle = (2 * Math.PI * index) / portfolio.length - Math.PI / 2;
+    return { ...item, x: 50 + 37 * Math.cos(angle), y: 50 + 38 * Math.sin(angle) };
+  });
   const latest = selected.latestEvidence;
   const primarySource = latest || selected.source;
   const updated = data.generatedAt ? new Date(data.generatedAt).toLocaleDateString("ko-KR") : "";
