@@ -109,6 +109,36 @@ BULLET_ENDINGS = (
 )
 
 
+# BULLET_ENDINGS above only lists verbs seen so far; any other -ㅂ니다(formal)/
+# -ㄴ다(plain present) verb still needs a correct noun-form ending. Blindly
+# cutting the final -다 breaks the stem (e.g. "가져옵니다" -> "가져옵니"), so shift
+# the stem's own batchim (ㅂ or ㄴ) to ㅁ instead, which is how Korean actually
+# nominalizes these.
+_HANGUL_BASE, _HANGUL_LAST, _JONG_COUNT = 0xAC00, 0xD7A3, 28
+_JONG_NIEUN, _JONG_MIEUM, _JONG_BIEUP = 4, 16, 17
+
+
+def _jongseong_of(ch: str) -> int:
+    code = ord(ch)
+    return (code - _HANGUL_BASE) % _JONG_COUNT if _HANGUL_BASE <= code <= _HANGUL_LAST else -1
+
+
+def _with_jongseong(ch: str, jong: int) -> str:
+    return chr(ord(ch) - _jongseong_of(ch) + jong)
+
+
+def _nominalize_statement_ending(clause: str) -> str | None:
+    if clause.endswith("니다") and len(clause) >= 3:
+        stem = clause[:-2]
+        last = stem[-1]
+        return stem[:-1] + _with_jongseong(last, _JONG_MIEUM) if _jongseong_of(last) == _JONG_BIEUP else None
+    if clause.endswith("다") and len(clause) >= 2:
+        last = clause[-2]
+        if _jongseong_of(last) == _JONG_NIEUN:
+            return clause[:-2] + _with_jongseong(last, _JONG_MIEUM)
+    return None
+
+
 def clean(value: object) -> str:
     value = html.unescape(str(value or ""))
     value = re.sub(r"<[^>]+>", " ", value)
@@ -150,7 +180,8 @@ def bulletize_korean(value: object) -> str:
             if pattern.search(part):
                 part = pattern.sub(replacement, part)
                 break
-        part = re.sub(r"다$", "", part).strip()
+        if part.endswith("다"):
+            part = (_nominalize_statement_ending(part) or re.sub(r"다$", "", part)).strip()
         parts.append(f"{part}{closing}")
     return " · ".join(parts)
 

@@ -86,6 +86,30 @@ const ENDINGS = [
   [/목표다$/, "목표"],
 ];
 
+// ENDINGS above only lists verbs seen so far; any other -ㅂ니다(formal)/-ㄴ다(plain
+// present) verb still needs a correct noun-form ending. Blindly cutting the final
+// -다 breaks the stem (e.g. "가져옵니다" -> "가져옵니"), so shift the stem's own
+// batchim (ㅂ or ㄴ) to ㅁ instead, which is how Korean actually nominalizes these.
+const HANGUL_BASE = 0xac00, HANGUL_LAST = 0xd7a3, JONG_COUNT = 28;
+const JONG_NIEUN = 4, JONG_MIEUM = 16, JONG_BIEUP = 17;
+const jongseongOf = ch => {
+  const code = ch.codePointAt(0);
+  return code >= HANGUL_BASE && code <= HANGUL_LAST ? (code - HANGUL_BASE) % JONG_COUNT : -1;
+};
+const withJongseong = (ch, jong) => String.fromCodePoint(ch.codePointAt(0) - jongseongOf(ch) + jong);
+export const nominalizeStatementEnding = clause => {
+  if (clause.endsWith("니다") && clause.length >= 3) {
+    const stem = clause.slice(0, -2);
+    const last = stem.slice(-1);
+    return jongseongOf(last) === JONG_BIEUP ? stem.slice(0, -1) + withJongseong(last, JONG_MIEUM) : null;
+  }
+  if (clause.endsWith("다") && clause.length >= 2) {
+    const last = clause.slice(-2, -1);
+    if (jongseongOf(last) === JONG_NIEUN) return clause.slice(0, -2) + withJongseong(last, JONG_MIEUM);
+  }
+  return null;
+};
+
 const normalizeClause = value => {
   let clause = String(value || "").trim().replace(/^[·\s]+|[·\s]+$/g, "");
   const closing = clause.match(/(["'”’]+)$/)?.[1] || "";
@@ -99,7 +123,7 @@ const normalizeClause = value => {
   }
   // Deterministic final gate: no Korean presentation clause may retain a
   // declarative -다 ending even when a previously unseen verb is generated
-  clause = clause.replace(/다$/u, "").trim();
+  if (/다$/u.test(clause)) clause = (nominalizeStatementEnding(clause) || clause.replace(/다$/u, "")).trim();
   return `${clause}${closing}`;
 };
 
@@ -122,9 +146,15 @@ export function bulletizeKorean(value) {
 }
 
 export function hasKoreanProseEnding(value) {
-  return String(value || "").split(/\n|\s+·\s+/).some(part =>
-    /[가-힣](?:다|습니다|ㅂ니다)[.!?。！？]*["'”’]*\s*$/u.test(part.trim())
-  );
+  return String(value || "").split(/\n|\s+·\s+/).some(part => {
+    const clause = part.trim();
+    // A bare 니 as the very last character never occurs in correct 개조식
+    // Korean — it only appears when a -ㅂ니다 ending was cut without shifting
+    // the stem's batchim (e.g. "가져옵니다" -> "가져옵니"). Treat it the same
+    // as an un-nominalized declarative ending so it fails this gate.
+    return /[가-힣](?:다|습니다|ㅂ니다)[.!?。！？]*["'”’]*\s*$/u.test(clause)
+      || /[가-힣]니["'”’]*\s*$/u.test(clause);
+  });
 }
 
 export function hasKoreanSentencePeriod(value) {
