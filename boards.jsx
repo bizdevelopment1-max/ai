@@ -1057,14 +1057,16 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
 
                 <div className="cd-section cd-outline-sub">
                   <h4><b className="cd-outline-no">4)</b>영업 <em>Go-to-Market</em></h4>
-                  <PracticeBlock practice={practiceOf("partner")} fallback="파트너십·생태계 확대 관련 원문 근거가 아직 확보되지 않았습니다." />
-                  {monetizeSignals.length > 0 && (
+                  {monetizeSignals.length > 0 ? (
                     <div className="cd-bd-sec"><h5>돈 버는 방식 원문 신호</h5>
                       {monetizeSignals.map((s, i) => <SignalRow key={"m" + i} s={s} meta={modelMeta} />)}
                     </div>
-                  )}
+                  ) : <Empty text="영업·고객 채널 관련 원문 근거가 아직 확보되지 않았습니다." />}
                 </div>
 
+                {/* 파트너십·생태계 실행 신호(practiceOf partner)는 영업이 아니라 여기 하나에서만 —
+                    JV·제휴 공식 사례(ventures)가 있으면 그것을 우선하고, 없으면 같은 성격의
+                    원문 실행 신호로 보완한다. 어느 쪽도 없을 때만 빈 상태를 보여준다. */}
                 <div className="cd-section cd-outline-sub">
                   <h4><b className="cd-outline-no">5)</b>관계사 협력 <em>Partnerships</em></h4>
                   {ventures.length > 0 ? (
@@ -1088,7 +1090,9 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, onClose }) {
                         </article>
                       ))}
                     </div>
-                  ) : practiceOf("partner") ? null : <Empty text="공식 발표된 제휴·JV 형태의 사업 확장 사례가 아직 확보되지 않았습니다." />}
+                  ) : (
+                    <PracticeBlock practice={practiceOf("partner")} fallback="공식 발표된 제휴·JV 형태의 사업 확장 사례가 아직 확보되지 않았습니다." />
+                  )}
                 </div>
 
                 <div className="cd-section cd-outline-sub">
