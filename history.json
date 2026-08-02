@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-02T11:47:42.862Z",
+  "generatedAt": "2026-08-02T16:33:50.422Z",
   "articles": [
     {
       "date": "2026-08-02",
@@ -98,7 +98,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -201,7 +201,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -290,7 +290,304 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-02",
+      "co": "Meta AI",
+      "cat": "bigtech",
+      "source": "The Decoder",
+      "title": "Meta AI uses a second AI agent as a memory coach to keep long tasks on track",
+      "descEn": "Meta AI wants to stop AI agents from forgetting errors they've already diagnosed and repeating failed steps during complex tasks. A separate memory agent maintains a structured memory bank and decides when to remind the main agent and when to stay silent. The system improved scores by up to 8.3 percentage points across two benchmarks.",
+      "url": "https://the-decoder.com/meta-ai-uses-a-second-ai-agent-as-a-memory-coach-to-keep-long-tasks-on-track",
+      "tag": "글로벌",
+      "titleEn": "Meta AI uses a second AI agent as a memory coach to keep long tasks on track",
+      "summaryLinesEn": [
+        "With the older Claude Sonnet 4.5 as the action agent, the system solved 46 percent of Terminal-Bench tasks on its first attempt.",
+        "Supervised fine-tuning recovered that loss, and later reinforcement learning improved its decisions about when to recall a stored state.",
+        "Smaller open models need training to manage memory well The main version doesn't require a specially trained model and instead runs as a prompted agent."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "With the older Claude Sonnet 4.5 as the action agent, the system solved 46 percent of Terminal-Bench tasks on its first attempt.\nSupervised fine-tuning recovered that loss, and later reinforcement learning improved its decisions about when to recall a stored state.\nSmaller open models need training to manage memory well The main version doesn't require a specially trained model and instead runs as a prompted agent.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-02T16:29:50.051Z",
+        "originalUrl": "https://the-decoder.com/meta-ai-uses-a-second-ai-agent-as-a-memory-coach-to-keep-long-tasks-on-track/",
+        "resolvedUrl": "https://the-decoder.com/meta-ai-uses-a-second-ai-agent-as-a-memory-coach-to-keep-long-tasks-on-track/",
+        "canonicalUrl": "https://the-decoder.com/meta-ai-uses-a-second-ai-agent-as-a-memory-coach-to-keep-long-tasks-on-track/",
+        "headline": "Meta AI uses a second AI agent as a memory coach to keep long tasks on track",
+        "description": "Meta AI wants to stop AI agents from forgetting errors they've already diagnosed and repeating failed steps during complex tasks. A separate memory agent maintains a structured memory bank and decides when to remind the main agent and when to stay silent. The system improved scores by up to 8.3 percentage points across two benchmarks.",
+        "paragraphs": [
+          "During long tasks, AI agents often forget constraints, repeat failed commands, and rediscover errors they've already diagnosed. Meta AI's proposed memory module tracks that information and decides when to remind them.",
+          "In a new paper, Meta AI researchers describe how these failures play out. An agent recognizes a constraint early on but later violates it while fixing an unrelated bug. It sees that a command failed, then tries a nearly identical version soon afterward. It diagnoses an error pattern but later treats the same pattern as new.",
+          "The authors call this \"behavioral state decay.\" The state that guides the agent's decisions gets scattered across a growing task history. It can become buried deep in the context window or fall out of it altogether. Even when the information remains in the transcript or context window, it may no longer reliably shape the agent's behavior. Meta AI says simply giving agents access to longer histories doesn't solve the problem.",
+          "Existing memory systems focus on storing, updating, and retrieving information. According to the paper, that works well for personalization and recall across sessions. But agents working through a task face another problem. The system must decide when a memory is useful enough to bring back. Too few reminders lead to repeated mistakes, while too many add latency, consume tokens, and distract the agent from its current work.",
+          "This goes beyond summarization: a summarizer just decides what information to retain where Meta's system decides whether a stored execution state should influence the agent's next move. Since failure modes vary widely by task, a fixed summarization rule can't make that call reliably.",
+          "The proposed system pairs an unmodified \"action agent\" with a separate \"memory agent.\" At fixed intervals, the memory agent reviews a sliding window of the most recent steps and updates a structured memory bank. It then decides whether to add a brief reminder to the action agent's next call or stay silent.",
+          "The authors say the module can work with existing agents and harnesses as a plug-and-play component. Unlike a general advisor model, it provides only memory-based reminders and doesn't offer broader strategic advice.",
+          "The memory bank has three sections. A private status field tracks progress and outstanding risks and is never shown to the Action Agent. Knowledge Memory stores stable facts such as requirements, file paths, and configurations. Procedural Memory records what the agent tried and what happened, including failed commands, successful fixes, and rejected hypotheses.",
+          "During each memory step, the agent can update the bank only through predefined tool calls rather than freely overwriting its contents. It then decides whether to reactivate a stored state and, if needed, writes a targeted reminder. Choosing not to intervene is part of the policy.",
+          "The researchers tested the system on Terminal-Bench 2.0, which evaluates autonomous agents in realistic command-line environments. They also used tau2-Bench, which tests conversational tool use in the airline, retail, and telecom sectors. Claude Opus 4.6 served as the memory agent, though the model has since received several updates.",
+          "With the older Claude Sonnet 4.5 as the action agent, the system solved 46 percent of Terminal-Bench tasks on its first attempt. The baseline solved 38 percent. On tau2-Bench, the task-weighted average rose from 55 to 62 percent.",
+          "Results varied by domain. Scores for airline and retail tasks each rose by about 10 percentage points, while telecom improved by only 3 points. The researchers say the uneven gains suggest that the memory agent intervenes at different rates depending on the task rather than applying a fixed aggregation rule.",
+          "The gains were larger for the weaker agent but didn't disappear with a stronger one. Opus 4.6 improved by 2.4 percentage points on Terminal-Bench and 2.5 points on tau2-Bench. The result suggests that the memory system does more than compensate for a weaker model's limited capacity.",
+          "Selective intervention works better than constant recall",
+          "The team removed one capability at a time to determine which parts of the system drove the gains. When the action agent received the full memory bank at every step, performance fell below that of the full system. A version without the \"silence\" option, which returned a memory at every step, remained competitive but produced less consistent gains across domains.",
+          "An advisor-style version without a persistent memory bank helped in some areas but hurt performance in others. The full design, which combines a maintained memory bank with selective reminders, performed best.",
+          "The approach also outperformed Mem0, a production memory layer that retrieves records through search. The difference isn't just which records the system retrieves. The memory agent also decides whether and how a stored state should enter the loop as a targeted reminder.",
+          "An example from the tau2-Bench \"Airline\" domain shows how that works. A user claimed Gold status, but the tool identified him as a regular customer. The baseline granted compensation based on the user's claim. The memory agent instead issued a reminder to rely on the verified tool data."
+        ],
+        "text": "During long tasks, AI agents often forget constraints, repeat failed commands, and rediscover errors they've already diagnosed. Meta AI's proposed memory module tracks that information and decides when to remind them.\n\nIn a new paper, Meta AI researchers describe how these failures play out. An agent recognizes a constraint early on but later violates it while fixing an unrelated bug. It sees that a command failed, then tries a nearly identical version soon afterward. It diagnoses an error pattern but later treats the same pattern as new.\n\nThe authors call this \"behavioral state decay.\" The state that guides the agent's decisions gets scattered across a growing task history. It can become buried deep in the context window or fall out of it altogether. Even when the information remains in the transcript or context window, it may no longer reliably shape the agent's behavior. Meta AI says simply giving agents access to longer histories doesn't solve the problem.\n\nExisting memory systems focus on storing, updating, and retrieving information. According to the paper, that works well for personalization and recall across sessions. But agents working through a task face another problem. The system must decide when a memory is useful enough to bring back. Too few reminders lead to repeated mistakes, while too many add latency, consume tokens, and distract the agent from its current work.\n\nThis goes beyond summarization: a summarizer just decides what information to retain where Meta's system decides whether a stored execution state should influence the agent's next move. Since failure modes vary widely by task, a fixed summarization rule can't make that call reliably.\n\nThe proposed system pairs an unmodified \"action agent\" with a separate \"memory agent.\" At fixed intervals, the memory agent reviews a sliding window of the most recent steps and updates a structured memory bank. It then decides whether to add a brief reminder to the action agent's next call or stay silent.\n\nThe authors say the module can work with existing agents and harnesses as a plug-and-play component. Unlike a general advisor model, it provides only memory-based reminders and doesn't offer broader strategic advice.\n\nThe memory bank has three sections. A private status field tracks progress and outstanding risks and is never shown to the Action Agent. Knowledge Memory stores stable facts such as requirements, file paths, and configurations. Procedural Memory records what the agent tried and what happened, including failed commands, successful fixes, and rejected hypotheses.\n\nDuring each memory step, the agent can update the bank only through predefined tool calls rather than freely overwriting its contents. It then decides whether to reactivate a stored state and, if needed, writes a targeted reminder. Choosing not to intervene is part of the policy.\n\nThe researchers tested the system on Terminal-Bench 2.0, which evaluates autonomous agents in realistic command-line environments. They also used tau2-Bench, which tests conversational tool use in the airline, retail, and telecom sectors. Claude Opus 4.6 served as the memory agent, though the model has since received several updates.\n\nWith the older Claude Sonnet 4.5 as the action agent, the system solved 46 percent of Terminal-Bench tasks on its first attempt. The baseline solved 38 percent. On tau2-Bench, the task-weighted average rose from 55 to 62 percent.\n\nResults varied by domain. Scores for airline and retail tasks each rose by about 10 percentage points, while telecom improved by only 3 points. The researchers say the uneven gains suggest that the memory agent intervenes at different rates depending on the task rather than applying a fixed aggregation rule.\n\nThe gains were larger for the weaker agent but didn't disappear with a stronger one. Opus 4.6 improved by 2.4 percentage points on Terminal-Bench and 2.5 points on tau2-Bench. The result suggests that the memory system does more than compensate for a weaker model's limited capacity.\n\nSelective intervention works better than constant recall\n\nThe team removed one capability at a time to determine which parts of the system drove the gains. When the action agent received the full memory bank at every step, performance fell below that of the full system. A version without the \"silence\" option, which returned a memory at every step, remained competitive but produced less consistent gains across domains.\n\nAn advisor-style version without a persistent memory bank helped in some areas but hurt performance in others. The full design, which combines a maintained memory bank with selective reminders, performed best.\n\nThe approach also outperformed Mem0, a production memory layer that retrieves records through search. The difference isn't just which records the system retrieves. The memory agent also decides whether and how a stored state should enter the loop as a targeted reminder.\n\nAn example from the tau2-Bench \"Airline\" domain shows how that works. A user claimed Gold status, but the tool identified him as a regular customer. The baseline granted compensation based on the user's claim. The memory agent instead issued a reminder to rely on the verified tool data.\n\nMost remaining errors involved calibration rather than memory. In some cases, for example, the memory agent treated a speculative inference with too much confidence.\n\nSmaller open models need training to manage memory well\n\nThe main version doesn't require a specially trained model and instead runs as a prompted agent. The team also tested whether it could teach the intervention policy to an open model. It trained the smaller Qwen3.5-27B as the memory agent while keeping a much larger action model frozen.\n\nWithout training, the smaller memory agent reduced performance. Supervised fine-tuning recovered that loss, and later reinforcement learning improved its decisions about when to recall a stored state.\n\nMeta AI lists several open questions, including training the memory and action agents together, teaching the system to invoke memory when needed instead of following a fixed schedule, and determining when literal memories work better than task-specific abstractions.\n\nMeta isn't alone in running into this problem, and the industry still has no standard approach. The open-source Mastra framework uses two background agents that monitor and compress a conversation instead of keeping its full history in the context window. The GAM system aims to prevent \"context rot\" in long chats and, like Meta's approach, compares its results with the Mem0 memory layer. Other researchers are designing lifelong AI memory systems that can actively add, revise, and forget knowledge.\n\n6 times a year: “AI Radar” – deep dives on key AI topics.",
+        "contentHash": "17260ecec448b55314e5b3cbc271c859e8e8b35e201d17e321cec2ee03847a7b",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://the-decoder.com/meta-ai-uses-a-second-ai-agent-as-a-memory-coach-to-keep-long-tasks-on-track/",
+      "collectedAt": "2026-08-02T16:29:51.756Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "3348314f90a75a0dc606a910a8b5cb90984c0d73fe606d17432ab0d86da6df2c",
+        "sourceLines": [
+          "With the older Claude Sonnet 4.5 as the action agent, the system solved 46 percent of Terminal-Bench tasks on its first attempt.",
+          "Supervised fine-tuning recovered that loss, and later reinforcement learning improved its decisions about when to recall a stored state.",
+          "Smaller open models need training to manage memory well The main version doesn't require a specially trained model and instead runs as a prompted agent."
+        ],
+        "checkedAt": "2026-08-02T16:32:04.120202+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "Meta AI는 두 번째 AI 에이전트를 메모리 코치로 사용하여 긴 작업을 계속 추적함",
+        "summaryLines": [
+          "이전 Claude Sonnet 4.5를 작업 에이전트로 사용하여 시스템은 첫 번째 시도에서 터미널 벤치 작업의 46%를 해결함",
+          "감독된 미세 조정을 통해 해당 손실이 복구되었으며 나중에 강화 학습을 통해 저장된 상태를 언제 불러올지에 대한 결정이 향상됨",
+          "더 작은 개방형 모델은 메모리를 잘 관리하려면 훈련이 필요함 · 기본 버전은 특별히 훈련된 모델이 필요하지 않으며 대신 프롬프트 에이전트로 실행됨"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "Meta AI는 두 번째 AI 에이전트를 메모리 코치로 사용하여 긴 작업을 계속 추적함",
+      "summaryLinesKo": [
+        "이전 Claude Sonnet 4.5를 작업 에이전트로 사용하여 시스템은 첫 번째 시도에서 터미널 벤치 작업의 46%를 해결함",
+        "감독된 미세 조정을 통해 해당 손실이 복구되었으며 나중에 강화 학습을 통해 저장된 상태를 언제 불러올지에 대한 결정이 향상됨",
+        "더 작은 개방형 모델은 메모리를 잘 관리하려면 훈련이 필요함 · 기본 버전은 특별히 훈련된 모델이 필요하지 않으며 대신 프롬프트 에이전트로 실행됨"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-02",
+      "co": "",
+      "cat": "bigtech",
+      "source": "The Decoder",
+      "title": "OpenAI Presence wants to make AI agents production-ready for businesses",
+      "descEn": "OpenAI's new enterprise offering, Presence, is designed to get AI agents into production for customer service and internal workflows. Unlike the existing Workspace Agents, Presence targets external deployments. For complex cases, OpenAI's own engineers step in.",
+      "url": "https://the-decoder.com/openai-presence-wants-to-make-ai-agents-production-ready-for-businesses",
+      "tag": "글로벌",
+      "titleEn": "OpenAI Presence wants to make AI agents production-ready for businesses",
+      "summaryLinesEn": [
+        "They work directly with the customer to pick the right workflows, connect existing systems, set up guidelines, and manage testing through to the production launch.",
+        "OpenAI is trying to fix that with Presence , a new offering aimed at enterprise customers.",
+        "Presence goes further and targets production deployments in customer service and internal workflows."
+      ],
+      "summaryRoles": [
+        "fact",
+        "evidence",
+        "evidence"
+      ],
+      "summary": "They work directly with the customer to pick the right workflows, connect existing systems, set up guidelines, and manage testing through to the production launch.\nOpenAI is trying to fix that with Presence , a new offering aimed at enterprise customers.\nPresence goes further and targets production deployments in customer service and internal workflows.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-02T16:29:50.034Z",
+        "originalUrl": "https://the-decoder.com/openai-presence-wants-to-make-ai-agents-production-ready-for-businesses/",
+        "resolvedUrl": "https://the-decoder.com/openai-presence-wants-to-make-ai-agents-production-ready-for-businesses/",
+        "canonicalUrl": "https://the-decoder.com/openai-presence-wants-to-make-ai-agents-production-ready-for-businesses/",
+        "headline": "OpenAI Presence wants to make AI agents production-ready for businesses",
+        "description": "OpenAI's new enterprise offering, Presence, is designed to get AI agents into production for customer service and internal workflows. Unlike the existing Workspace Agents, Presence targets external deployments. For complex cases, OpenAI's own engineers step in.",
+        "paragraphs": [
+          "Getting AI agents to work reliably in real business settings is still a messy problem. OpenAI is trying to fix that with Presence , a new offering aimed at enterprise customers. The company's existing Workspace Agents, which are customizable \"GPTs,\" are mostly built for internal use cases. Presence goes further and targets production deployments in customer service and internal workflows.",
+          "When a use case goes beyond what Presence can handle out of the box, OpenAI's Forward Deployed Engineers step in . They work directly with the customer to pick the right workflows, connect existing systems, set up guidelines, and manage testing through to the production launch.",
+          "Presence is currently available to qualifying enterprise customers but isn't an open product. How OpenAI handles specific compliance requirements like the EU AI Act remains unclear. The company mentions trust mechanisms but hasn't shared any legal details. Ad DEC_D_Incontent-1 Ad"
+        ],
+        "text": "Getting AI agents to work reliably in real business settings is still a messy problem. OpenAI is trying to fix that with Presence , a new offering aimed at enterprise customers. The company's existing Workspace Agents, which are customizable \"GPTs,\" are mostly built for internal use cases. Presence goes further and targets production deployments in customer service and internal workflows.\n\nWhen a use case goes beyond what Presence can handle out of the box, OpenAI's Forward Deployed Engineers step in . They work directly with the customer to pick the right workflows, connect existing systems, set up guidelines, and manage testing through to the production launch.\n\nPresence is currently available to qualifying enterprise customers but isn't an open product. How OpenAI handles specific compliance requirements like the EU AI Act remains unclear. The company mentions trust mechanisms but hasn't shared any legal details. Ad DEC_D_Incontent-1 Ad",
+        "contentHash": "1aa5ece637b96ccf84c59d9ed017c1d43cd190db821e93e000487e531a14ca28",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://the-decoder.com/openai-presence-wants-to-make-ai-agents-production-ready-for-businesses/",
+      "collectedAt": "2026-08-02T16:29:51.756Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "5ce7c5291baf671788a7d80eadddc9712814a52546717383da5af6e7df70dfea",
+        "sourceLines": [
+          "They work directly with the customer to pick the right workflows, connect existing systems, set up guidelines, and manage testing through to the production launch.",
+          "OpenAI is trying to fix that with Presence , a new offering aimed at enterprise customers.",
+          "Presence goes further and targets production deployments in customer service and internal workflows."
+        ],
+        "checkedAt": "2026-08-02T16:32:04.120371+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "OpenAI Presence는 AI 에이전트를 기업용으로 제작할 수 있도록 만들고 싶어함",
+        "summaryLines": [
+          "그들은 고객과 직접 협력하여 올바른 워크플로를 선택하고, 기존 시스템을 연결하고, 지침을 설정하고, 생산 출시까지 테스트를 관리함",
+          "OpenAI는 기업 고객을 겨냥한 새로운 제품인 Presence를 통해 이 문제를 해결하려고 노력하고 있음",
+          "Presence는 더 나아가 고객 서비스 및 내부 워크플로의 프로덕션 배포를 목표로 함"
+        ],
+        "summaryRoles": [
+          "fact",
+          "evidence",
+          "evidence"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "OpenAI Presence는 AI 에이전트를 기업용으로 제작할 수 있도록 만들고 싶어함",
+      "summaryLinesKo": [
+        "그들은 고객과 직접 협력하여 올바른 워크플로를 선택하고, 기존 시스템을 연결하고, 지침을 설정하고, 생산 출시까지 테스트를 관리함",
+        "OpenAI는 기업 고객을 겨냥한 새로운 제품인 Presence를 통해 이 문제를 해결하려고 노력하고 있음",
+        "Presence는 더 나아가 고객 서비스 및 내부 워크플로의 프로덕션 배포를 목표로 함"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-02",
+      "co": "",
+      "cat": "bigtech",
+      "source": "The Verge",
+      "title": "Is paying artists enough to convince them to embrace AI?",
+      "descEn": "Pippa wants to show the world that AI companies don’t have to steal to make their products work.",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/974018/pippa-seedance-artist-royalties",
+      "tag": "글로벌",
+      "titleEn": "Is paying artists enough to convince them to embrace AI?",
+      "summaryLinesEn": [
+        "Artists are lawyering up against AI slop, and some are even winning Pippa’s payments to artists aren’t very large on an individual basis — especially when you compare them to how much the service charges users for monthly subscriptions (which range from $14.99 to $99.99.)",
+        "Pippa’s tech still involves using art that was scraped from the internet Pippa — which launched in May — currently has around 800 paying subscribers, and while the company has only signed licensing / model training agreements with four human artists, Shrum said they are in talks to bring four more into the fold.",
+        "In the near future, Pippa plans to incorporate ByteDance’s Seedance 2.5 model into its service, which may attract some subscribers because of the model’s ability to generate up to 30 seconds of video footage that can be fine-tuned without starting over from scratch."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "Artists are lawyering up against AI slop, and some are even winning Pippa’s payments to artists aren’t very large on an individual basis — especially when you compare them to how much the service charges users for monthly subscriptions (which range from $14.99 to $99.99.)\nPippa’s tech still involves using art that was scraped from the internet Pippa — which launched in May — currently has around 800 paying subscribers, and while the company has only signed licensing / model training agreements with four human artists, Shrum said they are in talks to bring four more into the fold.\nIn the near future, Pippa plans to incorporate ByteDance’s Seedance 2.5 model into its service, which may attract some subscribers because of the model’s ability to generate up to 30 seconds of video footage that can be fine-tuned without starting over from scratch.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-02T16:29:49.941Z",
+        "originalUrl": "https://www.theverge.com/ai-artificial-intelligence/974018/pippa-seedance-artist-royalties",
+        "resolvedUrl": "https://www.theverge.com/ai-artificial-intelligence/974018/pippa-seedance-artist-royalties",
+        "canonicalUrl": "https://www.theverge.com/ai-artificial-intelligence/974018/pippa-seedance-artist-royalties",
+        "headline": "Is paying artists enough to convince them to embrace AI?",
+        "description": "Pippa wants to show the world that AI companies don’t have to steal to make their products work.",
+        "paragraphs": [
+          "AI Close AI Posts from this topic will be added to your daily email digest and your homepage feed. Follow Follow See All AI",
+          "Pippa is trying to entice artists with a revenue share system.",
+          "Posts from this author will be added to your daily email digest and your homepage feed.",
+          "Illustrators have spent years sounding the alarm about generative artificial intelligence startups training their models on artists’ work without permission. They’ve pointed out how the practice is tantamount to theft, and in response, many gen AI boosters have argued that it’s necessary for the technology’s evolution. This has led to contentious legal battles , but it’s also given rise to a new wave of AI startups like Pippa that market their services as being more ethical than the competition.",
+          "Like most companies selling access to text-to-video models, Pippa’s main product is short bursts of user-generated footage that can be cobbled together to tell visual stories. But what sets Pippa apart from other players in the gen AI video space is the way its business model is designed to pay artists directly. Every time a Pippa subscriber generates an image or a video clip whose style is derived from a human artist’s work, that artist is compensated by the platform.",
+          "Pippa’s cofounders, Hogan Shrum and Sean Wright, think that their focus on working with artists is what will attract customers. They also believe that their company will prove that AI firms can generate content ethically. But Pippa faces an uphill battle as it seeks to convince artists. Even as it tries to create an ethical spin on AI video generation, the company is still getting off the ground with the same sloppy models that other text-to-video services offer.",
+          "When I recently spoke with Shrum and Wright, they told me that they see Pippa as a way to move forward from “the bloody history that the AI industry has been built on.” The duo want to set an example for their peers and show the public how AI companies don’t necessarily have to steal to make their products work.",
+          "“All of these models from the past 18 months have been trained on real people’s art without their permission — that’s how it was built,” Wright said. “I harken it back to when Napster was a thing and everybody was stealing music. But then, Apple came out with the 99-cent song, Napster got shut down, and we figured out a different way to get musical artists paid.”",
+          "Artists are lawyering up against AI slop, and some are even winning",
+          "Pippa’s payments to artists aren’t very large on an individual basis — especially when you compare them to how much the service charges users for monthly subscriptions (which range from $14.99 to $99.99.) The company says that artists receive $0.005 per image and $0.003 per second of video. The more generations a user makes, the larger an artist’s payments become, and Pippa also gives them access to a cut of a 5 percent royalty pool that’s funded by the platform’s overall subscription revenue. In Pippa’s press materials , the company likens its royalty payment structure to Spotify’s — a curious choice given how many artists have spoken out about being shafted by the music streamer .",
+          "Pippa’s tech still involves using art that was scraped from the internet",
+          "Pippa — which launched in May — currently has around 800 paying subscribers, and while the company has only signed licensing / model training agreements with four human artists, Shrum said they are in talks to bring four more into the fold. Artists interested in working with Pippa must first go through a multi-step vetting process to verify that the illustrations they submit are actually theirs. Once an illustrator is approved, models trained on their art become available to Pippa’s subscribers. Additionally, the service provides artists a profile page, which can be used to direct people to their work outside of the platform. But Wright noted that Pippa also gives its partner artists the option to submit their work under pseudonyms if they are concerned about being seen as “crossing the picket line.”",
+          "“We’ve had so many conversations with artists where they’re like, ‘I love this, but I don’t want to get ostracized by my community,’” Wright explained. “We’re very early in this space, so there’s some apprehension to participate in it. But we think that can change as people see the economics of how we’re paying artists and that our intent is good.”",
+          "That issue isn’t unique to Pippa; it’s something that must be considered with every “ethical” AI startup whose bespoke models are trained on information that wasn’t created internally. This is why some companies — like Ben Affleck’s InterPositive — have made a point of emphasizing the fact that they develop wholly original, proprietary datasets of their own. But that requires a lot of upfront capital most startups don’t have access to, and the end result is usually very specialized AI tools that aren’t exactly designed for general consumers.",
+          "Scrolling through Pippa’s online portal where you can watch other people’s gen AI animations or prompt up your own, I didn’t see all that much that looked very different from what you would find from other text-to-video services. Right now, the site is mostly filled with kid-oriented content that’s doing a poor job of imitating Pixar’s polished aesthetics, and nothing really looks like it was inspired by an independent artist’s hand.",
+          "This makes some sense given that — while Pippa intends to incorporate more original art styles — it still uses many of the same cloud-based models that other platforms sell access to. In the near future, Pippa plans to incorporate ByteDance’s Seedance 2.5 model into its service, which may attract some subscribers because of the model’s ability to generate up to 30 seconds of video footage that can be fine-tuned without starting over from scratch. But in order for Pippa to really stand out from competitors that also offer Seedance 2.5, it will need to sign more in-house artists, which will depend on how well the company is able to pitch itself to potential partners.",
+          "Shrum and Wright believe that they will find more artists to work with, and that using Pippa will convince them to sell their communities on the idea of joining as well. In order for that to happen, though, public opinion about whether they really want to use gen AI would need to shift back in the technology’s favor.",
+          "With Switch 2, iPhone, and laptop tricks, the Sharge Disk Pro 2 is finally a worthy EDC"
+        ],
+        "text": "AI Close AI Posts from this topic will be added to your daily email digest and your homepage feed. Follow Follow See All AI\n\nPippa is trying to entice artists with a revenue share system.\n\nPosts from this author will be added to your daily email digest and your homepage feed.\n\nIllustrators have spent years sounding the alarm about generative artificial intelligence startups training their models on artists’ work without permission. They’ve pointed out how the practice is tantamount to theft, and in response, many gen AI boosters have argued that it’s necessary for the technology’s evolution. This has led to contentious legal battles , but it’s also given rise to a new wave of AI startups like Pippa that market their services as being more ethical than the competition.\n\nLike most companies selling access to text-to-video models, Pippa’s main product is short bursts of user-generated footage that can be cobbled together to tell visual stories. But what sets Pippa apart from other players in the gen AI video space is the way its business model is designed to pay artists directly. Every time a Pippa subscriber generates an image or a video clip whose style is derived from a human artist’s work, that artist is compensated by the platform.\n\nPippa’s cofounders, Hogan Shrum and Sean Wright, think that their focus on working with artists is what will attract customers. They also believe that their company will prove that AI firms can generate content ethically. But Pippa faces an uphill battle as it seeks to convince artists. Even as it tries to create an ethical spin on AI video generation, the company is still getting off the ground with the same sloppy models that other text-to-video services offer.\n\nWhen I recently spoke with Shrum and Wright, they told me that they see Pippa as a way to move forward from “the bloody history that the AI industry has been built on.” The duo want to set an example for their peers and show the public how AI companies don’t necessarily have to steal to make their products work.\n\n“All of these models from the past 18 months have been trained on real people’s art without their permission — that’s how it was built,” Wright said. “I harken it back to when Napster was a thing and everybody was stealing music. But then, Apple came out with the 99-cent song, Napster got shut down, and we figured out a different way to get musical artists paid.”\n\nArtists are lawyering up against AI slop, and some are even winning\n\nPippa’s payments to artists aren’t very large on an individual basis — especially when you compare them to how much the service charges users for monthly subscriptions (which range from $14.99 to $99.99.) The company says that artists receive $0.005 per image and $0.003 per second of video. The more generations a user makes, the larger an artist’s payments become, and Pippa also gives them access to a cut of a 5 percent royalty pool that’s funded by the platform’s overall subscription revenue. In Pippa’s press materials , the company likens its royalty payment structure to Spotify’s — a curious choice given how many artists have spoken out about being shafted by the music streamer .\n\nPippa’s tech still involves using art that was scraped from the internet\n\nPippa — which launched in May — currently has around 800 paying subscribers, and while the company has only signed licensing / model training agreements with four human artists, Shrum said they are in talks to bring four more into the fold. Artists interested in working with Pippa must first go through a multi-step vetting process to verify that the illustrations they submit are actually theirs. Once an illustrator is approved, models trained on their art become available to Pippa’s subscribers. Additionally, the service provides artists a profile page, which can be used to direct people to their work outside of the platform. But Wright noted that Pippa also gives its partner artists the option to submit their work under pseudonyms if they are concerned about being seen as “crossing the picket line.”\n\n“We’ve had so many conversations with artists where they’re like, ‘I love this, but I don’t want to get ostracized by my community,’” Wright explained. “We’re very early in this space, so there’s some apprehension to participate in it. But we think that can change as people see the economics of how we’re paying artists and that our intent is good.”\n\nThat issue isn’t unique to Pippa; it’s something that must be considered with every “ethical” AI startup whose bespoke models are trained on information that wasn’t created internally. This is why some companies — like Ben Affleck’s InterPositive — have made a point of emphasizing the fact that they develop wholly original, proprietary datasets of their own. But that requires a lot of upfront capital most startups don’t have access to, and the end result is usually very specialized AI tools that aren’t exactly designed for general consumers.\n\nScrolling through Pippa’s online portal where you can watch other people’s gen AI animations or prompt up your own, I didn’t see all that much that looked very different from what you would find from other text-to-video services. Right now, the site is mostly filled with kid-oriented content that’s doing a poor job of imitating Pixar’s polished aesthetics, and nothing really looks like it was inspired by an independent artist’s hand.\n\nThis makes some sense given that — while Pippa intends to incorporate more original art styles — it still uses many of the same cloud-based models that other platforms sell access to. In the near future, Pippa plans to incorporate ByteDance’s Seedance 2.5 model into its service, which may attract some subscribers because of the model’s ability to generate up to 30 seconds of video footage that can be fine-tuned without starting over from scratch. But in order for Pippa to really stand out from competitors that also offer Seedance 2.5, it will need to sign more in-house artists, which will depend on how well the company is able to pitch itself to potential partners.\n\nShrum and Wright believe that they will find more artists to work with, and that using Pippa will convince them to sell their communities on the idea of joining as well. In order for that to happen, though, public opinion about whether they really want to use gen AI would need to shift back in the technology’s favor.\n\nWith Switch 2, iPhone, and laptop tricks, the Sharge Disk Pro 2 is finally a worthy EDC",
+        "contentHash": "110ac6f2ee11e5221d54f8fbaa1e06a97a46699a49169c7978991c648a26ea1e",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.theverge.com/ai-artificial-intelligence/974018/pippa-seedance-artist-royalties",
+      "collectedAt": "2026-08-02T16:29:51.756Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "6494ae255d79d2f471833131560ccb2c01279815f636697c62ffcff9faf04eb8",
+        "sourceLines": [
+          "Artists are lawyering up against AI slop, and some are even winning Pippa’s payments to artists aren’t very large on an individual basis — especially when you compare them to how much the service charges users for monthly subscriptions (which range from $14.99 to $99.99.)",
+          "Pippa’s tech still involves using art that was scraped from the internet Pippa — which launched in May — currently has around 800 paying subscribers, and while the company has only signed licensing / model training agreements with four human artists, Shrum said they are in talks to bring four more into the fold.",
+          "In the near future, Pippa plans to incorporate ByteDance’s Seedance 2.5 model into its service, which may attract some subscribers because of the model’s ability to generate up to 30 seconds of video footage that can be fine-tuned without starting over from scratch."
+        ],
+        "checkedAt": "2026-08-02T16:32:04.120647+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "예술가들이 AI를 수용하도록 설득할 만큼 충분한 비용을 지불하고 있습니까",
+        "summaryLines": [
+          "아티스트들은 AI 슬롭에 대해 변호사를 선임하고 있으며 일부는 심지어 Pippa가 아티스트에게 지불하는 금액이 개인 기준으로 그다지 크지 않음 · 특히 서비스가 사용자에게 월간 구독료(14.99~99.99달러 범위)에 대해 청구하는 금액과 비교할 때 더욱 그렇음",
+          "Pippa의 기술에는 여전히 인터넷에서 스크랩한 예술품을 사용하는 것이 포함됨 · 5월에 출시된 Pippa는 현재 약 800명의 유료 가입자를 보유하고 있으며 회사는 4명의 인간 아티스트와 라이센스/모델 교육 계약만 체결했지만 Shrum은 4명을 더 추가하기 위해 협상 중이라고 말함",
+          "가까운 미래에 Pippa는 ByteDance의 Seedance 2.5 모델을 자사 서비스에 통합할 계획임 · 이 모델은 처음부터 다시 시작하지 않고도 미세 조정할 수 있는 최대 30초 길이의 비디오 장면을 생성할 수 있는 모델의 기능으로 인해 일부 가입자의 관심을 끌 수 있음"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "예술가들이 AI를 수용하도록 설득할 만큼 충분한 비용을 지불하고 있습니까",
+      "summaryLinesKo": [
+        "아티스트들은 AI 슬롭에 대해 변호사를 선임하고 있으며 일부는 심지어 Pippa가 아티스트에게 지불하는 금액이 개인 기준으로 그다지 크지 않음 · 특히 서비스가 사용자에게 월간 구독료(14.99~99.99달러 범위)에 대해 청구하는 금액과 비교할 때 더욱 그렇음",
+        "Pippa의 기술에는 여전히 인터넷에서 스크랩한 예술품을 사용하는 것이 포함됨 · 5월에 출시된 Pippa는 현재 약 800명의 유료 가입자를 보유하고 있으며 회사는 4명의 인간 아티스트와 라이센스/모델 교육 계약만 체결했지만 Shrum은 4명을 더 추가하기 위해 협상 중이라고 말함",
+        "가까운 미래에 Pippa는 ByteDance의 Seedance 2.5 모델을 자사 서비스에 통합할 계획임 · 이 모델은 처음부터 다시 시작하지 않고도 미세 조정할 수 있는 최대 30초 길이의 비디오 장면을 생성할 수 있는 모델의 기능으로 인해 일부 가입자의 관심을 끌 수 있음"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -388,7 +685,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -492,7 +789,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -596,7 +893,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -700,7 +997,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -804,7 +1101,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -908,7 +1205,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1009,7 +1306,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1112,7 +1409,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1216,7 +1513,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1320,7 +1617,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1414,7 +1711,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1507,7 +1804,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1611,7 +1908,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1703,7 +2000,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1807,7 +2104,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1900,7 +2197,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1999,7 +2296,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2101,7 +2398,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2205,7 +2502,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2309,7 +2606,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2398,7 +2695,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2486,7 +2783,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2589,7 +2886,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2693,7 +2990,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2784,7 +3081,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2875,7 +3172,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2977,7 +3274,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3066,7 +3363,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3170,7 +3467,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3266,7 +3563,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3361,7 +3658,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3464,7 +3761,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3568,7 +3865,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3657,7 +3954,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3756,7 +4053,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3846,7 +4143,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3950,7 +4247,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4054,7 +4351,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4145,7 +4442,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4247,7 +4544,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4336,7 +4633,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4440,7 +4737,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4544,7 +4841,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4643,7 +4940,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4747,7 +5044,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4851,7 +5148,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4955,7 +5252,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5059,7 +5356,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5163,7 +5460,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5267,7 +5564,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5370,7 +5667,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5465,7 +5762,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5558,7 +5855,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5654,7 +5951,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5753,7 +6050,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5849,7 +6146,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5951,7 +6248,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6040,7 +6337,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6137,7 +6434,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6241,7 +6538,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6345,7 +6642,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6448,7 +6745,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6531,7 +6828,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6621,7 +6918,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6717,7 +7014,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6811,7 +7108,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6915,7 +7212,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7019,7 +7316,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7120,7 +7417,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7224,7 +7521,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7316,7 +7613,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7420,7 +7717,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7524,7 +7821,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7727,7 +8024,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7809,7 +8106,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7906,7 +8203,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8005,7 +8302,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8109,7 +8406,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8213,7 +8510,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8303,7 +8600,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8407,7 +8704,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8511,7 +8808,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8601,7 +8898,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8701,7 +8998,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8784,7 +9081,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8888,7 +9185,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8992,7 +9289,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9091,7 +9388,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9182,7 +9479,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9286,7 +9583,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9375,7 +9672,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9464,7 +9761,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9568,7 +9865,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9672,7 +9969,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9776,7 +10073,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9871,7 +10168,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9970,7 +10267,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10074,7 +10371,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10163,7 +10460,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10261,7 +10558,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10350,7 +10647,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10442,7 +10739,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10546,7 +10843,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10645,7 +10942,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10742,7 +11039,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10838,7 +11135,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10942,7 +11239,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11031,7 +11328,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11119,7 +11416,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11223,7 +11520,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11317,7 +11614,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11421,7 +11718,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11525,7 +11822,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11616,7 +11913,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11720,7 +12017,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11819,7 +12116,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11917,7 +12214,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12021,7 +12318,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12125,7 +12422,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12223,7 +12520,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12316,7 +12613,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12414,7 +12711,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12512,7 +12809,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12601,7 +12898,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12699,7 +12996,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12797,7 +13094,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12895,7 +13192,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12992,7 +13289,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13082,7 +13379,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13180,7 +13477,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13278,7 +13575,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13376,7 +13673,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13474,7 +13771,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13572,7 +13869,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13670,7 +13967,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13768,7 +14065,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13856,7 +14153,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13945,7 +14242,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14043,7 +14340,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14141,7 +14438,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14239,7 +14536,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14333,7 +14630,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14431,7 +14728,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14519,7 +14816,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14617,7 +14914,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14700,7 +14997,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14798,7 +15095,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14896,7 +15193,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15000,7 +15297,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15104,7 +15401,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15164,7 +15461,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15263,7 +15560,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -15400,7 +15697,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15488,7 +15785,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15586,7 +15883,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15684,7 +15981,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15782,7 +16079,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15886,7 +16183,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15984,7 +16281,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16006,7 +16303,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16104,7 +16401,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [
           "source-content-mismatch"
         ],
@@ -16204,7 +16501,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16331,7 +16628,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16392,7 +16689,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16486,7 +16783,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16582,7 +16879,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16683,7 +16980,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16782,7 +17079,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16913,7 +17210,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -16978,7 +17275,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17076,7 +17373,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17260,7 +17557,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17343,7 +17640,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -17584,7 +17881,7 @@
           "While most AI systems pose limited to no risk and can contribute to solving many societal challenges, certain AI systems create risks that we must address to avoid undesirable outcomes.",
           "So, it may become difficult to assess whether someone has been unfairly disadvantaged, such as in a hiring decision or in an application for a public benefit scheme."
         ],
-        "checkedAt": "2026-08-02T11:45:47.753309+00:00",
+        "checkedAt": "2026-08-02T16:32:04.126023+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -17610,7 +17907,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17714,7 +18011,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17815,7 +18112,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17889,7 +18186,7 @@
           "The shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies.",
           "\"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising.\""
         ],
-        "checkedAt": "2026-08-02T11:45:47.752649+00:00",
+        "checkedAt": "2026-08-02T16:32:04.125750+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -17915,7 +18212,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17937,7 +18234,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18035,7 +18332,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18132,7 +18429,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18230,7 +18527,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18328,7 +18625,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18426,7 +18723,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18524,7 +18821,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18622,7 +18919,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18811,7 +19108,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -18876,7 +19173,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19062,7 +19359,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19510,7 +19807,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19609,7 +19906,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19708,7 +20005,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19769,7 +20066,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -19949,7 +20246,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20025,7 +20322,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [
           "summary-not-source-content-extractive",
           "numbers-not-in-source-snippet"
@@ -20061,7 +20358,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-02T11:45:04.075Z",
+        "checkedAt": "2026-08-02T16:31:19.654Z",
         "originalUrl": "https://aibusiness.com/cybersecurity/startup-focused-enterprise-ai-security-valued-1-2-billion",
         "error": "HTTP 403"
       }
@@ -20083,7 +20380,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20179,7 +20476,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20276,7 +20573,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20374,7 +20671,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20667,7 +20964,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20803,7 +21100,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -20902,7 +21199,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21045,7 +21342,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21149,7 +21446,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21171,7 +21468,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21226,7 +21523,7 @@
           "Since the platform is open source, developers can make their own Buzz instance feel more customized to the needs and workflows of their specific team.",
           "a new groupchat platform for teams of people and agents of all sizes, built to reduce our dependency on slack and github. model-agnostic, decentralized, self-sovereign, and open source. 🐝 https://t.co/8IaMVeTQNo As startups increasingly rely on AI agents to get work done, it can be challenging for employees to collaborate on various tasks across different platforms."
         ],
-        "checkedAt": "2026-08-02T11:45:47.754373+00:00",
+        "checkedAt": "2026-08-02T16:32:04.128087+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -21265,7 +21562,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21363,7 +21660,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21461,7 +21758,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21563,7 +21860,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -21652,7 +21949,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22142,7 +22439,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22241,7 +22538,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22384,7 +22681,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22486,7 +22783,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22648,7 +22945,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22781,7 +23078,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -22917,7 +23214,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23021,7 +23318,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23119,7 +23416,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23243,7 +23540,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23347,7 +23644,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23619,7 +23916,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23716,7 +24013,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23753,7 +24050,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-02T11:45:04.075Z",
+        "checkedAt": "2026-08-02T16:31:19.655Z",
         "originalUrl": "https://www.cnbc.com/video/2026/07/17/the-feds-plan-to-restore-price-stability-relies-on-ai.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -23823,7 +24120,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23916,7 +24213,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24029,7 +24326,7 @@
           "As enterprises advance from AI experimentation to large-scale adoption, LTM and Glean will help customers operationalize AI across key business functions, including IT support, enterprise knowledge management, and enterprise application operations.",
           "The joint offering is designed to help customers realize measurable business outcomes such as faster incident resolution, improved employee productivity, reduced support costs, accelerated onboarding, enhanced enterprise search, and more efficient application support operations."
         ],
-        "checkedAt": "2026-08-02T11:45:47.755017+00:00",
+        "checkedAt": "2026-08-02T16:32:04.129385+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -24055,7 +24352,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24337,7 +24634,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24383,7 +24680,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-02T11:45:04.075Z",
+        "checkedAt": "2026-08-02T16:31:19.655Z",
         "originalUrl": "https://www.ft.com/content/af8f4659-df0c-4c83-9fcc-8239714d0928?syn-25a6b1a6=1",
         "error": "HTTP 403"
       }
@@ -24405,7 +24702,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24503,7 +24800,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24745,7 +25042,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24875,7 +25172,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -24908,7 +25205,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-02T11:45:04.075Z",
+        "checkedAt": "2026-08-02T16:31:20.243Z",
         "originalUrl": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQMmZaRXBtUG5RLWpZQjg4UjFZd012cTM1Uy0xZy13SkkxamJiSzVuZ0dIMGllZDZVZGJKMkItTlo4bzliUGdndlY2ZG1JYTlpY0Z0a3lEWERtZDE5ZGY0VlA5WEYxaXJvSkZUMDBaUkxkekF5b2NQamFhdHRUVEM3aVRwNkw4VFlPa2M3VWtOa1cyNGUtVGRzOHhGdVJYVUw2aHpVZV91TmpUWjFWQ25STmwtMA?oc=5",
         "error": "HTTP 429"
       }
@@ -25299,7 +25596,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25397,7 +25694,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25434,7 +25731,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-02T11:45:04.536Z",
+        "checkedAt": "2026-08-02T16:31:19.655Z",
         "originalUrl": "https://www.cnbc.com/2026/07/15/why-jim-cramer-is-shocked-by-citis-against-the-grain-praise-of-microsofts-copilot.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -25504,7 +25801,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25603,7 +25900,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25700,7 +25997,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26019,7 +26316,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26118,7 +26415,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26217,7 +26514,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26354,7 +26651,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26513,7 +26810,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26572,7 +26869,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -26611,7 +26908,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-02T11:45:04.610Z",
+        "checkedAt": "2026-08-02T16:31:20.339Z",
         "originalUrl": "https://money.usnews.com/investing/news/articles/2026-07-10/sk-hynix-ceo-sees-worst-ever-memory-supply-shortage-in-2027-says-demand-to-outstrip-supply-beyond-2030",
         "error": "This operation was aborted"
       }
@@ -26651,7 +26948,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26749,7 +27046,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26898,7 +27195,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26995,7 +27292,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27094,7 +27391,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -27127,7 +27424,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-02T11:45:04.669Z",
+        "checkedAt": "2026-08-02T16:31:20.506Z",
         "originalUrl": "https://www.axios.com/2026/06/25/trump-administration-openai-gpt-model-release",
         "error": "HTTP 403"
       }
@@ -27149,7 +27446,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -27182,7 +27479,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-02T11:45:04.933Z",
+        "checkedAt": "2026-08-02T16:31:20.624Z",
         "originalUrl": "https://www.axios.com/2026/06/18/openai-devices-ha-thai",
         "error": "HTTP 403"
       }
@@ -27202,7 +27499,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27357,7 +27654,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27513,7 +27810,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27610,7 +27907,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27766,7 +28063,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28067,7 +28364,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28111,7 +28408,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-02T11:45:05.202Z",
+        "checkedAt": "2026-08-02T16:31:20.661Z",
         "originalUrl": "https://www.globenewswire.com/Error/Index?error=1",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -28132,7 +28429,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28308,7 +28605,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28405,7 +28702,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28556,7 +28853,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28654,7 +28951,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28752,7 +29049,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28887,7 +29184,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-02T11:47:42.862Z",
+        "checkedAt": "2026-08-02T16:33:50.422Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28905,7 +29202,7 @@
           "Try Claude Try Claude Try Claude Learn more about Claude About Claude Overview Log in to Claude Log in to Claude Log in to Claude Download app Download app Download app AI will have a vast impact on the world.",
           "At Anthropic, we build AI to serve humanity’s long-term well-being."
         ],
-        "checkedAt": "2026-08-02T11:45:47.756303+00:00",
+        "checkedAt": "2026-08-02T16:32:04.131564+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -31187,6 +31484,19 @@
       "limited": 6,
       "freshStocks": 61,
       "status": "warn"
+    },
+    {
+      "generatedAt": "2026-08-02T16:33:50.422Z",
+      "newsGeneratedAt": "2026-08-02T16:31:42.795Z",
+      "stocksGeneratedAt": "2026-08-02T16:30:57.322Z",
+      "articles": 266,
+      "sourceBacked": 260,
+      "sourceExcerpt": 257,
+      "localized": 261,
+      "localizationFallback": 5,
+      "limited": 6,
+      "freshStocks": 61,
+      "status": "ok"
     }
   ]
 }
