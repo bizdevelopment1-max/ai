@@ -1,13 +1,18 @@
 {
-  "generatedAt": "2026-08-02T06:17:50.394Z",
+  "generatedAt": "2026-08-02T11:42:59.881Z",
   "mode": "source-content-extractive",
   "policyVersion": 2,
   "streams": {
     "googleNews": 50,
     "directRss": 14
   },
-  "acceptedCandidates": 75,
-  "failedStreams": [],
+  "acceptedCandidates": 74,
+  "failedStreams": [
+    {
+      "stream": "rss:The Register",
+      "error": "HTTP 403"
+    }
+  ],
   "emptyStreams": [
     "google-news:Cursor",
     "google-news:Sierra AI",
@@ -18,8 +23,7 @@
     "google-news:경쟁 단말",
     "google-news:Databricks 자본·인프라",
     "rss:Hugging Face",
-    "rss:VentureBeat",
-    "rss:The Register"
+    "rss:VentureBeat"
   ],
-  "status": "ok"
+  "status": "partial"
 }
