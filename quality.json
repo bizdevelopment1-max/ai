@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-04T12:30:44.847Z",
+  "generatedAt": "2026-08-04T17:18:54.489Z",
   "overall": "ok",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 16개 · 정상 16 · 주의 0 · 실패 0",
@@ -8,31 +8,31 @@
       "id": "news-coverage",
       "label": "뉴스 수집",
       "status": "ok",
-      "value": "296건"
+      "value": "301건"
     },
     {
       "id": "source-backed",
       "label": "원문 스니펫 근거",
       "status": "ok",
-      "value": "290/296건"
+      "value": "295/301건"
     },
     {
       "id": "source-content-mode",
       "label": "원문 본문 추출",
       "status": "ok",
-      "value": "287/296건"
+      "value": "292/301건"
     },
     {
       "id": "feed-localization",
       "label": "기사 한국어 표시·영문 폴백",
       "status": "ok",
-      "value": "한국어 291 · 영문 폴백 5"
+      "value": "한국어 295 · 영문 폴백 6"
     },
     {
       "id": "collection-health",
       "label": "수집 스트림 상태",
       "status": "ok",
-      "value": "실패 0 · 빈 스트림 12"
+      "value": "실패 0 · 빈 스트림 13"
     },
     {
       "id": "briefing-evidence",
@@ -62,7 +62,7 @@
       "id": "infra-evidence",
       "label": "인프라 시그널 근거",
       "status": "ok",
-      "value": "공개 119건 · 보존 1건"
+      "value": "공개 120건 · 보존 1건"
     },
     {
       "id": "bizmodel-evidence",
@@ -74,13 +74,13 @@
       "id": "research-source",
       "label": "리서치 원문 링크",
       "status": "ok",
-      "value": "공개 34건 · 보존 29건"
+      "value": "공개 35건 · 보존 29건"
     },
     {
       "id": "research-localization",
       "label": "리서치 3줄 표시",
       "status": "ok",
-      "value": "한국어 62 · 영문 폴백 1"
+      "value": "한국어 62 · 영문 폴백 2"
     },
     {
       "id": "market-source",
@@ -98,63 +98,64 @@
       "id": "consumer-survey-coverage",
       "label": "소비자 조사 레코드",
       "status": "ok",
-      "value": "12건"
+      "value": "11건"
     }
   ],
   "metrics": {
-    "currentArticles": 296,
-    "accumulatedArticles": 373,
-    "sourceBackedArticles": 290,
-    "sourceExcerptArticles": 287,
-    "localizedArticles": 291,
-    "localizedFallbackArticles": 5,
+    "currentArticles": 301,
+    "accumulatedArticles": 378,
+    "sourceBackedArticles": 295,
+    "sourceExcerptArticles": 292,
+    "localizedArticles": 295,
+    "localizedFallbackArticles": 6,
     "limitedArticles": 6,
-    "limitedRate": 0.02027027027027027,
+    "limitedRate": 0.019933554817275746,
     "freshStocks": 61,
     "totalStocks": 63,
-    "linkedInfra": 119,
+    "linkedInfra": 120,
     "linkedBizmodel": 16,
-    "linkedResearch": 34,
+    "linkedResearch": 35,
     "localizedResearch": 62,
-    "localizedFallbackResearch": 1,
+    "localizedFallbackResearch": 2,
     "archivedMarketBaselines": 43,
     "linkedMarketRecords": 137,
-    "consumerSurveyRecords": 12
+    "consumerSurveyRecords": 11
   },
   "sources": {
     "news": {
       "Wired": 26,
       "ZDNet": 20,
       "The Decoder": 40,
-      "The Verge": 29,
-      "TechCrunch": 53,
+      "IEEE Spectrum": 8,
+      "The Verge": 30,
+      "TechCrunch": 55,
       "Engadget": 27,
       "MIT Tech Review": 9,
       "CNBC": 10,
       "the-decoder.com": 1,
       "Ars Technica": 4,
       "South China Morning Post": 2,
-      "Anthropic": 4,
       "AP News": 1,
-      "IEEE Spectrum": 7,
+      "Anthropic": 4,
       "venturebeat.com": 1,
-      "Semafor": 1,
       "Business Insider": 4,
-      "AI Business": 5,
+      "Semafor": 1,
       "VentureBeat": 7,
+      "AI Business": 5,
       "Business Insider Africa": 1,
       "The New York Times": 1,
       "Forbes": 3,
-      "Fortune": 4,
       "SiliconANGLE": 5,
+      "Fortune": 4,
       "The Guardian": 2,
-      "Shaping Europe’s digital future": 1,
       "9to5Mac": 1,
-      "Microsoft Source": 3,
+      "Shaping Europe’s digital future": 1,
+      "CNET": 1,
       "The Register": 4,
+      "Microsoft Source": 3,
       "Databricks": 1,
-      "Android Authority": 1,
       "Yahoo Finance": 1,
+      "Android Authority": 1,
       "MacRumors": 2,
       "Yahoo Finance UK": 1,
       "Yahoo Finance Singapore": 1,
@@ -175,30 +176,32 @@
       "nasdaq": 34,
       "naver": 1,
       "Yahoo Finance history": 2,
-      "sina": 26
+      "eastmoney": 20,
+      "sina": 6
     }
   },
   "collection": {
-    "generatedAt": "2026-08-04T12:26:01.264Z",
+    "generatedAt": "2026-08-04T17:14:57.671Z",
     "mode": "source-content-extractive",
     "policyVersion": 2,
     "streams": {
       "googleNews": 50,
       "directRss": 14
     },
-    "acceptedCandidates": 72,
+    "acceptedCandidates": 71,
     "failedStreams": [],
     "emptyStreams": [
       "google-news:Cursor",
       "google-news:Sierra AI",
-      "google-news:Glean",
-      "google-news:Harvey",
       "google-news:Lovable",
+      "google-news:Harvey",
+      "google-news:Glean",
       "google-news:Runway",
       "google-news:Writer",
       "google-news:경쟁 단말",
       "google-news:Databricks 자본·인프라",
       "rss:Hugging Face",
+      "rss:Engadget",
       "rss:VentureBeat",
       "rss:The Register"
     ],
@@ -206,7 +209,7 @@
   },
   "notices": [
     "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",
-    "검증 제한 기사 비율: 2.0% (6/296)",
+    "검증 제한 기사 비율: 2.0% (6/301)",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
     "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다."
