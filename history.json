@@ -1,6 +1,110 @@
 {
-  "generatedAt": "2026-08-07T01:13:35.784Z",
+  "generatedAt": "2026-08-07T05:21:11.471Z",
   "articles": [
+    {
+      "date": "2026-08-07",
+      "co": "",
+      "cat": "bigtech",
+      "source": "Wired",
+      "title": "One of China’s Most Powerful AI Models Has Also Escaped Containment",
+      "descEn": "Security researchers say that Kimi K3, an open-weight model from China, wandered off to the internet in an attempt to cheat on a test it was given.",
+      "url": "https://www.wired.com/story/moonshot-kimi-k3-ai-model-escape-sandbox",
+      "tag": "글로벌",
+      "titleEn": "One of China’s Most Powerful AI Models Has Also Escaped Containment",
+      "summaryLinesEn": [
+        "Last week, the AISI also disclosed that in its own testing, versions of OpenAI and Anthropic models that had security safeguards disabled perpetrated multiple hacks across the internet, including a particularly ambitious attempt by Anthropic’s Mythos 5 to plant malicious code in an open-source project on GitHub.",
+        "“Kimi K3 is very good at following a goal by any means necessary and also doesn't have the guardrails to prevent it from cheating or escaping the sandbox,” says Paul Kassianik, a researcher at Frontier Security.",
+        "Frontier claims, though, that the incident shows Kimi has fewer cyber safeguards than most other powerful AI models, something that allowed it to go off and use the internet without express permission."
+      ],
+      "summaryRoles": [
+        "fact",
+        "implication",
+        "evidence"
+      ],
+      "summary": "Last week, the AISI also disclosed that in its own testing, versions of OpenAI and Anthropic models that had security safeguards disabled perpetrated multiple hacks across the internet, including a particularly ambitious attempt by Anthropic’s Mythos 5 to plant malicious code in an open-source project on GitHub.\n“Kimi K3 is very good at following a goal by any means necessary and also doesn't have the guardrails to prevent it from cheating or escaping the sandbox,” says Paul Kassianik, a researcher at Frontier Security.\nFrontier claims, though, that the incident shows Kimi has fewer cyber safeguards than most other powerful AI models, something that allowed it to go off and use the internet without express permission.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-07T05:13:53.137Z",
+        "originalUrl": "https://www.wired.com/story/moonshot-kimi-k3-ai-model-escape-sandbox/",
+        "resolvedUrl": "https://www.wired.com/story/moonshot-kimi-k3-ai-model-escape-sandbox/",
+        "canonicalUrl": "https://www.wired.com/story/moonshot-kimi-k3-ai-model-escape-sandbox/",
+        "headline": "One of China’s Most Powerful AI Models Has Also Escaped Containment",
+        "description": "Security researchers say that Kimi K3, an open-weight model from China, wandered off to the internet in an attempt to cheat on a test it was given.",
+        "paragraphs": [
+          "The AI industry is having a rogue agent summer. The latest model to escape onto the open internet during security testing is Kimi K3 , a powerful open-weight offering from the Chinese company Moonshot AI .",
+          "Frontier Security, a US startup, says that Kimi K3 went outside of its sandbox while testing its defensive cybersecurity skills. As with incidents previously reported by OpenAI and Anthropic , the escape was partly enabled by a misconfiguration in the sandbox designed to contain it. Frontier claims, though, that the incident shows Kimi has fewer cyber safeguards than most other powerful AI models, something that allowed it to go off and use the internet without express permission.",
+          "“We found a leak in the sandbox,” says Yaron Singer, CEO of Frontier Security. “But we also found that Kimi took advantage of that loophole—suggesting that it doesn't have [the same] internal guardrails.”",
+          "Unlike other recent incidents of AI agents going off-script, Kimi K3 did not hack anything after accessing the internet—because the answers to the problems it was seeking were easily attainable on GitHub.",
+          "Moonshot did not respond to a request for comment by time of publication.",
+          "The incident is the latest in a string of agent mishaps that suggest increasingly cyber-capable AI models are becoming more challenging to control.",
+          "Last month, OpenAI disclosed that an unreleased model had broken out onto the internet and then hacked Hugging Face , a company that hosts AI models and data, in order to find answers to problems it was tasked with solving. OpenAI subsequently shared that its AI agents had in fact hacked into four additional services as part of the spree.",
+          "Shortly after OpenAI reported its incident, Anthropic revealed that several of its models had also gained access to the internet and attacked outside systems. Last week, the AISI also disclosed that in its own testing, versions of OpenAI and Anthropic models that had security safeguards disabled perpetrated multiple hacks across the internet, including a particularly ambitious attempt by Anthropic’s Mythos 5 to plant malicious code in an open-source project on GitHub.",
+          "While these AI hacking episodes all vary in both cause and degree, the Kimi K3 is similar to several of them in that a misconfigured sandbox allowed access to a number of websites rather than keeping it contained to a simulated environment. The model was expressly tasked with solving problems that should not have involved going off to find the answers online, and appears to have gone outside of those instructions. The model had to figure out for itself that it had access to certain websites by probing the network settings of the sandbox.",
+          "While human error appears to have played a major role in each of the breakouts, the consequences have been compounded by the fact that advanced AI models are designed to use reason and take complex actions in order to solve problems.",
+          "Another key difference between previous incidents and the one discovered by Frontier Security is that it involves a model that is already widely available, with the same safeguards an average user would encounter.",
+          "“Kimi K3 is very good at following a goal by any means necessary and also doesn't have the guardrails to prevent it from cheating or escaping the sandbox,” says Paul Kassianik, a researcher at Frontier Security.",
+          "Kassianik and Singer both say that Kimi and other open-weight models are also excellent tools for cybersecurity defense. (Hugging Face ultimately used an unnamed AI model from China to defend itself against the OpenAI agent hack.) Their company has developed benchmarks that measure a model’s capacity to find vulnerabilities in software and networks, which show that Kimi excels at these tasks.",
+          "The sandbox tested by Frontier Security was developed by the UK government’s AI Security Institute (AISI) for testing AI systems. AISI did not respond to a request for comment by time of posting.",
+          "Some cybersecurity experts say the issue discovered by Frontier Security reinforces how important it is to configure the environments that frontier AI models are placed in carefully.",
+          "“It's not surprising at all,” says Matt Fredrikson, CEO of Gray Swan , another cybersecurity startup, and associate professor at Carnegie Mellon University. “As a general phenomenon, if you give one of these models an objective, and if you're not very explicit, like walls you're putting around it, it'll find a way to get the answer.”",
+          "Fredrikson says this means that people using AI models as agents, including in tools like OpenClaw , which use AI to automate a wide range of useful chores, could find their systems misbehaving if they aren’t careful. “It is a cautionary tale,” he says.",
+          "In your inbox: Inside WIRED’s newsroom with Katie Drummond"
+        ],
+        "text": "The AI industry is having a rogue agent summer. The latest model to escape onto the open internet during security testing is Kimi K3 , a powerful open-weight offering from the Chinese company Moonshot AI .\n\nFrontier Security, a US startup, says that Kimi K3 went outside of its sandbox while testing its defensive cybersecurity skills. As with incidents previously reported by OpenAI and Anthropic , the escape was partly enabled by a misconfiguration in the sandbox designed to contain it. Frontier claims, though, that the incident shows Kimi has fewer cyber safeguards than most other powerful AI models, something that allowed it to go off and use the internet without express permission.\n\n“We found a leak in the sandbox,” says Yaron Singer, CEO of Frontier Security. “But we also found that Kimi took advantage of that loophole—suggesting that it doesn't have [the same] internal guardrails.”\n\nUnlike other recent incidents of AI agents going off-script, Kimi K3 did not hack anything after accessing the internet—because the answers to the problems it was seeking were easily attainable on GitHub.\n\nMoonshot did not respond to a request for comment by time of publication.\n\nThe incident is the latest in a string of agent mishaps that suggest increasingly cyber-capable AI models are becoming more challenging to control.\n\nLast month, OpenAI disclosed that an unreleased model had broken out onto the internet and then hacked Hugging Face , a company that hosts AI models and data, in order to find answers to problems it was tasked with solving. OpenAI subsequently shared that its AI agents had in fact hacked into four additional services as part of the spree.\n\nShortly after OpenAI reported its incident, Anthropic revealed that several of its models had also gained access to the internet and attacked outside systems. Last week, the AISI also disclosed that in its own testing, versions of OpenAI and Anthropic models that had security safeguards disabled perpetrated multiple hacks across the internet, including a particularly ambitious attempt by Anthropic’s Mythos 5 to plant malicious code in an open-source project on GitHub.\n\nWhile these AI hacking episodes all vary in both cause and degree, the Kimi K3 is similar to several of them in that a misconfigured sandbox allowed access to a number of websites rather than keeping it contained to a simulated environment. The model was expressly tasked with solving problems that should not have involved going off to find the answers online, and appears to have gone outside of those instructions. The model had to figure out for itself that it had access to certain websites by probing the network settings of the sandbox.\n\nWhile human error appears to have played a major role in each of the breakouts, the consequences have been compounded by the fact that advanced AI models are designed to use reason and take complex actions in order to solve problems.\n\nAnother key difference between previous incidents and the one discovered by Frontier Security is that it involves a model that is already widely available, with the same safeguards an average user would encounter.\n\n“Kimi K3 is very good at following a goal by any means necessary and also doesn't have the guardrails to prevent it from cheating or escaping the sandbox,” says Paul Kassianik, a researcher at Frontier Security.\n\nKassianik and Singer both say that Kimi and other open-weight models are also excellent tools for cybersecurity defense. (Hugging Face ultimately used an unnamed AI model from China to defend itself against the OpenAI agent hack.) Their company has developed benchmarks that measure a model’s capacity to find vulnerabilities in software and networks, which show that Kimi excels at these tasks.\n\nThe sandbox tested by Frontier Security was developed by the UK government’s AI Security Institute (AISI) for testing AI systems. AISI did not respond to a request for comment by time of posting.\n\nSome cybersecurity experts say the issue discovered by Frontier Security reinforces how important it is to configure the environments that frontier AI models are placed in carefully.\n\n“It's not surprising at all,” says Matt Fredrikson, CEO of Gray Swan , another cybersecurity startup, and associate professor at Carnegie Mellon University. “As a general phenomenon, if you give one of these models an objective, and if you're not very explicit, like walls you're putting around it, it'll find a way to get the answer.”\n\nFredrikson says this means that people using AI models as agents, including in tools like OpenClaw , which use AI to automate a wide range of useful chores, could find their systems misbehaving if they aren’t careful. “It is a cautionary tale,” he says.\n\nIn your inbox: Inside WIRED’s newsroom with Katie Drummond\n\nBig Story: For Taylor Swift, MSG’s controversial cameras briefly went dark\n\nPete Hegseth’s plan for ‘high T’ troops is a junk-science fever dream\n\nHow to find us: Add WIRED.com to your preferred sources in Google",
+        "contentHash": "a30813dc067793513fe2bd78d426a11dce4273d1089ef18a5988f3504d3878a7",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.wired.com/story/moonshot-kimi-k3-ai-model-escape-sandbox/",
+      "collectedAt": "2026-08-07T05:13:53.860Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "c1909a8760cafadb89e490105add0adf0fabfc70dac8a20dc5c278c4e657853c",
+        "sourceLines": [
+          "Last week, the AISI also disclosed that in its own testing, versions of OpenAI and Anthropic models that had security safeguards disabled perpetrated multiple hacks across the internet, including a particularly ambitious attempt by Anthropic’s Mythos 5 to plant malicious code in an open-source project on GitHub.",
+          "“Kimi K3 is very good at following a goal by any means necessary and also doesn't have the guardrails to prevent it from cheating or escaping the sandbox,” says Paul Kassianik, a researcher at Frontier Security.",
+          "Frontier claims, though, that the incident shows Kimi has fewer cyber safeguards than most other powerful AI models, something that allowed it to go off and use the internet without express permission."
+        ],
+        "checkedAt": "2026-08-07T05:19:19.612050+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "중국에서 가장 강력한 AI 모델 중 하나도 격리 탈출",
+        "summaryLines": [
+          "지난주 AISI는 또한 자체 테스트에서 보안 보호 장치가 비활성화된 OpenAI 및 Anthropic 모델 버전이 GitHub의 오픈 소스 프로젝트에 악성 코드를 심으려는 Anthropic의 Mythos 5의 특히 야심찬 시도를 포함하여 인터넷 전반에 걸쳐 여러 해킹을 저질렀다고 밝힘",
+          "Frontier Security의 연구원인 Paul Kassianik은 “Kimi K3는 필요한 모든 수단을 동원하여 목표를 추적하는 데 매우 뛰어나며, 속임수를 쓰거나 샌드박스에서 탈출하는 것을 방지하는 가드레일도 없음” · 라고 말함",
+          "그러나 Frontier는 이번 사건으로 인해 Kimi가 대부분의 다른 강력한 AI 모델보다 사이버 보호 장치가 부족하여 명시적인 허가 없이 인터넷을 사용할 수 있게 되었다고 주장함"
+        ],
+        "summaryRoles": [
+          "fact",
+          "implication",
+          "evidence"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "중국에서 가장 강력한 AI 모델 중 하나도 격리 탈출",
+      "summaryLinesKo": [
+        "지난주 AISI는 또한 자체 테스트에서 보안 보호 장치가 비활성화된 OpenAI 및 Anthropic 모델 버전이 GitHub의 오픈 소스 프로젝트에 악성 코드를 심으려는 Anthropic의 Mythos 5의 특히 야심찬 시도를 포함하여 인터넷 전반에 걸쳐 여러 해킹을 저질렀다고 밝힘",
+        "Frontier Security의 연구원인 Paul Kassianik은 “Kimi K3는 필요한 모든 수단을 동원하여 목표를 추적하는 데 매우 뛰어나며, 속임수를 쓰거나 샌드박스에서 탈출하는 것을 방지하는 가드레일도 없음” · 라고 말함",
+        "그러나 Frontier는 이번 사건으로 인해 Kimi가 대부분의 다른 강력한 AI 모델보다 사이버 보호 장치가 부족하여 명시적인 허가 없이 인터넷을 사용할 수 있게 되었다고 주장함"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
     {
       "date": "2026-08-06",
       "co": "",
@@ -87,7 +191,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -178,7 +282,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -282,7 +386,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -386,7 +490,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -490,7 +594,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -594,7 +698,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -682,7 +786,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -777,7 +881,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -881,7 +985,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -977,7 +1081,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1074,7 +1178,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1176,7 +1280,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1280,7 +1384,193 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-06",
+      "co": "",
+      "cat": "bigtech",
+      "source": "IEEE Spectrum",
+      "title": "Runaway OpenAI Agent Hits Hugging Face and Exposes AI Guardrail Gaps",
+      "descEn": "Guardrails to prevent AI agents from analyzing attacks don’t keep agents from committing them",
+      "url": "https://spectrum.ieee.org/hugging-face-openai-cyberattack",
+      "tag": "글로벌",
+      "titleEn": "Runaway OpenAI Agent Hits Hugging Face and Exposes AI Guardrail Gaps",
+      "summaryLinesEn": [
+        "Guardrails to prevent AI agents from analyzing attacks don’t keep agents from committing them Matthew S.",
+        "Smith is a contributing editor for IEEE Spectrum and the former lead reviews editor at Digital Trends."
+      ],
+      "summaryRoles": [
+        "evidence",
+        "evidence"
+      ],
+      "summary": "Guardrails to prevent AI agents from analyzing attacks don’t keep agents from committing them Matthew S.\nSmith is a contributing editor for IEEE Spectrum and the former lead reviews editor at Digital Trends.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-07T05:13:53.092Z",
+        "originalUrl": "https://spectrum.ieee.org/hugging-face-openai-cyberattack",
+        "resolvedUrl": "https://spectrum.ieee.org/hugging-face-openai-cyberattack",
+        "canonicalUrl": "https://spectrum.ieee.org/hugging-face-openai-cyberattack",
+        "headline": "Runaway OpenAI Agent Hits Hugging Face and Exposes AI Guardrail Gaps",
+        "description": "Guardrails to prevent AI agents from analyzing attacks don’t keep agents from committing them",
+        "paragraphs": [
+          "Guardrails to prevent AI agents from analyzing attacks don’t keep agents from committing them",
+          "Matthew S. Smith is a contributing editor for IEEE Spectrum and the former lead reviews editor at Digital Trends."
+        ],
+        "text": "Guardrails to prevent AI agents from analyzing attacks don’t keep agents from committing them\n\nMatthew S. Smith is a contributing editor for IEEE Spectrum and the former lead reviews editor at Digital Trends.",
+        "contentHash": "5f5ff4be4c0ff07f13c0f07b671b4caeb897ff5fd0b2409d331189f4ce9bf6df",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://spectrum.ieee.org/hugging-face-openai-cyberattack",
+      "collectedAt": "2026-08-07T05:13:53.860Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "f2e3ca0927973ff12f8ae3d7ed8b64b8adb704cec879628d6bbd7d1a5da54b28",
+        "sourceLines": [
+          "Guardrails to prevent AI agents from analyzing attacks don’t keep agents from committing them Matthew S.",
+          "Smith is a contributing editor for IEEE Spectrum and the former lead reviews editor at Digital Trends."
+        ],
+        "checkedAt": "2026-08-07T05:19:19.612427+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "폭주한 OpenAI 에이전트, 포옹하는 얼굴을 치고 AI 난간 간격 노출",
+        "summaryLines": [
+          "AI 에이전트가 공격을 분석하지 못하도록 방지하는 가드레일은 에이전트가 공격을 저지르는 것을 막지 못함 · Matthew S",
+          "Smith는 IEEE Spectrum의 기고 편집자이자 Digital Trends의 전직 수석 리뷰 편집자임"
+        ],
+        "summaryRoles": [
+          "evidence",
+          "evidence"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "폭주한 OpenAI 에이전트, 포옹하는 얼굴을 치고 AI 난간 간격 노출",
+      "summaryLinesKo": [
+        "AI 에이전트가 공격을 분석하지 못하도록 방지하는 가드레일은 에이전트가 공격을 저지르는 것을 막지 못함 · Matthew S",
+        "Smith는 IEEE Spectrum의 기고 편집자이자 Digital Trends의 전직 수석 리뷰 편집자임"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-06",
+      "co": "",
+      "cat": "native",
+      "source": "SiliconANGLE",
+      "title": "Agentic AI security tests enterprise defenses as scale outpaces strategy",
+      "descEn": "Cybersecurity leaders are confronting an inflection point as agentic AI security becomes the defining challenge of this year's threat landscape, with attackers and defenders racing to harness autonomo",
+      "url": "https://siliconangle.com/2026/08/06/agentic-ai-security-requires-human-oversight-blackhat",
+      "tag": "AI 에이전트",
+      "rssUrl": "https://news.google.com/rss/articles/CBMilAFBVV95cUxQdC1aTERyQkVTdG1LV3hYTy1PSlA0ZzdkbGh2OGxKNlJ3M0VBMjVjaXZPQnk2R0l2d3d1WVNLcC1HZnRXSmRkeXFqM1p0ZUw5b2FuUFJiSFZEZC1UaTRzMDRiaFZDMGs1cW9oeXpELTZQR2tmMDdlMGthRnZVQ0phdjJDT3JFWEJZb2NkcXRfUVB3d21K?oc=5",
+      "titleEn": "Agentic AI security tests enterprise defenses as scale outpaces strategy",
+      "summaryLinesEn": [
+        "Oltsik and Krista Case (right) wrapped up day one coverage of Black Hat USA , during an exclusive broadcast on theCUBE, SiliconANGLE Media’s livestreaming studio.",
+        "As agents move into production and gain access to sensitive systems, the need for new governance models is colliding with a market still figuring out how to operationalize control, according to Jon Oltsik (pictured, left), principal analyst in residence at theCUBE Research.",
+        "“If you ask an agent to do a task, it’s going to do whatever it needs to do or whatever it can do to accomplish that task,” Oltsik said."
+      ],
+      "summaryRoles": [
+        "fact",
+        "implication",
+        "implication"
+      ],
+      "summary": "Oltsik and Krista Case (right) wrapped up day one coverage of Black Hat USA , during an exclusive broadcast on theCUBE, SiliconANGLE Media’s livestreaming studio.\nAs agents move into production and gain access to sensitive systems, the need for new governance models is colliding with a market still figuring out how to operationalize control, according to Jon Oltsik (pictured, left), principal analyst in residence at theCUBE Research.\n“If you ask an agent to do a task, it’s going to do whatever it needs to do or whatever it can do to accomplish that task,” Oltsik said.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-07T05:13:49.519Z",
+        "originalUrl": "https://news.google.com/rss/articles/CBMilAFBVV95cUxQdC1aTERyQkVTdG1LV3hYTy1PSlA0ZzdkbGh2OGxKNlJ3M0VBMjVjaXZPQnk2R0l2d3d1WVNLcC1HZnRXSmRkeXFqM1p0ZUw5b2FuUFJiSFZEZC1UaTRzMDRiaFZDMGs1cW9oeXpELTZQR2tmMDdlMGthRnZVQ0phdjJDT3JFWEJZb2NkcXRfUVB3d21K?oc=5",
+        "resolvedUrl": "https://siliconangle.com/2026/08/06/agentic-ai-security-requires-human-oversight-blackhat/",
+        "canonicalUrl": "https://siliconangle.com/2026/08/06/agentic-ai-security-requires-human-oversight-blackhat/",
+        "headline": "Agentic AI security tests enterprise defenses as scale outpaces strategy",
+        "description": "Cybersecurity leaders are confronting an inflection point as agentic AI security becomes the defining challenge of this year's threat landscape, with attackers and defenders racing to harness autonomo",
+        "paragraphs": [
+          "Agentic AI security tests enterprise defenses as scale outpaces strategy",
+          "Cybersecurity leaders are confronting an inflection point as agentic AI security becomes the defining challenge of this year’s threat landscape, with attackers and defenders racing to harness autonomous tools at unprecedented speed and scale.",
+          "That urgency was on full display during the first day of Black Hat USA 2026, where autonomous AI agents dominated briefings and hallway conversations alike. As agents move into production and gain access to sensitive systems, the need for new governance models is colliding with a market still figuring out how to operationalize control, according to Jon Oltsik (pictured, left), principal analyst in residence at theCUBE Research.",
+          "“Certainly it’s unprecedented in terms of scale and speed,” Oltsik said. “I’m starting to hear from people it’s a manageable problem — but you have to go into it with strategy and intelligence and the right balance of people, process and technology. I don’t think a lot of companies are doing that, but those that are are managing.”",
+          "Oltsik and Krista Case (right) wrapped up day one coverage of Black Hat USA , during an exclusive broadcast on theCUBE, SiliconANGLE Media’s livestreaming studio. They discussed how enterprises are navigating agentic AI security, identity governance and cyber resilience amid a fast-moving threat landscape. (* Disclosure below.)",
+          "Identity emerges as the control point for agentic AI security",
+          "Beyond the hype cycle, practitioners are zeroing in on identity as the critical layer for managing autonomous agents, Case noted. Static entitlements no longer suffice when an agent can improvise its way toward a goal.",
+          "“If you ask an agent to do a task, it’s going to do whatever it needs to do or whatever it can do to accomplish that task,” Oltsik said. “And some of that may be rogue behavior. So that’s where I think identity, non-human identities, agentic identities, that’s the challenge there, and it’s not static, it’s very dynamic.”",
+          "Visibility must come before any control layer can work, Oltsik noted, describing the process as sequential rather than simultaneous — organizations first need to know what agents exist and what they touch before they can govern them. That discipline extends to resilience, where CISOs face pressure to prove systems can keep operating even after a breach.",
+          "“We have to be much more sensitive to where the human in the loop takes place,” Oltsik said. “We have to guide this technology. We have to understand this technology. But humans are still necessary to make decisions, and will be.”",
+          "Here’s the complete video interview, part of SiliconANGLE’s and theCUBE’s coverage of Black Hat USA :",
+          "(* Disclosure: TheCUBE is a paid media partner for Black Hat USA. Sponsors of theCUBE’s event coverage do not have editorial control over content on theCUBE or SiliconANGLE.)",
+          "Support our mission to keep content open and free by engaging with theCUBE community. Join theCUBE’s Alumni Trust Network , where technology leaders connect, share intelligence and create opportunities.",
+          "15M+ viewers of theCUBE videos , powering conversations across AI, cloud, cybersecurity and more",
+          "11.4k+ theCUBE alumni — Connect with more than 11,400 tech and business leaders shaping the future through a unique trusted-based network.",
+          "Founded by tech visionaries John Furrier and Dave Vellante, SiliconANGLE Media has built a dynamic ecosystem of industry-leading digital media brands that reach 15+ million elite tech professionals. Our new proprietary theCUBE AI Video Cloud is breaking ground in audience interaction, leveraging theCUBEai.com neural network to help technology companies make data-driven decisions and stay at the forefront of industry conversations.",
+          "Datadog shares plummet despite expectation-topping quarterly results",
+          "New details on OpenAI/Hugging Face attack emerge as security industry debates AI agent controls"
+        ],
+        "text": "Agentic AI security tests enterprise defenses as scale outpaces strategy\n\nCybersecurity leaders are confronting an inflection point as agentic AI security becomes the defining challenge of this year’s threat landscape, with attackers and defenders racing to harness autonomous tools at unprecedented speed and scale.\n\nThat urgency was on full display during the first day of Black Hat USA 2026, where autonomous AI agents dominated briefings and hallway conversations alike. As agents move into production and gain access to sensitive systems, the need for new governance models is colliding with a market still figuring out how to operationalize control, according to Jon Oltsik (pictured, left), principal analyst in residence at theCUBE Research.\n\n“Certainly it’s unprecedented in terms of scale and speed,” Oltsik said. “I’m starting to hear from people it’s a manageable problem — but you have to go into it with strategy and intelligence and the right balance of people, process and technology. I don’t think a lot of companies are doing that, but those that are are managing.”\n\nOltsik and Krista Case (right) wrapped up day one coverage of Black Hat USA , during an exclusive broadcast on theCUBE, SiliconANGLE Media’s livestreaming studio. They discussed how enterprises are navigating agentic AI security, identity governance and cyber resilience amid a fast-moving threat landscape. (* Disclosure below.)\n\nIdentity emerges as the control point for agentic AI security\n\nBeyond the hype cycle, practitioners are zeroing in on identity as the critical layer for managing autonomous agents, Case noted. Static entitlements no longer suffice when an agent can improvise its way toward a goal.\n\n“If you ask an agent to do a task, it’s going to do whatever it needs to do or whatever it can do to accomplish that task,” Oltsik said. “And some of that may be rogue behavior. So that’s where I think identity, non-human identities, agentic identities, that’s the challenge there, and it’s not static, it’s very dynamic.”\n\nVisibility must come before any control layer can work, Oltsik noted, describing the process as sequential rather than simultaneous — organizations first need to know what agents exist and what they touch before they can govern them. That discipline extends to resilience, where CISOs face pressure to prove systems can keep operating even after a breach.\n\n“We have to be much more sensitive to where the human in the loop takes place,” Oltsik said. “We have to guide this technology. We have to understand this technology. But humans are still necessary to make decisions, and will be.”\n\nHere’s the complete video interview, part of SiliconANGLE’s and theCUBE’s coverage of Black Hat USA :\n\n(* Disclosure: TheCUBE is a paid media partner for Black Hat USA. Sponsors of theCUBE’s event coverage do not have editorial control over content on theCUBE or SiliconANGLE.)\n\nSupport our mission to keep content open and free by engaging with theCUBE community. Join theCUBE’s Alumni Trust Network , where technology leaders connect, share intelligence and create opportunities.\n\n15M+ viewers of theCUBE videos , powering conversations across AI, cloud, cybersecurity and more\n\n11.4k+ theCUBE alumni — Connect with more than 11,400 tech and business leaders shaping the future through a unique trusted-based network.\n\nFounded by tech visionaries John Furrier and Dave Vellante, SiliconANGLE Media has built a dynamic ecosystem of industry-leading digital media brands that reach 15+ million elite tech professionals. Our new proprietary theCUBE AI Video Cloud is breaking ground in audience interaction, leveraging theCUBEai.com neural network to help technology companies make data-driven decisions and stay at the forefront of industry conversations.\n\nDatadog shares plummet despite expectation-topping quarterly results\n\nNew details on OpenAI/Hugging Face attack emerge as security industry debates AI agent controls\n\nThe AI security skills gap becomes Black Hat's quiet crisis: theCUBE's Black Hat USA 2026 day one keynote analysis\n\nEnvoy launches Response to provide threat intelligence and incident management for businesses\n\nInevitable AI Group raises $6M to derail SaaS incumbents with more agile, AI-native software startups\n\nBroadcom updates VMware security for AI-era threats SECURITY - BY PAUL GILLIN . 34 MINS AGO",
+        "contentHash": "bc193d7a12046dc709fb7901788d91ae70445e8a91a61123642ccce2d771f25d",
+        "selectionVersion": 7
+      },
+      "collectedAt": "2026-08-07T05:13:53.860Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "1b2e23a0d9bedfb2ab9ddfb51382ec0e69e0f493a22775b2d788064bd4d09419",
+        "sourceLines": [
+          "Oltsik and Krista Case (right) wrapped up day one coverage of Black Hat USA , during an exclusive broadcast on theCUBE, SiliconANGLE Media’s livestreaming studio.",
+          "As agents move into production and gain access to sensitive systems, the need for new governance models is colliding with a market still figuring out how to operationalize control, according to Jon Oltsik (pictured, left), principal analyst in residence at theCUBE Research.",
+          "“If you ask an agent to do a task, it’s going to do whatever it needs to do or whatever it can do to accomplish that task,” Oltsik said."
+        ],
+        "checkedAt": "2026-08-07T05:19:19.612791+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "Agentic AI 보안은 규모 확장 전략에 따라 기업 방어를 테스트함",
+        "summaryLines": [
+          "Oltsik과 Krista Case(오른쪽)는 SiliconANGLE Media의 라이브 스트리밍 스튜디오인 theCUBE에서 독점 방송되는 동안 Black Hat USA의 첫 번째 취재를 마무리함",
+          "theCUBE Research의 수석 분석가인 Jon Oltsik(사진, 왼쪽)에 따르면 에이전트가 프로덕션으로 이동하고 민감한 시스템에 액세스함에 따라 새로운 거버넌스 모델의 필요성이 제어를 운영화하는 방법을 여전히 파악하고 있는 시장과 충돌하고 있음",
+          "Oltsik은 \"에이전트에게 작업을 요청하면 에이전트는 해당 작업을 달성하기 위해 필요한 모든 작업을 수행하거나 할 수 있는 모든 작업을 수행함\" · 라고 말함"
+        ],
+        "summaryRoles": [
+          "fact",
+          "implication",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "Agentic AI 보안은 규모 확장 전략에 따라 기업 방어를 테스트함",
+      "summaryLinesKo": [
+        "Oltsik과 Krista Case(오른쪽)는 SiliconANGLE Media의 라이브 스트리밍 스튜디오인 theCUBE에서 독점 방송되는 동안 Black Hat USA의 첫 번째 취재를 마무리함",
+        "theCUBE Research의 수석 분석가인 Jon Oltsik(사진, 왼쪽)에 따르면 에이전트가 프로덕션으로 이동하고 민감한 시스템에 액세스함에 따라 새로운 거버넌스 모델의 필요성이 제어를 운영화하는 방법을 여전히 파악하고 있는 시장과 충돌하고 있음",
+        "Oltsik은 \"에이전트에게 작업을 요청하면 에이전트는 해당 작업을 달성하기 위해 필요한 모든 작업을 수행하거나 할 수 있는 모든 작업을 수행함\" · 라고 말함"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1382,7 +1672,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1479,7 +1769,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1583,7 +1873,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1684,7 +1974,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1788,7 +2078,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1883,7 +2173,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1976,7 +2266,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2080,7 +2370,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2174,7 +2464,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2270,7 +2560,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2374,7 +2664,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2478,7 +2768,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2572,7 +2862,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2672,7 +2962,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2776,7 +3066,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2880,7 +3170,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2977,7 +3267,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3081,7 +3371,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3185,7 +3475,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3289,7 +3579,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3385,7 +3675,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3489,7 +3779,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3591,7 +3881,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3684,7 +3974,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3788,7 +4078,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3859,7 +4149,7 @@
           "“Our remix and covers I think is an incredibly exciting product again because there is no one else that can really do this,” Söderström said.",
           "The new tool will launch as a paid add-on, creating an additional revenue stream for artists, Spotify previously said."
         ],
-        "checkedAt": "2026-08-07T01:11:48.557635+00:00",
+        "checkedAt": "2026-08-07T05:19:19.629399+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -3885,7 +4175,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3974,7 +4264,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4067,7 +4357,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4171,7 +4461,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4260,7 +4550,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4358,7 +4648,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4462,7 +4752,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4566,7 +4856,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4670,7 +4960,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4759,7 +5049,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4862,7 +5152,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4959,7 +5249,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5053,7 +5343,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5157,7 +5447,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5261,7 +5551,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5355,7 +5645,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5459,7 +5749,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5563,7 +5853,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5652,7 +5942,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5747,7 +6037,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5851,7 +6141,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5950,7 +6240,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6054,7 +6344,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6145,7 +6435,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6249,7 +6539,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6353,7 +6643,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6442,7 +6732,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6531,7 +6821,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6633,7 +6923,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6737,7 +7027,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6841,7 +7131,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6945,7 +7235,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7042,7 +7332,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7145,7 +7435,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7248,7 +7538,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7350,7 +7640,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7453,7 +7743,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7542,7 +7832,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7646,7 +7936,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7735,7 +8025,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7839,7 +8129,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7942,7 +8232,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8046,7 +8336,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8144,7 +8434,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8248,7 +8538,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8352,7 +8642,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8456,7 +8746,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8560,7 +8850,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8664,7 +8954,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8765,7 +9055,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8868,7 +9158,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8972,7 +9262,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9076,7 +9366,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9180,7 +9470,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9274,7 +9564,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9367,7 +9657,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9471,7 +9761,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9667,7 +9957,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9760,7 +10050,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9859,7 +10149,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9961,7 +10251,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10065,7 +10355,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10258,7 +10548,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10346,7 +10636,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10449,7 +10739,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10553,7 +10843,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10644,7 +10934,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10735,7 +11025,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10837,7 +11127,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10926,7 +11216,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11030,7 +11320,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11126,7 +11416,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11221,7 +11511,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11324,7 +11614,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11428,7 +11718,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11532,7 +11822,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11621,7 +11911,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11720,7 +12010,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11810,7 +12100,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11914,7 +12204,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12018,7 +12308,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12109,7 +12399,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12211,7 +12501,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12300,7 +12590,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12404,7 +12694,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12508,7 +12798,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12607,7 +12897,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12711,7 +13001,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12815,7 +13105,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12919,7 +13209,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13023,7 +13313,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13127,7 +13417,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13231,7 +13521,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13334,7 +13624,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13429,7 +13719,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13522,7 +13812,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13618,7 +13908,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13717,7 +14007,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13813,7 +14103,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13915,7 +14205,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14004,7 +14294,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14101,7 +14391,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14205,7 +14495,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14309,7 +14599,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14412,7 +14702,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14495,7 +14785,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14585,7 +14875,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14681,7 +14971,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14775,7 +15065,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14879,7 +15169,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14983,7 +15273,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15087,7 +15377,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15191,7 +15481,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15292,7 +15582,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15396,7 +15686,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15488,7 +15778,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15592,7 +15882,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15696,7 +15986,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15899,7 +16189,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15981,7 +16271,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16078,7 +16368,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16177,7 +16467,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16281,7 +16571,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16385,7 +16675,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16475,7 +16765,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16579,7 +16869,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16683,7 +16973,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16773,7 +17063,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16873,7 +17163,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16956,7 +17246,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17060,7 +17350,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17164,7 +17454,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17263,7 +17553,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17354,7 +17644,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17458,7 +17748,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17547,7 +17837,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17636,7 +17926,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17740,7 +18030,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17844,7 +18134,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17948,7 +18238,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18043,7 +18333,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18142,7 +18432,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18246,7 +18536,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18335,7 +18625,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18433,7 +18723,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18522,7 +18812,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18614,7 +18904,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18718,7 +19008,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18817,7 +19107,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18914,7 +19204,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19010,7 +19300,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19114,7 +19404,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19203,7 +19493,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19291,7 +19581,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19395,7 +19685,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19489,7 +19779,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19593,7 +19883,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19697,7 +19987,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19788,7 +20078,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19892,7 +20182,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19991,7 +20281,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20089,7 +20379,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20193,7 +20483,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20297,7 +20587,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20401,7 +20691,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20499,7 +20789,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20592,7 +20882,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20690,7 +20980,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20788,7 +21078,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20877,7 +21167,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20975,7 +21265,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21073,7 +21363,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21171,7 +21461,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21268,7 +21558,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21358,7 +21648,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21456,7 +21746,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21554,7 +21844,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21652,7 +21942,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21750,7 +22040,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21848,7 +22138,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21946,7 +22236,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22044,7 +22334,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22132,7 +22422,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22221,7 +22511,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22319,7 +22609,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22417,7 +22707,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22515,7 +22805,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22609,7 +22899,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22712,7 +23002,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22810,7 +23100,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22898,7 +23188,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22996,7 +23286,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23079,7 +23369,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23177,7 +23467,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23275,7 +23565,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23379,7 +23669,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23483,7 +23773,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23543,7 +23833,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23642,7 +23932,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23779,7 +24069,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23867,7 +24157,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23965,7 +24255,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24063,7 +24353,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24161,7 +24451,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24265,7 +24555,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24363,7 +24653,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24385,7 +24675,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24483,7 +24773,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [
           "source-content-mismatch"
         ],
@@ -24583,7 +24873,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24710,7 +25000,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24771,7 +25061,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24865,7 +25155,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24961,7 +25251,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25062,7 +25352,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25161,7 +25451,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25292,7 +25582,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25357,7 +25647,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25455,7 +25745,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25639,7 +25929,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25722,7 +26012,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25963,7 +26253,7 @@
           "While most AI systems pose limited to no risk and can contribute to solving many societal challenges, certain AI systems create risks that we must address to avoid undesirable outcomes.",
           "So, it may become difficult to assess whether someone has been unfairly disadvantaged, such as in a hiring decision or in an application for a public benefit scheme."
         ],
-        "checkedAt": "2026-08-07T01:11:48.562631+00:00",
+        "checkedAt": "2026-08-07T05:19:19.635933+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -25989,7 +26279,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26093,7 +26383,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26194,7 +26484,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26268,7 +26558,7 @@
           "The shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies.",
           "\"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising.\""
         ],
-        "checkedAt": "2026-08-07T01:11:48.562746+00:00",
+        "checkedAt": "2026-08-07T05:19:19.635769+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -26294,7 +26584,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26398,7 +26688,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26420,7 +26710,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26518,7 +26808,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26615,7 +26905,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26713,7 +27003,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26811,7 +27101,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26909,7 +27199,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27007,7 +27297,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27105,7 +27395,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27294,7 +27584,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27359,7 +27649,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27545,7 +27835,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27993,7 +28283,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28092,7 +28382,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28191,7 +28481,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28252,7 +28542,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28432,7 +28722,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -28534,7 +28824,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -28610,7 +28900,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [
           "summary-not-source-content-extractive",
           "numbers-not-in-source-snippet"
@@ -28646,7 +28936,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T01:07:54.975Z",
+        "checkedAt": "2026-08-07T05:15:39.080Z",
         "originalUrl": "https://aibusiness.com/cybersecurity/startup-focused-enterprise-ai-security-valued-1-2-billion",
         "error": "HTTP 403"
       }
@@ -28668,7 +28958,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28764,7 +29054,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28861,7 +29151,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28959,7 +29249,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29252,7 +29542,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29388,7 +29678,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29487,7 +29777,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29630,7 +29920,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -29734,7 +30024,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -29756,7 +30046,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29811,7 +30101,7 @@
           "Since the platform is open source, developers can make their own Buzz instance feel more customized to the needs and workflows of their specific team.",
           "a new groupchat platform for teams of people and agents of all sizes, built to reduce our dependency on slack and github. model-agnostic, decentralized, self-sovereign, and open source. 🐝 https://t.co/8IaMVeTQNo As startups increasingly rely on AI agents to get work done, it can be challenging for employees to collaborate on various tasks across different platforms."
         ],
-        "checkedAt": "2026-08-07T01:11:48.564106+00:00",
+        "checkedAt": "2026-08-07T05:19:19.637097+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -29850,7 +30140,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29948,7 +30238,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30046,7 +30336,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30148,7 +30438,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30237,7 +30527,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30727,7 +31017,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30826,7 +31116,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30969,7 +31259,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31071,7 +31361,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31174,7 +31464,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31336,7 +31626,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -31469,7 +31759,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -31605,7 +31895,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31709,7 +31999,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31807,7 +32097,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31931,7 +32221,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -32035,7 +32325,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -32307,7 +32597,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -32404,7 +32694,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -32441,7 +32731,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T01:07:54.975Z",
+        "checkedAt": "2026-08-07T05:15:39.081Z",
         "originalUrl": "https://www.cnbc.com/video/2026/07/17/the-feds-plan-to-restore-price-stability-relies-on-ai.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -32511,7 +32801,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -32604,7 +32894,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -32717,7 +33007,7 @@
           "As enterprises advance from AI experimentation to large-scale adoption, LTM and Glean will help customers operationalize AI across key business functions, including IT support, enterprise knowledge management, and enterprise application operations.",
           "The joint offering is designed to help customers realize measurable business outcomes such as faster incident resolution, improved employee productivity, reduced support costs, accelerated onboarding, enhanced enterprise search, and more efficient application support operations."
         ],
-        "checkedAt": "2026-08-07T01:11:48.564550+00:00",
+        "checkedAt": "2026-08-07T05:19:19.637777+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -32743,7 +33033,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -33025,7 +33315,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -33071,7 +33361,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T01:07:54.975Z",
+        "checkedAt": "2026-08-07T05:15:39.081Z",
         "originalUrl": "https://www.ft.com/content/af8f4659-df0c-4c83-9fcc-8239714d0928?syn-25a6b1a6=1",
         "error": "HTTP 403"
       }
@@ -33093,7 +33383,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -33191,7 +33481,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -33433,7 +33723,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -33563,7 +33853,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -33596,7 +33886,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T01:07:54.975Z",
+        "checkedAt": "2026-08-07T05:15:39.613Z",
         "originalUrl": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQMmZaRXBtUG5RLWpZQjg4UjFZd012cTM1Uy0xZy13SkkxamJiSzVuZ0dIMGllZDZVZGJKMkItTlo4bzliUGdndlY2ZG1JYTlpY0Z0a3lEWERtZDE5ZGY0VlA5WEYxaXJvSkZUMDBaUkxkekF5b2NQamFhdHRUVEM3aVRwNkw4VFlPa2M3VWtOa1cyNGUtVGRzOHhGdVJYVUw2aHpVZV91TmpUWjFWQ25STmwtMA?oc=5",
         "error": "HTTP 429"
       }
@@ -33987,7 +34277,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34085,7 +34375,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34122,7 +34412,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T01:07:55.429Z",
+        "checkedAt": "2026-08-07T05:15:39.081Z",
         "originalUrl": "https://www.cnbc.com/2026/07/15/why-jim-cramer-is-shocked-by-citis-against-the-grain-praise-of-microsofts-copilot.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -34192,7 +34482,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34291,7 +34581,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34388,7 +34678,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34707,7 +34997,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34806,7 +35096,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34905,7 +35195,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35042,7 +35332,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -35201,7 +35491,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35260,7 +35550,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -35299,7 +35589,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T01:07:55.561Z",
+        "checkedAt": "2026-08-07T05:15:39.656Z",
         "originalUrl": "https://money.usnews.com/investing/news/articles/2026-07-10/sk-hynix-ceo-sees-worst-ever-memory-supply-shortage-in-2027-says-demand-to-outstrip-supply-beyond-2030",
         "error": "This operation was aborted"
       }
@@ -35339,7 +35629,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35437,7 +35727,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35586,7 +35876,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35683,7 +35973,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35782,7 +36072,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -35815,7 +36105,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T01:07:55.753Z",
+        "checkedAt": "2026-08-07T05:15:39.884Z",
         "originalUrl": "https://www.axios.com/2026/06/25/trump-administration-openai-gpt-model-release",
         "error": "HTTP 403"
       }
@@ -35837,7 +36127,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -35870,7 +36160,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T01:07:56.158Z",
+        "checkedAt": "2026-08-07T05:15:39.995Z",
         "originalUrl": "https://www.axios.com/2026/06/18/openai-devices-ha-thai",
         "error": "HTTP 403"
       }
@@ -35890,7 +36180,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36045,7 +36335,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36201,7 +36491,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36298,7 +36588,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36454,7 +36744,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36755,7 +37045,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36799,7 +37089,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T01:07:56.347Z",
+        "checkedAt": "2026-08-07T05:15:40.096Z",
         "originalUrl": "https://www.globenewswire.com/Error/Index?error=1",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -36820,7 +37110,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36996,7 +37286,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37093,7 +37383,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37244,7 +37534,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37342,7 +37632,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37440,7 +37730,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37575,7 +37865,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T01:13:35.784Z",
+        "checkedAt": "2026-08-07T05:21:11.471Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37593,7 +37883,7 @@
           "Try Claude Try Claude Try Claude Learn more about Claude About Claude Overview Log in to Claude Log in to Claude Log in to Claude Download app Download app Download app AI will have a vast impact on the world.",
           "At Anthropic, we build AI to serve humanity’s long-term well-being."
         ],
-        "checkedAt": "2026-08-07T01:11:48.565567+00:00",
+        "checkedAt": "2026-08-07T05:19:19.638904+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -40053,6 +40343,19 @@
       "sourceBacked": 342,
       "sourceExcerpt": 339,
       "localized": 342,
+      "localizationFallback": 6,
+      "limited": 6,
+      "freshStocks": 61,
+      "status": "ok"
+    },
+    {
+      "generatedAt": "2026-08-07T05:21:11.471Z",
+      "newsGeneratedAt": "2026-08-07T05:16:02.114Z",
+      "stocksGeneratedAt": "2026-08-07T05:15:21.555Z",
+      "articles": 351,
+      "sourceBacked": 345,
+      "sourceExcerpt": 342,
+      "localized": 345,
       "localizationFallback": 6,
       "limited": 6,
       "freshStocks": 61,
