@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07T05:21:11.471Z",
+  "generatedAt": "2026-08-07T11:29:25.048Z",
   "articles": [
     {
       "date": "2026-08-07",
@@ -100,7 +100,294 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-07",
+      "co": "",
+      "cat": "bigtech",
+      "source": "Engadget",
+      "title": "Chinese AI model Moonshot Kimi K3 also escaped its testing environment - Engadget",
+      "descEn": "Kimi K3 also found loopholes in its sandbox environment that allowed it to access the internet.",
+      "url": "https://www.engadget.com/2232256/chinese-ai-kimi-k3-also-escaped-containment",
+      "tag": "글로벌",
+      "titleEn": "Chinese AI model Moonshot Kimi K3 also escaped its testing environment - Engadget",
+      "summaryLinesEn": [
+        "Moonshot launched Kimi K3 in July and made it available for free shortly thereafter.",
+        "All three companies reported that their models were able to leave the confines of their supposed-to-be isolated setting due to an error by their evaluation partner, Irregular.",
+        "Kimi K3, one of most powerful AI models developed by a Chinese company, also escaped its testing environment."
+      ],
+      "summaryRoles": [
+        "change",
+        "implication",
+        "evidence"
+      ],
+      "summary": "Moonshot launched Kimi K3 in July and made it available for free shortly thereafter.\nAll three companies reported that their models were able to leave the confines of their supposed-to-be isolated setting due to an error by their evaluation partner, Irregular.\nKimi K3, one of most powerful AI models developed by a Chinese company, also escaped its testing environment.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-07T11:22:33.028Z",
+        "originalUrl": "https://www.engadget.com/2232256/chinese-ai-kimi-k3-also-escaped-containment/",
+        "resolvedUrl": "https://www.engadget.com/2232256/chinese-ai-kimi-k3-also-escaped-containment/",
+        "canonicalUrl": "https://www.engadget.com/2232256/chinese-ai-kimi-k3-also-escaped-containment/",
+        "headline": "Chinese AI model Moonshot Kimi K3 also escaped its testing environment - Engadget",
+        "description": "Kimi K3 also found loopholes in its sandbox environment that allowed it to access the internet.",
+        "paragraphs": [
+          "But it not, unlike OpenAI and Anthropic's models, hack a third-party website or service.",
+          "It wasn't too long ago when the idea of an AI model or agent escaping their confines and breaking into websites on their own felt alarming. Now, it has become a pretty common story. Kimi K3, one of most powerful AI models developed by a Chinese company, also escaped its testing environment. According to US cybersecurity startup Frontier , Kimi K3 broke out of a sandbox from the UK government's AI Security Institute ( AISI ) while its defensive cybersecurity skills were being evaluated.",
+          "Moonshot launched Kimi K3 in July and made it available for free shortly thereafter. According to the BBC , third-party evaluations of the model showed that it's comparable to leading AI models from OpenAI and Anthropic.",
+          "Frontier clarified in its post, that the model didn't exploit a zero-day vulnerability. Instead, it took advantage of a misconfiguration in its sandbox environment, similar to what happened with Anthropic , OpenAI and Meta . All three companies reported that their models were able to leave the confines of their supposed-to-be isolated setting due to an error by their evaluation partner, Irregular.",
+          "Yaron Singer, the CEO of Frontier Security, told Wired that while Kimi didn't perform any complex exploit, it took advantage of a loophole in AISI's testing sandbox. That suggests that it doesn't have the internal guardrails to stop itself from \"cheating\" or looking for the easiest way to accomplish a task instead of actually doing it. The incidents at Anthropic and OpenAI involved testing unreleased models or models whose safeguards were deliberately lowered to allow for more rigorous evaluations. The Kimi K3 tested in this event, however, is widely available. Nevertheless, Kimi didn't hack into a third-party website or service. It simply accessed the internet and found the solution to the problem it was solving on GitHub.",
+          "One of Frontier's key takeaways from the incident is that if there's path to access the internet, \"a sufficiently capable agent will find it.\" As OpenAI's employees said at Black Hat USA , frontier models like to cheat. During testing, they're typically tasked to find solutions as fast as possible using the least number of tools, and they have the capability to realize that they can just go on the internet to find the answer. To be able to truly assess them, companies and testers will have to make sure their evaluation infrastructure is secure and has no loopholes, especially since AI models are becoming more and more advanced.",
+          "Speaking of OpenAI's talk at Black Hat USA, its employees revealed at the security conference that the company's AI agents created a message board within its network to work with each other. The agents' contributions to that board led to the attack on Hugging Face. If you'll recall, the AI agents the company were testing also escaped their isolated environment and infiltrated the AI repository to find solutions to the problems they were solving. In that case, however, they broke free by exploiting a vulnerability in OpenAI's systems."
+        ],
+        "text": "But it not, unlike OpenAI and Anthropic's models, hack a third-party website or service.\n\nIt wasn't too long ago when the idea of an AI model or agent escaping their confines and breaking into websites on their own felt alarming. Now, it has become a pretty common story. Kimi K3, one of most powerful AI models developed by a Chinese company, also escaped its testing environment. According to US cybersecurity startup Frontier , Kimi K3 broke out of a sandbox from the UK government's AI Security Institute ( AISI ) while its defensive cybersecurity skills were being evaluated.\n\nMoonshot launched Kimi K3 in July and made it available for free shortly thereafter. According to the BBC , third-party evaluations of the model showed that it's comparable to leading AI models from OpenAI and Anthropic.\n\nFrontier clarified in its post, that the model didn't exploit a zero-day vulnerability. Instead, it took advantage of a misconfiguration in its sandbox environment, similar to what happened with Anthropic , OpenAI and Meta . All three companies reported that their models were able to leave the confines of their supposed-to-be isolated setting due to an error by their evaluation partner, Irregular.\n\nYaron Singer, the CEO of Frontier Security, told Wired that while Kimi didn't perform any complex exploit, it took advantage of a loophole in AISI's testing sandbox. That suggests that it doesn't have the internal guardrails to stop itself from \"cheating\" or looking for the easiest way to accomplish a task instead of actually doing it. The incidents at Anthropic and OpenAI involved testing unreleased models or models whose safeguards were deliberately lowered to allow for more rigorous evaluations. The Kimi K3 tested in this event, however, is widely available. Nevertheless, Kimi didn't hack into a third-party website or service. It simply accessed the internet and found the solution to the problem it was solving on GitHub.\n\nOne of Frontier's key takeaways from the incident is that if there's path to access the internet, \"a sufficiently capable agent will find it.\" As OpenAI's employees said at Black Hat USA , frontier models like to cheat. During testing, they're typically tasked to find solutions as fast as possible using the least number of tools, and they have the capability to realize that they can just go on the internet to find the answer. To be able to truly assess them, companies and testers will have to make sure their evaluation infrastructure is secure and has no loopholes, especially since AI models are becoming more and more advanced.\n\nSpeaking of OpenAI's talk at Black Hat USA, its employees revealed at the security conference that the company's AI agents created a message board within its network to work with each other. The agents' contributions to that board led to the attack on Hugging Face. If you'll recall, the AI agents the company were testing also escaped their isolated environment and infiltrated the AI repository to find solutions to the problems they were solving. In that case, however, they broke free by exploiting a vulnerability in OpenAI's systems.",
+        "contentHash": "898cb05a4136088578d57bc61b21f0f3a4053d31164a501124bb8725bba1a647",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.engadget.com/2232256/chinese-ai-kimi-k3-also-escaped-containment/",
+      "collectedAt": "2026-08-07T11:22:34.098Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "7b3fc631fecb4c75f0a1ba110febce2f1d72e1425a3208db69e066e42e6c6083",
+        "sourceLines": [
+          "Moonshot launched Kimi K3 in July and made it available for free shortly thereafter.",
+          "All three companies reported that their models were able to leave the confines of their supposed-to-be isolated setting due to an error by their evaluation partner, Irregular.",
+          "Kimi K3, one of most powerful AI models developed by a Chinese company, also escaped its testing environment."
+        ],
+        "checkedAt": "2026-08-07T11:27:42.898617+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "중국 AI 모델 문샷 키미 K3도 테스트 환경 탈출 - 엔가젯(Engadget)",
+        "summaryLines": [
+          "Moonshot은 지난 7월 Kimi K3를 출시한 후 곧 무료로 제공함",
+          "세 회사 모두 평가 파트너인 Irregular의 오류로 인해 모델이 격리된 것으로 추정되는 설정의 범위를 벗어날 수 있었다고 보고함",
+          "중국 기업이 개발한 가장 강력한 AI 모델 중 하나인 키미 K3(Kimi K3)도 테스트 환경을 벗어났"
+        ],
+        "summaryRoles": [
+          "change",
+          "implication",
+          "evidence"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "중국 AI 모델 문샷 키미 K3도 테스트 환경 탈출 - 엔가젯(Engadget)",
+      "summaryLinesKo": [
+        "Moonshot은 지난 7월 Kimi K3를 출시한 후 곧 무료로 제공함",
+        "세 회사 모두 평가 파트너인 Irregular의 오류로 인해 모델이 격리된 것으로 추정되는 설정의 범위를 벗어날 수 있었다고 보고함",
+        "중국 기업이 개발한 가장 강력한 AI 모델 중 하나인 키미 K3(Kimi K3)도 테스트 환경을 벗어났"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-07",
+      "co": "Meta AI",
+      "cat": "bigtech",
+      "source": "Wired",
+      "title": "The Hottest New AI Chatbot Is Just a Guy Answering Your Questions",
+      "descEn": "WIRED spoke with Tucker Bryant, an artist and former Google employee who created ChatTJB to get people to reflect on the “strange moment” we’re in.",
+      "url": "https://www.wired.com/story/this-chatbot-is-just-a-random-guy-lol",
+      "tag": "글로벌",
+      "titleEn": "The Hottest New AI Chatbot Is Just a Guy Answering Your Questions",
+      "summaryLinesEn": [
+        "It’s the creation of 32-year-old Tucker Bryant, a public speaker, artist, and former project manager at Google.",
+        "Bryant tells WIRED he launched ChatTJB back in April , but it didn’t take off until July 27, when his $6,000 billboard went up in San Francisco.",
+        "So far, he says, about four people have paid the $5 per month fee—so he hasn’t exactly made up the cost of the billboard, which will remain up until late August."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "It’s the creation of 32-year-old Tucker Bryant, a public speaker, artist, and former project manager at Google.\nBryant tells WIRED he launched ChatTJB back in April , but it didn’t take off until July 27, when his $6,000 billboard went up in San Francisco.\nSo far, he says, about four people have paid the $5 per month fee—so he hasn’t exactly made up the cost of the billboard, which will remain up until late August.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-07T11:22:33.024Z",
+        "originalUrl": "https://www.wired.com/story/this-chatbot-is-just-a-random-guy-lol/",
+        "resolvedUrl": "https://www.wired.com/story/this-chatbot-is-just-a-random-guy-lol/",
+        "canonicalUrl": "https://www.wired.com/story/this-chatbot-is-just-a-random-guy-lol/",
+        "headline": "The Hottest New AI Chatbot Is Just a Guy Answering Your Questions",
+        "description": "WIRED spoke with Tucker Bryant, an artist and former Google employee who created ChatTJB to get people to reflect on the “strange moment” we’re in.",
+        "paragraphs": [
+          "What if, instead of typing the next silly question you have into Claude or ChatGPT , you asked a random guy instead?",
+          "That’s the idea behind ChatTJB. It’s the creation of 32-year-old Tucker Bryant, a public speaker, artist, and former project manager at Google. A San Francisco billboard describes ChatTJB as “the leading chat interface powered by AI.” In this case, though, AI stands for “average individual.”",
+          "Bryant didn’t train an LLM to respond based on how he writes. He literally sits down and answers the prompts himself . If you request an image of a skunk wearing sunglasses, he’ll scribble one up. If you ask how to fry an egg, he’ll respond with a suggestion. Maybe. (WIRED asked ChatTJB how to become a morning person, and at the time of writing, we haven’t received a response. The website notes that “thousands of people are writing in right now.”)",
+          "Bryant tells WIRED he launched ChatTJB back in April , but it didn’t take off until July 27, when his $6,000 billboard went up in San Francisco. News coverage soon followed . As of August 6, he says, ChatTJB has received over 30,000 queries. At its peak, he says, he was receiving about 5,000 prompts per hour.",
+          "Bryant says that he “first and foremost” considers ChatTJB to be an art project, not just a funny bit or a social experiment.",
+          "“It was sort of an opportunity for me to provide a little bit of commentary on a strange moment that I feel like we're in,” Bryant says. He doesn’t consider himself anti-AI—in fact, he vibe-coded the ChatTJB website using Lovable—but he’s clear-eyed about the risks of the technology.",
+          "He’s concerned about the risk of “ cognitive surrender ,” which refers to accepting AI outputs with increasingly little critical thinking or scrutiny. He says the concept made him reflect on his own back-and-forths with LLMs, like the time he asked if he should wear short or long sleeves on a 65-degree day in San Francisco.",
+          "“And then I'm like, dude, I've been living in this city for whatever, like seven years,” Bryant says. “Like, I know how to handle the weather. And yet, it felt like an easier thing for me to defer to a LLM for advice on that.”",
+          "“It felt like something that I wanted to speak on,” he adds, “because I was like, what am I doing here?”",
+          "Over the past couple of days, he has drawn a frog eating spaghetti, San Francisco mayor David Lurie as Godzilla, and two black cats eating grass on a table, among other things. The written requests, Bryant says, have been diverse.",
+          "“People were asking things like, ‘Oh, it's my birthday in two weeks, and I don't really want to have a party—what do you think I should do?’” Bryant says. Other people ask what they should have for dinner or how they can use the ingredients in their fridge.",
+          "“A lot of people initially were interacting with this thing as a joke or as a funny thing,” Bryant says. “And then I think when they realized that they could chat and get actual conversation, some of what people would share would be more personal, sincere, genuine, et cetera.”",
+          "Bryant is quick to note that he’s not a good artist, and his advice is no better than any other person’s. (On YouTube, he described it as “the worst LLM of all time.”) But he thinks people understand that.",
+          "“The way I'm interpreting it is that the value for them is just getting a human to bounce those questions off of, as opposed to getting super expert advice,” Bryant says. “It's very tender to see.”",
+          "At first, Bryant tells WIRED, he expected the project to last only a couple of days. But after seeing people’s enthusiasm, he says, he plans to keep it going. He has enlisted the help of 10 volunteers, but they’re a select crowd. Bryant says that over 3,000 people applied.",
+          "For ChatTJB superfans, there’s an option to financially support the project: ChatTJB Pro. Bryant is clear on the website that “this is a worthless tier,” and users get nothing but the knowledge that they’re supporting his art. So far, he says, about four people have paid the $5 per month fee—so he hasn’t exactly made up the cost of the billboard, which will remain up until late August. But Bryant says he didn’t create ChatTJB to make money.",
+          "“I really just want people to have an opportunity to take a second look at both their own relationship to technology as well as the world's relationship to technology,” Bryant says. He adds that in a time when people are bombarded with companies claiming to sell world-changing technology, alongside frightening coverage of a looming AI bubble, he wants to bring some levity.",
+          "“I hope that that just makes a weird time sit a little bit lighter,” Bryant says, “because I think sometimes that's the best that we can do.”"
+        ],
+        "text": "What if, instead of typing the next silly question you have into Claude or ChatGPT , you asked a random guy instead?\n\nThat’s the idea behind ChatTJB. It’s the creation of 32-year-old Tucker Bryant, a public speaker, artist, and former project manager at Google. A San Francisco billboard describes ChatTJB as “the leading chat interface powered by AI.” In this case, though, AI stands for “average individual.”\n\nBryant didn’t train an LLM to respond based on how he writes. He literally sits down and answers the prompts himself . If you request an image of a skunk wearing sunglasses, he’ll scribble one up. If you ask how to fry an egg, he’ll respond with a suggestion. Maybe. (WIRED asked ChatTJB how to become a morning person, and at the time of writing, we haven’t received a response. The website notes that “thousands of people are writing in right now.”)\n\nBryant tells WIRED he launched ChatTJB back in April , but it didn’t take off until July 27, when his $6,000 billboard went up in San Francisco. News coverage soon followed . As of August 6, he says, ChatTJB has received over 30,000 queries. At its peak, he says, he was receiving about 5,000 prompts per hour.\n\nBryant says that he “first and foremost” considers ChatTJB to be an art project, not just a funny bit or a social experiment.\n\n“It was sort of an opportunity for me to provide a little bit of commentary on a strange moment that I feel like we're in,” Bryant says. He doesn’t consider himself anti-AI—in fact, he vibe-coded the ChatTJB website using Lovable—but he’s clear-eyed about the risks of the technology.\n\nHe’s concerned about the risk of “ cognitive surrender ,” which refers to accepting AI outputs with increasingly little critical thinking or scrutiny. He says the concept made him reflect on his own back-and-forths with LLMs, like the time he asked if he should wear short or long sleeves on a 65-degree day in San Francisco.\n\n“And then I'm like, dude, I've been living in this city for whatever, like seven years,” Bryant says. “Like, I know how to handle the weather. And yet, it felt like an easier thing for me to defer to a LLM for advice on that.”\n\n“It felt like something that I wanted to speak on,” he adds, “because I was like, what am I doing here?”\n\nOver the past couple of days, he has drawn a frog eating spaghetti, San Francisco mayor David Lurie as Godzilla, and two black cats eating grass on a table, among other things. The written requests, Bryant says, have been diverse.\n\n“People were asking things like, ‘Oh, it's my birthday in two weeks, and I don't really want to have a party—what do you think I should do?’” Bryant says. Other people ask what they should have for dinner or how they can use the ingredients in their fridge.\n\n“A lot of people initially were interacting with this thing as a joke or as a funny thing,” Bryant says. “And then I think when they realized that they could chat and get actual conversation, some of what people would share would be more personal, sincere, genuine, et cetera.”\n\nBryant is quick to note that he’s not a good artist, and his advice is no better than any other person’s. (On YouTube, he described it as “the worst LLM of all time.”) But he thinks people understand that.\n\n“The way I'm interpreting it is that the value for them is just getting a human to bounce those questions off of, as opposed to getting super expert advice,” Bryant says. “It's very tender to see.”\n\nAt first, Bryant tells WIRED, he expected the project to last only a couple of days. But after seeing people’s enthusiasm, he says, he plans to keep it going. He has enlisted the help of 10 volunteers, but they’re a select crowd. Bryant says that over 3,000 people applied.\n\nFor ChatTJB superfans, there’s an option to financially support the project: ChatTJB Pro. Bryant is clear on the website that “this is a worthless tier,” and users get nothing but the knowledge that they’re supporting his art. So far, he says, about four people have paid the $5 per month fee—so he hasn’t exactly made up the cost of the billboard, which will remain up until late August. But Bryant says he didn’t create ChatTJB to make money.\n\n“I really just want people to have an opportunity to take a second look at both their own relationship to technology as well as the world's relationship to technology,” Bryant says. He adds that in a time when people are bombarded with companies claiming to sell world-changing technology, alongside frightening coverage of a looming AI bubble, he wants to bring some levity.\n\n“I hope that that just makes a weird time sit a little bit lighter,” Bryant says, “because I think sometimes that's the best that we can do.”\n\nTake our survey: Do you work in tech? We want to hear from you",
+        "contentHash": "bdd74aec60ab1fe98b1d56f40446bd2ebe0e83e59adcf4ee81afba622d312bdf",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.wired.com/story/this-chatbot-is-just-a-random-guy-lol/",
+      "collectedAt": "2026-08-07T11:22:34.098Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "334e4cb2d6a99c99d48489142e0f749644943bf8bda328c246572c462bcd043d",
+        "sourceLines": [
+          "It’s the creation of 32-year-old Tucker Bryant, a public speaker, artist, and former project manager at Google.",
+          "Bryant tells WIRED he launched ChatTJB back in April , but it didn’t take off until July 27, when his $6,000 billboard went up in San Francisco.",
+          "So far, he says, about four people have paid the $5 per month fee—so he hasn’t exactly made up the cost of the billboard, which will remain up until late August."
+        ],
+        "checkedAt": "2026-08-07T11:27:42.898882+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "가장 인기 있는 새로운 AI 챗봇은 단지 질문에 답하는 사람일 뿐임",
+        "summaryLines": [
+          "이는 대중 연설가이자 예술가이자 Google의 전 프로젝트 관리자인 32세의 터커 브라이언트(Tucker Bryant)의 창작물임",
+          "브라이언트는 WIRED와의 인터뷰에서 4월에 ChatTJB를 출시했지만 7월 27일 샌프란시스코에 6,000달러짜리 광고판이 올라오기 전까지는 출시하지 않았다고 말함",
+          "그는 지금까지 약 4명이 월 5달러의 요금을 지불했기 때문에 8월 말까지 유지될 광고판 비용을 정확히 충당하지 못했다고 말함"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "가장 인기 있는 새로운 AI 챗봇은 단지 질문에 답하는 사람일 뿐임",
+      "summaryLinesKo": [
+        "이는 대중 연설가이자 예술가이자 Google의 전 프로젝트 관리자인 32세의 터커 브라이언트(Tucker Bryant)의 창작물임",
+        "브라이언트는 WIRED와의 인터뷰에서 4월에 ChatTJB를 출시했지만 7월 27일 샌프란시스코에 6,000달러짜리 광고판이 올라오기 전까지는 출시하지 않았다고 말함",
+        "그는 지금까지 약 4명이 월 5달러의 요금을 지불했기 때문에 8월 말까지 유지될 광고판 비용을 정확히 충당하지 못했다고 말함"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-07",
+      "co": "Microsoft",
+      "cat": "bigtech",
+      "source": "The Decoder",
+      "title": "Amazon, Cursor, Microsoft, OpenAI, and Vercel unite on a shared standard for AI agent plugins",
+      "descEn": "Amazon, Cursor, Microsoft, OpenAI, and Vercel have jointly created Agent Plugins, an open standard that defines a single package format for AI agent extensions. Version 1.0.0 uses a plugin.json manifest file and supports both agent skills and MCP servers.",
+      "url": "https://the-decoder.com/amazon-cursor-microsoft-openai-and-vercel-unite-on-a-shared-standard-for-ai-agent-plugins",
+      "tag": "글로벌",
+      "titleEn": "Amazon, Cursor, Microsoft, OpenAI, and Vercel unite on a shared standard for AI agent plugins",
+      "summaryLinesEn": [
+        "Amazon, Cursor, Microsoft, OpenAI, and Vercel have teamed up to create Agent Plugins, an open standard for AI agent extensions.",
+        "The standard boils down to a directory with a manifest file called plugin.json.",
+        "Yet it isn't part of the Agent Plugins effort."
+      ],
+      "summaryRoles": [
+        "fact",
+        "fact",
+        "evidence"
+      ],
+      "summary": "Amazon, Cursor, Microsoft, OpenAI, and Vercel have teamed up to create Agent Plugins, an open standard for AI agent extensions.\nThe standard boils down to a directory with a manifest file called plugin.json.\nYet it isn't part of the Agent Plugins effort.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-07T11:22:33.012Z",
+        "originalUrl": "https://the-decoder.com/amazon-cursor-microsoft-openai-and-vercel-unite-on-a-shared-standard-for-ai-agent-plugins/",
+        "resolvedUrl": "https://the-decoder.com/amazon-cursor-microsoft-openai-and-vercel-unite-on-a-shared-standard-for-ai-agent-plugins/",
+        "canonicalUrl": "https://the-decoder.com/amazon-cursor-microsoft-openai-and-vercel-unite-on-a-shared-standard-for-ai-agent-plugins/",
+        "headline": "Amazon, Cursor, Microsoft, OpenAI, and Vercel unite on a shared standard for AI agent plugins",
+        "description": "Amazon, Cursor, Microsoft, OpenAI, and Vercel have jointly created Agent Plugins, an open standard that defines a single package format for AI agent extensions. Version 1.0.0 uses a plugin.json manifest file and supports both agent skills and MCP servers.",
+        "paragraphs": [
+          "Amazon, Cursor, Microsoft, OpenAI, and Vercel have teamed up to create Agent Plugins, an open standard for AI agent extensions. It defines a single package format that lets developers bundle and reuse extensions across platforms. Until now, every product has relied on its own formats, folder structures, and setup processes, forcing developers to rebuild their work for each one.",
+          "The standard boils down to a directory with a manifest file called plugin.json. Version 1.0.0 supports two components. Agent Skills handle reusable instructions and workflows. MCP servers connect agents to tools and data.",
+          "The standard only covers packaging and discoverability. It doesn't touch marketplaces, permissions, or runtime environments. The spec is being developed in the open on GitHub . Ad",
+          "One notable absence from the group is Anthropic. The company created both the Model Context Protocol and Agent Skills as open standards and recently added its own plugin system to Cowork , its desktop tool for agentic knowledge work. Yet it isn't part of the Agent Plugins effort. Ad DEC_D_Incontent-1"
+        ],
+        "text": "Amazon, Cursor, Microsoft, OpenAI, and Vercel have teamed up to create Agent Plugins, an open standard for AI agent extensions. It defines a single package format that lets developers bundle and reuse extensions across platforms. Until now, every product has relied on its own formats, folder structures, and setup processes, forcing developers to rebuild their work for each one.\n\nThe standard boils down to a directory with a manifest file called plugin.json. Version 1.0.0 supports two components. Agent Skills handle reusable instructions and workflows. MCP servers connect agents to tools and data.\n\nThe standard only covers packaging and discoverability. It doesn't touch marketplaces, permissions, or runtime environments. The spec is being developed in the open on GitHub . Ad\n\nOne notable absence from the group is Anthropic. The company created both the Model Context Protocol and Agent Skills as open standards and recently added its own plugin system to Cowork , its desktop tool for agentic knowledge work. Yet it isn't part of the Agent Plugins effort. Ad DEC_D_Incontent-1",
+        "contentHash": "cbffdd8d091c349fbef5685004941cbe8c64881754558e0adbb83c36db4c5996",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://the-decoder.com/amazon-cursor-microsoft-openai-and-vercel-unite-on-a-shared-standard-for-ai-agent-plugins/",
+      "collectedAt": "2026-08-07T11:22:34.098Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "6a06abf55bc09edeb89dc7e874efdaf6676e514f29de1740a774463f2b112ca5",
+        "sourceLines": [
+          "Amazon, Cursor, Microsoft, OpenAI, and Vercel have teamed up to create Agent Plugins, an open standard for AI agent extensions.",
+          "The standard boils down to a directory with a manifest file called plugin.json.",
+          "Yet it isn't part of the Agent Plugins effort."
+        ],
+        "checkedAt": "2026-08-07T11:27:42.899009+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "Amazon, Cursor, Microsoft, OpenAI 및 Vercel은 AI 에이전트 플러그인에 대한 공유 표준을 기반으로 통합됨",
+        "summaryLines": [
+          "Amazon, Cursor, Microsoft, OpenAI 및 Vercel이 협력하여 AI 에이전트 확장을 위한 개방형 표준인 에이전트 플러그인을 만들었음",
+          "표준은 플러그인.json이라는 매니페스트 파일이 있는 디렉터리로 요약됨",
+          "그러나 이는 에이전트 플러그인 노력의 일부가 아님"
+        ],
+        "summaryRoles": [
+          "fact",
+          "fact",
+          "evidence"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "Amazon, Cursor, Microsoft, OpenAI 및 Vercel은 AI 에이전트 플러그인에 대한 공유 표준을 기반으로 통합됨",
+      "summaryLinesKo": [
+        "Amazon, Cursor, Microsoft, OpenAI 및 Vercel이 협력하여 AI 에이전트 확장을 위한 개방형 표준인 에이전트 플러그인을 만들었음",
+        "표준은 플러그인.json이라는 매니페스트 파일이 있는 디렉터리로 요약됨",
+        "그러나 이는 에이전트 플러그인 노력의 일부가 아님"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -191,7 +478,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -282,7 +569,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -386,7 +673,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -490,7 +777,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -594,7 +881,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -698,7 +985,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -706,12 +993,13 @@
     {
       "date": "2026-08-06",
       "co": "Microsoft",
-      "cat": "bigtech",
-      "source": "The Decoder",
+      "cat": "native",
+      "source": "the-decoder.com",
       "title": "Microsoft's AI revenue reportedly depends on OpenAI for 70 percent",
       "descEn": "Microsoft generated $24.1 billion in AI revenue through OpenAI in the fiscal year ending in June. That's about 70 percent of its total AI business, according to a Bloomberg analysis. The heavy reliance helps explain why a company long known for vendor lock-in has recently been championing open-weight models and pushing back against proprietary isolation.",
       "url": "https://the-decoder.com/microsofts-ai-revenue-reportedly-depends-on-openai-for-70-percent",
-      "tag": "글로벌",
+      "tag": "수익화",
+      "rssUrl": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNUWVScTI5NjJYNUt1ZHk1VXdfeUVFSU0yYjl4RWtZblB6TTNTMFAwcFB4WEtUVWdMNEFqQzFxZ21weWR2Y0E1TTB3akJWNFZRLVpLa1A3bk4wQldSb3A4Yk9kOWpFSHNKU1RGUEpRbGxEZnFqR1ZQcUdqRmM2NUVjbE5pZVg5a2JoWmN4Zmduajc5WnNh?oc=5",
       "titleEn": "Microsoft's AI revenue reportedly depends on OpenAI for 70 percent",
       "summaryLinesEn": [
         "A Bloomberg report puts the figure at $24.1 billion during the fiscal year ending in June, roughly 70 percent of Microsoft's total AI revenue.",
@@ -731,8 +1019,8 @@
       "sourceContent": {
         "version": 1,
         "status": "content-extracted",
-        "retrievedAt": "2026-08-07T01:03:19.246Z",
-        "originalUrl": "https://the-decoder.com/microsofts-ai-revenue-reportedly-depends-on-openai-for-70-percent/",
+        "retrievedAt": "2026-08-07T11:22:30.715Z",
+        "originalUrl": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNUWVScTI5NjJYNUt1ZHk1VXdfeUVFSU0yYjl4RWtZblB6TTNTMFAwcFB4WEtUVWdMNEFqQzFxZ21weWR2Y0E1TTB3akJWNFZRLVpLa1A3bk4wQldSb3A4Yk9kOWpFSHNKU1RGUEpRbGxEZnFqR1ZQcUdqRmM2NUVjbE5pZVg5a2JoWmN4Zmduajc5WnNh?oc=5",
         "resolvedUrl": "https://the-decoder.com/microsofts-ai-revenue-reportedly-depends-on-openai-for-70-percent/",
         "canonicalUrl": "https://the-decoder.com/microsofts-ai-revenue-reportedly-depends-on-openai-for-70-percent/",
         "headline": "Microsoft's AI revenue reportedly depends on OpenAI for 70 percent",
@@ -745,8 +1033,7 @@
         "contentHash": "f9d0f555fe527ca0d8789c84b6268a39b07bde0d5cf326d5f7f0f1301bf3cfac",
         "selectionVersion": 7
       },
-      "rssUrl": "https://the-decoder.com/microsofts-ai-revenue-reportedly-depends-on-openai-for-70-percent/",
-      "collectedAt": "2026-08-07T01:03:20.717Z",
+      "collectedAt": "2026-08-07T11:22:34.097Z",
       "needsLLM": false,
       "localization": {
         "version": 14,
@@ -756,7 +1043,7 @@
           "Most of Microsoft's AI revenue comes from OpenAI, new disclosures show.",
           "Under their agreement, OpenAI pays Microsoft for computing power, model development costs, and a revenue share."
         ],
-        "checkedAt": "2026-08-07T01:11:48.555889+00:00",
+        "checkedAt": "2026-08-07T11:27:42.899516+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "accepted",
@@ -786,7 +1073,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -881,7 +1168,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -985,7 +1272,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1081,7 +1368,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1178,7 +1465,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1280,7 +1567,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1384,7 +1671,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1466,7 +1753,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1570,7 +1857,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1672,7 +1959,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1769,7 +2056,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1873,7 +2160,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -1974,7 +2261,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2078,7 +2365,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2173,7 +2460,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2266,7 +2553,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2370,7 +2657,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2464,7 +2751,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2560,7 +2847,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2664,7 +2951,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2768,7 +3055,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2862,7 +3149,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -2962,7 +3249,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3066,7 +3353,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3170,7 +3457,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3267,7 +3554,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3371,7 +3658,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3475,7 +3762,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3579,7 +3866,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3675,7 +3962,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3779,7 +4066,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3881,7 +4168,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -3974,7 +4261,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4078,7 +4365,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4149,7 +4436,7 @@
           "“Our remix and covers I think is an incredibly exciting product again because there is no one else that can really do this,” Söderström said.",
           "The new tool will launch as a paid add-on, creating an additional revenue stream for artists, Spotify previously said."
         ],
-        "checkedAt": "2026-08-07T05:19:19.629399+00:00",
+        "checkedAt": "2026-08-07T11:27:42.900872+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -4175,7 +4462,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4264,7 +4551,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4357,7 +4644,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4461,7 +4748,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4550,7 +4837,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4648,7 +4935,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4752,7 +5039,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4856,7 +5143,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -4960,7 +5247,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5049,7 +5336,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5152,7 +5439,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5249,7 +5536,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5343,7 +5630,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5447,7 +5734,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5551,7 +5838,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5645,7 +5932,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5749,7 +6036,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5853,7 +6140,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -5942,7 +6229,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6037,7 +6324,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6141,7 +6428,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6240,7 +6527,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6344,7 +6631,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6435,7 +6722,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6539,7 +6826,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6643,7 +6930,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6732,7 +7019,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6821,7 +7108,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -6923,7 +7210,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7027,7 +7314,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7131,7 +7418,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7235,7 +7522,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7332,7 +7619,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7435,7 +7722,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7538,7 +7825,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7640,7 +7927,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7743,7 +8030,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7832,7 +8119,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -7936,7 +8223,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8025,7 +8312,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8129,7 +8416,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8232,7 +8519,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8336,7 +8623,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8434,7 +8721,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8538,7 +8825,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8642,7 +8929,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8746,7 +9033,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8850,7 +9137,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -8954,7 +9241,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9055,7 +9342,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9158,7 +9445,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9262,7 +9549,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9366,7 +9653,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9470,7 +9757,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9564,7 +9851,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9657,7 +9944,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9761,7 +10048,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -9957,7 +10244,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10050,7 +10337,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10149,7 +10436,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10251,7 +10538,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10355,7 +10642,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10548,7 +10835,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10636,7 +10923,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10739,7 +11026,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10843,7 +11130,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -10934,7 +11221,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11025,7 +11312,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11127,7 +11414,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11216,7 +11503,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11320,7 +11607,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11416,7 +11703,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11511,7 +11798,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11614,7 +11901,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11718,7 +12005,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11822,7 +12109,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -11911,7 +12198,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12010,7 +12297,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12100,7 +12387,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12204,7 +12491,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12308,7 +12595,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12399,7 +12686,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12501,7 +12788,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12590,7 +12877,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12694,7 +12981,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12798,7 +13085,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -12897,7 +13184,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13001,7 +13288,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13105,7 +13392,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13209,7 +13496,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13313,7 +13600,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13417,7 +13704,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13521,7 +13808,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13624,7 +13911,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13719,7 +14006,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13812,7 +14099,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -13908,7 +14195,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14007,7 +14294,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14103,7 +14390,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14205,7 +14492,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14294,7 +14581,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14391,7 +14678,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14495,7 +14782,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14599,7 +14886,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14702,7 +14989,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14785,7 +15072,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14875,7 +15162,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -14971,7 +15258,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15065,7 +15352,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15169,7 +15456,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15273,7 +15560,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15377,7 +15664,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15481,7 +15768,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15582,7 +15869,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15686,7 +15973,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15778,7 +16065,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15882,7 +16169,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -15986,7 +16273,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16189,7 +16476,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16271,7 +16558,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16368,7 +16655,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16467,7 +16754,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16571,7 +16858,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16675,7 +16962,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16765,7 +17052,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16869,7 +17156,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -16973,7 +17260,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17063,7 +17350,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17163,7 +17450,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17246,7 +17533,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17350,7 +17637,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17454,7 +17741,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17553,7 +17840,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17644,7 +17931,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17748,7 +18035,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17837,7 +18124,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -17926,7 +18213,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18030,7 +18317,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18134,7 +18421,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18238,7 +18525,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18333,7 +18620,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18432,7 +18719,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18536,7 +18823,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18625,7 +18912,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18723,7 +19010,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18812,7 +19099,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -18904,7 +19191,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19008,7 +19295,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19107,7 +19394,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19204,7 +19491,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19300,7 +19587,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19404,7 +19691,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19493,7 +19780,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19581,7 +19868,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19685,7 +19972,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19779,7 +20066,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19883,7 +20170,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -19987,7 +20274,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20078,7 +20365,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20182,7 +20469,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20281,7 +20568,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20379,7 +20666,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20483,7 +20770,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20587,7 +20874,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20691,7 +20978,111 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-07-28",
+      "co": "Amazon",
+      "cat": "bigtech",
+      "source": "Business Insider",
+      "title": "Amazon overhauls its AI strategy, winding down most flagship models",
+      "descEn": "Amazon reshapes its AI strategy by deprecating most Nova AI models and shifting resources to Pieter Abbeel's Frontier Model Research initiative.",
+      "url": "https://www.businessinsider.com/amazon-overhauls-ai-strategy-phasing-out-most-nova-models-2026-7",
+      "tag": "최신",
+      "rssUrl": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPMGtDS1VlcFFySmVVZzJyNE1RNmZJMkV1SlRoa0dtR01IcVdsMlMyNks0ZWtLOWNhTWFXZlA2UGhvWXZGZ3FKQW9iUE1UZWpQUHFfVHdud3pjaEZxV3Z0WEFxekRVVGhrTTBXQU9xTnpoVVhwX25ZZVZFRDNpWDdjVng5ejZyVVlOLWdTcV9BdXBOR0Z4N0h2WDNEQnU?oc=5",
+      "titleEn": "Amazon overhauls its AI strategy, winding down most flagship models",
+      "summaryLinesEn": [
+        "Amazon is overhauling its AI strategy, winding down many in-house models, reorganizing teams, and focusing engineers on a new strategy to compete at the frontier, according to people familiar with the matter.",
+        "According to the people familiar with the matter, resources have increasingly moved away from the existing Nova models and toward a new frontier-model effort led by researcher Pieter Abbeel, who came to Amazon through the acquisition of AI robotics startup Covariant.",
+        "An Amazon spokesperson told Business Insider the company has long supported AI models in production for extended periods because customers depend on them, and said Amazon remains committed to investing in frontier models."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "Amazon is overhauling its AI strategy, winding down many in-house models, reorganizing teams, and focusing engineers on a new strategy to compete at the frontier, according to people familiar with the matter.\nAccording to the people familiar with the matter, resources have increasingly moved away from the existing Nova models and toward a new frontier-model effort led by researcher Pieter Abbeel, who came to Amazon through the acquisition of AI robotics startup Covariant.\nAn Amazon spokesperson told Business Insider the company has long supported AI models in production for extended periods because customers depend on them, and said Amazon remains committed to investing in frontier models.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-07T11:22:25.752Z",
+        "originalUrl": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPMGtDS1VlcFFySmVVZzJyNE1RNmZJMkV1SlRoa0dtR01IcVdsMlMyNks0ZWtLOWNhTWFXZlA2UGhvWXZGZ3FKQW9iUE1UZWpQUHFfVHdud3pjaEZxV3Z0WEFxekRVVGhrTTBXQU9xTnpoVVhwX25ZZVZFRDNpWDdjVng5ejZyVVlOLWdTcV9BdXBOR0Z4N0h2WDNEQnU?oc=5",
+        "resolvedUrl": "https://www.businessinsider.com/amazon-overhauls-ai-strategy-phasing-out-most-nova-models-2026-7",
+        "canonicalUrl": "https://www.businessinsider.com/amazon-overhauls-ai-strategy-phasing-out-most-nova-models-2026-7",
+        "headline": "Amazon overhauls its AI strategy, winding down most flagship models",
+        "description": "Amazon reshapes its AI strategy by deprecating most Nova AI models and shifting resources to Pieter Abbeel's Frontier Model Research initiative.",
+        "paragraphs": [
+          "Amazon is overhauling its AI strategy, winding down many in-house models, reorganizing teams, and focusing engineers on a new strategy to compete at the frontier, according to people familiar with the matter.",
+          "The changes follow layoffs in Amazon's Artificial General Intelligence, or AGI, organization last week and the shutdown of AGI Lab, a research group it created in 2024 after hiring most of the team behind AI startup Adept.",
+          "The restructuring suggests Amazon is refocusing its AI strategy.",
+          "Rather than investing across a number of text, image, and video models, the company is concentrating engineering talent and scarce computing resources on its highest priorities.",
+          "Amazon has begun deprecating most of its in-house flagship Nova models, including the high-end Premier and Omni models, Reel video-generation model, and Canvas image-generation model, according to people familiar with the matter.",
+          "Some Amazon employees described these models as operating in \"KTLO,\" short for \"keep the lights on,\" an engineering term for software that remains supported for existing customers but is no longer a major development priority.",
+          "According to the people familiar with the matter, resources have increasingly moved away from the existing Nova models and toward a new frontier-model effort led by researcher Pieter Abbeel, who came to Amazon through the acquisition of AI robotics startup Covariant.",
+          "Known internally as Frontier Model Research, or FMR, the initiative has become a top priority this year.",
+          "Under that effort, Amazon is developing a new flagship foundation model that is expected to debut at this year's re:Invent annual conference, which typically happens in the fall.",
+          "An Amazon spokesperson told Business Insider the company has long supported AI models in production for extended periods because customers depend on them, and said Amazon remains committed to investing in frontier models.",
+          "\"AI models remain one of the most important things we're working on, and that hasn't changed,\" the spokesperson said.",
+          "\"As with any AI portfolio, we continually evolve our model lineup based on what customers need, and we always provide customers clear guidance and migration paths as models advance.\"",
+          "The organizational change does not necessarily mean Amazon is abandoning Nova altogether.",
+          "The remaining Nova portfolio includes the Nova 2 Sonic and Nova 2 Lite foundation models, Nova Forge, a service for building and customizing models, and Nova Act, Amazon's AI agent technology.",
+          "Indeed, the new model that FMR is developing could emerge under the Nova brand.",
+          "Instead, the shift reflects a broader reorganization of Amazon's AI efforts that has unfolded over the past year.",
+          "Amazon created its AGI organization in 2023 to build foundation models and other technologies capable of powering future AI products across the company.",
+          "Rohit Prasad, a longtime Alexa executive, led the organization until he departed in December 2025."
+        ],
+        "text": "Amazon is overhauling its AI strategy, winding down many in-house models, reorganizing teams, and focusing engineers on a new strategy to compete at the frontier, according to people familiar with the matter.\n\nThe changes follow layoffs in Amazon's Artificial General Intelligence, or AGI, organization last week and the shutdown of AGI Lab, a research group it created in 2024 after hiring most of the team behind AI startup Adept.\n\nThe restructuring suggests Amazon is refocusing its AI strategy.\n\nRather than investing across a number of text, image, and video models, the company is concentrating engineering talent and scarce computing resources on its highest priorities.\n\nAmazon has begun deprecating most of its in-house flagship Nova models, including the high-end Premier and Omni models, Reel video-generation model, and Canvas image-generation model, according to people familiar with the matter.\n\nSome Amazon employees described these models as operating in \"KTLO,\" short for \"keep the lights on,\" an engineering term for software that remains supported for existing customers but is no longer a major development priority.\n\nAccording to the people familiar with the matter, resources have increasingly moved away from the existing Nova models and toward a new frontier-model effort led by researcher Pieter Abbeel, who came to Amazon through the acquisition of AI robotics startup Covariant.\n\nKnown internally as Frontier Model Research, or FMR, the initiative has become a top priority this year.\n\nUnder that effort, Amazon is developing a new flagship foundation model that is expected to debut at this year's re:Invent annual conference, which typically happens in the fall.\n\nAn Amazon spokesperson told Business Insider the company has long supported AI models in production for extended periods because customers depend on them, and said Amazon remains committed to investing in frontier models.\n\n\"AI models remain one of the most important things we're working on, and that hasn't changed,\" the spokesperson said.\n\n\"As with any AI portfolio, we continually evolve our model lineup based on what customers need, and we always provide customers clear guidance and migration paths as models advance.\"\n\nThe organizational change does not necessarily mean Amazon is abandoning Nova altogether.\n\nThe remaining Nova portfolio includes the Nova 2 Sonic and Nova 2 Lite foundation models, Nova Forge, a service for building and customizing models, and Nova Act, Amazon's AI agent technology.\n\nIndeed, the new model that FMR is developing could emerge under the Nova brand.\n\nInstead, the shift reflects a broader reorganization of Amazon's AI efforts that has unfolded over the past year.\n\nAmazon created its AGI organization in 2023 to build foundation models and other technologies capable of powering future AI products across the company.\n\nRohit Prasad, a longtime Alexa executive, led the organization until he departed in December 2025.\n\nThe AGI organization oversaw several specialized groups.\n\nOne was AGI Lab, which Amazon established in 2024 after hiring AI startup Adept's cofounders and licensing its technology.\n\nLed by Adept cofounder David Luan, the lab focused on long-term AI research.\n\nLuan left Amazon in February, and the company shut down the AGI Lab last week as part of the latest reorganization.\n\nSeparately, Frontier Model Research was created within the AGI organization to develop Amazon's next generation of frontier AI models.\n\nAfter Prasad's departure, Amazon tapped Abbeel to lead the group.\n\nPeople familiar with the transition said FMR has since become the organization's primary focus.\n\nIn December, Amazon placed it under senior vice president Peter DeSantis, combining it with the company's silicon development and quantum computing organizations.\n\nPeople familiar with the transition said DeSantis has pursued a more focused AI strategy than his predecessor.\n\nUnder Prasad, Amazon pursued multiple model families spanning text, image, and video generation.\n\nDeSantis, however, has concentrated Amazon's engineering talent and computing resources on a smaller number of frontier-model efforts, they said.\n\nEmployees said they have received little guidance about the long-term future of Nova models, fueling uncertainty across the organization.",
+        "contentHash": "1da00f574331adc7b58c3b8fe080e572ef3fdf05211372ed59456e7f76dcc5d5",
+        "selectionVersion": 7
+      },
+      "collectedAt": "2026-08-07T11:22:34.096Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "2701673438cdd9d3d5a947f6007ac76bccb93dadae6d9d9ec271526f0892e80c",
+        "sourceLines": [
+          "Amazon is overhauling its AI strategy, winding down many in-house models, reorganizing teams, and focusing engineers on a new strategy to compete at the frontier, according to people familiar with the matter.",
+          "According to the people familiar with the matter, resources have increasingly moved away from the existing Nova models and toward a new frontier-model effort led by researcher Pieter Abbeel, who came to Amazon through the acquisition of AI robotics startup Covariant.",
+          "An Amazon spokesperson told Business Insider the company has long supported AI models in production for extended periods because customers depend on them, and said Amazon remains committed to investing in frontier models."
+        ],
+        "checkedAt": "2026-08-07T11:27:42.905956+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "Amazon은 AI 전략을 전면적으로 점검하여 대부분의 주력 모델을 종료함",
+        "summaryLines": [
+          "이 문제에 정통한 소식통에 따르면 아마존은 AI 전략을 재정비하고 많은 내부 모델을 축소하고 팀을 재편성하며 엔지니어들을 새로운 전략에 집중시켜 선두에서 경쟁하고 있다고 함",
+          "이 문제에 정통한 사람들에 따르면, 자원은 점점 더 기존 Nova 모델에서 AI 로봇 스타트업 Covariant 인수를 통해 Amazon에 온 연구원 Pieter Abbeel이 이끄는 새로운 개척 모델 노력으로 이동하고 있음",
+          "Amazon 대변인은 Business Insider와의 인터뷰에서 고객이 AI 모델에 의존하기 때문에 회사는 장기간 생산에서 AI 모델을 지원해 왔으며 Amazon은 계속해서 프론티어 모델에 투자하기 위해 노력하고 있다고 말함"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "Amazon은 AI 전략을 전면적으로 점검하여 대부분의 주력 모델을 종료함",
+      "summaryLinesKo": [
+        "이 문제에 정통한 소식통에 따르면 아마존은 AI 전략을 재정비하고 많은 내부 모델을 축소하고 팀을 재편성하며 엔지니어들을 새로운 전략에 집중시켜 선두에서 경쟁하고 있다고 함",
+        "이 문제에 정통한 사람들에 따르면, 자원은 점점 더 기존 Nova 모델에서 AI 로봇 스타트업 Covariant 인수를 통해 Amazon에 온 연구원 Pieter Abbeel이 이끄는 새로운 개척 모델 노력으로 이동하고 있음",
+        "Amazon 대변인은 Business Insider와의 인터뷰에서 고객이 AI 모델에 의존하기 때문에 회사는 장기간 생산에서 AI 모델을 지원해 왔으며 Amazon은 계속해서 프론티어 모델에 투자하기 위해 노력하고 있다고 말함"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20789,7 +21180,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20882,7 +21273,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -20980,7 +21371,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21078,7 +21469,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21167,7 +21558,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21265,7 +21656,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21363,7 +21754,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21461,7 +21852,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21558,7 +21949,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21648,7 +22039,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21746,7 +22137,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21844,7 +22235,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -21942,7 +22333,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22040,7 +22431,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22138,7 +22529,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22236,7 +22627,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22334,7 +22725,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22422,7 +22813,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22511,7 +22902,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22609,7 +23000,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22707,7 +23098,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22805,7 +23196,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -22899,7 +23290,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23002,7 +23393,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23100,7 +23491,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23188,7 +23579,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23286,7 +23677,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23369,7 +23760,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23467,7 +23858,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23565,7 +23956,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23669,7 +24060,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23773,7 +24164,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -23833,7 +24224,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -23932,7 +24323,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24069,7 +24460,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24157,7 +24548,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24255,7 +24646,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24353,7 +24744,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24451,7 +24842,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24555,7 +24946,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24653,7 +25044,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -24675,7 +25066,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -24773,7 +25164,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [
           "source-content-mismatch"
         ],
@@ -24873,7 +25264,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25000,7 +25391,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25061,7 +25452,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25155,7 +25546,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25251,7 +25642,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25352,7 +25743,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25451,7 +25842,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25582,7 +25973,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25647,7 +26038,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25745,7 +26136,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -25929,7 +26320,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26012,7 +26403,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26253,7 +26644,7 @@
           "While most AI systems pose limited to no risk and can contribute to solving many societal challenges, certain AI systems create risks that we must address to avoid undesirable outcomes.",
           "So, it may become difficult to assess whether someone has been unfairly disadvantaged, such as in a hiring decision or in an application for a public benefit scheme."
         ],
-        "checkedAt": "2026-08-07T05:19:19.635933+00:00",
+        "checkedAt": "2026-08-07T11:27:42.907322+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -26279,7 +26670,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26383,7 +26774,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26484,7 +26875,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26558,7 +26949,7 @@
           "The shift breaks a decades-long Silicon Valley formula that created the world's most valuable companies.",
           "\"The transition from asset-light to asset-heavy models requires unprecedented levels of investment and capital raising.\""
         ],
-        "checkedAt": "2026-08-07T05:19:19.635769+00:00",
+        "checkedAt": "2026-08-07T11:27:42.907455+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -26584,7 +26975,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26688,7 +27079,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -26710,7 +27101,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26808,7 +27199,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -26905,7 +27296,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27003,7 +27394,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27101,7 +27492,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27199,7 +27590,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27297,7 +27688,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27395,7 +27786,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27584,7 +27975,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27649,7 +28040,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -27835,7 +28226,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28283,7 +28674,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28382,7 +28773,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28481,7 +28872,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28542,7 +28933,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -28722,7 +29113,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -28824,7 +29215,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -28900,7 +29291,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [
           "summary-not-source-content-extractive",
           "numbers-not-in-source-snippet"
@@ -28936,7 +29327,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T05:15:39.080Z",
+        "checkedAt": "2026-08-07T11:24:01.912Z",
         "originalUrl": "https://aibusiness.com/cybersecurity/startup-focused-enterprise-ai-security-valued-1-2-billion",
         "error": "HTTP 403"
       }
@@ -28958,7 +29349,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29054,7 +29445,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29151,7 +29542,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29249,7 +29640,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29542,7 +29933,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29678,7 +30069,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29777,7 +30168,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -29920,7 +30311,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -30024,7 +30415,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -30046,7 +30437,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30101,7 +30492,7 @@
           "Since the platform is open source, developers can make their own Buzz instance feel more customized to the needs and workflows of their specific team.",
           "a new groupchat platform for teams of people and agents of all sizes, built to reduce our dependency on slack and github. model-agnostic, decentralized, self-sovereign, and open source. 🐝 https://t.co/8IaMVeTQNo As startups increasingly rely on AI agents to get work done, it can be challenging for employees to collaborate on various tasks across different platforms."
         ],
-        "checkedAt": "2026-08-07T05:19:19.637097+00:00",
+        "checkedAt": "2026-08-07T11:27:42.909096+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -30140,7 +30531,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30238,7 +30629,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30336,7 +30727,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30438,7 +30829,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -30527,7 +30918,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -31017,7 +31408,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -31116,7 +31507,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -31259,7 +31650,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31361,7 +31752,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31464,7 +31855,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31626,7 +32017,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -31759,7 +32150,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -31895,7 +32286,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -31999,7 +32390,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -32097,7 +32488,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -32221,7 +32612,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -32325,7 +32716,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -32597,7 +32988,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -32694,7 +33085,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -32731,7 +33122,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T05:15:39.081Z",
+        "checkedAt": "2026-08-07T11:24:01.913Z",
         "originalUrl": "https://www.cnbc.com/video/2026/07/17/the-feds-plan-to-restore-price-stability-relies-on-ai.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -32801,7 +33192,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -32894,7 +33285,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -33007,7 +33398,7 @@
           "As enterprises advance from AI experimentation to large-scale adoption, LTM and Glean will help customers operationalize AI across key business functions, including IT support, enterprise knowledge management, and enterprise application operations.",
           "The joint offering is designed to help customers realize measurable business outcomes such as faster incident resolution, improved employee productivity, reduced support costs, accelerated onboarding, enhanced enterprise search, and more efficient application support operations."
         ],
-        "checkedAt": "2026-08-07T05:19:19.637777+00:00",
+        "checkedAt": "2026-08-07T11:27:42.909676+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -33033,7 +33424,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -33315,7 +33706,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -33361,7 +33752,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T05:15:39.081Z",
+        "checkedAt": "2026-08-07T11:24:01.913Z",
         "originalUrl": "https://www.ft.com/content/af8f4659-df0c-4c83-9fcc-8239714d0928?syn-25a6b1a6=1",
         "error": "HTTP 403"
       }
@@ -33383,7 +33774,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -33481,7 +33872,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -33723,7 +34114,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -33853,7 +34244,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -33886,9 +34277,9 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T05:15:39.613Z",
+        "checkedAt": "2026-08-07T11:24:01.913Z",
         "originalUrl": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQMmZaRXBtUG5RLWpZQjg4UjFZd012cTM1Uy0xZy13SkkxamJiSzVuZ0dIMGllZDZVZGJKMkItTlo4bzliUGdndlY2ZG1JYTlpY0Z0a3lEWERtZDE5ZGY0VlA5WEYxaXJvSkZUMDBaUkxkekF5b2NQamFhdHRUVEM3aVRwNkw4VFlPa2M3VWtOa1cyNGUtVGRzOHhGdVJYVUw2aHpVZV91TmpUWjFWQ25STmwtMA?oc=5",
-        "error": "HTTP 429"
+        "error": "HTTP 401"
       }
     },
     {
@@ -34277,7 +34668,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34375,7 +34766,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34412,7 +34803,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T05:15:39.081Z",
+        "checkedAt": "2026-08-07T11:24:02.472Z",
         "originalUrl": "https://www.cnbc.com/2026/07/15/why-jim-cramer-is-shocked-by-citis-against-the-grain-praise-of-microsofts-copilot.html",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -34482,7 +34873,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34581,7 +34972,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34678,7 +35069,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -34997,7 +35388,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35096,7 +35487,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35195,7 +35586,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35332,7 +35723,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       }
@@ -35491,7 +35882,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35550,7 +35941,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -35589,7 +35980,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T05:15:39.656Z",
+        "checkedAt": "2026-08-07T11:24:02.526Z",
         "originalUrl": "https://money.usnews.com/investing/news/articles/2026-07-10/sk-hynix-ceo-sees-worst-ever-memory-supply-shortage-in-2027-says-demand-to-outstrip-supply-beyond-2030",
         "error": "This operation was aborted"
       }
@@ -35629,7 +36020,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35727,7 +36118,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35876,7 +36267,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -35973,7 +36364,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36072,7 +36463,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -36105,7 +36496,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T05:15:39.884Z",
+        "checkedAt": "2026-08-07T11:24:02.633Z",
         "originalUrl": "https://www.axios.com/2026/06/25/trump-administration-openai-gpt-model-release",
         "error": "HTTP 403"
       }
@@ -36127,7 +36518,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "legacy-or-unknown",
         "verificationTier": "limited",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [
           "summary-not-source-content-extractive"
         ],
@@ -36160,7 +36551,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T05:15:39.995Z",
+        "checkedAt": "2026-08-07T11:24:02.796Z",
         "originalUrl": "https://www.axios.com/2026/06/18/openai-devices-ha-thai",
         "error": "HTTP 403"
       }
@@ -36180,7 +36571,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36335,7 +36726,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36491,7 +36882,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36588,7 +36979,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -36744,7 +37135,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37045,7 +37436,7 @@
         "evidenceType": "retained-without-source-page",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37089,7 +37480,7 @@
       "sourceContent": {
         "version": 1,
         "status": "unavailable",
-        "checkedAt": "2026-08-07T05:15:40.096Z",
+        "checkedAt": "2026-08-07T11:24:03.199Z",
         "originalUrl": "https://www.globenewswire.com/Error/Index?error=1",
         "error": "insufficient-distinct-source-sentences"
       },
@@ -37110,7 +37501,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37286,7 +37677,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37383,7 +37774,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37534,7 +37925,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37632,7 +38023,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37730,7 +38121,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37865,7 +38256,7 @@
         "evidenceType": "publisher-page-text",
         "summaryMode": "source-content-extractive",
         "verificationTier": "publisher-page-extractive",
-        "checkedAt": "2026-08-07T05:21:11.471Z",
+        "checkedAt": "2026-08-07T11:29:25.048Z",
         "issues": [],
         "unsupportedNumbers": []
       },
@@ -37883,7 +38274,7 @@
           "Try Claude Try Claude Try Claude Learn more about Claude About Claude Overview Log in to Claude Log in to Claude Log in to Claude Download app Download app Download app AI will have a vast impact on the world.",
           "At Anthropic, we build AI to serve humanity’s long-term well-being."
         ],
-        "checkedAt": "2026-08-07T05:19:19.638904+00:00",
+        "checkedAt": "2026-08-07T11:27:42.910934+00:00",
         "method": "source-fragment-translation",
         "sourceLanguage": "English",
         "status": "fallback-english",
@@ -40356,6 +40747,19 @@
       "sourceBacked": 345,
       "sourceExcerpt": 342,
       "localized": 345,
+      "localizationFallback": 6,
+      "limited": 6,
+      "freshStocks": 61,
+      "status": "ok"
+    },
+    {
+      "generatedAt": "2026-08-07T11:29:25.048Z",
+      "newsGeneratedAt": "2026-08-07T11:24:24.983Z",
+      "stocksGeneratedAt": "2026-08-07T11:23:41.221Z",
+      "articles": 355,
+      "sourceBacked": 349,
+      "sourceExcerpt": 346,
+      "localized": 349,
       "localizationFallback": 6,
       "limited": 6,
       "freshStocks": 61,
