@@ -1,13 +1,18 @@
 {
-  "generatedAt": "2026-08-09T04:46:11.653Z",
+  "generatedAt": "2026-08-09T11:02:34.609Z",
   "mode": "source-content-extractive",
   "policyVersion": 2,
   "streams": {
     "googleNews": 50,
     "directRss": 14
   },
-  "acceptedCandidates": 73,
-  "failedStreams": [],
+  "acceptedCandidates": 71,
+  "failedStreams": [
+    {
+      "stream": "rss:AI Business",
+      "error": "HTTP 404"
+    }
+  ],
   "emptyStreams": [
     "google-news:Sierra AI",
     "google-news:Lovable",
@@ -15,13 +20,13 @@
     "google-news:Abridge",
     "google-news:Writer",
     "google-news:경쟁 단말",
-    "google-news:Databricks 자본·인프라",
     "google-news:Anthropic 공식 공시",
+    "google-news:Databricks 자본·인프라",
     "rss:Ars Technica",
     "rss:Hugging Face",
     "rss:VentureBeat",
     "rss:ZDNet",
     "rss:The Register"
   ],
-  "status": "ok"
+  "status": "partial"
 }
