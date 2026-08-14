@@ -256,6 +256,7 @@ try {
   const carouselScenes = [...how.matchAll(/<span style="background-image:url\('assets\/poster-[^']+\.webp'\)"><\/span>/g)].length;
   const accentColors = new Set([...how.matchAll(/data-accent="([^"]+)"/g)].map(match => match[1]));
   const secondaryAccentColors = new Set([...how.matchAll(/data-accent2="([^"]+)"/g)].map(match => match[1]));
+  const tertiaryAccentColors = new Set([...how.matchAll(/data-accent3="([^"]+)"/g)].map(match => match[1]));
   const samsungOne = how.includes('font-family: "SamsungOne700C"')
     && how.includes('font-family: "SamsungOne500C"')
     && how.includes('--title-font: "SamsungOne700C"')
@@ -281,11 +282,17 @@ try {
     && how.includes("@keyframes diagramRise");
   const bcgArrowSystem = how.includes(".tri-arrow {")
     && how.includes(".logic-arrow {")
-    && how.includes("clip-path: polygon(0 40%, 76% 40%, 76% 0, 100% 50%, 76% 100%, 76% 60%, 0 60%)")
-    && how.includes("width: clamp(56px, 5.8vw, 108px)")
-    && /\.logic-arrow\s*\{[\s\S]{0,160}width:\s*64px;[\s\S]{0,80}height:\s*10px;/.test(how);
+    && how.includes("clip-path: polygon(0 44%, 78% 44%, 78% 5%, 100% 50%, 78% 95%, 78% 56%, 0 56%, 9% 50%)")
+    && how.includes("width: clamp(72px, 6.8vw, 132px)")
+    && /\.logic-arrow\s*\{[\s\S]{0,160}width:\s*78px;[\s\S]{0,80}height:\s*14px;/.test(how)
+    && how.includes("@keyframes arrowFloat");
   const beginnerCodexPlaybook = how.includes("FIRST PROMPT")
+    && how.includes("VIBE CODING KICK-OFF")
     && how.includes("PROMPT BLUEPRINT")
+    && how.includes("FIRST REVISION PROMPT")
+    && how.includes("DOUBLE DIAMOND DELIVERY")
+    && how.includes("복사해서 시작")
+    && how.includes("첫 결과를 본 뒤 이렇게 입력")
     && how.includes("실제 입력과 실행 예시")
     && how.includes("SAFE GITHUB FLOW")
     && how.includes("목표·범위·유지 조건·완료 기준");
@@ -310,10 +317,17 @@ try {
     && !/\bJSON\b/i.test(how);
   const variedGradientSystem = accentColors.size >= 6
     && secondaryAccentColors.size >= 6
+    && tertiaryAccentColors.size >= 5
     && how.includes("--accent-2")
     && how.includes("--accent-rgb-2")
-    && how.includes("linear-gradient(118deg, var(--accent)")
+    && how.includes("--accent-3")
+    && how.includes("--accent-rgb-3")
+    && how.includes("linear-gradient(118deg, #00b3e3 0%, var(--accent)")
     && how.includes("--signature-blue: linear-gradient(135deg, #00b3e3 0%, #0072ce 52%, #1428a0 100%)")
+    && how.includes(".diagram-track > .diagram-item:nth-of-type(4n+4)")
+    && how.includes(".north-star")
+    && how.includes(".evidence-matrix")
+    && how.includes(".double-diamond")
     && how.includes(".slide-inner::after")
     && how.includes("@keyframes blueSignature");
   const introVideoExperience = how.includes('class="slide active intro-video cover-slide"')
@@ -323,10 +337,10 @@ try {
     && how.includes("video.volume = 0")
     && how.includes(".summary-slide .flow")
     && how.includes(".summary-slide .takeaway");
-  if (slides !== 12 || videos.size !== 2 || backgroundCarousels !== 10 || carouselScenes !== 20 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !beginnerCodexPlaybook || !crossVerifiedCaseStudy || !removedLegacyCopy || !variedGradientSystem || !introVideoExperience) {
-    throw new Error("How deck must keep 12 slides, 2 muted intro videos, 10 dual-image backgrounds, blue signatures plus varied gradients, long consulting arrows, beginner prompts, cross-verification evidence, real commands, and long-run cases");
+  if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 26 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !beginnerCodexPlaybook || !crossVerifiedCaseStudy || !removedLegacyCopy || !variedGradientSystem || !introVideoExperience) {
+    throw new Error("How deck must keep 15 slides, 2 muted intro videos, 13 dual-image backgrounds, blue signatures plus varied card colors, floating long-triangle arrows, varied consulting frameworks, beginner start/revision prompts, cross-verification evidence, real commands, and long-run cases");
   }
-  console.log("  OK  How 12장 · 첫 2장 무음 영상 · 3장 이후 이중 이미지 · 블루 시그니처+다색 도식 · 교차검증·실제 명령·장기 작업 사례");
+  console.log("  OK  How 15장 · 첫 2장 무음 영상 · 3장 이후 이중 이미지 · 블루 시그니처+다색 카드 · 장축 삼각 화살표 · 피라미드·2×2·더블 다이아몬드 · 시작·수정 입력 예시");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);
