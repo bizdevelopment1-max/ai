@@ -399,7 +399,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 }
 
 // ---- AI 메모리 전략 운영 프레임 — Customer → Stack → Solution → Decision ----
-function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
+function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
   const strategy = window.DASH.MEMORY_STRATEGY || { choices: [], horizons: [] };
@@ -419,16 +419,53 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
   const opportunityPortfolio = strategy.opportunityPortfolio || [];
   const expertSignals = strategy.expertSignals || [];
   const accountCompany = name => (companies || []).find(company => company.name === name);
+  const evidenceArticles = React.useMemo(() => {
+    const memoryTerms = /(?:inference|training|workload|data\s*cent(?:er|re)|server|accelerator|GPU|ASIC|HBM\d*|DRAM|NAND|eSSD|CXL|MRDIMM|SOCAMM|memory|메모리|데이터센터|서버|추론|학습|워크로드|가속기)/i;
+    const generatedDate = generatedAt ? new Date(generatedAt) : null;
+    const latestArticleTime = (articles || []).reduce((latest, article) => {
+      const time = new Date(`${article.date || ""}T23:59:59Z`).getTime();
+      return Number.isFinite(time) ? Math.max(latest, time) : latest;
+    }, 0);
+    const referenceTime = generatedDate && !Number.isNaN(generatedDate.getTime())
+      ? generatedDate.getTime()
+      : latestArticleTime;
+    const cutoffTime = referenceTime - 30 * 86400000;
+    const seen = new Set();
+    return (articles || []).filter(article => {
+      const key = String(article.url || `${article.source || ""}|${article.date || ""}|${article.title || ""}`).trim().toLowerCase();
+      const articleTime = new Date(`${article.date || ""}T00:00:00Z`).getTime();
+      const text = `${article.title || ""} ${article.titleKo || ""} ${article.summary || ""} ${(article.summaryLinesKo || []).join(" ")} ${article.signal || ""}`;
+      if (!key || seen.has(key) || !article.url || !article.date || !Number.isFinite(articleTime)
+        || articleTime < cutoffTime || articleTime > referenceTime + 86400000
+        || (article.provenance?.status && article.provenance.status !== "source-backed")
+        || !memoryTerms.test(text)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [articles, generatedAt]);
+  const evidenceDate = React.useMemo(() => {
+    const parsed = generatedAt ? new Date(generatedAt) : null;
+    const sourceDate = parsed && !Number.isNaN(parsed.getTime())
+      ? parsed
+      : new Date(Math.max(0, ...evidenceArticles.map(article => new Date(article.date).getTime() || 0)));
+    const validDate = !Number.isNaN(sourceDate.getTime()) && sourceDate.getTime() > 0 ? sourceDate : new Date();
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
+    }).format(validDate);
+  }, [generatedAt, evidenceArticles]);
   return (
     <section className="board msf" ref={sectionRef} data-screen-label="AI Memory Strategy Framework">
       <AnimCtx.Provider value={inView}>
-        <div className="board-head" style={{ "--accent": "#1428A0" }}>
-          <span className="board-tab" style={{ background: "#1428A0" }} />
-          <div className="board-titles">
-            <h2>AI 메모리 사업전략 <span className="board-en">Customer Pain Point → Technology Shift → Memory Business → Execution</span></h2>
-            <p><b>주요 고객 현황·기술·전략</b>과 <b>AI App·HW·SW 변화</b>를 분석해 맞춤형 메모리 전략·신규 Biz.·AI Infra 대내외 실행안으로 연결</p>
+        <div className="msf-consulting-intro">
+          <div className="msf-consulting-kicker">Strategy consulting · pain-point → memory solution → new Biz</div>
+          <div className="msf-consulting-title-row">
+            <h2>전략 컨설팅 · 고객 페인포인트 &amp; 신규 메모리 Biz 기회</h2>
+            <span className="msf-consulting-evidence">크롤 근거 <b>{evidenceArticles.length}</b>건 · {evidenceDate} 기준</span>
           </div>
-          <div className="board-count msf-live">LIVE · 30일 신호</div>
+          <p>
+            <b>SK hynix 고객의 Pain point</b>를 분석하고 맞춤형 메모리 솔루션을 제안해 새로운 Biz. 기회를 창출함
+            <span>아래 카드는 이번 수집의 공개 원문 근거로 우선순위 갱신 · 프레임은 컨설팅 스캐폴드 · 수치와 인용은 실제 공개 근거</span>
+          </p>
         </div>
 
         <div className="msf-exec-architecture">
@@ -3109,7 +3146,7 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
           />
         </div>
         <aside className="dyn-video-panel" aria-live="polite">
-          <video ref={videoRef} className="dyn-video" muted loop playsInline preload="none" aria-label="AI 업계 경쟁 다이내믹스 영상">
+          <video ref={videoRef} className="dyn-video" muted loop playsInline preload="metadata" aria-label="AI 업계 경쟁 다이내믹스 영상">
             {mediaActive && <source src="assets/competitive-dynamics.mp4" type="video/mp4" />}
           </video>
           <div className="dyn-video-overlay">

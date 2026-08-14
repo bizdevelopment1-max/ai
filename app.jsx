@@ -31,7 +31,7 @@ const COLOR_PRESETS = [
 // immediate without paying the full DOM cost during first paint.
 function LazySection({ id, active, sectionRef, height = 420, children }) {
   const innerRef = uR(null);
-  const nearViewport = useInView(sectionRef, 1800);
+  const nearViewport = useInView(sectionRef, 3000);
   const [ready, setReady] = uS(active === id);
   uE(() => {
     if (nearViewport || active === id) setReady(true);
@@ -50,7 +50,7 @@ function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [brandIdx, setBrandIdx] = uS(0);
   const [colorIdx, setColorIdx] = uS(0);
-  const [active, setActive] = uS("ib");
+  const [active, setActive] = uS("overview");
   const [query, setQuery] = uS("");
   const [feedFilter, setFeedFilter] = uS("all");
   const [selected, setSelected] = uS(null);
@@ -376,7 +376,7 @@ function App() {
           return;
         }
         const y = sc.scrollTop + NAV_SCROLL_OFFSET + 1;
-        let cur = "ib", best = -1;
+        let cur = "overview", best = -1;
         for (const id of NAV_SECTION_IDS) {
           const el = refs[id].current;
           if (!el) continue;
@@ -476,26 +476,29 @@ function App() {
 
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
-            {/* ── 0. 증권사 인사이트(IB Research 1페이저 + 기관 피드) ── */}
+            {/* ── 1. 첫 화면: 관계 지도 + 영상 브리핑 ── */}
+            <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="AI Memory Video Brief">
+              <div className="ov-head">
+                <h2 className="ov-title">AI 메모리 산업 브리핑 <span>Source-backed competitive dynamics</span></h2>
+              </div>
+              <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
+            </section>
+
+            {/* ── 2. 전략 컨설팅: 영상 다음에 바로 노출 ── */}
+            <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={1320}>
+              <MemoryStrategyBoard companies={companiesLive} articles={articles} generatedAt={dataGeneratedAt} onNav={navTo} />
+            </LazySection>
+
+            {/* ── 3. 리서치·시장 DB ── */}
             <div className="nav-section-anchor" data-section="ib">
               <IBInsightBoard research={research} reports={[]} sectionRef={refs.ib} />
             </div>
 
-            {/* ── 1. 개요 ── */}
-            <section ref={refs.overview} className="nav-section-anchor" data-section="overview" data-screen-label="Overview">
-              <div className="ov-head">
-                <h2 className="ov-title">AI 메모리 전략 의사결정 <span>Executive Decision Brief</span></h2>
+            <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={1080}>
+              <div className="opportunity-stack">
+                <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
+                <MobileAIBusinessBoard dataVersion={dataVersion} />
               </div>
-              <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
-              <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
-            </section>
-
-            <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={980}>
-              <MobileAIBusinessBoard dataVersion={dataVersion} />
-            </LazySection>
-
-            <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={860}>
-              <MemoryStrategyBoard companies={companiesLive} onNav={navTo} />
             </LazySection>
 
             <LazySection id="articles" active={active} sectionRef={refs.articles} height={840}>

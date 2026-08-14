@@ -1038,6 +1038,129 @@ a[href]:hover .rainbow-on-hover,
 
 /* ---- Mobile AI strategy framework ---- */
 .msf-live { color: #1428A0; background: color-mix(in srgb, #1428A0 9%, transparent); white-space: nowrap; }
+.first-video-screen {
+  min-height: min(760px, calc(100vh - 72px));
+  padding-top: 4px;
+}
+.first-video-screen .ov-head { margin-bottom: 4px; }
+.first-video-screen .es-compmap { margin-top: 8px; }
+.first-video-screen .es-dynamics-grid {
+  grid-template-columns: minmax(440px, .94fr) minmax(440px, 1.06fr);
+}
+.first-video-screen .dyn-video-panel,
+.first-video-screen .dyn-video-overlay { min-height: clamp(500px, 63vh, 660px); }
+.opportunity-stack { display: grid; gap: 18px; }
+
+.msf-consulting-intro {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding: 24px 26px 22px 30px;
+  overflow: hidden;
+  border-bottom: 1px solid color-mix(in srgb, #0D7377 24%, var(--line));
+  background:
+    linear-gradient(116deg, color-mix(in srgb, #0B2942 9%, var(--panel)) 0%, var(--panel) 58%, color-mix(in srgb, #0D7377 7%, var(--panel)) 100%);
+}
+.msf-consulting-intro::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: linear-gradient(180deg, #0B2942, #0D7377 70%, #B58A42);
+  content: "";
+}
+.msf-consulting-intro::after {
+  position: absolute;
+  top: -70px;
+  right: 4%;
+  width: 190px;
+  height: 190px;
+  border: 1px solid color-mix(in srgb, #0D7377 18%, transparent);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+.msf-consulting-kicker {
+  position: relative;
+  z-index: 1;
+  color: #0D7377;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.msf-consulting-title-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+.msf-consulting-title-row h2 {
+  margin: 0;
+  color: #102A43;
+  font-size: clamp(22px, 2.1vw, 34px);
+  font-weight: 900;
+  line-height: 1.16;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+.msf-consulting-evidence {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: baseline;
+  gap: 4px;
+  padding: 7px 10px;
+  border: 1px solid color-mix(in srgb, #0D7377 38%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, #0D7377 7%, var(--panel));
+  color: #315266;
+  font-size: 10px;
+  font-weight: 780;
+}
+.msf-consulting-evidence b { color: #0D7377; font-size: 14px; font-weight: 950; }
+.msf-consulting-intro > p {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(300px, .7fr);
+  gap: 18px;
+  align-items: center;
+  margin: 0;
+  padding-top: 13px;
+  border-top: 1px solid color-mix(in srgb, #102A43 16%, var(--line));
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 680;
+  line-height: 1.58;
+}
+.msf-consulting-intro > p > b { color: #102A43; font-weight: 900; }
+.msf-consulting-intro > p > span {
+  padding-left: 16px;
+  border-left: 2px solid #B58A42;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+[data-theme="dark"] .msf-consulting-title-row h2,
+[data-theme="dark"] .msf-consulting-intro > p > b { color: var(--ink); }
+
+@media (max-width: 980px) {
+  .first-video-screen { min-height: 0; }
+  .first-video-screen .es-dynamics-grid { grid-template-columns: 1fr; }
+  .first-video-screen .dyn-video-panel,
+  .first-video-screen .dyn-video-overlay { min-height: 460px; }
+  .msf-consulting-title-row { align-items: flex-start; flex-direction: column; }
+  .msf-consulting-intro > p { grid-template-columns: 1fr; }
+  .msf-consulting-intro > p > span { padding: 0 0 0 12px; }
+}
+@media (max-width: 620px) {
+  .msf-consulting-intro { padding: 20px 16px 18px 21px; }
+  .msf-consulting-title-row h2 { font-size: 22px; }
+  .msf-consulting-evidence { white-space: normal; }
+}
 .msf-north { margin: 18px 0 26px; padding: 18px 22px; border-radius: 14px; color: #fff; background: linear-gradient(125deg, #0B1F4D 0%, #1428A0 54%, #315BCE 100%); display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 18px; box-shadow: 0 12px 30px rgba(20,40,160,.18); }
 .msf-north span { font-family: var(--mono); font-size: 10px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; color: #AFC4FF; }
 .msf-north p { margin: 0; font-size: 17px; line-height: 1.55; font-weight: 800; letter-spacing: -.02em; text-wrap: balance; }

@@ -410,7 +410,7 @@ try {
     && dash.MEMORY_STRATEGY?.capabilities?.length === 5
     && dash.MEMORY_STRATEGY?.horizons?.length === 3
     && boards.includes("function MemoryStrategyBoard")
-    && boards.includes("Customer Pain Point → Technology Shift → Memory Business → Execution")
+    && boards.includes("Strategy consulting · pain-point → memory solution → new Biz")
     && boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")
     && boards.includes("function ConsultingDecisionRail")
@@ -1148,7 +1148,7 @@ try {
     && charts.includes('className={"hbar-chart" + (compact ? " hbar-compact" : "")}')
     && styles.includes(".hbar-chart.hbar-compact")
     && styles.includes("content-visibility: auto")
-    && app.includes("useInView(sectionRef, 1800)")
+    && app.includes("useInView(sectionRef, 3000)")
     && app.includes("board-gate-placeholder")
     && styles.includes(".board-gate.is-pending");
   const hasFundingReadout = boards.includes("function FundingTrendInsight")

@@ -40,10 +40,10 @@ for (const required of [
 ]) {
   assert(strategyText.includes(required), `부서 업무 문구가 없습니다: ${required}`);
 }
-assert(/Customer Pain Point → Technology Shift → Memory Business → Execution/.test(boards), "고객-기술-사업-실행 흐름이 없습니다");
+assert(/Strategy consulting · pain-point → memory solution → new Biz/.test(boards), "고객-솔루션-사업기회 컨설팅 흐름이 없습니다");
 assert(/zone\.question/.test(boards) && /zone\.output/.test(boards) && /zone\.gate/.test(boards), "운영 모델의 질문·산출물·게이트가 표시되지 않습니다");
 assert(/msf-flow-arrow/.test(boards), "단계 전환 화살표가 없습니다");
-assert(/AI 메모리 전략/.test(components) && /신규 메모리 Biz\./.test(components), "좌측 내비게이션이 부서 업무와 일치하지 않습니다");
+assert(/전략 컨설팅/.test(components) && /신규 메모리 Biz\./.test(components), "좌측 내비게이션이 부서 업무와 일치하지 않습니다");
 assert(/AI 메모리 전략 인텔리전스/.test(index), "페이지 메타 정보가 부서 목적과 일치하지 않습니다");
 assert(!/MOBILE_STRATEGY|MobileStrategyBoard|Mobile AI Strategy/.test([boards, app, components, index].join("\n")), "이전 모바일 전략 명칭이 남아 있습니다");
 
@@ -61,7 +61,7 @@ for (const removed of removedSections) {
   assert(!uiText.includes(removed), `삭제된 섹션이 다시 노출됩니다: ${removed}`);
 }
 
-assert(/useInView\(sectionRef, 1800\)/.test(app), "하단 보드 사전 로딩 범위가 적용되지 않았습니다");
+assert(/useInView\(sectionRef, 3000\)/.test(app), "하단 보드 사전 로딩 범위가 적용되지 않았습니다");
 assert(/needsCompanyExtras/.test(app), "초기 화면과 상세 데이터 요청이 분리되지 않았습니다");
 assert(/fmtNum\(p\.num, p\)/.test(anim), "숫자 첫 화면의 0 플래시 방지가 적용되지 않았습니다");
 assert(/Math\.min\(dur \|\| 420, 620\)/.test(anim), "숫자 애니메이션 시간 상한이 적용되지 않았습니다");

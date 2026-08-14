@@ -169,10 +169,10 @@ function Trend({ v, small, animate }) {
 
 // ---- Sidebar ------------------------------
 const NAV = [
+  { id: "overview", ko: "AI 메모리 영상 브리핑", en: "Video Brief", icon: "grid", group: "경영 의사결정" },
+  { id: "strategy", ko: "전략 컨설팅", en: "Pain Point → New Biz", icon: "target", group: "경영 의사결정" },
   { id: "ib", ko: "산업 리서치", en: "Industry Research", icon: "report", group: "경영 의사결정" },
-  { id: "overview", ko: "Executive Summary", en: "Decision Brief", icon: "grid", group: "경영 의사결정" },
-  { id: "opportunity", ko: "모바일 AI 신사업 DB", en: "Market · Money · Move", icon: "target", group: "경영 의사결정" },
-  { id: "strategy", ko: "AI 메모리 전략", en: "AI Memory Strategy", icon: "target", group: "경영 의사결정" },
+  { id: "opportunity", ko: "AI 신사업 DB", en: "Market · Money · Move", icon: "target", group: "경영 의사결정" },
   { id: "articles", ko: "산업·고객 신호", en: "Industry & Customer Signals", icon: "news", group: "경영 의사결정" },
   { id: "app", ko: "AI 앱·워크로드", en: "Applications & Workloads", icon: "spark", group: "AI 수요·메모리 밸류체인" },
   { id: "agent", ko: "에이전트·업무 흐름", en: "Agents & Workflows", icon: "ai", group: "AI 수요·메모리 밸류체인" },
