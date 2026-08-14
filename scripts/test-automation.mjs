@@ -181,6 +181,42 @@ try {
 }
 
 try {
+  const [components, styles] = await Promise.all([
+    readFile("components.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+  ]);
+  const dropdownRemoved = !components.includes('className="chatbot-drop"')
+    && !components.includes("QA_CATS.map")
+    && !components.includes('title="질문 선택"')
+    && !styles.includes(".chatbot-drop");
+  const commands = ["/search", "/company", "/market", "/ask", "/edit", "/open", "/connect", "/export", "/clear"];
+  const cliReady = components.includes('className="site-cli-terminal"')
+    && components.includes("buildSiteCliIndex")
+    && components.includes("searchSiteCli")
+    && components.includes("extractResponseText")
+    && components.includes("https://api.openai.com/v1/responses")
+    && components.includes('label: command === "edit" ? "PATCH REVIEW"')
+    && components.includes("ReactDOM.createPortal")
+    && commands.every(command => components.includes(`\"${command}`))
+    && styles.includes(".site-cli-overlay")
+    && styles.includes(".site-cli-command-grid")
+    && styles.includes(".site-cli-triangle");
+  const tokenIsEphemeral = components.includes('const [token, setToken] = useState("")')
+    && !/localStorage[^\n]{0,160}token|sessionStorage\.setItem\([^\n]{0,120}token/i.test(components)
+    && components.includes("토큰은 현재 탭 메모리에만 유지");
+  const reviewOnly = components.includes("실제 저장소 반영 전 사용자가 검토할 수 있는 수정안만 출력")
+    && components.includes("수정안은 자동 반영 없이 검토 후 내보내기")
+    && !/fetch\([^)]*github\.com|api\.github\.com/.test(components);
+  if (!dropdownRemoved || !cliReady || !tokenIsEphemeral || !reviewOnly) {
+    throw new Error("site CLI must replace the dropdown, support local and LLM commands, keep tokens ephemeral, and export review-only patches");
+  }
+  console.log("  OK  질문 드롭다운 제거 · Site CLI 검색·LLM·수정안 내보내기 · 세션 토큰 비저장");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  site CLI workspace: ${error.message}`);
+}
+
+try {
   const [app, components, anim] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("components.jsx", "utf8"),

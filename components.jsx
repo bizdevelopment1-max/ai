@@ -138,6 +138,8 @@ function Icon({ name, size = 16, sw = 1.6 }) {
     x: "M6 6l12 12M18 6L6 18",
     target: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 11.2a.8.8 0 1 0 0 1.6.8.8 0 0 0 0-1.6z",
     menu: "M3 6h18M3 12h18M3 18h18",
+    copy: "M8 8h11v11H8zM5 16H4V5h11v1",
+    download: "M12 3v12M7 10l5 5 5-5M4 21h16",
     palette: "M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.6 0-.4-.1-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16c3.3 0 6-2.7 6-6 0-5.5-4.5-9.7-10-9.7z",
     brain: "M12 2a7 7 0 0 0-5.2 2.3A6.5 6.5 0 0 0 3 10c0 2.1 1 4 2.5 5.3V20a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-2h1v2a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-4.7A6.5 6.5 0 0 0 21 10a6.5 6.5 0 0 0-3.8-5.7A7 7 0 0 0 12 2zM9 10h6M12 7v6M9 13h6",
     server: "M3 4h18v6H3zM3 14h18v6H3zM7 7h.01M7 17h.01M12 7h4M12 17h4",
@@ -399,305 +401,416 @@ function KpiStrip({ kpis }) {
   );
 }
 
-// ---- chat answer formatting (bold lead · accent terms · yellow figures) ----
-const CHAT_TERMS = ["LLM","Transformer","GPT","GPT-4","GPT-5","Gemini","Claude","RLHF","Diffusion","Neural","Token","AGI","API","Fine-tune","RAG","Vector","Embedding","OpenAI","Anthropic","Google","DeepMind","Meta","Microsoft","Mistral","Cohere","Stability AI","Midjourney","Hugging Face","NVIDIA","AMD","Perplexity","Character AI","Inflection","Adept","Runway","Jasper","Copy.ai","Synthesia","ElevenLabs","Replicate","Scale AI","Databricks","Snowflake","Pinecone","Weaviate","LangChain","LlamaIndex","xAI","Grok","Llama","Mixtral","DALL-E","Sora","Copilot","ChatGPT","Bard","AWS","Azure","GCP","TPU","GPU","FLOPS","IPO","S-1","CB Insights","Sequoia","a16z","Benchmark","Accel","데카콘"];
-function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
-const CHAT_FIG = "\\$[\\d.,]+[BMK]?\\+?|[+-]?\\d[\\d.,]*%|\\d[\\d.,]*억\\+?|\\d[\\d.,]*만\\s?명?\\+?";
-const CHAT_TERM_PAT = CHAT_TERMS.slice().sort((a, b) => b.length - a.length).map(escRe).join("|");
-const CHAT_SPLIT = new RegExp("(" + CHAT_FIG + "|" + CHAT_TERM_PAT + ")", "g");
-const CHAT_FIG_RE = new RegExp("^(" + CHAT_FIG + ")$");
-const CHAT_TERMSET = new Set(CHAT_TERMS);
-function hlInline(str, key) {
-  return String(str).split(CHAT_SPLIT).map((p, i) => {
-    if (!p) return null;
-    if (CHAT_FIG_RE.test(p)) return <b key={key + "-" + i} className="num-hl">{p}</b>;
-    if (CHAT_TERMSET.has(p)) return <b key={key + "-" + i} className="chat-term">{p}</b>;
-    return <React.Fragment key={key + "-" + i}>{p}</React.Fragment>;
-  });
-}
-function MatrixRain() {
-  const leftRef = useRef(null);
-  const rightRef = useRef(null);
-  useEffect(() => {
-    const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$@#%&";
-    function initRain(canvas) {
-      if (!canvas) return null;
-      const ctx = canvas.getContext("2d");
-      const w = canvas.width = 32;
-      const h = canvas.height = canvas.parentElement ? canvas.parentElement.offsetHeight : 600;
-      const fontSize = 11;
-      const cols = Math.floor(w / fontSize);
-      const drops = Array.from({ length: cols }, () => Math.random() * -20);
-      return setInterval(() => {
-        ctx.fillStyle = "rgba(10,10,10,0.12)";
-        ctx.fillRect(0, 0, w, h);
-        for (let i = 0; i < cols; i++) {
-          const ch = chars[Math.floor(Math.random() * chars.length)];
-          const bright = Math.random() > 0.92;
-          ctx.fillStyle = bright ? "#7fff7f" : "rgba(0,255,65," + (0.25 + Math.random() * 0.35) + ")";
-          ctx.font = (bright ? "bold " : "") + fontSize + "px monospace";
-          ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
-          if (drops[i] * fontSize > h && Math.random() > 0.96) drops[i] = 0;
-          drops[i] += 0.4 + Math.random() * 0.3;
-        }
-      }, 70);
-    }
-    const id1 = initRain(leftRef.current);
-    const id2 = initRain(rightRef.current);
-    return () => { if (id1) clearInterval(id1); if (id2) clearInterval(id2); };
-  }, []);
-  return (
-    <>
-      <canvas ref={leftRef} className="matrix-rain matrix-left" />
-      <canvas ref={rightRef} className="matrix-rain matrix-right" />
-    </>
-  );
+// ---- Site CLI · local evidence search + optional LLM patch workspace ----
+const SITE_CLI_COMMANDS = [
+  ["/search <키워드>", "사이트 전체 근거 검색"],
+  ["/company <기업명>", "기업 개요·수익 모델·전략 검색"],
+  ["/market <키워드>", "시장·소비자 조사 검색"],
+  ["/ask <질문>", "로컬 근거 또는 연결된 LLM 답변"],
+  ["/edit <요청>", "검토 가능한 사이트 수정안 생성"],
+  ["/open <섹션명>", "대시보드 섹션 이동"],
+  ["/connect", "LLM 엔드포인트 설정"],
+  ["/export", "현재 작업 기록 저장"],
+  ["/clear", "콘솔 기록 정리"],
+];
+
+const SITE_CLI_DEFAULT_CONFIG = {
+  endpoint: "https://api.openai.com/v1/responses",
+  model: "gpt-5.6-sol",
+};
+
+const SITE_CLI_SYSTEM = `당신은 AI Intelligence 사이트 전용 분석·편집 콘솔임
+제공된 SITE EVIDENCE만 사실 근거로 사용
+근거에 없는 수치·날짜·인물·거래는 생성 금지
+한국어 개조식으로 답변하고 문장형 종결과 마침표 사용 금지
+질문 답변은 핵심 결론·근거·시사점 순서로 MECE하게 구성
+수정 요청은 요약·영향 파일·unified diff·검증 항목 순서로 구성
+실제 저장소 반영 전 사용자가 검토할 수 있는 수정안만 출력`;
+
+function siteCliText(value, limit = 2600) {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number") return String(value).slice(0, limit);
+  try { return JSON.stringify(value).slice(0, limit); } catch { return ""; }
 }
 
-function formatAnswer(text) {
-  if (!text) return null;
-  return String(text).split(/\n\n+/).map((para, pi) => (
-    <p key={pi} className={"chat-para" + (pi === 0 ? " lead" : "")}>{hlInline(para, "p" + pi)}</p>
+function buildSiteCliIndex() {
+  const D = window.DASH || {};
+  const docs = [];
+  const add = (kind, title, text, nav, url, source) => {
+    const body = siteCliText(text).replace(/\s+/g, " ").trim();
+    if (!title || !body) return;
+    docs.push({ id: `${kind}-${docs.length}`, kind, title: String(title), text: body, nav, url, source });
+  };
+  (D.COMPANIES || []).forEach(company => add(
+    "기업",
+    company.name,
+    [company.unit, company.note, company.vp, company.direction, company.metric, company.value,
+      company.funding, company.valuation, siteCliText(D.COMPANY_PROFILES?.[company.name])].filter(Boolean).join(" · "),
+    company.cat,
+    company.url,
+    company.domain,
   ));
+  (D.INSIGHTS || []).forEach(item => add("전략", item.title, item.desc, "overview", item.url, item.src));
+  (D.ARTICLES || []).forEach(item => add(
+    "기사", item.title, [item.co, item.summary, item.tag, item.date].filter(Boolean).join(" · "),
+    "articles", item.url, item.source,
+  ));
+  (D.QA_PAIRS || []).forEach(item => add("분석", item.q, item.a, item.nav || "overview", "", "사이트 분석"));
+  [
+    ["시장", D.MARKET_GROWTH, "market"],
+    ["시장", D.MARKET_VERTICAL, "market"],
+    ["비즈니스 모델", D.BIZ_MODELS, "newbiz"],
+    ["비즈니스 모델", D.PRICING_MODELS, "newbiz"],
+    ["소비자 조사", D.USERS, "survey"],
+    ["소비자 조사", D.SHARE, "survey"],
+    ["리서치", D.REPORTS, "ib"],
+  ].forEach(([kind, rows, nav]) => (rows || []).forEach((row, index) => {
+    const title = row.title || row.name || row.label || row.market || `${kind} ${index + 1}`;
+    add(kind, title, row, nav, row.url || row.sourceUrl, row.source || row.src);
+  }));
+  return docs;
 }
 
-// ---- AI Chatbot (dropdown questions + natural language search) ----
+function siteCliTokens(query) {
+  const stop = new Set(["대한", "관련", "어떻게", "무엇", "사이트", "내용", "알려줘", "보여줘"]);
+  return String(query || "").toLowerCase().split(/[\s,./?!:;()\[\]{}·—_-]+/)
+    .map(token => token.trim()).filter(token => token.length > 1 && !stop.has(token));
+}
+
+function searchSiteCli(query, kindFilter) {
+  const raw = String(query || "").toLowerCase().trim();
+  const tokens = siteCliTokens(raw);
+  return buildSiteCliIndex().map(doc => {
+    if (kindFilter && doc.kind !== kindFilter) return { ...doc, score: -1 };
+    const title = doc.title.toLowerCase();
+    const text = doc.text.toLowerCase();
+    let score = raw && title.includes(raw) ? 36 : raw && text.includes(raw) ? 18 : 0;
+    tokens.forEach(token => {
+      if (title === token) score += 24;
+      else if (title.includes(token)) score += 12;
+      if (text.includes(token)) score += 3;
+    });
+    const first = tokens.map(token => text.indexOf(token)).filter(index => index >= 0).sort((a, b) => a - b)[0] || 0;
+    const start = Math.max(0, first - 70);
+    const excerpt = `${start ? "…" : ""}${doc.text.slice(start, start + 320)}${doc.text.length > start + 320 ? "…" : ""}`;
+    return { ...doc, score, excerpt };
+  }).filter(doc => doc.score > 0).sort((a, b) => b.score - a.score).slice(0, 6);
+}
+
+function extractResponseText(payload) {
+  if (typeof payload?.output_text === "string") return payload.output_text.trim();
+  return (payload?.output || []).flatMap(item => item.content || [])
+    .map(item => item.text || item.output_text || "").filter(Boolean).join("\n").trim();
+}
+
 function AIChatbot({ onNav }) {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [answer, setAnswer] = useState(null);
-  const [displayText, setDisplayText] = useState("");
-  const [typing, setTyping] = useState(false);
-  const [answerNav, setAnswerNav] = useState(null);
-  const dropRef = useRef(null);
-  const typingRef = useRef(null);
-  const inputRef = useRef(null);
+  const [launcher, setLauncher] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [input, setInput] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [configOpen, setConfigOpen] = useState(false);
+  const [llmEnabled, setLlmEnabled] = useState(false);
+  const [token, setToken] = useState("");
+  const [config, setConfig] = useState(() => {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem("siteCliLLMConfig") || "null");
+      return { ...SITE_CLI_DEFAULT_CONFIG, ...(saved || {}) };
+    } catch { return SITE_CLI_DEFAULT_CONFIG; }
+  });
+  const [draftConfig, setDraftConfig] = useState(config);
+  const [history, setHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [log, setLog] = useState([{
+    id: "boot", role: "system", label: "READY",
+    text: "사이트 공개 데이터 인덱스 연결 · /help 명령어 확인 · 일반 문장 입력 시 질문으로 처리",
+  }]);
+  const launcherRef = useRef(null);
+  const terminalInputRef = useRef(null);
+  const outputRef = useRef(null);
 
-  const QA = window.DASH.QA_PAIRS || [];
-  const QA_CATS = window.DASH.QA_CATS || [];
-
-  const QUICK_Q = [
-    "LLM 시장 규모와 성장률은?",
-    "OpenAI vs Anthropic 경쟁 구도는?",
-    "GPT-5 출시 일정과 예상 성능은?",
-    "AI 스타트업 펀딩 트렌드는?",
-    "RAG와 Fine-tuning 비교 분석",
-    "GPU 공급난 현황과 전망은?",
-  ];
+  const append = entry => setLog(current => [
+    ...current,
+    { id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, ...entry },
+  ]);
 
   useEffect(() => {
-    const close = e => { if (dropRef.current && !dropRef.current.contains(e.target)) setOpen(false); };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
+    if (!visible) return;
+    const timer = setTimeout(() => terminalInputRef.current?.focus(), 40);
+    const onKey = event => { if (event.key === "Escape") setVisible(false); };
+    document.addEventListener("keydown", onKey);
+    return () => { clearTimeout(timer); document.removeEventListener("keydown", onKey); };
+  }, [visible]);
 
-  const typeOut = (text, nav) => {
-    setAnswer(text);
-    setAnswerNav(nav);
-    setDisplayText("");
-    setTyping(true);
-    setOpen(false);
-    if (typingRef.current) clearInterval(typingRef.current);
-    let i = 0;
-    typingRef.current = setInterval(() => {
-      i += 1;
-      if (i >= text.length) {
-        setDisplayText(text);
-        setTyping(false);
-        clearInterval(typingRef.current);
-      } else {
-        setDisplayText(text.slice(0, i));
-      }
-    }, 14);
+  useEffect(() => {
+    if (outputRef.current) outputRef.current.scrollTop = outputRef.current.scrollHeight;
+  }, [log, busy, configOpen]);
+
+  const localResponse = (query, kindFilter) => {
+    const results = searchSiteCli(query, kindFilter);
+    if (!results.length) {
+      return {
+        text: "일치 근거 없음 · 기업명·시장·수익 모델·조직·제품 중 하나를 포함해 범위 축소 권장",
+        results: [],
+      };
+    }
+    return {
+      text: `${results.length}개 근거 확인 · 제목과 요약을 선택해 해당 섹션 이동`,
+      results,
+    };
   };
 
-  const selectQ = (qa) => {
-    setSearch(qa.q);
-    typeOut(qa.a, qa.nav);
+  const callLlm = async (question, mode, evidence) => {
+    const endpoint = config.endpoint.trim();
+    if (!endpoint) throw new Error("LLM 엔드포인트 입력 필요");
+    if (/api\.openai\.com/i.test(endpoint) && !token.trim()) throw new Error("OpenAI 연결 토큰 입력 필요");
+    const evidenceText = evidence.length
+      ? evidence.map((doc, index) => `[${index + 1}] ${doc.kind} | ${doc.title}\n${doc.excerpt}\n${doc.source || "사이트 데이터"} ${doc.url || ""}`).join("\n\n")
+      : "직접 일치 근거 없음";
+    const modeInstruction = mode === "edit"
+      ? "요청을 구현 가능한 변경안으로 변환 · 정확한 코드 근거가 없으면 diff를 추정하지 말고 변경 명세로 대체"
+      : "질문에 직접 답변 · 근거 번호를 함께 표시";
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token.trim() ? { Authorization: `Bearer ${token.trim()}` } : {}),
+      },
+      body: JSON.stringify({
+        model: config.model.trim() || SITE_CLI_DEFAULT_CONFIG.model,
+        instructions: SITE_CLI_SYSTEM,
+        input: `${modeInstruction}\n\nUSER REQUEST\n${question}\n\nSITE EVIDENCE\n${evidenceText}`,
+        reasoning: { effort: mode === "edit" ? "high" : "medium" },
+        text: { verbosity: mode === "edit" ? "high" : "medium" },
+      }),
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload?.error?.message || `LLM 요청 오류 ${response.status}`);
+    const text = extractResponseText(payload);
+    if (!text) throw new Error("LLM 응답 본문 없음");
+    return text;
   };
 
-  const doSearch = () => {
-    if (!search.trim()) return;
-    const q = search.toLowerCase().trim();
-    // tokenize: split on spaces AND pull 2-gram-ish Korean chunks so spaceless
-    // Korean questions still match
-    const words = q.split(/[\s,./?!·]+/).filter(w => w.length > 1);
+  const saveConfig = () => {
+    const next = {
+      endpoint: draftConfig.endpoint.trim(),
+      model: draftConfig.model.trim() || SITE_CLI_DEFAULT_CONFIG.model,
+    };
+    setConfig(next);
+    setLlmEnabled(Boolean(next.endpoint));
+    sessionStorage.setItem("siteCliLLMConfig", JSON.stringify(next));
+    setConfigOpen(false);
+    append({ role: "system", label: "LLM", text: `${next.model} 구성 완료 · 토큰은 현재 탭 메모리에만 유지` });
+  };
 
-    const strip = s => s.replace(/[의은는이가을를에서도와과로부터까지만]/g, "");
-    const qStripped = strip(q);
-    const wordsStripped = words.map(strip).filter(w => w.length > 1);
+  const exportSession = () => {
+    const body = [
+      "# Site CLI 작업 기록",
+      `생성 시각 · ${new Date().toISOString()}`,
+      "",
+      ...log.flatMap(item => [`## ${item.label || item.role}`, item.text || "", ...(item.results || []).map(result => `- ${result.title} · ${result.excerpt}`), ""]),
+    ].join("\n");
+    const url = URL.createObjectURL(new Blob([body], { type: "text/markdown;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `site-cli-${new Date().toISOString().slice(0, 10)}.md`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+  };
 
-    const scored = QA.map(qa => {
-      let score = 0;
-      const kw = qa.keywords || [];
-      const ql = qa.q.toLowerCase();
-      const al = qa.a.toLowerCase();
-      kw.forEach(k => {
-        if (q.includes(k) || qStripped.includes(k)) score += 12;
-        wordsStripped.forEach(w => {
-          if (w === k || k === w) score += 12;
-          else if (w.length > 1 && (k.startsWith(w) || w.startsWith(k))) score += 6;
+  const openSection = raw => {
+    const needle = String(raw || "").toLowerCase().trim();
+    const match = NAV.find(item => [item.id, item.ko, item.en].some(value => String(value).toLowerCase().includes(needle)));
+    if (!match || !needle) {
+      append({ role: "error", label: "NAV", text: "섹션 확인 실패 · /open 시장 · /open 기업 · /open stocks 형식 권장" });
+      return;
+    }
+    onNav?.(match.id);
+    append({ role: "system", label: "NAV", text: `${match.ko} 섹션 이동` });
+  };
+
+  const execute = async rawValue => {
+    const raw = String(rawValue || "").trim();
+    if (!raw || busy) return;
+    setVisible(true);
+    setInput("");
+    setLauncher("");
+    setHistory(current => [raw, ...current.filter(item => item !== raw)].slice(0, 40));
+    setHistoryIndex(-1);
+    append({ role: "user", label: "YOU", text: raw });
+
+    const commandMatch = raw.match(/^\/(\S+)\s*(.*)$/s);
+    const command = commandMatch ? commandMatch[1].toLowerCase() : "ask";
+    const args = commandMatch ? commandMatch[2].trim() : raw;
+
+    if (command === "help") {
+      append({ role: "system", label: "COMMANDS", text: "질문·검색·섹션 이동·수정안 생성·내보내기 지원", commands: SITE_CLI_COMMANDS });
+      return;
+    }
+    if (command === "clear") { setLog([]); return; }
+    if (command === "export") { exportSession(); append({ role: "system", label: "EXPORT", text: "Markdown 작업 기록 저장" }); return; }
+    if (command === "connect") { setDraftConfig(config); setConfigOpen(true); return; }
+    if (command === "disconnect") {
+      setToken(""); setLlmEnabled(false); setConfigOpen(false);
+      append({ role: "system", label: "LLM", text: "LLM 연결 해제 · 로컬 사이트 검색 유지" });
+      return;
+    }
+    if (command === "status") {
+      append({ role: "system", label: "STATUS", text: `로컬 인덱스 ${buildSiteCliIndex().length}건 · LLM ${llmEnabled ? `${config.model} 구성` : "미연결"} · 자동 적용 비활성` });
+      return;
+    }
+    if (command === "open") { openSection(args); return; }
+    if (!["search", "company", "market", "ask", "edit"].includes(command)) {
+      append({ role: "error", label: "COMMAND", text: `지원하지 않는 명령어 /${command} · /help 확인` });
+      return;
+    }
+    if (!args) {
+      append({ role: "error", label: "INPUT", text: `/${command} 뒤에 검색어 또는 요청 입력 필요` });
+      return;
+    }
+
+    const kindFilter = command === "company" ? "기업" : command === "market" ? "시장" : null;
+    const evidence = searchSiteCli(args, kindFilter);
+    if (command === "search" || command === "company" || command === "market") {
+      append({ role: "assistant", label: "LOCAL INDEX", ...localResponse(args, kindFilter) });
+      return;
+    }
+    if (!llmEnabled) {
+      if (command === "edit") {
+        append({
+          role: "assistant", label: "CHANGE BRIEF",
+          text: `요청 · ${args}\n영향 영역 · ${evidence.slice(0, 3).map(item => item.kind).filter((item, index, list) => list.indexOf(item) === index).join(" · ") || "화면 구성"}\n검증 · 기존 데이터 보존 · 모바일 정렬 · 번들 재생성 · 자동 테스트\n적용 방식 · /connect 후 코드 수정안 생성 또는 현재 기록 내보내기`,
+          results: evidence.slice(0, 3),
         });
-      });
-      if (ql.includes(q) || q.includes(ql.slice(0, 8))) score += 8;
-      wordsStripped.forEach(w => { if (ql.includes(w)) score += 3; });
-      wordsStripped.forEach(w => { if (al.includes(w)) score += 1; });
-      kw.forEach(k => { wordsStripped.forEach(w => { if (k.includes(w) || w.includes(k)) score += 2; }); });
-      return { qa, score };
-    });
-    scored.sort((a, b) => b.score - a.score);
-    if (scored[0] && scored[0].score >= 3) { typeOut(scored[0].qa.a, scored[0].qa.nav); return; }
+      } else {
+        append({ role: "assistant", label: "LOCAL ANSWER", ...localResponse(args, null) });
+      }
+      return;
+    }
 
-    const D = window.DASH;
-    const results = [];
-    (D.COMPANIES || []).forEach(c => {
-      const txt = (c.name + " " + c.note + " " + (c.vp || "") + " " + (c.direction || "")).toLowerCase();
-      let s = 0;
-      if (txt.includes(q)) s += 10;
-      words.forEach(w => { if (c.name.toLowerCase().includes(w)) s += 5; if (txt.includes(w)) s += 1; });
-      if (s > 0) results.push({ text: c.name + " — " + c.note, nav: c.cat, score: s });
-    });
-    (D.INSIGHTS || []).forEach(ins => {
-      const txt = (ins.title + " " + ins.desc).toLowerCase();
-      let s = 0;
-      if (txt.includes(q)) s += 8;
-      words.forEach(w => { if (txt.includes(w)) s += 1; });
-      if (s > 0) results.push({ text: ins.title + " — " + ins.desc, nav: "insights", score: s });
-    });
-    (D.ARTICLES || []).forEach(a => {
-      const txt = (a.title + " " + (a.summary || "") + " " + (a.co || "")).toLowerCase();
-      let s = 0;
-      if (a.co && q.includes(a.co.toLowerCase())) s += 6;
-      words.forEach(w => { if (txt.includes(w)) s += 1; });
-      if (s > 0) results.push({ text: a.source + ": " + a.title, nav: "articles", score: s });
-    });
+    setBusy(true);
+    try {
+      const text = await callLlm(args, command === "edit" ? "edit" : "ask", evidence);
+      append({ role: "assistant", label: command === "edit" ? "PATCH REVIEW" : config.model, text, results: evidence.slice(0, 4), exportable: command === "edit" });
+    } catch (error) {
+      append({ role: "error", label: "LLM ERROR", text: `${error.message} · /connect 설정 확인 · 로컬 검색은 계속 사용 가능` });
+    } finally { setBusy(false); }
+  };
 
-    results.sort((a, b) => b.score - a.score);
-    if (results.length > 0) {
-      const top = results.slice(0, 3);
-      const answerText = top.map((r, i) => (i + 1) + ". " + r.text).join("\n\n");
-      typeOut(answerText, top[0].nav);
-    } else if (scored[0] && scored[0].score > 0) {
-      // 키워드 매칭이 약해도 가장 가까운 Q&A로 답한다 (항상 답변)
-      typeOut(scored[0].qa.a, scored[0].qa.nav);
-    } else {
-      // 근거를 찾지 못한 질의에는 숫자·거래를 추정해서 답하지 않는다.
-      const fb = "현재 공개된 원문 근거에서 정확히 일치하는 항목을 찾지 못했습니다. 기업명(OpenAI·Anthropic·NVIDIA·Apple 등)이나 '수익 모델', '사업 방향', '에이전트', '조직도'처럼 범위를 좁혀 다시 질문해 주세요. 최신 기업 상세에서는 원문 링크와 생성일을 함께 확인할 수 있습니다.";
-      typeOut(fb, "overview");
+  const onTerminalKey = event => {
+    if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); execute(input); return; }
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      const next = Math.min(history.length - 1, historyIndex + 1);
+      if (next >= 0) { setHistoryIndex(next); setInput(history[next]); }
+    }
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      const next = historyIndex - 1;
+      setHistoryIndex(next);
+      setInput(next >= 0 ? history[next] : "");
     }
   };
 
-  const closeAnswer = () => {
-    setAnswer(null);
-    setDisplayText("");
-    setTyping(false);
-    setAnswerNav(null);
-    if (typingRef.current) clearInterval(typingRef.current);
-    setSearch("");
-    setOpen(false);
-    setTimeout(() => { if (inputRef.current) inputRef.current.focus(); }, 30);
-  };
-
-  // click inside the open answer: while typing -> reveal full text; once done -> clear & let user re-ask
-  const onPanelClick = (e) => {
-    if (typing) {
-      e.stopPropagation();
-      if (typingRef.current) clearInterval(typingRef.current);
-      setDisplayText(answer);
-      setTyping(false);
-    }
-    // when finished, allow the click to bubble to the overlay -> closeAnswer (clears input)
-  };
-
-  const goToSection = () => {
-    if (answerNav && onNav) { onNav(answerNav); }
-    closeAnswer();
-  };
-
-  const filtered = search.trim()
-    ? QA.filter(qa => {
-        const s = search.toLowerCase();
-        return qa.q.toLowerCase().includes(s) || (qa.keywords || []).some(k => s.includes(k));
-      })
-    : QA;
+  const copyText = text => navigator.clipboard?.writeText(text || "").catch(() => {});
 
   return (
-    <div className="chatbot" ref={dropRef}>
-      <div className="chatbot-box">
+    <div className="site-cli">
+      <div className="site-cli-launcher">
+        <span className="site-cli-prompt" aria-hidden="true">$</span>
         <input
-          className="chatbot-input"
-          ref={inputRef}
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); doSearch(); } }}
-          placeholder="AI 시장에 대해 물어보세요…"
+          ref={launcherRef}
+          value={launcher}
+          onChange={event => setLauncher(event.target.value)}
+          onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); launcher.trim() ? execute(launcher) : setVisible(true); } }}
+          placeholder="site-cli · 질문 또는 수정 명령어"
+          aria-label="사이트 CLI 명령어"
+          data-preserve-copy="true"
         />
-        <button className="chatbot-arrow" onClick={() => setOpen(!open)} title="질문 선택">
-          <Icon name={open ? "up" : "down"} size={14} sw={2.2} />
+        <button className="site-cli-open" onClick={() => launcher.trim() ? execute(launcher) : setVisible(true)} title="CLI 열기">
+          <span className="site-cli-triangle" />
         </button>
       </div>
-      {open && (
-        <div className="chatbot-drop">
-          <div className="chatbot-drop-title">질문을 선택하세요 · 예시 {filtered.length}개</div>
-          <div className="chatbot-drop-list">
-            {QA_CATS.map(c => {
-              const items = filtered.filter(qa => (qa.cat || 0) === c.id);
-              if (!items.length) return null;
-              return (
-                <React.Fragment key={c.id}>
-                  <div className="qa-cat-head" style={{ color: c.color }}>
-                    <span className="qa-cat-dot" style={{ background: c.color }} />{c.name}
+
+      {visible && ReactDOM.createPortal(
+        <div className="site-cli-overlay" role="dialog" aria-modal="true" aria-label="사이트 CLI">
+          <section className="site-cli-terminal">
+            <header className="site-cli-head">
+              <div className="site-cli-window-controls" aria-hidden="true"><i /><i /><i /></div>
+              <div className="site-cli-title">
+                <span className="site-cli-mark"><Icon name="pulse" size={17} sw={2.2} /></span>
+                <div><b>SITE CLI</b><small>CONTENT · LLM · PATCH WORKSPACE</small></div>
+              </div>
+              <div className="site-cli-status">
+                <span>LOCAL INDEX</span>
+                <span className={llmEnabled ? "is-on" : ""}>LLM {llmEnabled ? "READY" : "OPTIONAL"}</span>
+                <span>PATCH REVIEW</span>
+              </div>
+              <button className="site-cli-close" onClick={() => setVisible(false)} title="닫기"><Icon name="x" size={17} sw={2} /></button>
+            </header>
+
+            <div className="site-cli-flow" aria-hidden="true">
+              <span>SITE DATA</span><i /><span>RETRIEVAL</span><i /><span>LLM</span><i /><span>REVIEW</span>
+            </div>
+
+            <div className="site-cli-output" ref={outputRef} data-preserve-copy="true">
+              {log.map(item => (
+                <article key={item.id} className={`site-cli-line ${item.role}`}>
+                  <div className="site-cli-line-head">
+                    <span>{item.label}</span>
+                    {item.role !== "user" && item.text && <button onClick={() => copyText(item.text)} title="복사"><Icon name="copy" size={12} /></button>}
                   </div>
-                  {items.map((qa, i) => (
-                    <button key={c.id + "-" + i} className="chatbot-drop-item" style={{ "--qa": c.color }} onClick={() => selectQ(qa)}>
-                      {qa.q}
-                    </button>
-                  ))}
-                </React.Fragment>
-              );
-            })}
-            {/* 카테고리 없는(레거시) 항목 */}
-            {filtered.filter(qa => !qa.cat).map((qa, i) => (
-              <button key={"x-" + i} className="chatbot-drop-item" onClick={() => selectQ(qa)}>{qa.q}</button>
-            ))}
-            {filtered.length === 0 && <div className="chatbot-drop-empty">일치하는 질문이 없습니다. Enter로 자연어 검색</div>}
-          </div>
-        </div>
-      )}
-      {answer && (
-        <div className="chatbot-overlay" onClick={closeAnswer}>
-          <div className="chat-panel" onClick={onPanelClick}>
-            <MatrixRain />
-            <div className="chat-head">
-              <span className="chat-ava"><Icon name="brain" size={16} /></span>
-              <b>AI INTELLIGENCE TERMINAL</b>
-              {typing && <span className="chat-typing">PROCESSING…</span>}
-              <button className="chatbot-bubble-close" onClick={closeAnswer}><Icon name="x" size={15} sw={2} /></button>
+                  {item.text && <pre data-preserve-copy="true">{item.text}</pre>}
+                  {item.commands && (
+                    <div className="site-cli-command-grid">
+                      {item.commands.map(([cmd, desc]) => <button key={cmd} onClick={() => setInput(cmd.split(" ")[0] + " ")}><code>{cmd}</code><span>{desc}</span></button>)}
+                    </div>
+                  )}
+                  {item.results?.length > 0 && (
+                    <div className="site-cli-results">
+                      {item.results.map(result => (
+                        <button key={result.id} onClick={() => { result.nav && onNav?.(result.nav); }}>
+                          <span>{result.kind}</span><b>{result.title}</b><p>{result.excerpt}</p><em>{result.source || "사이트 근거"}</em>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {item.exportable && <button className="site-cli-export" onClick={exportSession}><Icon name="download" size={13} /> 수정안 내보내기</button>}
+                </article>
+              ))}
+              {busy && <div className="site-cli-running"><i /><span>근거 분석과 수정안 구성</span></div>}
             </div>
-            <div className="chat-body">
-              <div className="chat-msg user">
-                <div className="chat-bubble user">{search}</div>
-              </div>
-              <div className="chat-msg bot">
-                <span className="chat-ava sm"><Icon name="brain" size={14} /></span>
-                <div className="chat-bubble bot">
-                  {typing
-                    ? <span className="chat-typetext">{displayText}<span className="chatbot-cursor">▋</span></span>
-                    : formatAnswer(answer)}
+
+            {configOpen && (
+              <div className="site-cli-config">
+                <div className="site-cli-config-title"><b>LLM CONNECTION</b><span>OpenAI Responses API 또는 호환 보안 프록시</span></div>
+                <label><span>ENDPOINT</span><input value={draftConfig.endpoint} onChange={event => setDraftConfig({ ...draftConfig, endpoint: event.target.value })} spellCheck="false" /></label>
+                <label><span>MODEL</span><input value={draftConfig.model} onChange={event => setDraftConfig({ ...draftConfig, model: event.target.value })} spellCheck="false" /></label>
+                <label><span>SESSION TOKEN</span><input type="password" value={token} onChange={event => setToken(event.target.value)} autoComplete="new-password" placeholder="현재 탭 메모리에만 유지" /></label>
+                <p>공개 페이지에 키 저장 금지 · 운영 환경은 서버측 보안 프록시 권장 · 수정안은 자동 반영 없이 검토 후 내보내기</p>
+                <div className="site-cli-config-actions">
+                  <button onClick={() => setConfigOpen(false)}>취소</button>
+                  <button className="primary" onClick={saveConfig}>연결 구성</button>
                 </div>
               </div>
-              {!typing && answerNav && (
-                <div className="chat-msg bot">
-                  <span className="chat-ava sm" style={{ visibility: "hidden" }}></span>
-                  <button className="chatbot-go" onClick={e => { e.stopPropagation(); goToSection(); }}>
-                    해당 섹션으로 이동 <Icon name="chevron" size={12} />
-                  </button>
-                </div>
-              )}
-              {!typing && <div className="chat-hint">아무 곳이나 클릭하면 닫고 새 질문을 입력할 수 있어요</div>}
-            </div>
-          </div>
-        </div>
+            )}
+
+            <footer className="site-cli-input-row">
+              <span>site-cli&nbsp;$</span>
+              <textarea
+                ref={terminalInputRef}
+                value={input}
+                onChange={event => setInput(event.target.value)}
+                onKeyDown={onTerminalKey}
+                placeholder="질문 입력 · /help 명령어 확인"
+                rows="1"
+                disabled={busy}
+                data-preserve-copy="true"
+              />
+              <button onClick={() => execute(input)} disabled={busy || !input.trim()} title="실행"><span className="site-cli-triangle" /></button>
+            </footer>
+          </section>
+        </div>,
+        document.body,
       )}
     </div>
   );
