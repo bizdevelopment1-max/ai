@@ -52,16 +52,9 @@ window.DASH = (function () {
       sources: ["Gemini 앱 MAU 900M+ (Google I/O 2026, Pichai)", "Gemini 3 출시 (Google I/O '26.5)", "AlphaFold 노벨화학상 2024"],
       url: "https://deepmind.google",
     },
-    {
-      cat: "startup", name: "DeepSeek", vertical: "지역 AI 플랫폼", domain: "deepseek.com", unit: "오픈 파운데이션 모델(중국)",
-      valuation: "$50B+", valAsof: "26.06", metric: "밸류에이션", value: "$52B~$59B", metricAsof: "26.06",
-      funding: "첫 외부 라운드 완료 $7.4B", trend: 50, trendBasis: "효율 혁신·첫 외부 투자 완료",
-      note: "DeepSeek-V3, R1 — 중국 최대 AI 연구소. 2026.06.16 첫 외부 투자 라운드 완료(CNY 50B+ ≈ $7.4B 조달, 밸류 $50B+ 확정 — $52B~$59B 범위의 하단부). 주요 투자자는 Tencent·CATL·창업자 Liang(약 40% 자체 출자)이며 국가 AI 펀드(CAIIF)도 참여 — 단 외부 투자자는 5년 락업·의결권 없음, 국가 펀드만 의결권 보유. R1·V3가 GPT-4급 성능을 약 1/10 비용으로 구현해 'AI 비용 혁명(Sputnik Moment)' 촉발. 단, 국유 펀드 투자로 지정학적 리스크 존재.",
-      vp: "압도적 비용 효율과 오픈 가중치 배포로 빠른 채택. AI 인프라 비용 패러다임 전환의 상징.",
-      direction: "효율 중심 모델 + 오픈 생태계. 다만 수출 규제·지정학 변수에 노출.",
-      sources: ["첫 외부 라운드 완료 $7.4B·밸류 $50B+ (TrendForce / TechStartups '26.06.16)", "R1·V3 1/10 비용 GPT-4급 성능", "Tencent·CATL·창업자 40% 출자, 국가 AI 펀드만 의결권 (FT '26.6)"],
-      url: "https://www.deepseek.com",
-    },
+    // 지역 기업은 발견용 최소 레지스트리만 유지한다. 사업·전략·수치·조직은
+    // companies.json의 공식 페이지/공개 원문 근거가 있을 때만 화면에 합성한다.
+    { cat: "startup", name: "DeepSeek", vertical: "지역 AI 플랫폼", domain: "deepseek.com", unit: "오픈 파운데이션 모델", trend: 0, note: "", vp: "", direction: "", sources: [], url: "https://www.deepseek.com" },
 
     // ── bigtech ──
     {
@@ -335,26 +328,8 @@ window.DASH = (function () {
       sources: ["~$400M 라운드·밸류 $9B 협의 (Bloomberg '26.01)", "$1B ARR 목표", "Replit Agent 자율 개발"],
       url: "https://replit.com",
     },
-    {
-      cat: "startup", name: "Kling AI", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T2", domain: "klingai.com", unit: "AI 영상 생성(중국)",
-      valuation: "$20B", valAsof: "26", metric: "ARR", value: "$240M~$500M", metricAsof: "25.12",
-      funding: "Kuaishou 스핀오프 제안", trend: 140, trendBasis: "ARR $100M→$240M+(3월→12월)",
-      note: "중국 Kuaishou의 AI 영상 생성. Kuaishou가 약 $20B 밸류·$2B 조달 스핀오프 제안 평가 중. ARR $240M(2025.12, 3월 $100M서 급증)·일부 보도 $500M. 글로벌 AI 영상 생성 랭킹 상위권(Runway·MiniMax와 경쟁).",
-      vp: "고품질 텍스트→영상 생성 + Kuaishou 유통. 중국 크리에이터 생태계 장악.",
-      direction: "스핀오프로 독립 자본 조달 + 글로벌 확장.",
-      sources: ["Kuaishou 스핀오프 ~$20B 제안 (The Information '26)", "ARR $240M (2025.12)", "글로벌 AI 영상 상위권"],
-      url: "https://klingai.com",
-    },
-    {
-      cat: "startup", name: "Hailuo (MiniMax)", vertical: "크리에이티브 도구", rel: "온디바이스 음성·미디어", tier: "T2", domain: "hailuoai.com", unit: "AI 영상·멀티모달(중국)",
-      valuation: "$13.7B", valAsof: "26", metric: "밸류", value: "$13.7B", metricAsof: "26",
-      funding: "멀티모달 성장", trend: 120, trendBasis: "약 3년 만에 $13.7B",
-      note: "중국 MiniMax의 AI 영상 생성 제품(Hailuo). 모회사 MiniMax는 텍스트·음성·영상 멀티모달 전략으로 약 3년 만에 밸류 $13.7B 도달. Hailuo는 Kling과 함께 크리에이터용 AI 영상 생성 1위권 경쟁.",
-      vp: "텍스트·음성·영상을 아우르는 멀티모달 + 저비용 고품질 영상.",
-      direction: "멀티모달 통합 + 글로벌 크리에이터·API 확장.",
-      sources: ["MiniMax 밸류 $13.7B (2026)", "Hailuo·Kling 글로벌 AI 영상 상위권", "멀티모달(텍스트·음성·영상)"],
-      url: "https://hailuoai.com",
-    },
+    { cat: "startup", name: "Kling AI", vertical: "크리에이티브 도구", rel: "멀티모달 미디어", tier: "T2", domain: "klingai.com", unit: "AI 영상 생성", trend: 0, note: "", vp: "", direction: "", sources: [], url: "https://kling.ai" },
+    { cat: "startup", name: "Hailuo (MiniMax)", vertical: "크리에이티브 도구", rel: "멀티모달 미디어", tier: "T2", domain: "minimax.io", unit: "AI 영상·멀티모달", trend: 0, note: "", vp: "", direction: "", sources: [], url: "https://www.minimax.io" },
     {
       cat: "startup", name: "Writer", vertical: "엔터프라이즈 AI", domain: "writer.com", unit: "엔터프라이즈 생성 AI",
       valuation: "$1.9B", valAsof: "24.11", metric: "라운드", value: "$200M", metricAsof: "24.11",
@@ -395,7 +370,7 @@ window.DASH = (function () {
     { id: "assistant", ko: "검색·어시스턴트", en: "Search & Assistant", desc: "AI 검색·답변·에이전트 브라우저 — 단말 어시스턴트 경쟁축" },
     { id: "creative", ko: "크리에이티브 도구", en: "Creative Tools", desc: "영상·음악·이미지·음성 생성 — 온디바이스 생성 기능과 직접 연결" },
     { id: "infra", ko: "인프라·파운데이션", en: "Infra & Foundation", desc: "오픈·소버린 모델·데이터·평가·모델 허브 — 모델 경쟁의 후방 가치사슬" },
-    { id: "regional", ko: "지역 AI 플랫폼", en: "Regional Ecosystems", desc: "중국 등 지역 생태계 — 비용 효율·지정학 변수" },
+    { id: "regional", ko: "지역 AI 플랫폼", en: "Regional Ecosystems", desc: "지역별 모델·서비스 생태계와 워크로드 특성" },
     { id: "enterprise", ko: "엔터프라이즈 AI", en: "Enterprise AI", desc: "법률·CS·헬스케어·사내검색 등 도메인 특화" },
   ];
 
@@ -497,7 +472,6 @@ window.DASH = (function () {
     { date: "2026-05-20", co: "Google DeepMind", cat: "bigtech", source: "Google", title: "Google I/O 2026 — Gemini 3.1 Pro + Deep Research Max, ARC-AGI-2 77.1%", summary: "· Gemini 3.1 Pro — ARC-AGI-2 77.1%·SWE-Bench 80.6%·100만 토큰 컨텍스트\n· Deep Research Max — 자율 리서치 에이전트(MCP 지원)\n· 검색·워크스페이스 전면 통합 — AI Ultra 구독자 우선 배포", tag: "Product", url: "https://blog.google/technology/ai/" },
     { date: "2026-05-19", co: "Google DeepMind", cat: "bigtech", source: "Google DeepMind / 9to5Google", title: "Gemini 3.5 Flash 출시 — 'Flash 속도로 Pro급 추론', 앱 기본 모델로", summary: "· Gemini 3.5 Flash — 출시 즉시 앱·검색 AI Mode 기본 모델로 전환\n· 에이전트·멀티모달서 Pro급 상회(ARC-AGI-2 72.1%) — 중급가로 코딩·에이전트 처리\n· Gemini 앱 MAU 900M+ 공개($84.75B 증자) · AI 개발자 구독 $100/월", tag: "Product", url: "https://deepmind.google/models/gemini/flash/" },
     { date: "2026-01-06", co: "SpaceX (xAI, Cursor)", cat: "native", source: "TechCrunch / NYT / The Guardian", title: "xAI, Series E $20B 완료 — 밸류 $230B+, Grok 딥페이크 논란 동시 직면", summary: "· xAI Series E $20B 완료(NVIDIA·Cisco·카타르·Fidelity) — 누적 $42B+·밸류 $230B+\n· Grok+X 합산 도달 600M+(독립 MAU와 구분 — 대부분 X 사용자)\n· Grok 미성년 딥페이크 자동 생성 논란 → 다수 정부 조사(성장 vs 거버넌스 리스크)", tag: "Funding", url: "https://www.theguardian.com/technology/2026/jan/06/elon-musk-xai-investment-grok-backlash" },
-    { date: "2026-06-16", co: "DeepSeek", cat: "startup", source: "CNBC / Reuters", title: "DeepSeek, 첫 외부 펀딩 완료 — $7.4B 조달·밸류 $50B+ 확정", summary: "· 첫 외부 라운드 $7.4B(CNY 50B+)·밸류 $50B+ 확정($52B~$59B 하단부)\n· 투자자 Tencent·CATL·창업자 40%·국가 AI 펀드 — 외부 투자자 5년 락업·의결권 없음\n· R1·V3로 GPT-4급을 1/10 비용 구현('Sputnik Moment') — 단 국유자본 거버넌스 리스크", tag: "Funding", url: "https://www.cnbc.com/2026/06/03/deepseek-slated-to-draw-7-billion-in-maiden-fundraising-sources-say.html" },
     { date: "2026-05-28", co: "Anthropic", cat: "native", source: "Anthropic / Reuters", title: "Anthropic, Series H $65B·밸류 $965B — run-rate 매출 $47B로 OpenAI 추월", summary: "· Series H $65B·$965B post-money(직전 2026.02 $380B) — 3개월 만에 2.5배\n· run-rate 매출 '이달 $47B 돌파'(4월 $30B서 급증) — OpenAI $25B 2배 가까이 추월\n· Claude Code 단독 $2.5B+ ARR — 최대 경쟁 역학 변화", tag: "Funding", url: "https://www.anthropic.com/news#series-h" },
     { date: "2026-06-17", co: "Anthropic", cat: "native", source: "Anthropic / The Information", title: "Anthropic, IPO 기밀 제출 + 서울 오피스 개설 — 한국 AI 생태계 파트너십", summary: "· 2026.06.01 밸류 $965B로 IPO 기밀 제출 — AI 최대어 상장 경쟁 가세\n· 06.17 서울 오피스 개설 + 한국 AI 생태계 파트너십 — 단말·제조 적용 신호\n· OpenAI(09월 목표)와 상장 레이스 본격화", tag: "IPO", url: "https://www.anthropic.com/news#seoul-office" },
     { date: "2026-06-12", co: "SpaceX (xAI, Cursor)", cat: "native", source: "CNBC / TechCrunch", title: "SpaceX, SPCX로 나스닥 데뷔 — 공모가 $135·조달 최종 $85.7B '사상 최대 IPO'", summary: "· 2026.06.12 나스닥 SPCX 데뷔 — 공모가 $135·조달 $75B → 그린슈 행사로 최종 $85.7B(사상 최대 IPO)\n· 첫날 +19% $161 마감·시총 $2.1T 데뷔 → 06.16 주가 급등으로 ~$2.51T(미 시총 4위권)\n· 4일 뒤 Cursor $60B 전액 주식 인수 합의 — 머스크 거버넌스 리스크 병존", tag: "IPO", url: "https://www.cnbc.com/2026/06/16/spacex-spcx-cursor-acquisition-ipo.html#nasdaq-debut" },
@@ -529,8 +503,6 @@ window.DASH = (function () {
     { date: "2026-03-25", co: "Harvey", cat: "startup", source: "CNBC / Bloomberg", title: "Harvey AI, $200M 라운드 — 법률 버티컬 AI $11B 밸류 달성", summary: "· Series C $200M·밸류 $11B(Sequoia·GIC) · ARR $190M(5개월 +90%)\n· 변호사 10만 명+·AmLaw 100 과반수 고객\n· 법률 버티컬 AI 리더 — 전문서비스로 확장", tag: "Funding", url: "https://www.cnbc.com/2026/03/25/legal-ai-startup-harvey-raises-200-million-at-11-billion-valuation.html" },
     { date: "2026-02-12", co: "Replit", cat: "startup", source: "Bloomberg / TechCrunch", title: "Replit, ~$400M 라운드 협의 — 밸류 $9B로 약 3배 점프, 코딩 에이전트 본격화", summary: "· ~$400M 신규 라운드로 밸류 약 $9B 협의 — 직전 대비 약 3배 상향\n· Replit Agent로 자연어→앱 빌드·배포 자동화 · ARR $1B 목표 제시\n· 단말 관점: 비개발자도 앱을 만드는 에이전트형 개발 — 단말 앱 생태계 진입장벽 붕괴 신호", tag: "Funding", url: "https://replit.com" },
     { date: "2025-12-15", co: "Lovable", cat: "startup", source: "CNBC / TechCrunch", title: "Lovable, Series B $330M — 밸류 $6.6B, '바이브 코딩' 대장주 부상", summary: "· Series B $330M·밸류 $6.6B — 직전 $1.8B서 급등\n· ARR $200M→$500M(12개월 만에 $1M→$200M 돌파 후 가속)\n· 단말 관점: 프롬프트만으로 동작하는 앱 생성 — 소프트웨어 제작 대중화가 단말 콘텐츠 공급 폭증으로 연결", tag: "Funding", url: "https://lovable.dev" },
-    { date: "2026-03-18", co: "Kling AI", cat: "startup", source: "The Information / Bloomberg", title: "Kuaishou, Kling AI 스핀오프 검토 — 밸류 ~$20B·$2B 조달 평가", summary: "· 모회사 Kuaishou가 Kling AI 분사·약 $20B 밸류·$2B 조달 검토\n· ARR $100M(3월)→$240M+(12월) 급증 · 일부 보도 $500M 추정\n· 단말 관점: 고품질 텍스트→영상 생성이 모바일 크리에이터 도구로 직결 — 온디바이스 미디어 수요 견인", tag: "Funding", url: "https://klingai.com" },
-    { date: "2026-03-10", co: "Hailuo (MiniMax)", cat: "startup", source: "Bloomberg / The Information", title: "MiniMax, 밸류 $13.7B 도달 — Hailuo로 AI 영상 글로벌 1위권 경쟁", summary: "· MiniMax 밸류 $13.7B — 창업 약 3년 만에 멀티모달로 급성장\n· Hailuo 영상 생성, Kling·Runway와 글로벌 상위권 경쟁 · 텍스트·음성·영상 통합\n· 단말 관점: 저비용 고품질 멀티모달 생성 — 단말 카메라·음성 앱의 생성형 기능 원가 절감 기반", tag: "Market", url: "https://hailuoai.com" },
     { date: "2026-02-26", co: "Synthesia", cat: "startup", source: "Reuters / TechCrunch", title: "Synthesia, 밸류 $2.1B — AI 아바타 영상으로 엔터프라이즈 표준화", summary: "· Series D로 밸류 $2.1B · ARR $100M+ 돌파\n· 대본 입력만으로 다국어 아바타 영상 자동 제작 · 사내 교육·마케팅 채택 확대\n· 단말 관점: 사람·촬영 없는 영상 제작 — 단말 영상 소비·생성 수요를 동시에 키우는 공급원", tag: "Funding", url: "https://www.synthesia.io" },
     { date: "2025-04-15", co: "Midjourney", cat: "startup", source: "The Information / TechCrunch", title: "Midjourney, V7 공개·영상 진입 — 외부 투자 없는 부트스트랩 흑자", summary: "· V7 모델 공개·2025년 영상 생성 진입 · 외부 투자 없이 흑자 운영\n· 추정 매출 $300M+(2024) — 구독 단일 모델로 고마진 유지\n· 단말 관점: 이미지→영상·3D 확장 — 단말 비주얼 생성 품질 기준선을 끌어올리는 레퍼런스", tag: "Product", url: "https://www.midjourney.com" },
     { date: "2025-02-20", co: "Writer", cat: "startup", source: "TechCrunch / Forbes", title: "Writer, 밸류 $1.9B — 자체 모델 Palmyra로 엔터프라이즈 에이전트 공략", summary: "· Series C $200M·밸류 $1.9B · 자체 모델 Palmyra 기반 기업용 생성 AI\n· Fortune 500 다수 고객 · 규제 산업 데이터 거버넌스·컴플라이언스 강점\n· 단말 관점: 기업 규정에 맞춘 온프레미스·전용 모델 수요 — 단말·엣지 AI의 거버넌스 요구와 동일 축", tag: "Funding", url: "https://writer.com" },
@@ -600,7 +572,6 @@ window.DASH = (function () {
     { name: "OpenAI", value: 852, cat: "native", src: "2026.03 확정 $730B pre + $122B 신규(post $852B)" },
     { name: "SpaceX (xAI, Cursor)", value: 230, cat: "native", src: "xAI Series E '26.1 밸류 $230B+ · Cursor 인수 $60B" },
     { name: "Databricks", value: 188, cat: "startup", src: "Coatue 주도 투자 보도 · $188B (2026-07-16)" },
-    { name: "DeepSeek", value: 55, cat: "startup", src: "Reuters '26.5 $52B~59B" },
     { name: "Mistral AI", value: 20, cat: "startup", src: "$3.5B 라운드·밸류 $20B 클로즈 (2026.06)" },
     { name: "Perplexity", value: 20, cat: "startup", src: "'25.09 Series E-6 $20B post(보도 추정 $21B+)" },
     { name: "Scale AI", value: 14, cat: "startup", src: "Forbes '24.05 $14B" },
@@ -626,7 +597,6 @@ window.DASH = (function () {
     { name: "Meta AI(제품 MAU)", value: 1200, cat: "bigtech", src: "Meta AI 제품 1.2B (Q1 2026 IR, 앱군 Family DAP 35억과 구분)" },
     { name: "X+Grok(합산 도달)", value: 600, cat: "native", src: "xAI Series E — X+Grok combined reach ~600M (Grok 단독 아님)" },
     { name: "GitHub Copilot", value: 200, cat: "bigtech", src: "Microsoft '26.4 (Copilot 좌석 2,000만 별도)" },
-    { name: "DeepSeek", value: 150, cat: "startup", src: "[업계 추정] '26.4" },
     { name: "Perplexity", value: 100, cat: "startup", src: "Perplexity 공식 '26.3" },
     { name: "Claude", value: 90, cat: "native", src: "[업계 추정] Anthropic '26.5" },
   ];
@@ -702,24 +672,24 @@ window.DASH = (function () {
   ];
 
   /* ---- KPI Cards (6) ---- */
-  /* ---- Executive Top-line: 현상 → 의사결정 (온디바이스 AI 단말 사업 임원 관점, 사명 비표기) ---- */
+  /* ---- Executive Top-line: 수요 신호 → 메모리 기회 → 실행 의사결정 ---- */
   const TOPLINE = [
-    { tag: "어시스턴트 전장", tone: "warn", nav: "bigtech",
-      now: "Gemini 앱 MAU 900M+ · Apple, Siri를 'Siri AI'로 재설계 · Perplexity Comet $200/월→전면 무료 전환",
-      cause: "AI 비서가 단말의 입력·앱 트래픽·데이터를 좌우하는 'OS 위의 새 관문'이 됨 → 비서를 쥔 쪽이 단말 경험·수익 동선을 통제",
-      decision: "폰의 '기본 비서' 자리가 단말 차별화의 핵심 전장 — 자사 기본 어시스턴트 노선(파트너 심화 vs 자체 vs 멀티)을 지금 확정해야 함" },
-    { tag: "온디바이스 스펙 경쟁", tone: "signal", nav: "bigtech",
-      now: "Morgan Stanley: 구형 iPhone 8.5억대가 메모리 한계로 온디바이스 AI 구동 곤란(고급 비서엔 12GB) · IDC: 생성형 AI 폰 2028년 70%",
-      cause: "고급 AI 추론에 메모리·NPU가 필수 → AI 성능이 하드웨어 사양에 직접 종속되고 구형 단말은 구조적으로 배제됨",
-      decision: "프리미엄 세그먼트에서 AI 기능·메모리·NPU를 함께 설계하되 판매·교체 효과는 가격·사용 빈도·업그레이드 주기로 별도 검증" },
-    { tag: "수익화 분기", tone: "revenue", nav: "bizmodel",
-      now: "Perplexity는 구독 버리고 광고·에이전트 커머스로 · OpenAI는 구독+API지만 Q1 마진 -122% · 버티컬은 ARR 배수 67배",
-      cause: "추론 단가가 3년 150배 급락 → 'AI 기능=무료' 압력이 커지며 '어디서 돈을 받는가'의 과금 모델 자체가 흔들림",
-      decision: "무료로 푸는 온디바이스 AI 기능의 과금 노선(구독 유료화 vs 단말 가격 프리미엄 vs 커머스 수수료) 결정이 임박" },
-    { tag: "에이전트 UX", tone: "compete", nav: "signals",
-      now: "Computer Use·Deep Research·Comet이 탭 관리·구매 대행까지 자동화 · 그러나 자율 성공률 OSWorld 66%서 정체·구조화 과제 1/3 실패",
-      cause: "성능(capability)은 빠르게 오르지만 자율 신뢰성(reliability)이 못 따라감 → 완전 자동화 시 오작동·책임·복구 비용이 폭증",
-      decision: "온디바이스 에이전트는 완전 자동화가 아니라 승인형·작업 로그·취소/복구 설계가 정답 — 자사 에이전트 UX 원칙으로 못박을 것" },
+    { tag: "고객 Pain point", tone: "warn", nav: "articles",
+      now: "수요처의 제품·워크로드·도입 일정과 메모리 병목을 동일한 근거 묶음으로 연결",
+      cause: "고객의 AI 서비스 목표가 같아도 모델 구조·지연시간·전력·데이터 이동량에 따라 필요한 메모리 조합이 달라짐",
+      decision: "고객별 성능 병목과 구매 조건을 먼저 정의하고 HBM·DRAM·NAND/eSSD·CXL 제안 우선순위를 결정" },
+    { tag: "AI Stack 변화", tone: "signal", nav: "signals",
+      now: "Application·Model·System SW·Accelerator·Storage 변화를 하나의 워크로드 맵으로 추적",
+      cause: "모델 경량화와 에이전트 확산이 동시에 진행돼 용량·대역폭·지연·내구성 요구가 계층별로 분화",
+      decision: "제품 로드맵을 단일 시장 전망이 아니라 워크로드별 메모리 요구량과 고객 채택 시점으로 검증" },
+    { tag: "신규 메모리 Biz.", tone: "revenue", nav: "newbiz",
+      now: "표준 제품 판매를 넘어 Custom HBM·CXL·기업용 SSD·메모리 SW 결합 기회를 비교",
+      cause: "고객의 시스템 병목이 제품 단품보다 데이터 이동·배치·운영 소프트웨어에서 발생",
+      decision: "수요 증거·차별화·실행 가능성·수익성을 통과한 기회만 PoC와 공동 로드맵으로 전환" },
+    { tag: "AI Infra 전략", tone: "compete", nav: "infra",
+      now: "데이터센터의 Compute·Memory·Storage·Network·Power/Cooling 설계를 함께 분석",
+      cause: "AI 인프라 투자 효율은 가속기 성능이 아니라 전체 시스템의 병목 제거와 가동률에서 결정",
+      decision: "국내외 AI Infra 파트너십을 메모리 attach·고객 검증·반복 수주로 연결하는 실행 안건으로 관리" },
   ];
 
   const KPIS = [
@@ -746,10 +716,8 @@ window.DASH = (function () {
     { title: "OpenAI 수익성 역설 — 밸류 $852B vs 마진 -122%", desc: "OpenAI는 $852B(2026.03) 밸류로 S-1 제출했으나 Q1 GAAP 운영손실 $9.3B·현금소각 $3.7B(매출의 65%)·순손실 $21.3B·Non-GAAP 마진 -122%를 기록. $852B는 2030년 매출 $280B 가정 기반 — 파운데이션 모델(대규모 적자) vs NVIDIA(~75% 마진)의 수익성 스펙트럼 양극단", icon: "pulse", src: "The Information '26.05, Bloomberg" },
     { title: "OpenAI vs Anthropic 재무 구조 — IPO 수익성 검증 국면", desc: "두 IPO 후보의 '실제 수익성' 격차가 공모 핵심 변수로 부상. OpenAI: ARR ~$24B(연환산)·Q1 실매출 $5.7B·Non-GAAP 마진 -122%·현금 $73B+·컴퓨트 약정 $665B·밸류 $852B(09월 목표). Anthropic: run-rate $47B(공식)이나 Q1 실매출 추정 $4.8B(연환산 ~$19B)로 간극 큼·Q2 Non-GAAP 흑자 전망·밸류 $965B. 핵심 리스크 — 두 회사 모두 GAAP 감사 재무 미공개 상태로 공모 진행, OpenAI는 '매출 $1당 $1.22 손실' 구조적 적자, Anthropic은 run-rate 신빙성 — S-1 공개가 실질 밸류 검증 분수령", icon: "pulse", src: "The Information/Bloomberg '26.06" },
     { title: "AI 코딩 에이전트 '3강' — SpaceX·Cursor 인수로 지형 재편", desc: "SpaceX가 Cursor($60B 인수)로 코딩 AI 시장 진입 — GitHub Copilot(Microsoft)·Claude Code(Anthropic)·Grok Build(xAI/SpaceX) 3강 경쟁 본격화. Cursor ARR $2B+(2026.02)→Oppenheimer 현재 ~$4B·연말 $6B 전망, DAU 100만+·총 활성 개발자 400만+·Fortune 500의 60%+ 고객. 인수 위약금 $10B($1.5B 현금+$8.5B 컴퓨트)·Cursor 코드 데이터의 Grok 학습 활용 계획에 프라이버시 논란 — 단말 관점: 자연어→앱 생성이 단말 SW 공급 구조를 바꾸는 변곡점", icon: "spark", src: "CNBC/Reuters '26.06, Oppenheimer" },
-    { title: "AI 칩 전쟁 — NVIDIA vs 커스텀 실리콘", desc: "NVIDIA B200이 AI 학습 시장 80%+를 점유하나, Google TPU·Amazon Trainium·Microsoft Maia 등 커스텀 칩이 추격. DeepSeek의 1/10 비용 모델로 효율이 핵심 변수로 부상. TIKR 모델 기준 NVDA 목표주가 $486(현 ~$220 대비 +121%, 20% 매출 CAGR 중간 케이스)·Q1 2026 AI VC 펀딩 $18.9B(CB Insights)로 자본 유입 지속", icon: "chip", src: "Goldman Sachs '26.02, TIKR/CB Insights '26" },
     { title: "AI 에이전트 — 파일럿에서 프로덕션으로", desc: "Gartner: 2026년 말 엔터프라이즈 앱 40%에 task-specific 에이전트 내장(2025년 <5%에서·현재 실제 배포는 17%), 2028년 SW 33%에 agentic AI 포함, 2026 agentic AI 지출 $201.9B(+141% YoY). 단, 프로젝트 40%+는 2027년까지 취소 경고. 독립 시장조사 기준 에이전트 시장은 $8.8~12.1B(2026)→$33.9~53.2B(2030~32)", icon: "spark", src: "Gartner '26 / Reuters '25.6, 독립 시장조사" },
     { title: "버티컬 AI — 모든 산업에 $1B+ 유니콘", desc: "법률(Harvey $11B), 음성(ElevenLabs $11B), 기업검색(Glean $7.2B), 고객서비스(Sierra $15B+) — 수평 LLM 경쟁에서 산업 전문화 AI로 투자 이동. Sierra는 $950M 라운드로 $15B+ 점프", icon: "chart", src: "TechCrunch '26.05, 각사 공식" },
-    { title: "오픈소스 vs 클로즈드 — 전략 분기", desc: "Meta Llama·Mistral·DeepSeek 등 오픈 가중치 모델이 도입을 가속하며 클로즈드 모델과 성능 격차 축소. EU AI Act 규제 환경에서 오픈소스 선호도 상승", icon: "chart", src: "Mistral·Meta·DeepSeek 공식, EU AI Act" },
     { title: "Physical AI — AI가 현실 세계로", desc: "Tesla Optimus Gen 3 제한 생산(2026 여름), Figure AI 공장 배포, Waymo 밸류 $126B. 골드만삭스: 2026년 인간형 로봇 5~10만 대 출하·휴머노이드 TAM 2035E $38B(구 $6B서 6배↑, 단가 $4~6만으로 하락). 물리적 AI 전체(자율주행 포함)는 별도 추정 2035E $1.15T — scope 구분", icon: "chip", src: "Goldman Sachs '26, Pomegra '26" },
     { title: "AI 전력 수요 쇼크 — 데이터센터가 전력망을 흔들다", desc: "IEA: 데이터센터 전력 소비 460 TWh는 2022년 수치(2024년은 ~415~490 TWh로 조정) → 2030E ~945 TWh로 수렴(전망 범위는 출처마다 상이). 미국 비중 2023년 4.4% → 2028년 6.7~12%(EIA). 전력 확충이 반도체보다 핵심 병목", icon: "spark", src: "IEA Energy & AI '25, EIA '26" },
     { title: "GenAI ROI — $1 투자 → $3.70 회수", desc: "성숙 AI 기업 평균 ROI $4.60/$1(Accenture), 파일럿 단계 $1.20/$1. 개발자 생산성 +26~40%. 회수기간: 고객서비스 4.1개월·마케팅 6.7개월·엔지니어링 9.3개월. 단 전사 ROI 체감은 29%에 그침", icon: "chart", src: "Accenture '26, McKinsey '26, Futurum '26" },
@@ -823,8 +791,6 @@ window.DASH = (function () {
     // ── ② 모델 경쟁 ──
     { cat: 2, q: "GPT-5.5 vs Claude Fable 5 — 지금 뭐가 더 낫나?", a: "2026년 6월 현재 두 모델이 최전선을 분점합니다. 한 줄 결론: '에이전트·속도→GPT-5.5, 코딩·장기 자율작업→Claude Fable 5'.\n\nGPT-5.5(2026.04.22 출시): Terminal-Bench 2.0 82.7%(Claude Opus 4.7의 69.4% 대비 +13p), FrontierMath 51.7%, 같은 작업 대비 72% 적은 토큰 사용. API $5/$30 per 1M 토큰, 1M 컨텍스트.\n\nClaude Fable 5(2026.06.09 출시): SWE-bench Verified 95.0%(GPT-5.5 82.6% 대비 +12p), SWE-Bench Pro 80.3%, Cognition FrontierCode Diamond 29.3%(GPT-5.5의 5.7%보다 5배). Hebbia Finance Benchmark 1위. API $10/$50 per 1M 토큰. 단, 미국 정부 수출 지시로 출시 3일 만에 일시 오프라인 → 현재 복귀.\n\n비교 요약: 코딩 벤치마크·장기 에이전트 자율작업(수 시간~수일)은 Fable 5 우위 / 속도·비용·에이전트 브레드스는 GPT-5.5 우위. 실무적으로는 '둘 다 무료 티어로 먼저 테스트하고 워크플로우에 맞는 쪽 선택'을 권장합니다.", nav: "native", keywords: ["gpt", "gpt-5.5", "claude", "fable", "비교", "벤치마크", "모델", "최신", "2026"] },
     { cat: 2, q: "OpenAI vs Anthropic — 철학과 수익화 전략의 차이는?", a: "같은 기술을 정반대 전략으로 팝니다.\n\nOpenAI: 철학='빠른 배포, 문제는 해결하며 간다.' ChatGPT로 주간 활성 사용자 ~905M 확보, GPT가 일반명사가 됐습니다. 수익화=구독(ChatGPT Plus/Pro)+API+엔터프라이즈. ARR $25B+(2026.02). IPO로 개인 투자자에게 문 열 예정.\n\nAnthropic: 철학='Constitutional AI — AI가 스스로 행동을 평가·수정'. OpenAI 전 연구진 창업, 안전성이 핵심 브랜드. Claude Code·Managed Agents로 개발자/기업 침투. ARR $47B(2026.05) — 의료·법률·금융 등 규제 산업에서 '안전성 프리미엄' 수익화. 상장 전 이미 OpenAI를 매출로 앞질렀습니다.\n\n전략적 포지션: OpenAI=소비자 AI 최강(9억 사용자) / Anthropic=엔터프라이즈 AI 실세(ARR 2배). '누가 이기냐'보다 '어느 시장에서'가 더 정확한 질문입니다. Amazon은 양쪽에 $13B+ 투자해 무승부 포지션을 취합니다.", nav: "native", keywords: ["openai", "anthropic", "claude", "차이", "비교", "철학", "constitutional", "전략"] },
-    { cat: 2, q: "DeepSeek가 AI 산업의 상식을 어떻게 깼나?", a: "DeepSeek는 '컴퓨트가 많아야 좋은 AI'라는 10년 간의 상식을 깼습니다.\n\n무슨 일이 있었나(2025.01): R1·V3가 GPT-4급 성능을 훈련·추론 비용 1/10로 구현 → NVIDIA 주가 하루 17% 폭락 → 'AI의 Sputnik Moment'. 혁신의 핵심은 Mixture-of-Experts 최적화 + 추론 시간 컴퓨트 배분 — 미국 칩 수출 규제로 H100이 없는 상태에서 이뤄냈습니다.\n\n2026.06.16 현재: 첫 외부 투자 라운드 완료 — CNY 50B+($7.4B), 밸류 $50B+. 주요 투자자: Tencent·CATL·창업자 Liang(약 40% 자체 출자) + 국가 AI 펀드(CAIIF, 의결권 보유). 외부 투자자는 5년 락업·의결권 없음.\n\n산업에 남긴 교훈: ① 알고리즘 혁신은 컴퓨트 우위를 단기간에 무력화할 수 있다. ② 오픈 가중치 배포로 전 세계 무료 사용 → 생태계 급성장. 리스크: 국유 자본 거버넌스·수출 규제·데이터 프라이버시 — 미국·유럽 기업은 독립 배포 전 법무 검토 필수.", nav: "native", keywords: ["deepseek", "딥시크", "r1", "v3", "비용", "효율", "sputnik", "7.4"] },
-    { cat: 2, q: "오픈소스 vs 클로즈드 모델 — 기업은 어떤 걸 써야 하나?", a: "이건 기술 선택이 아니라 데이터 전략·비용 구조·컴플라이언스 전략의 선택입니다.\n\n오픈 가중치(Llama 4·Mistral·DeepSeek R1): 가중치 공개 배포. 장점=무료·자체 서버 배포로 데이터 외부 유출 없음·파인튜닝 자유·EU AI Act 대부분 면제. 단점=자체 인프라 비용·운영/보안 책임 전담·최신 성능 격차(줄어들고 있음).\n\n클로즈드(GPT-5.5·Claude Fable 5·Gemini 3.x): API 전용. 장점=최고 성능·운영 부담 제로·빠른 업데이트. 단점=데이터 API 통과·토큰 비용 누적·서비스 정책 변경 리스크.\n\n2026년 격차 현황: DeepSeek R1이 GPT-4급을 1/10 비용으로, Llama 4도 근접 — 격차가 빠르게 줄고 있습니다. EU·한국 기업은 GDPR/개인정보보호법으로 오픈소스 자체 배포가 늘고 있습니다.\n\n선택 기준: 데이터 보안·컴플라이언스 최우선 → 오픈소스 자체 배포 / 최고 성능·빠른 도입·지원 우선 → 클로즈드 API.", nav: "dynamics", keywords: ["오픈소스", "클로즈드", "llama", "deepseek", "차이", "기업", "eu", "gdpr", "데이터"] },
     // ── ③ 인프라·하드웨어 ──
     { cat: 3, q: "NVIDIA는 왜 아직도 압도적인가?", a: "NVIDIA의 해자는 '좋은 GPU' 하나가 아니라 하드웨어+소프트웨어 이중 구조입니다.\n\n하드웨어: AI GPU 점유율 80%+. FY27 Q1(2026.05) 매출 $81.6B(+85% YoY)·데이터센터 $75.2B(+92%). Q2 가이던스 $91.0B. B200(Blackwell)은 H100 대비 추론 30배·전력효율 대폭 향상.\n\n소프트웨어(핵심 해자): CUDA 생태계는 10년간 7.5M+ 개발자가 쌓은 라이브러리·워크플로우. PyTorch·TensorFlow 모두 CUDA 위에서 최적화 — '수백만 명의 습관'을 바꾸는 건 기술이 아닙니다.\n\n위협은 실재: Google TPU v7(Ironwood) 추론 전력효율 B200의 약 2배, Amazon Trainium 3·MS Maia 2·Meta MTIA 2 등 4대 하이퍼스케일러 자체 칩 합산 190만 가속기. 업계 컨센서스는 'CUDA 대체 최소 5~7년'. FY27 데이터센터 전망 $105~120B로 오히려 상향됐습니다 — '분리'는 시작됐지만 NVIDIA 시대의 끝은 아닙니다.", nav: "bigtech", keywords: ["nvidia", "엔비디아", "gpu", "cuda", "b200", "blackwell", "tpu", "trainium"] },
     { cat: 3, q: "빅테크 자체 칩이 NVIDIA를 위협하나?", a: "위협은 실재하지만, 2026년 현재는 '보완재' 단계입니다.\n\n4대 하이퍼스케일러 현황: Google TPU v7(Ironwood)=추론 전력효율 B200의 약 2배, Google 내부 Gemini 학습에 우선 사용. Amazon Trainium 3=NVIDIA 의존도 감소·Anthropic과 10년 $100B 약정 연계. MS Maia 2=Copilot·Azure 일부 워크로드 전환. Meta MTIA 2=Llama 학습 일부 담당.\n\n합산 배포 약 190만 가속기이지만, CUDA 생태계 미지원으로 외부 개발자에게는 '접근 불가' 상태. 이 칩들은 자체 워크로드 비용 절감용이지 NVIDIA를 대체하는 상품이 아닙니다.\n\n결론: 하이퍼스케일러들은 NVIDIA 의존도를 '전략적으로 낮추는 중'이지, 대체하는 게 아닙니다. NVIDIA가 더 위협적으로 보는 것은 칩 자체보다 'AWS/Azure가 GPU 서버를 되팔면서 NVIDIA 최종 고객에게 접근하는 것'입니다.", nav: "bigtech", keywords: ["tpu", "trainium", "자체칩", "nvidia", "대체", "google", "amazon", "maia"] },
@@ -990,7 +956,6 @@ window.DASH = (function () {
       events: [
         { date: "2023-05-25", dir: "up", label: "FY24 가이던스 서프라이즈", reason: "데이터센터 GPU 수요가 예상을 압도해 다음 분기 매출 가이던스를 시장 추정치보다 50%+ 높게 제시. ChatGPT發 AI 학습 붐의 '유일한 삽·곡괭이' 공급자로 부각되며 하루 +24%, 단숨에 AI 대장주로 등극." },
         { date: "2024-06-07", dir: "up", label: "10:1 주식분할", reason: "10:1 액면분할로 주당 가격을 낮춰 소매·옵션 접근성 확대. 분할 자체는 가치를 바꾸지 않지만 수급 기대와 H100/H200 수요 지속이 겹쳐 사상 최고가 경신." },
-        { date: "2025-01-27", dir: "down", label: "DeepSeek 쇼크 -17%", reason: "중국 DeepSeek가 GPU를 훨씬 적게 쓰고도 GPT-4급 성능을 냈다는 소식에 'AI 칩 과잉투자(capex 거품)' 공포 확산. 하루 -17%·시총 약 $600B 증발(미국 증시 사상 최대 일일 손실). 단, 이후 추론 수요 급증으로 회복." },
         { date: "2025-04-04", dir: "down", label: "관세·수출규제 우려", reason: "반도체 관세와 대중(對中) 수출규제 확대 가능성에 마진·물량 훼손 우려. 매크로 위험회피까지 겹쳐 조정됐으나, B200(Blackwell) 실수요 확인되며 반등." },
         { date: "2026-01-30", dir: "down", label: "Blackwell 정점론·차익실현", reason: "Q3 FY26 매출 $57B·데이터센터 $51.2B(+66%)의 호실적에도 '성장 정점' 논쟁과 단기 차익실현 매물 출회. 호재가 이미 주가에 반영됐다는 인식(sell-the-news)이 단기 조정을 유발." },
         { date: "2026-05-20", dir: "up", label: "FY27 Q1 사상 최대 실적", reason: "분기 매출 $81.6B(+85%)·데이터센터 $75.2B(+92%) 신기록에 Q2 가이던스 $91B 제시. '정점론'을 실적으로 반박하며 사상 최고가권 회복." },
@@ -1073,7 +1038,6 @@ window.DASH = (function () {
       ticker: "AAPL", name: "Apple", group: "device", domain: "apple.com", cat: "bigtech",
       events: [
         { date: "2024-06-10", dir: "up", label: "Apple Intelligence 공개", reason: "WWDC에서 온디바이스 AI 'Apple Intelligence' 발표. 약 20억 대 기기의 'AI 업그레이드 교체 사이클' 기대가 사상 최고가를 견인." },
-        { date: "2025-04-08", dir: "down", label: "관세·AI 지연 우려", reason: "중국 생산 비중에 따른 관세 노출과 Siri 고도화 지연(기능 출시 연기) 우려가 겹쳐 조정. 'AI 후발주자' 인식이 멀티플 압박." },
         { date: "2025-06-09", dir: "up", label: "WWDC25 온디바이스 확대", reason: "온디바이스 모델 개방·Foundation Models 프레임워크로 개발자 생태계 확장 발표. 프라이버시 기반 단말 AI 차별화 기대로 반등." },
       ],
     },
@@ -1326,66 +1290,67 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  // ── 단말 AI SW·서비스 밸류체인 7계층 ─────────────────────────────────
-  // 고객 접점 → 서비스 운영 → 기술 인에이블러 → 후방 인프라 순으로 정렬한다.
+  // ── AI 수요 → 메모리 기회 밸류체인 7계층 ───────────────────────────────
+  // Application → Model/SW → Infrastructure로 내려가며 고객 Pain point가
+  // 어떤 메모리 제품·솔루션 요구로 전환되는지 추적한다.
   // 기업은 대표 계층(primary) 1개와 인접 확장 계층(adjacent)을 함께 가져,
   // 단순 업종 분류가 아니라 "현재 통제점과 다음 확장 방향"을 동시에 보여준다.
   const VALUE_CHAIN = [
     {
-      id: "app", ko: "AI 경험·버티컬 서비스", en: "Experience & Vertical Services",
-      accent: "#A66B3F", accentSoft: "#F7ECE3", stance: "OWN", stanceKo: "직접 보유",
-      controlPoint: "홈화면·OS·기본앱·일상 워크플로", economics: "구독·커머스·단말 프리미엄",
-      risk: "킬러 유스케이스 부재·외부 앱에 고객 접점 상실",
-      operatorMove: "생활·업무 버티컬 3~5개를 기본 탑재하고 계정·결제·단말 기능과 결합",
-      desc: "사용자가 단말에서 직접 체감하고 비용을 지불하는 AI 경험 — 비서·검색·생산성·크리에이티브·법률·의료",
+      id: "app", ko: "AI 애플리케이션·워크로드", en: "AI Applications & Workloads",
+      accent: "#315C4A", accentSoft: "#E9F2EE", stance: "DISCOVER", stanceKo: "수요 발굴",
+      controlPoint: "사용량·동시성·응답시간·데이터 유형", economics: "서비스 성장·인프라 비용·고객가치",
+      risk: "데모 성능을 실제 운영 부하와 혼동",
+      operatorMove: "고객 서비스의 토큰·세션·데이터 흐름을 메모리 용량·대역폭·내구성 요구로 변환",
+      desc: "AI 서비스가 만드는 실제 수요 — 생성·검색·코딩·산업별 추론·데이터 처리 워크로드",
     },
     {
-      id: "agent", ko: "에이전트·오케스트레이션", en: "Agents & Orchestration",
-      accent: "#66558C", accentSoft: "#F0EDF5", stance: "ORCHESTRATE", stanceKo: "오케스트레이션",
-      controlPoint: "의도 해석·도구 호출·멀티모델 라우팅", economics: "에이전트 구독·업무 성과 과금",
-      risk: "모델/OS 사업자가 오케스트레이션 계층을 선점",
-      operatorMove: "개인 컨텍스트와 단말 권한을 쓰는 멀티모델 에이전트 레이어를 핵심 통제점으로 확보",
-      desc: "여러 모델·앱·단말 기능을 연결해 사용자의 의도를 실제 행동으로 바꾸는 실행 계층",
+      id: "agent", ko: "에이전트·업무 흐름", en: "Agents & Workflows",
+      accent: "#4E5D78", accentSoft: "#EDF0F5", stance: "MAP", stanceKo: "동작 분석",
+      controlPoint: "도구 호출·컨텍스트 길이·동시 에이전트·체크포인트", economics: "업무 처리량·세션당 추론비·캐시 효율",
+      risk: "PoC 사용량으로 상용 트래픽을 과대 추정",
+      operatorMove: "에이전트 실행의 KV cache·메모리 풀링·스토리지 I/O 요구를 시나리오별 산출",
+      desc: "멀티스텝 AI가 만드는 장기 컨텍스트·반복 추론·상태 저장 수요",
     },
     {
-      id: "service", ko: "서비스 플랫폼·수익화", en: "Service Platform & Monetization",
-      accent: "#397A68", accentSoft: "#EAF3EF", stance: "BUILD", stanceKo: "플랫폼 구축",
-      controlPoint: "배포·과금·정산·파트너 마켓플레이스", economics: "수수료·번들·B2B 라이선스·성과 과금",
-      risk: "트래픽만 제공하고 서비스 마진은 파트너가 회수",
-      operatorMove: "AI 서비스 스토어·번들·B2B 배포 패키지로 유통과 과금 주도권 확보",
-      desc: "서비스를 묶고 배포하며 과금·정산하는 플랫폼 계층 — 마켓플레이스·FDE·엔터프라이즈 구축 포함",
+      id: "service", ko: "서비스·플랫폼 경제성", en: "Service & Platform Economics",
+      accent: "#466D63", accentSoft: "#EBF2F0", stance: "SIZE", stanceKo: "기회 산정",
+      controlPoint: "활성 사용자·가격·SLA·추론 원가", economics: "TCO·단위경제성·메모리 attach",
+      risk: "시장 규모와 실제 구매 예산을 혼합",
+      operatorMove: "고객 성장 시나리오를 서버·가속기·메모리 설치 기반과 조달 일정으로 연결",
+      desc: "AI 서비스의 사업모델과 확장 속도가 인프라·메모리 구매로 전환되는 계층",
     },
     {
-      id: "trust", ko: "데이터·컨텍스트·신뢰", en: "Data, Context & Trust",
-      accent: "#287A78", accentSoft: "#E8F3F2", stance: "CONTROL", stanceKo: "통제권 확보",
-      controlPoint: "개인 컨텍스트·ID·동의·권한·평가", economics: "신뢰 프리미엄·기업 관리·데이터 서비스",
-      risk: "프라이버시 사고·권한 오남용·데이터 이동성 규제",
-      operatorMove: "온디바이스 개인화 금고와 기업용 정책·평가 레이어를 공통 자산으로 구축",
-      desc: "개인화와 기업 배포를 가능하게 하는 컨텍스트·권한·보안·거버넌스·평가 계층",
+      id: "trust", ko: "데이터·RAG·신뢰", en: "Data, RAG & Trust",
+      accent: "#2F6F73", accentSoft: "#E8F2F2", stance: "DESIGN", stanceKo: "데이터 설계",
+      controlPoint: "벡터DB·검색·캐시·보안·데이터 지역성", economics: "검색 지연·스토리지 비용·데이터 재사용",
+      risk: "데이터 규모만으로 고성능 스토리지 수요를 단정",
+      operatorMove: "RAG·Vector DB·캐시 계층별 지연·내구성·용량 요구를 eSSD·CXL·DRAM 제안으로 연결",
+      desc: "기업 데이터가 모델에 공급되는 경로와 저장·검색·보안 요구",
     },
     {
-      id: "model", ko: "모델·온디바이스 지능", en: "Models & On-device Intelligence",
-      accent: "#5B5F8A", accentSoft: "#EEEFF5", stance: "PARTNER", stanceKo: "멀티소싱",
-      controlPoint: "성능·원가·지연·프라이버시의 균형", economics: "API 사용량·라이선스·소버린 배포",
-      risk: "단일 모델 종속·추론비 변동·기능 차별화 약화",
-      operatorMove: "자체 경량 모델과 2개 이상 외부 모델을 라우팅해 비용·성능·규제 리스크 분산",
-      desc: "클라우드 프런티어 모델과 단말 경량 모델을 조합하는 지능 공급 계층",
+      id: "model", ko: "모델·추론 아키텍처", en: "Models & Inference Architecture",
+      accent: "#565D7C", accentSoft: "#EEEFF4", stance: "TRANSLATE", stanceKo: "요구 변환",
+      controlPoint: "파라미터·정밀도·MoE·컨텍스트·추론 방식", economics: "토큰당 원가·메모리 풋프린트·처리량",
+      risk: "벤치마크 수치를 실서비스 하드웨어 요구로 직결",
+      operatorMove: "학습·추론·미세조정별 메모리 대역폭·용량·전력 민감도를 분리",
+      desc: "Transformer·멀티모달·MoE·경량 모델 구조가 만드는 메모리 요구",
     },
     {
-      id: "data", ko: "개발·배포 툴링", en: "Developer & Deployment Tooling",
-      accent: "#3E648D", accentSoft: "#EBF0F5", stance: "ENABLE", stanceKo: "생태계 개방",
-      controlPoint: "SDK·모델 허브·평가·MLOps·배포 자동화", economics: "개발자 플랫폼·호스팅·사용량",
-      risk: "폐쇄형 SDK로 파트너 확장 속도 저하",
-      operatorMove: "단말 API·에이전트 SDK·평가도구를 개방해 외부 서비스의 탑재 비용을 낮춤",
-      desc: "모델을 앱과 서비스로 빠르게 제품화하는 SDK·모델 허브·MLOps·평가·배포 도구",
+      id: "data", ko: "AI SW·개발·배포", en: "AI Software & Deployment",
+      accent: "#3F6382", accentSoft: "#EBF0F4", stance: "OPTIMIZE", stanceKo: "SW 최적화",
+      controlPoint: "Compiler·runtime·serving·scheduler·MLOps", economics: "가동률·메모리 활용률·배포 속도",
+      risk: "하드웨어 증설로 SW 비효율을 가림",
+      operatorMove: "메모리 관리·압축·프리패치·계층화 SW를 제품 차별화와 공동 최적화 기회로 전환",
+      desc: "AI 모델을 운영하는 HW/SW 통합 계층과 메모리 효율화 기술",
     },
     {
-      id: "infra", ko: "엣지·클라우드 런타임", en: "Edge & Cloud Runtime",
-      accent: "#2C7180", accentSoft: "#E8F2F4", stance: "SOURCE", stanceKo: "선택 조달",
-      controlPoint: "추론 원가·지연시간·가용성", economics: "컴퓨트·서빙 사용량",
-      risk: "GPU·클라우드 가격과 공급 제약을 서비스 원가로 전가",
-      operatorMove: "클라우드·칩을 멀티소싱하고 온디바이스 처리율을 높여 변동비를 방어",
-      desc: "단말·엣지·클라우드에서 모델을 실행하는 런타임과 컴퓨트 — 차별화보다 원가·안정성 관리가 핵심",
+      id: "infra", ko: "AI 인프라·HW", en: "AI Infrastructure & Hardware",
+      accent: "#255D70", accentSoft: "#E8F0F3", stance: "CO-DESIGN", stanceKo: "공동 설계",
+      controlPoint: "Compute·Memory·Storage·Network·Power/Cooling", economics: "CapEx·가동률·시스템 TCO",
+      risk: "가속기 수량을 메모리 수요와 일대일로 환산",
+      operatorMove: "고객 아키텍처와 조달 로드맵을 기준으로 HBM·DRAM·NAND/eSSD·CXL 솔루션을 공동 설계",
+      desc: "AI 데이터센터와 엣지 시스템의 성능·전력·용량 병목이 만나는 실행 계층",
     },
   ];
   // Stock 분석 전용 7계층 — 현재 추적 중인 상장사 63개의 실제 사업 영역을 하류에서 상류 순으로 재분류
@@ -1449,20 +1414,27 @@ window.DASH = (function () {
     "ElevenLabs": { layer: "app", vertical: "음성·대화 인터페이스", adjacent: ["agent", "service"], fit: "high" },
   };
 
-  // 컨설팅형 전략 프레임: Where to Play / How to Win / 실행 Horizon.
-  // 레이어별 시장 신호는 화면에서 companies.json의 기사·활동 데이터를 합산해 자동 갱신한다.
-  const MOBILE_STRATEGY = {
-    northStar: "모델을 소유하는 기업이 아니라, 고객 접점·개인 컨텍스트·서비스 유통과 과금을 통제하는 단말 AI 플랫폼",
+  // 고객 Pain point를 메모리 솔루션과 경영진 안건으로 전환하는 부서 운영 프레임.
+  // 시장 신호는 companies.json의 원문·공식 활동을 합산해 자동 갱신한다.
+  const MEMORY_STRATEGY = {
+    northStar: "고객 워크로드의 Pain point를 검증 가능한 메모리 솔루션과 신규 사업 기회로 전환",
     choices: [
-      { no: "01", title: "개인 컨텍스트 금고", where: "데이터·컨텍스트·신뢰", win: "온디바이스 처리·명시적 동의·앱 간 권한을 공통 서비스로 제공", kpi: "온디바이스 처리율 · 동의율 · 컨텍스트 재사용 앱 수" },
-      { no: "02", title: "멀티모델 에이전트", where: "에이전트·오케스트레이션", win: "성능·가격·프라이버시에 따라 모델을 라우팅하고 단말 기능을 안전하게 실행", kpi: "완료율 · 건당 추론원가 · 재시도율 · 월간 활성 에이전트" },
-      { no: "03", title: "AI 서비스 유통·과금", where: "서비스 플랫폼·수익화", win: "기본 탑재·번들·결제·B2B 배포를 묶어 파트너의 시장진입 비용을 낮춤", kpi: "유료 전환율 · 서비스 ARPU · 파트너 GMV · 수익배분율" },
-      { no: "04", title: "버티컬 포트폴리오", where: "AI 경험·버티컬 서비스", win: "자체 개발·독점 제휴·지분투자를 조합해 생활·업무 핵심 시나리오를 선점", kpi: "주간 이용률 · 기능당 유지율 · 파트너별 CAC · 번들 해지율" },
+      { no: "01", title: "Customer Intelligence", where: "주요 고객·워크로드", win: "고객 전략·제품 일정·시스템 병목을 원문 근거로 연결", kpi: "고객별 근거 최신성 · Pain point 검증률 · 의사결정자 인터뷰" },
+      { no: "02", title: "AI Stack Translation", where: "Application·HW·SW 변화", win: "모델·시스템 변화를 용량·대역폭·지연·내구성 요구로 정량 변환", kpi: "워크로드 커버리지 · 요구량 오차 · 기술 전환 리드타임" },
+      { no: "03", title: "Memory Solution Design", where: "HBM·DRAM·NAND/eSSD·CXL", win: "제품 단품이 아닌 시스템 TCO·성능 병목 중심의 맞춤 솔루션 설계", kpi: "고객 PoC · 인증 통과율 · attach · 반복 수주" },
+      { no: "04", title: "AI Infra Strategy", where: "국내외 AI 인프라", win: "파트너·투자·공동 로드맵을 신규 메모리 수요와 실행 안건으로 연결", kpi: "공동 로드맵 · 설계 반영 · 수주 파이프라인 · 실현 매출" },
+    ],
+    capabilities: [
+      { no: "01", title: "Data Center Workload", detail: "서비스 트래픽·모델 구조·컴퓨트 토폴로지·스토리지 경로", output: "Pain point map" },
+      { no: "02", title: "HW / SW Architecture", detail: "가속기·CPU·네트워크·시스템 SW·데이터 파이프라인", output: "Memory requirement" },
+      { no: "03", title: "Memory & Semiconductor", detail: "HBM·DRAM·NAND/eSSD·CXL의 성능·전력·신뢰성 trade-off", output: "Solution concept" },
+      { no: "04", title: "Strategy & Consulting", detail: "시장 구조·경쟁·고객 경제성·파트너십·사업성", output: "Executive case" },
+      { no: "05", title: "LLM / RAG / Vector DB", detail: "Transformer·Prompt Engineering·RAG·Vector DB 기반 워크로드 변화", output: "Demand scenario" },
     ],
     horizons: [
-      { id: "h1", label: "H1 · 0–6개월", title: "기준선 확보", actions: ["7계층 파트너·원가·데이터 흐름 맵핑", "모델 라우팅·권한·평가 공통 아키텍처 확정", "상위 3개 버티컬 PoC와 단위경제성 측정"] },
-      { id: "h2", label: "H2 · 6–18개월", title: "통제점 제품화", actions: ["개인 컨텍스트 금고와 에이전트 SDK 출시", "구독·커머스·기업 번들 3개 과금 실험", "파트너 마켓플레이스와 품질·안전 인증 운영"] },
-      { id: "h3", label: "H3 · 18–36개월", title: "플랫폼 확장", actions: ["성과 상위 버티컬 직접 투자·인수", "단말군·지역·기업 fleet로 배포 확장", "외부 개발자 매출과 반복 소비 기반 플랫폼 수익화"] },
+      { id: "h1", label: "01 · DISCOVER", title: "Pain point 정의", actions: ["고객·워크로드·아키텍처 근거 수집", "현재 병목과 구매 조건 분리", "검증 질문과 정보 공백 명시"] },
+      { id: "h2", label: "02 · DESIGN", title: "솔루션·사업 설계", actions: ["메모리 요구량과 시스템 TCO 산정", "제품·SW·파트너 조합 비교", "PoC·인증·수익성 기준 설정"] },
+      { id: "h3", label: "03 · DECIDE", title: "경영진 실행", actions: ["Go/Watch/No-Go 안건 상정", "고객 공동 로드맵과 담당자 지정", "수주·검증·재평가 KPI 추적"] },
     ],
   };
 
@@ -1488,7 +1460,6 @@ window.DASH = (function () {
 
     "OpenAI": { linkedin: "https://www.linkedin.com/company/openai", founded: "2015 · Sam Altman 等", ceo: "Sam Altman", hq: "미국 캘리포니아州 샌프란시스코", business: ["ChatGPT(소비자·기업)", "GPT 모델 API", "Deployment Company(엔터프라이즈 구축)"], shareholders: "비영리 모회사 지배 · Microsoft 등 투자" },
     "Anthropic": { linkedin: "https://www.linkedin.com/company/anthropic", founded: "2021 · Dario·Daniela Amodei 等", ceo: "Dario Amodei", hq: "미국 캘리포니아州 샌프란시스코", business: ["Claude(모델·API)", "엔터프라이즈·Claude Code", "엔터프라이즈 AI 서비스 회사"], shareholders: "Amazon·Google 대형 투자" },
-    "DeepSeek": { founded: "2023 · 항저우", hq: "중국 항저우", business: ["오픈 가중치 LLM(R1·V3)", "저비용 추론"] },
     "Perplexity": { linkedin: "https://www.linkedin.com/company/perplexity-ai", founded: "2022", ceo: "Aravind Srinivas", hq: "미국 캘리포니아州 샌프란시스코", business: ["AI 검색·답변 엔진", "Comet 브라우저"] },
     "Mistral AI": { linkedin: "https://www.linkedin.com/company/mistralai", founded: "2023", ceo: "Arthur Mensch", hq: "프랑스 파리", business: ["오픈 가중치 LLM", "엔터프라이즈·소버린 AI"] },
     "Cohere": { linkedin: "https://www.linkedin.com/company/cohere-ai", founded: "2019", ceo: "Aidan Gomez", hq: "캐나다 토론토", business: ["엔터프라이즈·소버린 LLM", "RAG·임베딩"] },
@@ -1509,8 +1480,6 @@ window.DASH = (function () {
     "Cursor": { founded: "2022 · Anysphere", hq: "미국 샌프란시스코", business: ["AI 코딩 에디터(IDE)"] },
     "Lovable": { founded: "2023", hq: "스웨덴 스톡홀름", business: ["AI 앱 빌더(바이브 코딩)"] },
     "Replit": { linkedin: "https://www.linkedin.com/company/replit", founded: "2016", ceo: "Amjad Masad", hq: "미국 캘리포니아州 샌프란시스코", business: ["브라우저 개발환경·AI 에이전트"] },
-    "Kling AI": { founded: "2024 · Kuaishou", hq: "중국", business: ["생성형 영상 AI"] },
-    "Hailuo (MiniMax)": { founded: "2021 · MiniMax", hq: "중국 상하이", business: ["영상·음성·LLM 생성 AI"] },
     "Writer": { founded: "2020", ceo: "May Habib", hq: "미국 캘리포니아州 샌프란시스코", business: ["엔터프라이즈 생성 AI 플랫폼"] },
     "SpaceX (xAI, Cursor)": { founded: "SpaceX 2002 · xAI 2023", ceo: "Elon Musk", hq: "미국 텍사스州", business: ["우주 발사·Starlink", "xAI(Grok) AI 모델"] },
   };
@@ -1636,9 +1605,6 @@ window.DASH = (function () {
       { name: "Rohit Prasad", role: "SVP·Head Scientist(AGI)", edu: "일리노이공대 전기공학 석사", career: "Alexa·AGI 조직 총괄" },
       { name: "Jeff Bezos", role: "Founder·Exec Chair", edu: "Princeton 전기공학·컴퓨터과학", career: "1994 창업 · 前 D.E. Shaw" },
     ] },
-    "DeepSeek": { mission: "저비용·오픈 가중치로 프런티어 AI를 대중화", leadership: [
-      { name: "Liang Wenfeng(량원펑)", role: "Founder·CEO", edu: "Zhejiang University 정보·전자공학", career: "High-Flyer(퀀트 헤지펀드) 창업 · 2023 DeepSeek 설립" },
-    ] },
     "Scale AI": { mission: "AI 개발을 위한 데이터 인프라(라벨링·평가) 공급", leadership: [
       { name: "Alexandr Wang", role: "Founder", edu: "MIT 중퇴", career: "前 Quora 엔지니어 · 2016 Scale AI 창업 (2025 Meta 초지능팀 합류)" },
       { name: "Jason Droege", role: "CEO", edu: "Xavier Univ · Kellogg MBA", career: "前 Uber Eats 창립 임원 · 2025~ Scale CEO" },
@@ -1685,12 +1651,6 @@ window.DASH = (function () {
     "Runway": { mission: "창작을 위한 AI 영상·이미지 생성 도구", leadership: [
       { name: "Cristóbal Valenzuela", role: "Co-founder·CEO", edu: "NYU ITP · 칠레 경제학", career: "Stable Diffusion 공동 개발" },
       { name: "Anastasis Germanidis", role: "Co-founder·CTO", edu: "NYU", career: "생성 영상 연구" },
-    ] },
-    "Kling AI": { mission: "콰이쇼우(Kuaishou)의 영상 생성 AI", leadership: [
-      { name: "Cheng Yixiao(청이샤오)", role: "Kuaishou CEO", edu: "", career: "콰이쇼우 공동창업 · Kling 영상 생성 모델 총괄" },
-    ] },
-    "Hailuo (MiniMax)": { mission: "멀티모달 생성 AI(영상·음성·모델)", leadership: [
-      { name: "Yan Junjie(옌쥔제)", role: "Founder·CEO", edu: "중국과기대(USTC)·CAS 박사", career: "前 SenseTime 부총재 · 2021 MiniMax 창업" },
     ] },
     "Synthesia": { mission: "텍스트로 AI 아바타 영상을 생성", leadership: [
       { name: "Victor Riparbelli", role: "Co-founder·CEO", edu: "덴마크 공대(DTU)", career: "AI 아바타 영상 플랫폼 창업" },
@@ -1899,5 +1859,5 @@ window.DASH = (function () {
     },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_VALUE_CHAIN, STOCK_GROUP_LAYER, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MEMORY_STRATEGY, STOCK_VALUE_CHAIN, STOCK_GROUP_LAYER, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

@@ -398,11 +398,11 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
   );
 }
 
-// ---- 단말 AI 전략 프레임 — Where to Play / How to Win / Execution ----
-function MobileStrategyBoard({ companies, onNav, sectionRef }) {
+// ---- AI 메모리 전략 운영 프레임 — Customer → Stack → Solution → Decision ----
+function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = window.DASH.MOBILE_STRATEGY || { choices: [], horizons: [] };
+  const strategy = window.DASH.MEMORY_STRATEGY || { choices: [], horizons: [] };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -417,19 +417,19 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
   const leadLayer = [...layerStats].sort((a, b) => b.mentions - a.mentions)[0] || {};
   const finalHorizon = (strategy.horizons || [])[Math.max(0, (strategy.horizons || []).length - 1)] || {};
   const controlZones = [
-    { no: "01", en: "OWN", title: "직접 보유", scope: "L1 · 고객 접점과 기본 경험" },
-    { no: "02", en: "ORCHESTRATE", title: "오케스트레이션", scope: "L2 · 의도·도구·모델 라우팅" },
-    { no: "03", en: "GOVERN", title: "플랫폼 통제", scope: "L3–L4 · 배포·수익·신뢰" },
-    { no: "04", en: "SOURCE", title: "선택 조달", scope: "L5–L7 · 모델·툴링·컴퓨트" },
+    { no: "01", en: "DISCOVER", title: "Pain point", scope: "고객·서비스·워크로드" },
+    { no: "02", en: "TRANSLATE", title: "요구량 변환", scope: "Application·Model·HW·SW" },
+    { no: "03", en: "DESIGN", title: "솔루션 설계", scope: "HBM·DRAM·NAND/eSSD·CXL" },
+    { no: "04", en: "DECIDE", title: "경영진 실행", scope: "PoC·인증·공동 로드맵·수주" },
   ];
   return (
-    <section className="board msf" ref={sectionRef} data-screen-label="Mobile AI Strategy Framework">
+    <section className="board msf" ref={sectionRef} data-screen-label="AI Memory Strategy Framework">
       <AnimCtx.Provider value={inView}>
         <div className="board-head" style={{ "--accent": "#1428A0" }}>
           <span className="board-tab" style={{ background: "#1428A0" }} />
           <div className="board-titles">
-            <h2>단말 AI 전략 프레임 <span className="board-en">Where to Play · How to Win · Execution</span></h2>
-            <p>휴대폰 사업자가 <b>어디를 직접 보유하고, 어디를 오케스트레이션하며, 어디를 파트너·조달할지</b>를 7개 SW·서비스 계층으로 정리</p>
+            <h2>AI 메모리 전략 프레임 <span className="board-en">Customer Pain Point → Memory Solution → Executive Decision</span></h2>
+            <p>주요 고객의 <b>워크로드·HW·SW 변화를 메모리 요구량과 신규 Biz. 기회로 변환</b>하고 AI Infra 실행 전략까지 연결</p>
           </div>
           <div className="board-count msf-live">LIVE · 30일 신호</div>
         </div>
@@ -451,7 +451,7 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
             </div>
             <div className="msf-house-foundation">
               <em>FOUNDATION</em>
-              <b>단말 · OS · 계정 · 결제 · 개인 컨텍스트</b>
+              <b>고객 인터뷰 · 공개 원문 · 기술 검증 · 메모리 제품 지식</b>
             </div>
           </div>
 
@@ -461,23 +461,23 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
               <b>시장 근거에서 실행 우선순위까지</b>
             </div>
             <div className="msf-synthesis-flow">
-              <div><em>01 · UNIVERSE</em><b>{companyCount}개사</b><span>SW·서비스 밸류체인</span></div>
+              <div><em>01 · CUSTOMER UNIVERSE</em><b>{companyCount}개사</b><span>AI 수요·파트너 생태계</span></div>
               <i aria-hidden="true" />
               <div><em>02 · MOMENTUM</em><b>{leadLayer.ko || layerStats[0]?.ko}</b><span>{leadLayer.mentions || 0}건 · 상위 계층</span></div>
               <i aria-hidden="true" />
-              <div><em>03 · CHOICE</em><b>{(strategy.choices || []).length}개 플레이</b><span>Where to Play / Win</span></div>
+              <div><em>03 · OPPORTUNITY</em><b>{(strategy.choices || []).length}개 축</b><span>수요·기술·솔루션·인프라</span></div>
               <i aria-hidden="true" />
               <div><em>04 · END STATE</em><b>{finalHorizon.title || "플랫폼 확장"}</b><span>{signalCount}건 · 30일 근거</span></div>
             </div>
-            <p>직접 보유할 통제점과 파트너 조달 영역을 분리하고, 반복 매출이 발생하는 서비스 계층에 자본과 실행 조직을 집중합니다.</p>
+            <p>기사 수를 수요로 간주하지 않고 고객 채택·기술 적합성·PoC·인증·반복 수주를 단계별 의사결정 게이트로 관리</p>
           </div>
         </div>
 
         <div className="msf-section-head">
-          <div><em>01</em><h3>밸류체인 통제 전략</h3></div>
-          <p>고객 접점에서 백엔드로 갈수록 ‘직접 보유’에서 ‘선택 조달’로 자본 배분을 전환</p>
+          <div><em>01</em><h3>고객 신호에서 실행 안건까지</h3></div>
+          <p>고객 Pain point를 기술 요구·솔루션·경영진 의사결정으로 순차 변환</p>
         </div>
-        <div className="msf-control-logic" aria-label="단말 사업자의 밸류체인 통제 방식 전환">
+        <div className="msf-control-logic" aria-label="AI 메모리 사업 기회 전환 과정">
           {controlZones.map((zone, index) => (
             <React.Fragment key={zone.no}>
               <div style={{ "--zone-step": index }}>
@@ -508,8 +508,8 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
 
         <div className="msf-section-head">
-          <div><em>02</em><h3>Where to Play / How to Win</h3></div>
-          <p>단말·OS·계정·결제·개인 컨텍스트를 재사용할 수 있는 4개 우선 플레이</p>
+          <div><em>02</em><h3>부서 핵심 업무</h3></div>
+          <p>고객 분석 · AI Stack 변화 · 맞춤 메모리 솔루션 · AI Infra 전략의 4개 업무 축</p>
         </div>
         <div className="msf-choices">
           {(strategy.choices || []).map(c => (
@@ -525,11 +525,25 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
 
         <div className="msf-section-head">
-          <div><em>03</em><h3>레이어별 의사결정 기준</h3></div>
-          <p>통제점·수익원·리스크를 한 화면에서 비교하고 투자 우선순위를 결정</p>
+          <div><em>03</em><h3>분석 툴킷</h3></div>
+          <p>워크로드부터 경영진 사업안까지 연결하는 필수 전문성</p>
+        </div>
+        <div className="msf-capabilities">
+          {(strategy.capabilities || []).map((capability, index) => (
+            <div className="msf-capability" key={capability.no} tabIndex="0" style={{ "--cap-order": index }}>
+              <span>{capability.no}</span>
+              <div><b>{capability.title}</b><p>{capability.detail}</p></div>
+              <em>{capability.output}</em>
+            </div>
+          ))}
+        </div>
+
+        <div className="msf-section-head">
+          <div><em>04</em><h3>AI Stack별 메모리 판단 기준</h3></div>
+          <p>기술 변화·경제성·고객 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
         <div className="msf-matrix">
-          <div className="msf-mrow msf-mhead"><span>계층 / 역할</span><span>통제점</span><span>수익 구조</span><span>단말 사업자 Action</span><span>핵심 리스크</span></div>
+          <div className="msf-mrow msf-mhead"><span>계층 / 역할</span><span>분석 변수</span><span>경제성</span><span>메모리 전략 Action</span><span>검증 리스크</span></div>
           {layers.map(l => (
             <div className="msf-mrow" key={l.id} style={{ "--lc": l.accent }} tabIndex="0">
               <span className="msf-mname"><i /> <b>{l.ko}</b><em>{l.stanceKo}</em></span>
@@ -539,8 +553,8 @@ function MobileStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
 
         <div className="msf-section-head">
-          <div><em>04</em><h3>실행 로드맵</h3></div>
-          <p>기준선 확보 · 통제점 제품화 · 플랫폼 확장</p>
+          <div><em>05</em><h3>실행 로드맵</h3></div>
+          <p>Discover · Design · Decide</p>
         </div>
         <div className="msf-horizons">
           {(strategy.horizons || []).map((h, i) => (
@@ -2403,9 +2417,7 @@ const STRUCTURAL_COMPETE_EDGES = [
   { from: "OpenAI", to: "Anthropic", type: "경쟁", label: "LLM 플랫폼 경쟁" },
   { from: "OpenAI", to: "Google DeepMind", type: "경쟁", label: "AGI·검색 경쟁" },
   { from: "OpenAI", to: "Meta AI", type: "경쟁", label: "오픈소스 vs 클로즈드" },
-  { from: "OpenAI", to: "DeepSeek", type: "경쟁", label: "비용·효율 경쟁" },
   { from: "Anthropic", to: "Google DeepMind", type: "경쟁", label: "프런티어 모델 경쟁" },
-  { from: "Anthropic", to: "DeepSeek", type: "경쟁", label: "가격·효율 경쟁" },
   { from: "Perplexity", to: "Google DeepMind", type: "경쟁", label: "AI 검색 경쟁" },
   { from: "Microsoft", to: "Amazon", type: "경쟁", label: "AI 클라우드 경쟁" },
   { from: "Microsoft", to: "Google DeepMind", type: "경쟁", label: "Copilot vs Gemini" },
@@ -2429,7 +2441,6 @@ const COMPANY_RELATION_ALIASES = {
   "Anthropic": ["Anthropic", "Claude"],
   "Google DeepMind": ["Google DeepMind", "DeepMind", "Google", "Gemini"],
   "Meta AI": ["Meta AI", "Meta", "Llama"],
-  "DeepSeek": ["DeepSeek"],
   "Perplexity": ["Perplexity"],
   "Microsoft": ["Microsoft", "Azure", "Copilot", "GitHub"],
   "Amazon": ["Amazon", "AWS", "Bedrock", "Trainium"],
@@ -4125,48 +4136,48 @@ function MonetizationPlaybook({ articles, dataVersion }) {
 function SignalBoard({ sectionRef, articles, dataVersion }) {
   const inView = useInView(sectionRef);
   return (
-    <section className="board signal-source-board" ref={sectionRef} data-screen-label="AI SW and services tech signals">
+    <section className="board signal-source-board" ref={sectionRef} data-screen-label="AI stack change signals">
       <AnimCtx.Provider value={inView}>
         <div className="board-head">
           <span className="board-tab" style={{ background: "#315C4A" }} />
           <div className="board-titles">
-            <h2>AI SW·서비스 기술 시그널 <span className="board-en">AI Software & Services · 휴대폰 신사업 관점</span></h2>
-            <p>반도체·데이터센터 하드웨어가 아니라 <b>단말에 올릴 만한 AI SW·서비스</b> — 온디바이스·에이전트·멀티모달 기능·OS/앱 통합·AI 서비스(수익화) 신호를 원문 확인 기사에서 누적</p>
+            <h2>AI Stack 변화 신호 <span className="board-en">Application · Model · System SW · Hardware</span></h2>
+            <p>고객 워크로드와 AI Application·HW·SW 변화를 함께 읽고 <b>대역폭·용량·지연·전력·신뢰성</b> 요구로 변환 · 공개 원문으로 확인된 신호만 누적</p>
           </div>
         </div>
         <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
-          dataVersion={dataVersion} title="AI SW·서비스 기술 신호" sub="온디바이스·에이전트·멀티모달·OS 통합·AI 서비스 — 원문 문장으로 확인된 카드만 표시" />
+          dataVersion={dataVersion} title="AI Stack 변화 신호" sub="Application · Agent · Model · RAG · System SW · Accelerator · Data Center — 원문 확인 카드만 표시" />
       </AnimCtx.Provider>
     </section>
   );
 }
 
-// AI 신사업 발굴 — 수직통합 실사례·플래그십 딜·Forward-Deployed AI 모델·컨설팅/구축 시장을 한 탭에 모음.
+// 신규 메모리 사업 발굴 — 고객 Pain point와 AI Stack 변화를 솔루션·사업모델로 연결.
 function NewBizBoard({ sectionRef, articles, dataVersion }) {
   const inView = useInView(sectionRef);
   return (
-    <section className="board signal-source-board" ref={sectionRef} data-screen-label="AI New Business">
+    <section className="board signal-source-board" ref={sectionRef} data-screen-label="Memory Business Opportunities">
       <AnimCtx.Provider value={inView}>
         <div className="board-head" style={{ "--accent": "#16A34A" }}>
           <span className="board-tab" style={{ background: "#16A34A" }} />
           <div className="board-titles">
-            <h2>AI 비즈니스 모델 <span className="board-en">AI Business Models · How Companies Make Money</span></h2>
-            <p>AI로 돈 버는 비즈니스 모델 <b>전체</b> · 업체별 실제 활동을 원문 기사로 정리해 매일 갱신 · 아래 <b>배포·AI서비스(수직통합)</b>는 그중 <b>한 가지 예시</b></p>
+            <h2>신규 메모리 Biz. 기회 <span className="board-en">Pain Point → Requirement → Solution → Business Case</span></h2>
+            <p>고객 워크로드의 병목을 메모리 요구량과 솔루션 가설로 전환 · 업체별 공개 활동과 사업모델을 근거로 <b>제품·서비스·파트너십 기회</b>를 검토</p>
           </div>
         </div>
 
         {/* 1) AI 비즈니스 모델 전체 — 기업별 수익모델·활동 + 7개 수익화 유형(모두 원문 기반) */}
         <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
         <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
-          dataVersion={dataVersion} title="수익화 유형별 신호 — 7개 비즈니스 모델" sub="수직통합·구독·사용량·광고/커머스·하드웨어·성과기반·엔터프라이즈 — 원문 확인 카드만 누적 표시" />
+          dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·성과기반 — 메모리 수요와 연결되는 원문 확인 카드만 누적 표시" />
         <BusinessModelForecasts dataVersion={dataVersion} />
 
         {/* 2) 한 단계 아래 — 비즈니스 모델 심화 예시: 배포·AI서비스(수직통합) */}
         <div className="nb-example-head">
-          <span className="nb-example-badge">예시 · 밸류체인 L5</span>
+          <span className="nb-example-badge">심화 · 솔루션 사업화</span>
           <div>
-            <h3>배포·AI서비스(수직통합) <em>Deployment & Services</em></h3>
-            <p>위 비즈니스 모델 중 하나 — 모델사가 자회사·합작으로 서비스에 직접 진입하는 수직통합 딜·Forward-Deployed AI 모델·컨설팅/구축 시장·단말 제조사 진입 전략</p>
+            <h3>고객 공동 설계·배포 <em>Co-design & Deployment</em></h3>
+            <p>메모리 제품 단품을 넘어 워크로드 프로파일링·시스템 최적화·검증·반복 수주로 이어지는 공동 설계 및 구축 모델</p>
           </div>
         </div>
         <NewBizDeepDive />
@@ -4287,7 +4298,7 @@ function LegacySignalBoard({ data, theme, sectionRef, articles }) {
           <p>CapEx·HBM 곡선이 가파를수록 <b>공급 부족·단가 상승</b> 리스크가 커집니다. 칩 믹스에서 커스텀 실리콘 비중 확대는 <b>GPU 단일 의존 완화</b>, 광통신 침투율은 <b>전력 병목의 다음 해법</b>을 뜻합니다.</p>
         </div>
         <div className="sx-item">
-          <em>단말 관점 시사점</em>
+          <em>메모리 전략 시사점</em>
           <p>인프라 병목·전환 시점은 <b>온디바이스 AI 로드맵의 외생 변수</b>입니다. 메모리·전력 제약이 클라우드 AI 단가에 반영되는 시점, 광통신 상용화로 지연시간이 줄어드는 시점을 <b>분기 단위로 추적</b>해야 합니다.</p>
         </div>
       </div>
@@ -5376,7 +5387,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                   const n = catCounts[t.id] || 0;
                   return (
                     <button key={t.id} disabled={n === 0} className={"su-tax-cat" + (catFilter === t.id ? " on" : "") + (n === 0 ? " empty" : "")} style={{ "--c": t.accent }}
-                      title={`${t.desc}\n▸ 단말 관점: ${t.handset}`}
+                      title={`${t.desc}\n▸ 메모리 전략 관점: ${t.handset}`}
                       onClick={() => n > 0 && setCatFilter(catFilter === t.id ? "" : t.id)}>
                       <i style={{ background: t.accent }} />{t.ko}<em>{n}</em>
                     </button>
@@ -5459,4 +5470,4 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   );
 }
 
-Object.assign(window, { BoldSummary, MobileAIBusinessBoard, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+Object.assign(window, { BoldSummary, MobileAIBusinessBoard, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MemoryStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });

@@ -169,24 +169,24 @@ function Trend({ v, small, animate }) {
 
 // ---- Sidebar ------------------------------
 const NAV = [
-  { id: "ib", ko: "증권사 인사이트", en: "IB Research", icon: "report", group: "개요" },
-  { id: "overview", ko: "Executive Summary", en: "Overview", icon: "grid", group: "개요" },
-  { id: "opportunity", ko: "모바일 AI 신사업 DB", en: "Market · Money · Move", icon: "target", group: "개요" },
-  { id: "strategy", ko: "단말 AI 전략 프레임", en: "Mobile AI Strategy", icon: "target", group: "개요" },
-  { id: "articles", ko: "데일리 기사", en: "Daily Articles", icon: "news", group: "개요" },
-  { id: "app", ko: "AI 경험·버티컬", en: "Experience & Verticals", icon: "spark", group: "SW·서비스 밸류체인" },
-  { id: "agent", ko: "에이전트·오케스트레이션", en: "Agents & Orchestration", icon: "ai", group: "SW·서비스 밸류체인" },
-  { id: "service", ko: "서비스 플랫폼·수익화", en: "Platform & Monetization", icon: "grid", group: "SW·서비스 밸류체인" },
-  { id: "trust", ko: "데이터·컨텍스트·신뢰", en: "Data, Context & Trust", icon: "report", group: "SW·서비스 밸류체인" },
-  { id: "model", ko: "모델·온디바이스 지능", en: "Models & On-device", icon: "ai", group: "SW·서비스 밸류체인" },
-  { id: "data", ko: "개발·배포 툴링", en: "Developer & Deployment", icon: "grid", group: "SW·서비스 밸류체인" },
-  { id: "infra", ko: "엣지·클라우드 런타임", en: "Edge & Cloud Runtime", icon: "server", group: "SW·서비스 밸류체인" },
-  { id: "sanalysis", ko: "스타트업 분석", en: "Startup Analysis", icon: "target", group: "SW·서비스 밸류체인" },
-  { id: "signals", ko: "AI SW·서비스 기술", en: "AI SW & Services", icon: "spark", group: "심층 분석" },
-  { id: "newbiz", ko: "AI 비즈니스 모델", en: "AI Business Models", icon: "spark", group: "심층 분석" },
-  { id: "survey", ko: "AI 관련 소비자 조사", en: "AI Consumer Surveys", icon: "target", group: "정량 데이터" },
-  { id: "market", ko: "AI 관련 시장", en: "AI Market Map", icon: "grid", group: "정량 데이터" },
-  { id: "stocks", ko: "Stock 분석", en: "Stock Analysis", icon: "up", group: "정량 데이터" },
+  { id: "ib", ko: "산업 리서치", en: "Industry Research", icon: "report", group: "경영 의사결정" },
+  { id: "overview", ko: "Executive Summary", en: "Decision Brief", icon: "grid", group: "경영 의사결정" },
+  { id: "opportunity", ko: "모바일 AI 신사업 DB", en: "Market · Money · Move", icon: "target", group: "경영 의사결정" },
+  { id: "strategy", ko: "AI 메모리 전략", en: "AI Memory Strategy", icon: "target", group: "경영 의사결정" },
+  { id: "articles", ko: "산업·고객 신호", en: "Industry & Customer Signals", icon: "news", group: "경영 의사결정" },
+  { id: "app", ko: "AI 앱·워크로드", en: "Applications & Workloads", icon: "spark", group: "AI 수요·메모리 밸류체인" },
+  { id: "agent", ko: "에이전트·업무 흐름", en: "Agents & Workflows", icon: "ai", group: "AI 수요·메모리 밸류체인" },
+  { id: "service", ko: "서비스·플랫폼 경제성", en: "Service Economics", icon: "grid", group: "AI 수요·메모리 밸류체인" },
+  { id: "trust", ko: "데이터·RAG·신뢰", en: "Data, RAG & Trust", icon: "report", group: "AI 수요·메모리 밸류체인" },
+  { id: "model", ko: "모델·추론 구조", en: "Models & Inference", icon: "ai", group: "AI 수요·메모리 밸류체인" },
+  { id: "data", ko: "AI SW·개발·배포", en: "AI Software Stack", icon: "grid", group: "AI 수요·메모리 밸류체인" },
+  { id: "infra", ko: "AI 인프라·HW", en: "AI Infrastructure & Hardware", icon: "server", group: "AI 수요·메모리 밸류체인" },
+  { id: "sanalysis", ko: "스타트업·파트너", en: "Startups & Partners", icon: "target", group: "전략·사업개발" },
+  { id: "signals", ko: "기술 변화 신호", en: "Technology Signals", icon: "spark", group: "전략·사업개발" },
+  { id: "newbiz", ko: "신규 메모리 Biz.", en: "Memory Business Opportunities", icon: "spark", group: "전략·사업개발" },
+  { id: "survey", ko: "수요처 조사", en: "Demand Surveys", icon: "target", group: "시장 검증" },
+  { id: "market", ko: "시장·TAM", en: "Market & TAM", icon: "grid", group: "시장 검증" },
+  { id: "stocks", ko: "Stock 분석", en: "Stock Analysis", icon: "up", group: "시장 검증" },
   { id: "audit", ko: "데이터 신뢰센터", en: "Data Trust Center", icon: "report", group: "운영·검증" },
 ];
 const NAV_SECTION_IDS = NAV.map(item => item.id);
@@ -221,7 +221,7 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
         <span className="sb-logo">
           <span className="sb-logo-mark" style={{ color: brand.bg }}><Icon name="pulse" size={18} sw={2.4} /></span>
           <span className="sb-logo-txt">
-            <b>AI</b><span>INTELLIGENCE</span>
+            <b>AI MEMORY</b><span>STRATEGY INTELLIGENCE</span>
           </span>
         </span>
       </div>

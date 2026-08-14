@@ -343,12 +343,15 @@ try {
     && linkedinProfiles.every(url => /^https:\/\/(?:(?:www|[a-z]{2})\.)?linkedin\.com\/in\/[^/?#]+\/?$/.test(url))
     && !boards.includes("linkedin.com/search/results/people")
     && !boards.includes("linkedin.com/search/results/companies");
-  const strategyReady = dash.MOBILE_STRATEGY?.choices?.length === 4
-    && dash.MOBILE_STRATEGY?.horizons?.length === 3
-    && boards.includes("function MobileStrategyBoard")
+  const strategyReady = dash.MEMORY_STRATEGY?.choices?.length === 4
+    && dash.MEMORY_STRATEGY?.capabilities?.length === 5
+    && dash.MEMORY_STRATEGY?.horizons?.length === 3
+    && boards.includes("function MemoryStrategyBoard")
+    && boards.includes("Customer Pain Point → Memory Solution → Executive Decision")
+    && boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")
     && boards.includes("function ConsultingDecisionRail")
-    && boards.includes("Where to Play / How to Win")
+    && boards.includes("Pain Point → Requirement → Solution → Business Case")
     && boards.includes("Strategy &amp;")
     && boards.includes('className="msf-strategy-house"')
     && boards.includes('className="msf-control-logic"')
@@ -387,10 +390,10 @@ try {
     ].filter(Boolean).join(", ");
     throw new Error(`seven-layer strategy, MECE portfolio UI, normalized profiles, or verified LinkedIn links are incomplete (${causes})`);
   }
-  console.log(`  OK  단말 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
+  console.log(`  OK  AI 메모리 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
 } catch (error) {
   failed = true;
-  console.error(`  FAIL  mobile strategy and company normalization: ${error.message}`);
+  console.error(`  FAIL  memory strategy and company normalization: ${error.message}`);
 }
 
 try {

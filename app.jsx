@@ -195,20 +195,42 @@ function App() {
       .then(j => { if (alive && j) setCollectionHealth(j); }).catch(() => {});
     return () => { alive = false; };
   }, [auditInView, active, dataVersion]);
-  // COMPANIES에 라이브 데이터(최신 기사·언급량·실시세 시총) 병합
+  // 지역 기업은 이름·분류만 정적 레지스트리에 두고, 공개 원문/공식 페이지로
+  // 확인된 사업 내용만 화면에 합성한다. 고정된 중국 전략·인물·수치 서술은
+  // 라이브 근거가 없으면 렌더링하지 않는다.
   const companiesLive = useMemo(() => (D.COMPANIES || []).map(c => {
     const lv = coLive && coLive[c.name];
     const strat = startupsX && (startupsX[c.name] || startupsX[c.name.replace(/\s*\(.*\)/, "")]);
+    const sourceGated = new Set(["DeepSeek", "Kling AI", "Hailuo (MiniMax)"]).has(c.name);
+    const sections = lv?.intelligence
+      ? [lv.intelligence.currentBusiness, lv.intelligence.revenueModel, lv.intelligence.strategyDirection, lv.intelligence.investmentDirection]
+      : [];
+    const hasSourceEvidence = sections.some(section =>
+      section?.groundingStatus === "source-grounded" &&
+      Array.isArray(section.evidence) && section.evidence.some(item => /^https?:\/\//.test(item?.url || ""))
+    );
+    if (sourceGated && !hasSourceEvidence) return null;
     // Legacy hand-entered valuation, funding and KPI values stay in the
     // append-only ledger but do not reach the public company map.
     const merged = { ...c, valuation: "—", valAsof: "", metric: "원문 기사", value: "—", metricAsof: "", funding: "—" };
-    merged.profile = (lv && lv.profile) || (D.COMPANY_PROFILES || {})[c.name] || null; // 정규화 개요: 라이브 변동값 우선
+    merged.profile = sourceGated ? (lv?.profile || null) : ((lv && lv.profile) || (D.COMPANY_PROFILES || {})[c.name] || null); // 정규화 개요: 라이브 변동값 우선
     const ly = (D.COMPANY_LAYER || {})[c.name];                    // AI 밸류체인 계층·버티컬
     merged.layer = ly ? ly.layer : null;
     merged.vchainVertical = ly ? ly.vertical : "";
     merged.adjacentLayers = ly && Array.isArray(ly.adjacent) ? ly.adjacent : [];
     merged.mobileFit = ly ? ly.fit || "medium" : "medium";
-    merged.org = (lv && lv.organization) || (D.COMPANY_ORG || {})[c.name] || null; // 정규화 조직: live officers + 큐레이션 배경
+    if (sourceGated) {
+      const organization = lv?.organization;
+      const verifiedPeople = (organization?.executiveTeam || []).filter(person =>
+        person?.verification === "verified" && /^https?:\/\//.test(person?.verificationUrl || "")
+      );
+      const officialPages = (organization?.officialPages || []).filter(page =>
+        page?.status === "reachable" && /^https?:\/\//.test(page?.resolvedUrl || page?.url || "")
+      );
+      merged.org = organization ? { mission: "", leadership: [], officers: verifiedPeople, executiveTeam: verifiedPeople, officialPages, sourceMode: "official-only" } : null;
+    } else {
+      merged.org = (lv && lv.organization) || (D.COMPANY_ORG || {})[c.name] || null; // 정규화 조직: live officers + 큐레이션 배경
+    }
     merged.invest = (D.COMPANY_INVEST || {})[c.name] || null;      // AI SW·서비스 투자 포트폴리오·전략 맵
     // 메인 카드도 상세 팝업과 같은 최신 원문 합성 결과를 우선한다.
     // 정적 레지스트리는 회사명·분류·도메인만 담당하고, 사업/수익/방향은
@@ -216,9 +238,10 @@ function App() {
     const intel = lv && lv.intelligence;
     if (intel) {
       merged.intelligence = intel;
-      merged.note = intel.currentBusiness?.summary || merged.note;
-      merged.vp = intel.revenueModel?.summary || merged.vp;
-      merged.direction = intel.strategyDirection?.summary || merged.direction;
+      const groundedSummary = section => section?.groundingStatus === "source-grounded" ? (section.summary || "") : "";
+      merged.note = groundedSummary(intel.currentBusiness) || (sourceGated ? "" : merged.note);
+      merged.vp = groundedSummary(intel.revenueModel) || (sourceGated ? "" : merged.vp);
+      merged.direction = groundedSummary(intel.strategyDirection) || (sourceGated ? "" : merged.direction);
     }
     // 원문 기반 수익모델·사업 방향(monetization.json) — 원문 링크 신호 + 밸류체인 legend
     merged.monetize = monet
@@ -227,7 +250,7 @@ function App() {
     if (lv) { merged.live = lv; if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); } }
     if (strat) merged.strategy = strat;
     return merged;
-  }), [coLive, startupsX, monet]);
+  }).filter(Boolean), [coLive, startupsX, monet]);
   uE(() => {
     if (!selected || !coLive) return;
     const hydrated = companiesLive.find(company => company.name === selected.name);
@@ -443,7 +466,7 @@ function App() {
             {/* ── 1. 개요 ── */}
             <section ref={refs.overview} className="nav-section-anchor" data-section="overview" data-screen-label="Overview">
               <div className="ov-head">
-                <h2 className="ov-title">전략 의사결정 브리프 <span>Executive Summary</span></h2>
+                <h2 className="ov-title">AI 메모리 전략 의사결정 <span>Executive Decision Brief</span></h2>
               </div>
               <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
@@ -454,14 +477,14 @@ function App() {
             </LazySection>
 
             <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={860}>
-              <MobileStrategyBoard companies={companiesLive} onNav={navTo} />
+              <MemoryStrategyBoard companies={companiesLive} onNav={navTo} />
             </LazySection>
 
             <LazySection id="articles" active={active} sectionRef={refs.articles} height={840}>
               <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
             </LazySection>
 
-            {/* ── 2. AI 밸류체인 — SW·서비스 우선(단말 접점) → 백엔드(모델·인프라) 순 ── */}
+            {/* ── 2. AI 수요 → 메모리 기회 밸류체인 ── */}
             <LazySection id="app" active={active} sectionRef={refs.app} height={740}>
               <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
             </LazySection>
@@ -512,7 +535,7 @@ function App() {
             </LazySection>
 
             <footer className="foot">
-              <span>AI Intelligence Dashboard</span>
+              <span>AI Memory Strategy Intelligence</span>
               <span className="foot-update">최종 업데이트: {renderTime}</span>
               <span>원출처: Bloomberg · TechCrunch · The Information · Pitchbook · Crunchbase · 각 기업 공식 발표</span>
             </footer>
