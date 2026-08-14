@@ -5,10 +5,6 @@
   "main": "app.jsx",
   "type": "module",
   "scripts": {
-    "codex:install": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-site-codex.ps1",
-    "codex:start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-site-codex.ps1",
-    "codex:status": "node node_modules/@openai/codex/bin/codex.js login status",
-    "test:codex-bridge": "node scripts/test-site-codex-bridge.mjs",
     "build:browser": "node scripts/build-browser-bundle.mjs",
     "build:mobile-db": "node scripts/build-mobile-ai-business-db.mjs",
     "test:department": "node scripts/test-department-fit.mjs",
@@ -29,8 +25,5 @@
     "dashboard"
   ],
   "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "@openai/codex": "0.147.0"
-  }
+  "license": "MIT"
 }

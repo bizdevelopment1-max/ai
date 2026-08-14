@@ -401,25 +401,29 @@ function KpiStrip({ kpis }) {
   );
 }
 
-// ---- Site CLI · local evidence search + authenticated Codex CLI workspace ----
-const SITE_CLI_COMMANDS = [
+// ---- Site CLI · GitHub-authenticated request queue + Codex Actions ----
+const SITE_CODEX_REPO = "bizdevelopment1-max/ai";
+const SITE_CODEX_API = `https://api.github.com/repos/${SITE_CODEX_REPO}`;
+const SITE_CODEX_WEB = `https://github.com/${SITE_CODEX_REPO}`;
+const SITE_CODEX_RESULT_MARKER = "<!-- site-codex-result:v1 -->";
+const SITE_CODEX_COMMANDS = [
   ["/search <키워드>", "사이트 전체 근거 검색"],
   ["/company <기업명>", "기업 개요·수익 모델·전략 검색"],
   ["/market <키워드>", "시장·소비자 조사 검색"],
-  ["/ask <질문>", "실제 Codex 읽기 전용 답변"],
-  ["/edit <요청>", "승인 후 저장소 파일 수정"],
+  ["/ask <질문>", "GitHub Codex 읽기 전용 답변"],
+  ["/edit <요청>", "GitHub 패치 검증 후 main 반영"],
+  ["/sync <요청 ID>", "GitHub Actions 결과 다시 확인"],
   ["/open <섹션명>", "대시보드 섹션 이동"],
-  ["/connect", "Codex 설치·로그인·브리지 확인"],
-  ["/doctor", "실행 환경 진단"],
+  ["/connect", "GitHub 인증·워크플로 정보"],
+  ["/doctor", "GitHub Actions 실행 상태"],
   ["/export", "현재 작업 기록 저장"],
   ["/clear", "콘솔 기록 정리"],
 ];
 
-const SITE_CODEX_SETUP = [
-  "git clone https://github.com/bizdevelopment1-max/ai.git",
-  "cd ai",
-  "powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\install-site-codex.ps1",
-  ".\\Start-Site-Codex.cmd",
+const SITE_CODEX_LINKS = [
+  ["01", "GitHub Actions 실행 기록", `${SITE_CODEX_WEB}/actions/workflows/site-codex.yml`],
+  ["02", "Codex API 키 Secret 설정", `${SITE_CODEX_WEB}/settings/secrets/actions`],
+  ["03", "Site Codex 요청 목록", `${SITE_CODEX_WEB}/issues?q=is%3Aissue+label%3Asite-codex`],
 ];
 
 function siteCliText(value, limit = 2600) {
@@ -492,54 +496,96 @@ function searchSiteCli(query, kindFilter) {
   }).filter(doc => doc.score > 0).sort((a, b) => b.score - a.score).slice(0, 6);
 }
 
+function siteCodexRequestId() {
+  const random = globalThis.crypto?.getRandomValues
+    ? globalThis.crypto.getRandomValues(new Uint32Array(1))[0].toString(36)
+    : Math.random().toString(36).slice(2, 10);
+  return `site-${Date.now()}-${random.slice(0, 8)}`;
+}
+
+function siteCodexIssueUrl(prompt, mode, requestId) {
+  const title = `[SITE CODEX][${mode.toUpperCase()}][${requestId}]`;
+  const body = [
+    "<!-- site-codex-request:v1 -->",
+    `REQUEST_ID: ${requestId}`,
+    `MODE: ${mode}`,
+    `CONFIRMED: ${mode === "edit" ? "yes" : "not-required"}`,
+    "",
+    "## 요청",
+    "",
+    prompt.slice(0, 6000),
+    "",
+    "## 실행 범위",
+    "",
+    mode === "edit"
+      ? "Codex :workspace 실행 → 무권한 검증 작업 → 검증된 패치만 main 반영"
+      : "Codex :read-only 실행 → 결과 댓글 등록",
+    "",
+    "> 공개 저장소 요청 · API 키·비밀번호·개인정보 입력 금지",
+  ].join("\n");
+  const query = new URLSearchParams({ title, body, labels: "site-codex" });
+  return `${SITE_CODEX_WEB}/issues/new?${query.toString()}`;
+}
+
+function cleanSiteCodexResult(body) {
+  return String(body || "")
+    .replaceAll(SITE_CODEX_RESULT_MARKER, "")
+    .replace(/^REQUEST_ID:\s*[^\n]+\n?/gm, "")
+    .replace(/^STATUS:\s*[^\n]+\n?/gm, "")
+    .trim();
+}
+
 function AIChatbot({ onNav }) {
   const [launcher, setLauncher] = useState("");
   const [visible, setVisible] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [activity, setActivity] = useState("Codex 응답 대기");
-  const [bridgePanelOpen, setBridgePanelOpen] = useState(false);
-  const [bridge, setBridge] = useState({ state: "checking", ready: false, installed: false, authenticated: false });
+  const [activity, setActivity] = useState("GitHub 요청 대기");
+  const [githubPanelOpen, setGithubPanelOpen] = useState(false);
+  const [githubState, setGithubState] = useState({ state: "idle", conclusion: "" });
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [log, setLog] = useState([{
     id: "boot", role: "system", label: "READY",
-    text: "사이트 데이터 인덱스 연결 · Codex CLI 상태 확인 · /help 명령어 확인",
+    text: "사이트 데이터 인덱스 연결 · GitHub 인증 큐 연결 · /help 명령어 확인",
   }]);
   const launcherRef = useRef(null);
   const terminalInputRef = useRef(null);
   const outputRef = useRef(null);
+  const pollTimerRef = useRef(null);
 
   const append = entry => setLog(current => [
     ...current,
     { id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, ...entry },
   ]);
 
-  const refreshBridge = async (announce = false) => {
-    setBridge(current => ({ ...current, state: "checking" }));
+  const checkGithubActions = async (announce = false) => {
+    setGithubState(current => ({ ...current, state: "checking" }));
     try {
-      const response = await fetch("./api/codex/status", { cache: "no-store" });
+      const response = await fetch(`${SITE_CODEX_API}/actions/workflows/site-codex.yml/runs?per_page=1`, {
+        cache: "no-store",
+        headers: { Accept: "application/vnd.github+json" },
+      });
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload?.error || `상태 확인 오류 ${response.status}`);
-      const next = { ...payload, state: payload.ready ? "ready" : "setup" };
-      setBridge(next);
+      if (!response.ok) throw new Error(`GitHub API ${response.status}`);
+      const latest = payload.workflow_runs?.[0];
+      const next = { state: "ready", conclusion: latest?.conclusion || latest?.status || "실행 이력 없음", url: latest?.html_url || `${SITE_CODEX_WEB}/actions` };
+      setGithubState(next);
       if (announce) append({
-        role: payload.ready ? "assistant" : "error",
-        label: "CODEX STATUS",
-        text: payload.ready
-          ? `Codex CLI ${payload.version} · ChatGPT 로그인 확인 · ${payload.execution} · 작업공간 ${payload.root}`
-          : `${payload.installed ? "Codex 로그인 필요" : "Codex CLI 설치 필요"} · /connect 설치 순서 확인`,
+        role: "assistant",
+        label: "GITHUB ACTIONS",
+        text: `GitHub 워크플로 연결 · 최근 상태 ${next.conclusion} · 로컬 실행 불필요`,
+        url: next.url,
+        actionLabel: "실행 기록 열기",
       });
       return next;
-    } catch {
-      const next = { state: "offline", ready: false, installed: false, authenticated: false };
-      setBridge(next);
-      if (announce) append({ role: "error", label: "LOCAL BRIDGE", text: "로컬 Codex 브리지 미연결 · /connect 설치 순서 확인" });
+    } catch (error) {
+      const next = { state: "error", conclusion: "확인 실패" };
+      setGithubState(next);
+      if (announce) append({ role: "error", label: "GITHUB API", text: `${error.message} · GitHub Actions 페이지에서 직접 확인` });
       return next;
     }
   };
-
-  useEffect(() => { refreshBridge(false); }, []);
 
   useEffect(() => {
     if (!visible) return;
@@ -551,7 +597,11 @@ function AIChatbot({ onNav }) {
 
   useEffect(() => {
     if (outputRef.current) outputRef.current.scrollTop = outputRef.current.scrollHeight;
-  }, [log, busy, bridgePanelOpen, activity]);
+  }, [log, busy, githubPanelOpen, activity]);
+
+  useEffect(() => () => {
+    if (pollTimerRef.current) clearInterval(pollTimerRef.current);
+  }, []);
 
   const localResponse = (query, kindFilter) => {
     const results = searchSiteCli(query, kindFilter);
@@ -567,44 +617,85 @@ function AIChatbot({ onNav }) {
     };
   };
 
-  const callCodex = async (question, mode) => {
-    const response = await fetch("./api/codex/run", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: question, mode, ...(mode === "edit" ? { confirm: "APPLY" } : {}) }),
+  const fetchGithubRequest = async identifier => {
+    const headers = { Accept: "application/vnd.github+json" };
+    let issue;
+    if (/^\d+$/.test(String(identifier))) {
+      const response = await fetch(`${SITE_CODEX_API}/issues/${identifier}`, { cache: "no-store", headers });
+      if (response.ok) issue = await response.json();
+    } else {
+      const response = await fetch(`${SITE_CODEX_API}/issues?state=all&sort=created&direction=desc&per_page=30`, { cache: "no-store", headers });
+      if (!response.ok) throw new Error(`GitHub API ${response.status}`);
+      const issues = await response.json();
+      issue = issues.find(item => !item.pull_request && item.title?.includes(String(identifier)));
+    }
+    if (!issue) return { state: "missing" };
+    const commentResponse = await fetch(issue.comments_url, { cache: "no-store", headers });
+    if (!commentResponse.ok) throw new Error(`GitHub 댓글 API ${commentResponse.status}`);
+    const comments = await commentResponse.json();
+    const result = [...comments].reverse().find(comment => comment.body?.includes(SITE_CODEX_RESULT_MARKER));
+    return result
+      ? { state: "complete", issue, result: cleanSiteCodexResult(result.body), resultUrl: result.html_url }
+      : { state: "running", issue };
+  };
+
+  const pollGithubRequest = requestId => {
+    if (pollTimerRef.current) clearInterval(pollTimerRef.current);
+    let checks = 0;
+    setBusy(true);
+    setActivity("GitHub Issue 등록·Actions 실행 확인");
+    const check = async () => {
+      checks += 1;
+      try {
+        const current = await fetchGithubRequest(requestId);
+        if (current.state === "running") setActivity(`GitHub Actions 실행 · Issue #${current.issue.number}`);
+        if (current.state === "complete") {
+          clearInterval(pollTimerRef.current);
+          pollTimerRef.current = null;
+          setBusy(false);
+          setActivity("GitHub Codex 작업 완료");
+          append({
+            role: "assistant",
+            label: "GITHUB CODEX",
+            text: current.result || `Issue #${current.issue.number} 처리 완료`,
+            url: current.resultUrl || current.issue.html_url,
+            actionLabel: `Issue #${current.issue.number} 결과 열기`,
+            exportable: true,
+          });
+          return;
+        }
+        if (checks >= 18) {
+          clearInterval(pollTimerRef.current);
+          pollTimerRef.current = null;
+          setBusy(false);
+          append({ role: "system", label: "GITHUB QUEUE", text: `자동 확인 종료 · /sync ${requestId} 로 결과 다시 확인` });
+        }
+      } catch (error) {
+        if (checks >= 3) {
+          clearInterval(pollTimerRef.current);
+          pollTimerRef.current = null;
+          setBusy(false);
+          append({ role: "error", label: "GITHUB API", text: `${error.message} · /sync ${requestId} 로 다시 확인` });
+        }
+      }
+    };
+    check();
+    pollTimerRef.current = setInterval(check, 20000);
+  };
+
+  const submitGithubRequest = (prompt, mode) => {
+    const requestId = siteCodexRequestId();
+    const url = siteCodexIssueUrl(prompt, mode, requestId);
+    localStorage.setItem("site-codex-last-request", requestId);
+    window.open(url, "_blank", "noopener,noreferrer");
+    append({
+      role: "system",
+      label: "GITHUB AUTH",
+      text: `${mode === "edit" ? "수정" : "질의"} 요청 ${requestId} · 열린 GitHub 화면에서 로그인 후 Issue 제출`,
+      url,
+      actionLabel: "GitHub 요청 열기",
     });
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(payload?.error || `Codex 요청 오류 ${response.status}`);
-    }
-    if (!response.body) throw new Error("Codex 스트림 연결 실패");
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    let buffer = "";
-    let answer = "";
-    let streamError = "";
-    while (true) {
-      const { value, done } = await reader.read();
-      buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
-      const blocks = buffer.split("\n\n");
-      buffer = blocks.pop() || "";
-      blocks.forEach(block => {
-        const data = block.split("\n").find(line => line.startsWith("data: "))?.slice(6);
-        if (!data) return;
-        try {
-          const event = JSON.parse(data);
-          if (event.type === "message" && event.text) answer += `${answer ? "\n" : ""}${event.text}`;
-          if (event.type === "status" && event.text) setActivity(event.text);
-          if (event.type === "tool" && event.text) setActivity(`실행 · ${event.text.slice(0, 90)}`);
-          if (event.type === "done") setActivity("Codex 작업 완료");
-          if (event.type === "error") streamError = event.message || "Codex 실행 실패";
-        } catch { /* non-JSON stream line ignored */ }
-      });
-      if (done) break;
-    }
-    if (streamError) throw new Error(streamError);
-    if (!answer.trim()) throw new Error("Codex 최종 답변 없음");
-    return answer.trim();
+    pollGithubRequest(requestId);
   };
 
   const exportSession = () => {
@@ -648,24 +739,23 @@ function AIChatbot({ onNav }) {
     const args = commandMatch ? commandMatch[2].trim() : raw;
 
     if (command === "help") {
-      append({ role: "system", label: "COMMANDS", text: "로컬 검색 · 실제 Codex 질의 · 승인형 파일 수정 · 실행 환경 진단", commands: SITE_CLI_COMMANDS });
+      append({ role: "system", label: "COMMANDS", text: "사이트 검색 · GitHub 인증형 Codex 질의 · 검증형 파일 수정 · Actions 상태 확인", commands: SITE_CODEX_COMMANDS });
       return;
     }
     if (command === "clear") { setLog([]); return; }
     if (command === "export") { exportSession(); append({ role: "system", label: "EXPORT", text: "Markdown 작업 기록 저장" }); return; }
-    if (command === "connect") { setBridgePanelOpen(true); refreshBridge(true); return; }
+    if (command === "connect") { setGithubPanelOpen(true); checkGithubActions(true); return; }
     if (command === "doctor" || command === "status") {
-      const current = await refreshBridge(false);
-      append({
-        role: current.ready ? "assistant" : "error",
-        label: "DOCTOR",
-        text: current.ready
-          ? `로컬 인덱스 ${buildSiteCliIndex().length}건 · Codex CLI ${current.version} · ChatGPT 인증 · 읽기 전용 질의 · 승인형 파일 수정`
-          : `로컬 인덱스 ${buildSiteCliIndex().length}건 · Codex 브리지 연결 필요 · /connect 설치 순서 확인`,
-      });
+      await checkGithubActions(true);
       return;
     }
     if (command === "open") { openSection(args); return; }
+    if (command === "sync") {
+      const requestId = args || localStorage.getItem("site-codex-last-request");
+      if (!requestId) append({ role: "error", label: "SYNC", text: "요청 ID 또는 Issue 번호 입력 필요" });
+      else pollGithubRequest(requestId);
+      return;
+    }
     if (!["search", "company", "market", "ask", "edit"].includes(command)) {
       append({ role: "error", label: "COMMAND", text: `지원하지 않는 명령어 /${command} · /help 확인` });
       return;
@@ -677,32 +767,18 @@ function AIChatbot({ onNav }) {
 
     const kindFilter = command === "company" ? "기업" : command === "market" ? "시장" : null;
     if (command === "search" || command === "company" || command === "market") {
-      append({ role: "assistant", label: "LOCAL INDEX", ...localResponse(args, kindFilter) });
-      return;
-    }
-    const currentBridge = bridge.ready ? bridge : await refreshBridge(false);
-    if (!currentBridge.ready) {
-      setBridgePanelOpen(true);
-      append({ role: "error", label: "CODEX OFFLINE", text: "실제 Codex 실행을 위한 로컬 브리지 연결 필요 · /connect 설치 순서 확인" });
+      append({ role: "assistant", label: "SITE INDEX", ...localResponse(args, kindFilter) });
       return;
     }
 
     if (command === "edit") {
-      const approved = window.confirm("Codex CLI가 작업공간 파일을 실제로 수정하고 검증 명령을 실행합니다\n\n이 요청을 실행할까요");
+      const approved = window.confirm("GitHub Actions의 Codex가 저장소 파일을 수정합니다\n\n별도 무권한 작업에서 패치·빌드·테스트를 검증한 뒤 main에 반영합니다\n\nGitHub Issue를 생성할까요");
       if (!approved) {
-        append({ role: "system", label: "EDIT CANCEL", text: "파일 수정 취소 · 작업공간 변경 없음" });
+        append({ role: "system", label: "EDIT CANCEL", text: "GitHub 수정 요청 취소 · 저장소 변경 없음" });
         return;
       }
     }
-
-    setBusy(true);
-    setActivity(command === "edit" ? "파일 수정 승인 전달" : "Codex 읽기 전용 질의 전달");
-    try {
-      const text = await callCodex(args, command === "edit" ? "edit" : "ask");
-      append({ role: "assistant", label: command === "edit" ? "CODEX EDIT" : `CODEX ${currentBridge.version}`, text, exportable: command === "edit" });
-    } catch (error) {
-      append({ role: "error", label: "CODEX ERROR", text: `${error.message} · /doctor 실행 환경 확인` });
-    } finally { setBusy(false); }
+    submitGithubRequest(args, command === "edit" ? "edit" : "ask");
   };
 
   const onTerminalKey = event => {
@@ -731,7 +807,7 @@ function AIChatbot({ onNav }) {
           value={launcher}
           onChange={event => setLauncher(event.target.value)}
           onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); launcher.trim() ? execute(launcher) : setVisible(true); } }}
-          placeholder="site-codex · 질문 또는 수정 명령어"
+          placeholder="github-codex · 질문 또는 수정 명령어"
           aria-label="사이트 CLI 명령어"
           data-preserve-copy="true"
         />
@@ -747,18 +823,18 @@ function AIChatbot({ onNav }) {
               <div className="site-cli-window-controls" aria-hidden="true"><i /><i /><i /></div>
               <div className="site-cli-title">
                 <span className="site-cli-mark"><Icon name="pulse" size={17} sw={2.2} /></span>
-                <div><b>SITE CODEX</b><small>LOCAL BRIDGE · CODEX CLI · WORKSPACE</small></div>
+                <div><b>SITE CODEX</b><small>GITHUB AUTH · CODEX ACTION · VERIFIED PATCH</small></div>
               </div>
               <div className="site-cli-status">
-                <span>LOCAL INDEX</span>
-                <span className={bridge.ready ? "is-on" : ""}>{bridge.ready ? `CODEX ${bridge.version}` : "BRIDGE OFF"}</span>
-                <span>WRITE APPROVAL</span>
+                <span>SITE INDEX</span>
+                <span className={githubState.state === "ready" ? "is-on" : ""}>GITHUB AUTH</span>
+                <span>PATCH GATE</span>
               </div>
               <button className="site-cli-close" onClick={() => setVisible(false)} title="닫기"><Icon name="x" size={17} sw={2} /></button>
             </header>
 
             <div className="site-cli-flow" aria-hidden="true">
-              <span>SITE DATA</span><i /><span>LOCAL BRIDGE</span><i /><span>CODEX CLI</span><i /><span>RESULT</span>
+              <span>SITE DATA</span><i /><span>GITHUB ISSUE</span><i /><span>CODEX ACTION</span><i /><span>RESULT</span>
             </div>
 
             <div className="site-cli-output" ref={outputRef} data-preserve-copy="true">
@@ -769,6 +845,7 @@ function AIChatbot({ onNav }) {
                     {item.role !== "user" && item.text && <button onClick={() => copyText(item.text)} title="복사"><Icon name="copy" size={12} /></button>}
                   </div>
                   {item.text && <pre data-preserve-copy="true">{item.text}</pre>}
+                  {item.url && <a className="site-cli-link" href={item.url} target="_blank" rel="noreferrer">{item.actionLabel || "GitHub에서 열기"} ↗</a>}
                   {item.commands && (
                     <div className="site-cli-command-grid">
                       {item.commands.map(([cmd, desc]) => <button key={cmd} onClick={() => setInput(cmd.split(" ")[0] + " ")}><code>{cmd}</code><span>{desc}</span></button>)}
@@ -789,26 +866,26 @@ function AIChatbot({ onNav }) {
               {busy && <div className="site-cli-running"><i /><span>{activity}</span></div>}
             </div>
 
-            {bridgePanelOpen && (
+            {githubPanelOpen && (
               <div className="site-cli-config">
-                <div className="site-cli-config-title"><b>CODEX LOCAL BRIDGE</b><span>{bridge.ready ? "실제 Codex CLI 연결 완료" : "PC에서 최초 1회 설치 후 로컬 주소로 접속"}</span></div>
-                <div className={`site-cli-bridge-card ${bridge.ready ? "is-ready" : ""}`}>
-                  <b>{bridge.ready ? `CODEX ${bridge.version} READY` : "LOCAL BRIDGE OFF"}</b>
-                  <span>{bridge.ready ? `ChatGPT 인증 · ${bridge.root}` : "정적 GitHub Pages는 PC의 CLI 프로세스를 직접 실행할 수 없음"}</span>
+                <div className="site-cli-config-title"><b>CODEX GITHUB ACTIONS</b><span>GitHub 로그인·권한 확인·실행·결과 기록을 저장소 안에서 처리</span></div>
+                <div className={`site-cli-github-card ${githubState.state === "ready" ? "is-ready" : ""}`}>
+                  <b>{githubState.state === "ready" ? "GITHUB WORKFLOW READY" : "GITHUB AUTH QUEUE"}</b>
+                  <span>Issue 작성자는 저장소 쓰기 권한 검증 · 브라우저 API 키 저장 없음</span>
                 </div>
-                <div className="site-cli-setup-steps">
-                  {SITE_CODEX_SETUP.map((step, index) => <button key={step} onClick={() => copyText(step)}><span>0{index + 1}</span><code>{step}</code><Icon name="copy" size={12} /></button>)}
+                <div className="site-cli-github-links">
+                  {SITE_CODEX_LINKS.map(([step, label, url]) => <a key={url} href={url} target="_blank" rel="noreferrer"><span>{step}</span><b>{label}</b><Icon name="ext" size={12} /></a>)}
                 </div>
-                <p>질문은 read-only sandbox · 파일 수정은 확인창 승인 후 workspace-write sandbox · 브리지는 127.0.0.1 전용</p>
+                <p>질문은 :read-only · 수정은 :workspace · Codex 작업에는 저장소 쓰기 토큰 미제공 · 검증 통과 패치만 별도 작업에서 main 반영 · 공개 Issue에 비밀정보 입력 금지</p>
                 <div className="site-cli-config-actions">
-                  <button onClick={() => setBridgePanelOpen(false)}>닫기</button>
-                  <button className="primary" onClick={() => refreshBridge(true)}>상태 다시 확인</button>
+                  <button onClick={() => setGithubPanelOpen(false)}>닫기</button>
+                  <button className="primary" onClick={() => checkGithubActions(true)}>Actions 확인</button>
                 </div>
               </div>
             )}
 
             <footer className="site-cli-input-row">
-              <span>codex&nbsp;$</span>
+              <span>github-codex&nbsp;$</span>
               <textarea
                 ref={terminalInputRef}
                 value={input}

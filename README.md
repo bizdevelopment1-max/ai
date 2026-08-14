@@ -2,18 +2,13 @@
 
 GitHub Pages dashboard: <https://bizdevelopment1-max.github.io/ai/>
 
-## Local Codex CLI
+## GitHub Codex CLI
 
-The public GitHub Pages build remains static. Actual Codex questions and workspace edits run only through the loopback bridge at `http://127.0.0.1:4510` so the CLI process and ChatGPT authentication are never exposed to the public web.
+The GitHub Pages terminal sends `/ask` and `/edit` requests through GitHub Issues. GitHub login provides user authentication and `.github/workflows/site-codex.yml` verifies repository write access before invoking the official `openai/codex-action`. No local PC, startup command, browser API key, or loopback service is required.
 
-Windows setup:
+Repository administrators must add one Actions secret named `OPENAI_API_KEY`. Questions run with the `:read-only` permission profile. Edits run with `:workspace` in a job that has no repository write token, then move through a separate no-secret validation job. Only a path-validated patch that passes the browser build and automation tests reaches the final `main` publishing job.
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-site-codex.ps1
-.\Start-Site-Codex.cmd
-```
-
-The installer adds the official `@openai/codex` package pinned in `package.json`, checks `codex login status`, and starts ChatGPT login when needed. `/ask` runs `codex exec` in a read-only sandbox. `/edit` requires a browser confirmation and then runs in a workspace-write sandbox. The bridge binds only to `127.0.0.1` and accepts same-origin requests.
+Requests and results are recorded as public Issues because this repository is public. Never include API keys, passwords, personal data, or other secrets in a Site Codex request.
 
 ## Mobile AI strategy model
 

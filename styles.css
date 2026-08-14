@@ -437,6 +437,13 @@ a[href]:hover .rainbow-on-hover,
   border: 1px solid #00A990; background: rgba(0,169,144,.09); color: #7FE6D5; font: 800 10px var(--mono); cursor: pointer;
 }
 .site-cli-export:hover { background: #7FE6D5; color: #08101F; transform: translateY(-2px); box-shadow: 5px 6px 0 rgba(0,169,144,.22); }
+.site-cli-link {
+  width: fit-content; margin-top: 11px; padding: 7px 10px; display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid #2E6BFF; color: #9EBAFF; background: rgba(46,107,255,.08);
+  font: 850 9.5px var(--mono); text-decoration: none;
+  transition: transform .18s ease, color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.site-cli-link:hover { color: #08101F; background: #EAF1FF; transform: translateY(-2px); box-shadow: 5px 6px 0 rgba(46,107,255,.3); }
 .site-cli-running { position: relative; width: min(440px, 90%); margin: 0 auto; padding-top: 10px; overflow: hidden; color: #7FE6D5; text-align: center; }
 .site-cli-running::before { content: ""; display: block; height: 2px; background: #1D3153; }
 .site-cli-running i { position: absolute; top: 10px; left: 0; width: 26%; height: 2px; background: #7FE6D5; box-shadow: 0 0 10px #00A990; animation: cliRun 1.25s linear infinite; }
@@ -449,26 +456,26 @@ a[href]:hover .rainbow-on-hover,
 .site-cli-config-title b { color: #7FE6D5; font-size: 10px; letter-spacing: .1em; }
 .site-cli-config-title span { color: #6F86AB; font: 650 10px var(--f); }
 .site-cli-config p { grid-column: 1 / -1; margin: 0; color: #7187AB; font: 600 9px/1.45 var(--f); }
-.site-cli-bridge-card {
+.site-cli-github-card {
   min-width: 0; padding: 10px 12px; display: grid; align-content: center; gap: 4px; border: 1px solid #385487;
   background: #111F36; transition: transform .2s ease, box-shadow .2s ease, color .2s ease, background .2s ease;
 }
-.site-cli-bridge-card b { color: #FF9A94; font: 900 10px var(--mono); letter-spacing: .08em; }
-.site-cli-bridge-card span { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: #8FA5C8; font: 650 9px/1.45 var(--f); white-space: nowrap; }
-.site-cli-bridge-card.is-ready { border-color: #00A990; background: rgba(0,169,144,.1); }
-.site-cli-bridge-card.is-ready b { color: #7FE6D5; }
-.site-cli-bridge-card:hover { transform: translateY(-2px); background: #EAF1FF; box-shadow: 5px 6px 0 rgba(46,107,255,.28); }
-.site-cli-bridge-card:hover b, .site-cli-bridge-card:hover span { color: #08101F; }
-.site-cli-setup-steps { min-width: 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; }
-.site-cli-setup-steps button {
+.site-cli-github-card b { color: #85A7FF; font: 900 10px var(--mono); letter-spacing: .08em; }
+.site-cli-github-card span { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: #8FA5C8; font: 650 9px/1.45 var(--f); white-space: nowrap; }
+.site-cli-github-card.is-ready { border-color: #00A990; background: rgba(0,169,144,.1); }
+.site-cli-github-card.is-ready b { color: #7FE6D5; }
+.site-cli-github-card:hover { transform: translateY(-2px); background: #EAF1FF; box-shadow: 5px 6px 0 rgba(46,107,255,.28); }
+.site-cli-github-card:hover b, .site-cli-github-card:hover span { color: #08101F; }
+.site-cli-github-links { min-width: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; }
+.site-cli-github-links a {
   min-width: 0; min-height: 31px; padding: 4px 8px; display: grid; grid-template-columns: 20px minmax(0,1fr) 14px; align-items: center; gap: 6px;
-  border: 1px solid #2A416B; background: #080F1C; color: #8FA5C8; cursor: pointer; text-align: left;
+  border: 1px solid #2A416B; background: #080F1C; color: #8FA5C8; text-align: left; text-decoration: none;
   transition: transform .18s ease, box-shadow .18s ease, color .18s ease, background .18s ease;
 }
-.site-cli-setup-steps button > span { color: #7FE6D5; font: 900 8px var(--mono); }
-.site-cli-setup-steps code { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: inherit; font: 650 8.5px var(--mono); white-space: nowrap; }
-.site-cli-setup-steps button:hover { transform: translateY(-2px); background: #EAF1FF; color: #08101F; box-shadow: 4px 5px 0 rgba(0,169,144,.24); }
-.site-cli-setup-steps button:hover > span { color: #1428A0; }
+.site-cli-github-links a > span { color: #7FE6D5; font: 900 8px var(--mono); }
+.site-cli-github-links b { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: inherit; font: 700 8.5px var(--f); white-space: nowrap; }
+.site-cli-github-links a:hover { transform: translateY(-2px); background: #EAF1FF; color: #08101F; box-shadow: 4px 5px 0 rgba(0,169,144,.24); }
+.site-cli-github-links a:hover > span { color: #1428A0; }
 .site-cli-config-actions { display: flex; align-items: stretch; gap: 6px; }
 .site-cli-config-actions button {
   height: 34px; padding: 0 11px; border: 1px solid #385487; background: #111F36; color: #9DB2D2;
@@ -493,7 +500,7 @@ a[href]:hover .rainbow-on-hover,
   .site-cli-terminal { height: calc(100vh - 20px); }
   .site-cli-status span:nth-child(3) { display: none; }
   .site-cli-config { grid-template-columns: 1fr 1.4fr; }
-  .site-cli-setup-steps { grid-column: 1 / -1; }
+  .site-cli-github-links { grid-column: 1 / -1; }
   .site-cli-config-actions { justify-self: end; }
   .site-cli-command-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
@@ -518,9 +525,9 @@ a[href]:hover .rainbow-on-hover,
   .site-cli-line.user { margin-left: 5%; }
   .site-cli-results, .site-cli-command-grid { grid-template-columns: 1fr; }
   .site-cli-config { max-height: 46vh; overflow-y: auto; grid-template-columns: 1fr; padding: 13px 12px; }
-  .site-cli-config-title, .site-cli-config p, .site-cli-setup-steps { grid-column: 1; }
+  .site-cli-config-title, .site-cli-config p, .site-cli-github-links { grid-column: 1; }
   .site-cli-config-title { display: grid; }
-  .site-cli-setup-steps { grid-template-columns: 1fr; }
+  .site-cli-github-links { grid-template-columns: 1fr; }
   .site-cli-config-actions { justify-self: stretch; }
   .site-cli-config-actions button { flex: 1; }
   .site-cli-input-row > span { padding-left: 10px; font-size: 10px; }

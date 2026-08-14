@@ -181,45 +181,54 @@ try {
 }
 
 try {
-  const [components, styles, bridgeSource, packageSource] = await Promise.all([
+  const [components, styles, workflow, validator, packageSource] = await Promise.all([
     readFile("components.jsx", "utf8"),
     readFile("styles.css", "utf8"),
-    readFile("scripts/site-codex-bridge.mjs", "utf8"),
+    readFile(".github/workflows/site-codex.yml", "utf8"),
+    readFile("scripts/validate-site-codex-patch.mjs", "utf8"),
     readFile("package.json", "utf8"),
   ]);
   const dropdownRemoved = !components.includes('className="chatbot-drop"')
     && !components.includes("QA_CATS.map")
     && !components.includes('title="질문 선택"')
     && !styles.includes(".chatbot-drop");
-  const commands = ["/search", "/company", "/market", "/ask", "/edit", "/open", "/connect", "/doctor", "/export", "/clear"];
+  const commands = ["/search", "/company", "/market", "/ask", "/edit", "/sync", "/open", "/connect", "/doctor", "/export", "/clear"];
   const cliReady = components.includes('className="site-cli-terminal"')
     && components.includes("buildSiteCliIndex")
     && components.includes("searchSiteCli")
-    && components.includes('fetch("./api/codex/status"')
-    && components.includes('fetch("./api/codex/run"')
-    && components.includes('label: command === "edit" ? "CODEX EDIT"')
+    && components.includes("siteCodexIssueUrl")
+    && components.includes("fetchGithubRequest")
+    && components.includes("pollGithubRequest")
+    && components.includes("GITHUB ISSUE")
     && components.includes("ReactDOM.createPortal")
     && commands.every(command => components.includes(`\"${command}`))
     && styles.includes(".site-cli-overlay")
     && styles.includes(".site-cli-command-grid")
     && styles.includes(".site-cli-triangle")
-    && styles.includes(".site-cli-setup-steps");
-  const actualCodex = bridgeSource.includes('const HOST = "127.0.0.1"')
-    && bridgeSource.includes('"exec"')
-    && bridgeSource.includes('mode === "edit" ? "workspace-write" : "read-only"')
-    && bridgeSource.includes('body.confirm !== "APPLY"')
-    && bridgeSource.includes('"--ask-for-approval", "never"')
-    && packageSource.includes('"@openai/codex": "0.147.0"');
+    && styles.includes(".site-cli-github-links");
+  const actualCodex = workflow.includes("uses: openai/codex-action@v1")
+    && workflow.includes("openai-api-key: ${{ secrets.OPENAI_API_KEY }}")
+    && workflow.includes("permission-profile: ${{ needs.prepare.outputs.mode == 'edit' && ':workspace' || ':read-only' }}")
+    && workflow.includes("persist-credentials: false")
+    && workflow.includes("scripts/validate-site-codex-patch.mjs")
+    && workflow.includes("npm run test:automation")
+    && workflow.includes("git push origin HEAD:main")
+    && validator.includes("protected path cannot be changed by Site Codex")
+    && !packageSource.includes("@openai/codex")
+    && !packageSource.includes("codex:start");
   const noBrowserSecret = !components.includes("SESSION TOKEN")
     && !components.includes("api.openai.com/v1/responses")
+    && !components.includes("OPENAI_API_KEY")
     && !/localStorage[^\n]{0,160}token|sessionStorage\.setItem\([^\n]{0,120}token/i.test(components);
   const confirmedWrite = components.includes("window.confirm")
-    && components.includes('confirm: "APPLY"')
-    && !/fetch\([^)]*github\.com|api\.github\.com/.test(components);
+    && components.includes('CONFIRMED: ${mode === "edit" ? "yes" : "not-required"}')
+    && !components.includes("127.0.0.1")
+    && !components.includes("LOCAL BRIDGE")
+    && !components.includes("Start-Site-Codex");
   if (!dropdownRemoved || !cliReady || !actualCodex || !noBrowserSecret || !confirmedWrite) {
-    throw new Error("site CLI must use an authenticated localhost Codex bridge with read-only questions and confirmed workspace writes");
+    throw new Error("site CLI must use GitHub authentication, the official Codex Action, and an isolated validated-patch publishing gate");
   }
-  console.log("  OK  질문 드롭다운 제거 · 실제 Codex CLI 브리지 · 읽기 전용 질의 · 승인형 파일 수정");
+  console.log("  OK  질문 드롭다운 제거 · GitHub 인증 큐 · 공식 Codex Action · 무권한 검증 후 main 반영");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  site CLI workspace: ${error.message}`);
