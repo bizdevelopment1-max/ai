@@ -83,13 +83,13 @@ jobs:
             core.setOutput('request_id', requestId)
             core.setOutput('mode', mode)
 
-      - name: Check Codex API configuration
+      - name: Check ChatGPT Codex authentication
         id: configuration
         shell: bash
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
         run: |
-          if [ -n "${OPENAI_API_KEY:-}" ]; then
+          if [ -n "${CODEX_ACCESS_TOKEN:-}" ]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
           else
             echo "configured=false" >> "$GITHUB_OUTPUT"
@@ -122,10 +122,12 @@ jobs:
               `REQUEST_ID: ${process.env.REQUEST_ID}`,
               'STATUS: configuration-required',
               '',
-              'Codex 실행 설정 필요',
+              'ChatGPT Codex 인증 연결 필요',
               '',
-              '- 저장소 Settings → Secrets and variables → Actions에 `OPENAI_API_KEY` 등록 필요',
-              '- 키는 GitHub Actions Secret에서만 사용되며 사이트 브라우저에 전달되지 않음',
+              '- ChatGPT Business·Enterprise 관리자 페이지에서 Codex access token 생성',
+              '- 저장소 Settings → Secrets and variables → Actions에 `CODEX_ACCESS_TOKEN`으로 등록',
+              '- 인증값은 GitHub Actions Secret에서만 사용되며 사이트 브라우저에 전달되지 않음',
+              '- 인증 안내 · https://learn.chatgpt.com/docs/enterprise/access-tokens',
             ].join('\n')
             await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body })
             await github.rest.issues.update({ ...context.repo, issue_number: context.issue.number, state: 'closed' })
@@ -134,6 +136,7 @@ jobs:
     needs: prepare
     if: needs.prepare.outputs.configured == 'true'
     runs-on: ubuntu-latest
+    environment: site-codex-authenticated
     timeout-minutes: 30
     permissions:
       contents: read
@@ -153,16 +156,44 @@ jobs:
           name: site-codex-request-${{ github.run_id }}
           path: ${{ runner.temp }}/site-codex-request
 
-      - name: Run official Codex CLI action
+      - name: Install official Codex CLI
+        shell: bash
+        run: npm install --global @openai/codex@0.147.0
+
+      - name: Authenticate Codex with ChatGPT workspace access
+        shell: bash
+        env:
+          CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
+          CODEX_HOME: ${{ runner.temp }}/site-codex-home
+        run: |
+          set -euo pipefail
+          mkdir -p "$CODEX_HOME"
+          printenv CODEX_ACCESS_TOKEN | codex login --with-access-token
+
+      - name: Run authenticated Codex CLI
         id: codex
-        uses: openai/codex-action@v1
-        with:
-          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
-          prompt-file: ${{ runner.temp }}/site-codex-request/prompt.md
-          output-file: ${{ runner.temp }}/site-codex-result.md
-          permission-profile: ${{ needs.prepare.outputs.mode == 'edit' && ':workspace' || ':read-only' }}
-          codex-version: "0.147.0"
-          safety-strategy: drop-sudo
+        shell: bash
+        env:
+          CODEX_HOME: ${{ runner.temp }}/site-codex-home
+          REQUEST_MODE: ${{ needs.prepare.outputs.mode }}
+        run: |
+          set -euo pipefail
+          if [ "$REQUEST_MODE" = "edit" ]; then
+            SANDBOX_MODE="workspace-write"
+          else
+            SANDBOX_MODE="read-only"
+          fi
+          codex exec \
+            --ignore-user-config \
+            --ephemeral \
+            --sandbox "$SANDBOX_MODE" \
+            --output-last-message "$RUNNER_TEMP/site-codex-result.md" \
+            - < "$RUNNER_TEMP/site-codex-request/prompt.md"
+
+      - name: Clear temporary Codex authentication
+        if: always()
+        shell: bash
+        run: rm -rf "$RUNNER_TEMP/site-codex-home"
 
       - name: Store Codex response
         uses: actions/upload-artifact@v4

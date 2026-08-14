@@ -405,6 +405,7 @@ function KpiStrip({ kpis }) {
 const SITE_CODEX_REPO = "bizdevelopment1-max/ai";
 const SITE_CODEX_API = `https://api.github.com/repos/${SITE_CODEX_REPO}`;
 const SITE_CODEX_WEB = `https://github.com/${SITE_CODEX_REPO}`;
+const SITE_CODEX_AUTH = "https://chatgpt.com/admin/access-tokens";
 const SITE_CODEX_RESULT_MARKER = "<!-- site-codex-result:v1 -->";
 const SITE_CODEX_COMMANDS = [
   ["/search <키워드>", "사이트 전체 근거 검색"],
@@ -414,16 +415,16 @@ const SITE_CODEX_COMMANDS = [
   ["/edit <요청>", "GitHub 패치 검증 후 main 반영"],
   ["/sync <요청 ID>", "GitHub Actions 결과 다시 확인"],
   ["/open <섹션명>", "대시보드 섹션 이동"],
-  ["/connect", "GitHub 인증·워크플로 정보"],
+  ["/connect", "ChatGPT·GitHub 인증 연결 정보"],
   ["/doctor", "GitHub Actions 실행 상태"],
   ["/export", "현재 작업 기록 저장"],
   ["/clear", "콘솔 기록 정리"],
 ];
 
 const SITE_CODEX_LINKS = [
-  ["01", "GitHub Actions 실행 기록", `${SITE_CODEX_WEB}/actions/workflows/site-codex.yml`],
-  ["02", "Codex API 키 Secret 설정", `${SITE_CODEX_WEB}/settings/secrets/actions`],
-  ["03", "Site Codex 요청 목록", `${SITE_CODEX_WEB}/issues?q=is%3Aissue+label%3Asite-codex`],
+  ["01", "ChatGPT Codex 인증", SITE_CODEX_AUTH],
+  ["02", "인증 Secret 연결", `${SITE_CODEX_WEB}/settings/secrets/actions`],
+  ["03", "GitHub Actions 실행 기록", `${SITE_CODEX_WEB}/actions/workflows/site-codex.yml`],
 ];
 
 function siteCliText(value, limit = 2600) {
@@ -547,7 +548,7 @@ function AIChatbot({ onNav }) {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [log, setLog] = useState([{
     id: "boot", role: "system", label: "READY",
-    text: "사이트 데이터 인덱스 연결 · GitHub 인증 큐 연결 · /help 명령어 확인",
+    text: "사이트 데이터 인덱스 연결 · ChatGPT 인증형 Codex CLI · GitHub 실행 큐 연결 · /help 명령어 확인",
   }]);
   const launcherRef = useRef(null);
   const terminalInputRef = useRef(null);
@@ -739,7 +740,7 @@ function AIChatbot({ onNav }) {
     const args = commandMatch ? commandMatch[2].trim() : raw;
 
     if (command === "help") {
-      append({ role: "system", label: "COMMANDS", text: "사이트 검색 · GitHub 인증형 Codex 질의 · 검증형 파일 수정 · Actions 상태 확인", commands: SITE_CODEX_COMMANDS });
+      append({ role: "system", label: "COMMANDS", text: "사이트 검색 · ChatGPT 인증형 Codex CLI 질의 · 검증형 파일 수정 · Actions 상태 확인", commands: SITE_CODEX_COMMANDS });
       return;
     }
     if (command === "clear") { setLog([]); return; }
@@ -823,18 +824,18 @@ function AIChatbot({ onNav }) {
               <div className="site-cli-window-controls" aria-hidden="true"><i /><i /><i /></div>
               <div className="site-cli-title">
                 <span className="site-cli-mark"><Icon name="pulse" size={17} sw={2.2} /></span>
-                <div><b>SITE CODEX</b><small>GITHUB AUTH · CODEX ACTION · VERIFIED PATCH</small></div>
+                <div><b>SITE CODEX</b><small>CHATGPT AUTH · CODEX CLI · VERIFIED PATCH</small></div>
               </div>
               <div className="site-cli-status">
                 <span>SITE INDEX</span>
-                <span className={githubState.state === "ready" ? "is-on" : ""}>GITHUB AUTH</span>
+                <span className={githubState.state === "ready" ? "is-on" : ""}>WORKFLOW</span>
                 <span>PATCH GATE</span>
               </div>
               <button className="site-cli-close" onClick={() => setVisible(false)} title="닫기"><Icon name="x" size={17} sw={2} /></button>
             </header>
 
             <div className="site-cli-flow" aria-hidden="true">
-              <span>SITE DATA</span><i /><span>GITHUB ISSUE</span><i /><span>CODEX ACTION</span><i /><span>RESULT</span>
+              <span>SITE DATA</span><i /><span>GITHUB AUTH</span><i /><span>CODEX CLI</span><i /><span>VERIFIED RESULT</span>
             </div>
 
             <div className="site-cli-output" ref={outputRef} data-preserve-copy="true">
@@ -868,15 +869,15 @@ function AIChatbot({ onNav }) {
 
             {githubPanelOpen && (
               <div className="site-cli-config">
-                <div className="site-cli-config-title"><b>CODEX GITHUB ACTIONS</b><span>GitHub 로그인·권한 확인·실행·결과 기록을 저장소 안에서 처리</span></div>
+                <div className="site-cli-config-title"><b>CHATGPT-AUTHENTICATED CODEX CLI</b><span>ChatGPT 워크스페이스 인증 후 GitHub 러너에서 비대화형 CLI 실행</span></div>
                 <div className={`site-cli-github-card ${githubState.state === "ready" ? "is-ready" : ""}`}>
-                  <b>{githubState.state === "ready" ? "GITHUB WORKFLOW READY" : "GITHUB AUTH QUEUE"}</b>
-                  <span>Issue 작성자는 저장소 쓰기 권한 검증 · 브라우저 API 키 저장 없음</span>
+                  <b>{githubState.state === "ready" ? "GITHUB WORKFLOW ONLINE" : "WORKFLOW CONNECTION"}</b>
+                  <span>GitHub 사용자 권한은 요청 시 검증 · ChatGPT 인증 상태는 Actions 실행 시 확인</span>
                 </div>
                 <div className="site-cli-github-links">
                   {SITE_CODEX_LINKS.map(([step, label, url]) => <a key={url} href={url} target="_blank" rel="noreferrer"><span>{step}</span><b>{label}</b><Icon name="ext" size={12} /></a>)}
                 </div>
-                <p>질문은 :read-only · 수정은 :workspace · Codex 작업에는 저장소 쓰기 토큰 미제공 · 검증 통과 패치만 별도 작업에서 main 반영 · 공개 Issue에 비밀정보 입력 금지</p>
+                <p>ChatGPT Business·Enterprise access token으로 CLI 로그인 · 질문은 read-only · 수정은 workspace-write · Codex 작업에는 저장소 쓰기 토큰 미제공 · 검증 통과 패치만 별도 작업에서 main 반영 · 공개 Issue에 비밀정보 입력 금지</p>
                 <div className="site-cli-config-actions">
                   <button onClick={() => setGithubPanelOpen(false)}>닫기</button>
                   <button className="primary" onClick={() => checkGithubActions(true)}>Actions 확인</button>
