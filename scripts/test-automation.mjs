@@ -226,6 +226,33 @@ try {
 }
 
 try {
+  const how = await readFile("How/index.html", "utf8");
+  const slides = [...how.matchAll(/<section class="slide(?:\s|\")/g)].length;
+  const videos = new Set([...how.matchAll(/data-src="([^"]+\.mp4)"/g)].map(match => match[1]));
+  const samsungOne = how.includes('font-family: "SamsungOne700C"')
+    && how.includes('font-family: "SamsungOne500C"')
+    && how.includes('--title-font: "SamsungOne700C"')
+    && how.includes('--body-font: "SamsungOne500C"');
+  const largerType = how.includes('h1 { max-width: 1160px; font-size: clamp(54px')
+    && how.includes('h2 { max-width: 1260px; font-size: clamp(38px')
+    && how.includes('.slide-title p { font-size: clamp(15px')
+    && how.includes('.branch li, .clean-list li { font-size: clamp(13px');
+  const consultingMotion = how.includes("const consultingLogic = {")
+    && how.includes("className = 'consulting-ribbon'")
+    && how.includes("className = 'logic-arrow'")
+    && how.includes("track.classList.add('diagram-track')")
+    && how.includes("@keyframes trackMove")
+    && how.includes("@keyframes diagramRise");
+  if (slides !== 12 || videos.size !== 12 || !samsungOne || !largerType || !consultingMotion) {
+    throw new Error("How deck must keep 12 unique video slides with SamsungOne typography and animated consulting diagrams");
+  }
+  console.log("  OK  How 12장 · SamsungOne 700C/500C · 확대 타이포 · 근거→분석→의사결정 동적 도식");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  How consulting deck: ${error.message}`);
+}
+
+try {
   const [app, components, anim] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("components.jsx", "utf8"),

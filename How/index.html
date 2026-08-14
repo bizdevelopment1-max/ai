@@ -7,6 +7,20 @@
   <meta name="description" content="모바일 AI 신사업 인텔리전스 사이트의 작동 원리와 초보자 구현 가이드">
   <title>HOW · 모바일 AI 신사업 인텔리전스 구현 가이드</title>
   <style>
+    @font-face {
+      font-family: "SamsungOne700C";
+      src: local("SamsungOne 700C"), local("SamsungOne700C"), local("SamsungOne 700");
+      font-style: normal;
+      font-weight: 700 900;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "SamsungOne500C";
+      src: local("SamsungOne 500C"), local("SamsungOne500C"), local("SamsungOne 500");
+      font-style: normal;
+      font-weight: 400 600;
+      font-display: swap;
+    }
     :root {
       color-scheme: dark;
       --bg: #030609;
@@ -20,7 +34,9 @@
       --good: #34d399;
       --warn: #fbbf24;
       --bad: #fb7185;
-      --sans: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", Inter, system-ui, sans-serif;
+      --title-font: "SamsungOne700C", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+      --body-font: "SamsungOne500C", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+      --sans: var(--body-font);
       --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
     }
 
@@ -344,6 +360,158 @@
     .close-help { margin-top: 18px; padding: 10px 13px; border: 1px solid var(--line); background: transparent; cursor: pointer; }
     .close-help:hover { background: var(--accent); color: #021014; }
 
+    /* SamsungOne consulting typography system */
+    .deck, .deck *, .help-panel, .help-panel * { font-family: var(--body-font); }
+    h1, h2, h3, strong, b, .slide-no, .brand-mark, .page-count b { font-family: var(--title-font); font-weight: 700; }
+    h1 { max-width: 1160px; font-size: clamp(54px, 6.2vw, 108px); line-height: .98; }
+    h2 { max-width: 1260px; font-size: clamp(38px, 3.65vw, 66px); line-height: 1.06; }
+    h3 { font-size: clamp(19px, 1.34vw, 25px); }
+    .lead { font-size: clamp(18px, 1.42vw, 25px); line-height: 1.52; }
+    .slide-title { margin-bottom: 24px; }
+    .slide-title p { font-size: clamp(15px, 1.04vw, 18px); line-height: 1.5; }
+    .slide-no { font-size: 34px; }
+    .eyebrow { font-size: 13px; }
+    .takeaway { padding: 16px 19px; font-size: clamp(14px, .98vw, 17px); }
+    .takeaway b { font-size: 11px; }
+    .cover-sub { font-size: clamp(19px, 1.5vw, 27px); }
+    .cover-tags span { font-size: 12px; }
+    .cover-index b { font-size: 16px; }
+    .cover-index small { font-size: 13px; }
+    .flow-card b, .outcome b { font-size: clamp(16px, 1.08vw, 20px); }
+    .flow-card span, .outcome span { font-size: clamp(12px, .78vw, 14px); }
+    .flow-card em, .outcome em, .branch em, .arch-layer em, .pipe-step em, .gate em,
+    .money-node em, .strategy-card em, .render-box em, .road-step em { font-size: 11px; }
+    .root-question { font-size: clamp(20px, 1.42vw, 27px); }
+    .branch li, .clean-list li { font-size: clamp(13px, .86vw, 15px); }
+    .arch-layer li { font-size: clamp(11px, .74vw, 13px); }
+    .ledger b, .principle b, .decision-box b, .pipe-step b, .render-box b { font-size: clamp(13px, .88vw, 16px); }
+    .ledger span, .principle span, .formula p, .decision-box span, .pipe-step span,
+    .render-box span, .performance span { font-size: clamp(11px, .74vw, 13px); }
+    .formula code { font-size: clamp(12px, .84vw, 15px); }
+    .mini-row span { font-size: clamp(11px, .72vw, 13px); }
+    .gate b { font-size: clamp(15px, 1vw, 18px); }
+    .gate span, .stop-strip span { font-size: clamp(12px, .78vw, 14px); }
+    .money-node b { font-size: clamp(15px, 1vw, 18px); }
+    .model b { font-size: clamp(13px, .86vw, 16px); }
+    .model span { font-size: clamp(11px, .72vw, 13px); }
+    .strategy-card dt { font-size: 10px; }
+    .strategy-card dd { font-size: clamp(12px, .78vw, 14px); }
+    .file-tree { font-size: clamp(11px, .76vw, 14px); }
+    .performance b { font-size: 12px; }
+    .road-step h3 { font-size: clamp(15px, 1vw, 18px); }
+    .road-step li { font-size: clamp(11px, .72vw, 13px); }
+    .check b { font-size: clamp(14px, .9vw, 17px); }
+    .check span { font-size: clamp(12px, .78vw, 14px); }
+    .cta { font-size: 15px; }
+    .key-grid span { font-size: 13px; }
+
+    /* conclusion-led consulting ribbon */
+    .consulting-ribbon {
+      position: absolute;
+      top: -22px;
+      right: 0;
+      z-index: 6;
+      display: grid;
+      grid-template-columns: repeat(5, auto);
+      align-items: center;
+      min-height: 30px;
+      border: 1px solid rgba(var(--accent-rgb), .32);
+      background: rgba(1, 5, 9, .72);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    .logic-node {
+      min-width: 112px;
+      padding: 8px 12px;
+      color: #dce7f1;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      text-align: center;
+      white-space: nowrap;
+      transition: color .25s ease, background .25s ease;
+    }
+    .logic-node:first-child { color: var(--accent); }
+    .logic-node:last-child { background: rgba(var(--accent-rgb), .12); }
+    .logic-arrow {
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 10px solid var(--accent);
+      filter: drop-shadow(0 0 7px rgba(var(--accent-rgb), .72));
+      animation: logicArrow 1.45s ease-in-out infinite;
+    }
+    .consulting-ribbon::after {
+      content: "";
+      position: absolute;
+      left: -22%;
+      bottom: 0;
+      width: 22%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent));
+      animation: ribbonScan 3.6s linear infinite;
+    }
+    @keyframes logicArrow { 0%,100% { opacity: .4; transform: translateX(-2px); } 50% { opacity: 1; transform: translateX(3px); } }
+    @keyframes ribbonScan { to { left: 108%; } }
+
+    /* semantic connection tracks and staged diagram motion */
+    .diagram-track { position: relative; isolation: isolate; }
+    .diagram-track > * { position: relative; z-index: 2; }
+    .diagram-item { will-change: transform, opacity; }
+    .active .diagram-item { animation: diagramRise .62s cubic-bezier(.18,.82,.2,1) both; animation-delay: calc(.16s + var(--card-order, 0) * .065s); }
+    @keyframes diagramRise {
+      from { opacity: 0; transform: translateY(16px) scale(.97); }
+      to { opacity: 1; transform: none; }
+    }
+    @media (min-width: 1101px) {
+      .diagram-track::before {
+        content: "";
+        position: absolute;
+        z-index: 0;
+        left: 3%;
+        right: 3%;
+        top: 50%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), .72) 12% 88%, transparent);
+        box-shadow: 0 0 12px rgba(var(--accent-rgb), .32);
+      }
+      .diagram-track::after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        top: calc(50% - 3px);
+        left: 3%;
+        width: 7px;
+        height: 7px;
+        background: var(--accent);
+        box-shadow: 0 0 16px var(--accent);
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+        animation: trackMove 4.4s linear infinite;
+      }
+      @keyframes trackMove { 0% { left: 3%; opacity: 0; } 9%,91% { opacity: 1; } 100% { left: 96%; opacity: 0; } }
+    }
+
+    .flow-card, .outcome, .branch, .arch-layer, .ledger, .pipe-step, .principle, .formula,
+    .decision-box, .gate, .money-node, .model, .strategy-card, .render-box, .performance div,
+    .road-step, .check, .cover-index div {
+      transition: color .28s ease, background .28s ease, border-color .28s ease, transform .28s ease, box-shadow .28s ease;
+    }
+    .flow-card:hover, .outcome:hover, .branch:hover, .arch-layer:hover, .ledger:hover, .pipe-step:hover,
+    .principle:hover, .formula:hover, .decision-box:hover, .gate:hover, .money-node:hover, .model:hover,
+    .strategy-card:hover, .render-box:hover, .performance div:hover, .road-step:hover, .check:hover,
+    .cover-index div:hover {
+      color: #021014;
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: perspective(800px) translateY(-6px) rotateX(2deg) rotateY(-1deg);
+      box-shadow: 8px 12px 0 rgba(0,0,0,.32), 0 20px 38px rgba(0,0,0,.38), 0 0 25px rgba(var(--accent-rgb), .2);
+    }
+    .flow-card:hover *, .outcome:hover *, .branch:hover *, .arch-layer:hover *, .ledger:hover *,
+    .pipe-step:hover *, .principle:hover *, .formula:hover *, .decision-box:hover *, .gate:hover *,
+    .money-node:hover *, .model:hover *, .strategy-card:hover *, .render-box:hover *,
+    .performance div:hover *, .road-step:hover *, .check:hover *, .cover-index div:hover * { color: #021014 !important; }
+
     @media (max-width: 1100px) {
       .slide { padding-left: 5vw; padding-right: 6vw; }
       .flow, .pipeline { grid-template-columns: repeat(5, 1fr); gap: 8px; }
@@ -381,6 +549,20 @@
       .nav-dots { display: none; }
       .footer { left: 18px; right: 18px; }
       .key-grid { grid-template-columns: 1fr; }
+      h1 { font-size: clamp(48px, 15vw, 76px); }
+      h2 { font-size: clamp(34px, 10vw, 54px); }
+      h3 { font-size: 21px; }
+      .slide-title p, .lead { font-size: 17px; }
+      .consulting-ribbon { position: relative; top: auto; right: auto; width: 100%; margin-bottom: 18px; grid-template-columns: 1fr 18px 1fr 18px 1fr; }
+      .logic-node { min-width: 0; padding: 9px 5px; font-size: 10px; }
+    }
+
+    @media (max-height: 820px) and (min-width: 761px) {
+      .slide { padding-top: 84px; padding-bottom: 54px; }
+      h2 { font-size: clamp(34px, 3.2vw, 54px); }
+      .slide-title { margin-bottom: 17px; }
+      .takeaway { margin-top: 14px; padding-block: 11px; }
+      .road-step { min-height: 205px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -698,10 +880,52 @@
       let touchStartX = 0
       let touchStartY = 0
 
+      const consultingLogic = {
+        '표지': ['질문 정의', '근거 체계', '실행 설계'],
+        '한 장 요약': ['데이터', '인사이트', '의사결정'],
+        '질문 설계': ['핵심 문제', 'MECE 분해', 'KPI'],
+        '시스템 구조': ['원천 데이터', '검증 계층', '공개 화면'],
+        '수집 흐름': ['탐색', '본문 추출', '정규화'],
+        '최신값 교체': ['안정 키', '신구 비교', '최신값 반영'],
+        '품질 검증': ['관련성', '완전성', '배포 승인'],
+        '수익모델 분석': ['지불 주체', '과금 단위', '재투자'],
+        '전략 도출': ['Where to Play', 'How to Win', 'KPI'],
+        '화면 구현': ['데이터', '컴포넌트', '상호작용'],
+        '구현 로드맵': ['설계', '구축', '자동화'],
+        '완료 기준': ['원문 근거', '품질 통과', '지속 갱신']
+      }
+      const diagramSelectors = '.flow-card, .outcome, .branch, .arch-layer, .ledger, .pipe-step, .principle, .formula, .decision-box, .gate, .money-node, .model, .strategy-card, .render-box, .performance > div, .road-step, .check, .cover-index > div'
+      const trackSelectors = '.flow, .three-outcomes, .branches, .architecture, .pipeline, .principle-grid, .decision, .gate-grid, .money-flow, .model-grid, .strategy-grid, .portfolio-line, .render-flow, .performance, .roadmap, .checklist, .cover-index'
+
       totalPages.textContent = String(slides.length).padStart(2, '0')
       slides.forEach((slide, slideIndex) => {
         slide.style.setProperty('--accent', slide.dataset.accent)
         slide.style.setProperty('--accent-rgb', slide.dataset.rgb)
+        const inner = slide.querySelector('.slide-inner')
+        const logic = consultingLogic[slide.dataset.title] || ['근거', '분석', '실행']
+        if (inner) {
+          const ribbon = document.createElement('div')
+          ribbon.className = 'consulting-ribbon'
+          ribbon.setAttribute('aria-label', `${logic[0]}에서 ${logic[2]}까지의 분석 흐름`)
+          logic.forEach((label, logicIndex) => {
+            const node = document.createElement('span')
+            node.className = 'logic-node'
+            node.textContent = label
+            ribbon.append(node)
+            if (logicIndex < logic.length - 1) {
+              const arrow = document.createElement('i')
+              arrow.className = 'logic-arrow'
+              arrow.setAttribute('aria-hidden', 'true')
+              ribbon.append(arrow)
+            }
+          })
+          inner.prepend(ribbon)
+        }
+        slide.querySelectorAll(diagramSelectors).forEach((item, itemIndex) => {
+          item.classList.add('diagram-item')
+          item.style.setProperty('--card-order', String(itemIndex))
+        })
+        slide.querySelectorAll(trackSelectors).forEach(track => track.classList.add('diagram-track'))
         const button = document.createElement('button')
         button.className = 'nav-dot'
         button.type = 'button'
