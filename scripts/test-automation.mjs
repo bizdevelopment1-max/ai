@@ -286,9 +286,23 @@ try {
     && /\.logic-arrow\s*\{[\s\S]{0,160}width:\s*64px;[\s\S]{0,80}height:\s*10px;/.test(how);
   const beginnerCodexPlaybook = how.includes("FIRST PROMPT")
     && how.includes("PROMPT BLUEPRINT")
-    && how.includes("Codex 작업 흐름")
+    && how.includes("실제 입력과 실행 예시")
     && how.includes("SAFE GITHUB FLOW")
     && how.includes("목표·범위·유지 조건·완료 기준");
+  const crossVerifiedCaseStudy = how.includes("THREE-LANE ASSURANCE")
+    && how.includes("Claude Code 2.1.220")
+    && how.includes("2차 지적 반영 후 최종 PASS")
+    && how.includes("Perplexity 검색 · 10개 출처")
+    && [...how.matchAll(/class="source-link"/g)].length >= 3
+    && how.includes("팩트체크 결과 · 부분 지지")
+    && how.includes("node scripts/test-automation.mjs")
+    && how.includes("git rebase origin/main")
+    && how.includes("git switch -c feature/how-playbook")
+    && how.includes("gh pr create --fill")
+    && how.includes("LONG-RUN CASES")
+    && how.includes("CASE 01 · STATIC HOSTING")
+    && how.includes("CASE 02 · MOVING MAIN")
+    && how.includes("CASE 03 · FIT &amp; SPEED");
   const removedLegacyCopy = !how.includes("ARROW KEYS TO NAVIGATE")
     && !how.includes("12 SLIDES")
     && !how.includes("10–15 MIN")
@@ -298,7 +312,10 @@ try {
     && secondaryAccentColors.size >= 6
     && how.includes("--accent-2")
     && how.includes("--accent-rgb-2")
-    && how.includes("linear-gradient(118deg, var(--accent)");
+    && how.includes("linear-gradient(118deg, var(--accent)")
+    && how.includes("--signature-blue: linear-gradient(135deg, #00b3e3 0%, #0072ce 52%, #1428a0 100%)")
+    && how.includes(".slide-inner::after")
+    && how.includes("@keyframes blueSignature");
   const introVideoExperience = how.includes('class="slide active intro-video cover-slide"')
     && how.includes('class="slide intro-video summary-slide"')
     && how.includes("slides[0].classList.add('scroll-lift')")
@@ -306,10 +323,10 @@ try {
     && how.includes("video.volume = 0")
     && how.includes(".summary-slide .flow")
     && how.includes(".summary-slide .takeaway");
-  if (slides !== 12 || videos.size !== 2 || backgroundCarousels !== 10 || carouselScenes !== 20 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !beginnerCodexPlaybook || !removedLegacyCopy || !variedGradientSystem || !introVideoExperience) {
-    throw new Error("How deck must keep 12 slides, 2 muted intro videos, 10 dual-image backgrounds, varied gradients, long triangular consulting arrows, beginner Codex guidance, and no removed labels or JSON copy");
+  if (slides !== 12 || videos.size !== 2 || backgroundCarousels !== 10 || carouselScenes !== 20 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !beginnerCodexPlaybook || !crossVerifiedCaseStudy || !removedLegacyCopy || !variedGradientSystem || !introVideoExperience) {
+    throw new Error("How deck must keep 12 slides, 2 muted intro videos, 10 dual-image backgrounds, blue signatures plus varied gradients, long consulting arrows, beginner prompts, cross-verification evidence, real commands, and long-run cases");
   }
-  console.log("  OK  How 12장 · 첫 2장 무음 영상 · 3장 이후 이중 이미지 · 다색 컨설팅 도식 · 초보자 Codex 가이드");
+  console.log("  OK  How 12장 · 첫 2장 무음 영상 · 3장 이후 이중 이미지 · 블루 시그니처+다색 도식 · 교차검증·실제 명령·장기 작업 사례");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);
