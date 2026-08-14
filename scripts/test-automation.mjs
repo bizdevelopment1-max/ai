@@ -1057,22 +1057,22 @@ try {
 
 try {
   const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
-  const readableSignals = boards.includes("signal-quant-layout")
-    && boards.includes("DECISION LENS")
-    && boards.includes("검토 항목")
-    && styles.includes(".signal-reading")
+  const readableSignals = boards.includes("function SignalBoard")
+    && boards.includes("Mobile AI 기술 변화")
+    && boards.includes("Experience · Agent · Model · Context · Developer Tool · Edge Runtime")
+    && boards.includes('SignalInfographic file="infra-view.json"')
     && styles.includes(".isg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));")
     && styles.includes(".isg-card:hover {")
     && styles.includes(".isg-card:hover::after { opacity: 1; }")
     && styles.includes("@media (prefers-reduced-motion: reduce)")
     && !styles.includes(".isg-summary li { position: relative; min-width: 0; padding-left: 10px; font-size: 11px; font-weight: 600; line-height: 1.45; color: var(--muted); word-break: keep-all; display: -webkit-box;");
   if (!readableSignals) {
-    throw new Error("infra charts need a compact chart layout, source-derived decision lenses, and unclipped readable signal cards");
+    throw new Error("mobile technology signals need a source-derived infographic and unclipped readable cards");
   }
-  console.log("  OK  infrastructure charts include compact visuals and readable source-derived insights");
+  console.log("  OK  mobile technology signals include readable source-derived infographics");
 } catch (error) {
   failed = true;
-  console.error(`  FAIL  infrastructure chart readability: ${error.message}`);
+  console.error(`  FAIL  mobile technology signal readability: ${error.message}`);
 }
 
 try {
@@ -1207,7 +1207,7 @@ try {
   const boards = await readFile("boards.jsx", "utf8");
   const removedSignalIntros = [
     "매일 크롤된 기사에서 '돈 버는 방식'을 구독·사용량(API)",
-    "매일 크롤된 기사에서 컴퓨트·메모리·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로",
+    "매일 크롤된 기사에서 컴퓨트·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로",
   ];
   if (removedSignalIntros.some(text => boards.includes(text)) || !/\{sub && <p>\{sub\}<\/p>\}/.test(boards)) {
     throw new Error("removed signal-board guidance must not leave empty explanatory copy");
@@ -1481,13 +1481,18 @@ try {
 try {
   const research = JSON.parse(await readFile("research.json", "utf8"));
   const pinned = (research.pinned || []).filter(brief => brief.provenance?.status === "user-provided-source");
-  if (!pinned.length || !pinned.every(brief => Array.isArray(brief.summaryLines) && brief.summaryLines.length === 3 && brief.sourceLine && brief.sourcePages?.length)) {
-    throw new Error("curated research briefs require a source reference, source pages, and exactly three Korean key lines");
+  const mobileBriefs = (research.feed || []).filter(brief =>
+    /(?:smartphone|mobile|phone|consumer|assistant|agent|wearable|camera|voice)/i.test(JSON.stringify(brief)));
+  const retiredFocus = /SK\s*hynix|SK하이닉스|하이닉스|메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM/i;
+  if (!mobileBriefs.length
+    || pinned.some(brief => !Array.isArray(brief.summaryLines) || brief.summaryLines.length !== 3 || !brief.sourceLine || !brief.sourcePages?.length)
+    || [...pinned, ...mobileBriefs].some(brief => retiredFocus.test(JSON.stringify(brief)))) {
+    throw new Error("research briefs must remain source-backed, mobile-AI-relevant, and free of the retired business focus");
   }
-  console.log(`  정상  증권사·기관 리서치 한국어 3줄 핵심 ${pinned.length}건`);
+  console.log(`  정상  휴대폰 AI 리서치 ${mobileBriefs.length}건 · 사용자 제공 브리프 ${pinned.length}건`);
 } catch (error) {
   failed = true;
-  console.error(`  실패  증권사·기관 리서치 3줄 핵심: ${error.message}`);
+  console.error(`  실패  휴대폰 AI 리서치: ${error.message}`);
 }
 
 try {
@@ -1563,9 +1568,9 @@ try {
   const keywords = Function(`return ${keywordDeclaration[1]}`)();
   const matches = (text) => [...text.matchAll(keywords)].map((match) => match[0]);
   const falsePositive = ["pair", "training"].some((word) => matches(word).length > 0);
-  const expectedTerms = matches("OpenAI와 AI 서버");
+  const expectedTerms = matches("OpenAI와 AI 서비스");
   const termRule = stylesSource.match(/\.term-hl\s*\{[\s\S]*?\n\}/)?.[0] || "";
-  if (falsePositive || !expectedTerms.includes("OpenAI") || !expectedTerms.includes("AI 서버")
+  if (falsePositive || !expectedTerms.includes("OpenAI") || !expectedTerms.includes("AI 서비스")
     || !/rgba\(255,212,0/.test(termRule) || /background:\s*color-mix/.test(termRule)) {
     throw new Error("keyword emphasis must use complete terms with a yellow underline only");
   }
@@ -1759,14 +1764,13 @@ try {
   ]);
   const dash = loadDash();
   const chinaGroups = [
-    "china-memory",
     "china-foundry",
     "china-equipment",
     "china-packaging",
     "china-design",
     "china-materials",
   ];
-  // 주가 보드는 제외 기업을 뺀 62개 상장사 전체를 사이트 공통 7계층으로 재분류한다.
+  // 주가 보드는 휴대폰 AI 신사업과 직접 연결되는 54개 상장사를 공통 7계층으로 재분류한다.
   const completeBoard = boards.includes("function StockRegionPanel")
     && boards.includes("function NvidiaInvestmentMap")
     && boards.includes("전체 상장사 밸류체인 분석")
@@ -1776,9 +1780,11 @@ try {
     && boards.includes("밸류체인 그룹 트렌드")
     && boards.includes("개별 종목");
   const completeMetadata = !data.includes('ticker: "000660.KS"')
-    && data.includes('ticker: "688825.SS"')
+    && !data.includes('ticker: "688825.SS"')
+    && !data.includes('group: "memory"')
+    && !data.includes('group: "china-memory"')
     && chinaGroups.every(group => data.includes(`id: "${group}"`))
-    && dash.STOCKS.length === 62
+    && dash.STOCKS.length === 54
     && dash.STOCK_VALUE_CHAIN.length === 7
     && dash.STOCKS.every(stock => dash.STOCK_VALUE_CHAIN.some(layer =>
       layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])))
@@ -1823,7 +1829,7 @@ try {
     || !liveHistory || !currencyAware || !responsiveUi || !stockComparisonCopyRemoved || !initialSevenCategoryView) {
     throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
-  console.log("  OK  62개 상장사 Stock 분석 + NVIDIA 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
+  console.log("  OK  휴대폰 AI 신사업 관련 54개 상장사 Stock 분석 + NVIDIA 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock value-chain board: ${error.message}`);
@@ -1939,8 +1945,11 @@ try {
     "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json",
     "nvidia-investments.json", "briefing.json", "quality.json",
   ].map(file => readFile(file, "utf8")));
-  if (visibleAssets.some(source => /SK\s*hynix|SK하이닉스|하이닉스/i.test(source))) {
+  if (visibleAssets.some(source => /SK\s*hynix|SK하이닉스|하이닉스|Micron|SanDisk|Western Digital|Kioxia|CXMT|GigaDevice|BIWIN|Montage Technology/i.test(source))) {
     throw new Error("permanently excluded company remains in a browser-visible asset");
+  }
+  if (visibleAssets.some(source => /메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM/i.test(source))) {
+    throw new Error("retired business focus remains in a browser-visible asset");
   }
   console.log("  OK  X 삭제 영구 제외 레지스트리 · 제외 기업 공개 자산 제거 · 크롤러 재유입 차단");
 } catch (error) {
@@ -1968,9 +1977,13 @@ try {
   const terms = newsPolicy.excludedTerms || [];
   if (!terms.length) throw new Error("config/news-policy.json has no excludedTerms configured");
   const escape = term => String(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const patternFor = term => {
+    const escaped = escape(term);
+    return /^[A-Za-z0-9]+$/.test(String(term)) ? `\\b${escaped}\\b` : escaped;
+  };
   // Data files: full case-insensitive policy match (identical to
   // isExcludedText, since these files have no code-identifier risk).
-  const dataRe = new RegExp(terms.map(escape).join("|"), "gi");
+  const dataRe = new RegExp(terms.map(patternFor).join("|"), "gi");
   // Source files: same, except "MX" is matched case-sensitively (no "i") in
   // a separate pass. Lowercase "mx"/"my" is an extremely common mouse-x/
   // mouse-y coordinate variable name in this codebase's canvas/graph code —
@@ -1979,7 +1992,7 @@ try {
   // never render as text).
   const otherTerms = terms.filter(t => t !== "MX");
   const sourceRes = [
-    ...(otherTerms.length ? [new RegExp(otherTerms.map(escape).join("|"), "gi")] : []),
+    ...(otherTerms.length ? [new RegExp(otherTerms.map(patternFor).join("|"), "gi")] : []),
     ...(terms.includes("MX") ? [new RegExp("\\bMX\\b", "g")] : []),
   ];
   // Only the JSON the browser actually fetches (dataUrl(...)/fetch(...) call

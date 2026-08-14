@@ -310,7 +310,7 @@ const OPPORTUNITY_FRAMEWORK = [
     id: "private-context-vault",
     priority: 4,
     title: "개인 컨텍스트 금고",
-    whereToPlay: "개인 데이터·동의·권한·기기 간 메모리를 관리하는 신뢰 계층",
+    whereToPlay: "개인 데이터·동의·권한·기기 간 컨텍스트 연속성을 관리하는 신뢰 계층",
     valueCapture: "개인 구독 + 기업 관리 라이선스 + 파트너 접근 수수료",
     evidenceKeys: ["competitor:apple", "competitor:google-ai", "market:device-adoption"],
     rationale: "AI 기능의 차별화가 모델 성능에서 개인 데이터 접근과 안전한 실행 권한으로 이동",

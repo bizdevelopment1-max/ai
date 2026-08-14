@@ -513,7 +513,7 @@ window.DASH = (function () {
     // ── 시장·산업·디바이스(온디바이스 AI 관점) ──
     { date: "2026-06-18", co: "OpenAI", cat: "native", source: "Axios / The Information", title: "OpenAI, 첫 AI 디바이스 출시 채비 — Jony Ive 협업·스크린리스 기기, Foxconn 4~5천만 대", summary: "· Meta 리얼리티랩스(Quest·AI 글라스) 통신 총괄 Ha Thai 영입 — 디바이스 통신 VP\n· Jony Ive의 io/LoveFrom 협업 스크린리스·음성 중심 기기 · 연내 공개 목표(2027 지연설)·Foxconn 첫해 4~5천만 대 계획\n· 단말 관점: AI 네이티브 단말이 스마트폰·웨어러블에 새 폼팩터 경쟁축 추가 — '화면 없는 AI'가 핵심 실험", tag: "Device", url: "https://www.axios.com/2026/06/18/openai-devices-ha-thai" },
     { date: "2025-03-11", co: "OpenAI", cat: "native", source: "OpenAI", title: "OpenAI, 에이전트 구축 도구 공개 — Responses API·Computer Use·Agents SDK", summary: "· 에이전트를 '사용자를 대신해 독립적으로 작업을 수행하는 시스템'으로 정의 · Responses API·Web/File Search·Computer Use·Agents SDK 공개\n· Computer Use 모델 성공률 WebVoyager 87%·WebArena 58.1%·OSWorld 38.1% — OpenAI도 실수 가능성·휴먼 감독 필요성 명시\n· 모바일 에이전트 UX 시사점: 완전 자동화보다 사용자 승인형·작업 로그·취소/복구·민감 작업 차단이 핵심", tag: "Agent", url: "https://openai.com/index/new-tools-for-building-agents/" },
-    { date: "2026-06-09", co: "Apple", cat: "bigtech", source: "Reuters / Morgan Stanley", title: "Morgan Stanley, 노후 기기가 Apple Siri AI 발목 — 8.5억대 처리 제약", summary: "· iPhone 8.5억대+ 기본 Apple Intelligence 쿼리 처리 곤란 · 13억대+는 고급 Siri 기능 사용 난망\n· 고급 Siri에 12GB 통합 메모리 필요 가능성 — 하드웨어 병목 지적\n· 시사점: 온디바이스 AI는 메모리·SoC 사양이 곧 기능 격차 → 교체수요·프리미엄 전환의 핵심 변수", tag: "Analysis", url: "https://www.reuters.com/business/apples-ai-siri-will-be-held-back-by-aging-devices-morgan-stanley-says-2026-06-09/" },
+    { date: "2026-06-09", co: "Apple", cat: "bigtech", source: "Reuters / Morgan Stanley", title: "Morgan Stanley, 노후 기기가 Apple Siri AI 확산 제약 — 지원 범위가 교체 변수", summary: "· 기존 iPhone 기반의 AI 기능 지원 범위와 체감 품질 격차가 핵심 변수\n· 고급 Siri의 기기 세대별 지원 정책과 업그레이드 경로를 별도 검증할 필요\n· 시사점: AI 기능 수보다 지원 단말 범위·과업 완료율·반복 사용이 교체수요와 프리미엄 전환의 핵심", tag: "Analysis", url: "https://www.reuters.com/business/apples-ai-siri-will-be-held-back-by-aging-devices-morgan-stanley-says-2026-06-09/" },
     { date: "2026-05-15", co: "Apple", cat: "bigtech", source: "Financial Times / IDC", title: "FT·IDC, 생성형 AI 스마트폰 2028년 시장 70%까지 — 폴더블은 2% 미만", summary: "· IDC 전망: 생성형 AI 스마트폰 2028년 전체의 ~70% · 2026년부터 중가 제품군 확산이 관건\n· 폴더블은 전체 출하량 2% 미만 · 평균 판매가격 ~$1,400 수준\n· 시사점: 'AI 침투율'과 '실제 교체수요·프리미엄 전환율'은 분리 필요 — AI 탑재=판매 증가라는 단정은 위험", tag: "Market", url: "https://www.ft.com/content/8b806d9d-1fb6-462e-ba6a-ea357e6357e5" },
     { date: "2026-06-12", co: "", cat: "bigtech", source: "Financial Times", title: "FT, KPMG 'AI 환각' 의심 보고서 철회 — 사례·출처 오류", summary: "· KPMG, AI 환각으로 보이는 잘못된 사례·출처가 포함된 agentic AI 보고서 철회\n· UBS·NHS·스위스연방철도·Transport for London 등이 언급된 사례 부인\n· 시사점: 모든 수치·전망·사례에 소스 등급·검증일·공식/추정/보도 구분의 '팩트체크 레이어' 필요", tag: "Governance", url: "https://www.ft.com/content/b3828e92-4961-4b39-84f0-c42f33be3c3f" },
   ];
@@ -539,7 +539,7 @@ window.DASH = (function () {
     { house: "Gartner (Reuters)", type: "Research", date: "2025-06-25", title: "agentic AI 프로젝트 40%+ 2027년까지 중단 — '에이전트 워싱' 경고", figure: "40%+ 중단", rating: "Caution", url: "https://www.reuters.com/business/over-40-agentic-ai-projects-will-be-scrapped-by-2027-gartner-says-2025-06-25/",
       bullets: ["2027년 말까지 agentic AI 프로젝트 40%+ 중단 가능 — 비용·불명확한 가치·리스크", "2028년 기업 SW 33%에 agentic AI 포함 · 일상 업무 의사결정 15% 에이전트 자율 수행 전망", "'에이전트 대세' 단정 금물 — agent washing·실패율·승인형 실행·거버넌스 리스크 병기"] },
     { house: "Bridgewater (Reuters)", type: "Securities", date: "2026-02-23", title: "빅테크 2026 AI 인프라 투자 ~$650B 전망 (빅4+공급사 전체; 하이퍼스케일러 4사 단독은 ~$350~380B)", figure: "$650B(범위 주의)", rating: "Report", url: "https://www.reuters.com/business/big-tech-invest-about-650-billion-ai-2026-bridgewater-says-2026-02-23/",
-      bullets: ["Alphabet·Amazon·Meta·Microsoft 등 AI 인프라 투자 2025 ~$410B → 2026 ~$650B", "클라우드 AI 비용·컴퓨트 부족·메모리 수요가 모바일·PC BOM과 서비스 원가에 직접 영향", "온디바이스 AI는 프라이버시 전략이자 클라우드 비용·공급망 리스크를 줄이는 원가 전략"] },
+      bullets: ["Alphabet·Amazon·Meta·Microsoft 등 AI 인프라 투자 2025 ~$410B → 2026 ~$650B", "클라우드 AI 비용·컴퓨트 수급·전력 제약이 모바일 AI 서비스 원가와 응답 품질에 직접 영향", "온디바이스 AI는 프라이버시 전략이자 클라우드 추론비·지연 리스크를 줄이는 서비스 원가 전략"] },
   ];
 
   /* ---- Market Growth (global AI market size $B) — Grand View Research 최신판 ----
@@ -733,13 +733,6 @@ window.DASH = (function () {
     { year: "2027E", size: 950, growth: 31, src: "Moody's — 2027년 $1T 근접 전망" },
   ];
 
-  /* ---- HBM(고대역폭메모리) 시장 규모 — AI 가속기 공급망 최대 병목($B) ---- */
-  const HBM_MARKET = [
-    { year: "2025", size: 33, growth: 133, src: "Gartner 인용 — 전년比 +130%+ 성장" },
-    { year: "2026E", size: 55, growth: 67, src: "BofA 추정 — 전년比 +58%, 공급 대부분 선계약 완료" },
-    { year: "2027E", size: 86, growth: 56, src: "Gartner — 2025~2027 CAGR 60.5%" },
-  ];
-
   /* ---- AI 가속기 칩 믹스 — GPU 범용 vs 하이퍼스케일러 커스텀 실리콘(%) ---- */
   const CHIP_MIX = [
     { period: "2024", gpu: 95, custom: 5, note: "커스텀 실리콘 초기 단계 — GPU 절대 우위", src: "업계 추정" },
@@ -921,12 +914,11 @@ window.DASH = (function () {
   ];
 
   /* ============================================================
-     STOCK_GROUPS — AI 밸류체인 카테고리(칩·메모리·하이퍼스케일러·
-     데이터센터·온디바이스·AI 네이티브). STOCKS[].group 이 이 id를 참조합니다.
+     STOCK_GROUPS — 휴대폰 AI 신사업과 직접 연결되는 상장사 카테고리.
+     사용자 경험·서비스·모델·클라우드·모바일 컴퓨트·연결·제조를 추적합니다.
      ============================================================ */
   const STOCK_GROUPS = [
     { id: "chip", ko: "AI 칩", en: "AI Chips", accent: "#C026D3" },
-    { id: "memory", ko: "메모리", en: "Memory", accent: "#EA580C" },
     { id: "foundry", ko: "파운드리", en: "Foundry", accent: "#2563EB" },
     { id: "equipment", ko: "반도체 장비", en: "Semiconductor Equipment", accent: "#0F766E" },
     { id: "packaging", ko: "패키징·테스트", en: "Packaging / Test", accent: "#B45309" },
@@ -936,7 +928,6 @@ window.DASH = (function () {
     { id: "software", ko: "AI 소프트웨어·플랫폼", en: "AI Software / Platform", accent: "#DB2777" },
     { id: "device", ko: "온디바이스", en: "On-device", accent: "#16A34A" },
     { id: "native", ko: "AI 네이티브", en: "AI Native", accent: "#7A38D6" },
-    { id: "china-memory", region: "china", ko: "메모리", en: "China Memory", accent: "#0F766E" },
     { id: "china-foundry", region: "china", ko: "파운드리", en: "China Foundry", accent: "#2563EB" },
     { id: "china-equipment", region: "china", ko: "장비", en: "China Equipment", accent: "#0891B2" },
     { id: "china-packaging", region: "china", ko: "패키징·테스트", en: "China Packaging / Test", accent: "#B45309" },
@@ -947,7 +938,7 @@ window.DASH = (function () {
   /* ============================================================
      STOCKS — listed AI companies. 실제 일별 주가는 매일 자동 수집되어
      stocks.json 으로 제공됩니다(scripts/crawl-stocks.mjs · Stooq).
-     group = AI 밸류체인 카테고리(STOCK_GROUPS 참조). 여기에는 메타데이터 +
+     group = 휴대폰 AI 신사업 생태계 카테고리(STOCK_GROUPS 참조). 여기에는 메타데이터 +
      변곡점 설명(에디토리얼)만 둡니다.
      ============================================================ */
   const STOCKS = [
@@ -995,11 +986,6 @@ window.DASH = (function () {
       ticker: "INTC", name: "Intel", group: "chip", domain: "intel.com", cat: "bigtech",
       events: [],
       note: "Intel(나스닥, IDM). Gaudi AI 가속기·파운드리(IFS) 재건으로 AI 반도체 경쟁 재진입 시도 — 턴어라운드 국면.",
-    },
-    {
-      ticker: "MU", name: "Micron", group: "memory", domain: "micron.com", cat: "bigtech",
-      events: [],
-      note: "Micron(나스닥, 메모리). HBM(고대역폭메모리) 3대 공급사 중 하나로 AI 가속기 필수 부품 제공.",
     },
     {
       ticker: "ANET", name: "Arista Networks", group: "network", domain: "arista.com", cat: "bigtech",
@@ -1099,18 +1085,6 @@ window.DASH = (function () {
       note: "SPCX 공개 시세가 Yahoo Finance·Stooq·Nasdaq·StockAnalysis에서 확인되는 경우에만 차트에 표시합니다.",
     },
     {
-      ticker: "SNDK", name: "SanDisk", group: "memory", domain: "sandisk.com", cat: "bigtech",
-      exchange: "NASDAQ", events: [], note: "SanDisk(나스닥). NAND 플래시와 클라이언트·데이터센터 스토리지 공급사.",
-    },
-    {
-      ticker: "WDC", name: "Western Digital", group: "memory", domain: "westerndigital.com", cat: "bigtech",
-      exchange: "NASDAQ", events: [], note: "Western Digital(나스닥). HDD 중심 데이터 스토리지 공급사.",
-    },
-    {
-      ticker: "285A.T", name: "Kioxia", group: "memory", domain: "kioxia-holdings.com", cat: "bigtech",
-      exchange: "TSE", events: [], note: "Kioxia(도쿄증권거래소). NAND 플래시와 엔터프라이즈 SSD 공급사.",
-    },
-    {
       ticker: "UMC", name: "UMC", group: "foundry", domain: "umc.com", cat: "bigtech",
       exchange: "NYSE", events: [], note: "UMC(뉴욕 ADR). 성숙 공정 중심 글로벌 파운드리.",
     },
@@ -1148,18 +1122,6 @@ window.DASH = (function () {
     },
 
     // 중국 A주 반도체 밸류체인 — 상하이·선전 거래소 상장 종목
-    {
-      ticker: "688825.SS", name: "CXMT", group: "china-memory", region: "china", domain: "cxmt.com",
-      exchange: "SSE STAR", listedAt: "2026-07-27", events: [], note: "CXMT(상하이 STAR). 중국 DRAM 공급사로 신규 상장 이력이 짧아 개별 시세와 장기 그룹 비교를 분리합니다.",
-    },
-    {
-      ticker: "603986.SS", name: "GigaDevice", group: "china-memory", region: "china", domain: "gigadevice.com",
-      exchange: "SSE", events: [], note: "GigaDevice(상하이). NOR Flash·MCU·메모리 제품 공급사.",
-    },
-    {
-      ticker: "688525.SS", name: "BIWIN Storage", group: "china-memory", region: "china", domain: "biwin.com.cn",
-      exchange: "SSE STAR", events: [], note: "BIWIN Storage(상하이 STAR). 임베디드·소비자·기업용 스토리지 공급사.",
-    },
     {
       ticker: "688981.SS", name: "SMIC", group: "china-foundry", region: "china", domain: "smics.com",
       exchange: "SSE STAR", events: [], note: "SMIC(상하이 STAR). 중국 최대 파운드리.",
@@ -1203,10 +1165,6 @@ window.DASH = (function () {
     {
       ticker: "002185.SZ", name: "Huatian Technology", group: "china-packaging", region: "china", domain: "ht-tech.com",
       exchange: "SZSE", events: [], note: "Huatian Technology(선전). 반도체 패키징·테스트 공급사.",
-    },
-    {
-      ticker: "688008.SS", name: "Montage Technology", group: "china-design", region: "china", domain: "montage-tech.com",
-      exchange: "SSE STAR", events: [], note: "Montage Technology(상하이 STAR). 서버 메모리 인터페이스·연결 칩 설계사.",
     },
     {
       ticker: "688521.SS", name: "VeriSilicon", group: "china-design", region: "china", domain: "verisilicon.com",
@@ -1347,22 +1305,22 @@ window.DASH = (function () {
       desc: "단말·엣지·클라우드에서 모델을 실행하는 런타임과 컴퓨트 — 차별화보다 원가·안정성 관리가 핵심",
     },
   ];
-  // Stock 분석 전용 7계층 — 현재 추적 중인 상장사 62개의 실제 사업 영역을 하류에서 상류 순으로 재분류
+  // Stock 분석 전용 7계층 — 휴대폰 AI 신사업과 직접 연결되는 상장사를 하류에서 상류 순으로 재분류
   const STOCK_VALUE_CHAIN = [
     { id: "applications", ko: "애플리케이션·디바이스", en: "Applications & Devices", accent: "#E54B4B", accentSoft: "#FDECEC" },
     { id: "enterprise", ko: "에이전트·엔터프라이즈 SW", en: "Agents & Enterprise Software", accent: "#C026D3", accentSoft: "#FAE8FF" },
     { id: "foundation", ko: "파운데이션 모델", en: "Foundation Models", accent: "#7A38D6", accentSoft: "#F1EBFC" },
     { id: "cloud", ko: "클라우드·데이터센터", en: "Cloud & Data Centers", accent: "#2563EB", accentSoft: "#EAF0FF" },
-    { id: "compute", ko: "인프라·AI 컴퓨트", en: "Infrastructure & AI Compute", accent: "#0D9488", accentSoft: "#E5F7F4" },
-    { id: "memory-network", ko: "메모리·네트워크", en: "Memory & Networking", accent: "#EA580C", accentSoft: "#FFF0E6" },
+    { id: "compute", ko: "모바일·AI 컴퓨트", en: "Mobile & AI Compute", accent: "#0D9488", accentSoft: "#E5F7F4" },
+    { id: "connectivity", ko: "연결·네트워크", en: "Connectivity & Networking", accent: "#EA580C", accentSoft: "#FFF0E6" },
     { id: "manufacturing", ko: "제조·장비·소재", en: "Manufacturing, Equipment & Materials", accent: "#475569", accentSoft: "#EEF2F6" },
   ];
   // STOCK_GROUP_LAYER는 시장 업종의 기본 연결, STOCK_LAYER는 복합 사업자의 주력 수익모델 기준 우선 분류
   const STOCK_GROUP_LAYER = {
-    chip: "compute", memory: "memory-network", foundry: "manufacturing", equipment: "manufacturing",
-    packaging: "manufacturing", network: "memory-network", hyperscaler: "cloud", datacenter: "cloud",
+    chip: "compute", foundry: "manufacturing", equipment: "manufacturing",
+    packaging: "manufacturing", network: "connectivity", hyperscaler: "cloud", datacenter: "cloud",
     software: "enterprise", device: "applications", native: "foundation",
-    "china-memory": "memory-network", "china-foundry": "manufacturing", "china-equipment": "manufacturing",
+    "china-foundry": "manufacturing", "china-equipment": "manufacturing",
     "china-packaging": "manufacturing", "china-design": "compute", "china-materials": "manufacturing",
   };
   const STOCK_LAYER = {
@@ -1552,7 +1510,6 @@ window.DASH = (function () {
     "AMD": { founded: "1969", ceo: "Lisa Su", hq: "미국 캘리포니아州 산타클라라", business: ["CPU(Ryzen·EPYC)", "GPU·AI 가속기(Instinct)", "데이터센터·임베디드"] },
     "Broadcom": { founded: "1991/2016(Avago 합병)", ceo: "Hock Tan", hq: "미국 캘리포니아州 팰로앨토", business: ["반도체(네트워킹·커스텀 AI칩)", "인프라 SW(VMware)"] },
     "TSMC": { founded: "1987 · Morris Chang", ceo: "C.C. Wei", hq: "대만 신주", business: ["반도체 파운드리(첨단 공정)", "AI·HPC 칩 위탁생산"] },
-    "Micron": { founded: "1978", ceo: "Sanjay Mehrotra", hq: "미국 아이다호州 보이시", business: ["DRAM·NAND 메모리", "HBM(AI 가속기용)"] },
     "CoreWeave": { founded: "2017", ceo: "Michael Intrator", hq: "미국 뉴저지州", business: ["GPU 클라우드(AI 전용)", "데이터센터 인프라"] },
     "Applied Digital": { founded: "2001", hq: "미국 텍사스州 댈러스", business: ["AI·HPC 데이터센터", "GPU 클라우드 호스팅"] },
 
@@ -1957,5 +1914,5 @@ window.DASH = (function () {
     },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_VALUE_CHAIN, STOCK_GROUP_LAYER, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_VALUE_CHAIN, STOCK_GROUP_LAYER, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

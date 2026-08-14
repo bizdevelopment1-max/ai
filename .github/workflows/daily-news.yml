@@ -125,6 +125,12 @@ jobs:
       - name: Build latest mobile AI business database snapshot
         run: node scripts/run-with-retry.mjs scripts/build-mobile-ai-business-db.mjs
 
+      - name: Remove retired business focus from published datasets
+        run: node scripts/prune-retired-focus.mjs
+
+      - name: Rebuild canonical company registry after focus pruning
+        run: node scripts/normalize-company-registry.mjs
+
       - name: Refresh deployment-company and AI services venture cases
         run: node scripts/run-with-retry.mjs scripts/crawl-strategic-ventures.mjs
 
@@ -148,6 +154,9 @@ jobs:
 
       - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
         run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
+
+      - name: Enforce final mobile-AI focus gate
+        run: node scripts/prune-retired-focus.mjs
 
       - name: Build compact source-backed public datasets
         run: node scripts/run-with-retry.mjs scripts/build-public-data.mjs

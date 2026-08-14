@@ -64,6 +64,12 @@ jobs:
       - name: Build latest mobile AI business database snapshot
         run: node scripts/run-with-retry.mjs scripts/build-mobile-ai-business-db.mjs
 
+      - name: Remove retired business focus from published datasets
+        run: node scripts/prune-retired-focus.mjs
+
+      - name: Rebuild canonical company registry after focus pruning
+        run: node scripts/normalize-company-registry.mjs
+
       - name: Build source-backed NVIDIA investment portfolio map
         run: node scripts/run-with-retry.mjs scripts/build-nvidia-investments.mjs
 
@@ -72,6 +78,9 @@ jobs:
 
       - name: Audit published bundle
         run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
+
+      - name: Enforce final mobile-AI focus gate
+        run: node scripts/prune-retired-focus.mjs
 
       - name: Build compact public datasets
         run: node scripts/run-with-retry.mjs scripts/build-public-data.mjs

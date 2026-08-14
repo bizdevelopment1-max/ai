@@ -19,7 +19,8 @@ export const isExcludedText = value => {
   const text = String(value || "");
   return newsPolicy.excludedTerms.some(term => {
     const escaped = String(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    return new RegExp(escaped, "i").test(text);
+    const pattern = /^[A-Za-z0-9]+$/.test(String(term)) ? `\\b${escaped}\\b` : escaped;
+    return new RegExp(pattern, "i").test(text);
   });
 };
 

@@ -19,13 +19,13 @@ const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Geck
 const TODAY = new Date().toISOString().slice(0, 10);
 
 const HOUSES = [
-  { house: "Morgan Stanley", type: "Securities", q: '"Morgan Stanley" AI (research OR forecast OR estimates OR memory OR semiconductor)', locale: "us-en" },
-  { house: "Goldman Sachs", type: "Securities", q: '"Goldman Sachs" AI (research OR forecast OR capex OR infrastructure)', locale: "us-en" },
+  { house: "Morgan Stanley", type: "Securities", q: '"Morgan Stanley" AI (smartphone OR mobile OR consumer OR services OR monetization)', locale: "us-en" },
+  { house: "Goldman Sachs", type: "Securities", q: '"Goldman Sachs" AI (smartphone OR mobile OR consumer OR services OR monetization)', locale: "us-en" },
   { house: "JPMorgan", type: "Securities", q: '"JPMorgan" OR "J.P. Morgan" AI (research OR forecast OR outlook)', locale: "us-en" },
-  { house: "UBS", type: "Securities", q: '"UBS" AI (forecast OR memory OR DRAM OR outlook)', locale: "eu-en" },
+  { house: "UBS", type: "Securities", q: '"UBS" AI (smartphone OR mobile OR consumer OR services OR outlook)', locale: "eu-en" },
   { house: "Bank of America", type: "Securities", q: '"Bank of America" OR "BofA" AI (research OR forecast)', locale: "us-en" },
   { house: "Citi", type: "Securities", q: '"Citi" OR "Citigroup" AI (research OR forecast OR semiconductor)', locale: "us-en" },
-  { house: "TrendForce", type: "Market", q: "TrendForce (AI OR HBM OR DRAM OR CPO OR server)", locale: "us-en" },
+  { house: "TrendForce", type: "Market", q: "TrendForce (AI smartphone OR mobile AI OR edge AI OR consumer device)", locale: "us-en" },
   { house: "IDC", type: "Market", q: '"IDC" (AI OR smartphone OR PC) forecast', locale: "us-en" },
   { house: "Gartner", type: "Market", q: "Gartner (AI OR agentic) forecast", locale: "us-en" },
   { house: "Counterpoint", type: "Market", q: '"Counterpoint Research" (AI OR smartphone)', locale: "us-en" },

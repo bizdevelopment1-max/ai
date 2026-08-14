@@ -42,9 +42,9 @@ for (const required of [
 assert(/Strategy consulting · user need → mobile experience → revenue → execution/.test(boards), "사용자-경험-수익-실행 컨설팅 흐름이 없습니다");
 assert(/zone\.question/.test(boards) && /zone\.output/.test(boards) && /zone\.gate/.test(boards), "운영 모델의 질문·산출물·게이트가 표시되지 않습니다");
 assert(/msf-flow-arrow/.test(boards), "단계 전환 화살표가 없습니다");
-assert(/휴대폰 AI 전략/.test(components) && /AI 서비스 신사업/.test(components), "좌측 내비게이션이 휴대폰 사업 업무와 일치하지 않습니다");
-assert(/휴대폰 AI 사업 인텔리전스/.test(index), "페이지 메타 정보가 휴대폰 사업 목적과 일치하지 않습니다");
-assert(!/MEMORY_STRATEGY|MemoryStrategyBoard|SK\s*hynix|SK하이닉스|하이닉스/.test([boards, app, components, index, strategyText].join("\n")), "제외 대상 기업 또는 이전 메모리 전략 명칭이 남아 있습니다");
+assert(/신사업 발굴 프레임/.test(components) && /AI 서비스 신사업/.test(components), "좌측 내비게이션이 휴대폰 AI 신사업 발굴 업무와 일치하지 않습니다");
+assert(/휴대폰 AI 신사업 발굴 인텔리전스/.test(index), "페이지 메타 정보가 휴대폰 AI 신사업 발굴 목적과 일치하지 않습니다");
+assert(!/MEMORY_STRATEGY|MemoryStrategyBoard|SK\s*hynix|SK하이닉스|하이닉스|메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bNAND\b|\bCXL\b/i.test([boards, app, components, index, strategyText].join("\n")), "제외 대상 기업 또는 이전 사업 관점이 공개 전략 화면에 남아 있습니다");
 
 const removedSections = [
   "중국 인력 전략",

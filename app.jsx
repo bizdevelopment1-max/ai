@@ -479,7 +479,7 @@ function App() {
             {/* ── 1. 첫 화면: 관계 지도 + 영상 브리핑 ── */}
             <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="Mobile AI Video Brief">
               <div className="ov-head">
-                <h2 className="ov-title">휴대폰 AI 사업 브리핑 <span>Source-backed competitive dynamics</span></h2>
+                <h2 className="ov-title">휴대폰 AI 신사업 발굴 <span>User need · experience · revenue · partner</span></h2>
               </div>
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
             </section>

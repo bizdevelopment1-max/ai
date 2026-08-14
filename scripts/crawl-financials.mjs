@@ -24,7 +24,7 @@ const COMPANY_QUERY = {
   NVDA: "Nvidia", MSFT: "Microsoft", AMZN: "Amazon company", AAPL: "Apple Inc.",
   GOOGL: "Alphabet Inc.", META: "Meta Platforms", ORCL: "Oracle Corporation",
   AMD: "Advanced Micro Devices", AVGO: "Broadcom Inc.", TSM: "TSMC",
-  MU: "Micron Technology", QCOM: "Qualcomm", ARM: "Arm Holdings", INTC: "Intel",
+  QCOM: "Qualcomm", ARM: "Arm Holdings", INTC: "Intel",
   PLTR: "Palantir Technologies", NOW: "ServiceNow", CRWV: "CoreWeave",
   APLD: "Applied Digital",
 };
@@ -277,7 +277,7 @@ async function main() {
   // (kept in sync with crawl-companies.mjs's TICKER_OF — a join key, not data).
   const TICKERED_NAMES = new Set([
     "NVIDIA", "Microsoft", "Amazon", "Apple", "Google DeepMind", "Meta AI",
-    "Oracle", "AMD", "Broadcom", "TSMC", "Micron", "CoreWeave", "Applied Digital",
+    "Oracle", "AMD", "Broadcom", "TSMC", "CoreWeave", "Applied Digital",
   ]);
   const dash = loadDash();
   const untickeredCompanies = (dash.COMPANIES || [])

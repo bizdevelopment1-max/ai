@@ -169,11 +169,11 @@ function Trend({ v, small, animate }) {
 
 // ---- Sidebar ------------------------------
 const NAV = [
-  { id: "overview", ko: "휴대폰 AI 영상 브리핑", en: "Video Brief", icon: "grid", group: "경영 의사결정" },
-  { id: "strategy", ko: "휴대폰 AI 전략", en: "User Need → New Biz", icon: "target", group: "경영 의사결정" },
-  { id: "ib", ko: "산업 리서치", en: "Industry Research", icon: "report", group: "경영 의사결정" },
-  { id: "opportunity", ko: "AI 신사업 DB", en: "Market · Money · Move", icon: "target", group: "경영 의사결정" },
-  { id: "articles", ko: "산업·고객 신호", en: "Industry & Customer Signals", icon: "news", group: "경영 의사결정" },
+  { id: "overview", ko: "휴대폰 AI 신사업 브리핑", en: "New Business Brief", icon: "grid", group: "신사업 의사결정" },
+  { id: "strategy", ko: "신사업 발굴 프레임", en: "User Need → New Biz", icon: "target", group: "신사업 의사결정" },
+  { id: "ib", ko: "시장·소비자 리서치", en: "Market & Consumer Research", icon: "report", group: "신사업 의사결정" },
+  { id: "opportunity", ko: "휴대폰 AI 신사업 DB", en: "Market · Money · Move", icon: "target", group: "신사업 의사결정" },
+  { id: "articles", ko: "산업·고객 신호", en: "Industry & Customer Signals", icon: "news", group: "신사업 의사결정" },
   { id: "app", ko: "AI 경험·버티컬", en: "Experience & Verticals", icon: "spark", group: "SW·서비스 밸류체인" },
   { id: "agent", ko: "에이전트·오케스트레이션", en: "Agents & Orchestration", icon: "ai", group: "SW·서비스 밸류체인" },
   { id: "service", ko: "서비스 플랫폼·수익화", en: "Platform & Monetization", icon: "grid", group: "SW·서비스 밸류체인" },
@@ -221,7 +221,7 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
         <span className="sb-logo">
           <span className="sb-logo-mark" style={{ color: brand.bg }}><Icon name="pulse" size={18} sw={2.4} /></span>
           <span className="sb-logo-txt">
-            <b>AI MEMORY</b><span>STRATEGY INTELLIGENCE</span>
+            <b>MOBILE AI</b><span>NEW BUSINESS INTELLIGENCE</span>
           </span>
         </span>
       </div>

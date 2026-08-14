@@ -398,7 +398,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
   );
 }
 
-// ---- 휴대폰 AI 사업 운영 프레임 — User → Experience → Business → Decision ----
+// ---- 휴대폰 AI 신사업 발굴 프레임 — User → Experience → Business → Decision ----
 function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
@@ -459,7 +459,7 @@ function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         <div className="msf-consulting-intro">
           <div className="msf-consulting-kicker">Strategy consulting · user need → mobile experience → revenue → execution</div>
           <div className="msf-consulting-title-row">
-            <h2>전략 컨설팅 · 휴대폰 AI 경험 &amp; 신사업 포트폴리오</h2>
+            <h2>전략 컨설팅 · 휴대폰 AI 신사업 발굴 포트폴리오</h2>
             <span className="msf-consulting-evidence">최신 공개 근거 <b>{evidenceArticles.length}</b>건 · {evidenceDate} 기준</span>
           </div>
           <p>
@@ -1621,7 +1621,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
 // Highlight only complete, recognisable source terms (facts remain unchanged).
 // A bare "AI" is deliberately excluded: it must never colour a fragment in
 // ordinary English words such as "pair" or "training".
-const BRIEF_KEYWORDS = /((?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년)|AI\s*(?:서버|인프라|에이전트|모델|칩|수요|지출)|인공지능|생성\s*AI|HBM|DRAM|NAND|SSD|GPU|NPU|ARM|x86|CapEx|데이터\s*센터|클라우드|Morgan Stanley|Goldman Sachs|JPMorgan|Bank of America|Citi|Citigroup|TrendForce|IDC|Gartner|OpenAI|Anthropic|NVIDIA|Google|Microsoft|Amazon|Meta|Apple))/gi;
+const BRIEF_KEYWORDS = /((?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년)|AI\s*(?:폰|서비스|에이전트|모델|수요|구독|매출)|인공지능|생성\s*AI|스마트폰|모바일|온디바이스|에이전트|어시스턴트|카메라|음성|통역|웨어러블|결제|구독|GPU|NPU|ARM|클라우드|Morgan Stanley|Goldman Sachs|JPMorgan|Bank of America|Citi|Citigroup|IDC|Gartner|Counterpoint|Canalys|OpenAI|Anthropic|NVIDIA|Google|Microsoft|Amazon|Meta|Apple))/gi;
 const NUMBER_TOKEN = /^(?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?:%|억|만|조|달러|TWh|TB|GB|nm|년))$/i;
 // Display copy uses concise, non-sentence Korean. Source text and hashes stay
 // untouched in the data set, so this is a visual writing rule only.
@@ -2427,10 +2427,10 @@ function QuantInsightSlider({ data }) {
     {
       image: "assets/quant-insight-device.webp",
       eyebrow: "DEVICE DECISION",
-      metric: "메모리 · NPU · 전력",
+      metric: "지연 · NPU · 전력",
       title: "온디바이스 AI는 사양 설계와 함께 검증",
       lines: [
-        "기능 로드맵과 메모리·NPU 조건을 동시에 비교",
+        "기능 로드맵과 지연·발열·NPU 조건을 동시에 비교",
         "AI 탑재만으로 판매 증가를 단정하지 않음",
       ],
       source: "단말 사양·기능 로드맵 검토 기준",
@@ -4314,126 +4314,6 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
         <AIConsultingBuildSection />
         <VerticalIntegrationTables />
       </AnimCtx.Provider>
-    </section>
-  );
-}
-
-function LegacySignalBoard({ data, theme, sectionRef, articles }) {
-  const inView = useInView(sectionRef);
-  const strat = data.INFRA_STRATEGY || { hyperscaler: [], aiNative: [] };
-  const metricAt = (series, key, value) => (series || []).find(row => String(row[key]) === value) || (series || [])[0] || {};
-  const capexNow = metricAt(data.DC_CAPEX, "year", "2026E");
-  const capexPrev = metricAt(data.DC_CAPEX, "year", "2025");
-  const hbmNow = metricAt(data.HBM_MARKET, "year", "2026E");
-  const hbmNext = metricAt(data.HBM_MARKET, "year", "2027E");
-  const chipNow = metricAt(data.CHIP_MIX, "period", "2026E");
-  const chipNext = metricAt(data.CHIP_MIX, "period", "2027E");
-  const opticalNow = metricAt(data.OPTICAL_TREND, "year", "2026");
-  const opticalNext = metricAt(data.OPTICAL_TREND, "year", "2030E");
-  const decisionReadouts = [
-    {
-      no: "01", label: "CAPEX", metric: capexNow.size ? `$${capexNow.size}B` : "—",
-      fact: `${capexPrev.year || "직전"} ${capexPrev.size ? `$${capexPrev.size}B` : "—"} · ${capexNow.year || "최신"} ${capexNow.size ? `$${capexNow.size}B` : "—"} · ${capexNow.growth ? `성장률 ${capexNow.growth}%` : ""}`,
-      insight: "전력·부지·메모리 조달이 투자 집행을 따라가는지 공급 제약을 별도 점검",
-      src: capexNow.src,
-    },
-    {
-      no: "02", label: "MEMORY", metric: hbmNow.size ? `$${hbmNow.size}B` : "—",
-      fact: `${hbmNow.year || "최신"} ${hbmNow.size ? `$${hbmNow.size}B` : "—"} · ${hbmNext.year || "다음"} ${hbmNext.size ? `$${hbmNext.size}B` : "—"} · ${hbmNow.growth ? `성장률 ${hbmNow.growth}%` : ""}`,
-      insight: "메모리 확보 시점이 모델 배포와 서버 증설의 선행 지표인지 확인",
-      src: hbmNow.src,
-    },
-    {
-      no: "03", label: "COMPUTE", metric: chipNow.custom != null ? `${chipNow.custom}%` : "—",
-      fact: `${chipNow.period || "최신"} 커스텀 실리콘 ${chipNow.custom ?? "—"}% · ${chipNext.period || "다음"} ${chipNext.custom ?? "—"}%`,
-      insight: "GPU 단일 조달이 아닌 멀티실리콘 호환성과 소프트웨어 이식성을 검토",
-      src: chipNow.src,
-    },
-    {
-      no: "04", label: "NETWORK", metric: opticalNext.pen != null ? `${opticalNext.pen}%` : "—",
-      fact: `${opticalNow.year || "최신"} 침투율 ${opticalNow.pen ?? "—"}% · ${opticalNext.year || "전망"} ${opticalNext.pen ?? "—"}%`,
-      insight: "광통신 전환 시점과 전력 효율 개선이 데이터센터 설계에 반영되는지 추적",
-      src: opticalNext.src,
-    },
-  ];
-  return (
-    <section className="board" ref={sectionRef} data-screen-label="Infra & Future Tech">
-     <AnimCtx.Provider value={inView}>
-      <div className="board-head">
-        <span className="board-tab" style={{ background: "var(--accent)" }} />
-        <div className="board-titles">
-          <h2>AI 인프라 & 미래 기술 <span className="board-en">Infra & Future Tech</span></h2>
-          <p>하이퍼스케일러 CapEx·메모리·칩 믹스·광통신 — 경쟁 로드맵을 좌우하는 인프라 변수</p>
-        </div>
-      </div>
-      <div className="signal-quant-layout">
-        <div className="chart-grid signal-chart-grid">
-          <div className="chart-card">
-            <div className="cc-head"><h3>하이퍼스케일러 데이터센터 CapEx</h3><span>$B · Big 5 합산 · Moody's / 각사 공시</span></div>
-            <MarketGrowthChart data={data.DC_CAPEX} accent={theme.accent} ink={theme.ink} grid={theme.grid} muted={theme.muted} />
-          </div>
-          <div className="chart-card">
-            <div className="cc-head"><h3>HBM(고대역폭메모리) 시장 규모</h3><span>$B · AI 가속기 공급망 최대 병목 · Gartner / BofA</span></div>
-            <MarketGrowthChart data={data.HBM_MARKET} accent="#F59E0B" ink={theme.ink} grid={theme.grid} muted={theme.muted} />
-          </div>
-          <div className="chart-card">
-            <div className="cc-head"><h3>AI 가속기 칩 믹스 변화</h3><span>GPU 범용 vs 커스텀 실리콘 비중(%)</span></div>
-            <ShareTrendChart data={data.CHIP_MIX} theme={theme} keyA="gpu" keyB="custom" labelA="GPU(범용)" labelB="커스텀 실리콘" colorA="#2D6BFF" colorB="#16A34A" />
-          </div>
-          <div className="chart-card">
-            <div className="cc-head"><h3>광통신(CPO) 데이터센터 침투율</h3><span>% · 차세대 인터커넥트 전환 · IDTechEx</span></div>
-            <PenetrationChart data={data.OPTICAL_TREND} theme={theme} />
-          </div>
-        </div>
-        <aside className="signal-reading" aria-label="인프라 수치 기반 시사점">
-          <div className="signal-reading-head">
-            <span>DECISION LENS</span>
-            <h3>숫자가 말하는 다음 질문</h3>
-            <p>그래프의 현재값·전망값을 분리해 해석</p>
-          </div>
-          <div className="signal-reading-list">
-            {decisionReadouts.map(readout => (
-              <article className="signal-reading-item" key={readout.label}>
-                <div className="signal-reading-top"><span>{readout.no}</span><em>{readout.label}</em><strong>{readout.metric}</strong></div>
-                <p className="signal-reading-fact">{readout.fact}</p>
-                <p className="signal-reading-insight"><b>검토 항목</b>{readout.insight}</p>
-                {readout.src && <small>{readout.src}</small>}
-              </article>
-            ))}
-          </div>
-        </aside>
-      </div>
-      <div className="infra-strategy">
-        <div className="is-col">
-          <em>하이퍼스케일러 — 자체 칩 + 인프라 임대 병행</em>
-          {strat.hyperscaler.map((s, i) => (
-            <div className="is-item" key={i}><b>{s.name}</b><span className="is-move">{s.move}</span><p>{s.note}</p></div>
-          ))}
-        </div>
-        <div className="is-col">
-          <em>AI 네이티브 — 멀티소싱·소프트웨어 레이어로 종속 탈피</em>
-          {strat.aiNative.map((s, i) => (
-            <div className="is-item" key={i}><b>{s.name}</b><span className="is-move">{s.move}</span><p>{s.note}</p></div>
-          ))}
-        </div>
-      </div>
-      <div className="signal-explain">
-        <div className="sx-item">
-          <em>왜 이 지표를 넣었나</em>
-          <p>CapEx·메모리·칩·광통신은 <b>모델 성능이 아니라 인프라 공급</b>이 경쟁 속도를 좌우한다는 신호입니다. HBM·GPU가 병목이면 아무리 좋은 모델도 배포가 지연됩니다.</p>
-        </div>
-        <div className="sx-item">
-          <em>어떻게 보면 되나</em>
-          <p>CapEx·HBM 곡선이 가파를수록 <b>공급 부족·단가 상승</b> 리스크가 커집니다. 칩 믹스에서 커스텀 실리콘 비중 확대는 <b>GPU 단일 의존 완화</b>, 광통신 침투율은 <b>전력 병목의 다음 해법</b>을 뜻합니다.</p>
-        </div>
-        <div className="sx-item">
-          <em>휴대폰 사업 시사점</em>
-          <p>인프라 병목·전환 시점은 <b>온디바이스 AI 로드맵의 외생 변수</b>입니다. 클라우드 AI 단가와 지연시간이 바뀌는 시점을 분기 단위로 추적해 기능별 실행 위치와 원가 기준을 갱신해야 합니다.</p>
-        </div>
-      </div>
-      <SignalInfographic file="infra.json" delKey="aiDashDeletedInfra" articles={articles}
-        title="인프라·미래기술 시그널" />
-     </AnimCtx.Provider>
     </section>
   );
 }

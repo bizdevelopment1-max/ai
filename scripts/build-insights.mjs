@@ -36,11 +36,11 @@ const AXES = [
   {
     axis: "ondevice_spec", label: "온디바이스 스펙", tone: "signal", nav: "bigtech",
     strong: ["온디바이스", "on-device", "npu", "ai pc", "snapdragon", "tops", "blackwell", "엣지 ai", "edge ai"],
-    weak: ["메모리", "memory", "soc", "칩", "chip", "노트북", "스마트폰", "폰"],
-    rootCause: "고급 AI 추론에 메모리·NPU가 필수 → AI 성능이 하드웨어 사양에 직접 종속되고 구형 단말은 구조적으로 배제됨",
-    soWhat: "AI 기능 = 하드웨어 스펙 = 프리미엄 전환·교체수요 동력 — 메모리·NPU 사양 로드맵에 직결('AI 탑재=판매 증가' 단정은 금물)",
-    action: "차기 플래그십 메모리·NPU 스펙을 AI 로드맵 역산으로 확정 — 부품 장기 공급 계약 조기 협상",
-    fallback: "구형 단말은 메모리 한계로 온디바이스 AI 구동 곤란(고급 비서엔 12GB) · 생성형 AI 폰 2028년 70%(IDC)",
+    weak: ["soc", "칩", "chip", "스마트폰", "폰", "카메라", "assistant", "latency", "battery"],
+    rootCause: "고급 AI 경험은 NPU·발열·배터리·지연·앱 권한의 동시 최적화가 필요 → 기능 수보다 실제 과업 완료 품질이 기기 세대별 격차를 결정",
+    soWhat: "AI 경험 품질이 프리미엄 전환·교체수요의 핵심 변수 → 온디바이스 처리율·과업 완료율·반복 사용을 제품 로드맵과 직접 연결",
+    action: "차기 제품의 NPU·발열·배터리·지연 목표를 상위 AI 사용 순간에서 역산 → 기능별 온디바이스·클라우드 실행 기준 확정",
+    fallback: "기기별 지원 범위와 실제 사용성 격차를 분리 검증 · 생성형 AI 폰 보급률 전망과 유료 전환을 별도 추적",
   },
   {
     axis: "monetization", label: "수익화", tone: "revenue", nav: "bizmodel",
