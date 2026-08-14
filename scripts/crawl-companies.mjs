@@ -81,7 +81,7 @@ async function translateQuoteToKorean(quoteOriginal) {
 const TICKER_OF = {
   "NVIDIA": "NVDA", "Microsoft": "MSFT", "Amazon": "AMZN", "Apple": "AAPL",
   "Google DeepMind": "GOOGL", "Meta AI": "META", "SpaceX (xAI, Cursor)": "SPCX",
-  "SK hynix": "SKHY", "Oracle": "ORCL", "AMD": "AMD", "Broadcom": "AVGO",
+  "Oracle": "ORCL", "AMD": "AMD", "Broadcom": "AVGO",
   "TSMC": "TSM", "Micron": "MU", "CoreWeave": "CRWV", "Applied Digital": "APLD",
 };
 

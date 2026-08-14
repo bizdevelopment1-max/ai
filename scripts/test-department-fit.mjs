@@ -15,37 +15,36 @@ const [dash, boards, components, app, anim, index] = await Promise.all([
   readFile("index.html", "utf8"),
 ]);
 
-assert(dash.MEMORY_STRATEGY, "MEMORY_STRATEGY가 없습니다");
-assert(dash.MEMORY_STRATEGY.choices?.length === 4, "핵심 업무는 4개 축으로 구성해야 합니다");
-assert(dash.MEMORY_STRATEGY.capabilities?.length === 5, "분석 툴킷은 5개 축이 필요합니다");
-assert(dash.MEMORY_STRATEGY.operatingModel?.length === 4, "고객 신호부터 실행까지 4단계 운영 모델이 필요합니다");
-assert(dash.MEMORY_STRATEGY.decisionOutputs?.length === 4, "경영진 의사결정 산출물은 4개 축이 필요합니다");
-assert(dash.MEMORY_STRATEGY.accountPortfolio?.length >= 5, "계정 포트폴리오는 주요 AI 인프라 계정 5개 이상이어야 합니다");
-assert(dash.MEMORY_STRATEGY.accountPortfolio.some(account => account.relation === "DIRECT EVIDENCE"), "직접 공개 근거 계정이 필요합니다");
-assert(dash.MEMORY_STRATEGY.accountPortfolio.some(account => account.relation === "NO DIRECT CLAIM"), "공급 관계를 단정하지 않는 아키텍처 기준 계정이 필요합니다");
-assert(dash.MEMORY_STRATEGY.accountPortfolio.every(account => /^https:\/\//.test(account.sourceUrl || "")), "모든 계정 카드에 공개 원문 URL이 필요합니다");
-assert(dash.MEMORY_STRATEGY.workloadMap?.length >= 5, "워크로드-병목-메모리 맵은 5개 이상이어야 합니다");
-assert(dash.MEMORY_STRATEGY.workloadMap.every(row => row.bottleneck && row.memory && row.opportunity && row.proof), "워크로드 맵은 병목·요구·사업기회·검증 KPI를 모두 포함해야 합니다");
-assert(dash.MEMORY_STRATEGY.opportunityPortfolio?.length === 4, "신규 메모리 사업 포트폴리오는 4개 MECE 축이어야 합니다");
-assert(dash.MEMORY_STRATEGY.expertSignals?.length >= 5, "데이터센터 HW·SW 전문 근거가 5건 이상이어야 합니다");
-assert(/Key Account Portfolio/.test(boards) && /Workload → System Bottleneck → Memory/.test(boards), "계정과 워크로드 컨설팅 화면이 필요합니다");
-assert(/New Memory Business Portfolio/.test(boards) && /Data Center Workload · HW · SW Evidence/.test(boards), "사업기회와 전문 근거 화면이 필요합니다");
+assert(dash.MOBILE_STRATEGY, "MOBILE_STRATEGY가 없습니다");
+assert(dash.MOBILE_STRATEGY.choices?.length === 4, "핵심 플레이는 4개 축으로 구성해야 합니다");
+assert(dash.MOBILE_STRATEGY.capabilities?.length === 5, "분석 툴킷은 5개 축이 필요합니다");
+assert(dash.MOBILE_STRATEGY.operatingModel?.length === 4, "사용자 신호부터 실행까지 4단계 운영 모델이 필요합니다");
+assert(dash.MOBILE_STRATEGY.decisionOutputs?.length === 4, "경영진 의사결정 산출물은 4개 축이 필요합니다");
+assert(dash.MOBILE_STRATEGY.accountPortfolio?.length >= 5, "경쟁 플랫폼 포트폴리오는 5개 이상이어야 합니다");
+assert(dash.MOBILE_STRATEGY.accountPortfolio.every(account => account.relation === "OFFICIAL PRODUCT"), "경쟁 플랫폼은 공식 제품 근거만 사용해야 합니다");
+assert(dash.MOBILE_STRATEGY.accountPortfolio.every(account => /^https:\/\//.test(account.sourceUrl || "")), "모든 경쟁 플랫폼 카드에 공식 원문 URL이 필요합니다");
+assert(dash.MOBILE_STRATEGY.workloadMap?.length >= 5, "사용자 순간-플랫폼-사업기회 맵은 5개 이상이어야 합니다");
+assert(dash.MOBILE_STRATEGY.workloadMap.every(row => row.bottleneck && row.platform && row.opportunity && row.proof), "사용자 순간 맵은 불편·플랫폼·사업기회·검증 KPI를 모두 포함해야 합니다");
+assert(dash.MOBILE_STRATEGY.opportunityPortfolio?.length === 4, "휴대폰 AI 신사업 포트폴리오는 4개 MECE 축이어야 합니다");
+assert(dash.MOBILE_STRATEGY.expertSignals?.length >= 5, "모바일 제품·플랫폼 공식 근거가 5건 이상이어야 합니다");
+assert(/Competitive Platform Portfolio/.test(boards) && /User Moment → Experience Stack → Revenue/.test(boards), "경쟁 플랫폼과 사용자 순간 컨설팅 화면이 필요합니다");
+assert(/Mobile AI New Business Portfolio/.test(boards) && /Mobile AI Product · Platform · Business Evidence/.test(boards), "신사업과 공식 근거 화면이 필요합니다");
 
-const strategyText = JSON.stringify(dash.MEMORY_STRATEGY);
+const strategyText = JSON.stringify(dash.MOBILE_STRATEGY);
 for (const required of [
-  "주요 고객 현황·기술·전략",
-  "AI App / HW / SW Opportunity",
-  "신규 메모리 Biz. 기회",
-  "SK hynix AI Infra 대내·대외",
+  "개인 컨텍스트",
+  "Multi-model Agent",
+  "서비스 플랫폼·수익화",
+  "AI 경험·버티컬 서비스",
 ]) {
   assert(strategyText.includes(required), `부서 업무 문구가 없습니다: ${required}`);
 }
-assert(/Strategy consulting · pain-point → memory solution → new Biz/.test(boards), "고객-솔루션-사업기회 컨설팅 흐름이 없습니다");
+assert(/Strategy consulting · user need → mobile experience → revenue → execution/.test(boards), "사용자-경험-수익-실행 컨설팅 흐름이 없습니다");
 assert(/zone\.question/.test(boards) && /zone\.output/.test(boards) && /zone\.gate/.test(boards), "운영 모델의 질문·산출물·게이트가 표시되지 않습니다");
 assert(/msf-flow-arrow/.test(boards), "단계 전환 화살표가 없습니다");
-assert(/전략 컨설팅/.test(components) && /신규 메모리 Biz\./.test(components), "좌측 내비게이션이 부서 업무와 일치하지 않습니다");
-assert(/AI 메모리 전략 인텔리전스/.test(index), "페이지 메타 정보가 부서 목적과 일치하지 않습니다");
-assert(!/MOBILE_STRATEGY|MobileStrategyBoard|Mobile AI Strategy/.test([boards, app, components, index].join("\n")), "이전 모바일 전략 명칭이 남아 있습니다");
+assert(/휴대폰 AI 전략/.test(components) && /AI 서비스 신사업/.test(components), "좌측 내비게이션이 휴대폰 사업 업무와 일치하지 않습니다");
+assert(/휴대폰 AI 사업 인텔리전스/.test(index), "페이지 메타 정보가 휴대폰 사업 목적과 일치하지 않습니다");
+assert(!/MEMORY_STRATEGY|MemoryStrategyBoard|SK\s*hynix|SK하이닉스|하이닉스/.test([boards, app, components, index, strategyText].join("\n")), "제외 대상 기업 또는 이전 메모리 전략 명칭이 남아 있습니다");
 
 const removedSections = [
   "중국 인력 전략",
@@ -54,7 +53,7 @@ const removedSections = [
   "정책·팹 리스크",
   "인재/IP 리스크",
   "Talent and hiring early warning",
-  "중국 메모리 인재·채용 레이더",
+  "중국 인재·채용 레이더",
 ];
 const uiText = [boards, components, app].join("\n");
 for (const removed of removedSections) {

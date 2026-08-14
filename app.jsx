@@ -300,7 +300,7 @@ function App() {
     accentSoft: softTint(c.id === "native" ? t.colNative : c.id === "bigtech" ? t.colBigtech : t.colStartup, dark),
   })), [t.colNative, t.colBigtech, t.colStartup, dark]);
 
-  // 상장사 원래 시장 업종(칩·메모리·하이퍼스케일러 등) — 상세 보조 분류에 사용
+  // 상장사 원래 시장 업종(칩·클라우드·소프트웨어·디바이스 등) — 상세 보조 분류에 사용
   const stockGroups = useMemo(() => (D.STOCK_GROUPS || []).map(g => ({
     ...g,
     accentSoft: softTint(g.accent, dark),
@@ -477,16 +477,16 @@ function App() {
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
             {/* ── 1. 첫 화면: 관계 지도 + 영상 브리핑 ── */}
-            <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="AI Memory Video Brief">
+            <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="Mobile AI Video Brief">
               <div className="ov-head">
-                <h2 className="ov-title">AI 메모리 산업 브리핑 <span>Source-backed competitive dynamics</span></h2>
+                <h2 className="ov-title">휴대폰 AI 사업 브리핑 <span>Source-backed competitive dynamics</span></h2>
               </div>
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
             </section>
 
             {/* ── 2. 전략 컨설팅: 영상 다음에 바로 노출 ── */}
             <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={1320}>
-              <MemoryStrategyBoard companies={companiesLive} articles={articles} generatedAt={dataGeneratedAt} onNav={navTo} />
+              <MobileStrategyBoard companies={companiesLive} articles={articles} generatedAt={dataGeneratedAt} onNav={navTo} />
             </LazySection>
 
             {/* ── 3. 리서치·시장 DB ── */}
@@ -505,7 +505,7 @@ function App() {
               <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
             </LazySection>
 
-            {/* ── 2. AI 수요 → 메모리 기회 밸류체인 ── */}
+            {/* ── 4. 휴대폰 AI SW·서비스 밸류체인 ── */}
             <LazySection id="app" active={active} sectionRef={refs.app} height={740}>
               <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
             </LazySection>
@@ -556,7 +556,7 @@ function App() {
             </LazySection>
 
             <footer className="foot">
-              <span>AI Memory Strategy Intelligence</span>
+              <span>Mobile AI Business Intelligence</span>
               <span className="foot-update">최종 업데이트: {renderTime}</span>
               <span>원출처: Bloomberg · TechCrunch · The Information · Pitchbook · Crunchbase · 각 기업 공식 발표</span>
             </footer>

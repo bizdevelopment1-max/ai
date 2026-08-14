@@ -70,10 +70,6 @@ export const COMPANY_SOURCES = {
       "https://www.nvidia.com/en-us/research/bill-dally/",
     ],
   },
-  "SK hynix": {
-    aliases: ["SK hynix", "SK Hynix", "SKHY"],
-    official: ["https://news.skhynix.com/", "https://www.skhynix.com/"],
-  },
   "Apple": {
     aliases: ["Apple"],
     official: ["https://www.apple.com/", "https://www.apple.com/leadership/"],

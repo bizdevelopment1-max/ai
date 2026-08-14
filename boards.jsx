@@ -398,11 +398,11 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
   );
 }
 
-// ---- AI 메모리 전략 운영 프레임 — Customer → Stack → Solution → Decision ----
-function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionRef }) {
+// ---- 휴대폰 AI 사업 운영 프레임 — User → Experience → Business → Decision ----
+function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = window.DASH.MEMORY_STRATEGY || { choices: [], horizons: [] };
+  const strategy = window.DASH.MOBILE_STRATEGY || { choices: [], horizons: [] };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -420,7 +420,7 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
   const expertSignals = strategy.expertSignals || [];
   const accountCompany = name => (companies || []).find(company => company.name === name);
   const evidenceArticles = React.useMemo(() => {
-    const memoryTerms = /(?:inference|training|workload|data\s*cent(?:er|re)|server|accelerator|GPU|ASIC|HBM\d*|DRAM|NAND|eSSD|CXL|MRDIMM|SOCAMM|memory|메모리|데이터센터|서버|추론|학습|워크로드|가속기)/i;
+    const mobileTerms = /(?:mobile|smartphone|phone|android|iphone|on[ -]?device|edge ai|agent|assistant|camera|voice|translation|wearable|wallet|consumer|모바일|스마트폰|휴대폰|온디바이스|에이전트|어시스턴트|카메라|음성|통역|웨어러블|결제|소비자)/i;
     const generatedDate = generatedAt ? new Date(generatedAt) : null;
     const latestArticleTime = (articles || []).reduce((latest, article) => {
       const time = new Date(`${article.date || ""}T23:59:59Z`).getTime();
@@ -438,7 +438,7 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
       if (!key || seen.has(key) || !article.url || !article.date || !Number.isFinite(articleTime)
         || articleTime < cutoffTime || articleTime > referenceTime + 86400000
         || (article.provenance?.status && article.provenance.status !== "source-backed")
-        || !memoryTerms.test(text)) return false;
+        || !mobileTerms.test(text)) return false;
       seen.add(key);
       return true;
     });
@@ -454,17 +454,17 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
     }).format(validDate);
   }, [generatedAt, evidenceArticles]);
   return (
-    <section className="board msf" ref={sectionRef} data-screen-label="AI Memory Strategy Framework">
+    <section className="board msf" ref={sectionRef} data-screen-label="Mobile AI Business Strategy Framework">
       <AnimCtx.Provider value={inView}>
         <div className="msf-consulting-intro">
-          <div className="msf-consulting-kicker">Strategy consulting · pain-point → memory solution → new Biz</div>
+          <div className="msf-consulting-kicker">Strategy consulting · user need → mobile experience → revenue → execution</div>
           <div className="msf-consulting-title-row">
-            <h2>전략 컨설팅 · 고객 페인포인트 &amp; 신규 메모리 Biz 기회</h2>
-            <span className="msf-consulting-evidence">크롤 근거 <b>{evidenceArticles.length}</b>건 · {evidenceDate} 기준</span>
+            <h2>전략 컨설팅 · 휴대폰 AI 경험 &amp; 신사업 포트폴리오</h2>
+            <span className="msf-consulting-evidence">최신 공개 근거 <b>{evidenceArticles.length}</b>건 · {evidenceDate} 기준</span>
           </div>
           <p>
-            <b>SK hynix 고객의 Pain point</b>를 분석하고 맞춤형 메모리 솔루션을 제안해 새로운 Biz. 기회를 창출함
-            <span>아래 카드는 이번 수집의 공개 원문 근거로 우선순위 갱신 · 프레임은 컨설팅 스캐폴드 · 수치와 인용은 실제 공개 근거</span>
+            <b>사용자의 반복 과업과 지불 의향</b>을 분석하고 OS·앱·계정·결제·개인 컨텍스트를 연결해 새로운 AI 서비스 매출을 설계
+            <span>공개 원문 근거로 우선순위 갱신 · 사실과 전략적 해석 분리 · 사용자 가치와 단위경제성을 같은 의사결정 구조로 연결</span>
           </p>
         </div>
 
@@ -485,14 +485,14 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
             </div>
             <div className="msf-house-foundation">
               <em>FOUNDATION</em>
-              <b>고객 인터뷰 · 공개 원문 · 기술 검증 · 메모리 제품 지식</b>
+              <b>소비자 조사 · 앱 행동 · 공개 원문 · 단말 UX · 수익성 검증</b>
             </div>
           </div>
 
           <div className="msf-exec-synthesis">
             <div className="msf-synthesis-head">
               <span>EXECUTIVE DECISION PACK</span>
-              <b>분석을 반복 가능한 네 가지 산출물로 운영</b>
+              <b>신사업 판단을 반복 가능한 네 가지 산출물로 운영</b>
             </div>
             <div className="msf-synthesis-flow">
               {decisionOutputs.map((item, index) => (
@@ -502,15 +502,15 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
                 </React.Fragment>
               ))}
             </div>
-            <p>각 산출물에 근거일·책임자·다음 의사결정·완료 기준을 기록해 고객 대응과 경영진 판단을 같은 리듬으로 운영</p>
+            <p>각 산출물에 근거일·책임자·다음 의사결정·완료 기준을 기록해 제품·서비스·파트너 판단을 같은 리듬으로 운영</p>
           </div>
         </div>
 
         <div className="msf-section-head">
-          <div><em>01</em><h3>고객 신호에서 실행 안건까지</h3></div>
-          <p>고객 Pain point를 기술 요구·솔루션·경영진 의사결정으로 순차 변환</p>
+          <div><em>01</em><h3>사용자 신호에서 90일 실험까지</h3></div>
+          <p>사용자 Pain point를 모바일 경험·수익모델·파트너 구조·경영진 의사결정으로 순차 변환</p>
         </div>
-        <div className="msf-control-logic" aria-label="AI 메모리 사업 기회 전환 과정">
+        <div className="msf-control-logic" aria-label="휴대폰 AI 신사업 기회 전환 과정">
           {controlZones.map((zone, index) => (
             <React.Fragment key={zone.no}>
               <div style={{ "--zone-step": index }}>
@@ -529,8 +529,8 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         </div>
 
         <div className="msf-section-head">
-          <div><em>02</em><h3>Key Account Portfolio</h3></div>
-          <p>관계 강도·플랫폼 변화·Pain point·실행 게이트를 계정별로 분리</p>
+          <div><em>02</em><h3>Competitive Platform Portfolio</h3></div>
+          <p>공식 제품·통제점·사용자 가치·수익 구조·대응 게이트를 경쟁 플랫폼별로 분리</p>
         </div>
         <div className="msf-account-scope"><Icon name="target" size={14} /><span>{strategy.accountScope}</span></div>
         <div className="msf-account-grid">
@@ -562,16 +562,16 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         </div>
 
         <div className="msf-section-head">
-          <div><em>03</em><h3>Workload → System Bottleneck → Memory</h3></div>
-          <p>데이터센터 App·HW·SW 변화를 신규 메모리 Biz. 가설과 검증 KPI로 번역</p>
+          <div><em>03</em><h3>User Moment → Experience Stack → Revenue</h3></div>
+          <p>휴대폰의 반복 사용 순간을 플랫폼 요구·신사업 가설·검증 KPI로 번역</p>
         </div>
         <div className="msf-workload-map">
-          <div className="msf-workload-head"><span>WORKLOAD / SHIFT</span><span>SYSTEM PAIN</span><span>MEMORY REQUIREMENT</span><span>BUSINESS OPPORTUNITY</span><span>PROOF</span></div>
+          <div className="msf-workload-head"><span>USER MOMENT / SHIFT</span><span>EXPERIENCE PAIN</span><span>PLATFORM REQUIREMENT</span><span>BUSINESS OPPORTUNITY</span><span>PROOF</span></div>
           {workloadMap.map((row, index) => (
             <div className="msf-workload-row" key={row.no} tabIndex="0" style={{ "--workload-order": index }}>
               <span className="msf-workload-name"><em>{row.no}</em><b>{row.workload}</b><small>{row.shift}</small></span>
               <span>{row.bottleneck}</span><i className="msf-flow-arrow" aria-hidden="true" />
-              <span>{row.memory}</span><i className="msf-flow-arrow" aria-hidden="true" />
+              <span>{row.platform}</span><i className="msf-flow-arrow" aria-hidden="true" />
               <span className="msf-workload-opportunity">{row.opportunity}</span>
               <span className="msf-workload-proof">{row.proof}</span>
             </div>
@@ -579,8 +579,8 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         </div>
 
         <div className="msf-section-head">
-          <div><em>04</em><h3>New Memory Business Portfolio</h3></div>
-          <p>Core 확장·인접 제품·데이터 플레인·co-design service를 서로 다른 투자 게이트로 관리</p>
+          <div><em>04</em><h3>Mobile AI New Business Portfolio</h3></div>
+          <p>핵심 경험·크리에이터 도구·컨텍스트 통제·서비스 유통을 서로 다른 투자 게이트로 관리</p>
         </div>
         <div className="msf-opportunity-grid">
           {opportunityPortfolio.map((item, index) => (
@@ -598,8 +598,8 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         </div>
 
         <div className="msf-section-head">
-          <div><em>05</em><h3>Data Center Workload · HW · SW Evidence</h3></div>
-          <p>기사 제목 나열이 아닌 아키텍처 변화와 SK hynix 의사결정 시사점으로 요약</p>
+          <div><em>05</em><h3>Mobile AI Product · Platform · Business Evidence</h3></div>
+          <p>공식 제품 근거를 고객 접점·플랫폼 통제·수익모델·파트너 의사결정 시사점으로 요약</p>
         </div>
         <div className="msf-expert-grid">
           {expertSignals.map((signal, index) => (
@@ -613,8 +613,8 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         </div>
 
         <div className="msf-section-head msf-value-chain-head">
-          <div><em>06</em><h3>AI Infra Value Chain</h3></div>
-          <p>계층별 통제점·경제성·최근 30일 공개 근거를 사업 포트폴리오와 연결</p>
+          <div><em>06</em><h3>Mobile AI SW · Service Value Chain</h3></div>
+          <p>7개 계층의 통제점·경제성·최근 30일 공개 근거를 휴대폰 신사업 포트폴리오와 연결</p>
         </div>
         <div className="msf-chain">
           {layerStats.map((l, i) => (
@@ -635,8 +635,8 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         </div>
 
         <div className="msf-section-head">
-          <div><em>07</em><h3>핵심 업무</h3></div>
-          <p>고객 Pain point · AI 기술 변화 · 맞춤 메모리 솔루션 · AI Infra 대내외 실행의 4개 업무 축</p>
+          <div><em>07</em><h3>Where to Play · How to Win</h3></div>
+          <p>개인 컨텍스트·멀티모델 에이전트·서비스 유통·버티컬 포트폴리오의 4개 우선 플레이</p>
         </div>
         <div className="msf-choices">
           {(strategy.choices || []).map(c => (
@@ -653,7 +653,7 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
 
         <div className="msf-section-head">
           <div><em>08</em><h3>분석 툴킷</h3></div>
-          <p>워크로드부터 경영진 사업안까지 연결하는 필수 전문성</p>
+          <p>소비자 수요부터 모바일 경험·단위경제성·파트너·출시 판단까지 연결하는 필수 전문성</p>
         </div>
         <div className="msf-capabilities">
           {(strategy.capabilities || []).map((capability, index) => (
@@ -666,11 +666,11 @@ function MemoryStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         </div>
 
         <div className="msf-section-head">
-          <div><em>09</em><h3>AI Stack별 메모리 판단 기준</h3></div>
-          <p>기술 변화·경제성·고객 Action·과대해석 리스크를 한 화면에서 비교</p>
+          <div><em>09</em><h3>AI Stack별 휴대폰 사업 판단 기준</h3></div>
+          <p>통제점·수익 구조·휴대폰 사업 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
         <div className="msf-matrix">
-          <div className="msf-mrow msf-mhead"><span>계층 / 역할</span><span>분석 변수</span><span>경제성</span><span>메모리 전략 Action</span><span>검증 리스크</span></div>
+          <div className="msf-mrow msf-mhead"><span>계층 / 역할</span><span>통제점</span><span>수익 구조</span><span>휴대폰 사업 Action</span><span>검증 리스크</span></div>
           {layers.map(l => (
             <div className="msf-mrow" key={l.id} style={{ "--lc": l.accent }} tabIndex="0">
               <span className="msf-mname"><i /> <b>{l.ko}</b><em>{l.stanceKo}</em></span>
@@ -4270,43 +4270,43 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
         <div className="board-head">
           <span className="board-tab" style={{ background: "#315C4A" }} />
           <div className="board-titles">
-            <h2>AI Stack 변화 신호 <span className="board-en">Application · Model · System SW · Hardware</span></h2>
-            <p>고객 워크로드와 AI Application·HW·SW 변화를 함께 읽고 <b>대역폭·용량·지연·전력·신뢰성</b> 요구로 변환 · 공개 원문으로 확인된 신호만 누적</p>
+            <h2>Mobile AI 기술 변화 <span className="board-en">Experience · Agent · Model · OS · Runtime</span></h2>
+            <p>사용자 경험과 AI Application·Agent·Model·OS 변화를 함께 읽고 <b>사용성·지연·원가·프라이버시·차별화</b> 요구로 변환 · 공개 원문으로 확인된 신호만 누적</p>
           </div>
         </div>
         <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
-          dataVersion={dataVersion} title="AI Stack 변화 신호" sub="Application · Agent · Model · RAG · System SW · Accelerator · Data Center — 원문 확인 카드만 표시" />
+          dataVersion={dataVersion} title="Mobile AI 변화 신호" sub="Experience · Agent · Model · Context · Developer Tool · Edge Runtime — 휴대폰 사업 관련 원문 카드만 표시" />
       </AnimCtx.Provider>
     </section>
   );
 }
 
-// 신규 메모리 사업 발굴 — 고객 Pain point와 AI Stack 변화를 솔루션·사업모델로 연결.
+// 휴대폰 AI 신사업 발굴 — 사용자 Pain point와 AI Stack 변화를 경험·수익모델로 연결.
 function NewBizBoard({ sectionRef, articles, dataVersion }) {
   const inView = useInView(sectionRef);
   return (
-    <section className="board signal-source-board" ref={sectionRef} data-screen-label="Memory Business Opportunities">
+    <section className="board signal-source-board" ref={sectionRef} data-screen-label="Mobile AI Business Opportunities">
       <AnimCtx.Provider value={inView}>
         <div className="board-head" style={{ "--accent": "#16A34A" }}>
           <span className="board-tab" style={{ background: "#16A34A" }} />
           <div className="board-titles">
-            <h2>신규 메모리 Biz. 기회 <span className="board-en">Pain Point → Requirement → Solution → Business Case</span></h2>
-            <p>고객 워크로드의 병목을 메모리 요구량과 솔루션 가설로 전환 · 업체별 공개 활동과 사업모델을 근거로 <b>제품·서비스·파트너십 기회</b>를 검토</p>
+            <h2>AI 서비스 신사업 기회 <span className="board-en">User Need → Experience → Revenue → Business Case</span></h2>
+            <p>사용자 과업과 지불 의향을 모바일 경험·수익모델 가설로 전환 · 업체별 공개 활동과 사업모델을 근거로 <b>자체 개발·제휴·투자 기회</b>를 검토</p>
           </div>
         </div>
 
         {/* 1) AI 비즈니스 모델 전체 — 기업별 수익모델·활동 + 7개 수익화 유형(모두 원문 기반) */}
         <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
         <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
-          dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·성과기반 — 메모리 수요와 연결되는 원문 확인 카드만 누적 표시" />
+          dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·거래·성과기반 — 휴대폰 고객 접점과 연결되는 원문 확인 카드만 누적 표시" />
         <BusinessModelForecasts dataVersion={dataVersion} />
 
         {/* 2) 한 단계 아래 — 비즈니스 모델 심화 예시: 배포·AI서비스(수직통합) */}
         <div className="nb-example-head">
-          <span className="nb-example-badge">심화 · 솔루션 사업화</span>
+          <span className="nb-example-badge">심화 · 서비스 사업화</span>
           <div>
-            <h3>고객 공동 설계·배포 <em>Co-design & Deployment</em></h3>
-            <p>메모리 제품 단품을 넘어 워크로드 프로파일링·시스템 최적화·검증·반복 수주로 이어지는 공동 설계 및 구축 모델</p>
+            <h3>기업 AI 공동 설계·배포 <em>Co-design & Deployment</em></h3>
+            <p>모델 API 제공을 넘어 업무 진단·에이전트 구축·현장 배포·운영·반복 과금으로 이어지는 서비스 모델</p>
           </div>
         </div>
         <NewBizDeepDive />
@@ -4427,8 +4427,8 @@ function LegacySignalBoard({ data, theme, sectionRef, articles }) {
           <p>CapEx·HBM 곡선이 가파를수록 <b>공급 부족·단가 상승</b> 리스크가 커집니다. 칩 믹스에서 커스텀 실리콘 비중 확대는 <b>GPU 단일 의존 완화</b>, 광통신 침투율은 <b>전력 병목의 다음 해법</b>을 뜻합니다.</p>
         </div>
         <div className="sx-item">
-          <em>메모리 전략 시사점</em>
-          <p>인프라 병목·전환 시점은 <b>온디바이스 AI 로드맵의 외생 변수</b>입니다. 메모리·전력 제약이 클라우드 AI 단가에 반영되는 시점, 광통신 상용화로 지연시간이 줄어드는 시점을 <b>분기 단위로 추적</b>해야 합니다.</p>
+          <em>휴대폰 사업 시사점</em>
+          <p>인프라 병목·전환 시점은 <b>온디바이스 AI 로드맵의 외생 변수</b>입니다. 클라우드 AI 단가와 지연시간이 바뀌는 시점을 분기 단위로 추적해 기능별 실행 위치와 원가 기준을 갱신해야 합니다.</p>
         </div>
       </div>
       <SignalInfographic file="infra.json" delKey="aiDashDeletedInfra" articles={articles}
@@ -5516,7 +5516,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                   const n = catCounts[t.id] || 0;
                   return (
                     <button key={t.id} disabled={n === 0} className={"su-tax-cat" + (catFilter === t.id ? " on" : "") + (n === 0 ? " empty" : "")} style={{ "--c": t.accent }}
-                      title={`${t.desc}\n▸ 메모리 전략 관점: ${t.handset}`}
+                      title={`${t.desc}\n▸ 휴대폰 신사업 관점: ${t.handset}`}
                       onClick={() => n > 0 && setCatFilter(catFilter === t.id ? "" : t.id)}>
                       <i style={{ background: t.accent }} />{t.ko}<em>{n}</em>
                     </button>
@@ -5599,4 +5599,4 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   );
 }
 
-Object.assign(window, { BoldSummary, MobileAIBusinessBoard, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MemoryStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+Object.assign(window, { BoldSummary, MobileAIBusinessBoard, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });

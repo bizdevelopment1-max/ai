@@ -423,15 +423,15 @@ try {
     && linkedinProfiles.every(url => /^https:\/\/(?:(?:www|[a-z]{2})\.)?linkedin\.com\/in\/[^/?#]+\/?$/.test(url))
     && !boards.includes("linkedin.com/search/results/people")
     && !boards.includes("linkedin.com/search/results/companies");
-  const strategyReady = dash.MEMORY_STRATEGY?.choices?.length === 4
-    && dash.MEMORY_STRATEGY?.capabilities?.length === 5
-    && dash.MEMORY_STRATEGY?.horizons?.length === 3
-    && boards.includes("function MemoryStrategyBoard")
-    && boards.includes("Strategy consulting · pain-point → memory solution → new Biz")
+  const strategyReady = dash.MOBILE_STRATEGY?.choices?.length === 4
+    && dash.MOBILE_STRATEGY?.capabilities?.length === 5
+    && dash.MOBILE_STRATEGY?.horizons?.length === 3
+    && boards.includes("function MobileStrategyBoard")
+    && boards.includes("Strategy consulting · user need → mobile experience → revenue → execution")
     && boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")
     && boards.includes("function ConsultingDecisionRail")
-    && boards.includes("Pain Point → Requirement → Solution → Business Case")
+    && boards.includes("User Need → Experience → Revenue → Business Case")
     && boards.includes("Strategy &amp;")
     && boards.includes('className="msf-strategy-house"')
     && boards.includes('className="msf-control-logic"')
@@ -470,10 +470,10 @@ try {
     ].filter(Boolean).join(", ");
     throw new Error(`seven-layer strategy, MECE portfolio UI, normalized profiles, or verified LinkedIn links are incomplete (${causes})`);
   }
-  console.log(`  OK  AI 메모리 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
+  console.log(`  OK  휴대폰 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
 } catch (error) {
   failed = true;
-  console.error(`  FAIL  memory strategy and company normalization: ${error.message}`);
+  console.error(`  FAIL  mobile strategy and company normalization: ${error.message}`);
 }
 
 try {
@@ -1766,7 +1766,7 @@ try {
     "china-design",
     "china-materials",
   ];
-  // 주가 보드는 수집 중인 63개 상장사 전체를 사이트 공통 7계층으로 재분류한다.
+  // 주가 보드는 제외 기업을 뺀 62개 상장사 전체를 사이트 공통 7계층으로 재분류한다.
   const completeBoard = boards.includes("function StockRegionPanel")
     && boards.includes("function NvidiaInvestmentMap")
     && boards.includes("전체 상장사 밸류체인 분석")
@@ -1775,10 +1775,10 @@ try {
     && !boards.includes(".filter(s => STOCK_LAYER[s.ticker])")
     && boards.includes("밸류체인 그룹 트렌드")
     && boards.includes("개별 종목");
-  const completeMetadata = data.includes('ticker: "000660.KS"')
+  const completeMetadata = !data.includes('ticker: "000660.KS"')
     && data.includes('ticker: "688825.SS"')
     && chinaGroups.every(group => data.includes(`id: "${group}"`))
-    && dash.STOCKS.length === 63
+    && dash.STOCKS.length === 62
     && dash.STOCK_VALUE_CHAIN.length === 7
     && dash.STOCKS.every(stock => dash.STOCK_VALUE_CHAIN.some(layer =>
       layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])))
@@ -1823,7 +1823,7 @@ try {
     || !liveHistory || !currencyAware || !responsiveUi || !stockComparisonCopyRemoved || !initialSevenCategoryView) {
     throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
-  console.log("  OK  63개 상장사 Stock 분석 + NVIDIA 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
+  console.log("  OK  62개 상장사 Stock 분석 + NVIDIA 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock value-chain board: ${error.message}`);
@@ -1900,6 +1900,7 @@ try {
     || !registry.hasUrl("https://example.com/story?utm_campaign=daily")
     || !registry.hasCompany("deleted startup")
     || registry.hasCompany("NVIDIA")
+    || !registry.hasCompanyMention("Deleted Startup launches a product")
     || !registry.hasKey("insight-axis", "수익 모델")
     || !registry.matches({ relatedSources: [{ sourceUrl: "https://example.com/story?utm_medium=syndication" }] }, "market")
     || canonicalSuppressionUrl("https://example.com/story?utm_source=x") !== "https://example.com/story") {
@@ -1933,7 +1934,15 @@ try {
   if (!browserGate || !pipelineGate) {
     throw new Error("X deletion is not connected to every browser and crawler publication gate");
   }
-  console.log("  OK  X 삭제 영구 제외 레지스트리 · 공개 데이터·크롤러 재유입 차단");
+  const visibleAssets = await Promise.all([
+    "index.html", "app.bundle.js", "data.bundle.js", "companies.json", "company-news.json",
+    "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json",
+    "nvidia-investments.json", "briefing.json", "quality.json",
+  ].map(file => readFile(file, "utf8")));
+  if (visibleAssets.some(source => /SK\s*hynix|SK하이닉스|하이닉스/i.test(source))) {
+    throw new Error("permanently excluded company remains in a browser-visible asset");
+  }
+  console.log("  OK  X 삭제 영구 제외 레지스트리 · 제외 기업 공개 자산 제거 · 크롤러 재유입 차단");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  suppression registry: ${error.message}`);

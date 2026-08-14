@@ -44,6 +44,10 @@ export function createSuppressionRegistry(source = {}) {
   const hasUrl = value => urls.has(canonicalSuppressionUrl(value));
   const hasId = value => ids.has(textKey(value));
   const hasCompany = value => companies.has(textKey(value));
+  const hasCompanyMention = value => {
+    const text = textKey(value);
+    return Boolean(text) && [...companies].some(company => company && text.includes(company));
+  };
   const hasKey = (scope, value) => scopedKeys.has(`${textKey(scope || "content")}:${textKey(value)}`);
   const matches = (item, scope = "content") => {
     if (!item) return false;
@@ -55,13 +59,30 @@ export function createSuppressionRegistry(source = {}) {
       ...(item.relatedSources || []).map(source => source.sourceUrl || source.url),
     ].filter(Boolean);
     const idsToCheck = [item.id, ...(item.mergedRecordIds || [])].filter(Boolean);
+    const textToCheck = [
+      item.name,
+      item.co,
+      item.company,
+      item.title,
+      item.titleKo,
+      item.titleEn,
+      item.signal,
+      item.summary,
+      item.evidence,
+      ...(item.summaryLines || []),
+      ...(item.summaryLinesKo || []),
+      ...(item.summaryLinesEn || []),
+      ...(item.consolidatedInsights || []),
+    ].filter(Boolean).join(" ");
     return urlsToCheck.some(hasUrl)
       || idsToCheck.some(hasId)
       || hasCompany(item.name || item.co || item.company)
+      || hasCompanyMention(textToCheck)
+      || hasCompanyMention(JSON.stringify(item))
       || hasKey(scope, item.key || item.id || item.url || item.name || item.title);
   };
 
-  return { source, records, urls, ids, companies, scopedKeys, hasUrl, hasId, hasCompany, hasKey, matches };
+  return { source, records, urls, ids, companies, scopedKeys, hasUrl, hasId, hasCompany, hasCompanyMention, hasKey, matches };
 }
 
 export async function loadSuppressionRegistry(root = process.cwd()) {

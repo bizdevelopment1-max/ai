@@ -16,6 +16,7 @@
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 const MAX_DAYS = 60;          // 아카이브 보존 일수(누적)
 const MAX_ITEMS = 6;          // 하루 브리핑 카드 수
@@ -133,12 +134,16 @@ function ruleBriefing(cands) {
 
 // ---- main ---------------------------------------------------------------
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   let articles = [];
-  try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
+  try { articles = (JSON.parse(await readFile("news.json", "utf8")).articles || []).filter(article => !suppression.matches(article, "article")); } catch {}
 
   let prev = { days: [] };
   try { prev = JSON.parse(await readFile("briefing.json", "utf8")); } catch {}
-  const prevDays = (prev.days || []).filter(d => d.date !== TODAY);
+  const prevDays = (prev.days || []).filter(d => d.date !== TODAY).map(day => ({
+    ...day,
+    items: (day.items || []).filter(item => !suppression.matches(item, "briefing")),
+  }));
 
   const usedUrls = new Set(prevDays.flatMap(d => (d.items || []).flatMap(it => (it.evidence || []).map(e => e.url))));
   const cands = pickCandidates(articles, usedUrls);

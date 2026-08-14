@@ -17,9 +17,15 @@ import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 const root = process.cwd();
 const readJson = async file => JSON.parse(await readFile(resolve(root, file), "utf8"));
 const writeJson = (file, value) => writeFile(resolve(root, file), `${JSON.stringify(value)}\n`);
+const writePrettyJson = (file, value) => writeFile(resolve(root, file), `${JSON.stringify(value, null, 2)}\n`);
 // 표시 최종 게이트: 금지어(삼성·samsung·갤럭시·galaxy·MX)가 조금이라도 포함된 레코드는
 // 원장에 남아 있어도 절대 공개 뷰(*-view.json)에 내보내지 않음 — 사이트 노출 금지 보장.
 const notBanned = item => !isExcludedText(JSON.stringify(item || {}));
+const notLegacyMemoryFocus = item => {
+  const focus = [item?.title, item?.titleKo, item?.titleEn, item?.topic, item?.metricLabel, item?.tag, item?.signal]
+    .filter(Boolean).join(" ");
+  return !/(?:\bHBM\d*\b|\bDRAM\b|\bNAND\b|\beSSD\b|\bCXL\b|AI\s+memory|memory\s+(?:market|demand|shortage|business)|AI\s*메모리|메모리\s*(?:시장|수요|공급|사업|솔루션))/i.test(focus);
+};
 const sourceBacked = item => item?.displayEligible !== false
   && item?.summaryMode === "source-content-extractive"
   && item?.provenance?.status === "source-backed";
@@ -58,14 +64,14 @@ const recordKeys = [
 ];
 const signalKeys = ["id", "group", "title", "signal", "quant", "source", "date", "url", "sourceSummaryMode", "provenance"];
 
-const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notDeleted("article"))
+const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notLegacyMemoryFocus).filter(notDeleted("article"))
   .map(item => normalizeLocalizedRecord(compact(item, articleKeys)));
-const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notDeleted("research"))
+const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notLegacyMemoryFocus).filter(notDeleted("research"))
   .map(item => normalizeLocalizedRecord(compact(item, researchKeys)));
 const visibleRecordSources = (market.records || []).filter(record => sourceBacked(record)
   && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
   && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length)
-  .filter(notBanned).filter(notDeleted("market"));
+  .filter(notBanned).filter(notLegacyMemoryFocus).filter(notDeleted("market"));
 const compactKey = value => String(value || "").toLocaleLowerCase()
   .replace(/[^a-z0-9가-힣]+/g, "-").replace(/^-+|-+$/g, "");
 const marketStableKey = record => {
@@ -100,7 +106,7 @@ const visibleRecords = [...latestRecordByKey.values()]
   .map(item => normalizeLocalizedRecord(compact(item, recordKeys)));
 const visibleSignals = (data, scope) => (data.items || [])
   .filter(item => item?.provenance?.status === "evidence-linked" && item?.sourceSummaryMode === "source-content-extractive")
-  .filter(notBanned).filter(notDeleted(scope))
+  .filter(notBanned).filter(notLegacyMemoryFocus).filter(notDeleted(scope))
   .map(item => normalizeLocalizedRecord(compact(item, signalKeys)));
 
 const generatedAt = new Date().toISOString();
@@ -136,6 +142,57 @@ await Promise.all(Object.entries(views).map(async ([file, value]) => {
   }
   await writeJson(file, value);
 }));
+
+// 브라우저가 직접 읽는 보조 자산도 중앙 제외 레지스트리를 동일하게 적용한다.
+// 원장 전체를 지우지 않고, 공개 브리핑 항목·최신 투자 근거·품질 통계의 제외 기업 표기만 제거한다.
+try {
+  const briefing = await readJson("briefing.json");
+  briefing.days = (briefing.days || []).map(day => ({
+    ...day,
+    items: (day.items || []).filter(item => !suppression.matches(item, "briefing")),
+  }));
+  await writeJson("briefing.json", briefing);
+} catch {}
+
+try {
+  const investments = await readJson("nvidia-investments.json");
+  investments.portfolio = (investments.portfolio || [])
+    .filter(item => !suppression.hasCompany(item.name))
+    .map(item => ({
+      ...item,
+      latestEvidence: item.latestEvidence && suppression.matches(item.latestEvidence, "investment-evidence")
+        ? null
+        : item.latestEvidence,
+    }));
+  await writeJson("nvidia-investments.json", investments);
+} catch {}
+
+const scrubSuppressedLabels = value => {
+  if (Array.isArray(value)) return value
+    .filter(item => !(typeof item === "string" && suppression.hasCompanyMention(item)))
+    .map(scrubSuppressedLabels);
+  if (!value || typeof value !== "object") {
+    return typeof value === "string" && suppression.hasCompanyMention(value) ? "" : value;
+  }
+  return Object.fromEntries(Object.entries(value)
+    .filter(([key]) => !suppression.hasCompanyMention(key))
+    .map(([key, item]) => [key, scrubSuppressedLabels(item)]));
+};
+try {
+  const quality = await readJson("quality.json");
+  await writePrettyJson("quality.json", scrubSuppressedLabels(quality));
+} catch {}
+
+try {
+  const companies = JSON.parse(JSON.stringify(await readJson("companies.json"))
+    .replaceAll("개인 AI 메모리 웨어러블", "개인 AI 웨어러블"));
+  companies.companies = Object.fromEntries(Object.entries(companies.companies || {})
+    .filter(([name]) => !suppression.hasCompany(name)));
+  if (companies.coverage?.companiesTracked != null) {
+    companies.coverage.companiesTracked = Object.keys(companies.companies).length;
+  }
+  await writeJson("companies.json", companies);
+} catch {}
 
 const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
