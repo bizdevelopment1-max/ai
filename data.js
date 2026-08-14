@@ -1417,12 +1417,12 @@ window.DASH = (function () {
   // 고객 Pain point를 메모리 솔루션과 경영진 안건으로 전환하는 부서 운영 프레임.
   // 시장 신호는 companies.json의 원문·공식 활동을 합산해 자동 갱신한다.
   const MEMORY_STRATEGY = {
-    northStar: "고객 워크로드의 Pain point를 검증 가능한 메모리 솔루션과 신규 사업 기회로 전환",
+    northStar: "SK hynix 주요 고객의 현황·기술·전략을 메모리 Pain point와 맞춤형 실행안으로 전환",
     choices: [
-      { no: "01", title: "Customer Intelligence", where: "주요 고객·워크로드", win: "고객 전략·제품 일정·시스템 병목을 원문 근거로 연결", kpi: "고객별 근거 최신성 · Pain point 검증률 · 의사결정자 인터뷰" },
-      { no: "02", title: "AI Stack Translation", where: "Application·HW·SW 변화", win: "모델·시스템 변화를 용량·대역폭·지연·내구성 요구로 정량 변환", kpi: "워크로드 커버리지 · 요구량 오차 · 기술 전환 리드타임" },
-      { no: "03", title: "Memory Solution Design", where: "HBM·DRAM·NAND/eSSD·CXL", win: "제품 단품이 아닌 시스템 TCO·성능 병목 중심의 맞춤 솔루션 설계", kpi: "고객 PoC · 인증 통과율 · attach · 반복 수주" },
-      { no: "04", title: "AI Infra Strategy", where: "국내외 AI 인프라", win: "파트너·투자·공동 로드맵을 신규 메모리 수요와 실행 안건으로 연결", kpi: "공동 로드맵 · 설계 반영 · 수주 파이프라인 · 실현 매출" },
+      { no: "01", title: "Customer Pain Point Strategy", where: "주요 고객 현황·기술·전략", win: "고객별 워크로드·구매 조건·시스템 병목을 메모리 관점의 맞춤 전략으로 연결", kpi: "고객 근거 최신성 · Pain point 검증률 · 공동 과제 전환율" },
+      { no: "02", title: "AI App / HW / SW Opportunity", where: "AI Application·Hardware·Software 변화", win: "AI 기술 변화를 용량·대역폭·지연·전력·내구성 요구와 신규 메모리 Biz. 기회로 정량 변환", kpi: "워크로드 커버리지 · 요구량 오차 · 신규 기회 파이프라인" },
+      { no: "03", title: "Memory Solution Design", where: "HBM·DRAM·NAND/eSSD·CXL", win: "제품 단품이 아닌 시스템 TCO·성능 병목 중심의 고객 맞춤 메모리 솔루션 설계", kpi: "고객 PoC · 인증 통과율 · 제품 attach · 반복 수주" },
+      { no: "04", title: "AI Infra Execution Strategy", where: "SK hynix AI Infra 대내·대외", win: "대내 역량·대외 고객·파트너·투자·공동 로드맵을 하나의 실행 포트폴리오로 연결", kpi: "대내 실행률 · 대외 공동 로드맵 · 설계 반영 · 실현 매출" },
     ],
     capabilities: [
       { no: "01", title: "Data Center Workload", detail: "서비스 트래픽·모델 구조·컴퓨트 토폴로지·스토리지 경로", output: "Pain point map" },

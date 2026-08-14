@@ -6,21 +6,51 @@ const assert = (condition, message) => {
   if (!condition) throw new Error(message);
 };
 
-const [dash, boards, components, app, index] = await Promise.all([
+const [dash, boards, components, app, anim, index] = await Promise.all([
   loadDash(),
   readFile("boards.jsx", "utf8"),
   readFile("components.jsx", "utf8"),
   readFile("app.jsx", "utf8"),
+  readFile("anim.jsx", "utf8"),
   readFile("index.html", "utf8"),
 ]);
 
 assert(dash.MEMORY_STRATEGY, "MEMORY_STRATEGY가 없습니다");
-assert(dash.MEMORY_STRATEGY.choices?.length === 4, "부서 핵심 업무 4개 축이 필요합니다");
-assert(dash.MEMORY_STRATEGY.capabilities?.length === 5, "분석 툴킷 5개 축이 필요합니다");
-assert(/Customer Pain Point → Memory Solution → Executive Decision/.test(boards), "고객-솔루션-의사결정 흐름이 없습니다");
+assert(dash.MEMORY_STRATEGY.choices?.length === 4, "핵심 업무는 4개 축으로 구성해야 합니다");
+assert(dash.MEMORY_STRATEGY.capabilities?.length === 5, "분석 툴킷은 5개 축이 필요합니다");
+
+const strategyText = JSON.stringify(dash.MEMORY_STRATEGY);
+for (const required of [
+  "주요 고객 현황·기술·전략",
+  "AI App / HW / SW Opportunity",
+  "신규 메모리 Biz. 기회",
+  "SK hynix AI Infra 대내·대외",
+]) {
+  assert(strategyText.includes(required), `부서 업무 문구가 없습니다: ${required}`);
+}
+assert(/Customer Pain Point → Technology Shift → Memory Business → Execution/.test(boards), "고객-기술-사업-실행 흐름이 없습니다");
 assert(/AI 메모리 전략/.test(components) && /신규 메모리 Biz\./.test(components), "좌측 내비게이션이 부서 업무와 일치하지 않습니다");
 assert(/AI 메모리 전략 인텔리전스/.test(index), "페이지 메타 정보가 부서 목적과 일치하지 않습니다");
 assert(!/MOBILE_STRATEGY|MobileStrategyBoard|Mobile AI Strategy/.test([boards, app, components, index].join("\n")), "이전 모바일 전략 명칭이 남아 있습니다");
+
+const removedSections = [
+  "중국 인력 전략",
+  "Policy maker direction · China / Korea / United States",
+  "정책 방향성",
+  "정책·팹 리스크",
+  "인재/IP 리스크",
+  "Talent and hiring early warning",
+  "중국 메모리 인재·채용 레이더",
+];
+const uiText = [boards, components, app].join("\n");
+for (const removed of removedSections) {
+  assert(!uiText.includes(removed), `삭제된 섹션이 다시 노출됩니다: ${removed}`);
+}
+
+assert(/useInView\(sectionRef, 1800\)/.test(app), "하단 보드 사전 로딩 범위가 적용되지 않았습니다");
+assert(/needsCompanyExtras/.test(app), "초기 화면과 상세 데이터 요청이 분리되지 않았습니다");
+assert(/fmtNum\(p\.num, p\)/.test(anim), "숫자 첫 화면의 0 플래시 방지가 적용되지 않았습니다");
+assert(/Math\.min\(dur \|\| 420, 620\)/.test(anim), "숫자 애니메이션 시간 상한이 적용되지 않았습니다");
 
 const sourceGated = new Set(["DeepSeek", "Kling AI", "Hailuo (MiniMax)"]);
 for (const company of dash.COMPANIES || []) {
@@ -28,8 +58,8 @@ for (const company of dash.COMPANIES || []) {
   assert(!company.note && !company.vp && !company.direction, `${company.name} 정적 전략 서술이 남아 있습니다`);
   assert(!company.valuation && !company.funding, `${company.name} 정적 수치가 남아 있습니다`);
 }
-assert(!(dash.ARTICLES || []).some(article => sourceGated.has(article.co)), "지역 기업의 정적 기사 스냅샷이 남아 있습니다");
-assert(!Object.keys(dash.COMPANY_PROFILES || {}).some(name => sourceGated.has(name)), "지역 기업의 정적 프로필이 남아 있습니다");
-assert(!Object.keys(dash.COMPANY_ORG || {}).some(name => sourceGated.has(name)), "지역 기업의 정적 조직 가정이 남아 있습니다");
+assert(!(dash.ARTICLES || []).some(article => sourceGated.has(article.co)), "소스 게이트 기업의 정적 기사가 남아 있습니다");
+assert(!Object.keys(dash.COMPANY_PROFILES || {}).some(name => sourceGated.has(name)), "소스 게이트 기업의 정적 프로필이 남아 있습니다");
+assert(!Object.keys(dash.COMPANY_ORG || {}).some(name => sourceGated.has(name)), "소스 게이트 기업의 정적 조직 가정이 남아 있습니다");
 
 console.log("department-fit: ok");

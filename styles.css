@@ -536,9 +536,11 @@ a[href]:hover .rainbow-on-hover,
 .main { flex: 1; overflow-y: auto; scroll-behavior: smooth; scroll-padding-top: 14px; }
 .main-inner { width: 100%; max-width: none; margin: 0; padding: 22px 26px 60px; display: flex; flex-direction: column; gap: 26px; }
 
-/* Stable navigation wrapper. Browser content-visibility defers paint while the
-   complete board structure remains available without a blank placeholder. */
+/* Stable navigation wrapper. Heavy boards mount 1.8 viewports early and keep
+   their reserved height until ready, avoiding both first-paint cost and jumps. */
 .board-gate, .nav-section-anchor { min-width: 0; scroll-margin-top: 14px; }
+.board-gate.is-pending { min-height: var(--gate-height, 760px); contain: layout style paint; }
+.board-gate-placeholder { min-height: var(--gate-height, 760px); border-radius: var(--radius); background: transparent; }
 
 /* ---------- overview ---------- */
 .ov-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 4px; }

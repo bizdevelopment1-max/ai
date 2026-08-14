@@ -101,7 +101,7 @@ function useEyeLevel() {
 }
 
 /* ---- board-level visibility (large sections, a bit more lenient) ---- */
-function useInView(ref, lead = 360) {
+function useInView(ref, lead = 1400) {
   const [inView, setInView] = useStateA(false);
   useEffectA(() => {
     const el = ref && ref.current;
@@ -120,7 +120,7 @@ function useInView(ref, lead = 360) {
         const navTarget = window.__DASH_NAV_TARGET;
         const belongsToTarget = !navTarget || !sectionId || sectionId === navTarget;
         setInView(belongsToTarget && r.top < vh * EYE_BOTTOM + lead && r.bottom > vh * EYE_TOP - lead);
-      }, 180);
+      }, 60);
     };
     const unregister = _register(el, update, lead);
     return () => { clearTimeout(confirmTimer); unregister(); };
@@ -130,10 +130,10 @@ function useInView(ref, lead = 360) {
 
 /* ---- eased 0→1 progress, restarts whenever `active`/`replayKey` flip ---- */
 function useProgress(active, dur, delay, replayKey) {
-  dur = dur || 1200;
-  const [p, setP] = useStateA(0);
+  dur = Math.min(dur || 520, 720);
+  const [p, setP] = useStateA(REDUCED ? 1 : 0);
   useEffectA(() => {
-    if (!active) { setP(0); return; }
+    if (!active) { setP(REDUCED ? 1 : 0); return; }
     if (REDUCED) { setP(1); return; }
     setP(0);
     let raf, start, to, done = false;
@@ -185,14 +185,16 @@ function CountUp({ value, active, dur }) {
   const pRef = useRefA(null);
   if (pRef.current === null || pRef.current.raw !== value) pRef.current = Object.assign(parseNum(value), { raw: value });
   const p = pRef.current;
-  const [disp, setDisp] = useStateA(p.ok ? fmtNum(0, p) : p.raw);
+  // First paint uses the verified value instead of a synthetic zero. This
+  // removes the $0B/0% flash while retaining a short replay when motion is on.
+  const [disp, setDisp] = useStateA(p.ok ? fmtNum(p.num, p) : p.raw);
   useEffectA(() => {
     if (!p.ok) { setDisp(value); return; }
-    if (!on) { setDisp(fmtNum(0, p)); return; }
+    if (!on) { setDisp(fmtNum(p.num, p)); return; }
     if (REDUCED) { setDisp(fmtNum(p.num, p)); return; }
-    setDisp(fmtNum(0, p));
+    setDisp(fmtNum(p.num * 0.72, p));
     let raf, start, done = false;
-    const d = dur || 1300;
+    const d = Math.min(dur || 420, 620);
     const snapFn = () => { if (!done) { done = true; setDisp(fmtNum(p.num, p)); } };
     _snapCallbacks.add(snapFn);
     const finish = setTimeout(snapFn, d + 300);
@@ -201,7 +203,7 @@ function CountUp({ value, active, dur }) {
       if (!start) start = t;
       const k = Math.min((t - start) / d, 1);
       const e = 1 - Math.pow(1 - k, 3);
-      setDisp(fmtNum(p.num * e, p));
+      setDisp(fmtNum(p.num * (0.72 + 0.28 * e), p));
       if (k < 1) raf = requestAnimationFrame(step); else { done = true; setDisp(fmtNum(p.num, p)); }
     };
     raf = requestAnimationFrame(step);

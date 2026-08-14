@@ -428,8 +428,8 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
         <div className="board-head" style={{ "--accent": "#1428A0" }}>
           <span className="board-tab" style={{ background: "#1428A0" }} />
           <div className="board-titles">
-            <h2>AI 메모리 전략 프레임 <span className="board-en">Customer Pain Point → Memory Solution → Executive Decision</span></h2>
-            <p>주요 고객의 <b>워크로드·HW·SW 변화를 메모리 요구량과 신규 Biz. 기회로 변환</b>하고 AI Infra 실행 전략까지 연결</p>
+            <h2>AI 메모리 사업전략 <span className="board-en">Customer Pain Point → Technology Shift → Memory Business → Execution</span></h2>
+            <p><b>주요 고객 현황·기술·전략</b>과 <b>AI App·HW·SW 변화</b>를 분석해 맞춤형 메모리 전략·신규 Biz.·AI Infra 대내외 실행안으로 연결</p>
           </div>
           <div className="board-count msf-live">LIVE · 30일 신호</div>
         </div>
@@ -508,8 +508,8 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
 
         <div className="msf-section-head">
-          <div><em>02</em><h3>부서 핵심 업무</h3></div>
-          <p>고객 분석 · AI Stack 변화 · 맞춤 메모리 솔루션 · AI Infra 전략의 4개 업무 축</p>
+          <div><em>02</em><h3>핵심 업무</h3></div>
+          <p>고객 Pain point · AI 기술 변화 · 맞춤 메모리 솔루션 · AI Infra 대내외 실행의 4개 업무 축</p>
         </div>
         <div className="msf-choices">
           {(strategy.choices || []).map(c => (

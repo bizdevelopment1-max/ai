@@ -26,15 +26,22 @@ const COLOR_PRESETS = [
   { sidebar: "#10131C", colNative: "#7A38D6", colBigtech: "#1428A0", colStartup: "#0E8F6E" },
 ];
 
-// Keep a stable wrapper for navigation, but render the board immediately.
-// Browser content-visibility handles below-the-fold cost without exposing a
-// blank gate or a transient loading state to readers.
+// Keep a stable wrapper for navigation and mount each heavy board before it
+// reaches the viewport. Once mounted it stays warm, so later navigation is
+// immediate without paying the full DOM cost during first paint.
 function LazySection({ id, active, sectionRef, height = 420, children }) {
   const innerRef = uR(null);
+  const nearViewport = useInView(sectionRef, 1800);
+  const [ready, setReady] = uS(active === id);
+  uE(() => {
+    if (nearViewport || active === id) setReady(true);
+  }, [nearViewport, active, id]);
   return (
-    <div ref={sectionRef} className="board-gate is-ready"
+    <div ref={sectionRef} className={"board-gate" + (ready ? " is-ready" : " is-pending")}
       style={{ "--gate-height": `${height}px` }} data-section={id} data-active={active === id ? "true" : "false"}>
-      {React.cloneElement(children, { sectionRef: innerRef })}
+      {ready
+        ? React.cloneElement(children, { sectionRef: innerRef })
+        : <div className="board-gate-placeholder" aria-hidden="true" />}
     </div>
   );
 }
@@ -168,6 +175,16 @@ function App() {
     let alive = true;
     fetch(dataUrl("companies.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
+    return () => { alive = false; };
+  }, [needsCompanyData, dataVersion]);
+
+  // Company articles and startup monetization are detail payloads. They are
+  // warmed only for the startup view or an opened company, rather than
+  // competing with the executive first screen.
+  const needsCompanyExtras = startupInView || active === "sanalysis" || !!selected;
+  uE(() => {
+    if (!needsCompanyExtras || !dataVersion) return;
+    let alive = true;
     fetch(dataUrl("company-news.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
       .then(j => { if (alive && j && j.companies) setCompanyNews(j.companies); }).catch(() => {});
     fetch(dataUrl("monetization.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
@@ -180,7 +197,7 @@ function App() {
         setStartupsX(m);
       } }).catch(() => {});
     return () => { alive = false; };
-  }, [needsCompanyData, dataVersion]);
+  }, [needsCompanyExtras, dataVersion]);
 
   uE(() => {
     if (!(auditInView || active === "audit") || !dataVersion) return;
