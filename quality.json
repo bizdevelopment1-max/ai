@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-14T15:05:03.313Z",
+  "generatedAt": "2026-08-14T15:19:48.748Z",
   "overall": "ok",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 16개 · 정상 16 · 주의 0 · 실패 0",
@@ -32,7 +32,7 @@
       "id": "collection-health",
       "label": "수집 스트림 상태",
       "status": "ok",
-      "value": "실패 0 · 빈 스트림 15"
+      "value": "실패 0 · 빈 스트림 13"
     },
     {
       "id": "briefing-evidence",
@@ -103,7 +103,7 @@
   ],
   "metrics": {
     "currentArticles": 500,
-    "accumulatedArticles": 596,
+    "accumulatedArticles": 598,
     "sourceBackedArticles": 496,
     "sourceExcerptArticles": 494,
     "localizedArticles": 493,
@@ -123,17 +123,18 @@
   },
   "sources": {
     "news": {
+      "Wired": 49,
       "The Decoder": 76,
       "Engadget": 53,
-      "Wired": 48,
       "ZDNet": 31,
+      "Ars Technica": 5,
       "The Verge": 53,
-      "TechCrunch": 88,
+      "TechCrunch": 87,
       "CNBC": 17,
       "AI Business": 9,
       "MIT Tech Review": 18,
-      "Semafor": 2,
       "SiliconANGLE": 15,
+      "Semafor": 2,
       "IEEE Spectrum": 10,
       "South China Morning Post": 2,
       "WIRED": 1,
@@ -151,57 +152,54 @@
       "the-decoder.com": 2,
       "forbes.com": 2,
       "Databricks": 2,
-      "Ars Technica": 4,
       "Fortune": 4,
       "AP News": 1,
       "Venturebeat": 1,
-      "anthropic.com": 1,
-      "cnbc.com": 1,
       "Business Insider Africa": 1,
-      "The New York Times": 1,
+      "cnbc.com": 1,
+      "anthropic.com": 1,
       "Yahoo Finance": 2,
+      "The New York Times": 1,
       "The Guardian": 1,
-      "Shaping Europe’s digital future": 1,
       "9to5Mac": 1,
-      "Microsoft Source": 3,
+      "Shaping Europe’s digital future": 1,
       "The Register": 4,
+      "Microsoft Source": 3,
       "Android Authority": 1,
       "Yahoo Finance UK": 1,
       "Yahoo Finance Singapore": 1,
       "Reuters": 1,
-      "US News (Reuters)": 1,
-      "BNN Bloomberg (Reuters)": 1
+      "US News (Reuters)": 1
     },
     "stocks": {
       "nasdaq": 34,
       "naver": 1,
       "yahoo-spark": 2,
-      "sina": 26
+      "eastmoney": 18,
+      "sina": 8
     }
   },
   "collection": {
-    "generatedAt": "2026-08-14T14:57:21.708Z",
+    "generatedAt": "2026-08-14T15:13:09.778Z",
     "mode": "source-content-extractive",
     "policyVersion": 2,
     "streams": {
       "googleNews": 55,
       "directRss": 14
     },
-    "acceptedCandidates": 81,
+    "acceptedCandidates": 83,
     "failedStreams": [],
     "emptyStreams": [
       "google-news:Sierra AI",
       "google-news:Lovable",
       "google-news:Runway",
+      "google-news:Abridge",
       "google-news:Writer",
-      "google-news:Synthesia",
       "google-news:Stability AI",
       "google-news:Kling AI",
       "google-news:Hailuo (MiniMax)",
-      "google-news:Abridge",
-      "google-news:Anthropic 공식 공시",
       "google-news:OpenAI 공식 공시",
-      "rss:Ars Technica",
+      "google-news:Anthropic 공식 공시",
       "rss:Hugging Face",
       "rss:VentureBeat",
       "rss:The Register"
