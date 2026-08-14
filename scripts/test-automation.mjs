@@ -267,10 +267,17 @@ try {
     && how.includes('@keyframes edgeSignal')
     && how.includes("@keyframes trackMove")
     && how.includes("@keyframes diagramRise");
-  if (slides !== 12 || videos.size !== 12 || !samsungOne || !largerType || !responsiveFit || !consultingMotion) {
-    throw new Error("How deck must keep 12 unique video slides with fitted typography, blue consulting diagrams, and motion");
+  const introVideoExperience = how.includes('class="slide active intro-video cover-slide"')
+    && how.includes('class="slide intro-video summary-slide"')
+    && how.includes("slides[0].classList.add('scroll-lift')")
+    && how.includes("video.defaultMuted = true")
+    && how.includes("video.volume = 0")
+    && how.includes(".summary-slide .flow")
+    && how.includes(".summary-slide .takeaway");
+  if (slides !== 12 || videos.size !== 12 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !introVideoExperience) {
+    throw new Error("How deck must keep 12 unique video slides with fitted typography, muted intro media, scroll lift, blue consulting diagrams, and motion");
   }
-  console.log("  OK  How 12장 · SamsungOne 700C/500C · 잘림 방지 · 블루 그라데이션 · 근거→분석→의사결정 동적 도식");
+  console.log("  OK  How 12장 · 첫 2장 무음 영상 · 스크롤 상승 · 2장 전체 문구 맞춤 · 블루 컨설팅 도식");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);

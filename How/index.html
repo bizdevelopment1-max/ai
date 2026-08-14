@@ -128,6 +128,17 @@
       z-index: -4;
       filter: saturate(.72) contrast(1.12) brightness(.44) hue-rotate(4deg);
     }
+    .intro-video .bg-video {
+      filter: saturate(.76) contrast(1.1) brightness(.48);
+      transform: scale(1.018);
+      transition: filter .7s ease, transform .9s cubic-bezier(.2,.8,.2,1);
+    }
+    .slide.intro-video::before {
+      background:
+        linear-gradient(90deg, rgba(1,4,12,.91) 0%, rgba(2,8,22,.76) 45%, rgba(2,8,20,.55) 72%, rgba(1,4,12,.76) 100%),
+        linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.48)),
+        radial-gradient(circle at 72% 42%, rgba(0,114,206,.18), transparent 42%);
+    }
     .bg-poster { background-size: cover; background-position: center; }
     .slide::before {
       content: "";
@@ -156,9 +167,13 @@
       min-width: 0;
       margin: 0 auto;
       position: relative;
-      transform: scale(var(--fit-scale, 1));
+      transform: translate3d(0, var(--scroll-lift, 0), 0) scale(var(--fit-scale, 1));
       transform-origin: 50% 50%;
+      transition: transform .52s cubic-bezier(.2,.82,.2,1), opacity .4s ease;
     }
+    .cover-slide.scroll-lift { --scroll-lift: -9vh; }
+    .cover-slide.scroll-lift .slide-inner { opacity: .08; }
+    .cover-slide.scroll-lift .bg-video { filter: saturate(.7) contrast(1.16) brightness(.34); transform: scale(1.065); }
     .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 13px; color: var(--accent); font: 850 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; }
     .eyebrow::before { content: ""; width: 30px; height: 2px; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
     h1, h2, h3, p { margin: 0; }
@@ -230,6 +245,18 @@
     .outcome em { color: var(--accent); font: 850 9px var(--mono); font-style: normal; }
     .outcome b { display: block; margin: 8px 0 5px; font-size: 15px; }
     .outcome span { color: var(--muted); font-size: 10px; line-height: 1.4; }
+
+    .summary-slide { padding-top: 84px; padding-bottom: 54px; }
+    .summary-slide .slide-inner { width: min(1580px, 100%); }
+    .summary-slide .slide-title { margin-bottom: clamp(14px, 2.2vh, 24px); }
+    .summary-slide .flow {
+      grid-template-columns: minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr);
+      margin-top: clamp(14px, 2.7vh, 28px);
+    }
+    .summary-slide .flow-card { padding: clamp(13px, 1.6vh, 19px) 14px; }
+    .summary-slide .three-outcomes { margin-top: clamp(10px, 1.7vh, 17px); }
+    .summary-slide .outcome { padding: clamp(12px, 1.7vh, 17px); }
+    .summary-slide .takeaway { margin-top: clamp(10px, 1.8vh, 18px); padding-block: clamp(10px, 1.5vh, 14px); }
 
     .issue-tree { display: grid; grid-template-columns: .78fr 36px 2.2fr; align-items: center; margin-top: 26px; }
     .root-question { padding: 22px; border: 2px solid var(--accent); background: var(--blue-gradient); box-shadow: 14px 14px 40px rgba(0,35,110,.32); font-size: 19px; line-height: 1.4; }
@@ -637,6 +664,9 @@
       .consulting-ribbon { top: -20px; }
       .slide-title { margin-bottom: 13px; }
       .takeaway { margin-top: 10px; }
+      .summary-slide { padding-top: 72px; padding-bottom: 42px; }
+      .summary-slide .flow-card { padding-block: 11px; }
+      .summary-slide .outcome { padding-block: 10px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -658,9 +688,9 @@
     <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
 
     <div class="slides" id="slides">
-      <section class="slide active" data-title="표지" data-accent="#00a9e0" data-rgb="0,169,224" aria-hidden="false">
+      <section class="slide active intro-video cover-slide" data-title="표지" data-accent="#00a9e0" data-rgb="0,169,224" aria-hidden="false">
         <div class="bg-poster" style="background-image:url('assets/poster-01.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-01.mp4" muted loop playsinline preload="none" poster="assets/poster-01.webp"></video>
+        <video class="bg-video" data-src="assets/bg-01.mp4" muted loop playsinline preload="none" poster="assets/poster-01.webp" aria-label="모바일 AI 미래 기술 배경 영상"></video>
         <div class="slide-inner cover-layout">
           <div>
             <div class="eyebrow reveal">AI BUSINESS INTELLIGENCE PLAYBOOK</div>
@@ -677,9 +707,9 @@
         </div>
       </section>
 
-      <section class="slide" data-title="한 장 요약" data-accent="#42c8ff" data-rgb="66,200,255" aria-hidden="true">
+      <section class="slide intro-video summary-slide" data-title="한 장 요약" data-accent="#42c8ff" data-rgb="66,200,255" aria-hidden="true">
         <div class="bg-poster" style="background-image:url('assets/poster-02.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-02.mp4" muted loop playsinline preload="none" poster="assets/poster-02.webp"></video>
+        <video class="bg-video" data-src="assets/bg-02.mp4" muted loop playsinline preload="none" poster="assets/poster-02.webp" aria-label="모바일 AI 블루 그라데이션 배경 영상"></video>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">00</span><div><div class="eyebrow">EXECUTIVE SUMMARY</div><h2>기사 모음이 아니라 <span class="accent">의사결정 데이터베이스</span></h2><p>질문에서 출발해 검증 근거와 실행 우선순위까지 한 방향으로 연결</p></div></div>
           <div class="flow reveal" style="--delay:.16s">
@@ -1039,6 +1069,9 @@
         slides.forEach((slide, slideIndex) => {
           const video = videoFor(slide)
           if (!video || reduceMotion) return
+          video.defaultMuted = true
+          video.muted = true
+          video.volume = 0
           const nearby = Math.abs(slideIndex - index) <= 1
           if (nearby && !video.src) {
             video.src = video.dataset.src
@@ -1062,6 +1095,7 @@
           slide.toggleAttribute('inert', slideIndex !== bounded)
         })
         index = bounded
+        slides[0]?.classList.remove('scroll-lift')
         const active = slides[index]
         document.documentElement.style.setProperty('--accent', active.dataset.accent)
         document.documentElement.style.setProperty('--accent-rgb', active.dataset.rgb)
@@ -1112,6 +1146,14 @@
       addEventListener('wheel', event => {
         if (wheelLock || Math.abs(event.deltaY) < 20) return
         wheelLock = true
+        if (index === 0 && event.deltaY > 0 && !reduceMotion) {
+          slides[0].classList.add('scroll-lift')
+          setTimeout(() => {
+            go(1)
+            wheelLock = false
+          }, 520)
+          return
+        }
         go(index + (event.deltaY > 0 ? 1 : -1))
         setTimeout(() => { wheelLock = false }, 780)
       }, { passive: true })
