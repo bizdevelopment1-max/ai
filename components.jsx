@@ -401,31 +401,26 @@ function KpiStrip({ kpis }) {
   );
 }
 
-// ---- Site CLI · local evidence search + optional LLM patch workspace ----
+// ---- Site CLI · local evidence search + authenticated Codex CLI workspace ----
 const SITE_CLI_COMMANDS = [
   ["/search <키워드>", "사이트 전체 근거 검색"],
   ["/company <기업명>", "기업 개요·수익 모델·전략 검색"],
   ["/market <키워드>", "시장·소비자 조사 검색"],
-  ["/ask <질문>", "로컬 근거 또는 연결된 LLM 답변"],
-  ["/edit <요청>", "검토 가능한 사이트 수정안 생성"],
+  ["/ask <질문>", "실제 Codex 읽기 전용 답변"],
+  ["/edit <요청>", "승인 후 저장소 파일 수정"],
   ["/open <섹션명>", "대시보드 섹션 이동"],
-  ["/connect", "LLM 엔드포인트 설정"],
+  ["/connect", "Codex 설치·로그인·브리지 확인"],
+  ["/doctor", "실행 환경 진단"],
   ["/export", "현재 작업 기록 저장"],
   ["/clear", "콘솔 기록 정리"],
 ];
 
-const SITE_CLI_DEFAULT_CONFIG = {
-  endpoint: "https://api.openai.com/v1/responses",
-  model: "gpt-5.6-sol",
-};
-
-const SITE_CLI_SYSTEM = `당신은 AI Intelligence 사이트 전용 분석·편집 콘솔임
-제공된 SITE EVIDENCE만 사실 근거로 사용
-근거에 없는 수치·날짜·인물·거래는 생성 금지
-한국어 개조식으로 답변하고 문장형 종결과 마침표 사용 금지
-질문 답변은 핵심 결론·근거·시사점 순서로 MECE하게 구성
-수정 요청은 요약·영향 파일·unified diff·검증 항목 순서로 구성
-실제 저장소 반영 전 사용자가 검토할 수 있는 수정안만 출력`;
+const SITE_CODEX_SETUP = [
+  "git clone https://github.com/bizdevelopment1-max/ai.git",
+  "cd ai",
+  "powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\install-site-codex.ps1",
+  ".\\Start-Site-Codex.cmd",
+];
 
 function siteCliText(value, limit = 2600) {
   if (value == null) return "";
@@ -497,32 +492,19 @@ function searchSiteCli(query, kindFilter) {
   }).filter(doc => doc.score > 0).sort((a, b) => b.score - a.score).slice(0, 6);
 }
 
-function extractResponseText(payload) {
-  if (typeof payload?.output_text === "string") return payload.output_text.trim();
-  return (payload?.output || []).flatMap(item => item.content || [])
-    .map(item => item.text || item.output_text || "").filter(Boolean).join("\n").trim();
-}
-
 function AIChatbot({ onNav }) {
   const [launcher, setLauncher] = useState("");
   const [visible, setVisible] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [configOpen, setConfigOpen] = useState(false);
-  const [llmEnabled, setLlmEnabled] = useState(false);
-  const [token, setToken] = useState("");
-  const [config, setConfig] = useState(() => {
-    try {
-      const saved = JSON.parse(sessionStorage.getItem("siteCliLLMConfig") || "null");
-      return { ...SITE_CLI_DEFAULT_CONFIG, ...(saved || {}) };
-    } catch { return SITE_CLI_DEFAULT_CONFIG; }
-  });
-  const [draftConfig, setDraftConfig] = useState(config);
+  const [activity, setActivity] = useState("Codex 응답 대기");
+  const [bridgePanelOpen, setBridgePanelOpen] = useState(false);
+  const [bridge, setBridge] = useState({ state: "checking", ready: false, installed: false, authenticated: false });
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [log, setLog] = useState([{
     id: "boot", role: "system", label: "READY",
-    text: "사이트 공개 데이터 인덱스 연결 · /help 명령어 확인 · 일반 문장 입력 시 질문으로 처리",
+    text: "사이트 데이터 인덱스 연결 · Codex CLI 상태 확인 · /help 명령어 확인",
   }]);
   const launcherRef = useRef(null);
   const terminalInputRef = useRef(null);
@@ -532,6 +514,32 @@ function AIChatbot({ onNav }) {
     ...current,
     { id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, ...entry },
   ]);
+
+  const refreshBridge = async (announce = false) => {
+    setBridge(current => ({ ...current, state: "checking" }));
+    try {
+      const response = await fetch("./api/codex/status", { cache: "no-store" });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload?.error || `상태 확인 오류 ${response.status}`);
+      const next = { ...payload, state: payload.ready ? "ready" : "setup" };
+      setBridge(next);
+      if (announce) append({
+        role: payload.ready ? "assistant" : "error",
+        label: "CODEX STATUS",
+        text: payload.ready
+          ? `Codex CLI ${payload.version} · ChatGPT 로그인 확인 · ${payload.execution} · 작업공간 ${payload.root}`
+          : `${payload.installed ? "Codex 로그인 필요" : "Codex CLI 설치 필요"} · /connect 설치 순서 확인`,
+      });
+      return next;
+    } catch {
+      const next = { state: "offline", ready: false, installed: false, authenticated: false };
+      setBridge(next);
+      if (announce) append({ role: "error", label: "LOCAL BRIDGE", text: "로컬 Codex 브리지 미연결 · /connect 설치 순서 확인" });
+      return next;
+    }
+  };
+
+  useEffect(() => { refreshBridge(false); }, []);
 
   useEffect(() => {
     if (!visible) return;
@@ -543,7 +551,7 @@ function AIChatbot({ onNav }) {
 
   useEffect(() => {
     if (outputRef.current) outputRef.current.scrollTop = outputRef.current.scrollHeight;
-  }, [log, busy, configOpen]);
+  }, [log, busy, bridgePanelOpen, activity]);
 
   const localResponse = (query, kindFilter) => {
     const results = searchSiteCli(query, kindFilter);
@@ -559,52 +567,49 @@ function AIChatbot({ onNav }) {
     };
   };
 
-  const callLlm = async (question, mode, evidence) => {
-    const endpoint = config.endpoint.trim();
-    if (!endpoint) throw new Error("LLM 엔드포인트 입력 필요");
-    if (/api\.openai\.com/i.test(endpoint) && !token.trim()) throw new Error("OpenAI 연결 토큰 입력 필요");
-    const evidenceText = evidence.length
-      ? evidence.map((doc, index) => `[${index + 1}] ${doc.kind} | ${doc.title}\n${doc.excerpt}\n${doc.source || "사이트 데이터"} ${doc.url || ""}`).join("\n\n")
-      : "직접 일치 근거 없음";
-    const modeInstruction = mode === "edit"
-      ? "요청을 구현 가능한 변경안으로 변환 · 정확한 코드 근거가 없으면 diff를 추정하지 말고 변경 명세로 대체"
-      : "질문에 직접 답변 · 근거 번호를 함께 표시";
-    const response = await fetch(endpoint, {
+  const callCodex = async (question, mode) => {
+    const response = await fetch("./api/codex/run", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token.trim() ? { Authorization: `Bearer ${token.trim()}` } : {}),
-      },
-      body: JSON.stringify({
-        model: config.model.trim() || SITE_CLI_DEFAULT_CONFIG.model,
-        instructions: SITE_CLI_SYSTEM,
-        input: `${modeInstruction}\n\nUSER REQUEST\n${question}\n\nSITE EVIDENCE\n${evidenceText}`,
-        reasoning: { effort: mode === "edit" ? "high" : "medium" },
-        text: { verbosity: mode === "edit" ? "high" : "medium" },
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: question, mode, ...(mode === "edit" ? { confirm: "APPLY" } : {}) }),
     });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(payload?.error?.message || `LLM 요청 오류 ${response.status}`);
-    const text = extractResponseText(payload);
-    if (!text) throw new Error("LLM 응답 본문 없음");
-    return text;
-  };
-
-  const saveConfig = () => {
-    const next = {
-      endpoint: draftConfig.endpoint.trim(),
-      model: draftConfig.model.trim() || SITE_CLI_DEFAULT_CONFIG.model,
-    };
-    setConfig(next);
-    setLlmEnabled(Boolean(next.endpoint));
-    sessionStorage.setItem("siteCliLLMConfig", JSON.stringify(next));
-    setConfigOpen(false);
-    append({ role: "system", label: "LLM", text: `${next.model} 구성 완료 · 토큰은 현재 탭 메모리에만 유지` });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(payload?.error || `Codex 요청 오류 ${response.status}`);
+    }
+    if (!response.body) throw new Error("Codex 스트림 연결 실패");
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+    let answer = "";
+    let streamError = "";
+    while (true) {
+      const { value, done } = await reader.read();
+      buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+      const blocks = buffer.split("\n\n");
+      buffer = blocks.pop() || "";
+      blocks.forEach(block => {
+        const data = block.split("\n").find(line => line.startsWith("data: "))?.slice(6);
+        if (!data) return;
+        try {
+          const event = JSON.parse(data);
+          if (event.type === "message" && event.text) answer += `${answer ? "\n" : ""}${event.text}`;
+          if (event.type === "status" && event.text) setActivity(event.text);
+          if (event.type === "tool" && event.text) setActivity(`실행 · ${event.text.slice(0, 90)}`);
+          if (event.type === "done") setActivity("Codex 작업 완료");
+          if (event.type === "error") streamError = event.message || "Codex 실행 실패";
+        } catch { /* non-JSON stream line ignored */ }
+      });
+      if (done) break;
+    }
+    if (streamError) throw new Error(streamError);
+    if (!answer.trim()) throw new Error("Codex 최종 답변 없음");
+    return answer.trim();
   };
 
   const exportSession = () => {
     const body = [
-      "# Site CLI 작업 기록",
+      "# Site Codex CLI 작업 기록",
       `생성 시각 · ${new Date().toISOString()}`,
       "",
       ...log.flatMap(item => [`## ${item.label || item.role}`, item.text || "", ...(item.results || []).map(result => `- ${result.title} · ${result.excerpt}`), ""]),
@@ -643,19 +648,21 @@ function AIChatbot({ onNav }) {
     const args = commandMatch ? commandMatch[2].trim() : raw;
 
     if (command === "help") {
-      append({ role: "system", label: "COMMANDS", text: "질문·검색·섹션 이동·수정안 생성·내보내기 지원", commands: SITE_CLI_COMMANDS });
+      append({ role: "system", label: "COMMANDS", text: "로컬 검색 · 실제 Codex 질의 · 승인형 파일 수정 · 실행 환경 진단", commands: SITE_CLI_COMMANDS });
       return;
     }
     if (command === "clear") { setLog([]); return; }
     if (command === "export") { exportSession(); append({ role: "system", label: "EXPORT", text: "Markdown 작업 기록 저장" }); return; }
-    if (command === "connect") { setDraftConfig(config); setConfigOpen(true); return; }
-    if (command === "disconnect") {
-      setToken(""); setLlmEnabled(false); setConfigOpen(false);
-      append({ role: "system", label: "LLM", text: "LLM 연결 해제 · 로컬 사이트 검색 유지" });
-      return;
-    }
-    if (command === "status") {
-      append({ role: "system", label: "STATUS", text: `로컬 인덱스 ${buildSiteCliIndex().length}건 · LLM ${llmEnabled ? `${config.model} 구성` : "미연결"} · 자동 적용 비활성` });
+    if (command === "connect") { setBridgePanelOpen(true); refreshBridge(true); return; }
+    if (command === "doctor" || command === "status") {
+      const current = await refreshBridge(false);
+      append({
+        role: current.ready ? "assistant" : "error",
+        label: "DOCTOR",
+        text: current.ready
+          ? `로컬 인덱스 ${buildSiteCliIndex().length}건 · Codex CLI ${current.version} · ChatGPT 인증 · 읽기 전용 질의 · 승인형 파일 수정`
+          : `로컬 인덱스 ${buildSiteCliIndex().length}건 · Codex 브리지 연결 필요 · /connect 설치 순서 확인`,
+      });
       return;
     }
     if (command === "open") { openSection(args); return; }
@@ -669,30 +676,32 @@ function AIChatbot({ onNav }) {
     }
 
     const kindFilter = command === "company" ? "기업" : command === "market" ? "시장" : null;
-    const evidence = searchSiteCli(args, kindFilter);
     if (command === "search" || command === "company" || command === "market") {
       append({ role: "assistant", label: "LOCAL INDEX", ...localResponse(args, kindFilter) });
       return;
     }
-    if (!llmEnabled) {
-      if (command === "edit") {
-        append({
-          role: "assistant", label: "CHANGE BRIEF",
-          text: `요청 · ${args}\n영향 영역 · ${evidence.slice(0, 3).map(item => item.kind).filter((item, index, list) => list.indexOf(item) === index).join(" · ") || "화면 구성"}\n검증 · 기존 데이터 보존 · 모바일 정렬 · 번들 재생성 · 자동 테스트\n적용 방식 · /connect 후 코드 수정안 생성 또는 현재 기록 내보내기`,
-          results: evidence.slice(0, 3),
-        });
-      } else {
-        append({ role: "assistant", label: "LOCAL ANSWER", ...localResponse(args, null) });
-      }
+    const currentBridge = bridge.ready ? bridge : await refreshBridge(false);
+    if (!currentBridge.ready) {
+      setBridgePanelOpen(true);
+      append({ role: "error", label: "CODEX OFFLINE", text: "실제 Codex 실행을 위한 로컬 브리지 연결 필요 · /connect 설치 순서 확인" });
       return;
     }
 
+    if (command === "edit") {
+      const approved = window.confirm("Codex CLI가 작업공간 파일을 실제로 수정하고 검증 명령을 실행합니다\n\n이 요청을 실행할까요");
+      if (!approved) {
+        append({ role: "system", label: "EDIT CANCEL", text: "파일 수정 취소 · 작업공간 변경 없음" });
+        return;
+      }
+    }
+
     setBusy(true);
+    setActivity(command === "edit" ? "파일 수정 승인 전달" : "Codex 읽기 전용 질의 전달");
     try {
-      const text = await callLlm(args, command === "edit" ? "edit" : "ask", evidence);
-      append({ role: "assistant", label: command === "edit" ? "PATCH REVIEW" : config.model, text, results: evidence.slice(0, 4), exportable: command === "edit" });
+      const text = await callCodex(args, command === "edit" ? "edit" : "ask");
+      append({ role: "assistant", label: command === "edit" ? "CODEX EDIT" : `CODEX ${currentBridge.version}`, text, exportable: command === "edit" });
     } catch (error) {
-      append({ role: "error", label: "LLM ERROR", text: `${error.message} · /connect 설정 확인 · 로컬 검색은 계속 사용 가능` });
+      append({ role: "error", label: "CODEX ERROR", text: `${error.message} · /doctor 실행 환경 확인` });
     } finally { setBusy(false); }
   };
 
@@ -722,7 +731,7 @@ function AIChatbot({ onNav }) {
           value={launcher}
           onChange={event => setLauncher(event.target.value)}
           onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); launcher.trim() ? execute(launcher) : setVisible(true); } }}
-          placeholder="site-cli · 질문 또는 수정 명령어"
+          placeholder="site-codex · 질문 또는 수정 명령어"
           aria-label="사이트 CLI 명령어"
           data-preserve-copy="true"
         />
@@ -738,18 +747,18 @@ function AIChatbot({ onNav }) {
               <div className="site-cli-window-controls" aria-hidden="true"><i /><i /><i /></div>
               <div className="site-cli-title">
                 <span className="site-cli-mark"><Icon name="pulse" size={17} sw={2.2} /></span>
-                <div><b>SITE CLI</b><small>CONTENT · LLM · PATCH WORKSPACE</small></div>
+                <div><b>SITE CODEX</b><small>LOCAL BRIDGE · CODEX CLI · WORKSPACE</small></div>
               </div>
               <div className="site-cli-status">
                 <span>LOCAL INDEX</span>
-                <span className={llmEnabled ? "is-on" : ""}>LLM {llmEnabled ? "READY" : "OPTIONAL"}</span>
-                <span>PATCH REVIEW</span>
+                <span className={bridge.ready ? "is-on" : ""}>{bridge.ready ? `CODEX ${bridge.version}` : "BRIDGE OFF"}</span>
+                <span>WRITE APPROVAL</span>
               </div>
               <button className="site-cli-close" onClick={() => setVisible(false)} title="닫기"><Icon name="x" size={17} sw={2} /></button>
             </header>
 
             <div className="site-cli-flow" aria-hidden="true">
-              <span>SITE DATA</span><i /><span>RETRIEVAL</span><i /><span>LLM</span><i /><span>REVIEW</span>
+              <span>SITE DATA</span><i /><span>LOCAL BRIDGE</span><i /><span>CODEX CLI</span><i /><span>RESULT</span>
             </div>
 
             <div className="site-cli-output" ref={outputRef} data-preserve-copy="true">
@@ -777,25 +786,29 @@ function AIChatbot({ onNav }) {
                   {item.exportable && <button className="site-cli-export" onClick={exportSession}><Icon name="download" size={13} /> 수정안 내보내기</button>}
                 </article>
               ))}
-              {busy && <div className="site-cli-running"><i /><span>근거 분석과 수정안 구성</span></div>}
+              {busy && <div className="site-cli-running"><i /><span>{activity}</span></div>}
             </div>
 
-            {configOpen && (
+            {bridgePanelOpen && (
               <div className="site-cli-config">
-                <div className="site-cli-config-title"><b>LLM CONNECTION</b><span>OpenAI Responses API 또는 호환 보안 프록시</span></div>
-                <label><span>ENDPOINT</span><input value={draftConfig.endpoint} onChange={event => setDraftConfig({ ...draftConfig, endpoint: event.target.value })} spellCheck="false" /></label>
-                <label><span>MODEL</span><input value={draftConfig.model} onChange={event => setDraftConfig({ ...draftConfig, model: event.target.value })} spellCheck="false" /></label>
-                <label><span>SESSION TOKEN</span><input type="password" value={token} onChange={event => setToken(event.target.value)} autoComplete="new-password" placeholder="현재 탭 메모리에만 유지" /></label>
-                <p>공개 페이지에 키 저장 금지 · 운영 환경은 서버측 보안 프록시 권장 · 수정안은 자동 반영 없이 검토 후 내보내기</p>
+                <div className="site-cli-config-title"><b>CODEX LOCAL BRIDGE</b><span>{bridge.ready ? "실제 Codex CLI 연결 완료" : "PC에서 최초 1회 설치 후 로컬 주소로 접속"}</span></div>
+                <div className={`site-cli-bridge-card ${bridge.ready ? "is-ready" : ""}`}>
+                  <b>{bridge.ready ? `CODEX ${bridge.version} READY` : "LOCAL BRIDGE OFF"}</b>
+                  <span>{bridge.ready ? `ChatGPT 인증 · ${bridge.root}` : "정적 GitHub Pages는 PC의 CLI 프로세스를 직접 실행할 수 없음"}</span>
+                </div>
+                <div className="site-cli-setup-steps">
+                  {SITE_CODEX_SETUP.map((step, index) => <button key={step} onClick={() => copyText(step)}><span>0{index + 1}</span><code>{step}</code><Icon name="copy" size={12} /></button>)}
+                </div>
+                <p>질문은 read-only sandbox · 파일 수정은 확인창 승인 후 workspace-write sandbox · 브리지는 127.0.0.1 전용</p>
                 <div className="site-cli-config-actions">
-                  <button onClick={() => setConfigOpen(false)}>취소</button>
-                  <button className="primary" onClick={saveConfig}>연결 구성</button>
+                  <button onClick={() => setBridgePanelOpen(false)}>닫기</button>
+                  <button className="primary" onClick={() => refreshBridge(true)}>상태 다시 확인</button>
                 </div>
               </div>
             )}
 
             <footer className="site-cli-input-row">
-              <span>site-cli&nbsp;$</span>
+              <span>codex&nbsp;$</span>
               <textarea
                 ref={terminalInputRef}
                 value={input}

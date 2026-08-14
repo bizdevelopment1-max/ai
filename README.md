@@ -2,6 +2,19 @@
 
 GitHub Pages dashboard: <https://bizdevelopment1-max.github.io/ai/>
 
+## Local Codex CLI
+
+The public GitHub Pages build remains static. Actual Codex questions and workspace edits run only through the loopback bridge at `http://127.0.0.1:4510` so the CLI process and ChatGPT authentication are never exposed to the public web.
+
+Windows setup:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-site-codex.ps1
+.\Start-Site-Codex.cmd
+```
+
+The installer adds the official `@openai/codex` package pinned in `package.json`, checks `codex login status`, and starts ChatGPT login when needed. `/ask` runs `codex exec` in a read-only sandbox. `/edit` requires a browser confirmation and then runs in a workspace-write sandbox. The bridge binds only to `127.0.0.1` and accepts same-origin requests.
+
 ## Mobile AI strategy model
 
 The company universe is organized as a seven-layer mobile AI software-and-services value chain: experience and vertical services, agents and orchestration, service platform and monetization, data/context/trust, models and on-device intelligence, developer/deployment tooling, and edge/cloud runtime.
