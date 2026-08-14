@@ -414,6 +414,11 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
   });
   const controlZones = strategy.operatingModel || [];
   const decisionOutputs = strategy.decisionOutputs || [];
+  const accountPortfolio = strategy.accountPortfolio || [];
+  const workloadMap = strategy.workloadMap || [];
+  const opportunityPortfolio = strategy.opportunityPortfolio || [];
+  const expertSignals = strategy.expertSignals || [];
+  const accountCompany = name => (companies || []).find(company => company.name === name);
   return (
     <section className="board msf" ref={sectionRef} data-screen-label="AI Memory Strategy Framework">
       <AnimCtx.Provider value={inView}>
@@ -485,6 +490,95 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
             </React.Fragment>
           ))}
         </div>
+
+        <div className="msf-section-head">
+          <div><em>02</em><h3>Key Account Portfolio</h3></div>
+          <p>관계 강도·플랫폼 변화·Pain point·실행 게이트를 계정별로 분리</p>
+        </div>
+        <div className="msf-account-scope"><Icon name="target" size={14} /><span>{strategy.accountScope}</span></div>
+        <div className="msf-account-grid">
+          {accountPortfolio.map((account, index) => {
+            const company = accountCompany(account.name);
+            const evidence = Number(company?.live?.mentions30 || 0);
+            return (
+              <article className={`msf-account tone-${account.tone || "navy"}`} key={account.name} tabIndex="0" style={{ "--account-order": index }}>
+                <div className="msf-account-head">
+                  <span><em>0{index + 1}</em><b>{account.name}</b></span>
+                  <i>{account.relation}</i>
+                </div>
+                <div className="msf-account-tier"><b>{account.tier}</b><span>{account.platform}</span></div>
+                <p className="msf-account-demand">{account.demand}</p>
+                <div className="msf-account-signal"><em>SIGNAL</em><p>{account.signal}</p></div>
+                <div className="msf-account-logic">
+                  <div><em>PAIN POINT</em><p>{account.pain}</p></div>
+                  <i className="msf-flow-arrow" aria-hidden="true" />
+                  <div><em>ACTION</em><p>{account.move}</p></div>
+                </div>
+                <div className="msf-account-gate"><em>DECISION GATE</em><b>{account.gate}</b></div>
+                <div className="msf-account-foot">
+                  <span>{evidence ? `30D 연결 근거 ${evidence}건` : "공개 원문 기준"}</span>
+                  <a href={account.sourceUrl} target="_blank" rel="noopener">{account.source} · {account.sourceDate} <Icon name="ext" size={11} /></a>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="msf-section-head">
+          <div><em>03</em><h3>Workload → System Bottleneck → Memory</h3></div>
+          <p>데이터센터 App·HW·SW 변화를 신규 메모리 Biz. 가설과 검증 KPI로 번역</p>
+        </div>
+        <div className="msf-workload-map">
+          <div className="msf-workload-head"><span>WORKLOAD / SHIFT</span><span>SYSTEM PAIN</span><span>MEMORY REQUIREMENT</span><span>BUSINESS OPPORTUNITY</span><span>PROOF</span></div>
+          {workloadMap.map((row, index) => (
+            <div className="msf-workload-row" key={row.no} tabIndex="0" style={{ "--workload-order": index }}>
+              <span className="msf-workload-name"><em>{row.no}</em><b>{row.workload}</b><small>{row.shift}</small></span>
+              <span>{row.bottleneck}</span><i className="msf-flow-arrow" aria-hidden="true" />
+              <span>{row.memory}</span><i className="msf-flow-arrow" aria-hidden="true" />
+              <span className="msf-workload-opportunity">{row.opportunity}</span>
+              <span className="msf-workload-proof">{row.proof}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="msf-section-head">
+          <div><em>04</em><h3>New Memory Business Portfolio</h3></div>
+          <p>Core 확장·인접 제품·데이터 플레인·co-design service를 서로 다른 투자 게이트로 관리</p>
+        </div>
+        <div className="msf-opportunity-grid">
+          {opportunityPortfolio.map((item, index) => (
+            <article className="msf-opportunity" key={item.title} tabIndex="0" style={{ "--opportunity-order": index }}>
+              <div><em>{item.horizon}</em><span>{item.score}</span></div>
+              <h4>{item.title}</h4>
+              <p className="msf-opportunity-customer">{item.customer}</p>
+              <dl>
+                <div><dt>WHY NOW</dt><dd>{item.thesis}</dd></div>
+                <div><dt>OFFER</dt><dd>{item.offer}</dd></div>
+                <div><dt>GATE</dt><dd>{item.gate}</dd></div>
+              </dl>
+            </article>
+          ))}
+        </div>
+
+        <div className="msf-section-head">
+          <div><em>05</em><h3>Data Center Workload · HW · SW Evidence</h3></div>
+          <p>기사 제목 나열이 아닌 아키텍처 변화와 SK hynix 의사결정 시사점으로 요약</p>
+        </div>
+        <div className="msf-expert-grid">
+          {expertSignals.map((signal, index) => (
+            <a className="msf-expert" href={signal.url} target="_blank" rel="noopener" key={`${signal.source}-${signal.title}`} style={{ "--expert-order": index }}>
+              <span><em>{signal.lens}</em><b>{signal.source}</b><small>{signal.date}</small></span>
+              <h4>{signal.title}</h4>
+              <p>{signal.implication}</p>
+              <i><Icon name="ext" size={12} /></i>
+            </a>
+          ))}
+        </div>
+
+        <div className="msf-section-head msf-value-chain-head">
+          <div><em>06</em><h3>AI Infra Value Chain</h3></div>
+          <p>계층별 통제점·경제성·최근 30일 공개 근거를 사업 포트폴리오와 연결</p>
+        </div>
         <div className="msf-chain">
           {layerStats.map((l, i) => (
             <button className="msf-layer" key={l.id} onClick={() => onNav && onNav(l.id)}
@@ -504,7 +598,7 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
 
         <div className="msf-section-head">
-          <div><em>02</em><h3>핵심 업무</h3></div>
+          <div><em>07</em><h3>핵심 업무</h3></div>
           <p>고객 Pain point · AI 기술 변화 · 맞춤 메모리 솔루션 · AI Infra 대내외 실행의 4개 업무 축</p>
         </div>
         <div className="msf-choices">
@@ -521,7 +615,7 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
 
         <div className="msf-section-head">
-          <div><em>03</em><h3>분석 툴킷</h3></div>
+          <div><em>08</em><h3>분석 툴킷</h3></div>
           <p>워크로드부터 경영진 사업안까지 연결하는 필수 전문성</p>
         </div>
         <div className="msf-capabilities">
@@ -535,7 +629,7 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
 
         <div className="msf-section-head">
-          <div><em>04</em><h3>AI Stack별 메모리 판단 기준</h3></div>
+          <div><em>09</em><h3>AI Stack별 메모리 판단 기준</h3></div>
           <p>기술 변화·경제성·고객 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
         <div className="msf-matrix">
@@ -549,7 +643,7 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
         </div>
 
         <div className="msf-section-head">
-          <div><em>05</em><h3>실행 로드맵</h3></div>
+          <div><em>10</em><h3>90-Day Execution Roadmap</h3></div>
           <p>Discover · Design · Decide</p>
         </div>
         <div className="msf-horizons">

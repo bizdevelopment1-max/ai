@@ -76,6 +76,9 @@ const TOPICS = [
   { co: "", cat: "bigtech", tag: "경쟁 단말", topic: true, n: 3, q: '("Xiaomi" OR "Honor" OR "OPPO" OR "vivo" OR "Snapdragon" OR "Dimensity") AI smartphone' },
   // 탭별 전용 스트림: 인프라(Signal 탭)·수익화(BizModel 탭)·규제
   { co: "", cat: "bigtech", tag: "Infra", topic: true, n: 3, q: '(HBM OR "data center" OR "AI infrastructure" OR "co-packaged optics" OR hyperscaler OR capex) AI' },
+  { co: "", cat: "bigtech", tag: "AI Workload", topic: true, n: 3, q: '("long context" OR "KV cache" OR RAG OR "vector database" OR checkpoint OR "model training" OR inference) (memory OR "data center")' },
+  { co: "", cat: "bigtech", tag: "Memory System", topic: true, n: 3, q: '("memory bandwidth" OR "memory capacity" OR CXL OR SOCAMM OR MRDIMM OR "enterprise SSD") (AI OR accelerator OR server)' },
+  { co: "", cat: "bigtech", tag: "AI Infra SW", topic: true, n: 3, q: '(XLA OR Pallas OR CUDA OR Neuron OR sharding OR quantization OR checkpoint) (memory OR HBM OR "data center")' },
   { co: "", cat: "native", tag: "수익화", topic: true, n: 2, q: '("AI pricing" OR "AI subscription" OR "AI revenue" OR "API pricing" OR "AI monetization")' },
   { co: "", cat: "native", tag: "규제", topic: true, n: 2, q: '("AI regulation" OR "AI export control" OR "AI Act" OR "chip export controls")' },
   // ── 신규 스트림(신사업·경쟁 관점 확대) ──

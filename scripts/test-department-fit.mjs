@@ -20,6 +20,16 @@ assert(dash.MEMORY_STRATEGY.choices?.length === 4, "핵심 업무는 4개 축으
 assert(dash.MEMORY_STRATEGY.capabilities?.length === 5, "분석 툴킷은 5개 축이 필요합니다");
 assert(dash.MEMORY_STRATEGY.operatingModel?.length === 4, "고객 신호부터 실행까지 4단계 운영 모델이 필요합니다");
 assert(dash.MEMORY_STRATEGY.decisionOutputs?.length === 4, "경영진 의사결정 산출물은 4개 축이 필요합니다");
+assert(dash.MEMORY_STRATEGY.accountPortfolio?.length >= 5, "계정 포트폴리오는 주요 AI 인프라 계정 5개 이상이어야 합니다");
+assert(dash.MEMORY_STRATEGY.accountPortfolio.some(account => account.relation === "DIRECT EVIDENCE"), "직접 공개 근거 계정이 필요합니다");
+assert(dash.MEMORY_STRATEGY.accountPortfolio.some(account => account.relation === "NO DIRECT CLAIM"), "공급 관계를 단정하지 않는 아키텍처 기준 계정이 필요합니다");
+assert(dash.MEMORY_STRATEGY.accountPortfolio.every(account => /^https:\/\//.test(account.sourceUrl || "")), "모든 계정 카드에 공개 원문 URL이 필요합니다");
+assert(dash.MEMORY_STRATEGY.workloadMap?.length >= 5, "워크로드-병목-메모리 맵은 5개 이상이어야 합니다");
+assert(dash.MEMORY_STRATEGY.workloadMap.every(row => row.bottleneck && row.memory && row.opportunity && row.proof), "워크로드 맵은 병목·요구·사업기회·검증 KPI를 모두 포함해야 합니다");
+assert(dash.MEMORY_STRATEGY.opportunityPortfolio?.length === 4, "신규 메모리 사업 포트폴리오는 4개 MECE 축이어야 합니다");
+assert(dash.MEMORY_STRATEGY.expertSignals?.length >= 5, "데이터센터 HW·SW 전문 근거가 5건 이상이어야 합니다");
+assert(/Key Account Portfolio/.test(boards) && /Workload → System Bottleneck → Memory/.test(boards), "계정과 워크로드 컨설팅 화면이 필요합니다");
+assert(/New Memory Business Portfolio/.test(boards) && /Data Center Workload · HW · SW Evidence/.test(boards), "사업기회와 전문 근거 화면이 필요합니다");
 
 const strategyText = JSON.stringify(dash.MEMORY_STRATEGY);
 for (const required of [
