@@ -242,20 +242,29 @@ try {
     && how.includes('font-family: "SamsungOne500C"')
     && how.includes('--title-font: "SamsungOne700C"')
     && how.includes('--body-font: "SamsungOne500C"');
-  const largerType = how.includes('h1 { max-width: 1160px; font-size: clamp(54px')
-    && how.includes('h2 { max-width: 1260px; font-size: clamp(38px')
+  const largerType = how.includes('h1 { max-width: 1160px; font-size: clamp(50px')
+    && how.includes('h2 { max-width: 1260px; font-size: clamp(36px')
     && how.includes('.slide-title p { font-size: clamp(15px')
     && how.includes('.branch li, .clean-list li { font-size: clamp(13px');
+  const responsiveFit = how.includes('class="cover-title-line"')
+    && how.includes('--fit-scale')
+    && how.includes('const fitSlides = () =>')
+    && how.includes("document.fonts?.ready.then(scheduleFit)")
+    && how.includes('word-break: keep-all')
+    && how.includes('overflow-y: auto');
   const consultingMotion = how.includes("const consultingLogic = {")
     && how.includes("className = 'consulting-ribbon'")
     && how.includes("className = 'logic-arrow'")
     && how.includes("track.classList.add('diagram-track')")
+    && how.includes('--blue-gradient: linear-gradient')
+    && how.includes('@keyframes arrowTravel')
+    && how.includes('@keyframes edgeSignal')
     && how.includes("@keyframes trackMove")
     && how.includes("@keyframes diagramRise");
-  if (slides !== 12 || videos.size !== 12 || !samsungOne || !largerType || !consultingMotion) {
-    throw new Error("How deck must keep 12 unique video slides with SamsungOne typography and animated consulting diagrams");
+  if (slides !== 12 || videos.size !== 12 || !samsungOne || !largerType || !responsiveFit || !consultingMotion) {
+    throw new Error("How deck must keep 12 unique video slides with fitted typography, blue consulting diagrams, and motion");
   }
-  console.log("  OK  How 12장 · SamsungOne 700C/500C · 확대 타이포 · 근거→분석→의사결정 동적 도식");
+  console.log("  OK  How 12장 · SamsungOne 700C/500C · 잘림 방지 · 블루 그라데이션 · 근거→분석→의사결정 동적 도식");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);
