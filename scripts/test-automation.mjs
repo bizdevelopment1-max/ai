@@ -252,6 +252,10 @@ try {
   const how = await readFile("How/index.html", "utf8");
   const slides = [...how.matchAll(/<section class="slide(?:\s|\")/g)].length;
   const videos = new Set([...how.matchAll(/data-src="([^"]+\.mp4)"/g)].map(match => match[1]));
+  const backgroundCarousels = [...how.matchAll(/class="bg-carousel"/g)].length;
+  const carouselScenes = [...how.matchAll(/<span style="background-image:url\('assets\/poster-[^']+\.webp'\)"><\/span>/g)].length;
+  const accentColors = new Set([...how.matchAll(/data-accent="([^"]+)"/g)].map(match => match[1]));
+  const secondaryAccentColors = new Set([...how.matchAll(/data-accent2="([^"]+)"/g)].map(match => match[1]));
   const samsungOne = how.includes('font-family: "SamsungOne700C"')
     && how.includes('font-family: "SamsungOne500C"')
     && how.includes('--title-font: "SamsungOne700C"')
@@ -275,6 +279,26 @@ try {
     && how.includes('@keyframes edgeSignal')
     && how.includes("@keyframes trackMove")
     && how.includes("@keyframes diagramRise");
+  const bcgArrowSystem = how.includes(".tri-arrow {")
+    && how.includes(".logic-arrow {")
+    && how.includes("clip-path: polygon(0 40%, 76% 40%, 76% 0, 100% 50%, 76% 100%, 76% 60%, 0 60%)")
+    && how.includes("width: clamp(56px, 5.8vw, 108px)")
+    && /\.logic-arrow\s*\{[\s\S]{0,160}width:\s*64px;[\s\S]{0,80}height:\s*10px;/.test(how);
+  const beginnerCodexPlaybook = how.includes("FIRST PROMPT")
+    && how.includes("PROMPT BLUEPRINT")
+    && how.includes("Codex 작업 흐름")
+    && how.includes("SAFE GITHUB FLOW")
+    && how.includes("목표·범위·유지 조건·완료 기준");
+  const removedLegacyCopy = !how.includes("ARROW KEYS TO NAVIGATE")
+    && !how.includes("12 SLIDES")
+    && !how.includes("10–15 MIN")
+    && !how.includes("BEGINNER FRIENDLY")
+    && !/\bJSON\b/i.test(how);
+  const variedGradientSystem = accentColors.size >= 6
+    && secondaryAccentColors.size >= 6
+    && how.includes("--accent-2")
+    && how.includes("--accent-rgb-2")
+    && how.includes("linear-gradient(118deg, var(--accent)");
   const introVideoExperience = how.includes('class="slide active intro-video cover-slide"')
     && how.includes('class="slide intro-video summary-slide"')
     && how.includes("slides[0].classList.add('scroll-lift')")
@@ -282,10 +306,10 @@ try {
     && how.includes("video.volume = 0")
     && how.includes(".summary-slide .flow")
     && how.includes(".summary-slide .takeaway");
-  if (slides !== 12 || videos.size !== 12 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !introVideoExperience) {
-    throw new Error("How deck must keep 12 unique video slides with fitted typography, muted intro media, scroll lift, blue consulting diagrams, and motion");
+  if (slides !== 12 || videos.size !== 2 || backgroundCarousels !== 10 || carouselScenes !== 20 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !beginnerCodexPlaybook || !removedLegacyCopy || !variedGradientSystem || !introVideoExperience) {
+    throw new Error("How deck must keep 12 slides, 2 muted intro videos, 10 dual-image backgrounds, varied gradients, long triangular consulting arrows, beginner Codex guidance, and no removed labels or JSON copy");
   }
-  console.log("  OK  How 12장 · 첫 2장 무음 영상 · 스크롤 상승 · 2장 전체 문구 맞춤 · 블루 컨설팅 도식");
+  console.log("  OK  How 12장 · 첫 2장 무음 영상 · 3장 이후 이중 이미지 · 다색 컨설팅 도식 · 초보자 Codex 가이드");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);

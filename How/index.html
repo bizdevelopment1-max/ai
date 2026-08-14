@@ -34,10 +34,12 @@
       --blue-500: #0072ce;
       --blue-300: #00a9e0;
       --blue-100: #8bdcff;
-      --blue-gradient: linear-gradient(118deg, var(--blue-900) 0%, var(--blue-500) 52%, var(--blue-300) 100%);
-      --blue-panel: linear-gradient(135deg, rgba(20, 40, 160, .44) 0%, rgba(0, 114, 206, .24) 52%, rgba(0, 169, 224, .10) 100%);
       --accent: #00a9e0;
       --accent-rgb: 0, 169, 224;
+      --accent-2: #7c3aed;
+      --accent-rgb-2: 124, 58, 237;
+      --blue-gradient: linear-gradient(118deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 48%, var(--accent-2)) 50%, var(--accent-2) 100%);
+      --blue-panel: linear-gradient(135deg, rgba(var(--accent-rgb), .28) 0%, rgba(var(--accent-rgb-2), .18) 58%, rgba(3, 9, 25, .78) 100%);
       --good: #00a9e0;
       --warn: #4da3ff;
       --bad: #8bdcff;
@@ -106,6 +108,8 @@
     .slide {
       --accent: #00a9e0;
       --accent-rgb: 0, 169, 224;
+      --accent-2: #7c3aed;
+      --accent-rgb-2: 124, 58, 237;
       position: absolute;
       inset: 0;
       display: grid;
@@ -119,7 +123,7 @@
     }
     .slide.active { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; z-index: 5; }
     .slide.was-active { transform: translate3d(-4%,0,0) scale(.985); }
-    .bg-video, .bg-poster {
+    .bg-video, .bg-poster, .bg-carousel {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -127,6 +131,24 @@
       object-fit: cover;
       z-index: -4;
       filter: saturate(.72) contrast(1.12) brightness(.44) hue-rotate(4deg);
+    }
+    .bg-carousel { z-index: -4; overflow: hidden; filter: saturate(.78) contrast(1.12) brightness(.42); }
+    .bg-carousel span {
+      position: absolute; inset: -3%; background-size: cover; background-position: center;
+      opacity: 0; transform: scale(1.04) translate3d(0,0,0); animation-play-state: paused;
+    }
+    .bg-carousel span:first-child { opacity: 1; animation: bgSceneA 18s ease-in-out infinite; }
+    .bg-carousel span:last-child { animation: bgSceneB 18s ease-in-out infinite; }
+    .slide.active .bg-carousel span { animation-play-state: running; }
+    @keyframes bgSceneA {
+      0%, 42% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
+      52%, 92% { opacity: 0; transform: scale(1.1) translate3d(-1.4%,.8%,0); }
+      100% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
+    }
+    @keyframes bgSceneB {
+      0%, 42% { opacity: 0; transform: scale(1.1) translate3d(1.2%,-.6%,0); }
+      52%, 92% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
+      100% { opacity: 0; transform: scale(1.1) translate3d(1.2%,-.6%,0); }
     }
     .intro-video .bg-video {
       filter: saturate(.76) contrast(1.1) brightness(.48);
@@ -147,7 +169,8 @@
       z-index: -3;
       background:
         linear-gradient(90deg, rgba(2,5,14,.98) 0%, rgba(2,8,24,.90) 42%, rgba(3,15,39,.64) 75%, rgba(2,6,18,.90) 100%),
-        radial-gradient(circle at 72% 42%, rgba(0,114,206,.24), transparent 38%);
+        radial-gradient(circle at 72% 42%, rgba(var(--accent-rgb), .23), transparent 38%),
+        radial-gradient(circle at 88% 72%, rgba(var(--accent-rgb-2), .18), transparent 34%);
     }
     .slide::after {
       content: "";
@@ -210,8 +233,8 @@
     .cover-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, .31fr); gap: clamp(28px, 4vw, 64px); align-items: end; }
     .cover-layout h1 { max-width: none; font-size: clamp(50px, 5.15vw, 88px); }
     .cover-title-line { display: block; white-space: nowrap; }
-    .cover-rule { position: relative; width: min(520px, 62%); height: 2px; margin: 26px 0; background: linear-gradient(90deg, var(--blue-300), var(--blue-500), transparent); box-shadow: 0 0 20px rgba(0,169,224,.55); }
-    .cover-rule::after { content: ""; position: absolute; right: -1px; top: -4px; width: 10px; height: 10px; background: var(--blue-300); clip-path: polygon(0 0, 100% 50%, 0 100%); animation: arrowPulse 1.8s ease-in-out infinite; }
+    .cover-rule { position: relative; width: min(620px, 70%); height: 12px; margin: 26px 0; background: var(--blue-gradient); clip-path: polygon(0 39%, 84% 39%, 84% 0, 100% 50%, 84% 100%, 84% 61%, 0 61%); filter: drop-shadow(0 0 13px rgba(var(--accent-rgb), .58)); }
+    .cover-rule::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0 38%, rgba(255,255,255,.8) 48%, transparent 58%); animation: arrowTravel 2.2s linear infinite; }
     .cover-sub { max-width: 720px; color: #cbd5df; font-size: clamp(16px, 1.3vw, 22px); line-height: 1.55; }
     .cover-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
     .cover-tags span { padding: 9px 12px; border: 1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.3); color: #dce6ef; font: 750 10px var(--mono); letter-spacing: .06em; }
@@ -234,9 +257,13 @@
     .flow-card em { display: block; color: var(--accent); font: 900 9px var(--mono); font-style: normal; letter-spacing: .08em; }
     .flow-card b { display: block; margin-top: 10px; font-size: 15px; }
     .flow-card span { display: block; margin-top: 8px; color: var(--muted); font-size: 10px; line-height: 1.45; }
-    .tri-arrow { position: relative; width: clamp(26px, 3vw, 48px); height: 1px; align-self: center; justify-self: center; background: linear-gradient(90deg, rgba(0,169,224,.15), var(--accent)); filter: drop-shadow(0 0 7px rgba(var(--accent-rgb), .64)); }
-    .tri-arrow::before { content: ""; position: absolute; inset: -1px auto -1px 0; width: 42%; background: linear-gradient(90deg, transparent, #fff); animation: arrowTravel 1.8s linear infinite; }
-    .tri-arrow::after { content: ""; position: absolute; top: -5px; right: -1px; width: 11px; height: 11px; background: var(--accent); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+    .tri-arrow {
+      position: relative; width: clamp(56px, 5.8vw, 108px); height: 14px; align-self: center; justify-self: center;
+      background: var(--blue-gradient); clip-path: polygon(0 40%, 76% 40%, 76% 0, 100% 50%, 76% 100%, 76% 60%, 0 60%);
+      filter: drop-shadow(0 0 9px rgba(var(--accent-rgb), .58)); overflow: hidden;
+    }
+    .tri-arrow::before { content: ""; position: absolute; inset: 0; width: 46%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.92), transparent); animation: arrowTravel 1.8s linear infinite; }
+    .tri-arrow::after { content: none; }
     @keyframes arrowPulse { 0%,100% { transform: translateX(-2px); opacity: .58; } 50% { transform: translateX(3px); opacity: 1; } }
     @keyframes arrowTravel { from { left: 0; opacity: 0; } 25%,75% { opacity: 1; } to { left: 62%; opacity: 0; } }
 
@@ -250,7 +277,7 @@
     .summary-slide .slide-inner { width: min(1580px, 100%); }
     .summary-slide .slide-title { margin-bottom: clamp(14px, 2.2vh, 24px); }
     .summary-slide .flow {
-      grid-template-columns: minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr);
+      grid-template-columns: minmax(0,1fr) 64px minmax(0,1fr) 64px minmax(0,1fr) 64px minmax(0,1fr) 64px minmax(0,1fr);
       margin-top: clamp(14px, 2.7vh, 28px);
     }
     .summary-slide .flow-card { padding: clamp(13px, 1.6vh, 19px) 14px; }
@@ -295,7 +322,7 @@
     .formula { padding: 19px; border: 1px solid var(--line); background: var(--panel-strong); }
     .formula code { display: block; margin-top: 12px; padding: 14px; color: var(--accent); background: #010305; font: 800 12px/1.55 var(--mono); overflow-wrap: anywhere; }
     .formula p { margin-top: 12px; color: var(--muted); font-size: 10px; line-height: 1.5; }
-    .decision { display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr; align-items: stretch; }
+    .decision { display: grid; grid-template-columns: 1fr 68px 1fr 68px 1fr; align-items: stretch; }
     .decision-box { display: grid; place-content: center; padding: 15px; text-align: center; border: 1px solid rgba(var(--accent-rgb), .4); background: var(--blue-panel); }
     .decision-box b { font-size: 12px; }
     .decision-box span { margin-top: 7px; color: var(--muted); font-size: 9px; line-height: 1.4; }
@@ -339,7 +366,7 @@
     .stack { display: grid; grid-template-columns: .86fr 1.14fr; gap: 18px; margin-top: 20px; }
     .file-tree { padding: 18px; border: 1px solid var(--line); background: #010305; font: 800 11px/1.75 var(--mono); color: #d6e1ea; white-space: pre-wrap; }
     .file-tree b { color: var(--accent); }
-    .render-flow { display: grid; grid-template-columns: 1fr 26px 1fr; gap: 0; }
+    .render-flow { display: grid; grid-template-columns: 1fr 68px 1fr; gap: 0; }
     .render-box { padding: 16px; border: 1px solid var(--line); background: var(--blue-panel); }
     .render-box em { color: var(--accent); font: 900 9px var(--mono); font-style: normal; }
     .render-box b { display: block; margin: 8px 0 6px; font-size: 12px; }
@@ -364,7 +391,7 @@
     .check b { font-size: 11px; }
     .check span { display: block; margin-top: 4px; color: var(--muted); font-size: 9.5px; }
     .cta { margin-top: 25px; display: inline-flex; align-items: center; gap: 12px; padding: 14px 17px; color: #fff; background: var(--blue-gradient); font-size: 12px; font-weight: 900; }
-    .cta::after { content: ""; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid #fff; }
+    .cta::after { content: ""; width: 28px; height: 10px; background: #fff; clip-path: polygon(0 40%, 72% 40%, 72% 0, 100% 50%, 72% 100%, 72% 60%, 0 60%); }
 
     .footer {
       position: fixed;
@@ -392,9 +419,8 @@
     }
     .control:hover, .control:focus-visible { color: #001015; background: var(--accent); border-color: var(--accent); outline: 0; transform: translateY(-3px); }
     .control:disabled { opacity: .25; cursor: default; transform: none; }
-    .control .arrow { width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
-    .control.prev .arrow { border-right: 10px solid currentColor; }
-    .control.next .arrow { border-left: 10px solid currentColor; }
+    .control .arrow { width: 18px; height: 9px; background: currentColor; clip-path: polygon(0 37%, 70% 37%, 70% 0, 100% 50%, 70% 100%, 70% 63%, 0 63%); }
+    .control.prev .arrow { transform: rotate(180deg); }
     .control.help { font: 900 13px var(--mono); }
 
     .nav-dots { position: fixed; right: 19px; top: 50%; z-index: 80; display: grid; gap: 7px; transform: translateY(-50%); }
@@ -467,8 +493,8 @@
       grid-template-columns: repeat(5, auto);
       align-items: center;
       min-height: 30px;
-      border: 1px solid rgba(93,173,255,.38);
-      background: linear-gradient(90deg, rgba(3,18,55,.92), rgba(20,40,160,.54), rgba(0,114,206,.20));
+      border: 1px solid rgba(var(--accent-rgb), .42);
+      background: linear-gradient(90deg, rgba(3,18,55,.92), rgba(var(--accent-rgb), .30), rgba(var(--accent-rgb-2), .20));
       backdrop-filter: blur(10px);
       overflow: hidden;
     }
@@ -487,20 +513,17 @@
     .logic-node:last-child { background: rgba(var(--accent-rgb), .12); }
     .logic-arrow {
       position: relative;
-      width: 46px;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(0,169,224,.15), var(--accent));
+      width: 64px;
+      height: 10px;
+      background: var(--blue-gradient);
+      clip-path: polygon(0 42%, 76% 42%, 76% 0, 100% 50%, 76% 100%, 76% 58%, 0 58%);
       filter: drop-shadow(0 0 7px rgba(var(--accent-rgb), .72));
+      overflow: hidden;
     }
     .logic-arrow::before {
       content: "";
-      position: absolute;
-      top: -5px;
-      right: -1px;
-      width: 11px;
-      height: 11px;
-      background: var(--accent);
-      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      position: absolute; inset: 0; width: 42%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
       animation: logicArrow 1.45s ease-in-out infinite;
     }
     .consulting-ribbon::after {
@@ -513,7 +536,7 @@
       background: linear-gradient(90deg, transparent, var(--accent));
       animation: ribbonScan 3.6s linear infinite;
     }
-    @keyframes logicArrow { 0%,100% { opacity: .45; transform: translateX(-4px); } 50% { opacity: 1; transform: translateX(1px); } }
+    @keyframes logicArrow { 0% { opacity: 0; transform: translateX(-90%); } 35%,70% { opacity: 1; } 100% { opacity: 0; transform: translateX(220%); } }
     @keyframes ribbonScan { to { left: 108%; } }
 
     /* semantic connection tracks and staged diagram motion */
@@ -534,7 +557,7 @@
         right: 3%;
         top: 50%;
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(0,169,224,.85) 12% 58%, rgba(20,40,160,.88) 88%, transparent);
+        background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), .85) 12% 58%, rgba(var(--accent-rgb-2), .88) 88%, transparent);
         box-shadow: 0 0 12px rgba(var(--accent-rgb), .32);
       }
       .diagram-track::after {
@@ -543,11 +566,11 @@
         z-index: 1;
         top: calc(50% - 3px);
         left: 3%;
-        width: 7px;
+        width: 28px;
         height: 7px;
-        background: var(--accent);
+        background: var(--blue-gradient);
         box-shadow: 0 0 16px var(--accent);
-        clip-path: polygon(0 0, 100% 50%, 0 100%);
+        clip-path: polygon(0 38%, 72% 38%, 72% 0, 100% 50%, 72% 100%, 72% 62%, 0 62%);
         animation: trackMove 4.4s linear infinite;
       }
       @keyframes trackMove { 0% { left: 3%; opacity: 0; } 9%,91% { opacity: 1; } 100% { left: 96%; opacity: 0; } }
@@ -581,10 +604,10 @@
     .strategy-card:hover, .render-box:hover, .performance div:hover, .road-step:hover, .check:hover,
     .cover-index div:hover {
       color: #fff;
-      background: linear-gradient(135deg, var(--blue-900), var(--blue-500) 62%, var(--blue-300));
+      background: var(--blue-gradient);
       border-color: var(--accent);
       transform: perspective(800px) translateY(-6px) rotateX(2deg) rotateY(-1deg);
-      box-shadow: 8px 12px 0 rgba(0,24,78,.42), 0 20px 38px rgba(0,0,0,.38), 0 0 25px rgba(0,169,224,.28);
+      box-shadow: 8px 12px 0 rgba(var(--accent-rgb-2), .25), 0 20px 38px rgba(0,0,0,.38), 0 0 25px rgba(var(--accent-rgb), .28);
     }
     .flow-card:hover *, .outcome:hover *, .branch:hover *, .arch-layer:hover *, .ledger:hover *,
     .pipe-step:hover *, .principle:hover *, .formula:hover *, .decision-box:hover *, .gate:hover *,
@@ -646,7 +669,7 @@
       .slide-title p, .lead { font-size: 17px; }
       .consulting-ribbon { position: relative; top: auto; right: auto; width: 100%; margin-bottom: 18px; grid-template-columns: 1fr 18px 1fr 18px 1fr; }
       .logic-node { min-width: 0; padding: 9px 5px; font-size: 10px; }
-      .logic-arrow { width: 18px; }
+      .logic-arrow { width: 30px; }
       .cover-title-line { white-space: normal; }
       .slide-inner { transform: none; }
     }
@@ -672,6 +695,8 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
       .bg-video { display: none; }
+      .bg-carousel span { animation: none !important; }
+      .bg-carousel span:last-child { display: none; }
     }
   </style>
 </head>
@@ -683,258 +708,242 @@
         <b>HOW IT WORKS</b>
         <em>STRATEGY SYSTEM PLAYBOOK</em>
       </a>
-      <div class="top-meta"><i></i><span>ARROW KEYS TO NAVIGATE</span></div>
+      <div class="top-meta"><i></i><span>CODEX BUILD PLAYBOOK</span></div>
     </header>
     <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
 
     <div class="slides" id="slides">
-      <section class="slide active intro-video cover-slide" data-title="표지" data-accent="#00a9e0" data-rgb="0,169,224" aria-hidden="false">
+      <section class="slide active intro-video cover-slide" data-title="표지" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#7c3aed" data-rgb2="124,58,237" aria-hidden="false">
         <div class="bg-poster" style="background-image:url('assets/poster-01.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-01.mp4" muted loop playsinline preload="none" poster="assets/poster-01.webp" aria-label="모바일 AI 미래 기술 배경 영상"></video>
+        <video class="bg-video" data-src="assets/bg-01.mp4" muted loop playsinline preload="none" poster="assets/poster-01.webp" aria-label="미래 기술 배경 영상"></video>
         <div class="slide-inner cover-layout">
           <div>
-            <div class="eyebrow reveal">AI BUSINESS INTELLIGENCE PLAYBOOK</div>
-            <h1 class="reveal" style="--delay:.16s"><span class="cover-title-line">모바일 AI 신사업 사이트</span><span class="cover-title-line accent">작동 원리와 구현 가이드</span></h1>
+            <div class="eyebrow reveal">CODEX PRODUCT BUILD PLAYBOOK</div>
+            <h1 class="reveal" style="--delay:.16s"><span class="cover-title-line">Codex로 만드는 AI 전략 사이트</span><span class="cover-title-line accent">입력부터 개발·검증·배포까지</span></h1>
             <div class="cover-rule reveal" style="--delay:.26s"></div>
-            <p class="cover-sub reveal" style="--delay:.32s">인터넷의 최신 근거를 시장 규모·경쟁 수익모델·신사업 기회로 바꾸는 전 과정</p>
-            <div class="cover-tags reveal" style="--delay:.4s"><span>12 SLIDES</span><span>10–15 MIN</span><span>BEGINNER FRIENDLY</span></div>
+            <p class="cover-sub reveal" style="--delay:.32s">개발 경험이 없어도 원하는 결과를 설명하고 화면을 확인하며 단계적으로 완성하는 실전 흐름</p>
           </div>
           <div class="cover-index reveal" style="--delay:.46s">
-            <div><em>01</em><b>UNDERSTAND</b><small>사이트가 답해야 할 질문</small></div>
-            <div><em>02</em><b>BUILD</b><small>수집·검증·DB·화면 구조</small></div>
-            <div><em>03</em><b>OPERATE</b><small>최신값 교체·품질·자동화</small></div>
+            <div><em>01</em><b>DEFINE</b><small>원하는 결과와 완료 기준 정의</small></div>
+            <div><em>02</em><b>DELEGATE</b><small>Codex에 조사·설계·개발 요청</small></div>
+            <div><em>03</em><b>REVIEW</b><small>미리보기·검증·배포 확인</small></div>
           </div>
         </div>
       </section>
 
-      <section class="slide intro-video summary-slide" data-title="한 장 요약" data-accent="#42c8ff" data-rgb="66,200,255" aria-hidden="true">
+      <section class="slide intro-video summary-slide" data-title="한 장 요약" data-accent="#a78bfa" data-rgb="167,139,250" data-accent2="#22d3ee" data-rgb2="34,211,238" aria-hidden="true">
         <div class="bg-poster" style="background-image:url('assets/poster-02.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-02.mp4" muted loop playsinline preload="none" poster="assets/poster-02.webp" aria-label="모바일 AI 블루 그라데이션 배경 영상"></video>
+        <video class="bg-video" data-src="assets/bg-02.mp4" muted loop playsinline preload="none" poster="assets/poster-02.webp" aria-label="그라데이션 기술 배경 영상"></video>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">00</span><div><div class="eyebrow">EXECUTIVE SUMMARY</div><h2>기사 모음이 아니라 <span class="accent">의사결정 데이터베이스</span></h2><p>질문에서 출발해 검증 근거와 실행 우선순위까지 한 방향으로 연결</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">00</span><div><div class="eyebrow">EXECUTIVE SUMMARY</div><h2>Codex 개발은 코딩보다 <span class="accent">명확한 요청과 검토의 반복</span></h2><p>목표를 말하고 · 현재 구조를 확인하고 · 작은 단위로 구현하고 · 검증 후 배포</p></div></div>
           <div class="flow reveal" style="--delay:.16s">
-            <div class="flow-card"><em>QUESTION</em><b>무엇을 알고 싶은가</b><span>시장성·수익성·실행성</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>COLLECT</em><b>원문을 어떻게 찾는가</b><span>공식·리서치·공시 우선</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>VERIFY</em><b>무엇을 믿을 수 있는가</b><span>숫자·날짜·주체 교차 확인</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>DATABASE</em><b>어떻게 최신화하는가</b><span>안정 키별 최신값 교체</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>DECIDE</em><b>무엇을 실행할 것인가</b><span>Where to Play · How to Win</span></div>
+            <div class="flow-card"><em>ASK</em><b>결과 정의</b><span>무엇을 누구에게 보여줄지</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>INSPECT</em><b>현황 파악</b><span>파일·화면·제약조건 확인</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>BUILD</em><b>작은 단위 구현</b><span>콘텐츠·디자인·동작 분리</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>REVIEW</em><b>눈으로 검토</b><span>잘림·중복·링크·속도 확인</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>RELEASE</em><b>안전하게 반영</b><span>검증 통과 후 공개</span></div>
           </div>
           <div class="three-outcomes reveal" style="--delay:.28s">
-            <div class="outcome"><em>MARKET ATTRACTIVENESS</em><b>시장이 충분히 큰가</b><span>규모·성장률·침투율·지불의사</span></div>
-            <div class="outcome"><em>MONETIZATION PROOF</em><b>누가 어떻게 돈을 버는가</b><span>고객·가치·과금·매출 근거</span></div>
-            <div class="outcome"><em>STRATEGIC MOVE</em><b>어디에 먼저 진입할 것인가</b><span>보유 접점·차별화·KPI·리스크</span></div>
+            <div class="outcome"><em>ONE-LINE GOAL</em><b>한 문장 목표</b><span>기능보다 사용자가 얻을 결과를 먼저 명시</span></div>
+            <div class="outcome"><em>VISIBLE PROOF</em><b>보이는 검증</b><span>화면·근거·테스트로 완료 여부 판단</span></div>
+            <div class="outcome"><em>SAFE CHANGE</em><b>되돌릴 수 있는 변경</b><span>작은 수정·비교·승인·배포 순서 유지</span></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>KEY MESSAGE</b><span>좋은 화면의 출발점은 디자인이 아니라 명확한 경영 질문과 검증 가능한 데이터 구조</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>KEY MESSAGE</b><span>좋은 Codex 입력은 역할 설명이 아니라 결과 · 범위 · 유지 조건 · 완료 기준을 구체적으로 전달</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="질문 설계" data-accent="#168eea" data-rgb="22,142,234" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-03.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-03.mp4" muted loop playsinline preload="none" poster="assets/poster-03.webp"></video>
+      <section class="slide" data-title="첫 입력" data-accent="#8b5cf6" data-rgb="139,92,246" data-accent2="#3b82f6" data-rgb2="59,130,246" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-03.webp')"></span><span style="background-image:url('assets/poster-04.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">01</span><div><div class="eyebrow">START WITH THE QUESTION</div><h2>화면보다 먼저 만드는 <span class="accent">MECE 질문 트리</span></h2><p>겹치지 않고 빠짐없는 세 축으로 모든 수집 항목을 정렬</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">01</span><div><div class="eyebrow">FIRST PROMPT</div><h2>첫 입력은 기능 목록이 아니라 <span class="accent">원하는 결과를 한 문장으로</span></h2><p>목표 · 반드시 포함할 내용 · 완료 판단 기준을 분리하면 Codex가 스스로 작업 순서를 구성</p></div></div>
           <div class="issue-tree reveal" style="--delay:.14s">
-            <div class="root-question"><b>휴대폰 접점에서<br>어떤 AI 신사업을<br>먼저 만들 것인가</b></div>
+            <div class="root-question"><b>이 사이트를 처음 보는 사람이<br>기업 전략을 빠르게 비교하고<br>상세 근거까지 확인하게 만들어줘</b></div>
             <i class="tri-arrow"></i>
             <div class="branches">
-              <article class="branch"><em>01 · ATTRACTIVENESS</em><h3>시장성</h3><ul><li>시장 규모와 성장률</li><li>사용자 침투와 이용 빈도</li><li>유료 전환과 지불의사</li><li>규제·신뢰 변화</li></ul></article>
-              <article class="branch"><em>02 · ECONOMICS</em><h3>수익성</h3><ul><li>누가 비용을 지불하는가</li><li>무엇을 과금하는가</li><li>반복 매출과 마진 구조</li><li>획득비용과 추론원가</li></ul></article>
-              <article class="branch"><em>03 · FEASIBILITY</em><h3>실행성</h3><ul><li>보유한 단말·OS·결제 접점</li><li>필요한 모델·데이터·파트너</li><li>12개월 내 검증 가능한 KPI</li><li>개인정보·채널·운영 리스크</li></ul></article>
+              <article class="branch"><em>01 · OUTCOME</em><h3>사용자 결과</h3><ul><li>누가 사용하는가</li><li>어떤 결정을 돕는가</li><li>첫 화면에서 무엇을 이해하는가</li><li>클릭 후 무엇을 확인하는가</li></ul></article>
+              <article class="branch"><em>02 · CONSTRAINT</em><h3>유지 조건</h3><ul><li>기존 데이터와 기능 유지</li><li>금지 문구와 표현 방식</li><li>모바일·데스크톱 대응</li><li>근거 링크와 최신성 유지</li></ul></article>
+              <article class="branch"><em>03 · DONE</em><h3>완료 기준</h3><ul><li>글자 잘림 없음</li><li>중복 콘텐츠 없음</li><li>모든 버튼 동작</li><li>검증 통과 후 공개</li></ul></article>
             </div>
           </div>
-          <div class="takeaway reveal" style="--delay:.3s"><b>BEGINNER TIP</b><span>스프레드시트 한 장에 질문 · 필요한 숫자 · 원문 유형 · 업데이트 주기를 먼저 적은 뒤 개발 시작</span></div>
+          <div class="takeaway reveal" style="--delay:.3s"><b>입력 예시</b><span>현재 구조를 먼저 확인하고 · 메인과 상세를 중복 없이 나누고 · 긴 삼각형 화살표와 다색 그라디언트를 적용하고 · 모바일에서도 잘리지 않게 검증해줘</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="시스템 구조" data-accent="#00a9e0" data-rgb="0,169,224" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-04.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-04.mp4" muted loop playsinline preload="none" poster="assets/poster-04.webp"></video>
+      <section class="slide" data-title="프로젝트 맡기기" data-accent="#ec4899" data-rgb="236,72,153" data-accent2="#8b5cf6" data-rgb2="139,92,246" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-04.webp')"></span><span style="background-image:url('assets/poster-05.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">02</span><div><div class="eyebrow">SYSTEM ARCHITECTURE</div><h2>원문에서 화면까지 <span class="accent">4개 계층</span></h2><p>수집·검증·분석·표현을 분리해야 오류 수정과 확장이 쉬운 구조</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">02</span><div><div class="eyebrow">GIVE CODEX CONTEXT</div><h2>수정 전에 Codex가 <span class="accent">프로젝트 전체 맥락을 읽게 하기</span></h2><p>작업 폴더와 현재 화면을 먼저 확인하면 기존 기능 손상과 중복 구현을 줄일 수 있는 구조</p></div></div>
           <div class="architecture reveal" style="--delay:.15s">
-            <article class="arch-layer"><em>SOURCE LAYER</em><h3>원천</h3><ul><li>공식 발표</li><li>공시·실적</li><li>시장 리서치</li><li>권위 언론</li></ul></article><i class="tri-arrow"></i>
-            <article class="arch-layer"><em>EVIDENCE LAYER</em><h3>근거</h3><ul><li>원문 URL</li><li>발행일</li><li>정량 문장</li><li>기업 직접 연관</li></ul></article><i class="tri-arrow"></i>
-            <article class="arch-layer"><em>INTELLIGENCE DB</em><h3>판단 데이터</h3><ul><li>안정 키</li><li>수익모델</li><li>시장 주제</li><li>전략 기회</li></ul></article><i class="tri-arrow"></i>
-            <article class="arch-layer"><em>EXPERIENCE LAYER</em><h3>화면</h3><ul><li>요약 카드</li><li>상세 팝업</li><li>필터·탭</li><li>원문 링크</li></ul></article>
+            <article class="arch-layer"><em>WORKSPACE</em><h3>작업 위치</h3><ul><li>수정할 폴더 지정</li><li>메인 진입 파일 확인</li><li>기존 배포 방식 유지</li><li>관련 자산 위치 확인</li></ul></article><i class="tri-arrow"></i>
+            <article class="arch-layer"><em>INSPECT</em><h3>현재 구조</h3><ul><li>페이지와 섹션 목록</li><li>사용 중인 컴포넌트</li><li>스타일과 반응형 규칙</li><li>테스트와 자동화 확인</li></ul></article><i class="tri-arrow"></i>
+            <article class="arch-layer"><em>PLAN</em><h3>변경 범위</h3><ul><li>유지할 부분</li><li>교체할 부분</li><li>새로 추가할 동작</li><li>검증 순서</li></ul></article><i class="tri-arrow"></i>
+            <article class="arch-layer"><em>EXECUTE</em><h3>구현</h3><ul><li>작은 패치 적용</li><li>화면 번들 갱신</li><li>오류 수정</li><li>배포 결과 확인</li></ul></article>
           </div>
           <div class="ledger-split reveal" style="--delay:.28s">
-            <div class="ledger private"><b>비공개 감사 원장</b><span>수집 이력·교체 전 값·실패 원인·삭제 기록을 복구와 감사를 위해 유지</span></div>
-            <div class="ledger public"><b>공개 최신 스냅샷</b><span>검증을 통과한 최신값만 작은 JSON으로 전달해 빠르고 일관된 화면 구성</span></div>
+            <div class="ledger"><b>Codex가 확인할 것</b><span>현재 파일 · 사용자 요청 · 기존 기능 · 디자인 규칙 · 테스트 결과</span></div>
+            <div class="ledger"><b>사용자가 결정할 것</b><span>무엇이 중요한가 · 어떤 내용을 삭제할지 · 어느 수준이면 완료인지</span></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>DESIGN RULE</b><span>원장과 공개 파일을 분리하면 과거 추적과 최신 화면을 동시에 확보</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>입력 예시</b><span>먼저 현재 사이트 구조와 관련 파일을 읽고 · 영향을 받는 부분만 정리한 뒤 · 기존 기능을 유지하며 수정해줘</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="수집 흐름" data-accent="#3b82f6" data-rgb="59,130,246" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-05.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-05.mp4" muted loop playsinline preload="none" poster="assets/poster-05.webp"></video>
+      <section class="slide" data-title="프롬프트 공식" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#14b8a6" data-rgb2="20,184,166" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-05.webp')"></span><span style="background-image:url('assets/poster-06.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">03</span><div><div class="eyebrow">COLLECTION PIPELINE</div><h2>검색 제목이 아니라 <span class="accent">발행사 원문</span>을 저장</h2><p>수집량보다 출처 품질과 주제 적합도가 중요한 자동화 원칙</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">03</span><div><div class="eyebrow">PROMPT BLUEPRINT</div><h2>좋은 입력은 <span class="accent">6개 블록으로 짧고 구체적으로</span></h2><p>한 번에 모든 것을 지시하기보다 요청의 종류와 완료 조건을 구분해 전달</p></div></div>
           <div class="pipeline reveal" style="--delay:.14s">
-            <div class="pipe-step"><em>STEP 1</em><b>질의</b><span>시장·기업·과금별 검색식</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>STEP 2</em><b>발견</b><span>후보 URL과 발행일</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>STEP 3</em><b>원문 열기</b><span>발행사 페이지 본문</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>STEP 4</em><b>근거 추출</b><span>숫자 포함 문장과 주체</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>STEP 5</em><b>분류</b><span>시장·수익·전략 안정 키</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>STEP 6</em><b>공개</b><span>품질 통과 최신값만 반영</span></div>
+            <div class="pipe-step"><em>01</em><b>맥락</b><span>현재 사이트와 사용자</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>02</em><b>목표</b><span>이번에 달성할 결과</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>03</em><b>범위</b><span>바꿀 화면과 콘텐츠</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>04</em><b>스타일</b><span>색상·도형·정보 위계</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>05</em><b>동작</b><span>클릭·호버·키보드</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>06</em><b>검증</b><span>잘림·속도·중복 확인</span></div>
           </div>
           <div class="principle-grid reveal" style="--delay:.28s">
-            <div class="principle"><b>수집 기준</b><span>공식·리서치 우선 → 제목과 본문에서 대상 일치 → 숫자 의미와 기간 확인 → 원문 URL 유지</span></div>
-            <div class="principle"><b>실행 주기</b><span>하루 여러 차례 자동 실행 · 실적 발표와 주요 발표 이후 새 원문 반영</span></div>
+            <div class="principle"><b>한 번에 하나의 결과</b><span>콘텐츠 구조 → 디자인 → 인터랙션 → 속도 순으로 나누면 수정 이유와 결과 비교가 쉬움</span></div>
+            <div class="principle"><b>검증까지 함께 요청</b><span>수정만 지시하지 말고 실제 화면·모바일·키보드·링크·빌드 확인을 완료 조건에 포함</span></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>DO NOT</b><span>검색 결과 제목만 저장 · 숫자만 추출 · 회사 이름이 없는 기사를 기업 카드에 연결</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>PROMPT RULE</b><span>모호한 표현 대신 대상 · 위치 · 변화 · 유지 조건 · 확인 방법을 함께 작성</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="최신값 교체" data-accent="#4da3ff" data-rgb="77,163,255" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-06.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-06.mp4" muted loop playsinline preload="none" poster="assets/poster-06.webp"></video>
+      <section class="slide" data-title="첫 개발 루프" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-06.webp')"></span><span style="background-image:url('assets/poster-07.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">04</span><div><div class="eyebrow">LATEST VERIFIED SNAPSHOT</div><h2>같은 주제는 누적하지 않고 <span class="accent">최신 검증값으로 교체</span></h2><p>중복 카드와 오래된 숫자를 막는 안정 키 기반 버전 관리</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">04</span><div><div class="eyebrow">FIRST BUILD LOOP</div><h2>처음부터 완벽하게 만들지 말고 <span class="accent">요청 → 확인 → 보완을 반복</span></h2><p>Codex가 만든 결과를 보고 다음 입력을 더 구체화하는 방식이 가장 빠른 개발 흐름</p></div></div>
           <div class="replacement reveal" style="--delay:.14s">
             <div>
-              <div class="formula"><b>안정 키 설계</b><code>시장 트랙 + 주제 ID<br>기업 ID + 수익모델 유형<br>사용자 삭제 + 항목 ID</code><p>표시 문구가 바뀌어도 같은 개념을 계속 추적하는 고정 식별자</p></div>
+              <div class="formula"><b>복사해서 쓰는 입력 구조</b><code>목표 · 첫 화면에서 전략 흐름을 이해<br>수정 범위 · How 화면만 변경<br>유지 조건 · 키보드 이동과 영상 유지<br>완료 기준 · 글자 잘림과 중복 없음</code><p>기술 용어보다 사용자가 확인할 수 있는 결과를 중심으로 작성</p></div>
               <div class="mini-table">
-                <div class="mini-row head"><span>안정 키</span><span>새 후보</span><span>판정</span><span>공개 결과</span></div>
-                <div class="mini-row"><span>device-adoption</span><span>더 최신 공식 전망</span><span>PASS</span><span>기존값 교체</span></div>
-                <div class="mini-row"><span>device-adoption</span><span>출처·단위 불명</span><span>REJECT</span><span>현재값 유지</span></div>
+                <div class="mini-row head"><span>사용자 입력</span><span>Codex 작업</span><span>확인 화면</span><span>다음 행동</span></div>
+                <div class="mini-row"><span>목표·범위</span><span>구조 분석</span><span>변경 계획</span><span>진행</span></div>
+                <div class="mini-row"><span>피드백</span><span>작은 수정</span><span>미리보기</span><span>보완</span></div>
               </div>
             </div>
             <div class="decision">
-              <div class="decision-box"><b>현재 공개값</b><span>안정 키별 1개</span></div><i class="tri-arrow"></i>
-              <div class="decision-box"><b>새 후보 비교</b><span>날짜·출처·정량 완전성</span></div><i class="tri-arrow"></i>
-              <div class="decision-box good"><b>교체 또는 유지</b><span>더 최신이고 검증되면 교체</span></div>
+              <div class="decision-box"><b>요청</b><span>한 번에 하나의 변화</span></div><i class="tri-arrow"></i>
+              <div class="decision-box"><b>미리보기</b><span>눈으로 결과 확인</span></div><i class="tri-arrow"></i>
+              <div class="decision-box good"><b>보완</b><span>차이를 다시 구체화</span></div>
             </div>
           </div>
-          <div class="takeaway reveal" style="--delay:.35s"><b>USER CONTROL</b><span>사용자가 X로 숨긴 항목은 삭제 레지스트리에 기록해 다음 수집에서도 재유입 차단</span></div>
+          <div class="takeaway reveal" style="--delay:.35s"><b>BEGINNER MOVE</b><span>마음에 들지 않는다고 전부 다시 만들게 하지 말고 · 유지할 것과 바꿀 것을 각각 한 줄로 전달</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="품질 검증" data-accent="#00b8f0" data-rgb="0,184,240" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-07.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-07.mp4" muted loop playsinline preload="none" poster="assets/poster-07.webp"></video>
+      <section class="slide" data-title="컨설팅 화면" data-accent="#14b8a6" data-rgb="20,184,166" data-accent2="#3b82f6" data-rgb2="59,130,246" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-07.webp')"></span><span style="background-image:url('assets/poster-08.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">05</span><div><div class="eyebrow">ANTI-HALLUCINATION GATES</div><h2>AI 요약보다 먼저 통과해야 하는 <span class="accent">5개 품질 게이트</span></h2><p>근거 없는 그럴듯한 문장을 화면에 올리지 않는 방어 구조</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">05</span><div><div class="eyebrow">CONSULTING INFOGRAPHICS</div><h2>컨설팅 화면은 장식보다 <span class="accent">결론과 논리의 이동 경로</span></h2><p>제목에서 결론을 말하고 긴 삼각형 화살표로 근거와 실행의 방향을 연결</p></div></div>
           <div class="gate-grid reveal" style="--delay:.14s">
-            <article class="gate"><em>GATE 01</em><b>원문 존재</b><span>발행사 페이지 접근 · RSS 제목만 있는 후보 제외</span></article>
-            <article class="gate"><em>GATE 02</em><b>주체 일치</b><span>기업명·제품명·사업 주체가 본문에 직접 등장</span></article>
-            <article class="gate"><em>GATE 03</em><b>숫자 완전성</b><span>무엇의 숫자인지 · 단위 · 기준기간 · 전망기간 확인</span></article>
-            <article class="gate"><em>GATE 04</em><b>중복 제거</b><span>동일 사건 재배포는 하나의 인사이트와 근거 묶음으로 병합</span></article>
-            <article class="gate"><em>GATE 05</em><b>공개 정책</b><span>금지어·사용자 삭제·저품질 출처를 마지막 단계에서 재검사</span></article>
+            <article class="gate"><em>RULE 01</em><b>결론형 제목</b><span>무엇이 바뀌고 왜 중요한지 한 문장으로 제시</span></article>
+            <article class="gate"><em>RULE 02</em><b>MECE 분류</b><span>시장 · 수익 · 경쟁 · 실행을 겹치지 않게 분리</span></article>
+            <article class="gate"><em>RULE 03</em><b>근거 → 시사점</b><span>숫자와 원문 다음에 전략적 의미를 연결</span></article>
+            <article class="gate"><em>RULE 04</em><b>시각 위계</b><span>핵심 숫자 · 흐름 · 세부 근거 순으로 크기 차등</span></article>
+            <article class="gate"><em>RULE 05</em><b>행동 유도</b><span>클릭 · 호버 · 상세 이동의 목적을 명확히 표시</span></article>
           </div>
-          <div class="stop-strip reveal" style="--delay:.29s"><b>STOP</b><span>숫자 라벨 없음 · 날짜 없음 · 회사 직접 연관 없음 · 출처 페이지 확인 실패 → 공개 스냅샷 승격 거부</span></div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>BEGINNER TIP</b><span>요약 프롬프트보다 먼저 if 조건으로 실패 기준을 코드화하면 품질 개선 속도 상승</span></div>
+          <div class="stop-strip reveal" style="--delay:.29s"><b>REMOVE</b><span>의미 없는 진행 바 · 반복 설명 · 근거 없는 수치 · 한쪽만 강조된 둥근 박스 · 장식용 화살표</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>입력 예시</b><span>모든 제목을 결론형으로 바꾸고 · 카드 간 관계를 긴 삼각형 화살표로 연결하고 · 핵심 메시지만 색상 반전 호버를 적용해줘</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="수익모델 분석" data-accent="#2f81f7" data-rgb="47,129,247" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-08.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-08.mp4" muted loop playsinline preload="none" poster="assets/poster-08.webp"></video>
+      <section class="slide" data-title="근거에서 전략" data-accent="#a855f7" data-rgb="168,85,247" data-accent2="#ec4899" data-rgb2="236,72,153" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-08.webp')"></span><span style="background-image:url('assets/poster-09.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">06</span><div><div class="eyebrow">MONETIZATION LOGIC</div><h2>경쟁사 분석의 중심은 기능이 아니라 <span class="accent">돈의 흐름</span></h2><p>누가 누구에게 무엇의 대가로 얼마를 지불하는지 구조화</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">06</span><div><div class="eyebrow">EVIDENCE TO DECISION</div><h2>사이트의 핵심은 자료량이 아니라 <span class="accent">근거가 결정으로 변하는 과정</span></h2><p>Codex에 최신 근거 확인과 전략 해석을 함께 요청하되 사실과 판단을 분리</p></div></div>
           <div class="money-flow reveal" style="--delay:.14s">
-            <div class="money-node"><em>WHO PAYS</em><b>고객</b></div><i class="tri-arrow"></i>
-            <div class="money-node"><em>VALUE</em><b>해결되는 작업</b></div><i class="tri-arrow"></i>
-            <div class="money-node"><em>PRICING UNIT</em><b>구독·기기·사용량</b></div><i class="tri-arrow"></i>
-            <div class="money-node"><em>REVENUE</em><b>반복 매출·거래 수수료</b></div><i class="tri-arrow"></i>
-            <div class="money-node"><em>REINVEST</em><b>모델·유통·데이터</b></div>
+            <div class="money-node"><em>SOURCE</em><b>원문</b></div><i class="tri-arrow"></i>
+            <div class="money-node"><em>FACT</em><b>확인된 사실</b></div><i class="tri-arrow"></i>
+            <div class="money-node"><em>IMPLICATION</em><b>사업적 의미</b></div><i class="tri-arrow"></i>
+            <div class="money-node"><em>CHOICE</em><b>전략 선택</b></div><i class="tri-arrow"></i>
+            <div class="money-node"><em>REFRESH</em><b>최신화</b></div>
           </div>
           <div class="model-grid reveal" style="--delay:.28s">
-            <div class="model"><b>구독·멤버십</b><span>고급 모델·클라우드 한도·가족 공유</span></div>
-            <div class="model"><b>기기 프리미엄</b><span>AI 기능을 기기 가격과 교체 수요에 결합</span></div>
-            <div class="model"><b>사용량·크레딧</b><span>추론량·생성량·API 호출별 과금</span></div>
-            <div class="model"><b>광고·커머스</b><span>추천·거래·예약·결제에서 수수료 확보</span></div>
-            <div class="model"><b>기업 라이선스</b><span>좌석·관리·보안·배포 서비스 계약</span></div>
+            <div class="model"><b>시장 규모</b><span>대상 · 기준연도 · 전망연도 · 단위</span></div>
+            <div class="model"><b>수익 모델</b><span>고객 · 가치 · 과금 단위 · 반복성</span></div>
+            <div class="model"><b>기업 방향</b><span>현재 사업 · 확장 · 투자 · 실행 근거</span></div>
+            <div class="model"><b>경영진</b><span>직책 · 배경 · 책임 영역 · 직접 링크</span></div>
+            <div class="model"><b>발언</b><span>한국어 요약 · 원문 · 날짜 · 출처</span></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>RULE</b><span>수익 기사 분류 시 매출·가격·구독·수수료 등 금전 문맥과 기업 직접 연관을 같은 문장에서 확인</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>입력 예시</b><span>최신 원문을 확인하고 · 사실과 해석을 분리하고 · 중복 근거는 하나의 인사이트로 합치고 · 각 판단에 원문 링크를 남겨줘</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="전략 도출" data-accent="#00a9e0" data-rgb="0,169,224" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-09.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-09.mp4" muted loop playsinline preload="none" poster="assets/poster-09.webp"></video>
+      <section class="slide" data-title="보완 요청" data-accent="#34d399" data-rgb="52,211,153" data-accent2="#22d3ee" data-rgb2="34,211,238" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-09.webp')"></span><span style="background-image:url('assets/poster-10.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">07</span><div><div class="eyebrow">FROM EVIDENCE TO STRATEGY</div><h2>근거를 <span class="accent">Where to Play · How to Win</span>으로 변환</h2><p>시장과 경쟁 데이터를 실행 가능한 포트폴리오 언어로 재구성</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">07</span><div><div class="eyebrow">ITERATION PROMPTS</div><h2>보완 요청은 <span class="accent">콘텐츠 · 디자인 · 동작을 분리</span></h2><p>문제 종류를 구분하면 Codex가 불필요한 파일을 건드리지 않고 정확히 수정</p></div></div>
           <div class="strategy-grid reveal" style="--delay:.14s">
-            <article class="strategy-card"><em>WHERE TO PLAY</em><h3>어디에서 경쟁할 것인가</h3><dl><dt>고객</dt><dd>개인 · 가족 · 기업 · 파트너</dd><dt>상황</dt><dd>통화 · 검색 · 건강 · 결제 · 창작</dd><dt>채널</dt><dd>단말 · OS · 앱 · 웨어러블</dd></dl></article>
-            <article class="strategy-card"><em>HOW TO WIN</em><h3>무엇으로 이길 것인가</h3><dl><dt>접점</dt><dd>상시 사용 · 배포 · 결제 · 개인 컨텍스트</dd><dt>구조</dt><dd>직접 구축 · 번들 · 제휴 · 지분투자</dd><dt>해자</dt><dd>권한 · 신뢰 · 데이터 · 전환비용</dd></dl></article>
-            <article class="strategy-card"><em>WHAT TO MEASURE</em><h3>무엇으로 검증할 것인가</h3><dl><dt>사용</dt><dd>주간 활성 · 호출 빈도 · 유지율</dd><dt>수익</dt><dd>유료 전환 · ARPU · 기기 부착률</dd><dt>원가</dt><dd>추론원가 · 파트너 정산 · CAC</dd></dl></article>
+            <article class="strategy-card"><em>CONTENT</em><h3>내용 수정</h3><dl><dt>문제</dt><dd>중복 · 모호함 · 최신성 부족</dd><dt>입력</dt><dd>메인과 상세 역할을 나누고 반복 문구를 통합</dd><dt>검증</dt><dd>각 정보가 한 위치에만 존재</dd></dl></article>
+            <article class="strategy-card"><em>VISUAL</em><h3>디자인 수정</h3><dl><dt>문제</dt><dd>단조로운 색 · 관계 불명확</dd><dt>입력</dt><dd>다색 그라디언트와 긴 화살표로 논리 흐름 강화</dd><dt>검증</dt><dd>제목 · 핵심 숫자 · 근거의 위계 명확</dd></dl></article>
+            <article class="strategy-card"><em>BEHAVIOR</em><h3>동작 수정</h3><dl><dt>문제</dt><dd>클릭 실패 · 느린 로딩 · 잘림</dd><dt>입력</dt><dd>키보드·모바일·지연 로딩을 유지하며 수정</dd><dt>검증</dt><dd>주요 경로를 실제로 끝까지 확인</dd></dl></article>
           </div>
           <div class="portfolio-line reveal" style="--delay:.29s">
-            <div class="flow-card"><em>1</em><b>시장 근거</b></div><i class="tri-arrow"></i><div class="flow-card"><em>2</em><b>수익 검증</b></div><i class="tri-arrow"></i><div class="flow-card"><em>3</em><b>보유 접점</b></div><i class="tri-arrow"></i><div class="flow-card"><em>4</em><b>우선순위</b></div>
+            <div class="flow-card"><em>1</em><b>한 가지 문제</b></div><i class="tri-arrow"></i><div class="flow-card"><em>2</em><b>한 번의 수정</b></div><i class="tri-arrow"></i><div class="flow-card"><em>3</em><b>한 번의 검증</b></div><i class="tri-arrow"></i><div class="flow-card"><em>4</em><b>다음 우선순위</b></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>MBB FORMAT</b><span>슬라이드 제목은 결론 · 본문은 근거 · 마지막 줄은 실행 선택지와 KPI</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>FEEDBACK RULE</b><span>좋다·나쁘다가 아니라 어떤 화면의 무엇이 왜 문제이며 어떤 결과를 원하는지 전달</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="화면 구현" data-accent="#5badff" data-rgb="91,173,255" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-10.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-10.mp4" muted loop playsinline preload="none" poster="assets/poster-10.webp"></video>
+      <section class="slide" data-title="GitHub 개발" data-accent="#3b82f6" data-rgb="59,130,246" data-accent2="#8b5cf6" data-rgb2="139,92,246" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-10.webp')"></span><span style="background-image:url('assets/poster-11.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">08</span><div><div class="eyebrow">FRONTEND BLUEPRINT</div><h2>작은 JSON과 독립 컴포넌트로 만드는 <span class="accent">빠른 화면</span></h2><p>초기 번들은 가볍게 · 상세 데이터와 영상은 필요할 때만 로드</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">08</span><div><div class="eyebrow">SAFE GITHUB FLOW</div><h2>개발 결과는 <span class="accent">미리보기와 변경 비교 후 GitHub에 반영</span></h2><p>Pro 계정의 Codex Cloud와 연결된 저장소에서 작업하고 Pull Request로 안전하게 검토</p></div></div>
           <div class="stack reveal" style="--delay:.14s">
-            <div class="file-tree"><b>ai/</b>
-├─ index.html                 # 앱 진입점
-├─ app.bundle.js             # 화면 로직
-├─ styles.css                # 컨설팅 UI
-├─ mobile-ai-business-view.json
-├─ market-view.json
-├─ companies.json
-├─ scripts/
-│  ├─ crawl-*.mjs            # 수집
-│  ├─ build-*.mjs            # 공개 스냅샷
-│  └─ test-automation.mjs    # 품질 검증
-└─ .github/workflows/        # 자동 실행</div>
+            <div class="file-tree"><b>Codex 작업 흐름</b>
+1 · 작업할 저장소와 브랜치 선택
+2 · 원하는 결과와 완료 기준 입력
+3 · Codex가 파일을 읽고 변경안 구현
+4 · 변경 파일과 테스트 결과 확인
+5 · 보완 요청 또는 Pull Request 생성
+6 · 검증 통과 후 공개 화면 확인</div>
             <div>
               <div class="render-flow">
-                <div class="render-box"><em>DATA</em><b>공개 JSON</b><span>현재 화면에 필요한 필드만 포함</span></div><i class="tri-arrow"></i><div class="render-box"><em>UI</em><b>카드·탭·상세</b><span>시장 → 수익 → 기회 순서</span></div>
+                <div class="render-box"><em>CURRENT</em><b>현재 사이트</b><span>기능·콘텐츠·배포 상태 확인</span></div><i class="tri-arrow"></i><div class="render-box"><em>PROPOSED</em><b>Codex 변경안</b><span>차이·근거·검증 결과 확인</span></div>
               </div>
               <div class="performance">
-                <div><b>LAZY FETCH</b><span>섹션이 보일 때 데이터 요청</span></div>
-                <div><b>VERSION CACHE</b><span>데이터 버전이 바뀔 때만 갱신</span></div>
-                <div><b>STATIC BUNDLE</b><span>브라우저 안에서 JSX 재컴파일 없음</span></div>
-                <div><b>ON-DEMAND MEDIA</b><span>현재·다음 장면 영상만 로드</span></div>
+                <div><b>PREVIEW</b><span>화면을 먼저 확인</span></div>
+                <div><b>TEST</b><span>기존 기능 회귀 검사</span></div>
+                <div><b>DIFF</b><span>바뀐 파일만 비교</span></div>
+                <div><b>PR</b><span>승인 가능한 단위로 제안</span></div>
               </div>
             </div>
           </div>
-          <div class="takeaway reveal" style="--delay:.36s"><b>INTERACTION</b><span>카드 클릭은 상세 근거 · 탭은 MECE 분류 · 원문 링크는 검증 · X는 사용자 영구 제외</span></div>
+          <div class="takeaway reveal" style="--delay:.36s"><b>SAFE RULE</b><span>브라우저 세션과 인증 파일을 저장소에 넣지 않고 · main 직접 수정 없이 검토 가능한 변경으로 제안</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="구현 로드맵" data-accent="#168eea" data-rgb="22,142,234" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-11.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-11.mp4" muted loop playsinline preload="none" poster="assets/poster-11.webp"></video>
+      <section class="slide" data-title="구현 로드맵" data-accent="#f472b6" data-rgb="244,114,182" data-accent2="#f59e0b" data-rgb2="245,158,11" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-11.webp')"></span><span style="background-image:url('assets/poster-12.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">09</span><div><div class="eyebrow">BEGINNER BUILD ROADMAP</div><h2>처음 만드는 사람을 위한 <span class="accent">7일 구현 순서</span></h2><p>하루에 한 계층만 완성해 복잡도를 낮추는 방식</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">09</span><div><div class="eyebrow">BEGINNER BUILD ROADMAP</div><h2>처음 만드는 사람은 <span class="accent">하루에 하나의 결과만 완성</span></h2><p>기획부터 배포까지 일주일 동안 범위를 좁혀 전체 개발 루프를 경험</p></div></div>
           <div class="roadmap reveal" style="--delay:.14s">
-            <article class="road-step"><em>DAY 1</em><h3>질문 정의</h3><ul><li>시장성·수익성·실행성</li><li>필요 KPI 목록</li><li>금지어와 삭제 정책</li></ul></article>
-            <article class="road-step"><em>DAY 2</em><h3>데이터 설계</h3><ul><li>안정 키</li><li>출처·날짜·지표</li><li>기업·시장 스키마</li></ul></article>
-            <article class="road-step"><em>DAY 3</em><h3>수집기</h3><ul><li>검색 질의</li><li>원문 본문</li><li>정량 문장 추출</li></ul></article>
-            <article class="road-step"><em>DAY 4</em><h3>품질 게이트</h3><ul><li>주체 일치</li><li>숫자 완전성</li><li>중복·금지어 차단</li></ul></article>
-            <article class="road-step"><em>DAY 5</em><h3>전략 변환</h3><ul><li>수익모델 분류</li><li>Where to Play</li><li>How to Win·KPI</li></ul></article>
-            <article class="road-step"><em>DAY 6</em><h3>화면</h3><ul><li>요약 카드</li><li>상세 근거</li><li>탭·삭제·링크</li></ul></article>
-            <article class="road-step"><em>DAY 7</em><h3>자동화</h3><ul><li>정기 실행</li><li>검증 후 배포</li><li>실패 로그·복구</li></ul></article>
+            <article class="road-step"><em>DAY 1</em><h3>목표</h3><ul><li>사용자 정의</li><li>한 문장 결과</li><li>완료 기준</li></ul></article>
+            <article class="road-step"><em>DAY 2</em><h3>구조</h3><ul><li>현재 화면 확인</li><li>메인·상세 역할</li><li>유지 조건</li></ul></article>
+            <article class="road-step"><em>DAY 3</em><h3>콘텐츠</h3><ul><li>MECE 분류</li><li>근거와 시사점</li><li>중복 제거</li></ul></article>
+            <article class="road-step"><em>DAY 4</em><h3>디자인</h3><ul><li>결론형 제목</li><li>도식화</li><li>색상 위계</li></ul></article>
+            <article class="road-step"><em>DAY 5</em><h3>동작</h3><ul><li>클릭·호버</li><li>키보드</li><li>모바일</li></ul></article>
+            <article class="road-step"><em>DAY 6</em><h3>검증</h3><ul><li>잘림·속도</li><li>링크·중복</li><li>테스트</li></ul></article>
+            <article class="road-step"><em>DAY 7</em><h3>배포</h3><ul><li>변경 비교</li><li>Pull Request</li><li>공개 확인</li></ul></article>
           </div>
-          <div class="takeaway reveal" style="--delay:.35s"><b>BUILD ORDER</b><span>데이터 → 품질 → 전략 → 화면 순서를 지키면 디자인을 다시 만드는 비용 감소</span></div>
+          <div class="takeaway reveal" style="--delay:.35s"><b>BUILD ORDER</b><span>목표 → 구조 → 콘텐츠 → 디자인 → 동작 → 검증 → 배포 순서를 유지하면 재작업 감소</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="완료 기준" data-accent="#42c8ff" data-rgb="66,200,255" aria-hidden="true">
-        <div class="bg-poster" style="background-image:url('assets/poster-12.webp')"></div>
-        <video class="bg-video" data-src="assets/bg-12.mp4" muted loop playsinline preload="none" poster="assets/poster-12.webp"></video>
+      <section class="slide" data-title="완료 기준" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#a855f7" data-rgb2="168,85,247" aria-hidden="true">
+        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-12.webp')"></span><span style="background-image:url('assets/poster-03.webp')"></span></div>
         <div class="slide-inner finish">
           <div>
             <div class="eyebrow reveal">IMPLEMENTATION CHECKLIST</div>
-            <h2 class="reveal" style="--delay:.14s">사이트 완성의 기준은<br><span class="accent">데이터가 스스로 최신화되는가</span></h2>
-            <p class="lead reveal" style="--delay:.24s">처음부터 모든 회사를 넣지 말고 한 시장·세 회사·한 기회로 전체 루프를 먼저 완성</p>
+            <h2 class="reveal" style="--delay:.14s">완성의 기준은 코드를 아는가가 아니라<br><span class="accent">원하는 결과를 만들고 검증할 수 있는가</span></h2>
+            <p class="lead reveal" style="--delay:.24s">작은 화면 하나를 목표 설정부터 배포까지 끝낸 뒤 같은 방식으로 범위를 확장</p>
             <a class="cta reveal" style="--delay:.34s" href="../">실제 사이트로 이동</a>
           </div>
           <div class="checklist reveal" style="--delay:.23s">
-            <div class="check"><i>✓</i><div><b>질문과 화면의 1:1 연결</b><span>모든 카드가 경영 질문 하나에 답변</span></div></div>
-            <div class="check"><i>✓</i><div><b>원문과 숫자 추적</b><span>수치마다 의미·기간·출처 확인 가능</span></div></div>
-            <div class="check"><i>✓</i><div><b>최신값 자동 교체</b><span>같은 안정 키의 과거 공개값 제거</span></div></div>
-            <div class="check"><i>✓</i><div><b>사용자 삭제 영구 반영</b><span>숨긴 항목의 다음 수집 재유입 차단</span></div></div>
-            <div class="check"><i>✓</i><div><b>자동 검증 후 배포</b><span>품질 실패 시 기존 정상 화면 유지</span></div></div>
+            <div class="check"><i>✓</i><div><b>결과 중심 입력</b><span>목표·범위·유지 조건·완료 기준 포함</span></div></div>
+            <div class="check"><i>✓</i><div><b>작은 단위 개발</b><span>콘텐츠·디자인·동작을 분리해 요청</span></div></div>
+            <div class="check"><i>✓</i><div><b>눈으로 검토</b><span>미리보기에서 잘림·중복·링크 확인</span></div></div>
+            <div class="check"><i>✓</i><div><b>변경 비교</b><span>수정된 파일과 기존 기능 영향 확인</span></div></div>
+            <div class="check"><i>✓</i><div><b>안전한 공개</b><span>검증 통과 후 Pull Request와 배포 확인</span></div></div>
           </div>
         </div>
       </section>
@@ -985,18 +994,18 @@
       let touchStartY = 0
 
       const consultingLogic = {
-        '표지': ['질문 정의', '근거 체계', '실행 설계'],
-        '한 장 요약': ['데이터', '인사이트', '의사결정'],
-        '질문 설계': ['핵심 문제', 'MECE 분해', 'KPI'],
-        '시스템 구조': ['원천 데이터', '검증 계층', '공개 화면'],
-        '수집 흐름': ['탐색', '본문 추출', '정규화'],
-        '최신값 교체': ['안정 키', '신구 비교', '최신값 반영'],
-        '품질 검증': ['관련성', '완전성', '배포 승인'],
-        '수익모델 분석': ['지불 주체', '과금 단위', '재투자'],
-        '전략 도출': ['Where to Play', 'How to Win', 'KPI'],
-        '화면 구현': ['데이터', '컴포넌트', '상호작용'],
-        '구현 로드맵': ['설계', '구축', '자동화'],
-        '완료 기준': ['원문 근거', '품질 통과', '지속 갱신']
+        '표지': ['목표 정의', 'Codex 위임', '검토·공개'],
+        '한 장 요약': ['요청', '구현', '검증'],
+        '첫 입력': ['사용자 결과', '유지 조건', '완료 기준'],
+        '프로젝트 맡기기': ['작업 위치', '구조 확인', '작은 구현'],
+        '프롬프트 공식': ['맥락·목표', '범위·스타일', '동작·검증'],
+        '첫 개발 루프': ['요청', '미리보기', '보완'],
+        '컨설팅 화면': ['결론', '근거', '실행'],
+        '근거에서 전략': ['원문·사실', '시사점', '전략 선택'],
+        '보완 요청': ['문제 분류', '정확한 수정', '검증'],
+        'GitHub 개발': ['현재 상태', 'Codex 변경', 'PR 검토'],
+        '구현 로드맵': ['목표·구조', '개발·검증', '배포'],
+        '완료 기준': ['요청 가능', '검토 가능', '안전한 공개']
       }
       const diagramSelectors = '.flow-card, .outcome, .branch, .arch-layer, .ledger, .pipe-step, .principle, .formula, .decision-box, .gate, .money-node, .model, .strategy-card, .render-box, .performance > div, .road-step, .check, .cover-index > div'
       const trackSelectors = '.flow, .three-outcomes, .branches, .architecture, .pipeline, .principle-grid, .decision, .gate-grid, .money-flow, .model-grid, .strategy-grid, .portfolio-line, .render-flow, .performance, .roadmap, .checklist, .cover-index'
@@ -1030,6 +1039,8 @@
       slides.forEach((slide, slideIndex) => {
         slide.style.setProperty('--accent', slide.dataset.accent)
         slide.style.setProperty('--accent-rgb', slide.dataset.rgb)
+        slide.style.setProperty('--accent-2', slide.dataset.accent2 || slide.dataset.accent)
+        slide.style.setProperty('--accent-rgb-2', slide.dataset.rgb2 || slide.dataset.rgb)
         const inner = slide.querySelector('.slide-inner')
         const logic = consultingLogic[slide.dataset.title] || ['근거', '분석', '실행']
         if (inner) {
@@ -1099,6 +1110,8 @@
         const active = slides[index]
         document.documentElement.style.setProperty('--accent', active.dataset.accent)
         document.documentElement.style.setProperty('--accent-rgb', active.dataset.rgb)
+        document.documentElement.style.setProperty('--accent-2', active.dataset.accent2 || active.dataset.accent)
+        document.documentElement.style.setProperty('--accent-rgb-2', active.dataset.rgb2 || active.dataset.rgb)
         progress.style.width = `${((index + 1) / slides.length) * 100}%`
         currentPage.textContent = String(index + 1).padStart(2, '0')
         prevBtn.disabled = index === 0
