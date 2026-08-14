@@ -39,6 +39,9 @@ jobs:
       - name: Crawl publisher and RSS source excerpts
         run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
 
+      - name: Apply mobile-AI focus before derived analysis
+        run: node scripts/prune-retired-focus.mjs
+
       - name: Append global market discovery records
         run: node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
 

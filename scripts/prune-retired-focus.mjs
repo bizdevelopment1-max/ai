@@ -5,13 +5,24 @@ import { loadDash } from "./load-dash.mjs";
 
 const root = process.cwd();
 const RETIRED_FOCUS = /(?:SK\s*-?\s*hynix|SK하이닉스|하이닉스|Micron|SanDisk|Western Digital|Kioxia|CXMT|GigaDevice|BIWIN|Montage Technology|메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM)/i;
-const hasRetiredFocus = value => RETIRED_FOCUS.test(typeof value === "string" ? value : JSON.stringify(value || {}));
+const hasRetiredFocus = value => {
+  if (typeof value === "string") return RETIRED_FOCUS.test(value);
+  if (Array.isArray(value)) return value.some(hasRetiredFocus);
+  if (value && typeof value === "object") {
+    return Object.entries(value).some(([key, item]) => RETIRED_FOCUS.test(key) || hasRetiredFocus(item));
+  }
+  return false;
+};
 
-const scrubText = value => String(value || "")
-  .split(/(?:\r?\n)+|(?<=[.!?])\s+/)
-  .filter(part => part.trim() && !hasRetiredFocus(part))
-  .join(" ")
-  .trim();
+const scrubText = value => {
+  const text = String(value || "");
+  if (!hasRetiredFocus(text)) return text;
+  return text
+    .split(/(?:\r?\n)+|(?<=[.!?])\s+/)
+    .filter(part => part.trim() && !hasRetiredFocus(part))
+    .join(" ")
+    .trim();
+};
 
 const DROP_FIELDS = ["company", "name", "ticker", "symbol", "title", "titleEn", "titleKo", "headline"];
 const shouldDropItem = item => {

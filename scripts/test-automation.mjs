@@ -1940,15 +1940,29 @@ try {
   if (!browserGate || !pipelineGate) {
     throw new Error("X deletion is not connected to every browser and crawler publication gate");
   }
-  const visibleAssets = await Promise.all([
+  const visibleAssetFiles = [
     "index.html", "app.bundle.js", "data.bundle.js", "companies.json", "company-news.json",
     "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json",
     "nvidia-investments.json", "briefing.json", "quality.json",
-  ].map(file => readFile(file, "utf8")));
-  if (visibleAssets.some(source => /SK\s*hynix|SK하이닉스|하이닉스|Micron|SanDisk|Western Digital|Kioxia|CXMT|GigaDevice|BIWIN|Montage Technology/i.test(source))) {
+  ];
+  const excludedCompanyRe = /SK\s*hynix|SK하이닉스|하이닉스|Micron|SanDisk|Western Digital|Kioxia|CXMT|GigaDevice|BIWIN|Montage Technology/i;
+  const retiredFocusRe = /메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM/i;
+  const containsValue = (value, re) => {
+    if (typeof value === "string") return re.test(value);
+    if (Array.isArray(value)) return value.some(item => containsValue(item, re));
+    if (value && typeof value === "object") {
+      return Object.entries(value).some(([key, item]) => re.test(key) || containsValue(item, re));
+    }
+    return false;
+  };
+  const visibleAssets = await Promise.all(visibleAssetFiles.map(async file => {
+    const source = await readFile(file, "utf8");
+    return file.endsWith(".json") ? JSON.parse(source) : source;
+  }));
+  if (visibleAssets.some(source => containsValue(source, excludedCompanyRe))) {
     throw new Error("permanently excluded company remains in a browser-visible asset");
   }
-  if (visibleAssets.some(source => /메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM/i.test(source))) {
+  if (visibleAssets.some(source => containsValue(source, retiredFocusRe))) {
     throw new Error("retired business focus remains in a browser-visible asset");
   }
   console.log("  OK  X 삭제 영구 제외 레지스트리 · 제외 기업 공개 자산 제거 · 크롤러 재유입 차단");
@@ -1981,9 +1995,9 @@ try {
     const escaped = escape(term);
     return /^[A-Za-z0-9]+$/.test(String(term)) ? `\\b${escaped}\\b` : escaped;
   };
-  // Data files: full case-insensitive policy match (identical to
-  // isExcludedText, since these files have no code-identifier risk).
-  const dataRe = new RegExp(terms.map(patternFor).join("|"), "gi");
+  // Parse JSON first and scan real string values. Scanning serialized JSON can
+  // turn a newline escape followed by "And" into "nAnd", a false NAND hit.
+  const dataRes = terms.map(term => new RegExp(patternFor(term), "i"));
   // Source files: same, except "MX" is matched case-sensitively (no "i") in
   // a separate pass. Lowercase "mx"/"my" is an extremely common mouse-x/
   // mouse-y coordinate variable name in this codebase's canvas/graph code —
@@ -2026,7 +2040,29 @@ try {
       hits.push(`${file}: "${text.slice(Math.max(0, match.index - 40), match.index + match[0].length + 40).replace(/\s+/g, " ")}"`);
     }
   };
-  for (const file of jsonFiles) { if (hits.length >= 20) break; await scan(file, dataRe, stripUrls); }
+  const scanJsonValue = (file, value, path = "$") => {
+    if (hits.length >= 20) return;
+    if (typeof value === "string") {
+      const visible = stripUrls(value);
+      const matched = dataRes.find(re => re.test(visible));
+      if (matched) hits.push(`${file}:${path}: "${visible.slice(0, 120).replace(/\s+/g, " ")}"`);
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => scanJsonValue(file, item, `${path}[${index}]`));
+      return;
+    }
+    if (value && typeof value === "object") {
+      Object.entries(value).forEach(([key, item]) => {
+        if (dataRes.some(re => re.test(key))) hits.push(`${file}:${path}.${key}: banned key`);
+        else scanJsonValue(file, item, `${path}.${key}`);
+      });
+    }
+  };
+  for (const file of jsonFiles) {
+    if (hits.length >= 20) break;
+    try { scanJsonValue(file, JSON.parse(await readFile(file, "utf8"))); } catch {}
+  }
   for (const file of sourceFiles) {
     for (const re of sourceRes) {
       if (hits.length >= 20) break;

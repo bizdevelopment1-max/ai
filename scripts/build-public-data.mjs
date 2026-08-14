@@ -19,11 +19,24 @@ const root = process.cwd();
 const readJson = async file => JSON.parse(await readFile(resolve(root, file), "utf8"));
 const writeJson = (file, value) => writeFile(resolve(root, file), `${JSON.stringify(value)}\n`);
 const writePrettyJson = (file, value) => writeFile(resolve(root, file), `${JSON.stringify(value, null, 2)}\n`);
-// 표시 최종 게이트: 금지어(삼성·samsung·갤럭시·galaxy·MX)가 조금이라도 포함된 레코드는
-// 원장에 남아 있어도 절대 공개 뷰(*-view.json)에 내보내지 않음 — 사이트 노출 금지 보장.
-const notBanned = item => !isExcludedText(JSON.stringify(item || {}));
+// 표시 최종 게이트: 실제 필드값을 재귀 검사해 JSON의 이스케이프 문자와
+// 짧은 영문 금지어가 우연히 이어지는 오탐을 방지함
+const hasBanned = value => {
+  if (typeof value === "string") return isExcludedText(value);
+  if (Array.isArray(value)) return value.some(hasBanned);
+  if (value && typeof value === "object") return Object.values(value).some(hasBanned);
+  return false;
+};
+const notBanned = item => !hasBanned(item);
 const RETIRED_FOCUS = /(?:SK\s*-?\s*hynix|SK하이닉스|하이닉스|Micron|SanDisk|Western Digital|Kioxia|CXMT|GigaDevice|BIWIN|Montage Technology|메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM)/i;
-const hasRetiredFocus = value => RETIRED_FOCUS.test(typeof value === "string" ? value : JSON.stringify(value || {}));
+const hasRetiredFocus = value => {
+  if (typeof value === "string") return RETIRED_FOCUS.test(value);
+  if (Array.isArray(value)) return value.some(hasRetiredFocus);
+  if (value && typeof value === "object") {
+    return Object.entries(value).some(([key, item]) => RETIRED_FOCUS.test(key) || hasRetiredFocus(item));
+  }
+  return false;
+};
 const notRetiredFocus = item => !hasRetiredFocus(item);
 const sourceBacked = item => item?.displayEligible !== false
   && item?.summaryMode === "source-content-extractive"

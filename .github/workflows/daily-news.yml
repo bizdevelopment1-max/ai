@@ -58,6 +58,9 @@ jobs:
       - name: Crawl authoritative English news → source excerpts
         run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
 
+      - name: Apply mobile-AI focus before derived analysis
+        run: node scripts/prune-retired-focus.mjs
+
       - name: Crawl real stock prices + market cap
         run: node scripts/run-with-retry.mjs scripts/crawl-stocks.mjs
 
