@@ -2657,12 +2657,15 @@ a[href]:hover .rainbow-on-hover,
 .stock-tab {
   display: flex; align-items: center; gap: 7px; font-family: var(--f);
   background: var(--panel); border: 2px solid var(--line); border-radius: 11px;
+  min-width: 148px; max-width: 230px; overflow: hidden;
   padding: 7px 12px; cursor: pointer; color: var(--ink-2); transition: all .15s;
 }
 .stock-tab:hover { transform: translateY(-2px); border-color: var(--accent); }
-.stock-tab img { width: 17px; height: 17px; border-radius: 4px; }
+.stock-tab .ct-logo { width: 28px; height: 28px; border-radius: 7px; }
+.stock-tab .ct-logo-img img { width: 20px; height: 20px; }
+.stock-tab-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; align-items: flex-start; gap: 1px; overflow: hidden; }
 .stock-tab b { font-size: 12.5px; font-weight: 800; color: var(--ink); }
-.stock-tab em { font-style: normal; font-size: 11px; color: var(--muted); font-weight: 600; }
+.stock-tab em { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: normal; font-size: 11px; color: var(--muted); font-weight: 600; }
 .stock-tab.on { font-weight: 800; box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 22%, transparent); }
 
 .stock-panel { padding: 16px 20px 20px; }
@@ -2684,8 +2687,8 @@ a[href]:hover .rainbow-on-hover,
 .sp-source { margin-left: auto; font-size: 10px; font-weight: 700; color: var(--muted); }
 
 .stock-chart { margin-top: 6px; }
-/* 차트 폭 상한 — 대화면에서 과도하게 커지지 않게(보기 좋게) */
-.stock-chart svg { max-width: 880px; margin: 0 auto; }
+/* 차트의 마우스 좌표와 SVG 좌표가 일치하도록 컨테이너 전체 폭을 사용 */
+.stock-chart svg { width: 100%; max-width: none; margin: 0; }
 .stock-empty { padding: 40px; text-align: center; color: var(--muted); font-size: 13px; }
 .stock-readout {
   display: flex; align-items: baseline; gap: 12px; padding: 4px 2px 8px; flex-wrap: wrap;

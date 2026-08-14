@@ -1714,7 +1714,12 @@ try {
     && workflowSource.includes("scripts/build-nvidia-investments.mjs")
     && appSource.includes('dataUrl("nvidia-investments.json")');
   const liveHistory = crawler.includes('const YEARS = 5')
-    && crawler.includes("indicators.adjclose")
+    && crawler.includes("indicators?.adjclose")
+    && crawler.includes("function normalizePoints")
+    && crawler.includes("fromYahooSpark")
+    && crawler.includes('c.market === "TSE"')
+    && crawler.includes('"yahoo-spark"')
+    && crawler.includes("retryTargets")
     && crawler.includes("const batchSize = 6")
     && crawler.includes("new Set(TICKERS.map(c => c.t))")
     && !crawler.includes("function scenarioSeries");

@@ -2145,9 +2145,11 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, the
             <button key={s.ticker} className={"stock-tab" + (on ? " on" : "")}
               style={on ? { borderColor: ac, color: ac, background: acSoft } : null}
               onClick={() => setTicker(s.ticker)}>
-              <img src={`https://www.google.com/s2/favicons?domain=${s.domain}&sz=32`} alt="" loading="lazy" />
-              <b>{s.ticker}</b>
-              <em>{s.marketCategory || s.exchange || s.name.replace(/\s*\(.*\)/, "")}</em>
+              <CoLogo name={s.name} domain={s.domain} accent={ac} />
+              <span className="stock-tab-copy">
+                <b>{s.ticker}</b>
+                <em>{s.marketCategory || s.exchange || s.name.replace(/\s*\(.*\)/, "")}</em>
+              </span>
             </button>
           );
         })}

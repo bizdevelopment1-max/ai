@@ -8,6 +8,8 @@
    Writes stocks.json for the dashboard. No synthetic prices.
    ============================================================ */
 import { writeFile, readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const TICKERS = [
   // ── 하이퍼스케일러 ──
@@ -95,10 +97,31 @@ const TICKERS = [
 ];
 
 const YEARS = 5;
-const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
+// Yahoo intermittently rate-limits the old Linux crawler signature even when the
+// same public endpoint is healthy. Keep a current desktop signature so scheduled
+// runs follow the normal web-client path instead of retaining stale closes.
+const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
 const fmtCap = (capB) => (capB >= 1000 ? `$${(capB / 1000).toFixed(2)}T` : `$${Math.round(capB)}B`);
 const round2 = (n) => Math.round(n * 100) / 100;
 const cutoffDate = () => { const d = new Date(); d.setFullYear(d.getFullYear() - YEARS); return d; };
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+// 공급자마다 정렬 순서·중복 행·휴장일 응답 방식이 다르므로 모든 시계열을
+// 동일한 규칙으로 정규화한 뒤 마지막 유효 거래일을 선택한다.
+function normalizePoints(rows) {
+  const today = new Date().toISOString().slice(0, 10);
+  const byDate = new Map();
+  for (const row of rows || []) {
+    const d = String(row?.d || "").slice(0, 10);
+    const p = Number(row?.p);
+    if (!ISO_DAY.test(d) || d > today || !Number.isFinite(p) || p <= 0) continue;
+    byDate.set(d, round2(p));
+  }
+  return [...byDate.entries()]
+    .map(([d, p]) => ({ d, p }))
+    .sort((a, b) => a.d.localeCompare(b.d));
+}
 
 // ---- Yahoo cookie + crumb session (required for datacenter IPs) ----
 async function yahooSession() {
@@ -120,30 +143,60 @@ async function fromYahoo(c, sess) {
   // Yahoo의 cookie+crumb 경로가 지역·IP별로 401이 될 수 있어 같은 요청을
   // 무세션으로도 재시도함
   const sessions = sess ? [sess, null] : [null];
-  for (const activeSession of sessions) {
-    for (const h of ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]) {
-      try {
-        const q = activeSession && activeSession.crumb ? `&crumb=${encodeURIComponent(activeSession.crumb)}` : "";
-        const url = `https://${h}/v8/finance/chart/${c.y}?range=${YEARS}y&interval=1d${q}`;
-        const headers = { "User-Agent": UA, Accept: "application/json" };
-        if (activeSession && activeSession.cookie) headers.Cookie = activeSession.cookie;
-        const res = await fetch(url, { headers });
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        const j = await res.json();
-        const r = j && j.chart && j.chart.result && j.chart.result[0];
-        if (!r || !r.timestamp) throw new Error("no result");
-        const closes = r.indicators.quote[0].close;
-        const adjusted = r.indicators.adjclose?.[0]?.adjclose || [];
-        const points = r.timestamp
-          .map((t, i) => ({
+  const hosts = ["query1.finance.yahoo.com", "query2.finance.yahoo.com"];
+  for (let attempt = 0; attempt < 4; attempt++) {
+    for (const activeSession of sessions) {
+      for (const h of hosts) {
+        try {
+          const crumb = activeSession?.crumb ? `&crumb=${encodeURIComponent(activeSession.crumb)}` : "";
+          const cacheBust = `&_=${Date.now()}-${attempt}`;
+          const url = `https://${h}/v8/finance/chart/${encodeURIComponent(c.y)}?range=${YEARS}y&interval=1d&events=history${crumb}${cacheBust}`;
+          const headers = { "User-Agent": UA, Accept: "application/json", "Cache-Control": "no-cache" };
+          if (activeSession?.cookie) headers.Cookie = activeSession.cookie;
+          const res = await fetch(url, { headers, signal: AbortSignal.timeout(15000) });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const j = await res.json();
+          const r = j?.chart?.result?.[0];
+          if (!r?.timestamp) throw new Error("no result");
+          const closes = r.indicators?.quote?.[0]?.close || [];
+          const adjusted = r.indicators?.adjclose?.[0]?.adjclose || [];
+          const points = normalizePoints(r.timestamp.map((t, i) => ({
             d: new Date(t * 1000).toISOString().slice(0, 10),
             p: typeof adjusted[i] === "number" ? adjusted[i] : closes[i],
-          }))
-          .filter((p) => typeof p.p === "number" && isFinite(p.p))
-          .map((p) => ({ d: p.d, p: round2(p.p) }));
-        if (points.length >= 2) return points;
-      } catch { /* next host/session */ }
+          })));
+          if (points.length >= 2) return points;
+        } catch { /* 다음 호스트·세션·백오프 재시도 */ }
+      }
     }
+    if (attempt < 3) await sleep(800 * (2 ** attempt));
+  }
+  return null;
+}
+
+// Chart v8의 IP별 순간 제한과 별도로 동작하는 Yahoo Spark 공개 경로
+// 일본 종목처럼 Yahoo 의존도가 높은 시장의 최신 거래일 복구에 사용한다.
+async function fromYahooSpark(c) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    for (const host of ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]) {
+      try {
+        const url = `https://${host}/v7/finance/spark?symbols=${encodeURIComponent(c.y)}&range=${YEARS}y&interval=1d&_=${Date.now()}-${attempt}`;
+        const res = await fetch(url, {
+          headers: { "User-Agent": UA, Accept: "application/json", "Cache-Control": "no-cache" },
+          signal: AbortSignal.timeout(15000),
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const response = (await res.json())?.spark?.result?.[0]?.response?.[0];
+        if (!response?.timestamp) throw new Error("no result");
+        const closes = response.indicators?.quote?.[0]?.close || [];
+        const adjusted = response.indicators?.adjclose?.[0]?.adjclose || [];
+        const points = normalizePoints(response.timestamp.map((t, i) => ({
+          d: new Date(t * 1000).toISOString().slice(0, 10),
+          p: typeof adjusted[i] === "number" ? adjusted[i] : closes[i],
+        })));
+        if (points.length >= 2) return points;
+      } catch { /* 다음 호스트·재시도 */ }
+    }
+    if (attempt < 2) await sleep(900 * (2 ** attempt));
   }
   return null;
 }
@@ -354,10 +407,17 @@ async function tvLastPrice(c) {
 
 async function crawlOne(c, sess) {
   // 지역별 전용 피드를 먼저 사용해 한 공급자의 속도 제한이 전체를 막지 않게 함
-  const yahooSources = [
-    ["yahoo-api", () => fromYahoo(c, sess)],
-    ["yahoo-web", () => fromYahooWeb(c, sess)],
-  ];
+  const yahooSources = c.market === "TSE"
+    ? [
+        ["yahoo-spark", () => fromYahooSpark(c)],
+        ["yahoo-api", () => fromYahoo(c, sess)],
+        ["yahoo-web", () => fromYahooWeb(c, sess)],
+      ]
+    : [
+        ["yahoo-api", () => fromYahoo(c, sess)],
+        ["yahoo-spark", () => fromYahooSpark(c)],
+        ["yahoo-web", () => fromYahooWeb(c, sess)],
+      ];
   const usSources = [
     ["nasdaq", () => fromNasdaq(c)],
     ...yahooSources,
@@ -380,12 +440,12 @@ async function crawlOne(c, sess) {
   const tried = [];
   for (const [name, fn] of sources) {
     let got = null;
-    try { got = await fn(); } catch { got = null; }
+    try { got = normalizePoints(await fn()); } catch { got = null; }
     tried.push(`${name}:${got ? got.length : 0}`);
     if (got && got.length) { points = got; src = name; break; }
   }
   if (!points) { console.warn(`[stock:${c.t}] no data — tried ${tried.join(" ")}`); return null; }
-  const last = points[points.length - 1];
+  const last = points.at(-1);
   let marketCap = c.shares ? fmtCap(last.p * c.shares) : "";
   if (!marketCap && !c.market) { marketCap = await yahooMarketCap(c, sess); }   // 미국 종목의 shares 미상 → Yahoo 요약에서 시총 파싱
   console.log(`[stock:${c.t}] ${src}: ${points.length} days, last ${last.d} ${c.currency || "$"}${last.p}${marketCap ? ", cap " + marketCap : ""} (${tried.join(" ")})`);
@@ -411,9 +471,8 @@ function mergeSeries(t, prevObj, freshObj) {
     for (const p of (prevObj.points || [])) byDate[p.d] = p.p;
     for (const p of (freshObj.points || [])) byDate[p.d] = p.p;
     const cut = cutoffDate();
-    const points = Object.entries(byDate).map(([d, p]) => ({ d, p: round2(p) }))
-      .filter(p => new Date(p.d) >= cut)               // 5년 범위로 제한(무한 증가 방지)
-      .sort((a, b) => (a.d < b.d ? -1 : 1));
+    const points = normalizePoints(Object.entries(byDate).map(([d, p]) => ({ d, p })))
+      .filter(p => new Date(p.d) >= cut);              // 5년 범위로 제한(무한 증가 방지)
     const last = points[points.length - 1];
     const sh = sharesOf();
     const cap = sh ? fmtCap(last.p * sh) : (freshObj.marketCap || prevObj.marketCap || "");
@@ -427,13 +486,28 @@ async function main() {
   console.log(`Yahoo session: ${sess ? (sess.crumb ? "cookie+crumb" : "cookie only") : "none"}`);
   const results = [];
   const batchSize = 6;
-  for (let i = 0; i < TICKERS.length;) {
+  // Yahoo에만 의존하는 일본 종목을 먼저 수집한다. 미국 종목의 시가총액 보조
+  // 요청이 누적된 뒤 호출하면 무료 엔드포인트의 순간 레이트리밋에 걸릴 수 있다.
+  const crawlQueue = [...TICKERS].sort((a, b) => Number(b.market === "TSE") - Number(a.market === "TSE"));
+  for (let i = 0; i < crawlQueue.length;) {
     // Eastmoney는 동시 다중 요청을 차단하므로 중국 A주는 순차 수집
-    const activeBatchSize = TICKERS[i].market ? 1 : batchSize;
-    const batch = await Promise.all(TICKERS.slice(i, i + activeBatchSize).map((c) => crawlOne(c, sess)));
+    const activeBatchSize = crawlQueue[i].market ? 1 : batchSize;
+    const batch = await Promise.all(crawlQueue.slice(i, i + activeBatchSize).map((c) => crawlOne(c, sess)));
     results.push(...batch.filter(Boolean));
     i += activeBatchSize;
-    if (i < TICKERS.length) await new Promise(resolve => setTimeout(resolve, activeBatchSize === 1 ? 450 : 300));
+    if (i < crawlQueue.length) await sleep(activeBatchSize === 1 ? 450 : 300);
+  }
+  // 첫 패스의 순간 제한은 새 세션 없이 한 번 더 복구한다. 기존 데이터로 조용히
+  // 후퇴하기 전에 실제 최신 거래일을 다시 확인하기 위한 마지막 안전망이다.
+  const collected = new Set(results.map(([ticker]) => ticker));
+  const retryTargets = TICKERS.filter(c => !collected.has(c.t));
+  if (retryTargets.length) {
+    await sleep(2500);
+    for (const c of retryTargets) {
+      const recovered = await crawlOne(c, null);
+      if (recovered) results.push(recovered);
+      await sleep(900);
+    }
   }
   const fresh = Object.fromEntries(results);
   if (!results.length) throw new Error("All stock data providers failed; keeping the previous bundle unchanged.");
@@ -463,4 +537,8 @@ async function main() {
   console.log(`Wrote stocks.json (${Object.keys(final).length} tickers, merged·monotonic) — ${dates}`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+export { fromYahoo, fromYahooSpark, normalizePoints };
+
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}

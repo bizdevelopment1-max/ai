@@ -280,7 +280,8 @@ function App() {
     if (!(stocksInView || active === "stocks") || !dataVersion) return;
     let alive = true;
     Promise.all([
-      fetch(dataUrl("stocks.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null)),
+      // 주가 파일은 최신 거래일이 핵심이므로 서비스워커·브라우저의 오래된 응답을 재사용하지 않는다.
+      fetch(dataUrl("stocks.json"), { cache: "no-store" }).then(r => (r.ok ? r.json() : null)),
       fetch(dataUrl("nvidia-investments.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null)),
     ])
       .then(([stocksPayload, investmentPayload]) => {
