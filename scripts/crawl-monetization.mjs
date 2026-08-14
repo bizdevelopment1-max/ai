@@ -3,12 +3,12 @@
    crawl-monetization.mjs — 'AI 수익화 플레이북' 기업별 누적 갱신
    입력: news.json(이미 크롤된 최신 기사) — 별도 네트워크 호출 없음.
    목적: 신사업 발굴 관점에서 "어떤 기업이 ①어떻게 돈을 버는가(수익모델)
-         ②비즈니스 모델 신호 ③앞으로의 투자·사업 방향"을 기사 근거로 계속 축적.
+         ②비즈니스 모델 신호 ③앞으로의 투자·사업 방향"을 최신 원문으로 교체.
    동작:
      - 대시보드 기업(밸류체인 계층 부여)을 별칭으로 기사에서 탐지.
      - 각 기사를 7개 수익모델 유형 + 4개 방향(투자·인수·확장·제휴)으로 분류.
      - 기업별로 modelMix(수익모델 분포)·최신 수익화 시그널·투자/사업 방향 시그널을
-       누적(merge)해 monetization.json 생성. 하드코딩 아님 — 기사 근거로 갱신.
+       동일 기업·유형별 최신값만 남겨 monetization.json 생성. 하드코딩 아님 — 기사 근거로 갱신.
      - 모든 시그널은 displayEligible + 원문 발췌(source-content-extractive) 기사만,
        사명(삼성/MX/Galaxy) 미출력.
    ============================================================ */
@@ -107,6 +107,7 @@ const pickTagged = (list, lines) => {
   return null;
 };
 const canonUrl = u => { const s = String(u || ""); try { const p = new URL(s); p.hash = ""; p.search = ""; return p.href.replace(/\/+$/, ""); } catch { return s.replace(/[?#].*$/, "").replace(/\/+$/, ""); } };
+const MONEY_CONTEXT = /revenue|sales|subscription|pricing|price|paid|premium|bundle|commission|transaction|usage-based|license|매출|판매|구독|가격|유료|프리미엄|번들|수수료|거래|과금|라이선스/i;
 
 async function main() {
   const suppression = await loadSuppressionRegistry();
@@ -138,21 +139,14 @@ async function main() {
   const ALL_COMPANIES = withRegex([...COMPANIES, ...startupEntries]
     .filter(company => !suppression.hasCompany(company.name)));
 
-  // 기존 누적 로드 — signals는 URL 기준으로 병합(중복 방지)
-  let prev = { companies: [] };
-  try { const p = JSON.parse(await readFile("monetization.json", "utf8")); if (p && Array.isArray(p.companies)) prev = p; } catch {}
-  const prevByName = new Map(prev.companies
-    .filter(company => !suppression.hasCompany(company.name))
-    .map(c => [c.name, c]));
-
-  // 기업별 시그널 버킷: url -> signal (누적 병합)
+  // 기업별 시그널 버킷: 이번 실행의 검증 원문만 사용
+  // 동일 기업·유형은 최신 원문이 이전 공개값을 대체
   const buckets = new Map();     // name -> { monetize: Map(url->sig), direction: Map(url->sig), modelMix: {id:n} }
   const bucket = name => {
     if (!buckets.has(name)) {
-      const p = prevByName.get(name) || {};
       buckets.set(name, {
-        monetize: new Map((p.monetize || []).map(s => [canonUrl(s.url), s])),
-        direction: new Map((p.direction || []).map(s => [canonUrl(s.url), s])),
+        monetize: new Map(),
+        direction: new Map(),
       });
     }
     return buckets.get(name);
@@ -168,12 +162,14 @@ async function main() {
     // 표시 시그널과 태그가 항상 일치(요약 뒷부분 우연 매칭 오분류 방지).
     const cand = [a.title || "", ...toLines(a.summary)].map(s => s.trim()).filter(s => s && !isExcludedText(s));
     if (!cand.length) continue;
-    const mHit = pickTagged(MODELS, cand);                  // 수익모델 시그널(있으면)
+    const modelCandidate = pickTagged(MODELS, cand);        // 수익모델 시그널(있으면)
+    const mHit = modelCandidate && MONEY_CONTEXT.test(modelCandidate.line) ? modelCandidate : null;
     const dHit = pickTagged(DIRECTIONS, cand);              // 사업 방향 시그널(있으면)
     if (!mHit && !dHit) continue;
 
     for (const c of ALL_COMPANIES) {
-      if (!c.re.test(hay)) continue;
+      const assigned = a.co ? a.co === c.name : c.re.test(a.title || "");
+      if (!assigned) continue;
       scanned++;
       const meta = { source: a.source || "", date: a.date || TODAY, url };
       const k = canonUrl(url);
@@ -186,15 +182,16 @@ async function main() {
     }
   }
 
-  const recent = (m, n) => [...m.values()]
+  const recentByType = (m, field, n) => [...m.values()]
     .filter(s => !isExcludedText(JSON.stringify(s)))
     .sort((x, y) => (x.date < y.date ? 1 : x.date > y.date ? -1 : 0))
+    .filter((signal, index, rows) => rows.findIndex(candidate => candidate[field] === signal[field]) === index)
     .slice(0, n);
 
   const companies = ALL_COMPANIES.map(c => {
     const b = buckets.get(c.name) || { monetize: new Map(), direction: new Map() };
-    const monetize = recent(b.monetize, 5);
-    const direction = recent(b.direction, 5);
+    const monetize = recentByType(b.monetize, "model", 3);
+    const direction = recentByType(b.direction, "kind", 3);
     const mix = {};
     for (const s of b.monetize.values()) if (s.model) mix[s.model] = (mix[s.model] || 0) + 1;
     const modelMix = Object.entries(mix).sort((a, b2) => b2[1] - a[1]).map(([id, n]) => ({ id, n }));
@@ -204,6 +201,12 @@ async function main() {
 
   const out = {
     generatedAt: new Date().toISOString(),
+    schemaVersion: 2,
+    database: {
+      mode: "latest-verified-snapshot",
+      replacementPolicy: "company + signal type + newest source date",
+      publicRetention: "current-only",
+    },
     count: companies.length,
     models: MODELS.map(({ re, ...m }) => m),
     directions: DIRECTIONS.map(({ re, ...d }) => d),

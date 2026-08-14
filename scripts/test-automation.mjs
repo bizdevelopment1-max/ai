@@ -41,6 +41,7 @@ const required = [
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
   "scripts/build-public-data.mjs",
+  "scripts/build-mobile-ai-business-db.mjs",
   "scripts/suppression-registry.mjs",
   "scripts/korean-copy.mjs",
   "scripts/audit-agent.mjs",
@@ -49,6 +50,7 @@ const required = [
   "news-view.json",
   "research-view.json",
   "market-view.json",
+  "mobile-ai-business-view.json",
   "infra-view.json",
   "bizmodel-view.json",
   "data-version.json",
@@ -69,6 +71,7 @@ const required = [
   "config/news-policy.json",
   "config/global-source-policy.json",
   "config/company-source-policy.json",
+  "_config.yml",
   "index.html",
   "app.bundle.js",
   "data.bundle.js",
@@ -1127,7 +1130,8 @@ try {
     && !/원문 수치|원문 정량 근거/.test(boards)
     && /aiDashDeletedMarketRecords/.test(boards)
     && /rememberSuppression\(\{[\s\S]{0,180}scope: "market"/.test(boards)
-    && /X는 사용자가 선택한 항목만 숨김/.test(boards);
+    && /같은 주제는 최신 검증값만 공개/.test(boards)
+    && /X로 숨긴 항목은 이후 수집에서도 영구 제외/.test(boards);
   const noForecastPlaceholder = /const hasForecast = numericValue\(it\.forecast\)/.test(boards)
     && /hasCurrent && hasForecast && <span className="mkt-arr" aria-hidden="true" \/>/.test(boards)
     && /hasForecast && <span className="mkt-num fut">/.test(boards);
@@ -1153,12 +1157,12 @@ try {
   };
   const failedMarketChecks = Object.entries(marketChecks).filter(([, value]) => !value).map(([key]) => key);
   if (failedMarketChecks.length) {
-    throw new Error(`append-only market database requires publisher-page-backed display records and retained source links: ${failedMarketChecks.join(", ")}`);
+    throw new Error(`audit ledger requires publisher-page-backed records and retained source links: ${failedMarketChecks.join(", ")}`);
   }
-  console.log(`  정상  market.json 누적 정량 DB ${records.length}건`);
+  console.log(`  정상  market.json 비공개 감사 원장 ${records.length}건 · 공개 뷰 최신값 교체`);
 } catch (error) {
   failed = true;
-  console.error(`  실패  market.json 누적 정량 DB: ${error.message}`);
+  console.error(`  실패  market.json 비공개 감사 원장: ${error.message}`);
 }
 
 try {
@@ -1482,13 +1486,60 @@ try {
     || !/build-public-data\.mjs/.test(workflowSource)
     || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(marketRecords)
     || remainingMarketDuplicates || !mergedMarketRecordsValid
-    || Number(publicMarket.sourceRecordCount || 0) - marketRecords.length !== Number(publicMarket.consolidatedDuplicateCount || 0)) {
+    || publicMarket.database?.mode !== "latest-verified-snapshot"
+    || publicMarket.database?.publicRetention !== "current-only"
+    || marketRecords.map(record => record.stableKey).some((key, index, keys) => !key || keys.indexOf(key) !== index)
+    || Number(publicMarket.sourceRecordCount || 0) - marketRecords.length
+      !== Number(publicMarket.consolidatedDuplicateCount || 0) + Number(publicMarket.replacedRecordCount || 0)) {
     throw new Error("public views must be versioned, source-backed, and free of minute cache busting");
   }
   console.log(`  OK  versioned source-only public views ${publicNews.count}/${publicResearch.count}/${marketRecords.length} · 시장 중복 ${publicMarket.consolidatedDuplicateCount || 0}건 통합`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  source-only public views: ${error.message}`);
+}
+
+try {
+  const [database, boardsSource, componentsSource, workflowSource, recoverySource, builderSource, version] = await Promise.all([
+    readFile("mobile-ai-business-view.json", "utf8").then(JSON.parse),
+    readFile("boards.jsx", "utf8"),
+    readFile("components.jsx", "utf8"),
+    readFile(".github/workflows/daily-news.yml", "utf8"),
+    readFile(".github/workflows/daily-news-update.yml", "utf8"),
+    readFile("scripts/build-mobile-ai-business-db.mjs", "utf8"),
+    readFile("data-version.json", "utf8").then(JSON.parse),
+  ]);
+  const rows = [...(database.markets || []), ...(database.competitors || [])];
+  const stableKeys = rows.map(item => item.stableKey);
+  const companyNames = (database.competitors || []).map(item => item.name.toLocaleLowerCase());
+  const validMarkets = (database.markets || []).every(item => item.sourceUrl && item.publishedAt
+    && Array.isArray(item.metrics) && item.metrics.length > 0 && item.metrics.every(metric => metric.label && metric.value));
+  const validCompetitors = (database.competitors || []).every(item => item.sourceUrl && item.publishedAt
+    && item.name && item.businessModel && item.proof);
+  const validOpportunities = (database.opportunities || []).every(item => item.evidenceCount >= 2
+    && item.whereToPlay && item.valueCapture && item.rationale
+    && Array.isArray(item.nextMetrics) && item.nextMetrics.length >= 3);
+  if (database.schemaVersion !== 2
+    || database.database?.mode !== "latest-verified-snapshot"
+    || database.database?.publicRetention !== "current-only"
+    || stableKeys.length !== new Set(stableKeys).size
+    || companyNames.length !== new Set(companyNames).size
+    || !validMarkets || !validCompetitors || !validOpportunities
+    || !database.snapshotVersion || !database.summary?.sources
+    || !boardsSource.includes("MobileAIBusinessBoard")
+    || !boardsSource.includes("mobile-ai-business-view.json")
+    || !componentsSource.includes('id: "opportunity"')
+    || !workflowSource.includes("scripts/build-mobile-ai-business-db.mjs")
+    || !recoverySource.includes("scripts/build-mobile-ai-business-db.mjs")
+    || !builderSource.includes("latestByStableKey")
+    || !builderSource.includes("previousIdentity")
+    || !(version.assets || []).includes("mobile-ai-business-view.json")) {
+    throw new Error("mobile AI business database must publish one current verified record per stable topic and company");
+  }
+  console.log(`  OK  모바일 AI 신사업 DB ${database.markets.length}개 시장 · ${database.competitors.length}개 수익모델 · ${database.opportunities.length}개 기회 · 최신값 교체`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  mobile AI business database: ${error.message}`);
 }
 
 const major = Number(process.versions.node.split(".")[0]);
@@ -1510,6 +1561,7 @@ const pipelineScripts = [
   "scripts/build-insights.mjs", "scripts/crawl-companies.mjs", "scripts/crawl-monetization.mjs",
   "scripts/crawl-a16z-startups.mjs", "scripts/crawl-strategic-ventures.mjs",
   "scripts/build-company-intelligence.mjs",
+  "scripts/build-mobile-ai-business-db.mjs",
 ];
 for (const file of pipelineScripts) {
   const source = await readFile(file, "utf8");
@@ -1772,7 +1824,7 @@ try {
     "audit.json", "collection-health.json", "companies.json", "company-news.json", "insights.json",
     "llm-health.json", "monetization.json", "news-view.json", "nvidia-investments.json", "quality.json",
     "research-view.json", "startups.json", "stocks.json", "business-model-forecasts.json",
-    "market-view.json", "stock-events.json",
+    "market-view.json", "mobile-ai-business-view.json", "stock-events.json",
   ];
   const sourceFiles = ["boards.jsx", "app.jsx", "components.jsx", "charts.jsx", "anim.jsx", "tweaks-panel.jsx", "data.js"];
   const hits = [];

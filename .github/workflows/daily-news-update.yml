@@ -58,6 +58,12 @@ jobs:
       - name: Build strict company-specific news index
         run: node scripts/run-with-retry.mjs scripts/build-company-news.mjs
 
+      - name: Refresh current monetization snapshot
+        run: node scripts/run-with-retry.mjs scripts/crawl-monetization.mjs
+
+      - name: Build latest mobile AI business database snapshot
+        run: node scripts/run-with-retry.mjs scripts/build-mobile-ai-business-db.mjs
+
       - name: Build source-backed NVIDIA investment portfolio map
         run: node scripts/run-with-retry.mjs scripts/build-nvidia-investments.mjs
 
@@ -67,11 +73,17 @@ jobs:
       - name: Audit published bundle
         run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
 
+      - name: Build compact public datasets
+        run: node scripts/run-with-retry.mjs scripts/build-public-data.mjs
+
+      - name: Validate automation and browser bundle
+        run: node scripts/run-with-retry.mjs scripts/test-automation.mjs
+
       - name: Commit changes
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json company-news.json nvidia-investments.json insights.json briefing.json radar.json research.json startups.json market.json infra.json bizmodel.json audit.json quality.json history.json llm-health.json collection-health.json
+          git add news.json company-news.json nvidia-investments.json insights.json briefing.json radar.json research.json startups.json market.json infra.json bizmodel.json monetization.json mobile-ai-business-view.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else

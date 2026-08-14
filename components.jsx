@@ -169,6 +169,7 @@ function Trend({ v, small, animate }) {
 const NAV = [
   { id: "ib", ko: "증권사 인사이트", en: "IB Research", icon: "report", group: "개요" },
   { id: "overview", ko: "Executive Summary", en: "Overview", icon: "grid", group: "개요" },
+  { id: "opportunity", ko: "모바일 AI 신사업 DB", en: "Market · Money · Move", icon: "target", group: "개요" },
   { id: "strategy", ko: "단말 AI 전략 프레임", en: "Mobile AI Strategy", icon: "target", group: "개요" },
   { id: "articles", ko: "데일리 기사", en: "Daily Articles", icon: "news", group: "개요" },
   { id: "app", ko: "AI 경험·버티컬", en: "Experience & Verticals", icon: "spark", group: "SW·서비스 밸류체인" },

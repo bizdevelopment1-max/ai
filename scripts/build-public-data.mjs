@@ -49,7 +49,8 @@ const researchKeys = [
   "localization", "sourceScope", "sourceRegion", "sourceLanguage", "sourceLocale",
 ];
 const recordKeys = [
-  "id", "type", "group", "verticalId", "title", "titleEn", "metricLabel", "values",
+  "id", "stableKey", "type", "group", "verticalId", "collectionTrack", "discoveryQueryId", "topic",
+  "title", "titleEn", "metricLabel", "values",
   "sourceName", "sourceUrl", "publishedAt", "collectedAt", "evidence", "origin",
   "provenance", "displayEligible", "sourceQuantifiedLines", "sourceQuantities", "sourceMetricValues", "localization",
   "summaryLinesEn", "summaryLinesKo", "consolidatedTitle", "consolidatedInsights",
@@ -65,9 +66,38 @@ const visibleRecordSources = (market.records || []).filter(record => sourceBacke
   && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
   && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length)
   .filter(notBanned).filter(notDeleted("market"));
-const visibleRecords = consolidateMarketRecords(visibleRecordSources)
+const compactKey = value => String(value || "").toLocaleLowerCase()
+  .replace(/[^a-z0-9가-힣]+/g, "-").replace(/^-+|-+$/g, "");
+const marketStableKey = record => {
+  const track = record.collectionTrack || (record.type === "consumer-survey" ? "consumer-survey" : "ai-market");
+  const topic = record.discoveryQueryId
+    || record.verticalId
+    || compactKey(record.topic || record.consolidatedTitle || record.title || record.id);
+  return `${track}:${topic}`;
+};
+const marketDateValue = record => {
+  const direct = Date.parse(String(record.publishedAt || ""));
+  if (Number.isFinite(direct)) return direct;
+  const shorthand = String(record.publishedAt || "").match(/'?([0-9]{2})(?:\.([0-9]{1,2}))?/);
+  if (shorthand) return Date.UTC(2000 + Number(shorthand[1]), Number(shorthand[2] || 1) - 1, 1);
+  const collected = Date.parse(String(record.collectedAt || ""));
+  return Number.isFinite(collected) ? collected : 0;
+};
+const consolidatedMarketRecords = consolidateMarketRecords(visibleRecordSources);
+const consolidatedDuplicateCount = consolidatedMarketRecords
+  .reduce((count, record) => count + Number(record.duplicateRecordCount || 0), 0);
+const latestRecordByKey = new Map();
+for (const record of consolidatedMarketRecords) {
+  const stableKey = marketStableKey(record);
+  const current = latestRecordByKey.get(stableKey);
+  if (!current || marketDateValue(record) > marketDateValue(current)) {
+    latestRecordByKey.set(stableKey, { ...record, stableKey });
+  }
+}
+const replacedRecordCount = Math.max(0, consolidatedMarketRecords.length - latestRecordByKey.size);
+const visibleRecords = [...latestRecordByKey.values()]
+  .sort((left, right) => marketDateValue(right) - marketDateValue(left))
   .map(item => normalizeLocalizedRecord(compact(item, recordKeys)));
-const consolidatedDuplicateCount = visibleRecords.reduce((count, record) => count + Number(record.duplicateRecordCount || 0), 0);
 const visibleSignals = (data, scope) => (data.items || [])
   .filter(item => item?.provenance?.status === "evidence-linked" && item?.sourceSummaryMode === "source-content-extractive")
   .filter(notBanned).filter(notDeleted(scope))
@@ -84,6 +114,13 @@ const views = {
     sourceRecordCount: visibleRecordSources.length,
     insightCount: visibleRecords.length,
     consolidatedDuplicateCount,
+    replacedRecordCount,
+    database: {
+      mode: "latest-verified-snapshot",
+      replacementPolicy: "collection-track + discovery-topic + newest verified source",
+      publicRetention: "current-only",
+      rawLedger: "audit-only",
+    },
     records: visibleRecords,
   },
   "infra-view.json": { generatedAt, count: visibleSignals(infra, "infra-signal").length, groups: infra.groups || [], items: visibleSignals(infra, "infra-signal") },
@@ -102,10 +139,10 @@ await Promise.all(Object.entries(views).map(async ([file, value]) => {
 
 const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
-  ...await Promise.all(["insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  ...await Promise.all(["insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
-await writeJson("data-version.json", { version, generatedAt, assets: [...Object.keys(views), "company-news.json", "business-model-forecasts.json"] });
+await writeJson("data-version.json", { version, generatedAt, assets: [...Object.keys(views), "company-news.json", "business-model-forecasts.json", "mobile-ai-business-view.json"] });
 
-console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} market insights · ${consolidatedDuplicateCount} duplicate records consolidated · version ${version}`);
+console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} current market insights · ${consolidatedDuplicateCount} duplicate records consolidated · ${replacedRecordCount} prior topic values replaced · version ${version}`);

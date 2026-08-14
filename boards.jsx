@@ -2738,9 +2738,9 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
         ctx.setLineDash((isHl || isSel) ? (edgeDash[e.type] || []) : []);
         ctx.stroke(); ctx.setLineDash([]);
         if (isHl || isSel) {
-          const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+          const midpointX = (a.x + b.x) / 2, midpointY = (a.y + b.y) / 2;
           ctx.font = "bold 9px sans-serif"; ctx.fillStyle = edgeColors[e.type] || "#888"; ctx.textAlign = "center";
-          ctx.fillText(e.label, mx, my - 5);
+          ctx.fillText(e.label, midpointX, midpointY - 5);
         }
       }
 
@@ -2787,11 +2787,11 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
 
     const getNode = (x, y) => {
       const rect = canvas.getBoundingClientRect();
-      const mx = (x - rect.left), my = (y - rect.top);
-      mouseRef.current = { x: mx, y: my };
+      const mouseX = (x - rect.left), mouseY = (y - rect.top);
+      mouseRef.current = { x: mouseX, y: mouseY };
       for (let i = nodes.length - 1; i >= 0; i--) {
         const n = nodes[i];
-        const dx = mx - n.x, dy = my - n.y;
+        const dx = mouseX - n.x, dy = mouseY - n.y;
         if (dx * dx + dy * dy < (n.r + 4) * (n.r + 4)) return n;
       }
       return null;
@@ -4700,6 +4700,155 @@ function ExecToplines({ items, insights, onNav }) {
 }
 
 
+// ---- 모바일 AI 신사업 DB: 시장성 → 경쟁 수익모델 → 실행 기회 최신 스냅샷 ----
+function MobileAIBusinessBoard({ sectionRef, dataVersion }) {
+  const inView = useInView(sectionRef);
+  const [data, setData] = React.useState(null);
+  const [loaded, setLoaded] = React.useState(false);
+  const [view, setView] = React.useState("all");
+  const [expanded, setExpanded] = React.useState("");
+
+  React.useEffect(() => {
+    if (!inView || loaded || !dataVersion) return;
+    setLoaded(true);
+    fetch(`mobile-ai-business-view.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
+      .then(response => response.ok ? response.json() : null)
+      .then(payload => {
+        if (payload?.database?.mode === "latest-verified-snapshot") setData(payload);
+      })
+      .catch(() => {});
+  }, [inView, loaded, dataVersion]);
+
+  const markets = data?.markets || [];
+  const competitors = data?.competitors || [];
+  const opportunities = data?.opportunities || [];
+  const summary = data?.summary || {};
+  const show = id => view === "all" || view === id;
+  const toggle = key => setExpanded(current => current === key ? "" : key);
+  const generated = data?.generatedAt ? data.generatedAt.slice(0, 10) : "";
+  const flow = [
+    ["01", "MARKET", "시장 크기·성장"],
+    ["02", "MONEY", "경쟁 수익모델"],
+    ["03", "RIGHT TO WIN", "단말·OS·결제 접점"],
+    ["04", "MOVE", "신사업 우선순위"],
+  ];
+
+  return (
+    <section className="board maib" ref={sectionRef} data-screen-label="Mobile AI Business Database">
+      <AnimCtx.Provider value={inView}>
+        <div className="board-head" style={{ "--accent": "#0F5EA8" }}>
+          <span className="board-tab" style={{ background: "#0F5EA8" }} />
+          <div className="board-titles">
+            <h2>모바일 AI 신사업 DB <span className="board-en">Market → Money → Move</span></h2>
+            <p>시장 규모 · 경쟁사의 돈 버는 방식 · 최신 실행 사례 · 신사업 우선순위를 하나의 의사결정 흐름으로 통합</p>
+          </div>
+          {generated && <div className="board-count maib-live">LATEST · {generated}</div>}
+        </div>
+
+        <div className="maib-policy">
+          <b>최신값 우선 공개</b>
+          <span>동일 주제의 새 검증값 확인 시 이전 공개값 자동 제거</span>
+          <span>원문·발행일·지표 정의가 확인된 항목만 반영</span>
+        </div>
+
+        {!data ? <SourcePipeline kind="market" /> : <React.Fragment>
+          <div className="maib-summary">
+            <div><em>시장 주제</em><b>{summary.marketTopics || markets.length}</b><span>규모·침투·소비지출</span></div>
+            <div><em>수익모델 사례</em><b>{summary.competitors || competitors.length}</b><span>가격·매출·과금 근거</span></div>
+            <div><em>신사업 기회</em><b>{summary.opportunities || opportunities.length}</b><span>근거 2개 이상만 채택</span></div>
+            <div><em>검증 원문</em><b>{summary.sources || 0}</b><span>클릭 시 발행사 원문</span></div>
+          </div>
+
+          <div className="maib-flow" aria-label="시장성에서 실행까지의 의사결정 흐름">
+            {flow.map((step, index) => <React.Fragment key={step[0]}>
+              <div><em>{step[0]}</em><span>{step[1]}</span><b>{step[2]}</b></div>
+              {index < flow.length - 1 && <i aria-hidden="true" />}
+            </React.Fragment>)}
+          </div>
+
+          <div className="maib-tabs" role="tablist" aria-label="신사업 DB 보기">
+            {[["all", "전체"], ["market", "시장 규모"], ["money", "경쟁 수익화"], ["move", "신사업 기회"]].map(tab => (
+              <button key={tab[0]} role="tab" aria-selected={view === tab[0]}
+                className={view === tab[0] ? "on" : ""} onClick={() => setView(tab[0])}>{tab[1]}</button>
+            ))}
+          </div>
+
+          {show("market") && markets.length > 0 && <div className="maib-block">
+            <div className="maib-block-head"><em>01 · MARKET ATTRACTIVENESS</em><h3>시장 크기와 지불 신호</h3><span>동일 주제 최신 검증값</span></div>
+            <div className="maib-market-grid">
+              {markets.map(item => <article className="maib-market-card" key={item.stableKey}>
+                <div className="maib-card-kicker"><span>{item.topic}</span><em>{item.publishedAt}</em></div>
+                <h4>{item.title}</h4>
+                <div className="maib-metrics">{(item.metrics || []).map((metric, index) => (
+                  <div key={`${metric.label}-${index}`}><em>{metric.label}</em><b>{metric.value}</b></div>
+                ))}</div>
+                <p>{item.insight}</p>
+                <a href={item.sourceUrl} target="_blank" rel="noopener">{item.sourceName} <Icon name="ext" size={10} /></a>
+              </article>)}
+            </div>
+          </div>}
+
+          {show("money") && competitors.length > 0 && <div className="maib-block">
+            <div className="maib-block-head"><em>02 · MONETIZATION PROOF</em><h3>경쟁사는 어디서 돈을 버는가</h3><span>기업별 최신 수익 근거</span></div>
+            <div className="maib-company-grid">
+              {competitors.map(item => {
+                const open = expanded === item.stableKey;
+                return <article className={`maib-company-card${open ? " is-open" : ""}`} key={item.stableKey}>
+                  <button className="maib-card-toggle" onClick={() => toggle(item.stableKey)} aria-expanded={open}>
+                    <span><em>{item.segment}</em><b>{item.name}</b></span>
+                    <i aria-hidden="true" />
+                  </button>
+                  <div className="maib-money-model"><em>수익모델</em><b>{item.businessModel}</b></div>
+                  <div className="maib-metrics">{(item.metrics || []).map((metric, index) => (
+                    <div key={`${metric.label}-${index}`}><em>{metric.label}</em><b>{metric.value}</b></div>
+                  ))}</div>
+                  <p>{item.proof}</p>
+                  {open && <div className="maib-card-detail">
+                    <span>최근 근거 · {item.publishedAt}</span>
+                    {(item.evidence || []).slice(1).map((evidence, index) => <a key={index} href={evidence.sourceUrl} target="_blank" rel="noopener">
+                      {evidence.businessModel} · {evidence.publishedAt} <Icon name="ext" size={9} />
+                    </a>)}
+                  </div>}
+                  <a className="maib-source" href={item.sourceUrl} target="_blank" rel="noopener">{item.sourceName} <Icon name="ext" size={10} /></a>
+                </article>;
+              })}
+            </div>
+          </div>}
+
+          {show("move") && opportunities.length > 0 && <div className="maib-block">
+            <div className="maib-block-head"><em>03 · WHERE TO PLAY / HOW TO WIN</em><h3>신사업 기회 포트폴리오</h3><span>시장·수익 근거 교차 검증</span></div>
+            <div className="maib-opportunity-grid">
+              {opportunities.map(item => {
+                const key = `opportunity:${item.id}`;
+                const open = expanded === key;
+                return <article className={`maib-opportunity-card${open ? " is-open" : ""}`} key={item.id}>
+                  <button className="maib-card-toggle" onClick={() => toggle(key)} aria-expanded={open}>
+                    <span><em>우선순위 {String(item.priority).padStart(2, "0")}</em><b>{item.title}</b></span>
+                    <i aria-hidden="true" />
+                  </button>
+                  <dl>
+                    <div><dt>WHERE</dt><dd>{item.whereToPlay}</dd></div>
+                    <div><dt>WIN</dt><dd>{item.valueCapture}</dd></div>
+                    <div><dt>WHY NOW</dt><dd>{item.rationale}</dd></div>
+                  </dl>
+                  <div className="maib-evidence-count">검증 출처 {item.evidenceCount}개 · 최신 {item.latestEvidenceAt}</div>
+                  {open && <div className="maib-card-detail">
+                    <b>검증 KPI</b>
+                    <div className="maib-kpis">{(item.nextMetrics || []).map(metric => <span key={metric}>{metric}</span>)}</div>
+                    {(item.sources || []).map((source, index) => <a key={`${source.sourceUrl}-${index}`} href={source.sourceUrl} target="_blank" rel="noopener">
+                      {source.sourceName} · {source.publishedAt} <Icon name="ext" size={9} />
+                    </a>)}
+                  </div>}
+                </article>;
+              })}
+            </div>
+          </div>}
+        </React.Fragment>}
+      </AnimCtx.Provider>
+    </section>
+  );
+}
+
 // ---- AI 신사업 시장 보드: lazy-load(inView 시에만 fetch), MECE 그룹, 플레인 텍스트, 삭제/숨김 ----
 function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
   const inView = useInView(sectionRef);
@@ -4797,7 +4946,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
     (record.relatedSources?.length ? record.relatedSources.map(source => source.sourceUrl) : [record.sourceUrl])
   ).filter(Boolean)).size;
   const quantityCount = scoped.reduce((count, record) => count + (record.sourceMetricValues || record.values || []).length, 0);
-  const duplicateCount = scoped.reduce((count, record) => count + Number(record.duplicateRecordCount || 0), 0);
+  const replacementCount = Number(data?.replacedRecordCount || 0);
   const shownRecords = scoped.slice()
     .sort((a, b) => String(b.publishedAt || b.collectedAt || "").localeCompare(String(a.publishedAt || a.collectedAt || "")));
   const TYPE_LABEL = { "consumer-survey": "소비자 조사", "market-estimate": "시장 기준선", shipment: "출하량", "market-observation": "정량 관측" };
@@ -4810,8 +4959,8 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
         <div className="board-titles">
           <h2>{isSurvey ? "AI 관련 소비자 조사 결과" : "AI 관련 시장"} <span className="board-en">{isSurvey ? "AI Consumer Surveys" : "AI Market Map"} · 휴대폰 사업 관점</span></h2>
           <p>{isSurvey
-            ? "지불의사·수용도·인식 등 소비자 조사 전용 트랙 · 신규 원문 자동 추가 · 기존 기록 유지"
-            : "시장 규모·예측·출하 등 정량 시장 전용 트랙 · 신규 원문 자동 추가 · 기존 기록 유지"}</p>
+            ? "지불의사·수용도·인식 등 소비자 조사 전용 트랙 · 동일 주제 최신 검증값 자동 교체"
+            : "시장 규모·예측·출하 등 정량 시장 전용 트랙 · 동일 주제 최신 검증값 자동 교체"}</p>
         </div>
       </div>
 
@@ -4823,13 +4972,13 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
             <div><em>통합 인사이트</em><b>{scoped.length}</b><span>동일 기사·재배포를 하나의 분석으로 통합</span></div>
             <div><em>검증 출처</em><b>{sourceCount}</b><span>통합 카드 안에서 관련 원문 개별 확인</span></div>
             <div><em>정량 지표</em><b>{quantityCount}</b><span>항목별 의미와 발행사 근거 문장 표시</span></div>
-            <div><em>중복 통합</em><b>{duplicateCount}</b><span>반복 카드 제거 후 근거·수치만 병합</span></div>
+            <div><em>이전값 교체</em><b>{replacementCount}</b><span>같은 주제의 과거 공개값 자동 제거</span></div>
           </div>
 
           <div className="mkt-db-head">
             <div>
               <h3>{isSurvey ? "AI 소비자 조사 데이터베이스" : "AI 시장 정량 데이터베이스"}</h3>
-              <p>동일 사건은 하나의 3줄 인사이트로 통합 · 정량 지표와 관련 원문은 중복 없이 병합 · 기존 기록 영구 보존 · X는 사용자가 선택한 항목만 숨김</p>
+              <p>동일 사건은 하나의 3줄 인사이트로 통합 · 같은 주제는 최신 검증값만 공개 · X로 숨긴 항목은 이후 수집에서도 영구 제외</p>
             </div>
           </div>
           <div className="mkt-record-grid">
@@ -4881,7 +5030,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
             {!shownRecords.length && <SourcePipeline kind="market" />}
           </div>
 
-          {!isSurvey && <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>기존 시장규모·예측·CAGR 데이터는 보존되며, 상단 누적 DB에 새 수치가 추가됩니다.</em></div>}
+          {!isSurvey && <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>검증된 최신 시장규모·예측·CAGR만 공개</em></div>}
           {!isSurvey && (data.groups || []).map(g => {
             const rows = (data.items || []).filter(it => it.group === g.id
               && it.provenance?.status !== "reference-only"
@@ -5310,4 +5459,4 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   );
 }
 
-Object.assign(window, { BoldSummary, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+Object.assign(window, { BoldSummary, MobileAIBusinessBoard, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
