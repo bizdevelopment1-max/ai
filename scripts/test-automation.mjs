@@ -1832,6 +1832,15 @@ try {
     && styles.includes(".nvi-stage")
     && styles.includes(".nvi-node:hover")
     && styles.includes("grid-template-columns: minmax(0, 1fr) auto");
+  const compactInteractiveInvestmentMap = boards.includes("onPointerEnter={() => setSelectedId(node.id)}")
+    && boards.includes("onKeyDown={event =>")
+    && boards.includes('data-nvi-id={node.id}')
+    && boards.includes('aria-live="polite"')
+    && styles.includes("width: 66px")
+    && styles.includes("min-height: 356px")
+    && styles.includes("@keyframes nvi-edge-flow")
+    && styles.includes("@keyframes nvi-detail-in")
+    && styles.includes(".nvi-stage:hover .nvi-node:not(:hover):not(.is-selected)");
   const stockComparisonCopyRemoved = !boards.includes("<p>{description}</p>")
     && !boards.includes('description="63개 상장사를')
     && !boards.includes("대시보드 기업 리스트에 있는 상장사를 인프라·컴퓨트 / 파운데이션 모델 / 애플리케이션 등 밸류체인 계층으로 묶어 실제 일별 시세로 비교");
@@ -1840,10 +1849,10 @@ try {
     && boards.includes('aria-label="상장사 밸류체인 카테고리"')
     && boards.includes("groups={visibleGroups} stocks={visibleStocks}");
   if (!completeBoard || !completeMetadata || !sourceBackedInvestments || !dynamicInvestmentPipeline
-    || !liveHistory || !currencyAware || !responsiveUi || !stockComparisonCopyRemoved || !initialSevenCategoryView) {
+    || !liveHistory || !currencyAware || !responsiveUi || !compactInteractiveInvestmentMap || !stockComparisonCopyRemoved || !initialSevenCategoryView) {
     throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
-  console.log("  OK  휴대폰 AI 신사업 관련 54개 상장사 Stock 분석 + NVIDIA 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
+  console.log("  OK  휴대폰 AI 신사업 관련 54개 상장사 Stock 분석 + NVIDIA 소형 인터랙티브 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock value-chain board: ${error.message}`);

@@ -2089,6 +2089,7 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
 
   const layerMap = Object.fromEntries((layers || []).map(layer => [layer.id, layer]));
   const selected = portfolio.find(item => item.id === selectedId) || portfolio[0];
+  const selectedIndex = Math.max(0, portfolio.findIndex(item => item.id === selected.id));
   const selectedLayer = layerMap[selected.layer] || {};
   // Evenly distribute N nodes around an ellipse (12 o'clock, clockwise) so the
   // ring stays correct as the source-backed portfolio grows or shrinks.
@@ -2099,6 +2100,12 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
   const latest = selected.latestEvidence;
   const primarySource = latest || selected.source;
   const updated = data.generatedAt ? new Date(data.generatedAt).toLocaleDateString("ko-KR") : "";
+  const moveSelection = (event, offset) => {
+    event.preventDefault();
+    const nextIndex = (selectedIndex + offset + portfolio.length) % portfolio.length;
+    setSelectedId(portfolio[nextIndex].id);
+    requestAnimationFrame(() => document.querySelector(`[data-nvi-id="${portfolio[nextIndex].id}"]`)?.focus());
+  };
 
   return (
     <article className="nvi-shell" style={{ "--accent": theme.accent }}>
@@ -2106,7 +2113,7 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
         <div>
           <span className="nvi-kicker">NVIDIA CAPITAL ECOSYSTEM · SOURCE-BACKED</span>
           <h3>NVIDIA AI 투자 포트폴리오</h3>
-          <p>원을 선택하면 거래 근거와 ‘왜 투자했는가’를 분리해 확인할 수 있습니다.</p>
+          <p>노드 호버·클릭 → 투자 근거·전략적 의미</p>
         </div>
         <div className="nvi-head-metrics">
           <span><b>{portfolio.length}</b>개 주요 투자</span>
@@ -2125,7 +2132,7 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
             </defs>
             {graphNodes.map(node => (
               <line key={node.id} x1="500" y1="260" x2={node.x * 10} y2={node.y * 5.2}
-                className={node.id === selected.id ? "is-selected" : ""} markerEnd="url(#nvi-arrow)" />
+                className={node.id === selected.id ? "is-selected" : "is-muted"} markerEnd="url(#nvi-arrow)" />
             ))}
           </svg>
           <div className="nvi-core">
@@ -2133,15 +2140,23 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
             <b>NVIDIA</b>
             <span>CAPITAL + COMPUTE</span>
           </div>
-          {graphNodes.map(node => {
+          {graphNodes.map((node, nodeIndex) => {
             const layer = layerMap[node.layer] || {};
             return (
               <button key={node.id} type="button"
                 className={"nvi-node" + (node.id === selected.id ? " is-selected" : "")}
-                style={{ left: `${node.x}%`, top: `${node.y}%`, "--node-color": layer.accent || theme.accent }}
+                style={{ left: `${node.x}%`, top: `${node.y}%`, "--node-color": layer.accent || theme.accent, "--node-index": nodeIndex }}
+                data-nvi-id={node.id}
                 aria-pressed={node.id === selected.id}
                 aria-label={`${node.name} 투자 이유 보기`}
-                onClick={() => setSelectedId(node.id)}>
+                title={`${node.name} · 호버 또는 클릭으로 상세 보기`}
+                onPointerEnter={() => setSelectedId(node.id)}
+                onFocus={() => setSelectedId(node.id)}
+                onClick={() => setSelectedId(node.id)}
+                onKeyDown={event => {
+                  if (["ArrowRight", "ArrowDown"].includes(event.key)) moveSelection(event, 1);
+                  if (["ArrowLeft", "ArrowUp"].includes(event.key)) moveSelection(event, -1);
+                }}>
                 <img src={`https://www.google.com/s2/favicons?domain=${node.domain}&sz=64`} alt="" loading="lazy" />
                 <b>{node.shortName}</b>
                 <span>{layer.ko || node.layer}</span>
@@ -2150,7 +2165,7 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
           })}
         </div>
 
-        <aside className="nvi-detail" style={{ "--node-color": selectedLayer.accent || theme.accent }}>
+        <aside key={selected.id} className="nvi-detail" style={{ "--node-color": selectedLayer.accent || theme.accent }} aria-live="polite">
           <div className="nvi-detail-top">
             <span>{selectedLayer.ko || selected.layer}</span>
             <time>근거 {selected.source.date}</time>
