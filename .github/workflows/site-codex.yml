@@ -1,18 +1,21 @@
-name: Site Codex GitHub CLI
+name: Site Codex Pro Cloud Bridge
 
 on:
   issues:
     types: [opened]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 permissions: {}
 
 concurrency:
-  group: site-codex-${{ github.event.issue.number }}
+  group: site-codex-${{ github.event_name }}-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
   cancel-in-progress: false
 
 jobs:
-  prepare:
+  register_request:
     if: >-
+      github.event_name == 'issues' &&
       startsWith(github.event.issue.title, '[SITE CODEX]') &&
       (github.event.issue.author_association == 'OWNER' ||
        github.event.issue.author_association == 'MEMBER' ||
@@ -20,28 +23,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
-      contents: read
-    outputs:
-      mode: ${{ steps.request.outputs.mode }}
-      request_id: ${{ steps.request.outputs.request_id }}
-      configured: ${{ steps.configuration.outputs.configured }}
+      issues: write
     steps:
-      - name: Parse trusted Site Codex request
-        id: request
+      - name: Validate and register Pro Codex Cloud request
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs')
-            const path = require('path')
             const body = context.payload.issue.body || ''
             if (!body.includes('<!-- site-codex-request:v1 -->')) {
               core.setFailed('missing Site Codex request marker')
               return
             }
+
             const requestId = body.match(/^REQUEST_ID:\s*(site-\d{10,}-[a-z0-9]{4,12})\s*$/mi)?.[1]
             const mode = body.match(/^MODE:\s*(ask|edit)\s*$/mi)?.[1]?.toLowerCase()
             const confirmed = body.match(/^CONFIRMED:\s*([^\n]+)\s*$/mi)?.[1]?.trim().toLowerCase()
             const prompt = body.match(/## 요청\s*\n+([\s\S]*?)(?:\n+## 실행 범위|$)/)?.[1]?.trim()
+
             if (!requestId || !mode || !prompt || prompt.length > 6000) {
               core.setFailed('invalid request id, mode, or prompt')
               return
@@ -50,214 +48,63 @@ jobs:
               core.setFailed('edit request is not explicitly confirmed')
               return
             }
-            const modeRules = mode === 'edit'
-              ? [
-                  'Implement the requested change in the checked-out repository',
-                  'Do not commit, push, open a pull request, change secrets, or edit .github/workflows or .github/actions',
-                  'Preserve unrelated changes and run relevant verification where practical',
-                ]
-              : [
-                  'Inspect the repository and answer the request without changing any file',
-                  'Base the answer on repository evidence and clearly state any unresolved limitation',
-                ]
-            const codexPrompt = [
-              '# Site Codex request',
+
+            const cloudPrompt = [
+              `GitHub 저장소 ${context.repo.owner}/${context.repo.repo}에서 아래 요청을 처리`,
+              `요청 기록 ${context.payload.issue.html_url}`,
+              `모드 ${mode}`,
               '',
-              `Mode: ${mode}`,
-              `Request ID: ${requestId}`,
-              `Repository: ${context.repo.owner}/${context.repo.repo}`,
+              mode === 'edit'
+                ? '새 브랜치에서 구현하고 관련 검증을 실행한 뒤 main 직접 푸시 없이 Pull Request로 제안'
+                : '저장소를 변경하지 않고 코드와 데이터 근거를 확인해 한국어로 답변',
+              '비밀정보·브라우저 세션·로컬 auth.json을 요청하거나 출력하지 않음',
               '',
-              '## Operating rules',
-              '',
-              '- Respond in concise Korean unless the request requires another language',
-              '- Never expose credentials, environment secrets, or GitHub tokens',
-              ...modeRules.map(rule => `- ${rule}`),
-              '',
-              '## User request',
-              '',
+              '사용자 요청',
               prompt,
             ].join('\n')
-            const directory = path.join(process.env.GITHUB_WORKSPACE, 'site-codex-request')
-            fs.mkdirSync(directory, { recursive: true })
-            fs.writeFileSync(path.join(directory, 'prompt.md'), codexPrompt, 'utf8')
-            core.setOutput('request_id', requestId)
-            core.setOutput('mode', mode)
 
-      - name: Check ChatGPT Codex authentication
-        id: configuration
-        shell: bash
-        env:
-          CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
-        run: |
-          if [ -n "${CODEX_ACCESS_TOKEN:-}" ]; then
-            echo "configured=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Store request for isolated Codex job
-        uses: actions/upload-artifact@v4
-        with:
-          name: site-codex-request-${{ github.run_id }}
-          path: site-codex-request/prompt.md
-          if-no-files-found: error
-          retention-days: 1
-
-  configuration_required:
-    needs: prepare
-    if: needs.prepare.outputs.configured != 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    permissions:
-      issues: write
-    steps:
-      - name: Report missing repository secret
-        uses: actions/github-script@v7
-        env:
-          REQUEST_ID: ${{ needs.prepare.outputs.request_id }}
-        with:
-          script: |
-            const body = [
+            const comment = [
               '<!-- site-codex-result:v1 -->',
-              `REQUEST_ID: ${process.env.REQUEST_ID}`,
-              'STATUS: configuration-required',
+              `REQUEST_ID: ${requestId}`,
+              'STATUS: cloud-ready',
               '',
-              'ChatGPT Codex 인증 연결 필요',
+              'ChatGPT Pro · Codex Cloud 실행 준비 완료',
               '',
-              '- ChatGPT Business·Enterprise 관리자 페이지에서 Codex access token 생성',
-              '- 저장소 Settings → Secrets and variables → Actions에 `CODEX_ACCESS_TOKEN`으로 등록',
-              '- 인증값은 GitHub Actions Secret에서만 사용되며 사이트 브라우저에 전달되지 않음',
-              '- 인증 안내 · https://learn.chatgpt.com/docs/enterprise/access-tokens',
+              '- Codex Cloud에서 ChatGPT Pro 계정으로 로그인',
+              `- GitHub 저장소 ${context.repo.owner}/${context.repo.repo}가 연결된 환경 선택`,
+              '- 아래 실행문을 붙여넣어 작업 시작',
+              '- 수정 요청은 새 브랜치와 Pull Request로 검토 후 반영',
+              '- Actions Secret·API 키·Access Token 불필요',
+              '',
+              'Codex Cloud · https://chatgpt.com/codex',
+              '',
+              '```text',
+              cloudPrompt,
+              '```',
             ].join('\n')
-            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body })
-            await github.rest.issues.update({ ...context.repo, issue_number: context.issue.number, state: 'closed' })
 
-  codex:
-    needs: prepare
-    if: needs.prepare.outputs.configured == 'true'
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: comment,
+            })
+
+  validate_cloud_pr:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    environment: site-codex-authenticated
-    timeout-minutes: 30
-    permissions:
-      contents: read
-    outputs:
-      has_changes: ${{ steps.patch.outputs.changed }}
-    steps:
-      - name: Checkout main without write credentials
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Restore request
-        uses: actions/download-artifact@v4
-        with:
-          name: site-codex-request-${{ github.run_id }}
-          path: ${{ runner.temp }}/site-codex-request
-
-      - name: Install official Codex CLI
-        shell: bash
-        run: npm install --global @openai/codex@0.147.0
-
-      - name: Authenticate Codex with ChatGPT workspace access
-        shell: bash
-        env:
-          CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
-          CODEX_HOME: ${{ runner.temp }}/site-codex-home
-        run: |
-          set -euo pipefail
-          mkdir -p "$CODEX_HOME"
-          printenv CODEX_ACCESS_TOKEN | codex login --with-access-token
-
-      - name: Run authenticated Codex CLI
-        id: codex
-        shell: bash
-        env:
-          CODEX_HOME: ${{ runner.temp }}/site-codex-home
-          REQUEST_MODE: ${{ needs.prepare.outputs.mode }}
-        run: |
-          set -euo pipefail
-          if [ "$REQUEST_MODE" = "edit" ]; then
-            SANDBOX_MODE="workspace-write"
-          else
-            SANDBOX_MODE="read-only"
-          fi
-          codex exec \
-            --ignore-user-config \
-            --ephemeral \
-            --sandbox "$SANDBOX_MODE" \
-            --output-last-message "$RUNNER_TEMP/site-codex-result.md" \
-            - < "$RUNNER_TEMP/site-codex-request/prompt.md"
-
-      - name: Clear temporary Codex authentication
-        if: always()
-        shell: bash
-        run: rm -rf "$RUNNER_TEMP/site-codex-home"
-
-      - name: Store Codex response
-        uses: actions/upload-artifact@v4
-        with:
-          name: site-codex-result-${{ github.run_id }}
-          path: ${{ runner.temp }}/site-codex-result.md
-          if-no-files-found: error
-          retention-days: 1
-
-      - name: Capture workspace patch without write credentials
-        if: needs.prepare.outputs.mode == 'edit'
-        id: patch
-        shell: bash
-        run: |
-          set -euo pipefail
-          git add -N --all
-          git diff --binary --no-ext-diff > "$RUNNER_TEMP/site-codex.patch"
-          if [ -s "$RUNNER_TEMP/site-codex.patch" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Store proposed patch
-        if: needs.prepare.outputs.mode == 'edit' && steps.patch.outputs.changed == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: site-codex-patch-${{ github.run_id }}
-          path: ${{ runner.temp }}/site-codex.patch
-          if-no-files-found: error
-          retention-days: 1
-
-  validate_edit:
-    needs: [prepare, codex]
-    if: needs.prepare.outputs.mode == 'edit' && needs.codex.outputs.has_changes == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     permissions:
       contents: read
     steps:
-      - name: Checkout current main without write credentials
+      - name: Checkout proposed change
         uses: actions/checkout@v4
         with:
-          ref: main
-          fetch-depth: 0
           persist-credentials: false
 
-      - name: Preserve trusted patch validator
-        shell: bash
-        run: cp scripts/validate-site-codex-patch.mjs "$RUNNER_TEMP/validate-site-codex-patch.mjs"
-
-      - name: Restore proposed patch
-        uses: actions/download-artifact@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          name: site-codex-patch-${{ github.run_id }}
-          path: ${{ runner.temp }}/proposed
-
-      - name: Validate and apply proposed patch
-        shell: bash
-        run: |
-          set -euo pipefail
-          node "$RUNNER_TEMP/validate-site-codex-patch.mjs" "$RUNNER_TEMP/proposed/site-codex.patch"
-          git apply --check --binary "$RUNNER_TEMP/proposed/site-codex.patch"
-          git apply --binary --whitespace=nowarn "$RUNNER_TEMP/proposed/site-codex.patch"
+          node-version: '22'
 
       - name: Rebuild static browser bundle
         run: npm run build:browser
@@ -267,219 +114,3 @@ jobs:
 
       - name: Verify strategy-team scope
         run: npm run test:department
-
-      - name: Create final validated patch
-        shell: bash
-        run: |
-          set -euo pipefail
-          git add -N --all
-          git diff --binary --no-ext-diff > "$RUNNER_TEMP/site-codex-validated.patch"
-          node "$RUNNER_TEMP/validate-site-codex-patch.mjs" "$RUNNER_TEMP/site-codex-validated.patch"
-
-      - name: Store validated patch
-        uses: actions/upload-artifact@v4
-        with:
-          name: site-codex-validated-${{ github.run_id }}
-          path: ${{ runner.temp }}/site-codex-validated.patch
-          if-no-files-found: error
-          retention-days: 1
-
-  publish_edit:
-    needs: [prepare, codex, validate_edit]
-    if: needs.validate_edit.result == 'success'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    concurrency:
-      group: site-codex-main-write
-      cancel-in-progress: false
-    permissions:
-      contents: write
-      issues: write
-    steps:
-      - name: Checkout latest main
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-
-      - name: Preserve trusted patch validator
-        shell: bash
-        run: cp scripts/validate-site-codex-patch.mjs "$RUNNER_TEMP/validate-site-codex-patch.mjs"
-
-      - name: Restore validated patch
-        uses: actions/download-artifact@v4
-        with:
-          name: site-codex-validated-${{ github.run_id }}
-          path: ${{ runner.temp }}/site-codex
-
-      - name: Restore Codex response
-        uses: actions/download-artifact@v4
-        with:
-          name: site-codex-result-${{ github.run_id }}
-          path: ${{ runner.temp }}/site-codex
-
-      - name: Apply only the validated patch
-        shell: bash
-        run: |
-          set -euo pipefail
-          node "$RUNNER_TEMP/validate-site-codex-patch.mjs" "$RUNNER_TEMP/site-codex/site-codex-validated.patch"
-          git apply --check --binary "$RUNNER_TEMP/site-codex/site-codex-validated.patch"
-          git apply --binary --whitespace=nowarn "$RUNNER_TEMP/site-codex/site-codex-validated.patch"
-
-      - name: Commit and publish main
-        id: publish
-        shell: bash
-        env:
-          REQUEST_ID: ${{ needs.prepare.outputs.request_id }}
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          git commit -m "site-codex: ${REQUEST_ID}"
-          if ! git push origin HEAD:main; then
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Report published change
-        uses: actions/github-script@v7
-        env:
-          REQUEST_ID: ${{ needs.prepare.outputs.request_id }}
-          COMMIT_SHA: ${{ steps.publish.outputs.sha }}
-          RESULT_FILE: ${{ runner.temp }}/site-codex/site-codex-result.md
-        with:
-          script: |
-            const fs = require('fs')
-            const message = fs.existsSync(process.env.RESULT_FILE)
-              ? fs.readFileSync(process.env.RESULT_FILE, 'utf8').trim().slice(0, 55000)
-              : '요청 변경 반영 완료'
-            const body = [
-              '<!-- site-codex-result:v1 -->',
-              `REQUEST_ID: ${process.env.REQUEST_ID}`,
-              'STATUS: published',
-              '',
-              message,
-              '',
-              `반영 커밋 · ${process.env.COMMIT_SHA}`,
-            ].join('\n')
-            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body })
-            await github.rest.issues.update({ ...context.repo, issue_number: context.issue.number, state: 'closed' })
-
-  report_answer:
-    needs: [prepare, codex]
-    if: needs.prepare.outputs.mode == 'ask' && needs.codex.result == 'success'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      issues: write
-    steps:
-      - name: Restore Codex response
-        uses: actions/download-artifact@v4
-        with:
-          name: site-codex-result-${{ github.run_id }}
-          path: ${{ runner.temp }}/site-codex
-
-      - name: Report answer
-        uses: actions/github-script@v7
-        env:
-          REQUEST_ID: ${{ needs.prepare.outputs.request_id }}
-          RESULT_FILE: ${{ runner.temp }}/site-codex/site-codex-result.md
-        with:
-          script: |
-            const fs = require('fs')
-            const message = fs.readFileSync(process.env.RESULT_FILE, 'utf8').trim().slice(0, 60000)
-            const body = [
-              '<!-- site-codex-result:v1 -->',
-              `REQUEST_ID: ${process.env.REQUEST_ID}`,
-              'STATUS: answered',
-              '',
-              message || 'Codex 응답 없음',
-            ].join('\n')
-            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body })
-            await github.rest.issues.update({ ...context.repo, issue_number: context.issue.number, state: 'closed' })
-
-  report_no_change:
-    needs: [prepare, codex]
-    if: needs.prepare.outputs.mode == 'edit' && needs.codex.result == 'success' && needs.codex.outputs.has_changes != 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      issues: write
-    steps:
-      - name: Report no file change
-        uses: actions/github-script@v7
-        env:
-          REQUEST_ID: ${{ needs.prepare.outputs.request_id }}
-        with:
-          script: |
-            const body = [
-              '<!-- site-codex-result:v1 -->',
-              `REQUEST_ID: ${process.env.REQUEST_ID}`,
-              'STATUS: no-change',
-              '',
-              '검토 완료 · 반영할 파일 변경 없음',
-            ].join('\n')
-            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body })
-            await github.rest.issues.update({ ...context.repo, issue_number: context.issue.number, state: 'closed' })
-
-  report_failure:
-    needs: [prepare, codex, validate_edit]
-    if: >-
-      always() && needs.prepare.outputs.configured == 'true' &&
-      (needs.codex.result == 'failure' || needs.validate_edit.result == 'failure')
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      issues: write
-    steps:
-      - name: Report guarded failure
-        uses: actions/github-script@v7
-        env:
-          REQUEST_ID: ${{ needs.prepare.outputs.request_id }}
-          CODEX_RESULT: ${{ needs.codex.result }}
-          VALIDATION_RESULT: ${{ needs.validate_edit.result }}
-        with:
-          script: |
-            const body = [
-              '<!-- site-codex-result:v1 -->',
-              `REQUEST_ID: ${process.env.REQUEST_ID}`,
-              'STATUS: failed',
-              '',
-              '요청 실행 또는 패치 검증 실패 · 저장소 변경 없음',
-              '',
-              `Codex · ${process.env.CODEX_RESULT}`,
-              `검증 · ${process.env.VALIDATION_RESULT}`,
-              `Actions 로그 · ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-            ].join('\n')
-            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body })
-
-  report_publish_failure:
-    needs: [prepare, publish_edit]
-    if: always() && needs.prepare.outputs.mode == 'edit' && needs.publish_edit.result == 'failure'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      issues: write
-    steps:
-      - name: Report publish failure
-        uses: actions/github-script@v7
-        env:
-          REQUEST_ID: ${{ needs.prepare.outputs.request_id }}
-        with:
-          script: |
-            const body = [
-              '<!-- site-codex-result:v1 -->',
-              `REQUEST_ID: ${process.env.REQUEST_ID}`,
-              'STATUS: publish-failed',
-              '',
-              '검증된 패치의 main 반영 실패 · Actions 로그 확인 필요',
-              '',
-              `Actions 로그 · ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-            ].join('\n')
-            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body })

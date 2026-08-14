@@ -2,13 +2,13 @@
 
 GitHub Pages dashboard: <https://bizdevelopment1-max.github.io/ai/>
 
-## GitHub Codex CLI
+## ChatGPT Pro · GitHub Codex Cloud
 
-The GitHub Pages terminal sends `/ask` and `/edit` requests through GitHub Issues. GitHub login provides user authentication and `.github/workflows/site-codex.yml` verifies repository write access before invoking the official `openai/codex-action`. No local PC, startup command, browser API key, or loopback service is required.
+GitHub Pages의 Site CLI는 `/ask`와 `/edit` 요청을 GitHub Issue로 기록하고 ChatGPT Pro 계정의 Codex Cloud 실행문을 생성한다. 최초 1회 `https://chatgpt.com/codex`에서 Pro 계정으로 로그인하고 `bizdevelopment1-max/ai` 저장소 환경을 연결한 뒤, 복사된 실행문을 Codex Cloud에 붙여넣어 작업한다.
 
-Repository administrators must add one Actions secret named `OPENAI_API_KEY`. Questions run with the `:read-only` permission profile. Edits run with `:workspace` in a job that has no repository write token, then move through a separate no-secret validation job. Only a path-validated patch that passes the browser build and automation tests reaches the final `main` publishing job.
+Pro 구독 인증은 ChatGPT에서 처리하며 GitHub Actions Secret, OpenAI API 키, Codex access token, 로컬 PC, 시작 명령, 루프백 서버를 사용하지 않는다. 질문은 저장소를 변경하지 않는 분석 요청으로 전달하고 수정은 새 브랜치와 Pull Request로 제안한다. `.github/workflows/site-codex.yml`은 Issue 요청을 등록하고 Pull Request의 브라우저 번들·자동화 계약·전략 범위 검증만 수행한다.
 
-Requests and results are recorded as public Issues because this repository is public. Never include API keys, passwords, personal data, or other secrets in a Site Codex request.
+이 저장소는 공개 저장소이므로 Site CLI 요청과 안내 댓글도 공개된다. API 키, 비밀번호, 브라우저 세션, `auth.json`, 개인정보를 요청에 포함하지 않는다.
 
 ## Mobile AI strategy model
 

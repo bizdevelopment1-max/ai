@@ -199,26 +199,34 @@ try {
     && components.includes("siteCodexIssueUrl")
     && components.includes("fetchGithubRequest")
     && components.includes("pollGithubRequest")
-    && components.includes("GITHUB AUTH")
-    && components.includes("CODEX CLI")
+    && components.includes("GITHUB ISSUE")
+    && components.includes("CODEX CLOUD")
     && components.includes("ReactDOM.createPortal")
     && commands.every(command => components.includes(`\"${command}`))
     && styles.includes(".site-cli-overlay")
     && styles.includes(".site-cli-command-grid")
     && styles.includes(".site-cli-triangle")
     && styles.includes(".site-cli-github-links");
-  const actualCodex = workflow.includes("npm install --global @openai/codex@0.147.0")
-    && workflow.includes("CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}")
-    && workflow.includes("codex login --with-access-token")
-    && workflow.includes("codex exec")
-    && workflow.includes('--sandbox "$SANDBOX_MODE"')
-    && workflow.includes("environment: site-codex-authenticated")
-    && !workflow.includes("openai/codex-action@v1")
-    && !workflow.includes("OPENAI_API_KEY")
+  const proCodexCloud = workflow.includes("name: Site Codex Pro Cloud Bridge")
+    && workflow.includes("STATUS: cloud-ready")
+    && workflow.includes("https://chatgpt.com/codex")
+    && workflow.includes("github.event_name == 'issues'")
+    && workflow.includes("github.event_name == 'pull_request'")
+    && workflow.includes("author_association == 'OWNER'")
     && workflow.includes("persist-credentials: false")
-    && workflow.includes("scripts/validate-site-codex-patch.mjs")
+    && workflow.includes("npm run build:browser")
     && workflow.includes("npm run test:automation")
-    && workflow.includes("git push origin HEAD:main")
+    && workflow.includes("npm run test:department")
+    && !workflow.includes("CODEX_ACCESS_TOKEN")
+    && !workflow.includes("OPENAI_API_KEY")
+    && !workflow.includes("codex login")
+    && !workflow.includes("codex exec")
+    && !workflow.includes("secrets.")
+    && components.includes('const SITE_CODEX_CLOUD = "https://chatgpt.com/codex"')
+    && components.includes("SITE_CODEX_ENVIRONMENTS")
+    && components.includes("siteCodexCloudPrompt")
+    && components.includes("PRO CODEX CLOUD")
+    && !components.includes("admin/access-tokens")
     && validator.includes("protected path cannot be changed by Site Codex")
     && !packageSource.includes("@openai/codex")
     && !packageSource.includes("codex:start");
@@ -231,10 +239,10 @@ try {
     && !components.includes("127.0.0.1")
     && !components.includes("LOCAL BRIDGE")
     && !components.includes("Start-Site-Codex");
-  if (!dropdownRemoved || !cliReady || !actualCodex || !noBrowserSecret || !confirmedWrite) {
-    throw new Error("site CLI must use GitHub authorization, ChatGPT-authenticated Codex CLI, and an isolated validated-patch publishing gate");
+  if (!dropdownRemoved || !cliReady || !proCodexCloud || !noBrowserSecret || !confirmedWrite) {
+    throw new Error("site CLI must use ChatGPT Pro Codex Cloud, a GitHub request ledger, and Pull Request verification without browser or Actions secrets");
   }
-  console.log("  OK  질문 드롭다운 제거 · GitHub 권한 큐 · ChatGPT 인증형 Codex CLI · 무권한 검증 후 main 반영");
+  console.log("  OK  질문 드롭다운 제거 · ChatGPT Pro Codex Cloud · GitHub 요청 기록 · Pull Request 검증");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  site CLI workspace: ${error.message}`);

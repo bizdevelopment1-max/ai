@@ -437,10 +437,11 @@ a[href]:hover .rainbow-on-hover,
   border: 1px solid #00A990; background: rgba(0,169,144,.09); color: #7FE6D5; font: 800 10px var(--mono); cursor: pointer;
 }
 .site-cli-export:hover { background: #7FE6D5; color: #08101F; transform: translateY(-2px); box-shadow: 5px 6px 0 rgba(0,169,144,.22); }
+.site-cli-link-row { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
 .site-cli-link {
-  width: fit-content; margin-top: 11px; padding: 7px 10px; display: inline-flex; align-items: center; gap: 6px;
+  width: fit-content; margin: 0; padding: 7px 10px; display: inline-flex; align-items: center; gap: 6px;
   border: 1px solid #2E6BFF; color: #9EBAFF; background: rgba(46,107,255,.08);
-  font: 850 9.5px var(--mono); text-decoration: none;
+  font: 850 9.5px var(--mono); text-decoration: none; cursor: pointer;
   transition: transform .18s ease, color .18s ease, background .18s ease, box-shadow .18s ease;
 }
 .site-cli-link:hover { color: #08101F; background: #EAF1FF; transform: translateY(-2px); box-shadow: 5px 6px 0 rgba(46,107,255,.3); }
