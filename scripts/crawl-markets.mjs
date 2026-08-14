@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /*
- * Append-only market intelligence crawler.
- * Keeps the existing six-axis market map intact, then adds only new,
- * RSS discovery observations to market.json.records. RSS content is retained
- * as a discovery ledger only; a separate source-page pass must resolve and
- * extract the publisher page before a record is allowed onto the site.
+ * Market intelligence crawler.
+ * The raw evidence ledger remains available for audit and recovery while the
+ * public mobile-business snapshot publishes only the newest verified record
+ * for each stable topic key.
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { appendRecords, ensureMarketDatabase, hasConsumerSurveyEvidence } from "./market-db.mjs";
@@ -79,6 +78,14 @@ const BASE_QUERIES = [
 ];
 
 const EXPANSION_QUERIES = [
+  // 모바일 AI 신사업 DB — 시장 규모·가격·수익화 근거를 발행사 원문 중심으로 갱신
+  { id: "mobile-db-genai-share", track: "ai-market", group: "core", verticalId: "core-0", topic: "AI 단말 출하 비중", query: "site:counterpointresearch.com GenAI smartphone share global shipments forecast" },
+  { id: "mobile-db-app-iap", track: "ai-market", group: "assistant", verticalId: "assistant-0", topic: "모바일 AI 앱 IAP", query: "site:sensortower.com generative AI mobile app revenue IAP 2026" },
+  { id: "mobile-db-app-spend", track: "ai-market", group: "assistant", verticalId: "assistant-0", topic: "AI 앱 소비지출", query: "site:appfigures.com AI mobile consumer spending revenue" },
+  { id: "mobile-db-ai-plans", track: "ai-market", group: "service", verticalId: "service-0", topic: "AI 서비스 구독 가격", query: "site:blog.google AI subscription price plan credits" },
+  { id: "mobile-db-device-bundle", track: "ai-market", group: "core", verticalId: "core-0", topic: "단말 AI 구독 번들", query: "site:apple.com/newsroom AI subscription increased access" },
+  { id: "mobile-db-wearable-price", track: "ai-market", group: "wearxr", verticalId: "wearxr-1", topic: "AI 웨어러블 가격·판매", query: "site:about.fb.com AI glasses price sold millions" },
+  { id: "mobile-db-agent-commerce", track: "ai-market", group: "service", verticalId: "service-0", topic: "에이전트 커머스 거래", query: "agentic commerce checkout transaction revenue official" },
   // AI 관련 소비자 조사 결과 — 이용·지불의사·신뢰·위임·폼팩터 수용도를 별도 추적
   { id: "survey-genai-frequency", track: "consumer-survey", group: "assistant", verticalId: "assistant-0", topic: "생성형 AI 이용 빈도·유료 전환", query: "consumer generative AI usage frequency paid subscription survey respondents 2026" },
   { id: "survey-ai-phone-wtp", track: "consumer-survey", group: "core", verticalId: "core-0", topic: "AI 스마트폰 구매의향·지불의사", query: "AI smartphone features purchase intention willingness to pay consumer survey 2026" },
@@ -100,7 +107,7 @@ const collectionTrackOf = config => config.track
   || (SURVEY_QUERY_HINT.test(config.query) ? "consumer-survey" : "ai-market");
 const QUERIES = [...EXPANSION_QUERIES, ...BASE_QUERIES]
   .map(config => ({ ...config, track: collectionTrackOf(config) }));
-const QUERY_SET_VERSION = 3;
+const QUERY_SET_VERSION = 4;
 
 const quantified = text => {
   const found = [

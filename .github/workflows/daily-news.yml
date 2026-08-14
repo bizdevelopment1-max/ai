@@ -122,6 +122,9 @@ jobs:
       - name: Reclassify company monetization to the 7-layer SW-service value chain
         run: node scripts/run-with-retry.mjs scripts/crawl-monetization.mjs
 
+      - name: Build latest mobile AI business database snapshot
+        run: node scripts/run-with-retry.mjs scripts/build-mobile-ai-business-db.mjs
+
       - name: Refresh deployment-company and AI services venture cases
         run: node scripts/run-with-retry.mjs scripts/crawl-strategic-ventures.mjs
 
@@ -168,7 +171,7 @@ jobs:
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
+          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json
           if git diff --staged --quiet; then
             echo "No data changes."
           else

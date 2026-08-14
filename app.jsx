@@ -50,7 +50,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = uS(false);
   const [collapsed, setCollapsed] = uS(false);
   const refs = {
-    ib: uR(null), overview: uR(null), strategy: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
+    ib: uR(null), overview: uR(null), opportunity: uR(null), strategy: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
     infra: uR(null), model: uR(null), data: uR(null), trust: uR(null), service: uR(null), agent: uR(null), app: uR(null),
     sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), survey: uR(null), market: uR(null), audit: uR(null),
   };
@@ -448,6 +448,10 @@ function App() {
               <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
             </section>
+
+            <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={980}>
+              <MobileAIBusinessBoard dataVersion={dataVersion} />
+            </LazySection>
 
             <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={860}>
               <MobileStrategyBoard companies={companiesLive} onNav={navTo} />
