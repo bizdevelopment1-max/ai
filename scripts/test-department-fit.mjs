@@ -18,6 +18,8 @@ const [dash, boards, components, app, anim, index] = await Promise.all([
 assert(dash.MEMORY_STRATEGY, "MEMORY_STRATEGY가 없습니다");
 assert(dash.MEMORY_STRATEGY.choices?.length === 4, "핵심 업무는 4개 축으로 구성해야 합니다");
 assert(dash.MEMORY_STRATEGY.capabilities?.length === 5, "분석 툴킷은 5개 축이 필요합니다");
+assert(dash.MEMORY_STRATEGY.operatingModel?.length === 4, "고객 신호부터 실행까지 4단계 운영 모델이 필요합니다");
+assert(dash.MEMORY_STRATEGY.decisionOutputs?.length === 4, "경영진 의사결정 산출물은 4개 축이 필요합니다");
 
 const strategyText = JSON.stringify(dash.MEMORY_STRATEGY);
 for (const required of [
@@ -29,6 +31,8 @@ for (const required of [
   assert(strategyText.includes(required), `부서 업무 문구가 없습니다: ${required}`);
 }
 assert(/Customer Pain Point → Technology Shift → Memory Business → Execution/.test(boards), "고객-기술-사업-실행 흐름이 없습니다");
+assert(/zone\.question/.test(boards) && /zone\.output/.test(boards) && /zone\.gate/.test(boards), "운영 모델의 질문·산출물·게이트가 표시되지 않습니다");
+assert(/msf-flow-arrow/.test(boards), "단계 전환 화살표가 없습니다");
 assert(/AI 메모리 전략/.test(components) && /신규 메모리 Biz\./.test(components), "좌측 내비게이션이 부서 업무와 일치하지 않습니다");
 assert(/AI 메모리 전략 인텔리전스/.test(index), "페이지 메타 정보가 부서 목적과 일치하지 않습니다");
 assert(!/MOBILE_STRATEGY|MobileStrategyBoard|Mobile AI Strategy/.test([boards, app, components, index].join("\n")), "이전 모바일 전략 명칭이 남아 있습니다");

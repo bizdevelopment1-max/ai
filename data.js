@@ -1418,6 +1418,38 @@ window.DASH = (function () {
   // 시장 신호는 companies.json의 원문·공식 활동을 합산해 자동 갱신한다.
   const MEMORY_STRATEGY = {
     northStar: "SK hynix 주요 고객의 현황·기술·전략을 메모리 Pain point와 맞춤형 실행안으로 전환",
+    operatingModel: [
+      {
+        no: "01", en: "CLIENT SIGNAL", title: "고객 Pain point 정의",
+        scope: "Hyperscaler·OEM·AI 서비스·워크로드",
+        question: "어떤 서비스 병목과 구매 조건이 메모리 선택을 바꾸는가",
+        output: "Key account pain-point map", gate: "고객 근거·담당자 확인",
+      },
+      {
+        no: "02", en: "TECH TRANSLATION", title: "메모리 요구량 변환",
+        scope: "AI App·Model·HW·SW·시스템 구조",
+        question: "기술 변화가 용량·대역폭·지연·전력·내구성에 미치는 영향은 무엇인가",
+        output: "Workload-to-memory requirement", gate: "벤치마크·아키텍처 검증",
+      },
+      {
+        no: "03", en: "BUSINESS DESIGN", title: "솔루션·사업성 설계",
+        scope: "HBM·DRAM·NAND/eSSD·CXL·Software",
+        question: "제품 조합과 파트너 구조가 고객 TCO와 SK hynix 수익을 함께 개선하는가",
+        output: "Solution concept & business case", gate: "TCO·수익성·차별성",
+      },
+      {
+        no: "04", en: "EXECUTION GATE", title: "대내외 실행 전환",
+        scope: "PoC·인증·Design-in·공동 로드맵·반복 수주",
+        question: "누가 언제 어떤 완료 기준으로 다음 단계까지 책임지는가",
+        output: "Executive decision & 90-day action", gate: "Go·Watch·No-Go",
+      },
+    ],
+    decisionOutputs: [
+      { cadence: "ACCOUNT", title: "고객 Pain Point Map", detail: "고객별 워크로드·시스템 병목·구매 조건·의사결정자를 한 장으로 연결" },
+      { cadence: "TECH", title: "Memory Requirement Tree", detail: "AI App·HW·SW 변화를 용량·대역폭·지연·전력·내구성 요구로 정량 변환" },
+      { cadence: "BIZ", title: "Opportunity Business Case", detail: "솔루션 조합·TCO·차별성·수익성·파트너 역할을 비교" },
+      { cadence: "EXECUTE", title: "90-Day Decision Board", detail: "PoC·인증·Design-in·수주 게이트와 대내외 책임자를 추적" },
+    ],
     choices: [
       { no: "01", title: "Customer Pain Point Strategy", where: "주요 고객 현황·기술·전략", win: "고객별 워크로드·구매 조건·시스템 병목을 메모리 관점의 맞춤 전략으로 연결", kpi: "고객 근거 최신성 · Pain point 검증률 · 공동 과제 전환율" },
       { no: "02", title: "AI App / HW / SW Opportunity", where: "AI Application·Hardware·Software 변화", win: "AI 기술 변화를 용량·대역폭·지연·전력·내구성 요구와 신규 메모리 Biz. 기회로 정량 변환", kpi: "워크로드 커버리지 · 요구량 오차 · 신규 기회 파이프라인" },

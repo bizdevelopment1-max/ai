@@ -412,16 +412,8 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
     const top = [...rows].sort((a, b) => Number(b.live?.mentions30 || 0) - Number(a.live?.mentions30 || 0))[0];
     return { ...layer, rows, primary, mentions, top };
   });
-  const companyCount = new Set((companies || []).map(company => company.name)).size;
-  const signalCount = (companies || []).reduce((sum, company) => sum + Number(company.live?.mentions30 || 0), 0);
-  const leadLayer = [...layerStats].sort((a, b) => b.mentions - a.mentions)[0] || {};
-  const finalHorizon = (strategy.horizons || [])[Math.max(0, (strategy.horizons || []).length - 1)] || {};
-  const controlZones = [
-    { no: "01", en: "DISCOVER", title: "Pain point", scope: "고객·서비스·워크로드" },
-    { no: "02", en: "TRANSLATE", title: "요구량 변환", scope: "Application·Model·HW·SW" },
-    { no: "03", en: "DESIGN", title: "솔루션 설계", scope: "HBM·DRAM·NAND/eSSD·CXL" },
-    { no: "04", en: "DECIDE", title: "경영진 실행", scope: "PoC·인증·공동 로드맵·수주" },
-  ];
+  const controlZones = strategy.operatingModel || [];
+  const decisionOutputs = strategy.decisionOutputs || [];
   return (
     <section className="board msf" ref={sectionRef} data-screen-label="AI Memory Strategy Framework">
       <AnimCtx.Provider value={inView}>
@@ -457,19 +449,18 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
 
           <div className="msf-exec-synthesis">
             <div className="msf-synthesis-head">
-              <span>EXECUTIVE SYNTHESIS</span>
-              <b>시장 근거에서 실행 우선순위까지</b>
+              <span>EXECUTIVE DECISION PACK</span>
+              <b>분석을 반복 가능한 네 가지 산출물로 운영</b>
             </div>
             <div className="msf-synthesis-flow">
-              <div><em>01 · CUSTOMER UNIVERSE</em><b>{companyCount}개사</b><span>AI 수요·파트너 생태계</span></div>
-              <i aria-hidden="true" />
-              <div><em>02 · MOMENTUM</em><b>{leadLayer.ko || layerStats[0]?.ko}</b><span>{leadLayer.mentions || 0}건 · 상위 계층</span></div>
-              <i aria-hidden="true" />
-              <div><em>03 · OPPORTUNITY</em><b>{(strategy.choices || []).length}개 축</b><span>수요·기술·솔루션·인프라</span></div>
-              <i aria-hidden="true" />
-              <div><em>04 · END STATE</em><b>{finalHorizon.title || "플랫폼 확장"}</b><span>{signalCount}건 · 30일 근거</span></div>
+              {decisionOutputs.map((item, index) => (
+                <React.Fragment key={item.cadence}>
+                  <div><em>0{index + 1} · {item.cadence}</em><b>{item.title}</b><span>{item.detail}</span></div>
+                  {index < decisionOutputs.length - 1 && <i className="msf-flow-arrow" aria-hidden="true" />}
+                </React.Fragment>
+              ))}
             </div>
-            <p>기사 수를 수요로 간주하지 않고 고객 채택·기술 적합성·PoC·인증·반복 수주를 단계별 의사결정 게이트로 관리</p>
+            <p>각 산출물에 근거일·책임자·다음 의사결정·완료 기준을 기록해 고객 대응과 경영진 판단을 같은 리듬으로 운영</p>
           </div>
         </div>
 
@@ -484,8 +475,13 @@ function MemoryStrategyBoard({ companies, onNav, sectionRef }) {
                 <em>{zone.no} · {zone.en}</em>
                 <b>{zone.title}</b>
                 <span>{zone.scope}</span>
+                <p>{zone.question}</p>
+                <dl>
+                  <div><dt>OUTPUT</dt><dd>{zone.output}</dd></div>
+                  <div><dt>GATE</dt><dd>{zone.gate}</dd></div>
+                </dl>
               </div>
-              {index < controlZones.length - 1 && <i aria-hidden="true" />}
+              {index < controlZones.length - 1 && <i className="msf-flow-arrow" aria-hidden="true" />}
             </React.Fragment>
           ))}
         </div>

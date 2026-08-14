@@ -5101,6 +5101,174 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     padding: 9px;
   }
 }
+
+/* AI memory strategy office: client signal → requirement → business → execution */
+.msf-control-logic {
+  grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr);
+  gap: 8px;
+  padding: 14px;
+  border-color: color-mix(in srgb, var(--consult-navy) 24%, var(--line));
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--consult-blue) 5%, transparent), transparent 58%),
+    var(--panel);
+}
+.msf-control-logic > div {
+  --zone-color: var(--consult-navy);
+  display: flex;
+  min-height: 218px;
+  padding: 16px;
+  flex-direction: column;
+  gap: 7px;
+  border: 1px solid color-mix(in srgb, var(--zone-color) 34%, var(--line));
+  border-radius: 8px;
+  background:
+    linear-gradient(150deg, color-mix(in srgb, var(--zone-color) 7%, var(--panel)), var(--panel) 62%);
+  box-shadow: 0 8px 20px rgba(16, 42, 67, .06);
+}
+.msf-control-logic > div:nth-of-type(2) { --zone-color: #175CD3; }
+.msf-control-logic > div:nth-of-type(3) { --zone-color: #087A72; }
+.msf-control-logic > div:nth-of-type(4) { --zone-color: #102A43; }
+.msf-control-logic > div:is(:hover, :focus-within) {
+  transform: translateY(-5px);
+  border-color: var(--zone-color);
+  box-shadow: 0 16px 32px color-mix(in srgb, var(--zone-color) 16%, transparent);
+}
+.msf-control-logic em { font-size: 8px; letter-spacing: .08em; }
+.msf-control-logic b { color: var(--ink); font-size: 14px; line-height: 1.35; }
+.msf-control-logic span { color: var(--ink-2); font-size: 10px; font-weight: 760; }
+.msf-control-logic p {
+  min-height: 48px;
+  margin: 3px 0 0;
+  color: var(--ink-2);
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+.msf-control-logic dl {
+  display: grid;
+  gap: 6px;
+  margin: auto 0 0;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--zone-color) 20%, var(--line));
+}
+.msf-control-logic dl > div { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 7px; }
+.msf-control-logic dt {
+  color: var(--zone-color);
+  font-family: var(--mono);
+  font-size: 7.5px;
+  font-weight: 900;
+  letter-spacing: .04em;
+}
+.msf-control-logic dd { margin: 0; color: var(--ink); font-size: 9px; font-weight: 760; line-height: 1.35; }
+.msf-control-logic > .msf-flow-arrow {
+  position: relative;
+  align-self: center;
+  justify-self: stretch;
+  width: 100%;
+  height: 2px;
+  border: 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--consult-gold) 28%, transparent), var(--consult-gold));
+  animation: none;
+}
+.msf-control-logic > .msf-flow-arrow::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--consult-gold);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--consult-gold) 18%, transparent);
+  content: "";
+  transform: translate(-2px, -50%);
+  animation: msfSignalTravel 2.2s cubic-bezier(.45, 0, .3, 1) infinite;
+}
+.msf-control-logic > .msf-flow-arrow::after {
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  width: 9px;
+  height: 9px;
+  border-top: 2px solid var(--consult-gold);
+  border-right: 2px solid var(--consult-gold);
+  content: "";
+  transform: translateY(-50%) rotate(45deg);
+}
+@keyframes msfSignalTravel {
+  0% { left: 0; opacity: 0; }
+  18% { opacity: 1; }
+  82% { opacity: 1; }
+  100% { left: calc(100% - 8px); opacity: 0; }
+}
+.msf-exec-synthesis { min-height: 360px; }
+.msf-synthesis-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
+  margin-top: 14px;
+}
+.msf-synthesis-flow > div {
+  display: grid;
+  min-height: 52px;
+  padding: 9px 11px;
+  grid-template-columns: 112px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 2px 10px;
+  align-items: center;
+  border-radius: 6px;
+}
+.msf-synthesis-flow em { grid-row: 1 / -1; align-self: center; font-size: 7.5px; }
+.msf-synthesis-flow b { font-size: 11px; }
+.msf-synthesis-flow span { font-size: 9px; line-height: 1.4; }
+.msf-synthesis-flow > .msf-flow-arrow {
+  position: relative;
+  justify-self: center;
+  width: 2px;
+  height: 11px;
+  border: 0;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--consult-gold) 30%, transparent), var(--consult-gold));
+  animation: msfVerticalFlow 1.8s ease-in-out infinite;
+}
+.msf-synthesis-flow > .msf-flow-arrow::after {
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid var(--consult-gold);
+  border-bottom: 2px solid var(--consult-gold);
+  content: "";
+  transform: translateX(-50%) rotate(45deg);
+}
+@keyframes msfVerticalFlow {
+  0%, 100% { opacity: .45; transform: translateY(-2px); }
+  50% { opacity: 1; transform: translateY(2px); }
+}
+@media (max-width: 1180px) {
+  .msf-control-logic {
+    display: flex;
+    align-items: stretch;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+  }
+  .msf-control-logic > div { flex: 1 0 245px; scroll-snap-align: start; }
+  .msf-control-logic > .msf-flow-arrow { flex: 0 0 28px; }
+}
+@media (max-width: 760px) {
+  .msf-control-logic { display: grid; grid-template-columns: minmax(0, 1fr); overflow: visible; }
+  .msf-control-logic > div { min-width: 0; }
+  .msf-control-logic > .msf-flow-arrow { width: 2px; height: 22px; justify-self: center; }
+  .msf-control-logic > .msf-flow-arrow { background: linear-gradient(180deg, color-mix(in srgb, var(--consult-gold) 28%, transparent), var(--consult-gold)); }
+  .msf-control-logic > .msf-flow-arrow::before { display: none; }
+  .msf-control-logic > .msf-flow-arrow::after {
+    top: auto;
+    right: auto;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%) rotate(135deg);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   :is(
     .sp-card,
@@ -5163,4 +5331,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   ):hover {
     transform: none !important;
   }
+  .msf-flow-arrow,
+  .msf-flow-arrow::before,
+  .msf-flow-arrow::after { animation: none !important; }
 }
