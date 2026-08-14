@@ -356,12 +356,19 @@ try {
   const sectionIds = [...app.matchAll(/(?:<LazySection\s+id=|data-section=)"([^"]+)"/g)].map(match => match[1]);
   const missingOnRight = navIds.filter(id => !sectionIds.includes(id));
   const missingOnLeft = sectionIds.filter(id => !navIds.includes(id));
+  const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
+  const sidebarBrandSource = components.match(/<span className="sb-logo-txt">[\s\S]*?<\/span>\s*<\/span>/)?.[0] || "";
+  const sidebarCopyClean = !/(?:mobile|휴대폰)/i.test(`${navSource}\n${sidebarBrandSource}`)
+    && navSource.includes('ko: "AI 신사업 브리핑"')
+    && navSource.includes('ko: "AI 신사업 DB"')
+    && sidebarBrandSource.includes("<b>AI</b>");
   if (missingOnRight.length || missingOnLeft.length
     || !/for \(const id of NAV_SECTION_IDS\)/.test(app)
-    || /if \(REDUCED\) \{ setInView\(true\)/.test(anim)) {
+    || /if \(REDUCED\) \{ setInView\(true\)/.test(anim)
+    || !sidebarCopyClean) {
     throw new Error(`navigation mismatch left-only=${missingOnRight.join(",")} right-only=${missingOnLeft.join(",")}`);
   }
-  console.log(`  정상  left navigation maps 1:1 to ${navIds.length} right-side sections`);
+  console.log(`  정상  left navigation maps 1:1 to ${navIds.length} right-side sections · Mobile/휴대폰 문구 없음`);
 } catch (error) {
   failed = true;
   console.error(`  실패  navigation mapping: ${error.message}`);
