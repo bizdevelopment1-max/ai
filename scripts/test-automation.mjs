@@ -278,8 +278,7 @@ try {
     && how.includes('--tone-gradient: linear-gradient')
     && how.includes('--blue-gradient: var(--tone-gradient)')
     && how.includes('@keyframes arrowTravel')
-    && how.includes('@keyframes edgeSignal')
-    && how.includes("@keyframes trackMove")
+    && how.includes('@keyframes logicArrow')
     && how.includes("@keyframes diagramRise");
   const bcgArrowSystem = how.includes(".tri-arrow {")
     && how.includes(".logic-arrow {")
@@ -288,39 +287,47 @@ try {
     && how.includes("width: clamp(82px, 7.4vw, 148px)")
     && /\.logic-arrow\s*\{[\s\S]{0,160}width:\s*92px;[\s\S]{0,80}height:\s*14px;/.test(how)
     && how.includes("@keyframes arrowFloat");
-  const vibeCodingCover = how.includes("VIBE CODING STRATEGY PLAYBOOK")
-    && how.includes("바이브 코딩으로 만드는 AI 전략 사이트")
-    && how.includes("아이디어부터 구현·검증·배포까지")
+  const vibeCodingCover = how.includes("VIBE CODING · REAL BUILD STORY")
+    && how.includes("바이브 코딩으로 만든 AI 신사업 인텔리전스")
+    && how.includes("첫 입력부터 데이터 자동화·전략 화면·운영까지")
     && !how.includes("Codex로 만드는 AI 전략 사이트")
-    && how.includes("HOW · 바이브 코딩 전략 사이트 구현 가이드");
-  const beginnerCodexPlaybook = how.includes("FIRST PROMPT")
-    && how.includes("VIBE CODING KICK-OFF")
-    && how.includes("PROMPT BLUEPRINT")
-    && how.includes("FIRST REVISION PROMPT")
-    && how.includes("DOUBLE DIAMOND DELIVERY")
+    && how.includes("HOW · AI 신사업 인텔리전스 바이브 코딩 구축기");
+  const beginnerSiteBuildStory = how.includes("SITE BUILD AT A GLANCE")
+    && how.includes("THE FIRST BUSINESS REQUEST")
+    && how.includes("SITE NORTH STAR")
+    && how.includes("INFORMATION ARCHITECTURE")
+    && how.includes("DATA PIPELINE")
+    && how.includes("COMPANY DATA CONTRACT")
+    && how.includes("AUTOMATED UPDATE ENGINE")
+    && how.includes("CONSULTING DECISION SYSTEM")
+    && how.includes("BUILD FLOW FOR BEGINNERS")
+    && how.includes("DOUBLE DIAMOND OPERATING LOOP")
     && how.includes("복사해서 시작")
-    && how.includes("첫 결과를 본 뒤 이렇게 입력")
-    && how.includes("실제 입력과 실행 예시")
-    && how.includes("SAFE GITHUB FLOW")
-    && how.includes("목표·범위·유지 조건·완료 기준");
-  const crossVerifiedCaseStudy = how.includes("THREE-LANE ASSURANCE")
-    && how.includes("Claude Code 2.1.220")
-    && how.includes("2차 지적 반영 후 최종 PASS")
-    && how.includes("Perplexity 검색 · 10개 출처")
+    && how.includes("실제 사용한 첫 입력")
+    && how.includes("실제로 사용한 데이터 요청")
+    && how.includes("기업 상세를 만든 입력")
+    && how.includes("초보자 입력");
+  const crossVerifiedCaseStudy = how.includes("REAL INPUT TO VERIFIED OUTPUT")
+    && how.includes("Claude Code 독립 검토")
+    && how.includes("Perplexity + 공식 원문")
+    && how.includes("Codex 구현 → Claude Code 반대 관점 검토")
     && [...how.matchAll(/class="source-link"/g)].length >= 3
-    && how.includes("팩트체크 결과 · 부분 지지")
+    && how.includes("최종 판정 원칙")
     && how.includes("node scripts/test-automation.mjs")
-    && how.includes("git rebase origin/main")
-    && how.includes("git switch -c feature/how-playbook")
-    && how.includes("gh pr create --fill")
     && how.includes("LONG-RUN CASES")
-    && how.includes("CASE 01 · STATIC HOSTING")
-    && how.includes("CASE 02 · MOVING MAIN")
-    && how.includes("CASE 03 · FIT &amp; SPEED");
+    && how.includes("CASE 01 · DUPLICATION")
+    && how.includes("CASE 02 · ORGANIZATION")
+    && how.includes("CASE 03 · LOAD SPEED");
+  const noLinesInsideBoxes = how.includes(".consulting-ribbon::after { content: none; display: none; }")
+    && how.includes(".diagram-track::before, .diagram-track::after { content: none !important; display: none !important; }")
+    && /\.diagram-item::after\s*\{[\s\S]{0,100}content:\s*none;[\s\S]{0,50}display:\s*none;/.test(how);
   const removedLegacyCopy = !how.includes("ARROW KEYS TO NAVIGATE")
     && !how.includes("12 SLIDES")
     && !how.includes("10–15 MIN")
     && !how.includes("BEGINNER FRIENDLY")
+    && !how.includes("브라우저에서 CLI 직접 실행 불가")
+    && !how.includes("현재 구조를 읽고 How만 수정")
+    && !how.includes("How는 15장 HTML 프레젠테이션")
     && !/\bJSON\b/i.test(how);
   const analogousGradientSystem = accentColors.size >= 6
     && secondaryAccentColors.size >= 6
@@ -348,10 +355,10 @@ try {
     && how.includes("video.volume = 0")
     && how.includes(".summary-slide .flow")
     && how.includes(".summary-slide .takeaway");
-  if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 26 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !vibeCodingCover || !beginnerCodexPlaybook || !crossVerifiedCaseStudy || !removedLegacyCopy || !analogousGradientSystem || !introVideoExperience) {
-    throw new Error("How deck must keep a Vibe Coding cover, 15 slides, 2 muted intro videos, 13 dual-image backgrounds, one-hue gradients per box, double-tip consulting arrows, varied consulting frameworks, beginner start/revision prompts, cross-verification evidence, real commands, and long-run cases");
+  if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 26 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !vibeCodingCover || !beginnerSiteBuildStory || !crossVerifiedCaseStudy || !noLinesInsideBoxes || !removedLegacyCopy || !analogousGradientSystem || !introVideoExperience) {
+    throw new Error("How deck must explain the real AI intelligence site build with 15 slides, 2 muted intro videos, 13 dual-image backgrounds, one-hue gradients, connectors only between boxes, beginner prompts, data automation, consulting frameworks, cross-verification and operating cases");
   }
-  console.log("  OK  How 바이브 코딩 표지 · 15장 · 박스별 단일 색조 · 이중 삼각 커넥터 · 피라미드·2×2·더블 다이아몬드 · 시작·수정 입력 예시");
+  console.log("  OK  How 본 사이트 구축 사례 · 15장 · 사업 질문→데이터→전략→운영 · 박스 내부 선 제거 · 실제 입력·검증·장기 작업 사례");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#030609">
-  <meta name="description" content="AI 신사업 인텔리전스 사이트를 바이브 코딩으로 구현하는 초보자 가이드">
-  <title>HOW · 바이브 코딩 전략 사이트 구현 가이드</title>
+  <meta name="description" content="AI 신사업 인텔리전스 본 사이트를 사업 질문부터 데이터 자동화와 운영까지 구현한 바이브 코딩 구축 가이드">
+  <title>HOW · AI 신사업 인텔리전스 바이브 코딩 구축기</title>
   <style>
     @font-face {
       font-family: "SamsungOne700C";
@@ -546,16 +546,7 @@
       background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
       animation: logicArrow 1.45s ease-in-out infinite;
     }
-    .consulting-ribbon::after {
-      content: "";
-      position: absolute;
-      left: -22%;
-      bottom: 0;
-      width: 22%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent));
-      animation: ribbonScan 3.6s linear infinite;
-    }
+    .consulting-ribbon::after { content: none; display: none; }
     @keyframes logicArrow { 0% { opacity: 0; transform: translateX(-90%); } 35%,70% { opacity: 1; } 100% { opacity: 0; transform: translateX(220%); } }
     @keyframes ribbonScan { to { left: 108%; } }
 
@@ -617,17 +608,10 @@
     }
     .diagram-item em, .diagram-item dt, .diagram-item > b:first-child { color: var(--item-color, var(--accent)); }
     .diagram-item::after {
-      content: "";
-      position: absolute;
-      top: -1px;
-      left: -1px;
-      width: 34%;
-      height: 2px;
-      pointer-events: none;
-      background: linear-gradient(90deg, color-mix(in srgb, var(--item-color, var(--accent)) 78%, white), var(--item-color, var(--accent)), transparent);
-      transform-origin: left;
-      animation: edgeSignal 3.2s ease-in-out infinite;
+      content: none;
+      display: none;
     }
+    .diagram-track::before, .diagram-track::after { content: none !important; display: none !important; }
     .flow-card, .arch-layer, .pipe-step, .command-step, .audit-card {
       border-radius: 0;
       clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 11px 50%);
@@ -825,7 +809,7 @@
         <b>HOW IT WORKS</b>
         <em>STRATEGY SYSTEM PLAYBOOK</em>
       </a>
-      <div class="top-meta"><i></i><span>CODEX BUILD PLAYBOOK</span></div>
+      <div class="top-meta"><i></i><span>AI INTELLIGENCE BUILD CASE</span></div>
     </header>
     <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
 
@@ -835,15 +819,15 @@
         <video class="bg-video" data-src="assets/bg-01.mp4" muted loop playsinline preload="none" poster="assets/poster-01.webp" aria-label="미래 기술 배경 영상"></video>
         <div class="slide-inner cover-layout">
           <div>
-            <div class="eyebrow reveal">VIBE CODING STRATEGY PLAYBOOK</div>
-            <h1 class="reveal" style="--delay:.16s"><span class="cover-title-line">바이브 코딩으로 만드는 AI 전략 사이트</span><span class="cover-title-line accent">아이디어부터 구현·검증·배포까지</span></h1>
+            <div class="eyebrow reveal">VIBE CODING · REAL BUILD STORY</div>
+            <h1 class="reveal" style="--delay:.16s"><span class="cover-title-line">바이브 코딩으로 만든 AI 신사업 인텔리전스</span><span class="cover-title-line accent">첫 입력부터 데이터 자동화·전략 화면·운영까지</span></h1>
             <div class="cover-rule reveal" style="--delay:.26s"></div>
-            <p class="cover-sub reveal" style="--delay:.32s">개발 경험이 없어도 원하는 결과를 설명하고 화면을 확인하며 단계적으로 완성하는 실전 흐름</p>
+            <p class="cover-sub reveal" style="--delay:.32s">개발 경험이 없어도 사업 질문을 입력하고 데이터와 화면을 단계적으로 연결해 실제 사이트로 완성한 과정</p>
           </div>
           <div class="cover-index reveal" style="--delay:.46s">
-            <div><em>01</em><b>DEFINE</b><small>원하는 결과와 완료 기준 정의</small></div>
-            <div><em>02</em><b>DELEGATE</b><small>Codex에 조사·설계·개발 요청</small></div>
-            <div><em>03</em><b>REVIEW</b><small>미리보기·검증·배포 확인</small></div>
+            <div><em>01</em><b>BUSINESS</b><small>의사결정 질문과 사용자 정의</small></div>
+            <div><em>02</em><b>DATA</b><small>근거 수집·정규화·업데이트 설계</small></div>
+            <div><em>03</em><b>EXPERIENCE</b><small>전략 프레임·상세·운영 화면 구현</small></div>
           </div>
         </div>
       </section>
@@ -852,240 +836,240 @@
         <div class="bg-poster" style="background-image:url('assets/poster-02.webp')"></div>
         <video class="bg-video" data-src="assets/bg-02.mp4" muted loop playsinline preload="none" poster="assets/poster-02.webp" aria-label="그라데이션 기술 배경 영상"></video>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">00</span><div><div class="eyebrow">EXECUTIVE SUMMARY</div><h2>Codex 개발은 코딩보다 <span class="accent">명확한 요청과 검토의 반복</span></h2><p>목표를 말하고 · 현재 구조를 확인하고 · 작은 단위로 구현하고 · 검증 후 배포</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">00</span><div><div class="eyebrow">SITE BUILD AT A GLANCE</div><h2>이 사이트는 한 번에 만든 화면이 아니라 <span class="accent">다섯 개 층을 순서대로 연결</span></h2><p>사업 질문에서 시작해 정보 구조 · 데이터 엔진 · 전략 프레임 · 자동 운영까지 확장</p></div></div>
           <div class="flow reveal" style="--delay:.16s">
-            <div class="flow-card"><em>ASK</em><b>결과 정의</b><span>무엇을 누구에게 보여줄지</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>INSPECT</em><b>현황 파악</b><span>파일·화면·제약조건 확인</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>BUILD</em><b>작은 단위 구현</b><span>콘텐츠·디자인·동작 분리</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>REVIEW</em><b>눈으로 검토</b><span>잘림·중복·링크·속도 확인</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>RELEASE</em><b>안전하게 반영</b><span>검증 통과 후 공개</span></div>
+            <div class="flow-card"><em>WHY</em><b>사업 질문</b><span>어떤 AI 신사업 결정을 도울지</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>WHAT</em><b>정보 구조</b><span>메인·상세·7개 밸류체인 분리</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>EVIDENCE</em><b>데이터 엔진</b><span>공식 원문·기사·시장·공시 수집</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>SO WHAT</em><b>전략 화면</b><span>시장·수익·경쟁·실행 프레임</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>NOW WHAT</em><b>자동 운영</b><span>검증·갱신·배포·삭제 억제</span></div>
           </div>
           <div class="three-outcomes reveal" style="--delay:.28s">
-            <div class="outcome"><em>ONE-LINE GOAL</em><b>한 문장 목표</b><span>기능보다 사용자가 얻을 결과를 먼저 명시</span></div>
-            <div class="outcome"><em>VISIBLE PROOF</em><b>보이는 검증</b><span>화면·근거·테스트로 완료 여부 판단</span></div>
-            <div class="outcome"><em>SAFE CHANGE</em><b>되돌릴 수 있는 변경</b><span>작은 수정·비교·승인·배포 순서 유지</span></div>
+            <div class="outcome"><em>COMPARE</em><b>기업 방향 비교</b><span>현재 비즈니스 모델과 다음 전략을 같은 축으로 비교</span></div>
+            <div class="outcome"><em>TRACE</em><b>근거까지 추적</b><span>기업 카드에서 조직·발언·기사·원문으로 이동</span></div>
+            <div class="outcome"><em>REFRESH</em><b>지속 업데이트</b><span>수집·중복 제거·최신값 교체·공개 데이터 재생성</span></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>KEY MESSAGE</b><span>좋은 Codex 입력은 역할 설명이 아니라 결과 · 범위 · 유지 조건 · 완료 기준을 구체적으로 전달</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>KEY MESSAGE</b><span>화면부터 그리지 않고 어떤 결정을 돕는지 정의한 뒤 근거 데이터와 전략 프레임을 연결한 것이 전체 구축의 출발점</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="첫 입력" data-accent="#8b5cf6" data-rgb="139,92,246" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
+      <section class="slide" data-title="최초 요청" data-accent="#8b5cf6" data-rgb="139,92,246" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-03.webp')"></span><span style="background-image:url('assets/poster-04.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">01</span><div><div class="eyebrow">FIRST PROMPT</div><h2>첫 입력은 기능 목록이 아니라 <span class="accent">원하는 결과를 한 문장으로</span></h2><p>목표 · 반드시 포함할 내용 · 완료 판단 기준을 분리하면 Codex가 스스로 작업 순서를 구성</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">01</span><div><div class="eyebrow">THE FIRST BUSINESS REQUEST</div><h2>최초 입력은 화면 디자인보다 <span class="accent">누가 어떤 결정을 내릴지</span>에서 시작</h2><p>AI 신사업을 발굴하는 담당자가 시장·경쟁·수익모델·기업 근거를 빠르게 비교하는 데이터베이스를 요청</p></div></div>
           <div class="issue-tree reveal" style="--delay:.14s">
-            <div class="root-question"><b>이 사이트를 처음 보는 사람이<br>기업 전략을 빠르게 비교하고<br>상세 근거까지 확인하게 만들어줘</b></div>
+            <div class="root-question"><b>AI 신사업 후보를<br>시장·수익·기업 움직임으로 비교하고<br>근거 원문까지 확인하게 만들어줘</b></div>
             <i class="tri-arrow"></i>
             <div class="branches">
-              <article class="branch"><em>01 · OUTCOME</em><h3>사용자 결과</h3><ul><li>누가 사용하는가</li><li>어떤 결정을 돕는가</li><li>첫 화면에서 무엇을 이해하는가</li><li>클릭 후 무엇을 확인하는가</li></ul></article>
-              <article class="branch"><em>02 · CONSTRAINT</em><h3>유지 조건</h3><ul><li>기존 데이터와 기능 유지</li><li>금지 문구와 표현 방식</li><li>모바일·데스크톱 대응</li><li>근거 링크와 최신성 유지</li></ul></article>
-              <article class="branch"><em>03 · DONE</em><h3>완료 기준</h3><ul><li>글자 잘림 없음</li><li>중복 콘텐츠 없음</li><li>모든 버튼 동작</li><li>검증 통과 후 공개</li></ul></article>
+              <article class="branch"><em>01 · DECISION</em><h3>의사결정 질문</h3><ul><li>어느 시장이 커지는가</li><li>경쟁사는 어떻게 돈을 버는가</li><li>어느 역량을 직접 보유할 것인가</li><li>어떤 기업과 협력할 것인가</li></ul></article>
+              <article class="branch"><em>02 · DATABASE</em><h3>필수 데이터</h3><ul><li>시장 규모와 소비자 조사</li><li>기업 비즈니스 모델과 전략</li><li>경영진·조직·발언·기사</li><li>스타트업·투자·주가·실적</li></ul></article>
+              <article class="branch"><em>03 · EXPERIENCE</em><h3>사용 방식</h3><ul><li>메인에서 방향을 빠르게 비교</li><li>클릭하면 상세 근거 확인</li><li>동일 업체는 한 번만 표시</li><li>최신 정보는 자동으로 반영</li></ul></article>
             </div>
           </div>
-          <div class="takeaway reveal" style="--delay:.3s"><b>입력 예시</b><span>현재 구조를 먼저 확인하고 · 메인과 상세를 중복 없이 나누고 · 양쪽 끝이 긴 이중 삼각 커넥터와 박스별 단일 색상 그라디언트를 적용하고 · 모바일에서도 잘리지 않게 검증해줘</span></div>
+          <div class="takeaway reveal" style="--delay:.3s"><b>실제 사용한 첫 입력</b><span>AI 신사업 발굴을 위한 데이터베이스형 사이트를 만들어줘 · 시장 규모 · 경쟁사 수익모델 · 기업 전략 · 조직과 경영진 · 스타트업 · 투자 방향을 한곳에서 비교하고 · 모든 주장에는 확인 가능한 원문 링크를 연결해줘</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="바이브 코딩 시작" data-accent="#0072ce" data-rgb="0,114,206" data-accent2="#f59e0b" data-rgb2="245,158,11" data-accent3="#34d399" data-rgb3="52,211,153" aria-hidden="true">
+      <section class="slide" data-title="북극성 정의" data-accent="#0072ce" data-rgb="0,114,206" data-accent2="#f59e0b" data-rgb2="245,158,11" data-accent3="#34d399" data-rgb3="52,211,153" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-03.webp')"></span><span style="background-image:url('assets/poster-05.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">02</span><div><div class="eyebrow">VIBE CODING KICK-OFF</div><h2>처음에는 코드보다 <span class="accent">북극성과 첫 작업 단위</span>를 입력</h2><p>누구의 어떤 문제를 어떤 화면으로 해결할지 정하고 첫 번째 결과물을 작게 제한</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">02</span><div><div class="eyebrow">SITE NORTH STAR</div><h2>사이트의 북극성은 정보량이 아니라 <span class="accent">신사업 결정을 더 빠르게 만드는 것</span></h2><p>사용자 · 판단 과업 · 필요한 근거 · 완료 기준을 먼저 고정해 이후 기능 추가가 흔들리지 않도록 설계</p></div></div>
           <div class="vibe-start reveal" style="--delay:.14s">
-            <article class="north-star"><div><em>NORTH STAR</em><b>기업의 휴대폰 AI 움직임을<br>신사업 기회로 비교하는 화면</b><span>처음 보는 사용자도 3분 안에 시장 · 수익모델 · 실행 후보를 이해</span></div></article>
+            <article class="north-star"><div><em>NORTH STAR</em><b>기업의 AI 움직임을<br>시장 기회와 실행 후보로 전환</b><span>처음 보는 사용자도 짧은 시간 안에 시장 · 수익모델 · 파트너 후보를 이해</span></div></article>
             <i class="tri-arrow"></i>
             <div class="prompt-pyramid">
-              <div class="pyramid-step"><b>01 · USER</b><span>사업개발 담당자가 사용</span></div>
-              <div class="pyramid-step"><b>02 · JOB</b><span>시장·경쟁·수익모델을 한 화면에서 비교</span></div>
-              <div class="pyramid-step"><b>03 · FIRST BUILD</b><span>메인 카드와 상세 팝업 한 개부터 구현</span></div>
-              <div class="pyramid-step"><b>04 · DONE</b><span>직접 눌러 상세 근거까지 확인되면 완료</span></div>
+              <div class="pyramid-step"><b>01 · USER</b><span>AI 신사업을 검토하는 사업개발 담당자</span></div>
+              <div class="pyramid-step"><b>02 · JOB</b><span>시장·경쟁·수익·조직을 같은 기준으로 비교</span></div>
+              <div class="pyramid-step"><b>03 · EVIDENCE</b><span>공식 자료·공시·원문 기사·직접 프로필</span></div>
+              <div class="pyramid-step"><b>04 · DONE</b><span>기회 후보와 다음 확인 항목까지 도출</span></div>
             </div>
           </div>
-          <div class="takeaway reveal" style="--delay:.34s"><b>복사해서 시작</b><span>현재 프로젝트를 먼저 읽고 · 휴대폰 AI 신사업 기회를 비교하는 메인 화면을 만들어줘 · 시장·수익모델·경쟁사를 MECE하게 나누고 · 카드 하나를 누르면 근거와 다음 행동이 보이게 해줘 · 기존 배포 방식은 유지하고 결과 화면까지 검증해줘</span></div>
+          <div class="takeaway reveal" style="--delay:.34s"><b>복사해서 시작</b><span>AI 신사업 담당자가 사용할 사이트를 만들어줘 · 시장·수익모델·기업·스타트업·조직·뉴스를 MECE하게 분리하고 · 첫 화면에서는 전략 방향을 비교하고 · 상세에서는 근거와 원문을 확인하며 · 데이터가 정기적으로 갱신되게 설계해줘</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="프로젝트 맡기기" data-accent="#ec4899" data-rgb="236,72,153" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
+      <section class="slide" data-title="정보 구조" data-accent="#ec4899" data-rgb="236,72,153" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-04.webp')"></span><span style="background-image:url('assets/poster-05.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">03</span><div><div class="eyebrow">GIVE CODEX CONTEXT</div><h2>수정 전에 Codex가 <span class="accent">프로젝트 전체 맥락을 읽게 하기</span></h2><p>작업 폴더와 현재 화면을 먼저 확인하면 기존 기능 손상과 중복 구현을 줄일 수 있는 구조</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">03</span><div><div class="eyebrow">INFORMATION ARCHITECTURE</div><h2>메인과 상세를 분리해 <span class="accent">같은 정보를 반복하지 않는 구조</span>로 설계</h2><p>메인은 비교와 방향성 · 상세는 기업 근거 · 시장과 주가는 별도 분석 화면 · 왼쪽 탐색은 오른쪽 섹션과 일대일 연결</p></div></div>
           <div class="architecture reveal" style="--delay:.15s">
-            <article class="arch-layer"><em>WORKSPACE</em><h3>작업 위치</h3><ul><li>수정할 폴더 지정</li><li>메인 진입 파일 확인</li><li>기존 배포 방식 유지</li><li>관련 자산 위치 확인</li></ul></article><i class="tri-arrow"></i>
-            <article class="arch-layer"><em>INSPECT</em><h3>현재 구조</h3><ul><li>페이지와 섹션 목록</li><li>사용 중인 컴포넌트</li><li>스타일과 반응형 규칙</li><li>테스트와 자동화 확인</li></ul></article><i class="tri-arrow"></i>
-            <article class="arch-layer"><em>PLAN</em><h3>변경 범위</h3><ul><li>유지할 부분</li><li>교체할 부분</li><li>새로 추가할 동작</li><li>검증 순서</li></ul></article><i class="tri-arrow"></i>
-            <article class="arch-layer"><em>EXECUTE</em><h3>구현</h3><ul><li>작은 패치 적용</li><li>화면 번들 갱신</li><li>오류 수정</li><li>배포 결과 확인</li></ul></article>
+            <article class="arch-layer"><em>EXECUTIVE VIEW</em><h3>한 장 요약</h3><ul><li>시장 변화</li><li>핵심 기업 움직임</li><li>신사업 기회</li><li>오늘 확인할 근거</li></ul></article><i class="tri-arrow"></i>
+            <article class="arch-layer"><em>VALUE CHAIN</em><h3>7개 사업 계층</h3><ul><li>AI 경험·버티컬</li><li>에이전트·서비스</li><li>데이터·모델</li><li>개발·런타임</li></ul></article><i class="tri-arrow"></i>
+            <article class="arch-layer"><em>COMPANY DETAIL</em><h3>기업 근거</h3><ul><li>개요·실적·인력</li><li>수익모델·전략</li><li>임원 조직도</li><li>발언·기사·원문</li></ul></article><i class="tri-arrow"></i>
+            <article class="arch-layer"><em>MARKET TOOLS</em><h3>정량 분석</h3><ul><li>시장·소비자 조사</li><li>상장사 주가</li><li>투자 관계망</li><li>신사업 사례</li></ul></article>
           </div>
           <div class="ledger-split reveal" style="--delay:.28s">
-            <div class="ledger"><b>Codex가 확인할 것</b><span>현재 파일 · 사용자 요청 · 기존 기능 · 디자인 규칙 · 테스트 결과</span></div>
-            <div class="ledger"><b>사용자가 결정할 것</b><span>무엇이 중요한가 · 어떤 내용을 삭제할지 · 어느 수준이면 완료인지</span></div>
+            <div class="ledger"><b>메인 화면의 역할</b><span>기업별 현재 모델 · 사업 방향 · 전략 이동 · 핵심 수치를 빠르게 비교</span></div>
+            <div class="ledger"><b>상세 화면의 역할</b><span>기업 개요 · 조직도 · 리더 배경 · 발언 · 뉴스 · 수치의 기준일과 원문 확인</span></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>입력 예시</b><span>먼저 현재 사이트 구조와 관련 파일을 읽고 · 영향을 받는 부분만 정리한 뒤 · 기존 기능을 유지하며 수정해줘</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>구조 입력</b><span>첫 화면과 상세 팝업의 정보를 MECE하게 나눠줘 · 메인은 비교와 방향성만 · 상세는 기업 개요·실적·수익모델·조직·발언·뉴스·원문 근거만 표시하고 · 같은 문장은 두 위치에 반복하지 않게 해줘</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="프롬프트 공식" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#14b8a6" data-rgb2="20,184,166" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
+      <section class="slide" data-title="데이터 엔진" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#14b8a6" data-rgb2="20,184,166" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-05.webp')"></span><span style="background-image:url('assets/poster-06.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">04</span><div><div class="eyebrow">PROMPT BLUEPRINT</div><h2>좋은 입력은 <span class="accent">6개 블록으로 짧고 구체적으로</span></h2><p>한 번에 모든 것을 지시하기보다 요청의 종류와 완료 조건을 구분해 전달</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">04</span><div><div class="eyebrow">DATA PIPELINE</div><h2>뉴스를 모으는 것이 아니라 <span class="accent">원문을 검증 가능한 전략 데이터로 변환</span></h2><p>출처 정책 → 수집 → 근거 문장 → 기업 식별 → 중복 통합 → 공개 뷰 순서로 데이터 품질을 고정</p></div></div>
           <div class="pipeline reveal" style="--delay:.14s">
-            <div class="pipe-step"><em>01</em><b>맥락</b><span>현재 사이트와 사용자</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>02</em><b>목표</b><span>이번에 달성할 결과</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>03</em><b>범위</b><span>바꿀 화면과 콘텐츠</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>04</em><b>스타일</b><span>색상·도형·정보 위계</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>05</em><b>동작</b><span>클릭·호버·키보드</span></div><i class="tri-arrow"></i>
-            <div class="pipe-step"><em>06</em><b>검증</b><span>잘림·속도·중복 확인</span></div>
+            <div class="pipe-step"><em>01</em><b>출처 정책</b><span>공식·공시·권위 매체 우선</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>02</em><b>원문 수집</b><span>기사·기업·시장·주가·실적</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>03</em><b>근거 추출</b><span>사실·변화·시사점 분리</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>04</em><b>정규화</b><span>기업명·날짜·단위·URL 통일</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>05</em><b>품질 게이트</b><span>중복·오래된 값·오연결 차단</span></div><i class="tri-arrow"></i>
+            <div class="pipe-step"><em>06</em><b>공개 뷰</b><span>화면용 데이터만 가볍게 생성</span></div>
           </div>
           <div class="prompt-compare reveal" style="--delay:.27s">
-            <article class="prompt-panel"><em>WEAK INPUT</em><b>결과가 흔들리는 입력</b><code>How를 더 멋지고 전문적으로 수정해줘</code></article>
+            <article class="prompt-panel"><em>WEAK INPUT</em><b>결과가 흔들리는 입력</b><code>AI 관련 뉴스를 많이 모아줘</code></article>
             <i class="tri-arrow"></i>
-            <article class="prompt-panel strong"><em>INPUT WINDOW · COPY &amp; USE</em><b>이번 화면에 실제로 넣은 입력</b><code>맥락 · How는 15장 HTML 프레젠테이션<br>목표 · 초보자가 바이브 코딩 개발 흐름을 이해<br>범위 · 3장 이후 배경과 본문 도식만 수정<br>스타일 · 양쪽 끝이 긴 이중 삼각 커넥터와 박스별 단일 색상 그라디언트<br>유지 · 첫 2장 무음 영상과 키보드 이동<br>검증 · 글자 잘림·중복·속도·배포까지 확인</code></article>
+            <article class="prompt-panel strong"><em>DATA INPUT · COPY &amp; USE</em><b>실제로 사용한 데이터 요청</b><code>공식 자료와 권위 매체 원문을 우선 수집<br>기업과 직접 관련된 기사만 연결<br>사실 · 변화 · 전략적 시사점을 분리<br>같은 사건과 같은 업체는 하나로 통합<br>최신 실적·인력·경영진은 기준일과 원문을 함께 저장<br>검증 실패 데이터는 공개 화면에 표시하지 않음</code></article>
           </div>
-          <div class="takeaway reveal" style="--delay:.39s"><b>PROMPT RULE</b><span>대상 · 위치 · 변화 · 유지 조건 · 확인 방법을 한 입력 안에서 분리</span></div>
+          <div class="takeaway reveal" style="--delay:.39s"><b>DATA RULE</b><span>수집량보다 출처 · 기업 직접 연관성 · 기준일 · 중복 통합 · 원문 복귀 경로를 먼저 정의</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="첫 결과 수정" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
+      <section class="slide" data-title="기업 데이터" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-05.webp')"></span><span style="background-image:url('assets/poster-07.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">05</span><div><div class="eyebrow">FIRST REVISION PROMPT</div><h2>수정 요청은 감상이 아니라 <span class="accent">관찰 · 변경 · 보호 · 검증</span></h2><p>화면에서 본 사실과 원하는 차이를 분리하면 기존 기능을 지키면서 정확히 수정</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">05</span><div><div class="eyebrow">COMPANY DATA CONTRACT</div><h2>대기업과 스타트업을 <span class="accent">같은 깊이의 기업 스키마</span>로 정렬</h2><p>규모와 상장 여부가 달라도 개요 · 수익 · 전략 · 조직 · 발언 · 근거의 레벨을 동일하게 유지</p></div></div>
           <div class="revision-layout reveal" style="--delay:.14s">
             <div class="evidence-matrix">
-              <article class="matrix-cell"><em>OBSERVE</em><b>현재 보이는 문제</b><span>카드 색상이 모두 같고 관계가 약함</span></article>
-              <article class="matrix-cell"><em>CHANGE</em><b>원하는 변화</b><span>박스별 단일 색상 계열 + 슬라이드 간 다색 구분</span></article>
-              <article class="matrix-cell"><em>PROTECT</em><b>유지할 기능</b><span>영상·키보드·모바일·직접 링크 유지</span></article>
-              <article class="matrix-cell"><em>VERIFY</em><b>완료 판단</b><span>15장 모두 잘림 없이 이동·호버 확인</span></article>
+              <article class="matrix-cell"><em>IDENTITY</em><b>기업 개요</b><span>설립 · 본사 · 인력 · 주요 사업 · 실적 · 기준일</span></article>
+              <article class="matrix-cell"><em>ECONOMICS</em><b>돈 버는 방식</b><span>고객 · 과금 단위 · 유통 · 비용 · 확장 경로</span></article>
+              <article class="matrix-cell"><em>ORGANIZATION</em><b>조직과 리더</b><span>CEO·CTO·임원 · 학교·전공·경력 · 직접 프로필</span></article>
+              <article class="matrix-cell"><em>EVIDENCE</em><b>전략 근거</b><span>경영진 발언 · 기사 · 공시 · 원문 링크 · 날짜</span></article>
             </div>
             <i class="tri-arrow"></i>
-            <article class="revision-prompt"><em>INPUT WINDOW · COPY &amp; USE</em><h3>첫 결과를 본 뒤 이렇게 입력</h3><code>현재 화면에서 카드가 같은 색으로 보여 논리 단계가 구분되지 않아<br><br>각 박스 안에서는 한 색상의 밝고 어두운 톤만 사용해줘<br><br>박스마다 블루·보라·핑크·앰버·청록 계열을 구분하고 기존 영상·키보드 이동·모바일 레이아웃은 유지해줘<br><br>양쪽 끝이 긴 이중 삼각 커넥터를 위아래로 천천히 움직이게 하고 15장 전체의 글자 잘림과 호버를 검증해줘</code></article>
+            <article class="revision-prompt"><em>SCHEMA INPUT · COPY &amp; USE</em><h3>기업 상세를 만든 입력</h3><code>모든 기업과 스타트업을 같은 순서로 표시<br><br>기업 개요 → 주요 사업 → 경영 실적 → 수익모델 → 사업 방향 → 임원 조직도 → 경영진 발언 → 관련 뉴스<br><br>경영진 이름 옆에 직책을 표시하고 학교·전공·주요 경력과 검증된 직접 프로필만 연결<br><br>확인되지 않은 인물·수치·링크는 추정하지 말고 공개 데이터에서 제외</code></article>
           </div>
-          <div class="takeaway reveal" style="--delay:.36s"><b>수정 공식</b><span>어디에서 · 무엇이 보였고 · 어떻게 달라져야 하며 · 무엇은 유지하고 · 무엇으로 완료를 확인할지 순서대로 입력</span></div>
+          <div class="takeaway reveal" style="--delay:.36s"><b>MECE RULE</b><span>메인은 비교 가능한 전략 요약 · 상세는 검증 가능한 기업 사실 · 조직과 발언은 출처가 확인된 경우만 노출</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="실제 개발" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#3b82f6" data-rgb3="59,130,246" aria-hidden="true">
+      <section class="slide" data-title="자동 업데이트" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#3b82f6" data-rgb3="59,130,246" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-06.webp')"></span><span style="background-image:url('assets/poster-07.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">06</span><div><div class="eyebrow">REAL DEVELOPMENT LOOP</div><h2>실제 개발은 <span class="accent">동기화 → 수정 → 검사 → 배포의 반복</span></h2><p>현재 저장소에서 사용한 명령과 통과 기준을 단계별로 연결</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">06</span><div><div class="eyebrow">AUTOMATED UPDATE ENGINE</div><h2>최신 정보는 사람이 붙여 넣지 않고 <span class="accent">수집 → 검증 → 교체 → 공개를 자동 반복</span></h2><p>뉴스·주가·실적·기업·스타트업·시장 데이터를 하루 여러 차례 갱신하고 공개 전 품질 검사를 실행</p></div></div>
           <div class="command-flow reveal" style="--delay:.14s">
-            <article class="command-step"><em>01 · SYNC</em><b>원격과 정렬</b><code>git fetch origin<br>git rebase origin/main</code></article><i class="tri-arrow"></i>
-            <article class="command-step"><em>02 · BRANCH</em><b>작업 브랜치 생성</b><code>git switch -c feature/how-playbook<br>git status --short</code></article><i class="tri-arrow"></i>
-            <article class="command-step"><em>03 · VERIFY</em><b>화면 계약 검사</b><code>node scripts/test-automation.mjs</code></article><i class="tri-arrow"></i>
-            <article class="command-step"><em>04 · REVIEW</em><b>커밋 전 비교</b><code>git diff --check<br>git diff --stat</code></article><i class="tri-arrow"></i>
-            <article class="command-step"><em>05 · COMMIT</em><b>검증본 기록</b><code>git add How scripts/test-automation.mjs<br>git commit -m "Refine How"</code></article><i class="tri-arrow"></i>
-            <article class="command-step"><em>06 · PR</em><b>검토 가능한 제안</b><code>git push -u origin feature/how-playbook<br>gh pr create --fill</code></article>
+            <article class="command-step"><em>01 · COLLECT</em><b>원문 수집</b><span>뉴스·공시·주가·실적·시장·기업 페이지</span></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>02 · RESOLVE</em><b>기업 연결</b><span>회사명·도메인·인물·기사 직접 연관성 확인</span></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>03 · NORMALIZE</em><b>표준화</b><span>날짜·통화·인원·직책·기업 ID를 같은 형식으로 변환</span></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>04 · CONSOLIDATE</em><b>중복 통합</b><span>동일 사건·재배포·중복 기업을 한 레코드로 병합</span></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>05 · VERIFY</em><b>품질 검사</b><span>근거 URL·기준일·금지 문구·한글·스키마 검사</span></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>06 · PUBLISH</em><b>공개 갱신</b><span>가벼운 화면용 데이터 생성 후 사이트 자동 배포</span></article>
           </div>
           <div class="proof-strip reveal" style="--delay:.28s">
-            <div><b>STRUCTURE</b><span>15장·2개 영상·26개 배경 장면</span></div>
-            <div><b>CONTENT</b><span>금지 문구·중복·한글 인코딩 검사</span></div>
-            <div><b>BEHAVIOR</b><span>키보드·스크롤·모바일 맞춤 로직</span></div>
-            <div><b>DEPLOY</b><span>Pages 완료 후 공개 응답 재확인</span></div>
+            <div><b>FRESHNESS</b><span>최신 실적과 인력은 새 기준일로 교체</span></div>
+            <div><b>ACCUMULATION</b><span>시장·소비자 조사·전략 사례는 중복 없이 축적</span></div>
+            <div><b>SUPPRESSION</b><span>사용자가 X로 제외한 항목은 재수집 차단</span></div>
+            <div><b>FAIL SAFE</b><span>검증 실패 시 직전 정상 공개 데이터를 유지</span></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>OPERATING RULE</b><span>명령은 복사 대상이 아니라 현재 상태를 확인하는 체크포인트 · 실패하면 원인을 고친 뒤 같은 검증을 다시 실행</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>운영 입력</b><span>최신값이 필요한 실적·인력·경영진·주가는 새 데이터로 교체하고 · 시장·소비자 조사·신사업 사례는 중복을 통합해 누적하며 · 사용자가 삭제한 항목은 이후 수집과 공개에서 영구 제외해줘</span></div>
         </div>
       </section>
 
       <section class="slide" data-title="컨설팅 화면" data-accent="#14b8a6" data-rgb="20,184,166" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-07.webp')"></span><span style="background-image:url('assets/poster-08.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">07</span><div><div class="eyebrow">CONSULTING INFOGRAPHICS</div><h2>컨설팅 화면은 장식보다 <span class="accent">결론과 논리의 이동 경로</span></h2><p>제목에서 결론을 말하고 이중 삼각 커넥터로 근거와 실행의 방향을 연결</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">07</span><div><div class="eyebrow">CONSULTING DECISION SYSTEM</div><h2>수집한 데이터는 다섯 개 질문으로 바꿔 <span class="accent">의사결정 가능한 인사이트</span>로 전환</h2><p>근거를 단순 요약하지 않고 시장 매력도 · 밸류체인 · 수익구조 · 승리조건 · 다음 행동으로 재구성</p></div></div>
           <div class="gate-grid reveal" style="--delay:.14s">
-            <article class="gate"><em>RULE 01</em><b>결론형 제목</b><span>무엇이 바뀌고 왜 중요한지 한 문장으로 제시</span></article>
-            <article class="gate"><em>RULE 02</em><b>MECE 분류</b><span>시장 · 수익 · 경쟁 · 실행을 겹치지 않게 분리</span></article>
-            <article class="gate"><em>RULE 03</em><b>근거 → 시사점</b><span>숫자와 원문 다음에 전략적 의미를 연결</span></article>
-            <article class="gate"><em>RULE 04</em><b>시각 위계</b><span>핵심 숫자 · 흐름 · 세부 근거 순으로 크기 차등</span></article>
-            <article class="gate"><em>RULE 05</em><b>행동 유도</b><span>클릭 · 호버 · 상세 이동의 목적을 명확히 표시</span></article>
+            <article class="gate"><em>01 · ATTRACTIVENESS</em><b>시장이 커지는가</b><span>시장 규모 · 성장률 · 소비자 채택 · 규제 변화를 함께 비교</span></article>
+            <article class="gate"><em>02 · VALUE CHAIN</em><b>어디서 가치가 생기는가</b><span>7개 SW·서비스 계층으로 기업의 통제점과 이동을 분류</span></article>
+            <article class="gate"><em>03 · ECONOMICS</em><b>어떻게 돈을 버는가</b><span>고객 · 과금 · 유통 · 반복매출 · 파트너 몫을 구조화</span></article>
+            <article class="gate"><em>04 · WHERE TO PLAY</em><b>어디에 진입할 것인가</b><span>직접 구축 · 제휴 · 투자 · 인수 후보를 역량과 속도로 비교</span></article>
+            <article class="gate"><em>05 · HOW TO WIN</em><b>무엇으로 이길 것인가</b><span>기기·OS·결제·개인 컨텍스트를 차별화 자산으로 연결</span></article>
           </div>
-          <div class="stop-strip reveal" style="--delay:.29s"><b>REMOVE</b><span>의미 없는 진행 바 · 반복 설명 · 근거 없는 수치 · 한쪽만 강조된 둥근 박스 · 장식용 화살표</span></div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>입력 예시</b><span>모든 제목을 결론형으로 바꾸고 · 카드 간 관계를 양쪽 끝이 긴 이중 삼각 커넥터로 연결하고 · 핵심 메시지만 색상 반전 호버를 적용해줘</span></div>
+          <div class="stop-strip reveal" style="--delay:.29s"><b>MECE</b><span>시장 사실 · 기업 사실 · 해석 · 선택지 · 실행을 서로 다른 섹션으로 분리해 같은 문장 반복을 제거</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>전략 입력</b><span>각 데이터를 사실 → 변화 → 사업 시사점 순으로 정리하고 · 시장 매력도 · 경쟁 수익모델 · 통제점 · 진입 선택지 · 90일 검증 과제로 연결해줘 · 근거가 없는 해석은 표시하지 말아줘</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="교차 검증" data-accent="#a855f7" data-rgb="168,85,247" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#22d3ee" data-rgb3="34,211,238" aria-hidden="true">
+      <section class="slide" data-title="실제 입력·검증" data-accent="#a855f7" data-rgb="168,85,247" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#22d3ee" data-rgb3="34,211,238" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-08.webp')"></span><span style="background-image:url('assets/poster-09.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">08</span><div><div class="eyebrow">THREE-LANE ASSURANCE</div><h2>교차검증은 모델 수가 아니라 <span class="accent">역할 분리와 사람의 승인</span></h2><p>Codex 구현 · Claude Code 독립 검토 · Perplexity 외부 근거 탐색을 하나의 판정 흐름으로 연결</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">08</span><div><div class="eyebrow">REAL INPUT TO VERIFIED OUTPUT</div><h2>실제 작업은 <span class="accent">입력 → 구현 → 독립 검토 → 팩트체크 → 승인</span>의 도식으로 운영</h2><p>긴 텍스트 나열을 역할별 카드와 박스 사이 커넥터로 바꿔 초보자도 실행 순서를 바로 이해</p></div></div>
           <div class="assurance-flow reveal" style="--delay:.14s">
-            <article class="audit-card"><em>BUILD</em><b>Codex</b><span>저장소 분석 · 화면 구현 · 자동검사 · 배포 확인</span></article><i class="tri-arrow"></i>
-            <article class="audit-card"><em>SECOND PASS</em><b>Claude Code 2.1.220</b><span>변경 파일 독립 검토 · 2차 지적 반영 후 최종 PASS</span></article><i class="tri-arrow"></i>
-            <article class="audit-card"><em>WEB CHECK</em><b>Perplexity</b><span>외부 근거 10개 탐색 · 지지 범위와 미확인 영역 분리</span></article><i class="tri-arrow"></i>
-            <article class="audit-card"><em>DECISION</em><b>테스트 + 사람</b><span>테스트·변경 비교·원문을 보고 공개 여부 결정</span></article>
+            <article class="audit-card"><em>01 · PROMPT</em><b>사업 결과 입력</b><span>시장·기업·수익·조직·근거를 한 데이터베이스에서 비교</span></article><i class="tri-arrow"></i>
+            <article class="audit-card"><em>02 · BUILD</em><b>Codex 구현</b><span>저장소 분석 · 데이터 흐름 · 화면 · 자동검사 · 배포까지 수정</span></article><i class="tri-arrow"></i>
+            <article class="audit-card"><em>03 · REVIEW</em><b>Claude Code 독립 검토</b><span>누락 · 회귀 · 중복 · 근거 없는 주장 · 위험한 변경을 반대 관점에서 확인</span></article><i class="tri-arrow"></i>
+            <article class="audit-card"><em>04 · FACT CHECK</em><b>Perplexity + 공식 원문</b><span>외부 주장과 최신 수치를 탐색하고 기업 원문·공시로 최종 확인</span></article>
           </div>
           <div class="audit-result reveal" style="--delay:.29s">
-            <div class="verdict"><b>팩트체크 결과 · 부분 지지</b><span>다중 에이전트 검토와 자동화 검사는 품질 보조 수단으로 지지 · 사람의 검토를 대체한다는 주장은 근거 부족</span><small class="fact-meta">Perplexity 검색 · 10개 출처 · 확인 2026-08-15</small><a class="source-link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener">Cloudflare 운영 사례 · 2026-04-20</a><a class="source-link" href="https://github.blog/ai-and-ml/generative-ai/agent-pull-requests-are-everywhere-heres-how-to-review-them/" target="_blank" rel="noopener">GitHub 검토 가이드 · 2026-05-07</a></div>
-            <div class="verdict"><b>최종 판정 원칙</b><span>AI 답변끼리 일치해도 사실 확정 아님 · 기업 원문·공시·공식 문서가 최종 근거 · 자동 테스트는 구현 오류 탐지 · 사람은 사업 맥락·표현·위험을 승인</span><small class="fact-meta">공식 문서 확인 · 2026-08-15</small><a class="source-link" href="https://learn.chatgpt.com/use-cases" target="_blank" rel="noopener">OpenAI 공식 활용 사례 · 확인 2026-08-15</a></div>
+            <div class="verdict"><b>Codex에 넣은 구현 입력</b><span>현재 사이트 전체를 읽고 · 기업과 스타트업을 동일 스키마로 정렬하고 · 7개 밸류체인으로 재분류하고 · 뉴스·시장·주가·조직 데이터를 자동 갱신하며 · 중복·오연결·빈 상태를 제거하고 · 자동검사 후 공개 주소까지 확인해줘</span><small class="fact-meta">입력 단위 · 결과·데이터·화면·보호 조건·완료 기준</small><a class="source-link" href="https://github.com/openai/codex" target="_blank" rel="noopener">Codex 공식 저장소</a></div>
+            <div class="verdict"><b>최종 판정 원칙</b><span>AI 답변끼리 일치해도 사실 확정 아님 · 기업 원문·공시·공식 문서가 최종 근거 · 자동 테스트는 구현 오류 탐지 · 사람은 사업 맥락·표현·위험을 승인</span><small class="fact-meta">교차검증 · 구현 검토와 사실 검토를 분리</small><a class="source-link" href="https://docs.github.com/en/actions" target="_blank" rel="noopener">GitHub Actions 공식 문서</a><a class="source-link" href="https://docs.github.com/en/pages" target="_blank" rel="noopener">GitHub Pages 공식 문서</a></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.39s"><b>검증 결론</b><span>Agent A 구현 → Agent B 반대 관점 검토 → 웹 근거 탐색 → 공식 원문 확인 → 테스트 → 사람 승인</span></div>
+          <div class="takeaway reveal" style="--delay:.39s"><b>검증 결론</b><span>Codex 구현 → Claude Code 반대 관점 검토 → Perplexity 탐색 → 기업 공식 원문 확인 → 자동검사 → 사람 승인</span></div>
         </div>
       </section>
 
       <section class="slide" data-title="보완 요청" data-accent="#34d399" data-rgb="52,211,153" data-accent2="#22d3ee" data-rgb2="34,211,238" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-09.webp')"></span><span style="background-image:url('assets/poster-10.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">09</span><div><div class="eyebrow">ITERATION PROMPTS</div><h2>보완 요청은 <span class="accent">콘텐츠 · 디자인 · 동작을 분리</span></h2><p>문제 종류를 구분하면 Codex가 불필요한 파일을 건드리지 않고 정확히 수정</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">09</span><div><div class="eyebrow">ITERATION PROMPTS</div><h2>본 사이트는 <span class="accent">콘텐츠 · 시각화 · 동작을 분리해</span> 반복 개선</h2><p>한 번에 전부 바꾸지 않고 데이터 품질 · 컨설팅 표현 · 인터랙션을 각각 요청해 회귀 범위를 축소</p></div></div>
           <div class="strategy-grid reveal" style="--delay:.14s">
-            <article class="strategy-card"><em>CONTENT</em><h3>내용 수정</h3><dl><dt>문제</dt><dd>중복 · 모호함 · 최신성 부족</dd><dt>입력</dt><dd>메인과 상세 역할을 나누고 반복 문구를 통합</dd><dt>검증</dt><dd>각 정보가 한 위치에만 존재</dd></dl></article>
-            <article class="strategy-card"><em>VISUAL</em><h3>디자인 수정</h3><dl><dt>문제</dt><dd>단조로운 색 · 관계 불명확</dd><dt>입력</dt><dd>박스별 단일 색조와 이중 삼각 커넥터로 논리 흐름 강화</dd><dt>검증</dt><dd>제목 · 핵심 숫자 · 근거의 위계 명확</dd></dl></article>
-            <article class="strategy-card"><em>BEHAVIOR</em><h3>동작 수정</h3><dl><dt>문제</dt><dd>클릭 실패 · 느린 로딩 · 잘림</dd><dt>입력</dt><dd>키보드·모바일·지연 로딩을 유지하며 수정</dd><dt>검증</dt><dd>주요 경로를 실제로 끝까지 확인</dd></dl></article>
+            <article class="strategy-card"><em>CONTENT</em><h3>데이터 품질</h3><dl><dt>문제</dt><dd>중복 기업 · 관련 없는 뉴스 · 오래된 수치</dd><dt>입력</dt><dd>직접 연관 근거만 남기고 동일 사건을 통합하며 최신값 교체</dd><dt>검증</dt><dd>기업·기사·수치마다 날짜와 원문 존재</dd></dl></article>
+            <article class="strategy-card"><em>VISUAL</em><h3>컨설팅 표현</h3><dl><dt>문제</dt><dd>카드 나열 · 관계 불명확 · 내부 선 겹침</dd><dt>입력</dt><dd>결론형 제목·MECE 도식·박스 밖 커넥터로 논리 흐름 강화</dd><dt>검증</dt><dd>박스 안 연결선 없음 · 정보 위계 명확</dd></dl></article>
+            <article class="strategy-card"><em>BEHAVIOR</em><h3>상호작용·속도</h3><dl><dt>문제</dt><dd>긴 초기 로딩 · 클릭 경로 불명확 · 글자 잘림</dd><dt>입력</dt><dd>필요한 섹션만 지연 로딩하고 호버·상세·모바일 흐름 개선</dd><dt>검증</dt><dd>왼쪽 탐색과 오른쪽 섹션 일치 · 주요 경로 정상</dd></dl></article>
           </div>
           <div class="portfolio-line reveal" style="--delay:.29s">
             <div class="flow-card"><em>1</em><b>한 가지 문제</b></div><i class="tri-arrow"></i><div class="flow-card"><em>2</em><b>한 번의 수정</b></div><i class="tri-arrow"></i><div class="flow-card"><em>3</em><b>한 번의 검증</b></div><i class="tri-arrow"></i><div class="flow-card"><em>4</em><b>다음 우선순위</b></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>FEEDBACK RULE</b><span>좋다·나쁘다가 아니라 어떤 화면의 무엇이 왜 문제이며 어떤 결과를 원하는지 전달</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>수정 입력</b><span>현재 화면에서 기업 카드가 반복되고 관련 없는 기사가 섞여 있어 · 기업 레지스트리 기준으로 한 번만 표시하고 직접 연관 기사만 연결해줘 · 기존 조직도와 원문 링크는 유지하고 · 중복 수와 기사 연결 정확도를 자동검사해줘</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="GitHub 개발" data-accent="#3b82f6" data-rgb="59,130,246" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
+      <section class="slide" data-title="구현·배포" data-accent="#3b82f6" data-rgb="59,130,246" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-10.webp')"></span><span style="background-image:url('assets/poster-11.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">10</span><div><div class="eyebrow">SAFE GITHUB FLOW</div><h2>개발 결과는 <span class="accent">미리보기와 변경 비교 후 GitHub에 반영</span></h2><p>Pro 계정의 Codex Cloud와 연결된 저장소에서 작업하고 Pull Request로 안전하게 검토</p></div></div>
-          <div class="stack reveal" style="--delay:.14s">
-            <div class="file-tree"><b>실제 입력과 실행 예시</b><br><br>Codex 입력<br>현재 구조를 읽고 How만 수정<br>15장·영상·키보드 이동 유지<br>자동검사 후 공개 주소 확인<br><br>Claude Code 검토<br>claude -p "변경 파일을 독립 검토하고<br>누락·회귀·근거 없는 주장을 지적해줘"</div>
-            <div>
-              <div class="render-flow">
-                <div class="render-box"><em>CURRENT</em><b>현재 사이트</b><span>기능·콘텐츠·배포 상태 확인</span></div><i class="tri-arrow"></i><div class="render-box"><em>PROPOSED</em><b>Codex 변경안</b><span>차이·근거·검증 결과 확인</span></div>
-              </div>
-              <div class="performance">
-                <div><b>PREVIEW</b><span>화면을 먼저 확인</span></div>
-                <div><b>TEST</b><span>기존 기능 회귀 검사</span></div>
-                <div><b>DIFF</b><span>바뀐 파일만 비교</span></div>
-                <div><b>PR</b><span>승인 가능한 단위로 제안</span></div>
-              </div>
-            </div>
+          <div class="slide-title reveal"><span class="slide-no">10</span><div><div class="eyebrow">BUILD FLOW FOR BEGINNERS</div><h2>초보자는 명령을 외우기보다 <span class="accent">각 단계의 목적과 확인 결과</span>를 이해</h2><p>기존 텍스트 목록을 실제 사이트 구축 순서에 맞춘 여섯 단계 실행 도식으로 전환</p></div></div>
+          <div class="command-flow reveal" style="--delay:.14s">
+            <article class="command-step"><em>01 · INPUT</em><b>사업 결과 요청</b><span>누가 어떤 결정을 내릴 사이트인지 자연어로 입력</span></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>02 · INSPECT</em><b>현재 구조 확인</b><span>Codex가 파일·데이터·화면·자동화를 먼저 읽고 변경 범위 제안</span></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>03 · BUILD</em><b>작은 단위 구현</b><span>메인 → 상세 → 데이터 → 자동화 순서로 기능을 확장</span></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>04 · REVIEW</em><b>독립 검토</b><span>변경 파일과 근거를 다른 모델이 반대 관점에서 확인</span></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>05 · TEST</em><b>자동검사</b><code>node scripts/test-automation.mjs</code></article><i class="tri-arrow"></i>
+            <article class="command-step"><em>06 · PUBLISH</em><b>공개 확인</b><span>변경 저장 → Pages 배포 완료 → 실제 주소 응답 재확인</span></article>
           </div>
-          <div class="takeaway reveal" style="--delay:.36s"><b>SAFE RULE</b><span>브라우저 세션과 인증 파일을 저장소에 넣지 않고 · main 직접 수정 없이 검토 가능한 변경으로 제안</span></div>
+          <div class="proof-strip reveal" style="--delay:.28s">
+            <div><b>INPUT</b><span>자연어로 결과와 완료 기준 정의</span></div>
+            <div><b>DIFF</b><span>어떤 파일이 왜 바뀌었는지 비교</span></div>
+            <div><b>TEST</b><span>데이터·문구·링크·동작 계약 확인</span></div>
+            <div><b>LIVE</b><span>공개 주소에서 새 내용 반영 확인</span></div>
+          </div>
+          <div class="takeaway reveal" style="--delay:.36s"><b>초보자 입력</b><span>현재 사이트를 먼저 읽고 필요한 변경을 작은 단계로 나눠줘 · 각 단계마다 바뀌는 화면과 유지되는 기능을 설명하고 · 자동검사를 실행한 뒤 오류를 고치고 · 마지막에는 공개 사이트에서 실제 반영 여부를 확인해줘</span></div>
         </div>
       </section>
 
       <section class="slide" data-title="장기 작업 사례" data-accent="#f472b6" data-rgb="244,114,182" data-accent2="#f59e0b" data-rgb2="245,158,11" data-accent3="#3b82f6" data-rgb3="59,130,246" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-11.webp')"></span><span style="background-image:url('assets/poster-12.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">11</span><div><div class="eyebrow">LONG-RUN CASES</div><h2>오래 걸린 문제는 기능보다 <span class="accent">환경·동시 변경·검증의 충돌</span></h2><p>실제 저장소 작업에서 반복된 문제를 원인 · 해결 · 재발 방지로 정리</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">11</span><div><div class="eyebrow">LONG-RUN CASES</div><h2>가장 오래 걸린 작업은 화면보다 <span class="accent">데이터 정확도·일관성·성능을 동시에 맞추는 과정</span></h2><p>실제 본 사이트에서 반복된 문제를 원인 · 해결 · 재발 방지로 정리</p></div></div>
           <div class="case-grid reveal" style="--delay:.14s">
-            <article class="case-card"><em>CASE 01 · STATIC HOSTING</em><h3>브라우저에서 CLI 직접 실행 불가</h3><div class="case-phase"><b>문제</b><span>정적 Pages에는 장기 실행 서버와 안전한 인증 저장소 부재</span></div><div class="case-phase"><b>해결</b><span>요청 Issue → Codex Cloud → Pull Request 검토 구조로 분리</span></div><div class="case-phase"><b>방지</b><span>브라우저 토큰·인증 파일·API 키를 공개 코드에 저장하지 않음</span></div><div class="case-proof">PROOF · Site Codex 자동화 계약 검사</div></article>
-            <article class="case-card"><em>CASE 02 · MOVING MAIN</em><h3>작업 중 데이터 갱신이 main을 앞섬</h3><div class="case-phase"><b>문제</b><span>정기 갱신 커밋과 장시간 UI 수정이 동시에 진행</span></div><div class="case-phase"><b>해결</b><span>push 직전 fetch·rebase 후 전체 검사를 다시 실행</span></div><div class="case-phase"><b>방지</b><span>데이터 갱신분을 보존하고 How 변경만 단일 커밋으로 유지</span></div><div class="case-proof">PROOF · 원격 선행 상태 확인 후 재정렬</div></article>
-            <article class="case-card"><em>CASE 03 · FIT &amp; SPEED</em><h3>큰 글자·영상 때문에 잘림과 로딩 지연</h3><div class="case-phase"><b>문제</b><span>15장 고밀도 콘텐츠와 다중 영상이 화면 높이와 초기 로딩을 압박</span></div><div class="case-phase"><b>해결</b><span>동적 축소·모바일 스크롤·영상 지연 로딩·이중 이미지 전환 적용</span></div><div class="case-phase"><b>방지</b><span>15장·2개 영상·26개 배경 장면을 자동검사로 고정</span></div><div class="case-proof">PROOF · fitSlides + reduced-motion + media contract</div></article>
+            <article class="case-card"><em>CASE 01 · DUPLICATION</em><h3>같은 기업과 같은 기사가 여러 곳에 반복</h3><div class="case-phase"><b>문제</b><span>소스마다 기업 표기와 기사 제목이 달라 중복 카드가 누적</span></div><div class="case-phase"><b>해결</b><span>기업 ID·도메인·정규화 이름을 단일 레지스트리로 통합</span></div><div class="case-phase"><b>방지</b><span>공개 전 동일 업체·동일 사건·재배포 근사 중복을 자동검사</span></div><div class="case-proof">PROOF · canonical registry + consolidation</div></article>
+            <article class="case-card"><em>CASE 02 · ORGANIZATION</em><h3>조직도 인물과 프로필이 실제 인물과 불일치</h3><div class="case-phase"><b>문제</b><span>이름 검색 링크와 오래된 기사만으로 직책과 경력을 확정하기 어려움</span></div><div class="case-phase"><b>해결</b><span>공식 임원 페이지·공시·직접 프로필을 우선해 직책과 배경을 병합</span></div><div class="case-phase"><b>방지</b><span>검증된 직접 링크가 없는 경우 링크를 만들지 않고 공개에서 제외</span></div><div class="case-proof">PROOF · official-only leadership validation</div></article>
+            <article class="case-card"><em>CASE 03 · LOAD SPEED</em><h3>기업·뉴스·주가 데이터를 한 번에 불러 로딩 지연</h3><div class="case-phase"><b>문제</b><span>초기 화면에 필요하지 않은 상세 데이터까지 동시에 요청</span></div><div class="case-phase"><b>해결</b><span>화면이 가까워질 때 섹션별 데이터와 상세 정보를 지연 로딩</span></div><div class="case-phase"><b>방지</b><span>화면용 공개 뷰를 분리하고 번들·데이터·초기 렌더 계약을 검사</span></div><div class="case-proof">PROOF · lazy section + public view bundles</div></article>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>CASE INSIGHT</b><span>장시간 작업은 코드 작성보다 변하는 기준을 다시 맞추는 데 시간이 소요 · 동기화와 완료 기준을 자동검사로 고정</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>CASE INSIGHT</b><span>기능을 추가하는 시간보다 출처가 다른 데이터를 같은 기업·날짜·스키마로 맞추고 공개 전에 품질을 증명하는 시간이 더 큼</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="실전 반복" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#34d399" data-rgb2="52,211,153" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
+      <section class="slide" data-title="지속 개선" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#34d399" data-rgb2="52,211,153" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-12.webp')"></span><span style="background-image:url('assets/poster-04.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">12</span><div><div class="eyebrow">DOUBLE DIAMOND DELIVERY</div><h2>바이브 코딩은 <span class="accent">발산 → 선택 → 구현 → 검증</span>의 반복</h2><p>처음부터 완벽한 입력을 만들기보다 화면을 보면서 문제를 좁히고 한 번에 한 축만 수정</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">12</span><div><div class="eyebrow">DOUBLE DIAMOND OPERATING LOOP</div><h2>사이트는 완성품이 아니라 <span class="accent">질문 → 데이터 → 화면 → 검증이 반복되는 운영 시스템</span></h2><p>새 사업 질문을 넓게 탐색하고 우선순위를 정한 뒤 데이터와 화면을 작게 구현하고 사용 결과로 다시 개선</p></div></div>
           <div class="double-diamond reveal" style="--delay:.14s">
-            <article class="diamond-stage"><div><em>DISCOVER</em><b>문제 탐색</b><span>사용자 · 화면 · 데이터 · 제약 확인</span></div></article><i class="tri-arrow"></i>
-            <article class="diamond-stage"><div><em>DEFINE</em><b>한 가지 선택</b><span>이번 수정의 핵심 결과를 한 문장으로 고정</span></div></article><i class="tri-arrow"></i>
-            <article class="diamond-stage"><div><em>DEVELOP</em><b>작게 구현</b><span>콘텐츠 · 디자인 · 동작 중 한 축부터 변경</span></div></article><i class="tri-arrow"></i>
-            <article class="diamond-stage"><div><em>DELIVER</em><b>검증 후 공개</b><span>화면 · 테스트 · 변경 비교 · 배포 확인</span></div></article>
+            <article class="diamond-stage"><div><em>DISCOVER</em><b>사업 신호 탐색</b><span>시장 · 소비자 · 기업 · 기술 · 규제 변화 수집</span></div></article><i class="tri-arrow"></i>
+            <article class="diamond-stage"><div><em>DEFINE</em><b>기회 질문 선택</b><span>가치 · 실행 가능성 · 차별화 기준으로 우선순위 고정</span></div></article><i class="tri-arrow"></i>
+            <article class="diamond-stage"><div><em>DEVELOP</em><b>데이터·화면 구현</b><span>스키마 · 수집 · 프레임 · 인터랙션을 작은 단위로 연결</span></div></article><i class="tri-arrow"></i>
+            <article class="diamond-stage"><div><em>DELIVER</em><b>검증·공개·학습</b><span>근거 · 중복 · 속도 · 사용 흐름 확인 후 운영 반영</span></div></article>
           </div>
           <div class="loop-strip reveal" style="--delay:.28s">
-            <div class="loop-node"><b>1 · 입력</b><span>원하는 결과</span></div><i class="tri-arrow"></i>
-            <div class="loop-node"><b>2 · 미리보기</b><span>실제 화면 관찰</span></div><i class="tri-arrow"></i>
-            <div class="loop-node"><b>3 · 수정</b><span>차이를 구체화</span></div><i class="tri-arrow"></i>
-            <div class="loop-node"><b>4 · 검증</b><span>유지 조건 확인</span></div><i class="tri-arrow"></i>
-            <div class="loop-node"><b>5 · 다음 장</b><span>범위를 한 단계 확장</span></div>
+            <div class="loop-node"><b>1 · 새 질문</b><span>사업 판단 정의</span></div><i class="tri-arrow"></i>
+            <div class="loop-node"><b>2 · 새 근거</b><span>공식 원문 연결</span></div><i class="tri-arrow"></i>
+            <div class="loop-node"><b>3 · 새 프레임</b><span>비교 기준 반영</span></div><i class="tri-arrow"></i>
+            <div class="loop-node"><b>4 · 사용자 검토</b><span>삭제·수정·우선순위</span></div><i class="tri-arrow"></i>
+            <div class="loop-node"><b>5 · 다음 갱신</b><span>자동 운영에 편입</span></div>
           </div>
-          <div class="takeaway reveal" style="--delay:.39s"><b>실전 입력</b><span>방금 만든 화면을 기준으로 가장 큰 문제 3개를 우선순위로 정리하고 · 1순위만 수정하고 · 바뀐 화면과 유지된 기능을 함께 보여줘 · 이상이 없으면 다음 우선순위로 넘어가줘</span></div>
+          <div class="takeaway reveal" style="--delay:.39s"><b>운영 입력</b><span>새로 수집된 데이터에서 기존 분류로 설명되지 않는 사업 모델과 기업 움직임을 찾아줘 · 근거가 충분한 후보만 기존 7개 계층과 비교하고 · 신규 use case·베스트 프랙티스·투자 가설로 정리한 뒤 검토 대기 상태로 추가해줘</span></div>
         </div>
       </section>
 
@@ -1093,18 +1077,18 @@
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-12.webp')"></span><span style="background-image:url('assets/poster-03.webp')"></span></div>
         <div class="slide-inner finish">
           <div>
-            <div class="eyebrow reveal">IMPLEMENTATION CHECKLIST</div>
-            <h2 class="reveal" style="--delay:.14s">완성의 기준은 코드를 아는가가 아니라<br><span class="accent">원하는 결과를 만들고 검증할 수 있는가</span></h2>
-            <p class="lead reveal" style="--delay:.24s">작은 화면 하나를 목표 설정부터 배포까지 끝낸 뒤 같은 방식으로 범위를 확장</p>
+            <div class="eyebrow reveal">PUBLISH &amp; OPERATE CHECKLIST</div>
+            <h2 class="reveal" style="--delay:.14s">본 사이트를 만드는 핵심은 화면보다<br><span class="accent">사업 질문·근거 데이터·전략 프레임·운영 규칙의 연결</span></h2>
+            <p class="lead reveal" style="--delay:.24s">초보자도 한 번에 전부 만들지 않고 질문 하나와 기업 한 곳부터 시작해 같은 구조로 범위를 확장</p>
             <a class="cta reveal" style="--delay:.34s" href="../">실제 사이트로 이동</a>
           </div>
           <div class="checklist reveal" style="--delay:.23s">
-            <div class="check"><i>✓</i><div><b>결과 중심 입력</b><span>목표·범위·유지 조건·완료 기준 포함</span></div></div>
-            <div class="check"><i>✓</i><div><b>작은 단위 개발</b><span>콘텐츠·디자인·동작을 분리해 요청</span></div></div>
-            <div class="check"><i>✓</i><div><b>눈으로 검토</b><span>미리보기에서 잘림·중복·링크 확인</span></div></div>
-            <div class="check"><i>✓</i><div><b>변경 비교</b><span>수정된 파일과 기존 기능 영향 확인</span></div></div>
-            <div class="check"><i>✓</i><div><b>교차 검증</b><span>독립 모델 검토·외부 검색·공식 원문·사람 승인 분리</span></div></div>
-            <div class="check"><i>✓</i><div><b>안전한 공개</b><span>검증 통과 후 Pull Request와 배포 확인</span></div></div>
+            <div class="check"><i>✓</i><div><b>사업 질문</b><span>누가 어떤 결정을 내릴지 한 문장으로 정의</span></div></div>
+            <div class="check"><i>✓</i><div><b>정보 구조</b><span>메인·상세·시장·기업·실행을 MECE하게 분리</span></div></div>
+            <div class="check"><i>✓</i><div><b>공통 스키마</b><span>기업과 스타트업을 같은 깊이와 순서로 정렬</span></div></div>
+            <div class="check"><i>✓</i><div><b>근거 정책</b><span>모든 수치·인물·전략에 기준일과 원문 연결</span></div></div>
+            <div class="check"><i>✓</i><div><b>자동 운영</b><span>수집·정규화·중복 통합·최신값 교체·삭제 억제</span></div></div>
+            <div class="check"><i>✓</i><div><b>검증 후 공개</b><span>독립 검토·공식 원문·자동검사·실제 주소 확인</span></div></div>
           </div>
         </div>
       </section>
@@ -1155,21 +1139,21 @@
       let touchStartY = 0
 
       const consultingLogic = {
-        '표지': ['목표 정의', 'Codex 위임', '검토·공개'],
-        '한 장 요약': ['요청', '구현', '검증'],
-        '첫 입력': ['사용자 결과', '유지 조건', '완료 기준'],
-        '바이브 코딩 시작': ['북극성', '첫 작업', '보이는 결과'],
-        '프로젝트 맡기기': ['작업 위치', '구조 확인', '작은 구현'],
-        '프롬프트 공식': ['맥락·목표', '범위·스타일', '동작·검증'],
-        '첫 결과 수정': ['관찰', '원하는 변화', '보호·검증'],
-        '실제 개발': ['동기화', '검사', '배포'],
-        '컨설팅 화면': ['결론', '근거', '실행'],
-        '교차 검증': ['구현', '독립 검토', '사람 승인'],
-        '보완 요청': ['문제 분류', '정확한 수정', '검증'],
-        'GitHub 개발': ['현재 상태', 'Codex 변경', 'PR 검토'],
+        '표지': ['사업 질문', '데이터 시스템', '전략 화면'],
+        '한 장 요약': ['질문', '근거·분석', '자동 운영'],
+        '최초 요청': ['의사결정', '필수 데이터', '사용 경험'],
+        '북극성 정의': ['사용자', '판단 과업', '완료 기준'],
+        '정보 구조': ['메인 비교', '기업 상세', '시장 도구'],
+        '데이터 엔진': ['원문 수집', '정규화·검증', '공개 뷰'],
+        '기업 데이터': ['기업 개요', '전략·조직', '근거 원문'],
+        '자동 업데이트': ['수집', '품질 게이트', '갱신·배포'],
+        '컨설팅 화면': ['사실', '사업 시사점', '실행 선택지'],
+        '실제 입력·검증': ['입력·구현', '독립 검토', '사람 승인'],
+        '보완 요청': ['문제 분류', '정확한 수정', '자동검사'],
+        '구현·배포': ['구조 분석', '구현·검토', '공개 확인'],
         '장기 작업 사례': ['문제', '해결', '재발 방지'],
-        '실전 반복': ['발산·탐색', '선택·구현', '검증·확장'],
-        '완료 기준': ['요청 가능', '검토 가능', '안전한 공개']
+        '지속 개선': ['탐색·선택', '구현·검증', '운영 학습'],
+        '완료 기준': ['사업 질문', '근거 시스템', '지속 운영']
       }
       const diagramSelectors = '.flow-card, .outcome, .branch, .arch-layer, .ledger, .pipe-step, .gate, .strategy-card, .render-box, .performance > div, .check, .cover-index > div, .prompt-panel, .command-step, .proof-strip > div, .audit-card, .verdict, .case-card, .north-star, .pyramid-step, .matrix-cell, .revision-prompt, .diamond-stage, .loop-node'
       const trackSelectors = '.flow, .three-outcomes, .branches, .architecture, .pipeline, .gate-grid, .strategy-grid, .portfolio-line, .render-flow, .performance, .checklist, .cover-index, .prompt-compare, .command-flow, .assurance-flow, .case-grid, .vibe-start, .prompt-pyramid, .revision-layout, .evidence-matrix, .double-diamond, .loop-strip'
