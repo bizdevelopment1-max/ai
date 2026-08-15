@@ -278,21 +278,18 @@ try {
     && how.includes("document.fonts?.ready.then(scheduleFit)")
     && how.includes('word-break: keep-all')
     && how.includes('overflow-y: auto');
-  const consultingMotion = how.includes("const consultingLogic = {")
-    && how.includes("className = 'consulting-ribbon'")
-    && how.includes("className = 'logic-arrow'")
+  const consultingMotion = !how.includes("const consultingLogic = {")
+    && !how.includes("className = 'consulting-ribbon'")
+    && !how.includes("className = 'logic-arrow'")
     && how.includes("track.classList.add('diagram-track')")
     && how.includes('--tone-gradient: linear-gradient')
     && how.includes('--blue-gradient: var(--tone-gradient)')
     && how.includes('@keyframes arrowTravel')
-    && how.includes('@keyframes logicArrow')
     && how.includes("@keyframes diagramRise");
   const bcgArrowSystem = how.includes(".tri-arrow {")
-    && how.includes(".logic-arrow {")
     && how.includes("--consult-arrow: polygon(0 50%, 18% 5%, 18% 40%, 82% 40%, 82% 5%, 100% 50%, 82% 95%, 82% 60%, 18% 60%, 18% 95%)")
     && how.includes("clip-path: var(--consult-arrow)")
     && how.includes("width: clamp(82px, 7.4vw, 148px)")
-    && /\.logic-arrow\s*\{[\s\S]{0,160}width:\s*92px;[\s\S]{0,80}height:\s*14px;/.test(how)
     && how.includes("@keyframes arrowFloat");
   const vibeCodingCover = how.includes("VIBE CODING · REAL BUILD STORY")
     && how.includes("바이브 코딩으로 만든 AI 신사업 인텔리전스")
@@ -325,7 +322,8 @@ try {
     && how.includes("CASE 01 · DUPLICATION")
     && how.includes("CASE 02 · ORGANIZATION")
     && how.includes("CASE 03 · LOAD SPEED");
-  const noLinesInsideBoxes = how.includes(".consulting-ribbon::after { content: none; display: none; }")
+  const noLinesInsideBoxes = !how.includes(".consulting-ribbon")
+    && !how.includes(".logic-arrow")
     && how.includes(".diagram-track::before, .diagram-track::after { content: none !important; display: none !important; }")
     && /\.diagram-item::after\s*\{[\s\S]{0,100}content:\s*none;[\s\S]{0,50}display:\s*none;/.test(how);
   const removedLegacyCopy = !how.includes("ARROW KEYS TO NAVIGATE")
@@ -335,6 +333,7 @@ try {
     && !how.includes("브라우저에서 CLI 직접 실행 불가")
     && !how.includes("현재 구조를 읽고 How만 수정")
     && !how.includes("How는 15장 HTML 프레젠테이션")
+    && !how.includes("개발 경험이 없어도")
     && !/\bJSON\b/i.test(how);
   const analogousGradientSystem = accentColors.size >= 6
     && secondaryAccentColors.size >= 6
@@ -366,7 +365,10 @@ try {
     && how.includes('class="flow sequential-flow reveal"')
     && how.includes("@keyframes sequentialGlow")
     && how.includes("@keyframes sequentialSheen")
-    && how.includes("calc(.82s + var(--sequence) * .58s)")
+    && how.includes("sequentialGlow 10.5s ease-in-out calc(1s + var(--sequence) * 1.2s)")
+    && how.includes(".summary-slide .flow > .tri-arrow { width: 38px; height: 12px; }")
+    && how.includes("grid-template-columns: repeat(5, minmax(0, 1fr) 34px) minmax(0, 1fr)")
+    && how.includes(".pipeline > .tri-arrow { width: 32px; height: 10px; }")
     && how.includes('class="consulting-brief-tree reveal"')
     && how.includes('class="brief-mandate"')
     && how.includes('class="brief-pillars"')
@@ -376,9 +378,9 @@ try {
     && how.includes(".deck :where(p, li, dd, dt, span, small, code, kbd, a, button)")
     && how.includes(".deck :where(h1, h2, h3, h4, strong, b, em");
   if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 39 || !tripleContextBackgrounds || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !vibeCodingCover || !beginnerSiteBuildStory || !crossVerifiedCaseStudy || !noLinesInsideBoxes || !removedLegacyCopy || !analogousGradientSystem || !introVideoExperience || !consultingScreenRefresh) {
-    throw new Error("How deck must explain the real AI intelligence site build with 15 slides, 2 muted intro videos, 13 dual-image backgrounds, one-hue gradients, connectors only between boxes, beginner prompts, data automation, consulting frameworks, cross-verification and operating cases");
+    throw new Error("How deck must keep 15 slides, 2 muted intro videos, 13 triple-image backgrounds, compact diagram connectors, slow sequential sheen, beginner prompts, data automation, consulting frameworks and operating cases");
   }
-  console.log("  OK  How 본 사이트 구축 사례 · 3페이지 이후 문맥별 3장 배경 순환 · 표지 겹침 제거 · 01→05 순차 광택 · MECE 역할 맵");
+  console.log("  OK  How 본 사이트 구축 사례 · 상단 리본 제거 · 작은 연결 화살표 · 느린 01→05 광택 · 넓은 데이터 파이프라인");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);
