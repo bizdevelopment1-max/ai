@@ -269,14 +269,22 @@ try {
 }
 
 try {
-  const how = await readFile("How/index.html", "utf8");
+  const [how, backgroundBuilder] = await Promise.all([
+    readFile("How/index.html", "utf8"),
+    readFile("scripts/build-how-context-backgrounds.mjs", "utf8"),
+  ]);
   const slides = [...how.matchAll(/<section class="slide(?:\s|\")/g)].length;
   const videos = new Set([...how.matchAll(/data-src="([^"]+\.mp4)"/g)].map(match => match[1]));
   const backgroundCarousels = [...how.matchAll(/class="bg-carousel"/g)].length;
-  const carouselScenes = [...how.matchAll(/<span style="background-image:url\('assets\/poster-[^']+\.webp'\)"><\/span>/g)].length;
-  const carouselBlocks = [...how.matchAll(/<div class="bg-carousel" data-theme="[^"]+" aria-hidden="true">([\s\S]*?)<\/div>/g)];
+  const contextBackgrounds = [...how.matchAll(/assets\/context-bg\/([0-9]{2}-[a-z-]+-[abc]\.svg)/g)].map(match => match[1]);
+  const carouselScenes = contextBackgrounds.length;
+  const carouselBlocks = [...how.matchAll(/<div class="bg-carousel" data-theme="[^"]+" data-scenes="([^"]+)" aria-hidden="true">([\s\S]*?)<\/div>/g)];
   const tripleContextBackgrounds = carouselBlocks.length === 13
-    && carouselBlocks.every(([, content]) => [...content.matchAll(/<span style="background-image:url\('assets\/poster-[^']+\.webp'\)"><\/span>/g)].length === 3)
+    && carouselBlocks.every(([, scenes, content]) => scenes.split("|").length === 3
+      && [...content.matchAll(/<span style="background-image:url\('assets\/context-bg\/[0-9]{2}-[a-z-]+-[abc]\.svg'\)"><\/span>/g)].length === 3)
+    && new Set(contextBackgrounds).size === 39
+    && backgroundBuilder.includes("contexts.length * variants.length")
+    && backgroundBuilder.includes('width="1600" height="900"')
     && how.includes(".bg-carousel span:nth-child(3)")
     && how.includes("@keyframes bgSceneC")
     && how.includes(".bg-carousel span:nth-child(n+2) { display: none; }");
@@ -399,7 +407,7 @@ try {
   if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 39 || !tripleContextBackgrounds || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !vibeCodingCover || !beginnerSiteBuildStory || !crossVerifiedCaseStudy || !noLinesInsideBoxes || !removedLegacyCopy || !analogousGradientSystem || !introVideoExperience || !consultingScreenRefresh) {
     throw new Error("How deck must keep 15 slides, 2 muted intro videos, 13 triple-image backgrounds, compact diagram connectors, slow sequential sheen, beginner prompts, data automation, consulting frameworks and operating cases");
   }
-  console.log("  OK  How 본 사이트 구축 사례 · 상단 리본 제거 · 작은 연결 화살표 · 느린 01→05 광택 · 넓은 데이터 파이프라인");
+  console.log("  OK  How 본 사이트 구축 사례 · 3페이지 이후 문맥별 전용 배경 39장 · 3장 교차 전환 · 넓은 데이터 파이프라인");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);
