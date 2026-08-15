@@ -199,19 +199,26 @@ try {
     && !components.includes("QA_CATS.map")
     && !components.includes('title="질문 선택"')
     && !styles.includes(".chatbot-drop");
-  const commands = ["/help", "/guide", "/examples", "/search", "/company", "/market", "/ask", "/edit", "/sync", "/open", "/connect", "/doctor", "/repo", "/issues", "/prs", "/actions", "/export", "/clear"];
+  const commands = ["/help", "/guide", "/examples", "/search", "/company", "/market", "/cloud", "/ask", "/edit", "/issue", "/env", "/tasks", "/status", "/sync", "/open", "/connect", "/doctor", "/repo", "/issues", "/prs", "/actions", "/export", "/clear"];
   const cliReady = components.includes('className="site-cli-terminal"')
     && components.includes("buildSiteCliIndex")
     && components.includes("searchSiteCli")
     && components.includes("siteCodexIssueUrl")
+    && components.includes("siteCodexTerminalCommand")
+    && components.includes("startCodexCloudTask")
+    && components.includes("checkLatestDelivery")
     && components.includes("fetchGithubRequest")
     && components.includes("pollGithubRequest")
-    && components.includes("GITHUB ISSUE")
+    && components.includes("SITE REQUEST")
     && components.includes("CODEX CLOUD")
+    && components.includes("BRANCH + PR")
     && components.includes("SITE_CODEX_GUIDE_STEPS")
     && components.includes("SITE_CODEX_EXAMPLES")
     && components.includes("completeSiteCliCommand")
-    && components.includes("Submit new issue")
+    && components.includes("window.open(SITE_CODEX_CLOUD")
+    && components.includes("codex cloud exec --env")
+    && components.includes("codex cloud list --env")
+    && components.includes("CLI 명령 복사")
     && components.includes('className="site-cli-shortcuts"')
     && components.includes("ReactDOM.createPortal")
     && commands.every(command => components.includes(`\"${command}`))
@@ -222,9 +229,9 @@ try {
     && styles.includes(".site-cli-shortcuts")
     && styles.includes(".site-cli-triangle")
     && styles.includes(".site-cli-github-links");
-  const proCodexCloud = workflow.includes("name: Site Codex Pro Cloud Bridge")
+  const proCodexCloud = workflow.includes("name: Site Codex Cloud Delivery")
     && workflow.includes("STATUS: cloud-ready")
-    && workflow.includes("https://chatgpt.com/codex")
+    && workflow.includes("https://chatgpt.com/codex/cloud")
     && workflow.includes("github.event_name == 'issues'")
     && workflow.includes("github.event_name == 'pull_request'")
     && workflow.includes("author_association == 'OWNER'")
@@ -237,10 +244,10 @@ try {
     && !workflow.includes("codex login")
     && !workflow.includes("codex exec")
     && !workflow.includes("secrets.")
-    && components.includes('const SITE_CODEX_CLOUD = "https://chatgpt.com/codex"')
+    && components.includes('const SITE_CODEX_CLOUD = "https://chatgpt.com/codex/cloud"')
     && components.includes("SITE_CODEX_ENVIRONMENTS")
     && components.includes("siteCodexCloudPrompt")
-    && components.includes("PRO CODEX CLOUD")
+    && components.includes("CODEX CLOUD TASK")
     && !components.includes("admin/access-tokens")
     && validator.includes("protected path cannot be changed by Site Codex")
     && !packageSource.includes("@openai/codex")
@@ -255,9 +262,9 @@ try {
     && !components.includes("LOCAL BRIDGE")
     && !components.includes("Start-Site-Codex");
   if (!dropdownRemoved || !cliReady || !proCodexCloud || !noBrowserSecret || !confirmedWrite) {
-    throw new Error("site CLI must use ChatGPT Pro Codex Cloud, a GitHub request ledger, and Pull Request verification without browser or Actions secrets");
+    throw new Error("site CLI must open Codex Cloud directly, provide supported terminal commands, and verify Pull Request delivery without browser or Actions secrets");
   }
-  console.log("  OK  질문 드롭다운 제거 · ChatGPT Pro Codex Cloud · GitHub 요청 기록 · Pull Request 검증");
+  console.log("  OK  질문 드롭다운 제거 · Codex Cloud 직접 실행 준비 · 공식 CLI 명령 · Pull Request 검증");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  site CLI workspace: ${error.message}`);

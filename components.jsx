@@ -483,26 +483,31 @@ function KpiStrip({ kpis }) {
   );
 }
 
-// ---- Site CLI · GitHub request ledger + ChatGPT Pro Codex Cloud ----
+// ---- Site CLI · Codex Cloud execution + GitHub delivery tracking ----
 const SITE_CODEX_REPO = "bizdevelopment1-max/ai";
 const SITE_CODEX_API = `https://api.github.com/repos/${SITE_CODEX_REPO}`;
 const SITE_CODEX_WEB = `https://github.com/${SITE_CODEX_REPO}`;
-const SITE_CODEX_CLOUD = "https://chatgpt.com/codex";
+const SITE_CODEX_CLOUD = "https://chatgpt.com/codex/cloud";
 const SITE_CODEX_ENVIRONMENTS = "https://chatgpt.com/codex/settings/environments";
 const SITE_CODEX_REVIEW = "https://chatgpt.com/codex/settings/code-review";
 const SITE_CODEX_RESULT_MARKER = "<!-- site-codex-result:v1 -->";
 const SITE_CODEX_COMMANDS = [
   ["/help", "전체 명령과 키보드 사용법"],
-  ["/guide", "GitHub Issue → Codex Cloud → Pull Request 사용 순서"],
+  ["/guide", "Codex Cloud → Pull Request → 검증 사용 순서"],
   ["/examples", "복사해서 바로 실행할 수 있는 예시"],
   ["/search <키워드>", "사이트 전체 근거 검색"],
   ["/company <기업명>", "기업 개요·수익 모델·전략 검색"],
   ["/market <키워드>", "시장·소비자 조사 검색"],
-  ["/ask <질문>", "Pro Codex Cloud용 GitHub 질문 생성"],
-  ["/edit <요청>", "Pro Codex Cloud용 GitHub PR 요청 생성"],
+  ["/cloud <요청>", "실행문 복사 후 Codex Cloud 바로 열기"],
+  ["/ask <질문>", "Codex Cloud에서 저장소 분석"],
+  ["/edit <요청>", "Codex Cloud에서 수정·검증·PR 생성"],
+  ["/issue <요청>", "선택 사항 · 공개 GitHub 요청 기록 생성"],
+  ["/env <환경 ID>", "터미널용 Cloud 환경 ID 저장"],
+  ["/tasks", "터미널용 최근 Cloud 작업 조회 명령"],
+  ["/status", "최근 Pull Request와 Actions 상태 확인"],
   ["/sync <요청 ID>", "GitHub 요청 등록 상태 확인"],
   ["/open <섹션명>", "대시보드 섹션 이동"],
-  ["/connect", "ChatGPT Pro·GitHub 연결 안내"],
+  ["/connect", "Codex Cloud·GitHub 연결 안내"],
   ["/doctor", "GitHub Cloud 브리지 상태"],
   ["/repo", "GitHub 저장소 바로가기"],
   ["/issues", "Site Codex 요청 Issue 목록"],
@@ -515,23 +520,23 @@ const SITE_CODEX_COMMANDS = [
 const SITE_CODEX_QUICK_COMMANDS = [
   ["/guide", "처음 사용"],
   ["/search ", "사이트 검색"],
-  ["/ask ", "저장소 질문"],
-  ["/edit ", "수정·PR 요청"],
-  ["/sync", "최근 요청 확인"],
+  ["/cloud ", "Cloud 작업"],
+  ["/edit ", "수정·PR"],
+  ["/status", "배포 상태"],
 ];
 
 const SITE_CODEX_GUIDE_STEPS = [
-  ["1", "명령 선택", "사이트 검색은 /search, 저장소 질문은 /ask, 코드·데이터 수정은 /edit 사용"],
-  ["2", "요청 작성", "명령 뒤에 검색어나 요청을 입력하고 Enter 실행 · Tab 자동완성 지원"],
-  ["3", "GitHub 요청 제출", "/ask·/edit 실행 시 열린 화면에서 Submit new issue를 눌러 요청 등록"],
-  ["4", "Cloud 작업 실행", "cloud-ready 댓글의 실행문을 복사해 연결된 저장소 환경에서 실행"],
-  ["5", "검증 후 적용", "수정 결과의 Pull Request와 Actions를 확인하고 승인 후 병합"],
+  ["1", "요청 입력", "수정은 /cloud 또는 /edit, 분석은 /ask 뒤에 요청을 입력하고 Enter 실행"],
+  ["2", "Cloud 열기", "연결된 Codex Cloud 화면이 즉시 열리고 저장소·기준 브랜치·검증 조건이 포함된 실행문이 복사됨"],
+  ["3", "작업 실행", "Codex Cloud에서 연결된 환경을 선택하고 복사된 실행문을 붙여넣어 작업 시작"],
+  ["4", "변경 검토", "작업 결과의 파일 차이와 검증 결과를 확인한 뒤 main 대상 Pull Request 생성"],
+  ["5", "상태 확인", "사이트 CLI에서 /status를 실행해 최근 Pull Request와 Actions 결과 확인"],
 ];
 
 const siteCliGuidePayload = () => ({
   role: "assistant",
   label: "CLI QUICK START",
-  text: "상단 입력창에서 명령을 바로 실행하거나 예시를 선택 · 읽기와 변경 요청을 분리하고 변경은 Pull Request 승인 후 적용",
+  text: "상단 입력창에서 명령을 바로 실행 · Cloud 작업 화면과 실행문을 함께 준비하고 변경은 Pull Request 승인 후 적용",
   steps: SITE_CODEX_GUIDE_STEPS,
   examples: SITE_CODEX_EXAMPLES,
   links: SITE_CODEX_LINKS.map(([, label, url]) => [label, url]),
@@ -542,8 +547,9 @@ const SITE_CODEX_EXAMPLES = [
   "/company Apple",
   "/market AI 스마트폰 출하량",
   "/ask 현재 수집 자동화의 빈 스트림 원인을 분석해줘",
+  "/cloud 최신 데이터 검증률을 높이고 검증 결과를 시각화해줘",
   "/edit Apple 카드 호버 대비를 수정하고 자동화 검사를 추가해줘",
-  "/sync",
+  "/status",
 ];
 
 const SITE_CODEX_GITHUB_PAGES = {
@@ -562,8 +568,8 @@ function completeSiteCliCommand(value) {
 }
 
 const SITE_CODEX_LINKS = [
-  ["01", "Pro Codex Cloud 로그인", SITE_CODEX_CLOUD],
-  ["02", "GitHub 저장소 환경 연결", SITE_CODEX_ENVIRONMENTS],
+  ["01", "Codex Cloud 작업 화면", SITE_CODEX_CLOUD],
+  ["02", "연결 환경 확인", SITE_CODEX_ENVIRONMENTS],
   ["03", "Pull Request 리뷰 설정", SITE_CODEX_REVIEW],
 ];
 
@@ -671,17 +677,30 @@ function siteCodexIssueUrl(prompt, mode, requestId) {
 
 function siteCodexCloudPrompt(prompt, mode, requestId) {
   return [
-    `GitHub 저장소 ${SITE_CODEX_REPO}에서 아래 요청을 처리`,
-    `요청 ID ${requestId}`,
-    `모드 ${mode}`,
+    `연결된 GitHub 저장소 ${SITE_CODEX_REPO}에서 아래 요청을 처리해 주세요.`,
+    `요청 ID: ${requestId}`,
+    `작업 유형: ${mode === "edit" ? "구현" : "분석"}`,
+    "기준 브랜치: main",
     "",
     mode === "edit"
-      ? "새 브랜치에서 구현하고 관련 검증을 실행한 뒤 main 직접 푸시 없이 Pull Request로 제안"
-      : "저장소를 변경하지 않고 코드와 데이터 근거를 확인해 한국어로 답변",
-    "비밀정보·브라우저 세션·로컬 auth.json을 요청하거나 출력하지 않음",
+      ? "새 브랜치에서 필요한 범위만 구현하고 브라우저 번들 빌드, 자동화 검사, 부서 적합성 검사를 실행한 뒤 main 대상 Pull Request로 제안해 주세요."
+      : "파일을 변경하지 말고 코드와 데이터 근거를 확인해 한국어로 답변해 주세요.",
+    "기존 공개 URL과 데이터 구조를 유지하고, 실패한 검증은 숨기지 말고 보고해 주세요.",
+    "비밀정보·브라우저 세션·로컬 인증 파일을 요청하거나 출력하지 마세요.",
     "",
-    "사용자 요청",
+    "사용자 요청:",
     prompt,
+  ].join("\n");
+}
+
+function siteCodexTerminalCommand(cloudPrompt, environmentId = "<ENV_ID>") {
+  const safePrompt = String(cloudPrompt || "").replace(/^'@$/gm, "' @");
+  const safeEnvironment = String(environmentId || "<ENV_ID>").replace(/[^a-zA-Z0-9_-]/g, "") || "<ENV_ID>";
+  return [
+    "$codexTask = @'",
+    safePrompt,
+    "'@",
+    `codex cloud exec --env '${safeEnvironment}' --attempts 1 $codexTask`,
   ].join("\n");
 }
 
@@ -702,14 +721,14 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
   const [visible, setVisible] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [activity, setActivity] = useState("GitHub 요청 대기");
+  const [activity, setActivity] = useState("Codex Cloud 작업 대기");
   const [githubPanelOpen, setGithubPanelOpen] = useState(false);
   const [githubState, setGithubState] = useState({ state: "idle", conclusion: "" });
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [log, setLog] = useState([{
     id: "boot", role: "system", label: "READY",
-    text: "처음 사용하면 /guide · 사이트 내부 검색은 /search · 저장소 질문은 /ask · 수정과 PR 요청은 /edit",
+    text: "처음 사용하면 /guide · Cloud 작업은 /cloud · 사이트 내부 검색은 /search · 전달 상태는 /status",
     commands: SITE_CODEX_QUICK_COMMANDS,
   }]);
   const launcherRef = useRef(null);
@@ -750,8 +769,8 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
       setGithubState(next);
       if (announce) append({
         role: "assistant",
-        label: "PRO CLOUD BRIDGE",
-        text: `GitHub 요청·PR 검증 브리지 연결 · 최근 상태 ${next.conclusion} · API 키와 로컬 실행 불필요`,
+        label: "CLOUD DELIVERY CHECK",
+        text: `공개 GitHub API와 PR 검증 워크플로 확인 · 최근 상태 ${next.conclusion} · Codex Cloud 연결 상태는 작업 화면에서 확인`,
         url: next.url,
         actionLabel: "GitHub 검증 기록 열기",
       });
@@ -828,16 +847,16 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
       try {
         const current = await fetchGithubRequest(requestId);
         if (current.state === "missing") setActivity("GitHub Issue 제출 대기");
-        if (current.state === "registered") setActivity(`Pro Codex Cloud 실행문 준비 · Issue #${current.issue.number}`);
+        if (current.state === "registered") setActivity(`Codex Cloud 실행문 준비 · Issue #${current.issue.number}`);
         if (current.state === "cloud-ready") {
           clearInterval(pollTimerRef.current);
           pollTimerRef.current = null;
           setBusy(false);
-          setActivity("Pro Codex Cloud 실행 준비 완료");
+          setActivity("Codex Cloud 실행 준비 완료");
           append({
             role: "assistant",
-            label: "PRO CODEX CLOUD",
-            text: `GitHub Issue #${current.issue.number} 등록 완료 · 실행문을 복사해 Pro 계정으로 Codex Cloud에서 작업 시작 · 수정 요청은 Pull Request로 검토`,
+            label: "CODEX CLOUD",
+            text: `GitHub Issue #${current.issue.number} 등록 완료 · 실행문을 복사해 Codex Cloud에서 작업 시작 · 수정 요청은 Pull Request로 검토`,
             links: [
               ["GitHub 요청 열기", current.issue.html_url],
               ["Codex Cloud 열기", SITE_CODEX_CLOUD],
@@ -898,11 +917,73 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
       text: `${mode === "edit" ? "수정" : "질의"} 요청 ${requestId}\n1. 열린 GitHub 화면에서 Submit new issue 클릭\n2. cloud-ready 댓글 확인\n3. ${copied ? "복사된 실행문을" : "실행문 복사 버튼을 누르고"} Codex Cloud에 붙여넣기\n4. 수정 요청은 Pull Request와 Actions 결과 검토 후 병합`,
       links: [
         ["GitHub 요청 열기", url],
-        ["Pro Codex Cloud 열기", SITE_CODEX_CLOUD],
+        ["Codex Cloud 열기", SITE_CODEX_CLOUD],
       ],
       copyValue: cloudPrompt,
     });
     pollGithubRequest(requestId);
+  };
+
+  const startCodexCloudTask = async (prompt, mode = "edit") => {
+    const requestId = siteCodexRequestId();
+    const cloudPrompt = siteCodexCloudPrompt(prompt, mode, requestId);
+    const environmentId = localStorage.getItem("site-codex-environment") || "ENV_ID";
+    const cliCommand = siteCodexTerminalCommand(cloudPrompt, environmentId);
+    localStorage.setItem("site-codex-last-request", requestId);
+    localStorage.setItem(`site-codex-prompt-${requestId}`, cloudPrompt);
+
+    window.open(SITE_CODEX_CLOUD, "_blank", "noopener,noreferrer");
+    let copied = false;
+    try {
+      await navigator.clipboard?.writeText(cloudPrompt);
+      copied = true;
+    } catch {}
+
+    setActivity("Codex Cloud 작업 화면 열림");
+    append({
+      role: "assistant",
+      label: "CODEX CLOUD TASK",
+      text: `${mode === "edit" ? "수정" : "분석"} 작업 ${requestId}\n${copied ? "실행문 복사 완료" : "아래 실행문 복사 필요"} · 열린 Codex Cloud에서 ${SITE_CODEX_REPO} 환경을 선택하고 붙여넣어 실행\n완료 후 파일 차이와 검증 결과를 확인하고 수정 작업은 main 대상 Pull Request로 제안`,
+      links: [
+        ["Codex Cloud 다시 열기", SITE_CODEX_CLOUD],
+        ["연결 환경 확인", SITE_CODEX_ENVIRONMENTS],
+      ],
+      copyValue: cloudPrompt,
+      cliValue: cliCommand,
+    });
+  };
+
+  const checkLatestDelivery = async () => {
+    setBusy(true);
+    setActivity("Pull Request와 Actions 확인");
+    try {
+      const headers = { Accept: "application/vnd.github+json" };
+      const [pullResponse, runResponse] = await Promise.all([
+        fetch(`${SITE_CODEX_API}/pulls?state=all&sort=updated&direction=desc&per_page=1`, { cache: "no-store", headers }),
+        fetch(`${SITE_CODEX_API}/actions/runs?per_page=1`, { cache: "no-store", headers }),
+      ]);
+      if (!pullResponse.ok || !runResponse.ok) throw new Error(`GitHub API ${pullResponse.status}/${runResponse.status}`);
+      const [pulls, runs] = await Promise.all([pullResponse.json(), runResponse.json()]);
+      const pull = pulls[0];
+      const run = runs.workflow_runs?.[0];
+      const pullState = pull ? `PR #${pull.number} · ${pull.state}${pull.merged_at ? " · merged" : ""} · ${pull.head?.ref || "브랜치 확인"}` : "Pull Request 없음";
+      const runState = run ? `${run.name} · ${run.conclusion || run.status}` : "Actions 실행 이력 없음";
+      append({
+        role: "assistant",
+        label: "DELIVERY STATUS",
+        text: `${pullState}\n${runState}`,
+        links: [
+          [pull ? `PR #${pull.number} 열기` : "Pull Request 목록", pull?.html_url || `${SITE_CODEX_WEB}/pulls`],
+          ["Actions 열기", run?.html_url || `${SITE_CODEX_WEB}/actions`],
+        ],
+      });
+      setActivity("전달 상태 확인 완료");
+    } catch (error) {
+      append({ role: "error", label: "DELIVERY STATUS", text: `${error.message} · GitHub Pull Request와 Actions 화면에서 직접 확인` });
+      setActivity("전달 상태 확인 실패");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const exportSession = () => {
@@ -961,8 +1042,38 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
     if (command === "clear") { setLog([]); return; }
     if (command === "export") { exportSession(); append({ role: "system", label: "EXPORT", text: "Markdown 작업 기록 저장" }); return; }
     if (command === "connect") { setGithubPanelOpen(true); checkGithubBridge(true); return; }
-    if (command === "doctor" || command === "status") {
+    if (command === "doctor") {
       await checkGithubBridge(true);
+      return;
+    }
+    if (command === "status") {
+      await checkLatestDelivery();
+      return;
+    }
+    if (command === "env") {
+      if (!args) {
+        const saved = localStorage.getItem("site-codex-environment");
+        append({ role: saved ? "assistant" : "system", label: "CLOUD ENV", text: saved ? `저장된 환경 ID · ${saved}` : "환경 ID 미설정 · Codex Cloud 설정에서 환경 ID를 확인한 뒤 /env <환경 ID> 실행" });
+        return;
+      }
+      if (!/^[a-zA-Z0-9_-]+$/.test(args)) {
+        append({ role: "error", label: "CLOUD ENV", text: "환경 ID는 영문·숫자·하이픈·밑줄만 입력 가능" });
+        return;
+      }
+      localStorage.setItem("site-codex-environment", args);
+      append({ role: "assistant", label: "CLOUD ENV", text: `터미널 명령용 환경 ID 저장 · ${args}\n민감정보가 아닌 환경 식별자만 이 브라우저에 저장됨` });
+      return;
+    }
+    if (command === "tasks") {
+      const environmentId = localStorage.getItem("site-codex-environment") || "ENV_ID";
+      const cliValue = `codex cloud list --env '${environmentId}' --limit 10`;
+      append({
+        role: "assistant",
+        label: "CODEX CLI",
+        text: `${environmentId === "ENV_ID" ? "/env <환경 ID>를 먼저 실행하면 " : ""}터미널에서 최근 Codex Cloud 작업 10개 조회`,
+        links: [["Codex Cloud 열기", SITE_CODEX_CLOUD]],
+        cliValue,
+      });
       return;
     }
     if (SITE_CODEX_GITHUB_PAGES[command]) {
@@ -977,7 +1088,7 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
       else pollGithubRequest(requestId);
       return;
     }
-    if (!["search", "company", "market", "ask", "edit"].includes(command)) {
+    if (!["search", "company", "market", "ask", "edit", "cloud", "issue"].includes(command)) {
       append({ role: "error", label: "COMMAND", text: `지원하지 않는 명령어 /${command} · /help 확인` });
       return;
     }
@@ -992,14 +1103,25 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
       return;
     }
 
-    if (command === "edit") {
-      const approved = window.confirm("ChatGPT Pro Codex Cloud에서 연결된 GitHub 저장소의 새 브랜치를 수정합니다\n\n결과는 main 직접 반영 없이 Pull Request로 제안되며 GitHub 검증을 거칩니다\n\nGitHub 요청 Issue를 생성할까요");
+    if (command === "issue") {
+      const approved = window.confirm("공개 GitHub Issue에 요청을 기록합니다\n\n비밀정보나 개인정보가 포함되지 않았는지 확인해 주세요\n\nIssue 작성 화면을 열까요");
       if (!approved) {
-        append({ role: "system", label: "EDIT CANCEL", text: "GitHub 수정 요청 취소 · 저장소 변경 없음" });
+        append({ role: "system", label: "ISSUE CANCEL", text: "GitHub 요청 기록 취소" });
+        return;
+      }
+      await submitGithubRequest(args, "edit");
+      return;
+    }
+
+    const mode = command === "ask" ? "ask" : "edit";
+    if (mode === "edit") {
+      const approved = window.confirm("연결된 Codex Cloud에서 새 브랜치 작업을 준비합니다\n\n실행문을 복사하고 Cloud 작업 화면을 열며, 결과는 main 대상 Pull Request로 제안합니다\n\n계속할까요");
+      if (!approved) {
+        append({ role: "system", label: "CLOUD CANCEL", text: "Codex Cloud 작업 준비 취소 · 저장소 변경 없음" });
         return;
       }
     }
-    await submitGithubRequest(args, command === "edit" ? "edit" : "ask");
+    await startCodexCloudTask(args, mode);
   };
 
   const onTerminalKey = event => {
@@ -1039,7 +1161,7 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
             }
             if (event.key === "Enter") { event.preventDefault(); launcher.trim() ? execute(launcher) : setVisible(true); }
           }}
-          placeholder="/guide · /search · /ask · /edit"
+          placeholder="/cloud 요청 · /search · /status"
           aria-label="사이트 CLI 명령어"
           data-preserve-copy="true"
         />
@@ -1055,18 +1177,18 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
               <div className="site-cli-window-controls" aria-hidden="true"><i /><i /><i /></div>
               <div className="site-cli-title">
                 <span className="site-cli-mark"><Icon name="pulse" size={17} sw={2.2} /></span>
-                <div><b>SITE CODEX</b><small>CHATGPT PRO · GITHUB · CODEX CLOUD</small></div>
+                <div><b>SITE CODEX</b><small>CODEX CLOUD · GITHUB · PULL REQUEST</small></div>
               </div>
               <div className="site-cli-status">
                 <span>SITE INDEX</span>
-                <span className={githubState.state === "ready" ? "is-on" : ""}>PRO CLOUD</span>
+                <span className={githubState.state === "ready" ? "is-on" : ""}>GITHUB API</span>
                 <span>PR REVIEW</span>
               </div>
               <button className="site-cli-close" onClick={() => setVisible(false)} title="닫기"><Icon name="x" size={17} sw={2} /></button>
             </header>
 
             <div className="site-cli-flow" aria-hidden="true">
-              <span>SITE DATA</span><i /><span>GITHUB ISSUE</span><i /><span>CODEX CLOUD</span><i /><span>REVIEW + PR</span>
+              <span>SITE REQUEST</span><i /><span>CODEX CLOUD</span><i /><span>BRANCH + PR</span><i /><span>ACTIONS</span>
             </div>
 
             <div className="site-cli-output" ref={outputRef} data-preserve-copy="true">
@@ -1077,11 +1199,12 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
                     {item.role !== "user" && item.text && <button onClick={() => copyText(item.text)} title="복사"><Icon name="copy" size={12} /></button>}
                   </div>
                   {item.text && <pre data-preserve-copy="true">{item.text}</pre>}
-                  {(item.url || item.links?.length > 0 || item.copyValue) && (
+                  {(item.url || item.links?.length > 0 || item.copyValue || item.cliValue) && (
                     <div className="site-cli-link-row">
                       {item.url && <a className="site-cli-link" href={item.url} target="_blank" rel="noreferrer">{item.actionLabel || "GitHub에서 열기"} ↗</a>}
                       {item.links?.map(([label, url]) => <a key={`${label}-${url}`} className="site-cli-link" href={url} target="_blank" rel="noreferrer">{label} ↗</a>)}
                       {item.copyValue && <button className="site-cli-link" onClick={() => copyText(item.copyValue)}><Icon name="copy" size={11} /> 실행문 복사</button>}
+                      {item.cliValue && <button className="site-cli-link" onClick={() => copyText(item.cliValue)}><Icon name="copy" size={11} /> CLI 명령 복사</button>}
                     </div>
                   )}
                   {item.commands && (
@@ -1116,15 +1239,15 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
 
             {githubPanelOpen && (
               <div className="site-cli-config">
-                <div className="site-cli-config-title"><b>CHATGPT PRO · CODEX CLOUD</b><span>Pro 계정 로그인으로 GitHub 저장소 연결 · Actions Secret 없이 실행</span></div>
+                <div className="site-cli-config-title"><b>CODEX CLOUD · CONNECTED REPOSITORY</b><span>연결된 저장소 환경에서 작업 · Actions Secret 없이 실행</span></div>
                 <div className={`site-cli-github-card ${githubState.state === "ready" ? "is-ready" : ""}`}>
-                  <b>{githubState.state === "ready" ? "GITHUB CLOUD BRIDGE ONLINE" : "CLOUD BRIDGE CONNECTION"}</b>
-                  <span>Issue는 요청 기록 · Codex Cloud는 작업 실행 · Pull Request는 변경 검토와 자동 검증</span>
+                  <b>{githubState.state === "ready" ? "GITHUB DELIVERY ONLINE" : "DELIVERY CONNECTION"}</b>
+                  <span>Codex Cloud는 작업 실행 · Pull Request는 변경 검토 · Actions는 자동 검증</span>
                 </div>
                 <div className="site-cli-github-links">
                   {SITE_CODEX_LINKS.map(([step, label, url]) => <a key={url} href={url} target="_blank" rel="noreferrer"><span>{step}</span><b>{label}</b><Icon name="ext" size={12} /></a>)}
                 </div>
-                <p>최초 1회 Codex Cloud에서 ChatGPT Pro 로그인 후 GitHub 저장소 환경 연결 · 브라우저 세션·auth.json·API 키를 GitHub Secret에 저장하지 않음 · 사이트 요청은 공개 Issue로 기록 · 수정 결과는 main 직접 반영 없이 Pull Request로 제안 · 공개 Issue에 비밀정보 입력 금지</p>
+                <p>연결된 Codex Cloud 환경을 사용 · 사이트는 로그인 세션이나 API 키에 접근하지 않음 · /cloud 실행 시 작업 화면을 열고 실행문을 복사 · 수정 결과는 main 직접 반영 없이 Pull Request로 제안 · /issue는 공개 기록이 필요할 때만 선택</p>
                 <div className="site-cli-config-actions">
                   <button onClick={() => setGithubPanelOpen(false)}>닫기</button>
                   <button className="primary" onClick={() => checkGithubBridge(true)}>브리지 확인</button>
@@ -1146,7 +1269,7 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
                 value={input}
                 onChange={event => setInput(event.target.value)}
                 onKeyDown={onTerminalKey}
-                placeholder="/guide로 시작 · Tab 자동완성 · ↑/↓ 명령 기록"
+                placeholder="/cloud 요청으로 시작 · Tab 자동완성 · ↑/↓ 명령 기록"
                 rows="1"
                 disabled={busy}
                 data-preserve-copy="true"
