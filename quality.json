@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-15T17:17:16.086Z",
+  "generatedAt": "2026-08-15T17:40:21.047Z",
   "overall": "warn",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
-  "summary": "검증 21개 · 정상 16 · 주의 5 · 실패 0",
+  "summary": "검증 21개 · 정상 17 · 주의 4 · 실패 0",
   "checks": [
     {
       "id": "news-coverage",
@@ -32,7 +32,7 @@
       "id": "collection-health",
       "label": "수집 스트림 상태",
       "status": "warn",
-      "value": "실패 0 · 빈 스트림 8 · 지속 실패 0"
+      "value": "실패 0/3 허용 · 빈 스트림 8 · 지속 실패 0"
     },
     {
       "id": "briefing-evidence",
@@ -127,7 +127,7 @@
     {
       "id": "opportunity-generation",
       "label": "월간 기회 후보 자동 생성",
-      "status": "warn",
+      "status": "ok",
       "value": "후보 24건 · 실험 3건 · 근거 미달 공개 0건"
     }
   ],
@@ -1050,7 +1050,7 @@
         "consecutiveEmptyRuns": 0
       },
       {
-        "stream": "official-feed:자사 Global Newsroom",
+        "stream": "official-feed:Samsung Global Newsroom",
         "state": "healthy",
         "lastAttemptAt": "2026-08-15T14:11:38.135Z",
         "lastSuccessAt": "2026-08-15T14:11:38.135Z",

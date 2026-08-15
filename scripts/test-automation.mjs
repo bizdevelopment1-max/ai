@@ -1960,13 +1960,14 @@ try {
 }
 
 try {
-  const [database, boardsSource, componentsSource, workflowSource, recoverySource, builderSource, version, metricGovernance, volatileMetrics, metricAudit, weeklyMetricWorkflow, officialSources, qualityThresholds, monetization, monetizationReviewQueue] = await Promise.all([
+  const [database, boardsSource, componentsSource, workflowSource, recoverySource, builderSource, verifySource, version, metricGovernance, volatileMetrics, metricAudit, weeklyMetricWorkflow, officialSources, qualityThresholds, monetization, monetizationReviewQueue] = await Promise.all([
     readFile("mobile-ai-business-view.json", "utf8").then(JSON.parse),
     readFile("boards.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
     readFile(".github/workflows/daily-news.yml", "utf8"),
     readFile(".github/workflows/daily-news-update.yml", "utf8"),
     readFile("scripts/build-mobile-ai-business-db.mjs", "utf8"),
+    readFile("scripts/verify-pipeline.mjs", "utf8"),
     readFile("data-version.json", "utf8").then(JSON.parse),
     readFile("config/metric-governance.json", "utf8").then(JSON.parse),
     readFile("config/volatile-metrics.json", "utf8").then(JSON.parse),
@@ -2028,6 +2029,9 @@ try {
     || (officialSources.sitemaps || []).length < 15
     || (officialSources.officialFeeds || []).length < 5
     || (officialSources.apiConnectors || []).length < 5
+    || qualityThresholds.maximumFailedStreamsBeforeBlock !== 3
+    || !verifySource.includes("failedStreamCount > failedStreamBlockThreshold")
+    || !verifySource.includes("[verify:${check.status}]")
     || !database.snapshotVersion || !database.summary?.sourceUrls
     || !boardsSource.includes("MobileAIBusinessBoard")
     || !boardsSource.includes("mobile-ai-business-view.json")

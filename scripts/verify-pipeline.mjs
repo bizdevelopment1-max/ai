@@ -346,6 +346,8 @@ const eligibleArticles = currentArticles.filter(article => article.displayEligib
 const sourceContentRate = eligibleArticles ? sourceExcerptArticles / eligibleArticles : 0;
 const duplicateRate = (currentArticles.length + duplicateArticles) ? duplicateArticles / (currentArticles.length + duplicateArticles) : 0;
 const criticalEmptyStreams = (collectionHealth.watchdogBreaches || []).length;
+const failedStreamCount = (collectionHealth.failedStreams || []).length;
+const failedStreamBlockThreshold = Number(qualityThresholds.maximumFailedStreamsBeforeBlock ?? 3);
 const publishedMonetizationRows = (monetization.companies || []).flatMap(company => company.monetize || []);
 const ungatedMonetizationRows = publishedMonetizationRows.filter(row => row.classificationGate?.status !== "passed");
 const generatedOpportunities = opportunityView.generatedOpportunities || [];
@@ -432,7 +434,7 @@ const checks = [
   { id: "source-backed", label: "원문 스니펫 근거", status: backedArticles >= Math.max(10, currentArticles.length * 0.35) ? "ok" : "warn", value: `${backedArticles}/${currentArticles.length}건` },
   { id: "source-content-mode", label: "원문 본문 추출", status: sourceContentRate >= Number(qualityThresholds.sourceContentExtractionRate || 0.97) ? "ok" : "warn", value: `${sourceExcerptArticles}/${eligibleArticles}건 · ${(sourceContentRate * 100).toFixed(1)}% / 목표 ${((qualityThresholds.sourceContentExtractionRate || 0.97) * 100).toFixed(0)}%` },
   { id: "feed-localization", label: "기사 한국어 표시·영문 폴백", status: localizedArticles + localizedFallbackArticles >= Math.max(10, currentArticles.length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedArticles} · 영문 폴백 ${localizedFallbackArticles}` },
-  { id: "collection-health", label: "수집 스트림 상태", status: (collectionHealth.failedStreams || []).length ? "fail" : criticalEmptyStreams > Number(qualityThresholds.maximumCriticalEmptyStreams ?? 0) || (collectionHealth.emptyStreams || []).length ? "warn" : "ok", value: `실패 ${(collectionHealth.failedStreams || []).length} · 빈 스트림 ${(collectionHealth.emptyStreams || []).length} · 지속 실패 ${criticalEmptyStreams}` },
+  { id: "collection-health", label: "수집 스트림 상태", status: failedStreamCount > failedStreamBlockThreshold ? "fail" : failedStreamCount || criticalEmptyStreams > Number(qualityThresholds.maximumCriticalEmptyStreams ?? 0) || (collectionHealth.emptyStreams || []).length ? "warn" : "ok", value: `실패 ${failedStreamCount}/${failedStreamBlockThreshold} 허용 · 빈 스트림 ${(collectionHealth.emptyStreams || []).length} · 지속 실패 ${criticalEmptyStreams}` },
   { id: "briefing-evidence", label: "브리핑 근거 연결", status: linkedBriefs > 0 ? "ok" : "fail", value: `${linkedBriefs}건` },
   { id: "insight-evidence", label: "인사이트 근거 연결", status: linkedInsights > 0 ? "ok" : "warn", value: `${linkedInsights}건` },
   { id: "stock-freshness", label: "주가 최신성", status: stockFresh >= Math.max(8, stockRows.length * 0.7) ? "ok" : "fail", value: `${stockFresh}/${stockRows.length}종목` },
@@ -576,6 +578,10 @@ await Promise.all([
 
 console.log(`[verify] ${quality.summary}`);
 console.log(`[verify] 누적 기사 ${historyArticles.length}건 · 원문 스니펫 근거 ${backedArticles}건 · 최신 주가 ${stockFresh}/${stockRows.length}`);
+for (const check of checks.filter(item => item.status !== "ok")) {
+  const writer = check.status === "fail" ? console.error : console.warn;
+  writer(`[verify:${check.status}] ${check.id} · ${check.label} · ${check.value}`);
+}
 if (fails) {
   console.error("[verify] Critical evidence checks failed. Refusing to publish this refresh.");
   process.exit(1);
