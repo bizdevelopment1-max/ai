@@ -60,6 +60,14 @@ const signalKeys = ["id", "group", "title", "signal", "quant", "source", "date",
 
 const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notDeleted("article"))
   .map(item => normalizeLocalizedRecord(compact(item, articleKeys)));
+const executiveArticleKeys = [
+  "id", "date", "co", "cat", "source", "title", "titleKo", "url", "tag", "summary",
+  "summaryMode", "displayEligible", "provenance", "localization",
+];
+const executiveArticles = visibleArticles.slice()
+  .sort((left, right) => String(right.date || "").localeCompare(String(left.date || "")))
+  .slice(0, 72)
+  .map(item => compact(item, executiveArticleKeys));
 const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notDeleted("research"))
   .map(item => normalizeLocalizedRecord(compact(item, researchKeys)));
 const visibleRecordSources = (market.records || []).filter(record => sourceBacked(record)
@@ -105,6 +113,7 @@ const visibleSignals = (data, scope) => (data.items || [])
 
 const generatedAt = new Date().toISOString();
 const views = {
+  "executive-news-view.json": { generatedAt, count: executiveArticles.length, articles: executiveArticles },
   "news-view.json": { generatedAt, count: visibleArticles.length, articles: visibleArticles },
   "research-view.json": { generatedAt, count: visibleResearch.length, feed: visibleResearch },
   "market-view.json": {
@@ -145,4 +154,4 @@ const versionInputs = [
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
 await writeJson("data-version.json", { version, generatedAt, assets: [...Object.keys(views), "company-news.json", "business-model-forecasts.json", "mobile-ai-business-view.json"] });
 
-console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} current market insights · ${consolidatedDuplicateCount} duplicate records consolidated · ${replacedRecordCount} prior topic values replaced · version ${version}`);
+console.log(`[public-data] ${executiveArticles.length} executive / ${visibleArticles.length} cumulative articles · ${visibleResearch.length} research · ${visibleRecords.length} current market insights · ${consolidatedDuplicateCount} duplicate records consolidated · ${replacedRecordCount} prior topic values replaced · version ${version}`);

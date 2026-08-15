@@ -168,7 +168,10 @@ function Trend({ v, small, animate }) {
 }
 
 // ---- Sidebar ------------------------------
-const NAV = [
+// Single source of truth for both the left navigation and the right-hand
+// document flow. App creates refs and scroll-spy order from this registry,
+// preventing crawler-driven board changes from desynchronising the sidebar.
+const SECTION_REGISTRY = [
   { id: "overview", ko: "AI 메모리 영상 브리핑", en: "Video Brief", icon: "grid", group: "01 · EXECUTIVE BRIEF" },
   { id: "strategy", ko: "전략 컨설팅", en: "Pain Point → New Biz", icon: "target", group: "01 · EXECUTIVE BRIEF" },
   { id: "ib", ko: "산업 리서치", en: "Industry Research", icon: "report", group: "01 · EXECUTIVE BRIEF" },
@@ -189,6 +192,7 @@ const NAV = [
   { id: "stocks", ko: "Stock 분석", en: "Stock Analysis", icon: "up", group: "04 · MARKET VALIDATION" },
   { id: "audit", ko: "데이터 신뢰센터", en: "Data Trust Center", icon: "report", group: "05 · EVIDENCE GOVERNANCE" },
 ];
+const NAV = SECTION_REGISTRY;
 const NAV_SECTION_IDS = NAV.map(item => item.id);
 
 // gradient background for the sidebar, derived from a single brand color
@@ -967,4 +971,4 @@ function AIChatbot({ onNav }) {
   );
 }
 
-Object.assign(window, { Icon, Trend, Sidebar, TopBar, KpiStrip, NAV, BRANDS, sbBg, AIChatbot, consultingBulletText });
+Object.assign(window, { Icon, Trend, Sidebar, TopBar, KpiStrip, SECTION_REGISTRY, NAV, NAV_SECTION_IDS, BRANDS, sbBg, AIChatbot, consultingBulletText });

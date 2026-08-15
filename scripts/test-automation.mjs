@@ -47,6 +47,7 @@ const required = [
   "scripts/audit-agent.mjs",
   "news.json",
   "company-news.json",
+  "executive-news-view.json",
   "news-view.json",
   "research-view.json",
   "market-view.json",
@@ -1197,7 +1198,7 @@ try {
     && charts.includes('className={"hbar-chart" + (compact ? " hbar-compact" : "")}')
     && styles.includes(".hbar-chart.hbar-compact")
     && styles.includes("content-visibility: auto")
-    && app.includes("useInView(sectionRef, 3000)")
+    && app.includes("useInView(sectionRef, 4200)")
     && app.includes("board-gate-placeholder")
     && styles.includes(".board-gate.is-pending");
   const hasFundingReadout = boards.includes("function FundingTrendInsight")
@@ -1651,9 +1652,10 @@ try {
 }
 
 try {
-  const [appSource, boardsSource, animSource, workflowSource, version, publicNews, publicResearch, publicMarket] = await Promise.all([
+  const [appSource, boardsSource, animSource, workflowSource, version, executiveNews, publicNews, publicResearch, publicMarket] = await Promise.all([
     readFile("app.jsx", "utf8"), readFile("boards.jsx", "utf8"), readFile("anim.jsx", "utf8"),
     readFile(".github/workflows/daily-news.yml", "utf8"), readFile("data-version.json", "utf8").then(JSON.parse),
+    readFile("executive-news-view.json", "utf8").then(JSON.parse),
     readFile("news-view.json", "utf8").then(JSON.parse), readFile("research-view.json", "utf8").then(JSON.parse),
     readFile("market-view.json", "utf8").then(JSON.parse),
   ]);
@@ -1668,10 +1670,11 @@ try {
     && Array.isArray(record.consolidatedInsights) && record.consolidatedInsights.length >= 1
     && record.consolidatedInsights.length <= 3);
   if (!version.version || !/data-version\.json/.test(appSource)
-    || !/news-view\.json/.test(appSource) || !/research-view\.json/.test(appSource)
+    || !/executive-news-view\.json/.test(appSource) || !/news-view\.json/.test(appSource) || !/research-view\.json/.test(appSource)
     || !/market-view\.json/.test(boardsSource) || /Math\.floor\(Date\.now\s*\/\s*60000\)/.test(`${appSource}\n${boardsSource}`)
     || /setInterval\(_queueScan,\s*600\)/.test(animSource)
     || !/build-public-data\.mjs/.test(workflowSource)
+    || !safe(executiveNews.articles || []) || executiveNews.count > 72
     || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(marketRecords)
     || remainingMarketDuplicates || !mergedMarketRecordsValid
     || publicMarket.database?.mode !== "latest-verified-snapshot"
@@ -1868,7 +1871,7 @@ try {
     readFile("scripts/build-company-intelligence.mjs", "utf8"),
     readFile("scripts/crawl-startups.mjs", "utf8"),
     readFile("scripts/translate_summarize.py", "utf8"),
-    ...["news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json"]
+    ...["executive-news-view.json", "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json"]
       .map(file => readFile(file, "utf8").then(JSON.parse)),
   ]);
   const cases = new Map([
@@ -2019,7 +2022,7 @@ try {
   // the only surfaces a user can actually see.
   const jsonFiles = [
     "audit.json", "collection-health.json", "companies.json", "company-news.json", "insights.json",
-    "llm-health.json", "monetization.json", "news-view.json", "nvidia-investments.json", "quality.json",
+    "llm-health.json", "monetization.json", "executive-news-view.json", "news-view.json", "nvidia-investments.json", "quality.json",
     "research-view.json", "startups.json", "stocks.json", "business-model-forecasts.json",
     "market-view.json", "mobile-ai-business-view.json", "stock-events.json",
   ];

@@ -986,7 +986,8 @@ a[href]:hover .rainbow-on-hover,
 .board { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 14px; }
 /* 화면 밖의 누적 보드는 자리만 확보하고 실제 페인트를 뒤로 미뤄 첫 화면을 빠르게 표시 */
 @supports (content-visibility: auto) {
-  .board-gate.is-ready .board { content-visibility: auto; contain-intrinsic-size: auto var(--gate-height, 760px); }
+  .board-gate.is-ready { content-visibility: auto; contain-intrinsic-size: auto var(--gate-height, 760px); }
+  .board-gate.is-ready .board { contain: layout style paint; }
 }
 .board-head { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--line); position: relative; cursor: pointer; user-select: none; }
 .board-head::after {

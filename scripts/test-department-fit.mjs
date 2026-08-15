@@ -61,13 +61,19 @@ for (const removed of removedSections) {
   assert(!uiText.includes(removed), `삭제된 섹션이 다시 노출됩니다: ${removed}`);
 }
 
-assert(/useInView\(sectionRef, 3000\)/.test(app), "하단 보드 근접 사전 로딩 범위가 적용되지 않았습니다");
-assert(/requestIdleCallback/.test(app) && /700 \+ sectionIndex \* 220/.test(app), "하단 보드 순차 백그라운드 예열이 적용되지 않았습니다");
+assert(/useInView\(sectionRef, 4200\)/.test(app), "하단 보드 선행 로딩 범위가 적용되지 않았습니다");
+assert(/requestIdleCallback/.test(app) && /120 \+ sectionIndex \* 90/.test(app), "빠른 순차 백그라운드 예열이 적용되지 않았습니다");
 assert(/scrollRestoration = "manual"/.test(app) && /setActive\("overview"\)/.test(app), "새 방문이 영상 브리핑에서 시작하도록 고정되지 않았습니다");
 const videoIndex = app.indexOf('data-screen-label="AI Memory Video Brief"');
 const strategyIndex = app.indexOf('<LazySection id="strategy"');
 assert(videoIndex >= 0 && strategyIndex > videoIndex && app.slice(strategyIndex, strategyIndex + 160).includes("priority"), "첫 화면 영상 다음에 전략 컨설팅을 우선 렌더링해야 합니다");
 assert(components.indexOf('id: "overview"') < components.indexOf('id: "strategy"'), "좌측 탭도 영상 다음 전략 컨설팅 순서여야 합니다");
+const registrySource = components.slice(components.indexOf("const SECTION_REGISTRY"), components.indexOf("];", components.indexOf("const SECTION_REGISTRY")) + 2);
+const registryIds = [...registrySource.matchAll(/id:\s*"([^"]+)"/g)].map(match => match[1]);
+const rightSectionIds = [...app.matchAll(/(?:data-section|<LazySection id)="([^"]+)"/g)].map(match => match[1]);
+assert(JSON.stringify(registryIds) === JSON.stringify(rightSectionIds), `좌측 탭과 우측 섹션 순서 불일치: ${registryIds.join(",")} / ${rightSectionIds.join(",")}`);
+assert(/Object\.fromEntries\(NAV_SECTION_IDS\.map/.test(app), "좌우 섹션 ref가 단일 레지스트리에서 생성되어야 합니다");
+assert(/executive-news-view\.json/.test(app) && /fullNewsLoaded/.test(app), "첫 화면 경량 기사 로딩 후 누적 기사 예열 구조가 필요합니다");
 assert(/01 · EXECUTIVE BRIEF/.test(components) && /05 · EVIDENCE GOVERNANCE/.test(components), "좌측 탭에 컨설팅 워크스트림이 없습니다");
 assert(/needsCompanyExtras/.test(app), "초기 화면과 상세 데이터 요청이 분리되지 않았습니다");
 assert(/fmtNum\(p\.num, p\)/.test(anim), "숫자 첫 화면의 0 플래시 방지가 적용되지 않았습니다");

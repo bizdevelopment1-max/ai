@@ -33,7 +33,7 @@ function LazySection({ id, active, sectionRef, height = 420, priority = false, c
   const innerRef = uR(null);
   // Observe well before the board reaches the viewport. Idle prewarming
   // remains sequential, while the generous margin protects fast scrolling.
-  const nearViewport = useInView(sectionRef, 3000);
+  const nearViewport = useInView(sectionRef, 4200);
   const sectionIndex = Math.max(0, NAV_SECTION_IDS.indexOf(id));
   const [ready, setReady] = uS(priority || active === id);
   uE(() => {
@@ -52,7 +52,7 @@ function LazySection({ id, active, sectionRef, height = 420, priority = false, c
       } else {
         setReady(true);
       }
-    }, 700 + sectionIndex * 220);
+    }, 120 + sectionIndex * 90);
     return () => {
       window.clearTimeout(timer);
       if (idleHandle && "cancelIdleCallback" in window) window.cancelIdleCallback(idleHandle);
@@ -78,11 +78,11 @@ function App() {
   const [selected, setSelected] = uS(null);
   const [sidebarOpen, setSidebarOpen] = uS(false);
   const [collapsed, setCollapsed] = uS(false);
-  const refs = {
-    ib: uR(null), overview: uR(null), opportunity: uR(null), strategy: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    infra: uR(null), model: uR(null), data: uR(null), trust: uR(null), service: uR(null), agent: uR(null), app: uR(null),
-    sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), survey: uR(null), market: uR(null), audit: uR(null),
-  };
+  const refsStore = uR(null);
+  if (!refsStore.current) {
+    refsStore.current = Object.fromEntries(NAV_SECTION_IDS.map(id => [id, React.createRef()]));
+  }
+  const refs = refsStore.current;
   const strategyInView = useInView(refs.strategy);
   const infraInView = useInView(refs.infra);
   const modelInView = useInView(refs.model);
@@ -124,15 +124,44 @@ function App() {
   // if provenance cannot be loaded, the feed stays empty rather than showing unverified claims.
   // 캐시버스터: GitHub Pages CDN(edge)은 URL 기준 캐시 → 분 단위 쿼리스트링으로 항상 최신 파일을 받게 함
   const [crawled, setCrawled] = uS([]);
+  const [fullNewsLoaded, setFullNewsLoaded] = uS(false);
+  const fullNewsLoadedRef = uR(false);
   uE(() => {
     if (!dataVersion || !needsNews) return;
     let alive = true;
-    fetch(dataUrl("news-view.json"), { cache: "force-cache" })
+    // The first two screens need only the newest, source-backed evidence.
+    // Load that compact payload first; the complete cumulative ledger is
+    // warmed below without blocking the video or consulting framework.
+    fetch(dataUrl("executive-news-view.json"), { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive) setCrawled(j && Array.isArray(j.articles) ? j.articles : []); })
-      .catch(() => { if (alive) setCrawled([]); });
+      .then(j => {
+        if (alive && !fullNewsLoadedRef.current) setCrawled(j && Array.isArray(j.articles) ? j.articles : []);
+      })
+      .catch(() => { if (alive && !fullNewsLoadedRef.current) setCrawled([]); });
     return () => { alive = false; };
   }, [dataVersion, needsNews]);
+  uE(() => {
+    if (!dataVersion || fullNewsLoaded) return;
+    let alive = true;
+    let idleHandle = 0;
+    const loadFullNews = () => fetch(dataUrl("news-view.json"), { cache: "force-cache" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => {
+        if (!alive || !Array.isArray(j?.articles)) return;
+        fullNewsLoadedRef.current = true;
+        setCrawled(j.articles);
+        setFullNewsLoaded(true);
+      }).catch(() => {});
+    const timer = window.setTimeout(() => {
+      if ("requestIdleCallback" in window) idleHandle = window.requestIdleCallback(loadFullNews, { timeout: 1400 });
+      else loadFullNews();
+    }, 650);
+    return () => {
+      alive = false;
+      window.clearTimeout(timer);
+      if (idleHandle && "cancelIdleCallback" in window) window.cancelIdleCallback(idleHandle);
+    };
+  }, [dataVersion, fullNewsLoaded]);
   // device-topic articles (co "AI 노트북"/"AI 폰")을 제목 기준으로 실제 업체에 재분류, 매칭 없으면 co 제거
   const DEVICE_CO_MAP = [
     [/iphone|ipad|siri|apple intelligence|\bapple\b|macbook|\bm[0-9] |vision pro/i, "Apple"],
@@ -531,9 +560,9 @@ function App() {
             </LazySection>
 
             {/* ── 3. 리서치·시장 DB ── */}
-            <div className="nav-section-anchor" data-section="ib">
+            <LazySection id="ib" active={active} sectionRef={refs.ib} height={980}>
               <IBInsightBoard research={research} reports={[]} sectionRef={refs.ib} />
-            </div>
+            </LazySection>
 
             <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={1080}>
               <div className="opportunity-stack">
