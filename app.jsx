@@ -369,7 +369,8 @@ function App() {
   // section scroll container
   const scrollRef = uR(null);
   const navIntentRef = uR(null);
-  const navSettleTimersRef = uR([]);
+  const navAlignFrameRef = uR(0);
+  const navAlignTokenRef = uR(0);
   const NAV_SCROLL_OFFSET = 14;
 
   const sectionTop = (sc, el) => (
@@ -408,28 +409,46 @@ function App() {
     if (!el || !sc) return;
     navIntentRef.current = id;
     window.__DASH_NAV_TARGET = id;
-    navSettleTimersRef.current.forEach(timer => window.clearTimeout(timer));
-    navSettleTimersRef.current = [];
+    navAlignTokenRef.current += 1;
+    const token = navAlignTokenRef.current;
+    window.cancelAnimationFrame(navAlignFrameRef.current);
     const destination = Math.max(0, sectionTop(sc, el) - NAV_SCROLL_OFFSET);
     const isDistant = Math.abs(destination - sc.scrollTop) > sc.clientHeight * 1.5;
+    sc.classList.toggle("nav-aligning", isDistant);
     // A long smooth traversal would activate every intermediate board and
     // download its payload. Jump long distances; retain smooth motion locally.
     sc.scrollTo({ top: destination, behavior: isDistant ? "auto" : "smooth" });
-    const realign = () => {
+    // Lazy boards can become several times taller than their placeholders.
+    // Follow the requested section until every board above it has settled,
+    // otherwise late layout growth leaves the right panel and left tab out of sync.
+    const startedAt = performance.now();
+    let stableFrames = 0;
+    const targetIndex = NAV_SECTION_IDS.indexOf(id);
+    const minimumSettleMs = targetIndex > 4 ? 1800 : targetIndex > 1 ? 1100 : 450;
+    const followTarget = now => {
+      if (token !== navAlignTokenRef.current || !scrollRef.current) return;
+      const container = scrollRef.current;
       const target = refs[id]?.current;
-      if (target && scrollRef.current) {
-        const container = scrollRef.current;
-        container.scrollTo({ top: Math.max(0, sectionTop(container, target) - NAV_SCROLL_OFFSET), behavior: "auto" });
+      if (!target) return;
+      const waitingAbove = NAV_SECTION_IDS.slice(0, targetIndex)
+        .some(sectionId => refs[sectionId]?.current?.classList.contains("is-pending"));
+      const delta = sectionTop(container, target) - NAV_SCROLL_OFFSET - container.scrollTop;
+      // Let a short local smooth-scroll finish before taking over alignment.
+      if (isDistant || now - startedAt > 360) {
+        container.classList.add("nav-aligning");
+        if (Math.abs(delta) > 1) container.scrollTop = Math.max(0, container.scrollTop + delta);
+        stableFrames = Math.abs(delta) <= 1 && !waitingAbove ? stableFrames + 1 : 0;
       }
-    };
-    const settleDelays = isDistant ? [0, 140, 360, 760, 1400, 2400, 3600] : [520, 1100];
-    navSettleTimersRef.current = settleDelays.map((delay, index) => window.setTimeout(() => {
-      realign();
-      if (index === settleDelays.length - 1) {
+      if ((stableFrames >= 12 && now - startedAt > minimumSettleMs) || now - startedAt > 6500) {
         navIntentRef.current = null;
         if (window.__DASH_NAV_TARGET === id) window.__DASH_NAV_TARGET = "";
+        container.classList.remove("nav-aligning");
+        navAlignFrameRef.current = 0;
+        return;
       }
-    }, delay));
+      navAlignFrameRef.current = window.requestAnimationFrame(followTarget);
+    };
+    navAlignFrameRef.current = window.requestAnimationFrame(followTarget);
   };
 
   // scroll-spy
@@ -445,7 +464,7 @@ function App() {
           frame = 0;
           return;
         }
-        const y = sc.scrollTop + NAV_SCROLL_OFFSET + 1;
+        const y = sc.scrollTop + Math.min(164, Math.max(NAV_SCROLL_OFFSET + 1, sc.clientHeight * .23));
         let cur = "overview", best = -1;
         for (const id of NAV_SECTION_IDS) {
           const el = refs[id].current;
@@ -453,16 +472,38 @@ function App() {
           const top = sectionTop(sc, el);
           if (top <= y && top > best) { best = top; cur = id; }
         }
+        if (sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 4) cur = NAV_SECTION_IDS[NAV_SECTION_IDS.length - 1];
         setActive(previous => previous === cur ? previous : cur);
         frame = 0;
       });
     };
     sc.addEventListener("scroll", onScroll, { passive: true });
+    const cancelProgrammaticAlignment = event => {
+      if (!event.isTrusted || !navIntentRef.current) return;
+      navAlignTokenRef.current += 1;
+      window.cancelAnimationFrame(navAlignFrameRef.current);
+      navAlignFrameRef.current = 0;
+      navIntentRef.current = null;
+      window.__DASH_NAV_TARGET = "";
+      sc.classList.remove("nav-aligning");
+    };
+    sc.addEventListener("wheel", cancelProgrammaticAlignment, { passive: true });
+    sc.addEventListener("touchstart", cancelProgrammaticAlignment, { passive: true });
+    sc.addEventListener("pointerdown", cancelProgrammaticAlignment, { passive: true });
+    const sizeObserver = "ResizeObserver" in window ? new ResizeObserver(onScroll) : null;
+    const flow = sc.querySelector(".main-inner");
+    if (flow) sizeObserver?.observe(flow);
     onScroll();
     return () => {
       sc.removeEventListener("scroll", onScroll);
+      sc.removeEventListener("wheel", cancelProgrammaticAlignment);
+      sc.removeEventListener("touchstart", cancelProgrammaticAlignment);
+      sc.removeEventListener("pointerdown", cancelProgrammaticAlignment);
+      sizeObserver?.disconnect();
       cancelAnimationFrame(frame);
-      navSettleTimersRef.current.forEach(timer => window.clearTimeout(timer));
+      navAlignTokenRef.current += 1;
+      window.cancelAnimationFrame(navAlignFrameRef.current);
+      sc.classList.remove("nav-aligning");
       window.__DASH_NAV_TARGET = "";
     };
   }, []);
@@ -549,7 +590,17 @@ function App() {
             {/* ── 1. 첫 화면: 관계 지도 + 영상 브리핑 ── */}
             <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="AI Memory Video Brief">
               <div className="ov-head">
-                <h2 className="ov-title">AI 메모리 산업 브리핑 <span>Source-backed competitive dynamics</span></h2>
+                <div className="ov-heading-copy">
+                  <span>EXECUTIVE SIGNAL ROOM · SOURCE-BACKED</span>
+                  <h2 className="ov-title">AI 메모리 산업 브리핑</h2>
+                  <p>공개 근거를 고객 Pain point와 메모리 실행 안건으로 연결</p>
+                </div>
+                <ol className="ov-consulting-flow" aria-label="브리핑 의사결정 흐름">
+                  <li><em>01</em><b>Signal</b><span>시장·고객</span></li>
+                  <li><em>02</em><b>Pain Point</b><span>워크로드 병목</span></li>
+                  <li><em>03</em><b>Memory Fit</b><span>제품·기술</span></li>
+                  <li><em>04</em><b>Decision</b><span>실행 게이트</span></li>
+                </ol>
               </div>
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
             </section>

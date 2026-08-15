@@ -209,6 +209,9 @@ function sbBg(hex) {
 function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCount, companies, cats, onSelectCompany, open, onToggle }) {
   const [openCat, setOpenCat] = useState(null);
   const navRef = useRef(null);
+  const activeIndex = Math.max(0, NAV.findIndex(item => item.id === active));
+  const activeItem = NAV[activeIndex] || NAV[0];
+  const progress = NAV.length > 1 ? ((activeIndex + 1) / NAV.length) * 100 : 100;
   const isCat = id => id === "native" || id === "bigtech";   // startup은 하위 목록 미표시
   const stop = fn => (e) => { e.stopPropagation(); fn && fn(e); };
   useEffect(() => {
@@ -230,6 +233,12 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
         </span>
       </div>
 
+      <div className="sb-progress" aria-live="polite">
+        <span><b>{String(activeIndex + 1).padStart(2, "0")}</b><em>/ {String(NAV.length).padStart(2, "0")}</em></span>
+        <div><i style={{ width: `${progress}%` }} /></div>
+        <small>{activeItem.en}</small>
+      </div>
+
       <nav className="sb-nav" ref={navRef} aria-label="대시보드 섹션">
         {NAV.map((n, idx) => {
           const cat = isCat(n.id) ? (cats || []).find(c => c.id === n.id) : null;
@@ -240,12 +249,12 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
           return (
             <React.Fragment key={n.id}>
               {showGroup && <div className="sb-group">{n.group}</div>}
-              <button className={"sb-item" + (active === n.id ? " on" : "")} title={n.ko}
+              <button className={"sb-item" + (active === n.id ? " on" : "")} title={`${n.ko} · ${n.en}`}
                 data-nav-id={n.id} aria-current={active === n.id ? "page" : undefined}
                 onClick={stop(() => { onNav(n.id); if (cat) setOpenCat(openS ? null : n.id); })}>
                 <span className="sb-ic"><Icon name={n.icon} size={17} /></span>
                 <span className="sb-no">{String(idx + 1).padStart(2, "0")}</span>
-                <span className="sb-label">{n.ko}</span>
+                <span className="sb-label"><b>{n.ko}</b>{active === n.id && <small>{n.en}</small>}</span>
                 {n.id === "articles" && articleCount > 0 && (
                   <span className="sb-badge">{articleCount}</span>
                 )}
