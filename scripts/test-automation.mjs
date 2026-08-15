@@ -275,17 +275,24 @@ try {
     && how.includes("className = 'consulting-ribbon'")
     && how.includes("className = 'logic-arrow'")
     && how.includes("track.classList.add('diagram-track')")
-    && how.includes('--blue-gradient: linear-gradient')
+    && how.includes('--tone-gradient: linear-gradient')
+    && how.includes('--blue-gradient: var(--tone-gradient)')
     && how.includes('@keyframes arrowTravel')
     && how.includes('@keyframes edgeSignal')
     && how.includes("@keyframes trackMove")
     && how.includes("@keyframes diagramRise");
   const bcgArrowSystem = how.includes(".tri-arrow {")
     && how.includes(".logic-arrow {")
-    && how.includes("clip-path: polygon(0 44%, 78% 44%, 78% 5%, 100% 50%, 78% 95%, 78% 56%, 0 56%, 9% 50%)")
-    && how.includes("width: clamp(72px, 6.8vw, 132px)")
-    && /\.logic-arrow\s*\{[\s\S]{0,160}width:\s*78px;[\s\S]{0,80}height:\s*14px;/.test(how)
+    && how.includes("--consult-arrow: polygon(0 50%, 18% 5%, 18% 40%, 82% 40%, 82% 5%, 100% 50%, 82% 95%, 82% 60%, 18% 60%, 18% 95%)")
+    && how.includes("clip-path: var(--consult-arrow)")
+    && how.includes("width: clamp(82px, 7.4vw, 148px)")
+    && /\.logic-arrow\s*\{[\s\S]{0,160}width:\s*92px;[\s\S]{0,80}height:\s*14px;/.test(how)
     && how.includes("@keyframes arrowFloat");
+  const vibeCodingCover = how.includes("VIBE CODING STRATEGY PLAYBOOK")
+    && how.includes("바이브 코딩으로 만드는 AI 전략 사이트")
+    && how.includes("아이디어부터 구현·검증·배포까지")
+    && !how.includes("Codex로 만드는 AI 전략 사이트")
+    && how.includes("HOW · 바이브 코딩 전략 사이트 구현 가이드");
   const beginnerCodexPlaybook = how.includes("FIRST PROMPT")
     && how.includes("VIBE CODING KICK-OFF")
     && how.includes("PROMPT BLUEPRINT")
@@ -315,14 +322,18 @@ try {
     && !how.includes("10–15 MIN")
     && !how.includes("BEGINNER FRIENDLY")
     && !/\bJSON\b/i.test(how);
-  const variedGradientSystem = accentColors.size >= 6
+  const analogousGradientSystem = accentColors.size >= 6
     && secondaryAccentColors.size >= 6
     && tertiaryAccentColors.size >= 5
     && how.includes("--accent-2")
     && how.includes("--accent-rgb-2")
     && how.includes("--accent-3")
     && how.includes("--accent-rgb-3")
-    && how.includes("linear-gradient(118deg, #00b3e3 0%, var(--accent)")
+    && how.includes("--tone-gradient: linear-gradient(118deg, color-mix(in srgb, var(--accent) 78%, white)")
+    && how.includes("--tone-panel: linear-gradient(140deg, color-mix(in srgb, var(--accent) 24%, #06152d)")
+    && how.includes("background: linear-gradient(142deg, rgba(var(--item-rgb), .30), rgba(var(--item-rgb), .16)")
+    && how.includes("background: linear-gradient(145deg, rgba(var(--cell-rgb),.32), rgba(var(--cell-rgb),.16)")
+    && !how.includes("linear-gradient(118deg, #00b3e3 0%, var(--accent)")
     && how.includes("--signature-blue: linear-gradient(135deg, #00b3e3 0%, #0072ce 52%, #1428a0 100%)")
     && how.includes(".diagram-track > .diagram-item:nth-of-type(4n+4)")
     && how.includes(".north-star")
@@ -337,10 +348,10 @@ try {
     && how.includes("video.volume = 0")
     && how.includes(".summary-slide .flow")
     && how.includes(".summary-slide .takeaway");
-  if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 26 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !beginnerCodexPlaybook || !crossVerifiedCaseStudy || !removedLegacyCopy || !variedGradientSystem || !introVideoExperience) {
-    throw new Error("How deck must keep 15 slides, 2 muted intro videos, 13 dual-image backgrounds, blue signatures plus varied card colors, floating long-triangle arrows, varied consulting frameworks, beginner start/revision prompts, cross-verification evidence, real commands, and long-run cases");
+  if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 26 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !vibeCodingCover || !beginnerCodexPlaybook || !crossVerifiedCaseStudy || !removedLegacyCopy || !analogousGradientSystem || !introVideoExperience) {
+    throw new Error("How deck must keep a Vibe Coding cover, 15 slides, 2 muted intro videos, 13 dual-image backgrounds, one-hue gradients per box, double-tip consulting arrows, varied consulting frameworks, beginner start/revision prompts, cross-verification evidence, real commands, and long-run cases");
   }
-  console.log("  OK  How 15장 · 첫 2장 무음 영상 · 3장 이후 이중 이미지 · 블루 시그니처+다색 카드 · 장축 삼각 화살표 · 피라미드·2×2·더블 다이아몬드 · 시작·수정 입력 예시");
+  console.log("  OK  How 바이브 코딩 표지 · 15장 · 박스별 단일 색조 · 이중 삼각 커넥터 · 피라미드·2×2·더블 다이아몬드 · 시작·수정 입력 예시");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);

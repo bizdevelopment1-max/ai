@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#030609">
-  <meta name="description" content="모바일 AI 신사업 인텔리전스 사이트의 작동 원리와 초보자 구현 가이드">
-  <title>HOW · 모바일 AI 신사업 인텔리전스 구현 가이드</title>
+  <meta name="description" content="AI 신사업 인텔리전스 사이트를 바이브 코딩으로 구현하는 초보자 가이드">
+  <title>HOW · 바이브 코딩 전략 사이트 구현 가이드</title>
   <style>
     @font-face {
       font-family: "SamsungOne700C";
@@ -41,8 +41,11 @@
       --accent-3: #f59e0b;
       --accent-rgb-3: 245, 158, 11;
       --signature-blue: linear-gradient(135deg, #00b3e3 0%, #0072ce 52%, #1428a0 100%);
-      --blue-gradient: linear-gradient(118deg, #00b3e3 0%, var(--accent) 28%, var(--accent-2) 64%, var(--accent-3) 100%);
-      --blue-panel: linear-gradient(135deg, rgba(0,114,206,.25) 0%, rgba(var(--accent-rgb), .22) 34%, rgba(var(--accent-rgb-2), .16) 68%, rgba(var(--accent-rgb-3), .11) 100%);
+      --tone-gradient: linear-gradient(118deg, color-mix(in srgb, var(--accent) 78%, white) 0%, var(--accent) 48%, color-mix(in srgb, var(--accent) 62%, #02050c) 100%);
+      --tone-panel: linear-gradient(140deg, color-mix(in srgb, var(--accent) 24%, #06152d) 0%, color-mix(in srgb, var(--accent) 14%, #030a18) 54%, color-mix(in srgb, var(--accent) 6%, #02050c) 100%);
+      --blue-gradient: var(--tone-gradient);
+      --blue-panel: var(--tone-panel);
+      --consult-arrow: polygon(0 50%, 18% 5%, 18% 40%, 82% 40%, 82% 5%, 100% 50%, 82% 95%, 82% 60%, 18% 60%, 18% 95%);
       --good: #00a9e0;
       --warn: #4da3ff;
       --bad: #8bdcff;
@@ -252,7 +255,7 @@
     .cover-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, .31fr); gap: clamp(28px, 4vw, 64px); align-items: end; }
     .cover-layout h1 { max-width: none; font-size: clamp(50px, 5.15vw, 88px); }
     .cover-title-line { display: block; white-space: nowrap; }
-    .cover-rule { position: relative; width: min(620px, 70%); height: 12px; margin: 26px 0; background: var(--blue-gradient); clip-path: polygon(0 39%, 84% 39%, 84% 0, 100% 50%, 84% 100%, 84% 61%, 0 61%); filter: drop-shadow(0 0 13px rgba(var(--accent-rgb), .58)); }
+    .cover-rule { position: relative; width: min(620px, 70%); height: 14px; margin: 26px 0; background: var(--tone-gradient); clip-path: var(--consult-arrow); filter: drop-shadow(0 0 13px rgba(var(--accent-rgb), .58)); }
     .cover-rule::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0 38%, rgba(255,255,255,.8) 48%, transparent 58%); animation: arrowTravel 2.2s linear infinite; }
     .cover-sub { max-width: 720px; color: #cbd5df; font-size: clamp(16px, 1.3vw, 22px); line-height: 1.55; }
     .cover-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
@@ -277,8 +280,8 @@
     .flow-card b { display: block; margin-top: 10px; font-size: 15px; }
     .flow-card span { display: block; margin-top: 8px; color: var(--muted); font-size: 10px; line-height: 1.45; }
     .tri-arrow {
-      position: relative; width: clamp(72px, 6.8vw, 132px); height: 22px; align-self: center; justify-self: center;
-      background: var(--blue-gradient); clip-path: polygon(0 44%, 78% 44%, 78% 5%, 100% 50%, 78% 95%, 78% 56%, 0 56%, 9% 50%);
+      position: relative; width: clamp(82px, 7.4vw, 148px); height: 22px; align-self: center; justify-self: center;
+      background: var(--tone-gradient); clip-path: var(--consult-arrow);
       filter: drop-shadow(0 0 10px rgba(0,169,224,.58)); overflow: hidden;
       animation: arrowFloat 2.8s ease-in-out infinite;
     }
@@ -371,7 +374,7 @@
     .prompt-panel em { color: var(--accent); font: 900 10px var(--mono); font-style: normal; }
     .prompt-panel b { display: block; margin: 9px 0 10px; font-size: 15px; }
     .prompt-panel code { display: block; color: #d9e4ef; font: 750 11px/1.62 var(--mono); white-space: pre-wrap; }
-    .prompt-panel.strong { border-color: rgba(0,114,206,.78); background: linear-gradient(135deg, rgba(0,114,206,.22), rgba(var(--accent-rgb-2),.14), rgba(0,0,0,.52)); }
+    .prompt-panel.strong { border-color: rgba(var(--accent-rgb),.78); background: linear-gradient(135deg, rgba(var(--accent-rgb),.30), rgba(var(--accent-rgb),.15) 54%, rgba(var(--accent-rgb),.05)); }
 
     .command-flow { display: grid; grid-template-columns: repeat(11, minmax(0, auto)); align-items: stretch; margin-top: 20px; }
     .command-step { min-width: 0; padding: 16px; border: 1px solid var(--line); background: var(--blue-panel); }
@@ -394,7 +397,7 @@
     .verdict span { display: block; margin-top: 7px; color: #d2deea; font-size: 10.5px; line-height: 1.5; }
     .fact-meta { display: block; margin-top: 8px; color: var(--accent); font: 800 9px var(--mono); }
     .source-link { display: inline-flex; align-items: center; gap: 7px; margin: 8px 10px 0 0; color: var(--accent); font: 800 9px var(--mono); text-decoration: underline; text-underline-offset: 3px; }
-    .source-link::after { content: ""; width: 18px; height: 7px; background: var(--signature-blue); clip-path: polygon(0 38%,72% 38%,72% 0,100% 50%,72% 100%,72% 62%,0 62%); }
+    .source-link::after { content: ""; width: 22px; height: 8px; background: var(--signature-blue); clip-path: var(--consult-arrow); }
 
     .case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
     .case-card { min-height: 260px; padding: 18px; border: 1px solid var(--line); border-top: 3px solid var(--accent); background: var(--blue-panel); }
@@ -412,7 +415,7 @@
     .check b { font-size: 11px; }
     .check span { display: block; margin-top: 4px; color: var(--muted); font-size: 9.5px; }
     .cta { margin-top: 25px; display: inline-flex; align-items: center; gap: 12px; padding: 14px 17px; color: #fff; background: var(--blue-gradient); font-size: 12px; font-weight: 900; }
-    .cta::after { content: ""; width: 28px; height: 10px; background: #fff; clip-path: polygon(0 40%, 72% 40%, 72% 0, 100% 50%, 72% 100%, 72% 60%, 0 60%); }
+    .cta::after { content: ""; width: 30px; height: 10px; background: #fff; clip-path: var(--consult-arrow); }
 
     .footer {
       position: fixed;
@@ -510,7 +513,7 @@
       align-items: center;
       min-height: 30px;
       border: 1px solid rgba(var(--accent-rgb), .42);
-      background: linear-gradient(90deg, rgba(3,18,55,.92), rgba(var(--accent-rgb), .30), rgba(var(--accent-rgb-2), .20));
+      background: linear-gradient(90deg, rgba(var(--accent-rgb), .08), rgba(var(--accent-rgb), .30), rgba(var(--accent-rgb), .08));
       backdrop-filter: blur(10px);
       overflow: hidden;
     }
@@ -529,10 +532,10 @@
     .logic-node:last-child { background: rgba(var(--accent-rgb), .12); }
     .logic-arrow {
       position: relative;
-      width: 78px;
+      width: 92px;
       height: 14px;
-      background: var(--blue-gradient);
-      clip-path: polygon(0 44%, 79% 44%, 79% 4%, 100% 50%, 79% 96%, 79% 56%, 0 56%, 10% 50%);
+      background: var(--tone-gradient);
+      clip-path: var(--consult-arrow);
       filter: drop-shadow(0 0 7px rgba(var(--accent-rgb), .72));
       overflow: hidden;
       animation: arrowFloat 3.1s ease-in-out infinite;
@@ -585,9 +588,9 @@
         left: 3%;
         width: 28px;
         height: 7px;
-        background: var(--blue-gradient);
+        background: var(--tone-gradient);
         box-shadow: 0 0 16px var(--accent);
-        clip-path: polygon(0 38%, 72% 38%, 72% 0, 100% 50%, 72% 100%, 72% 62%, 0 62%);
+        clip-path: var(--consult-arrow);
         animation: trackMove 4.4s linear infinite;
       }
       @keyframes trackMove { 0% { left: 3%; opacity: 0; } 9%,91% { opacity: 1; } 100% { left: 96%; opacity: 0; } }
@@ -610,7 +613,7 @@
     .diagram-track > .diagram-item:nth-of-type(4n+4) { --item-color: #f59e0b; --item-rgb: 245,158,11; }
     .diagram-track > .diagram-item {
       border-color: rgba(var(--item-rgb), .54);
-      background: linear-gradient(142deg, rgba(0,114,206,.22), rgba(var(--item-rgb), .18) 58%, rgba(3,9,25,.82));
+      background: linear-gradient(142deg, rgba(var(--item-rgb), .30), rgba(var(--item-rgb), .16) 58%, rgba(var(--item-rgb), .055));
     }
     .diagram-item em, .diagram-item dt, .diagram-item > b:first-child { color: var(--item-color, var(--accent)); }
     .diagram-item::after {
@@ -621,9 +624,18 @@
       width: 34%;
       height: 2px;
       pointer-events: none;
-      background: linear-gradient(90deg, #00b3e3, var(--item-color, var(--accent)), transparent);
+      background: linear-gradient(90deg, color-mix(in srgb, var(--item-color, var(--accent)) 78%, white), var(--item-color, var(--accent)), transparent);
       transform-origin: left;
       animation: edgeSignal 3.2s ease-in-out infinite;
+    }
+    .flow-card, .arch-layer, .pipe-step, .command-step, .audit-card {
+      border-radius: 0;
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 11px 50%);
+    }
+    .outcome, .branch, .gate, .strategy-card, .render-box, .verdict, .case-card,
+    .cover-index div, .prompt-panel, .proof-strip div, .performance div, .check {
+      border-radius: 0;
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
     }
     @keyframes edgeSignal { 0%,100% { transform: scaleX(.32); opacity: .45; } 50% { transform: scaleX(1); opacity: 1; } }
     .flow-card:hover, .outcome:hover, .branch:hover, .arch-layer:hover, .ledger:hover, .pipe-step:hover,
@@ -631,10 +643,11 @@
     .cover-index div:hover, .prompt-panel:hover, .command-step:hover, .proof-strip div:hover, .audit-card:hover, .verdict:hover, .case-card:hover,
     .north-star:hover, .pyramid-step:hover, .matrix-cell:hover, .revision-prompt:hover, .diamond-stage:hover, .loop-node:hover {
       color: #fff;
-      background: var(--blue-gradient);
-      border-color: var(--accent);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--item-color, var(--accent)) 76%, white), var(--item-color, var(--accent)) 48%, color-mix(in srgb, var(--item-color, var(--accent)) 64%, #02050c));
+      border-color: var(--item-color, var(--accent));
       transform: perspective(800px) translateY(-6px) rotateX(2deg) rotateY(-1deg);
-      box-shadow: 8px 12px 0 rgba(var(--accent-rgb-2), .25), 0 20px 38px rgba(0,0,0,.38), 0 0 25px rgba(var(--accent-rgb), .28);
+      box-shadow: 8px 12px 0 rgba(var(--item-rgb, var(--accent-rgb)), .20), 0 20px 38px rgba(0,0,0,.38), 0 0 25px rgba(var(--item-rgb, var(--accent-rgb)), .28);
+      filter: drop-shadow(0 14px 18px rgba(0,0,0,.28));
     }
     .flow-card:hover *, .outcome:hover *, .branch:hover *, .arch-layer:hover *, .ledger:hover *,
     .pipe-step:hover *, .gate:hover *, .strategy-card:hover *, .render-box:hover *,
@@ -646,7 +659,7 @@
     .vibe-start { display: grid; grid-template-columns: .78fr 72px 1.22fr; align-items: center; gap: 0; margin-top: 18px; }
     .north-star {
       min-height: 250px; display: grid; place-items: center; padding: 34px; text-align: center;
-      border: 1px solid rgba(0,169,224,.7); background: linear-gradient(145deg, rgba(0,114,206,.74), rgba(139,92,246,.48), rgba(236,72,153,.30));
+      border: 1px solid rgba(0,169,224,.7); background: linear-gradient(145deg, rgba(139,220,255,.78), rgba(0,114,206,.72) 48%, rgba(20,40,160,.82));
       clip-path: polygon(50% 0, 96% 21%, 88% 78%, 50% 100%, 12% 78%, 4% 21%);
       filter: drop-shadow(0 18px 30px rgba(0,0,0,.35));
     }
@@ -654,7 +667,7 @@
     .north-star b { display: block; margin-top: 14px; font-size: clamp(21px,1.65vw,29px); line-height: 1.35; }
     .north-star span { display: block; margin-top: 12px; color: #dbe8f4; font-size: 13px; line-height: 1.5; }
     .prompt-pyramid { display: grid; gap: 7px; align-content: center; }
-    .pyramid-step { min-height: 48px; display: grid; grid-template-columns: 82px 1fr; align-items: center; gap: 12px; padding: 11px 22px; border: 1px solid rgba(var(--step-rgb),.62); background: linear-gradient(100deg, rgba(0,114,206,.27), rgba(var(--step-rgb),.28), rgba(3,9,25,.84)); clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 50%, calc(100% - 24px) 100%, 0 100%, 13px 50%); }
+    .pyramid-step { min-height: 48px; display: grid; grid-template-columns: 82px 1fr; align-items: center; gap: 12px; padding: 11px 22px; border: 1px solid rgba(var(--step-rgb),.62); background: linear-gradient(100deg, rgba(var(--step-rgb),.34), rgba(var(--step-rgb),.18) 56%, rgba(var(--step-rgb),.055)); clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 50%, calc(100% - 24px) 100%, 0 100%, 13px 50%); }
     .pyramid-step:nth-child(1) { --step-rgb: 0,169,224; margin-inline: 12%; }
     .pyramid-step:nth-child(2) { --step-rgb: 139,92,246; margin-inline: 8%; }
     .pyramid-step:nth-child(3) { --step-rgb: 236,72,153; margin-inline: 4%; }
@@ -666,7 +679,7 @@
     .evidence-matrix { position: relative; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; padding: 20px 0 0 22px; }
     .evidence-matrix::before { content: "구체성 →"; position: absolute; left: 22px; top: 0; color: #8bdcff; font: 850 9px var(--mono); letter-spacing: .08em; }
     .evidence-matrix::after { content: "영향도 ↑"; position: absolute; left: -17px; top: 50%; color: #a78bfa; font: 850 9px var(--mono); letter-spacing: .08em; transform: rotate(-90deg); }
-    .matrix-cell { min-height: 112px; padding: 15px; border: 1px solid rgba(var(--cell-rgb),.58); background: linear-gradient(145deg, rgba(0,114,206,.20), rgba(var(--cell-rgb),.22), rgba(3,9,25,.82)); clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%); }
+    .matrix-cell { min-height: 112px; padding: 15px; border: 1px solid rgba(var(--cell-rgb),.58); background: linear-gradient(145deg, rgba(var(--cell-rgb),.32), rgba(var(--cell-rgb),.16) 58%, rgba(var(--cell-rgb),.05)); clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%); }
     .matrix-cell:nth-child(1) { --cell-rgb: 0,169,224; }
     .matrix-cell:nth-child(2) { --cell-rgb: 139,92,246; }
     .matrix-cell:nth-child(3) { --cell-rgb: 236,72,153; }
@@ -674,13 +687,13 @@
     .matrix-cell em { color: rgb(var(--cell-rgb)); font: 900 10px var(--mono); font-style: normal; }
     .matrix-cell b { display: block; margin: 8px 0 5px; font-size: 15px; }
     .matrix-cell span { color: var(--muted); font-size: 11px; line-height: 1.42; }
-    .revision-prompt { padding: 20px; border: 1px solid rgba(0,169,224,.62); background: linear-gradient(145deg, rgba(0,114,206,.28), rgba(139,92,246,.18), rgba(236,72,153,.13), rgba(3,9,25,.86)); }
+    .revision-prompt { padding: 20px; border: 1px solid rgba(139,92,246,.62); background: linear-gradient(145deg, rgba(196,181,253,.32), rgba(139,92,246,.20) 54%, rgba(76,29,149,.10)); }
     .revision-prompt em { color: #8bdcff; font: 900 10px var(--mono); font-style: normal; }
     .revision-prompt h3 { margin: 9px 0 12px; }
     .revision-prompt code { display: block; padding: 14px; color: #eaf4ff; background: rgba(0,0,0,.48); font: 750 11px/1.62 var(--mono); white-space: pre-wrap; }
 
     .double-diamond { display: grid; grid-template-columns: repeat(7, minmax(0,auto)); align-items: center; margin-top: 20px; }
-    .diamond-stage { min-height: 198px; display: grid; place-items: center; padding: 34px 24px; text-align: center; background: linear-gradient(145deg, rgba(0,114,206,.55), rgba(var(--diamond-rgb),.38), rgba(3,9,25,.76)); border: 1px solid rgba(var(--diamond-rgb),.72); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+    .diamond-stage { min-height: 198px; display: grid; place-items: center; padding: 34px 24px; text-align: center; background: linear-gradient(145deg, rgba(var(--diamond-rgb),.48), rgba(var(--diamond-rgb),.24) 55%, rgba(var(--diamond-rgb),.07)); border: 1px solid rgba(var(--diamond-rgb),.72); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
     .diamond-stage:nth-of-type(1) { --diamond-rgb: 0,169,224; }
     .diamond-stage:nth-of-type(2) { --diamond-rgb: 139,92,246; }
     .diamond-stage:nth-of-type(3) { --diamond-rgb: 236,72,153; }
@@ -689,7 +702,7 @@
     .diamond-stage b { display: block; margin-top: 9px; font-size: 16px; }
     .diamond-stage span { display: block; margin-top: 7px; color: #d8e2ec; font-size: 11px; line-height: 1.4; }
     .loop-strip { display: grid; grid-template-columns: repeat(9,minmax(0,auto)); align-items: center; margin-top: 16px; }
-    .loop-node { padding: 14px; border: 1px solid rgba(var(--node-rgb),.56); background: linear-gradient(135deg, rgba(0,114,206,.20), rgba(var(--node-rgb),.22), rgba(3,9,25,.82)); text-align: center; clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 9px 50%); }
+    .loop-node { padding: 14px; border: 1px solid rgba(var(--node-rgb),.56); background: linear-gradient(135deg, rgba(var(--node-rgb),.32), rgba(var(--node-rgb),.16) 58%, rgba(var(--node-rgb),.05)); text-align: center; clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 9px 50%); }
     .loop-node:nth-of-type(1) { --node-rgb: 0,169,224; }
     .loop-node:nth-of-type(2) { --node-rgb: 139,92,246; }
     .loop-node:nth-of-type(3) { --node-rgb: 236,72,153; }
@@ -711,7 +724,7 @@
       .assurance-flow { grid-template-columns: repeat(2, 1fr); gap: 14px 36px; }
       .assurance-flow .tri-arrow { display: none; }
       .command-step, .audit-card { position: relative; }
-      .command-step::after, .audit-card::after { content: ""; position: absolute; z-index: 3; right: -29px; top: calc(50% - 4px); width: 24px; height: 8px; background: var(--signature-blue); clip-path: polygon(0 38%,72% 38%,72% 0,100% 50%,72% 100%,72% 62%,0 62%); }
+      .command-step::after, .audit-card::after { content: ""; position: absolute; z-index: 3; right: -34px; top: calc(50% - 4px); width: 30px; height: 8px; background: var(--signature-blue); clip-path: var(--consult-arrow); }
       .command-step:nth-of-type(3n)::after, .audit-card:nth-of-type(even)::after { display: none; }
       .gate-grid { grid-template-columns: repeat(3, 1fr); }
       .vibe-start, .revision-layout { grid-template-columns: .82fr 54px 1.18fr; }
@@ -822,8 +835,8 @@
         <video class="bg-video" data-src="assets/bg-01.mp4" muted loop playsinline preload="none" poster="assets/poster-01.webp" aria-label="미래 기술 배경 영상"></video>
         <div class="slide-inner cover-layout">
           <div>
-            <div class="eyebrow reveal">CODEX PRODUCT BUILD PLAYBOOK</div>
-            <h1 class="reveal" style="--delay:.16s"><span class="cover-title-line">Codex로 만드는 AI 전략 사이트</span><span class="cover-title-line accent">입력부터 개발·검증·배포까지</span></h1>
+            <div class="eyebrow reveal">VIBE CODING STRATEGY PLAYBOOK</div>
+            <h1 class="reveal" style="--delay:.16s"><span class="cover-title-line">바이브 코딩으로 만드는 AI 전략 사이트</span><span class="cover-title-line accent">아이디어부터 구현·검증·배포까지</span></h1>
             <div class="cover-rule reveal" style="--delay:.26s"></div>
             <p class="cover-sub reveal" style="--delay:.32s">개발 경험이 없어도 원하는 결과를 설명하고 화면을 확인하며 단계적으로 완성하는 실전 흐름</p>
           </div>
@@ -869,7 +882,7 @@
               <article class="branch"><em>03 · DONE</em><h3>완료 기준</h3><ul><li>글자 잘림 없음</li><li>중복 콘텐츠 없음</li><li>모든 버튼 동작</li><li>검증 통과 후 공개</li></ul></article>
             </div>
           </div>
-          <div class="takeaway reveal" style="--delay:.3s"><b>입력 예시</b><span>현재 구조를 먼저 확인하고 · 메인과 상세를 중복 없이 나누고 · 긴 삼각형 화살표와 다색 그라디언트를 적용하고 · 모바일에서도 잘리지 않게 검증해줘</span></div>
+          <div class="takeaway reveal" style="--delay:.3s"><b>입력 예시</b><span>현재 구조를 먼저 확인하고 · 메인과 상세를 중복 없이 나누고 · 양쪽 끝이 긴 이중 삼각 커넥터와 박스별 단일 색상 그라디언트를 적용하고 · 모바일에서도 잘리지 않게 검증해줘</span></div>
         </div>
       </section>
 
@@ -924,7 +937,7 @@
           <div class="prompt-compare reveal" style="--delay:.27s">
             <article class="prompt-panel"><em>WEAK INPUT</em><b>결과가 흔들리는 입력</b><code>How를 더 멋지고 전문적으로 수정해줘</code></article>
             <i class="tri-arrow"></i>
-            <article class="prompt-panel strong"><em>INPUT WINDOW · COPY &amp; USE</em><b>이번 화면에 실제로 넣은 입력</b><code>맥락 · How는 15장 HTML 프레젠테이션<br>목표 · 초보자가 Codex 개발 흐름을 이해<br>범위 · 3장 이후 배경과 본문 도식만 수정<br>스타일 · 긴 삼각형 화살표와 다색 그라디언트<br>유지 · 첫 2장 무음 영상과 키보드 이동<br>검증 · 글자 잘림·중복·속도·배포까지 확인</code></article>
+            <article class="prompt-panel strong"><em>INPUT WINDOW · COPY &amp; USE</em><b>이번 화면에 실제로 넣은 입력</b><code>맥락 · How는 15장 HTML 프레젠테이션<br>목표 · 초보자가 바이브 코딩 개발 흐름을 이해<br>범위 · 3장 이후 배경과 본문 도식만 수정<br>스타일 · 양쪽 끝이 긴 이중 삼각 커넥터와 박스별 단일 색상 그라디언트<br>유지 · 첫 2장 무음 영상과 키보드 이동<br>검증 · 글자 잘림·중복·속도·배포까지 확인</code></article>
           </div>
           <div class="takeaway reveal" style="--delay:.39s"><b>PROMPT RULE</b><span>대상 · 위치 · 변화 · 유지 조건 · 확인 방법을 한 입력 안에서 분리</span></div>
         </div>
@@ -937,12 +950,12 @@
           <div class="revision-layout reveal" style="--delay:.14s">
             <div class="evidence-matrix">
               <article class="matrix-cell"><em>OBSERVE</em><b>현재 보이는 문제</b><span>카드 색상이 모두 같고 관계가 약함</span></article>
-              <article class="matrix-cell"><em>CHANGE</em><b>원하는 변화</b><span>블루 시그니처 + 보라·핑크·앰버 교차</span></article>
+              <article class="matrix-cell"><em>CHANGE</em><b>원하는 변화</b><span>박스별 단일 색상 계열 + 슬라이드 간 다색 구분</span></article>
               <article class="matrix-cell"><em>PROTECT</em><b>유지할 기능</b><span>영상·키보드·모바일·직접 링크 유지</span></article>
               <article class="matrix-cell"><em>VERIFY</em><b>완료 판단</b><span>15장 모두 잘림 없이 이동·호버 확인</span></article>
             </div>
             <i class="tri-arrow"></i>
-            <article class="revision-prompt"><em>INPUT WINDOW · COPY &amp; USE</em><h3>첫 결과를 본 뒤 이렇게 입력</h3><code>현재 화면에서 카드가 같은 색으로 보여 논리 단계가 구분되지 않아<br><br>블루 그라디언트는 모든 장에 남기고 보라·핑크·앰버·청록을 카드마다 교차 적용해줘<br><br>기존 영상·키보드 이동·모바일 레이아웃은 유지해줘<br><br>긴 삼각형 화살표를 위아래로 천천히 움직이게 하고 15장 전체의 글자 잘림과 호버를 검증해줘</code></article>
+            <article class="revision-prompt"><em>INPUT WINDOW · COPY &amp; USE</em><h3>첫 결과를 본 뒤 이렇게 입력</h3><code>현재 화면에서 카드가 같은 색으로 보여 논리 단계가 구분되지 않아<br><br>각 박스 안에서는 한 색상의 밝고 어두운 톤만 사용해줘<br><br>박스마다 블루·보라·핑크·앰버·청록 계열을 구분하고 기존 영상·키보드 이동·모바일 레이아웃은 유지해줘<br><br>양쪽 끝이 긴 이중 삼각 커넥터를 위아래로 천천히 움직이게 하고 15장 전체의 글자 잘림과 호버를 검증해줘</code></article>
           </div>
           <div class="takeaway reveal" style="--delay:.36s"><b>수정 공식</b><span>어디에서 · 무엇이 보였고 · 어떻게 달라져야 하며 · 무엇은 유지하고 · 무엇으로 완료를 확인할지 순서대로 입력</span></div>
         </div>
@@ -973,7 +986,7 @@
       <section class="slide" data-title="컨설팅 화면" data-accent="#14b8a6" data-rgb="20,184,166" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
         <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-07.webp')"></span><span style="background-image:url('assets/poster-08.webp')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">07</span><div><div class="eyebrow">CONSULTING INFOGRAPHICS</div><h2>컨설팅 화면은 장식보다 <span class="accent">결론과 논리의 이동 경로</span></h2><p>제목에서 결론을 말하고 긴 삼각형 화살표로 근거와 실행의 방향을 연결</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">07</span><div><div class="eyebrow">CONSULTING INFOGRAPHICS</div><h2>컨설팅 화면은 장식보다 <span class="accent">결론과 논리의 이동 경로</span></h2><p>제목에서 결론을 말하고 이중 삼각 커넥터로 근거와 실행의 방향을 연결</p></div></div>
           <div class="gate-grid reveal" style="--delay:.14s">
             <article class="gate"><em>RULE 01</em><b>결론형 제목</b><span>무엇이 바뀌고 왜 중요한지 한 문장으로 제시</span></article>
             <article class="gate"><em>RULE 02</em><b>MECE 분류</b><span>시장 · 수익 · 경쟁 · 실행을 겹치지 않게 분리</span></article>
@@ -982,7 +995,7 @@
             <article class="gate"><em>RULE 05</em><b>행동 유도</b><span>클릭 · 호버 · 상세 이동의 목적을 명확히 표시</span></article>
           </div>
           <div class="stop-strip reveal" style="--delay:.29s"><b>REMOVE</b><span>의미 없는 진행 바 · 반복 설명 · 근거 없는 수치 · 한쪽만 강조된 둥근 박스 · 장식용 화살표</span></div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>입력 예시</b><span>모든 제목을 결론형으로 바꾸고 · 카드 간 관계를 긴 삼각형 화살표로 연결하고 · 핵심 메시지만 색상 반전 호버를 적용해줘</span></div>
+          <div class="takeaway reveal" style="--delay:.38s"><b>입력 예시</b><span>모든 제목을 결론형으로 바꾸고 · 카드 간 관계를 양쪽 끝이 긴 이중 삼각 커넥터로 연결하고 · 핵심 메시지만 색상 반전 호버를 적용해줘</span></div>
         </div>
       </section>
 
@@ -1010,7 +1023,7 @@
           <div class="slide-title reveal"><span class="slide-no">09</span><div><div class="eyebrow">ITERATION PROMPTS</div><h2>보완 요청은 <span class="accent">콘텐츠 · 디자인 · 동작을 분리</span></h2><p>문제 종류를 구분하면 Codex가 불필요한 파일을 건드리지 않고 정확히 수정</p></div></div>
           <div class="strategy-grid reveal" style="--delay:.14s">
             <article class="strategy-card"><em>CONTENT</em><h3>내용 수정</h3><dl><dt>문제</dt><dd>중복 · 모호함 · 최신성 부족</dd><dt>입력</dt><dd>메인과 상세 역할을 나누고 반복 문구를 통합</dd><dt>검증</dt><dd>각 정보가 한 위치에만 존재</dd></dl></article>
-            <article class="strategy-card"><em>VISUAL</em><h3>디자인 수정</h3><dl><dt>문제</dt><dd>단조로운 색 · 관계 불명확</dd><dt>입력</dt><dd>다색 그라디언트와 긴 화살표로 논리 흐름 강화</dd><dt>검증</dt><dd>제목 · 핵심 숫자 · 근거의 위계 명확</dd></dl></article>
+            <article class="strategy-card"><em>VISUAL</em><h3>디자인 수정</h3><dl><dt>문제</dt><dd>단조로운 색 · 관계 불명확</dd><dt>입력</dt><dd>박스별 단일 색조와 이중 삼각 커넥터로 논리 흐름 강화</dd><dt>검증</dt><dd>제목 · 핵심 숫자 · 근거의 위계 명확</dd></dl></article>
             <article class="strategy-card"><em>BEHAVIOR</em><h3>동작 수정</h3><dl><dt>문제</dt><dd>클릭 실패 · 느린 로딩 · 잘림</dd><dt>입력</dt><dd>키보드·모바일·지연 로딩을 유지하며 수정</dd><dt>검증</dt><dd>주요 경로를 실제로 끝까지 확인</dd></dl></article>
           </div>
           <div class="portfolio-line reveal" style="--delay:.29s">
