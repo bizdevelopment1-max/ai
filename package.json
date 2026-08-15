@@ -7,6 +7,7 @@
   "scripts": {
     "build:browser": "node scripts/build-browser-bundle.mjs",
     "build:mobile-db": "node scripts/build-mobile-ai-business-db.mjs",
+    "sync:market-curated": "node scripts/sync-curated-market-records.mjs",
     "verify:volatile": "node scripts/reverify-volatile-metrics.mjs",
     "reverify:volatile": "node scripts/reverify-volatile-metrics.mjs --fetch --write",
     "watch:collections": "node scripts/check-collection-watchdog.mjs --write",

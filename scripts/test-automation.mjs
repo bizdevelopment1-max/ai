@@ -1983,8 +1983,16 @@ try {
     && item.mxMapping?.bomImpact && item.mxMapping?.partnershipHistory
     && item.mxMapping?.patentLitigationRisk && item.mxMapping?.svicPortfolio
     && item.validation?.evidenceSpanCount >= 3 && item.validation?.status === "passed");
-  const opportunitiesReady = (database.generatedOpportunities || []).length >= 10
-    && (database.generatedOpportunities || []).length <= 20
+  const requiredNewBusinessIds = [
+    "trusted-ai-control-center",
+    "ai-credit-subscription-hub",
+    "verified-answer-provenance",
+    "agentic-purchase-guardrails",
+  ];
+  const opportunityIds = new Set((database.generatedOpportunities || []).map(item => item.id));
+  const opportunitiesReady = (database.generatedOpportunities || []).length >= Number(qualityThresholds.minimumGeneratedOpportunities || 10)
+    && (database.generatedOpportunities || []).length <= Number(qualityThresholds.maximumGeneratedOpportunities || 25)
+    && requiredNewBusinessIds.every(id => opportunityIds.has(id))
     && (database.experimentShortlist || []).length <= 3
     && (database.assetOpportunityMatrix || []).length >= 8
     && (database.generatedOpportunities || []).every(item => Number.isFinite(item.signalScore)

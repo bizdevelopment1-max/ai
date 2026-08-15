@@ -358,6 +358,22 @@ const main = async () => {
   ]);
   const generatedAt = new Date().toISOString();
   const now = Date.now();
+  const marketRecords = Array.isArray(market.records) ? market.records : [];
+  const directMarketEvidenceCount = marketRecords.filter(record => record.provenance?.status === "source-backed"
+    && record.sourceContent?.status === "content-extracted"
+    && record.displayEligible === true
+    && record.summaryMode === "source-content-extractive"
+    && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
+    && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length).length;
+  const dataQualityTargets = {
+    ...(seed.dataQualityTargets || {}),
+    directMarketEvidence: {
+      ...(seed.dataQualityTargets?.directMarketEvidence || {}),
+      currentNumerator: directMarketEvidenceCount,
+      currentDenominator: marketRecords.length,
+      currentRate: marketRecords.length ? Number((directMarketEvidenceCount / marketRecords.length).toFixed(3)) : 0,
+    },
+  };
   const previousSignals = new Map((previous.signals || []).map(signal => [signal.id, signal]));
   const validationIssues = [];
   const numericDiffs = [];
@@ -569,7 +585,7 @@ const main = async () => {
     collectionHealth,
     marketReverificationQueue,
     priceChangeFlags,
-    dataQualityTargets: seed.dataQualityTargets || {},
+    dataQualityTargets,
     selfBenchmarkPolicy: newsPolicy.mxDecisionDatabasePolicy?.selfBenchmarkTrack || {},
     roiModel: seed.roiModel || {},
     osAgentStack: seed.osAgentStack || [],

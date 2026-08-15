@@ -37,6 +37,15 @@ const notRetiredFocus = item => !hasRetiredFocus(item);
 const sourceBacked = item => item?.displayEligible !== false
   && item?.summaryMode === "source-content-extractive"
   && item?.provenance?.status === "source-backed";
+const MARKET_SCOPE_PATTERN = /\b(?:ai|artificial intelligence|genai|generative|agentic|chatbot|assistant|smartphone|on-device|edge|npu|gpu|hbm|dram|nand|memory|semiconductor|data center|cloud|app|wearable|robot|autonomous|satellite|commerce|cybersecurity|software|model)\b|인공지능|생성형|에이전트|스마트폰|온디바이스|반도체|메모리|데이터센터|클라우드|앱|웨어러블|로봇|위성|커머스|보안|소프트웨어|모델/i;
+const MARKET_OFF_SCOPE_PATTERN = /\b(?:breast cancer|disposable gloves|fresh fruits?|acrylic emulsion|travel retail|dietary supplements?|water treatment chemicals?)\b/i;
+const marketInScope = record => {
+  const text = [
+    record?.title, record?.titleEn, record?.topic, record?.metricLabel, record?.evidence,
+    record?.sourceContent?.headline, record?.sourceContent?.text,
+  ].filter(Boolean).join(" ");
+  return MARKET_SCOPE_PATTERN.test(text) && !MARKET_OFF_SCOPE_PATTERN.test(text);
+};
 const compact = (item, keys) => Object.fromEntries(keys
   .filter(key => Object.hasOwn(item || {}, key))
   .map(key => [key, item[key]]));
@@ -79,7 +88,7 @@ const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBan
 const visibleRecordSources = (market.records || []).filter(record => sourceBacked(record)
   && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
   && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length)
-  .filter(notBanned).filter(notRetiredFocus).filter(notDeleted("market"));
+  .filter(marketInScope).filter(notBanned).filter(notRetiredFocus).filter(notDeleted("market"));
 const compactKey = value => String(value || "").toLocaleLowerCase()
   .replace(/[^a-z0-9가-힣]+/g, "-").replace(/^-+|-+$/g, "");
 const marketStableKey = record => {

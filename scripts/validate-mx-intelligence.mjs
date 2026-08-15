@@ -104,7 +104,7 @@ if (sourcePolicy.deduplication?.threshold !== 0.85 || !String(sourcePolicy.dedup
 if (pipelinePolicy.publishing?.automatedMerge !== false || pipelinePolicy.publishing?.minimumApprovals !== 1) fail("human approval publishing policy is incomplete");
 if (database.audit?.numericEvidenceFlags !== 0 || database.pipeline?.flagged !== 0) fail("MX audit has unresolved flags");
 
-for (const label of ["Decision Radar", "기회 후보·90일 실험", "단말·기능 Matrix", "수익화·ROI", "OS·Killer UX", "보안·헬스·컴패니언", "ON-DEVICE TRUST · B2B2C", "HEALTH MONETIZATION LADDER", "AI COMPANION ECONOMICS", "COMPARISON GUARD", "Partner Score", "PARTNERSHIP NETWORK", "폼팩터·SLM", "가격 변경 감지", "정량 DB 재검증 큐", "빈 스트림 official 폴백", "Compliance", "Build vs Buy · Trust", "예상 BOM 영향", "특허·소송 리스크"]) {
+for (const label of ["Decision Radar", "기회 후보·90일 실험", "단말·기능 Matrix", "수익화·ROI", "OS·Killer UX", "보안·헬스·컴패니언", "ON-DEVICE TRUST · B2B2C", "HEALTH MONETIZATION LADDER", "AI COMPANION ECONOMICS", "COMPARISON FRAMEWORK", "Partner Score", "PARTNERSHIP NETWORK", "폼팩터·SLM", "가격 변경 감지", "정량 DB 재검증 큐", "빈 스트림 official 폴백", "Compliance", "Build vs Buy · Trust", "예상 BOM 영향", "특허·소송 리스크"]) {
   if (!boards.includes(label)) fail(`UI contract missing: ${label}`);
 }
 if (!styles.includes(".mxc-radar-layout") || !styles.includes(".mxc-generated-grid") || !styles.includes(".mxc-experiment-grid") || !styles.includes(".mxc-partner-grid") || !styles.includes(".mxc-reg-grid") || !styles.includes(".mxc-security-proof-grid") || !styles.includes(".mxc-health-ladder") || !styles.includes(".mxc-comparison-grid")) fail("responsive visual system is incomplete");

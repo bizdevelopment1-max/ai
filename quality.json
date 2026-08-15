@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-15T14:14:30.682Z",
+  "generatedAt": "2026-08-15T17:17:16.086Z",
   "overall": "warn",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
-  "summary": "검증 21개 · 정상 17 · 주의 4 · 실패 0",
+  "summary": "검증 21개 · 정상 16 · 주의 5 · 실패 0",
   "checks": [
     {
       "id": "news-coverage",
@@ -56,7 +56,7 @@
       "id": "news-freshness",
       "label": "뉴스 번들 최신성",
       "status": "ok",
-      "value": "0.0일"
+      "value": "0.1일"
     },
     {
       "id": "infra-evidence",
@@ -92,7 +92,7 @@
       "id": "market-db-source",
       "label": "신사업 정량 DB 원문 직접 검증",
       "status": "warn",
-      "value": "153/466건 · 32.8% / 목표 90%"
+      "value": "161/474건 · 34.0% / 목표 90%"
     },
     {
       "id": "market-reverification-queue",
@@ -110,7 +110,7 @@
       "id": "consumer-survey-coverage",
       "label": "소비자 조사 레코드",
       "status": "ok",
-      "value": "24건"
+      "value": "27건"
     },
     {
       "id": "duplicate-rate",
@@ -127,8 +127,8 @@
     {
       "id": "opportunity-generation",
       "label": "월간 기회 후보 자동 생성",
-      "status": "ok",
-      "value": "후보 20건 · 실험 3건 · 근거 미달 공개 0건"
+      "status": "warn",
+      "value": "후보 24건 · 실험 3건 · 근거 미달 공개 0건"
     }
   ],
   "metrics": {
@@ -153,19 +153,19 @@
     "localizedResearch": 107,
     "localizedFallbackResearch": 1,
     "archivedMarketBaselines": 43,
-    "linkedMarketRecords": 153,
-    "marketDirectEvidenceRate": 0.3283261802575107,
+    "linkedMarketRecords": 161,
+    "marketDirectEvidenceRate": 0.339662447257384,
     "marketDirectEvidenceTarget": 0.9,
     "marketReverificationQueueSize": 313,
     "marketReverificationP0": 65,
     "pendingPriceChanges": 0,
     "verifiedPriceChanges": 0,
-    "consumerSurveyRecords": 24,
+    "consumerSurveyRecords": 27,
     "criticalEmptyStreams": 0,
     "publishedMonetizationRows": 7,
     "ungatedMonetizationRows": 0,
     "monetizationReviewQueue": 171,
-    "generatedOpportunities": 20,
+    "generatedOpportunities": 24,
     "experimentShortlist": 3,
     "invalidPublishedOpportunities": 0
   },
@@ -1050,7 +1050,7 @@
         "consecutiveEmptyRuns": 0
       },
       {
-        "stream": "official-feed:Samsung Global Newsroom",
+        "stream": "official-feed:자사 Global Newsroom",
         "state": "healthy",
         "lastAttemptAt": "2026-08-15T14:11:38.135Z",
         "lastSuccessAt": "2026-08-15T14:11:38.135Z",

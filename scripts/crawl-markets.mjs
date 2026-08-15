@@ -100,6 +100,14 @@ const EXPANSION_QUERIES = [
   { id: "market-agent-software", track: "ai-market", group: "assistant", verticalId: "assistant-0", topic: "AI 에이전트 소프트웨어 시장", query: "AI agent software market size spending forecast CAGR enterprise consumer" },
   { id: "market-ai-wearables", track: "ai-market", group: "wearxr", verticalId: "wearxr-1", topic: "AI 웨어러블·스마트글라스 출하", query: "AI smart glasses wearable shipments revenue market forecast units" },
   { id: "market-answer-engines", track: "ai-market", group: "service", verticalId: "service-0", topic: "AI 검색·답변 엔진 수익시장", query: "AI search answer engine advertising subscription revenue market forecast" },
+  { id: "market-genai-share-2026", track: "ai-market", group: "core", verticalId: "core-0", topic: "GenAI 단말 출하 비중", query: "site:counterpointresearch.com GenAI smartphone share 2026 shipments memory" },
+  { id: "market-smartphone-asp-2026", track: "ai-market", group: "core", verticalId: "core-0", topic: "스마트폰 ASP와 시장가치", query: "site:omdia.tech.informa.com smartphone ASP 2026 shipments market value" },
+  { id: "market-ai-spending-2026", track: "ai-market", group: "service", verticalId: "service-0", topic: "세계 AI 지출", query: "site:gartner.com/newsroom worldwide AI spending 2026 services software infrastructure" },
+  { id: "market-agentic-commerce-2031", track: "ai-market", group: "service", verticalId: "service-0", topic: "에이전틱 커머스 거래액", query: "site:juniperresearch.com agentic commerce transaction value 2031" },
+  { id: "market-ai-apps-h1-2026", track: "ai-market", group: "assistant", verticalId: "assistant-0", topic: "AI 앱 이용시간과 결제", query: "site:sensortower.com State of AI 2026 app time IAP downloads" },
+  { id: "survey-pew-ai-use-2026", track: "consumer-survey", group: "assistant", verticalId: "assistant-0", topic: "AI 이용률과 빈도", query: "site:pewresearch.org Americans AI 2026 chatbots daily use survey" },
+  { id: "survey-ai-shopping-control-2026", track: "consumer-survey", group: "service", verticalId: "service-0", topic: "AI 쇼핑 통제권", query: "site:gartner.com/newsroom consumers AI shopping purchase decisions survey 2026" },
+  { id: "survey-ai-assist-autonomy-2026", track: "consumer-survey", group: "trust", verticalId: "trust-0", topic: "AI 보조와 자율성 수용", query: "site:nri.com consumer survey AI assistance autonomous decision 2026" },
 ];
 
 const SURVEY_QUERY_HINT = /\b(?:survey|respondents?|poll|consumer awareness|willingness to pay|purchase intention)\b/i;
@@ -107,7 +115,7 @@ const collectionTrackOf = config => config.track
   || (SURVEY_QUERY_HINT.test(config.query) ? "consumer-survey" : "ai-market");
 const QUERIES = [...EXPANSION_QUERIES, ...BASE_QUERIES]
   .map(config => ({ ...config, track: collectionTrackOf(config) }));
-const QUERY_SET_VERSION = 4;
+const QUERY_SET_VERSION = 5;
 
 const quantified = text => {
   const found = [

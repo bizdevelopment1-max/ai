@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updatedAt": "2026-08-15",
+  "updatedAt": "2026-08-16",
   "purpose": "Samsung Electronics MX public-source decision intelligence: devices, carriers, partners, components, regulation and primary disclosures.",
   "display": {
     "originalLanguageFirst": true,
@@ -102,7 +102,11 @@
     { "name": "Omdia", "domain": "omdia.tech.informa.com", "status": "public-abstract-paid-detail", "use": ["AI phone shipments", "features", "ASP"] },
     { "name": "IDC", "domain": "idc.com", "status": "paid-license-required", "use": ["device shipments", "market share"] },
     { "name": "Canalys", "domain": "canalys.com", "status": "public-abstract-paid-detail", "use": ["AI PC", "smartphone channels"] },
-    { "name": "Gartner", "domain": "gartner.com", "status": "paid-license-required", "use": ["market forecast", "enterprise adoption"] }
+    { "name": "Gartner", "domain": "gartner.com", "status": "paid-license-required", "use": ["market forecast", "enterprise adoption"] },
+    { "name": "Sensor Tower", "domain": "sensortower.com", "status": "public-summary-api-license", "use": ["AI app time spent", "in-app purchase revenue", "downloads and ARPU"] },
+    { "name": "Pew Research Center", "domain": "pewresearch.org", "status": "public-primary-survey", "use": ["consumer AI adoption", "usage frequency", "privacy and trust"] },
+    { "name": "Nomura Research Institute", "domain": "nri.com", "status": "public-primary-survey", "use": ["AI assistance acceptance", "autonomy resistance", "regional consumer behavior"] },
+    { "name": "Juniper Research", "domain": "juniperresearch.com", "status": "public-abstract-paid-detail", "use": ["agentic commerce transaction value", "payments infrastructure", "B2C and B2B forecasts"] }
   ],
   "connectorRegistry": [
     { "group": "app-intelligence", "providers": ["Sensor Tower", "data.ai", "Appfigures", "Similarweb"], "status": "license-required", "fields": ["MAU", "DAU", "downloads", "rank", "rating"] },

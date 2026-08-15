@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "monthlyCandidateTarget": { "min": 10, "max": 20, "experimentShortlist": 3 },
+  "monthlyCandidateTarget": { "min": 10, "max": 25, "experimentShortlist": 3 },
   "publicationGate": { "minimumEvidenceUnits": 2, "minimumIndependentSources": 2, "minimumOpportunityScore": 45 },
   "scoreWeights": {
     "userDemand": 20,
@@ -166,6 +166,34 @@
       "assets": ["os-control", "account-identity", "secure-workspace", "global-channel"],
       "revenueModels": ["subscription", "enterprise", "outcome"], "preferredAction": "Build", "ownerOrg": "제품기획팀",
       "baseFit": { "demand": 4, "asset": 5, "differentiation": 4, "recurring": 4, "feasibility": 5, "data": 5, "distribution": 5, "risk": 2 }
+    },
+    {
+      "id": "trusted-ai-control-center", "title": "Trusted AI Control Center",
+      "terms": ["privacy", "consent", "permission", "disclosure", "trust", "data control", "개인정보", "동의", "권한", "투명성"],
+      "assets": ["os-control", "account-identity", "secure-workspace", "app-distribution"],
+      "revenueModels": ["enterprise", "license", "subscription"], "preferredAction": "Build", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 5, "recurring": 4, "feasibility": 4, "data": 5, "distribution": 5, "risk": 3 }
+    },
+    {
+      "id": "ai-credit-subscription-hub", "title": "AI Credit & Subscription Hub",
+      "terms": ["in-app purchase", "subscription", "credits", "ARPU", "bundle", "app revenue", "인앱결제", "구독", "크레딧", "번들"],
+      "assets": ["wallet-payment", "app-distribution", "account-identity", "global-channel"],
+      "revenueModels": ["commission", "subscription", "usage"], "preferredAction": "Partner", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 4, "recurring": 5, "feasibility": 5, "data": 4, "distribution": 5, "risk": 3 }
+    },
+    {
+      "id": "verified-answer-provenance", "title": "Verified Answer & Provenance Layer",
+      "terms": ["accuracy", "source", "provenance", "verification", "content authenticity", "double-check", "정확성", "출처", "검증", "진위"],
+      "assets": ["os-control", "secure-workspace", "camera-media", "app-distribution"],
+      "revenueModels": ["enterprise", "license", "usage"], "preferredAction": "Build", "ownerOrg": "R&D",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 5, "recurring": 4, "feasibility": 4, "data": 4, "distribution": 5, "risk": 3 }
+    },
+    {
+      "id": "agentic-purchase-guardrails", "title": "Agentic Purchase Guardrails",
+      "terms": ["agentic commerce", "purchase decision", "approval", "spend limit", "checkout", "dispute", "구매 승인", "한도", "결제", "분쟁"],
+      "assets": ["wallet-payment", "account-identity", "secure-workspace", "os-control"],
+      "revenueModels": ["commission", "enterprise", "license"], "preferredAction": "Partner", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 5, "recurring": 4, "feasibility": 4, "data": 5, "distribution": 5, "risk": 4 }
     }
   ],
   "experimentTemplate": {
