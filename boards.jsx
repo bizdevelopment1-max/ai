@@ -2950,7 +2950,10 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
     const container = containerRef.current;
     if (!canvas || !container) return;
     const W = container.offsetWidth;
-    const H = Math.min(520, Math.max(380, W * 0.5));
+    const fittedHeight = container.offsetHeight;
+    const H = compact && fittedHeight >= 320
+      ? fittedHeight
+      : Math.min(520, Math.max(380, W * 0.5));
     canvas.width = W * 2; canvas.height = H * 2;
     canvas.style.width = W + "px"; canvas.style.height = H + "px";
     const ctx = canvas.getContext("2d");
@@ -3136,7 +3139,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
       canvas.removeEventListener("touchstart", onDown);
       canvas.removeEventListener("touchend", onUp);
     };
-  }, [companies, cats, hovered, selected, selectNode, sourceOnly, active, relationEdges]);
+  }, [companies, cats, hovered, selected, selectNode, sourceOnly, active, relationEdges, compact]);
 
   const selCo = selected ? companies.find(c => c.name === selected) : null;
   const selectedEdgeSet = relationEdges || (mode === "dynamics" ? STRUCTURAL_COMPETE_EDGES : MONEY_EDGES);
@@ -3242,17 +3245,21 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
     const video = videoRef.current;
     if (!video) return undefined;
     if (!mediaActive) { video.pause(); return undefined; }
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    if (reduceMotion) { video.pause(); return undefined; }
     const slowPlayback = () => {
-      video.defaultPlaybackRate = 0.55;
-      video.playbackRate = 0.55;
+      video.defaultPlaybackRate = 0.38;
+      video.playbackRate = 0.38;
     };
     slowPlayback();
     const play = video.play();
     if (play?.catch) play.catch(() => {});
     video.addEventListener("loadedmetadata", slowPlayback);
+    video.addEventListener("canplay", slowPlayback);
     video.addEventListener("play", slowPlayback);
     return () => {
       video.removeEventListener("loadedmetadata", slowPlayback);
+      video.removeEventListener("canplay", slowPlayback);
       video.removeEventListener("play", slowPlayback);
     };
   }, [mediaActive]);
@@ -3305,8 +3312,8 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
           />
         </div>
         <aside className="dyn-video-panel" aria-live="polite">
-          <video ref={videoRef} className="dyn-video" muted loop playsInline preload="metadata" aria-label="AI 업계 경쟁 다이내믹스 영상">
-            {mediaActive && <source src="assets/competitive-dynamics.mp4" type="video/mp4" />}
+          <video ref={videoRef} className="dyn-video" autoPlay muted loop playsInline preload="auto" aria-label="AI 업계 경쟁 다이내믹스 영상">
+            <source src="assets/competitive-dynamics.mp4" type="video/mp4" />
           </video>
           <div className="dyn-video-overlay">
             <div className="dyn-video-head">

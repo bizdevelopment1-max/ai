@@ -1278,7 +1278,10 @@ try {
     && boards.includes("onNodeSelect={setActiveCompany}")
     && boards.includes("relationshipGroups.length > 0")
     && !boards.includes("false && relationshipGroups.length > 0")
-    && boards.includes("video.playbackRate = 0.55")
+    && boards.includes("video.playbackRate = 0.38")
+    && boards.includes('className="dyn-video" autoPlay muted loop playsInline preload="auto"')
+    && boards.includes('prefers-reduced-motion: reduce')
+    && boards.includes("const fittedHeight = container.offsetHeight")
     && boards.includes("compact")
     && app.includes('companyInView || active === "overview"');
   const interactiveLayout = styles.includes(".es-dynamics-grid")
@@ -1286,7 +1289,10 @@ try {
     && styles.includes(".dyn-relationship")
     && styles.includes(".dyn-relationship > div > a")
     && styles.includes("grid-template-columns: minmax(460px, 1.25fr) minmax(340px, .85fr)")
-    && styles.includes("brightness(.66)");
+    && styles.includes("brightness(.7)")
+    && styles.includes("height: calc(100% - 10px)")
+    && styles.includes("animation: dynVideoDrift 34s")
+    && styles.includes(".first-video-screen .es-dynamics-map,");
   if (!videoPanel || !interactiveLayout) {
     throw new Error("competitive dynamics needs a left interactive circle map and a right combined-video insight panel");
   }
