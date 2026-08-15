@@ -5958,12 +5958,13 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mxc-detail-head button:hover { color: #fff; background: var(--mxc-blue); }
 .mxc-radar-layout { display: grid; grid-template-columns: minmax(340px, .88fr) minmax(430px, 1.3fr); min-height: 720px; }
 .mxc-signal-list { display: grid; align-content: start; gap: 7px; max-height: 760px; padding: 10px; overflow-y: auto; border-right: 1px solid var(--line); }
-.mxc-signal-card { display: grid; gap: 7px; width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--ink); text-align: left; cursor: pointer; transition: border-color .18s, transform .18s, box-shadow .18s; }
-.mxc-signal-card:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--mxc-blue) 44%, var(--line)); box-shadow: 0 7px 18px rgba(16,36,62,.07); }
-.mxc-signal-card.is-selected { border-color: var(--mxc-blue); box-shadow: inset 3px 0 var(--mxc-blue), 0 7px 18px rgba(16,36,62,.08); }
+.mxc-signal-card { position: relative; display: grid; gap: 7px; width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--ink); text-align: left; cursor: pointer; transition: border-color .18s, background-color .18s, transform .18s, box-shadow .18s; }
+.mxc-signal-card:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--mxc-ink) 30%, var(--line)); background: color-mix(in srgb, #718092 3%, var(--panel)); box-shadow: 0 6px 16px rgba(16,36,62,.06); }
+.mxc-signal-card.is-selected { border-color: color-mix(in srgb, var(--mxc-ink) 54%, var(--line)); background: color-mix(in srgb, #718092 6%, var(--panel)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--mxc-ink) 10%, transparent), 0 8px 20px rgba(16,36,62,.08); }
 .mxc-card-top,
 .mxc-card-foot { display: flex; align-items: center; gap: 6px; }
 .mxc-card-top > em { color: var(--mxc-blue); font: 800 8px var(--f); }
+.mxc-signal-card.is-selected .mxc-card-top > em { padding: 3px 6px; border-radius: 4px; background: color-mix(in srgb, #718092 14%, var(--panel)); color: color-mix(in srgb, var(--mxc-ink) 84%, var(--muted)); }
 .mxc-card-top > i { margin-left: auto; }
 .mxc-freshness { padding: 3px 6px; border-radius: 99px; font: 750 7.5px var(--f); }
 .mxc-freshness.fresh { color: var(--mxc-green); background: color-mix(in srgb, var(--mxc-green) 9%, var(--panel)); }
@@ -5996,10 +5997,12 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mxc-axis-strip span { min-width: 0; padding: 8px; border-radius: 6px; background: var(--mxc-soft); color: var(--ink-2); font-size: 8px; line-height: 1.35; }
 .mxc-axis-strip em { display: block; margin-bottom: 3px; color: var(--mxc-blue); font: 800 7px var(--f); }
 .mxc-fid { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; }
-.mxc-fid > div { min-height: 142px; padding: 12px; border: 1px solid var(--line); border-top: 3px solid #74849a; border-radius: 7px; background: color-mix(in srgb, var(--panel) 96%, #edf1f5); }
-.mxc-fid > div:nth-child(2) { border-top-color: var(--mxc-cyan); }
-.mxc-fid > div.decision { border-top-color: var(--mxc-blue); background: var(--mxc-soft); }
-.mxc-fid em { color: var(--muted); font: 850 7.5px var(--f); letter-spacing: .06em; }
+.mxc-fid > div { min-height: 142px; padding: 12px; border: 1px solid color-mix(in srgb, #718092 24%, var(--line)); border-radius: 7px; background: color-mix(in srgb, #718092 4%, var(--panel)); }
+.mxc-fid > div:nth-child(2) { border-color: color-mix(in srgb, #4f7b75 24%, var(--line)); background: color-mix(in srgb, #6f8f89 4%, var(--panel)); }
+.mxc-fid > div.decision { border-color: color-mix(in srgb, #405d73 28%, var(--line)); background: color-mix(in srgb, #60788b 7%, var(--panel)); }
+.mxc-fid em { display: inline-flex; padding: 3px 6px; border-radius: 4px; background: color-mix(in srgb, #718092 12%, var(--panel)); color: #526171; font: 850 7.5px var(--f); letter-spacing: .06em; }
+.mxc-fid > div:nth-child(2) > em { background: color-mix(in srgb, #6f8f89 13%, var(--panel)); color: #365f5a; }
+.mxc-fid > div.decision > em { background: color-mix(in srgb, #60788b 14%, var(--panel)); color: #344f64; }
 .mxc-fid p { margin-top: 9px; color: var(--ink-2); font-size: 9.2px; line-height: 1.55; }
 .mxc-fid .decision > span { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
 .mxc-fid .decision > span i { color: var(--ink-2); font: 750 8px var(--f); }
