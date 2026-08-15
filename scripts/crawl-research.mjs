@@ -18,33 +18,6 @@ import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const TODAY = new Date().toISOString().slice(0, 10);
 
-// Curated source summaries come from user-supplied originals and must survive
-// automated RSS refreshes. Keeping the seed here prevents a transient or
-// empty research feed from deleting the source-level briefing.
-const CURATED_PINNED = [{
-  title: "차세대 메모리: AI 확장의 다음 병목",
-  sourceLine: "Morgan Stanley Research · Global Technology — Innovating the Next-Generation Memory (2026.07.16)",
-  sourceAccess: "사용자 제공 원문(PDF) · 공개 링크 미등록 · 원문 파일은 재배포하지 않음",
-  scope: "Global Technology · 메모리·패키징·인터커넥트",
-  thesis: "모건스탠리는 AI 확장의 제약이 연산 성능에서 메모리의 용량·대역폭·비용으로 이동하고 있으며, 해법과 수혜 범위도 메모리 칩을 넘어 시스템 생태계로 넓어진다고 본다.",
-  summaryLines: [
-    "AI 병목은 연산 성능만이 아니라 메모리 용량·대역폭·비용으로 이동했다. 모건스탠리는 클라우드 메모리 지출이 2030년 4,180억 달러에 이르고, 2027년 클라우드 CapEx의 40%를 차지할 수 있다고 추정한다.",
-    "에이전틱 AI는 2030년 증분 DRAM 수요의 26~77%를 만들 수 있어 HBM·DRAM·엔터프라이즈 SSD의 구조적 수요를 높이는 변수로 제시됐다.",
-    "수혜 범위는 메모리 제조사에 그치지 않고 고급 패키징·3D 적층·인터커넥트·시스템 설계·소재로 확장된다. 신흥 메모리 기술 TAM은 2025년 12억 달러에서 2030년 230억 달러로 커질 수 있다는 추정이다.",
-  ],
-  conclusion: "메모리 병목의 해결은 단일 부품 증설이 아니라 설계·공정·패키징·주변부품·통합·소재를 함께 보는 시스템 과제다. 모든 수치는 모건스탠리의 추정치이며, 투자 판단에는 원문과 최신 공급·수요 지표를 함께 확인해야 한다.",
-  watch: "클라우드 CapEx, 메모리 가격, 공급 능력 및 에이전틱 AI 채택 속도는 모두 추정의 전제다. 원문은 사용자 제공본으로만 확인했으며 공개 파일을 사이트에 저장하지 않았다.",
-  date: "2026-07-16",
-  engine: "source-translation",
-  translationLabel: "원문 기반 한국어 번역·3줄 핵심",
-  sourcePages: [1, 2, 10, 11],
-  provenance: {
-    status: "user-provided-source",
-    evidenceCount: 4,
-    sourceType: "user-provided-pdf",
-  },
-}];
-
 const HOUSES = [
   { house: "Morgan Stanley", type: "Securities", q: '"Morgan Stanley" AI (smartphone OR mobile OR consumer OR services OR monetization)', locale: "us-en" },
   { house: "Goldman Sachs", type: "Securities", q: '"Goldman Sachs" AI (smartphone OR mobile OR consumer OR services OR monetization)', locale: "us-en" },
@@ -182,9 +155,7 @@ async function main() {
 
   // Curated source summaries are explicitly supplied and checked outside the
   // RSS job. Keep them intact when the automated feed refreshes.
-  const pinned = Array.isArray(prev.pinned) && prev.pinned.length
-    ? prev.pinned
-    : CURATED_PINNED;
+  const pinned = prev.pinned || [];
   const out = { generatedAt: new Date().toISOString(), pinned, onepager, archive, feed };
   await writeFile("research.json", JSON.stringify(out, null, 2) + "\n");
   console.log(`Wrote research.json — onepager: ${onepager ? onepager.date + "/" + onepager.engine : "none"}, feed ${feed.length} item(s)`);
