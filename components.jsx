@@ -960,7 +960,7 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
       const headers = { Accept: "application/vnd.github+json" };
       const [pullResponse, runResponse] = await Promise.all([
         fetch(`${SITE_CODEX_API}/pulls?state=all&sort=updated&direction=desc&per_page=1`, { cache: "no-store", headers }),
-        fetch(`${SITE_CODEX_API}/actions/runs?per_page=1`, { cache: "no-store", headers }),
+        fetch(`${SITE_CODEX_API}/actions/workflows/site-codex.yml/runs?per_page=1`, { cache: "no-store", headers }),
       ]);
       if (!pullResponse.ok || !runResponse.ok) throw new Error(`GitHub API ${pullResponse.status}/${runResponse.status}`);
       const [pulls, runs] = await Promise.all([pullResponse.json(), runResponse.json()]);
