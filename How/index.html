@@ -46,6 +46,13 @@
       --blue-gradient: var(--tone-gradient);
       --blue-panel: var(--tone-panel);
       --consult-arrow: polygon(0 50%, 18% 5%, 18% 40%, 82% 40%, 82% 5%, 100% 50%, 82% 95%, 82% 60%, 18% 60%, 18% 95%);
+      --consult-arrow-vertical: polygon(50% 0, 100% 18%, 60% 18%, 60% 82%, 100% 82%, 50% 100%, 0 82%, 40% 82%, 40% 18%, 0 18%);
+      --consult-cut: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+      --type-slide-title: clamp(34px, 3.05vw, 54px);
+      --type-slide-lead: clamp(15px, 1.02vw, 18px);
+      --type-card-title: clamp(16px, 1.08vw, 20px);
+      --type-card-body: clamp(13px, .84vw, 15px);
+      --type-meta: clamp(11px, .72vw, 13px);
       --good: #00a9e0;
       --warn: #4da3ff;
       --bad: #8bdcff;
@@ -843,6 +850,106 @@
     .pipe-step b { font-size: clamp(15px,.98vw,18px); }
     .pipe-step span { font-size: clamp(13px,.82vw,15px); line-height: 1.45; }
 
+    /* MBB-inspired consulting system: answer first, MECE, decision rights and delivery */
+    .slide-title h2 { font-size: var(--type-slide-title); line-height: 1.1; letter-spacing: -.035em; }
+    .slide-title p { font-size: var(--type-slide-lead); line-height: 1.48; }
+    .framework-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 11px;
+      padding: 7px 11px;
+      border: 1px solid rgba(var(--accent-rgb),.62);
+      background: linear-gradient(100deg, rgba(var(--accent-rgb),.26), rgba(var(--accent-rgb-2),.13));
+      color: #eaf5ff;
+      font: 700 var(--type-meta)/1 var(--title-font) !important;
+      letter-spacing: .045em;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 6px 50%);
+    }
+    .framework-chip::before { content: "FRAME"; color: var(--accent); font-size: 10px; letter-spacing: .1em; }
+
+    .slide :is(.flow-card,.outcome,.branch,.arch-layer,.pipe-step,.gate,.strategy-card,.prompt-panel,.command-step,.audit-card,.verdict,.case-card,.pyramid-step,.matrix-cell,.revision-prompt,.diamond-stage,.loop-node,.brief-mandate,.brief-pillar,.role-panel,.check) :is(h3,b) {
+      font-size: var(--type-card-title);
+      line-height: 1.3;
+    }
+    .slide :is(.flow-card,.outcome,.branch,.arch-layer,.pipe-step,.gate,.strategy-card,.prompt-panel,.command-step,.audit-card,.verdict,.case-card,.pyramid-step,.matrix-cell,.revision-prompt,.diamond-stage,.loop-node,.brief-mandate,.brief-pillar,.role-panel,.check) :is(p,span,li,dd,code) {
+      font-size: var(--type-card-body);
+      line-height: 1.45;
+    }
+    .slide :is(.flow-card,.outcome,.branch,.arch-layer,.pipe-step,.gate,.strategy-card,.prompt-panel,.command-step,.audit-card,.case-card,.matrix-cell,.brief-pillar) em {
+      font-size: var(--type-meta);
+      letter-spacing: .07em;
+    }
+
+    .brief-mandate, .brief-pillar, .role-panel, .revision-prompt, .matrix-cell, .gate,
+    .strategy-card, .verdict, .case-card, .prompt-panel, .proof-strip div, .check {
+      border-radius: 0;
+      clip-path: var(--consult-cut);
+    }
+    .architecture .arch-layer, .pipeline .pipe-step, .command-flow .command-step, .assurance-flow .audit-card {
+      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 0 100%, 10px 50%);
+    }
+    .gate-grid .gate {
+      position: relative;
+      border-top-width: 1px;
+      clip-path: polygon(0 0, 88% 0, 100% 20%, 100% 100%, 0 100%);
+    }
+    .gate-grid .gate::before {
+      content: "";
+      display: block;
+      width: 38px;
+      height: 5px;
+      margin-bottom: 13px;
+      background: var(--tone-gradient);
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      box-shadow: 0 0 12px rgba(var(--accent-rgb),.48);
+    }
+    .case-card { border-top-width: 1px; }
+    .case-card .case-phase { padding-left: 10px; border-left: 2px solid rgba(var(--accent-rgb),.5); }
+
+    .vertical-arrow {
+      position: relative;
+      display: block;
+      width: 18px;
+      height: 34px;
+      margin: 0 auto;
+      background: var(--tone-gradient);
+      clip-path: var(--consult-arrow-vertical);
+      filter: drop-shadow(0 0 9px rgba(var(--accent-rgb),.56));
+      animation: verticalArrowFloat 3.8s ease-in-out infinite;
+    }
+    .vertical-arrow::before {
+      content: "";
+      position: absolute;
+      inset: -40% 0 auto;
+      width: 100%;
+      height: 42%;
+      background: linear-gradient(180deg, transparent, rgba(255,255,255,.9), transparent);
+      animation: verticalArrowTravel 2.8s ease-in-out infinite;
+    }
+    @keyframes verticalArrowFloat { 0%,100% { translate: 0 -2px; } 50% { translate: 0 3px; } }
+    @keyframes verticalArrowTravel { 0% { top: -42%; opacity: 0; } 25%,70% { opacity: .9; } 100% { top: 100%; opacity: 0; } }
+
+    .quality-house {
+      clip-path: polygon(50% 0, 100% 25%, 100% 100%, 0 100%, 0 25%);
+      background: linear-gradient(160deg, rgba(0,169,224,.78), rgba(0,114,206,.72) 48%, rgba(20,40,160,.84));
+    }
+    .prompt-pyramid.quality-gates { grid-template-columns: 1fr; gap: 2px; }
+    .prompt-pyramid.quality-gates .pyramid-step { grid-template-columns: 160px 1fr; }
+    .prompt-pyramid.quality-gates .pyramid-step b { white-space: nowrap; }
+    .prompt-pyramid.quality-gates .pyramid-step:nth-of-type(1) { --step-rgb: 0,169,224; margin-inline: 12%; }
+    .prompt-pyramid.quality-gates .pyramid-step:nth-of-type(2) { --step-rgb: 139,92,246; margin-inline: 8%; }
+    .prompt-pyramid.quality-gates .pyramid-step:nth-of-type(3) { --step-rgb: 236,72,153; margin-inline: 4%; }
+    .prompt-pyramid.quality-gates .pyramid-step:nth-of-type(4) { --step-rgb: 245,158,11; margin-inline: 0; }
+    .prompt-pyramid.quality-gates .vertical-arrow { height: 32px; width: 18px; }
+
+    .mbb-issue-tree .brief-mandate { clip-path: polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%); }
+    .mbb-issue-tree .brief-pillar { clip-path: polygon(8px 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%, 0 8px); }
+    .consulting-architecture .arch-layer:nth-of-type(odd) { translate: 0 -5px; }
+    .consulting-architecture .arch-layer:nth-of-type(even) { translate: 0 5px; }
+    .assurance-flow .audit-card:nth-of-type(2), .command-flow .command-step:nth-of-type(2n) { translate: 0 6px; }
+    .assurance-flow .audit-card:nth-of-type(odd), .command-flow .command-step:nth-of-type(odd) { translate: 0 -4px; }
+
     @media (max-width: 1100px) {
       .slide { padding-left: 5vw; padding-right: 6vw; }
       .cover-layout { grid-template-columns: minmax(0, 1fr) 240px; gap: 26px; }
@@ -870,6 +977,9 @@
       .brief-mandate, .brief-pillar { min-height: 220px; }
       .brief-pillar { padding: 21px 17px; }
       .mece-role-map { grid-template-columns: minmax(0,1fr) 96px minmax(0,1fr); }
+      .consulting-architecture .arch-layer,
+      .assurance-flow .audit-card,
+      .command-flow .command-step { translate: none; }
     }
 
     @media (max-width: 1040px) and (min-width: 761px) {
@@ -882,6 +992,13 @@
     }
 
     @media (max-width: 760px) {
+      :root {
+        --type-slide-title: clamp(32px, 9.5vw, 48px);
+        --type-slide-lead: 17px;
+        --type-card-title: 18px;
+        --type-card-body: 15px;
+        --type-meta: 12px;
+      }
       html, body { overflow: auto; }
       .deck { position: relative; min-height: 100dvh; }
       .slides { position: relative; }
@@ -906,6 +1023,9 @@
       .north-star { min-height: 220px; }
       .prompt-pyramid { gap: 6px; }
       .pyramid-step { margin-inline: 0 !important; }
+      .prompt-pyramid.quality-gates .pyramid-step { grid-template-columns: minmax(138px, .86fr) 1.14fr; }
+      .framework-chip { font-size: 12px !important; }
+      .quality-gates .vertical-arrow { display: block; }
       .evidence-matrix { min-height: 360px; }
       .double-diamond, .loop-strip { grid-template-columns: 1fr; gap: 8px; }
       .double-diamond .tri-arrow, .loop-strip .tri-arrow { display: block; transform: rotate(90deg); margin: 3px auto; }
@@ -994,7 +1114,7 @@
         </div>
       </section>
 
-      <section class="slide intro-video summary-slide" data-title="한 장 요약" data-accent="#a78bfa" data-rgb="167,139,250" data-accent2="#22d3ee" data-rgb2="34,211,238" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
+      <section class="slide intro-video summary-slide" data-title="한 장 요약" data-framework="McKinsey-style · Answer First" data-accent="#a78bfa" data-rgb="167,139,250" data-accent2="#22d3ee" data-rgb2="34,211,238" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
         <div class="bg-poster" style="background-image:url('assets/poster-02.webp')"></div>
         <video class="bg-video" data-src="assets/bg-02.mp4" muted loop playsinline preload="none" poster="assets/poster-02.webp" aria-label="그라데이션 기술 배경 영상"></video>
         <div class="slide-inner">
@@ -1015,11 +1135,11 @@
         </div>
       </section>
 
-      <section class="slide" data-title="최초 요청" data-accent="#8b5cf6" data-rgb="139,92,246" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
+      <section class="slide" data-title="최초 요청" data-framework="McKinsey-style · Issue Tree" data-accent="#8b5cf6" data-rgb="139,92,246" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
         <div class="bg-carousel" data-theme="사업 질문·시장 탐색·기업 비교" data-scenes="의사결정 질문|시장 탐색|기업 비교" aria-hidden="true"><span style="background-image:url('assets/context-bg/01-decision-a.svg')"></span><span style="background-image:url('assets/context-bg/01-decision-b.svg')"></span><span style="background-image:url('assets/context-bg/01-decision-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">01</span><div><div class="eyebrow">THE FIRST BUSINESS REQUEST</div><h2>최초 입력은 화면 디자인보다 <span class="accent">누가 어떤 결정을 내릴지</span>에서 시작</h2><p>AI 신사업을 발굴하는 담당자가 시장·경쟁·수익모델·기업 근거를 빠르게 비교하는 데이터베이스를 요청</p></div></div>
-          <div class="consulting-brief-tree reveal" style="--delay:.14s">
+          <div class="consulting-brief-tree mbb-issue-tree reveal" style="--delay:.14s">
             <article class="brief-mandate">
               <em>BUSINESS MANDATE</em>
               <b>AI 신사업 후보를 시장·수익·기업 움직임으로 비교</b>
@@ -1036,25 +1156,28 @@
         </div>
       </section>
 
-      <section class="slide" data-title="북극성 정의" data-accent="#0072ce" data-rgb="0,114,206" data-accent2="#f59e0b" data-rgb2="245,158,11" data-accent3="#34d399" data-rgb3="52,211,153" aria-hidden="true">
-        <div class="bg-carousel" data-theme="방향 설정·우선순위·성장 목표" data-scenes="북극성|우선순위|성장 목표" aria-hidden="true"><span style="background-image:url('assets/context-bg/02-north-star-a.svg')"></span><span style="background-image:url('assets/context-bg/02-north-star-b.svg')"></span><span style="background-image:url('assets/context-bg/02-north-star-c.svg')"></span></div>
+      <section class="slide" data-title="Quality 정의" data-framework="Bain · Results Delivery" data-accent="#0072ce" data-rgb="0,114,206" data-accent2="#f59e0b" data-rgb2="245,158,11" data-accent3="#34d399" data-rgb3="52,211,153" aria-hidden="true">
+        <div class="bg-carousel" data-theme="정확성·최신성·의사결정 활용" data-scenes="정확성|최신성|의사결정 활용" aria-hidden="true"><span style="background-image:url('assets/context-bg/02-quality-a.svg')"></span><span style="background-image:url('assets/context-bg/02-quality-b.svg')"></span><span style="background-image:url('assets/context-bg/02-quality-c.svg')"></span></div>
         <div class="slide-inner">
-          <div class="slide-title reveal"><span class="slide-no">02</span><div><div class="eyebrow">SITE NORTH STAR</div><h2>사이트의 북극성은 정보량이 아니라 <span class="accent">신사업 결정을 더 빠르게 만드는 것</span></h2><p>사용자 · 판단 과업 · 필요한 근거 · 완료 기준을 먼저 고정해 이후 기능 추가가 흔들리지 않도록 설계</p></div></div>
+          <div class="slide-title reveal"><span class="slide-no">02</span><div><div class="eyebrow">SITE QUALITY</div><h2>사이트 Quality는 정보량이 아니라 <span class="accent">근거 기반 의사결정 속도</span></h2><p>정확성 · 최신성 · 중복 제거 · 의사결정 활용성을 같은 기준으로 관리해 기능 확장보다 품질을 우선</p></div></div>
           <div class="vibe-start reveal" style="--delay:.14s">
-            <article class="north-star"><div><em>NORTH STAR</em><b>기업의 AI 움직임을<br>시장 기회와 실행 후보로 전환</b><span>처음 보는 사용자도 짧은 시간 안에 시장 · 수익모델 · 파트너 후보를 이해</span></div></article>
+            <article class="north-star quality-house"><div><em>QUALITY THESIS</em><b>신뢰할 수 있는 근거를<br>실행 가능한 선택지로 전환</b><span>짧은 시간 안에 사실 · 변화 · 사업 시사점 · 다음 행동을 이해</span></div></article>
             <i class="tri-arrow"></i>
-            <div class="prompt-pyramid">
-              <div class="pyramid-step"><b>01 · USER</b><span>AI 신사업을 검토하는 사업개발 담당자</span></div>
-              <div class="pyramid-step"><b>02 · JOB</b><span>시장·경쟁·수익·조직을 같은 기준으로 비교</span></div>
-              <div class="pyramid-step"><b>03 · EVIDENCE</b><span>공식 자료·공시·원문 기사·직접 프로필</span></div>
-              <div class="pyramid-step"><b>04 · DONE</b><span>기회 후보와 다음 확인 항목까지 도출</span></div>
+            <div class="prompt-pyramid quality-gates">
+              <div class="pyramid-step"><b>01 · ACCURACY</b><span>공식 원문과 기업 직접 연관성</span></div>
+              <i class="vertical-arrow" aria-hidden="true"></i>
+              <div class="pyramid-step"><b>02 · FRESHNESS</b><span>실적·인력·경영진·주가의 기준일</span></div>
+              <i class="vertical-arrow" aria-hidden="true"></i>
+              <div class="pyramid-step"><b>03 · MECE</b><span>중복 없는 메인·상세·시장·기업 역할</span></div>
+              <i class="vertical-arrow" aria-hidden="true"></i>
+              <div class="pyramid-step"><b>04 · ACTION</b><span>의사결정 후보와 다음 검증 과제</span></div>
             </div>
           </div>
-          <div class="takeaway reveal" style="--delay:.34s"><b>복사해서 시작</b><span>AI 신사업 담당자가 사용할 사이트를 만들어줘 · 시장·수익모델·기업·스타트업·조직·뉴스를 MECE하게 분리하고 · 첫 화면에서는 전략 방향을 비교하고 · 상세에서는 근거와 원문을 확인하며 · 데이터가 정기적으로 갱신되게 설계해줘</span></div>
+          <div class="takeaway reveal" style="--delay:.34s"><b>QUALITY STANDARD · 복사해서 시작</b><span>시장·수익모델·기업·스타트업·조직·뉴스를 MECE하게 분리 · 메인에서는 전략 방향을 비교 · 상세에서는 근거와 원문을 확인 · 최신 검증 데이터만 화면에 반영</span></div>
         </div>
       </section>
 
-      <section class="slide" data-title="정보 구조" data-accent="#ec4899" data-rgb="236,72,153" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
+      <section class="slide" data-title="정보 구조" data-framework="McKinsey · 7S + MECE" data-accent="#ec4899" data-rgb="236,72,153" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
         <div class="bg-carousel" data-theme="화면 구조·정보 계층·MECE 구분" data-scenes="메인 화면|상세 화면|정보 계층" aria-hidden="true"><span style="background-image:url('assets/context-bg/03-architecture-a.svg')"></span><span style="background-image:url('assets/context-bg/03-architecture-b.svg')"></span><span style="background-image:url('assets/context-bg/03-architecture-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">03</span><div><div class="eyebrow">INFORMATION ARCHITECTURE</div><h2>메인과 상세를 분리해 <span class="accent">같은 정보를 반복하지 않는 구조</span>로 설계</h2><p>메인은 비교와 방향성 · 상세는 기업 근거 · 시장과 주가는 별도 분석 화면 · 왼쪽 탐색은 오른쪽 섹션과 일대일 연결</p></div></div>
@@ -1073,7 +1196,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="데이터 엔진" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#14b8a6" data-rgb2="20,184,166" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
+      <section class="slide" data-title="데이터 엔진" data-framework="Bain · Results Delivery" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#14b8a6" data-rgb2="20,184,166" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
         <div class="bg-carousel" data-theme="원문 수집·데이터 연결·정규화" data-scenes="원문 수집|데이터 연결|품질 게이트" aria-hidden="true"><span style="background-image:url('assets/context-bg/04-data-engine-a.svg')"></span><span style="background-image:url('assets/context-bg/04-data-engine-b.svg')"></span><span style="background-image:url('assets/context-bg/04-data-engine-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">04</span><div><div class="eyebrow">DATA PIPELINE</div><h2>뉴스를 모으는 것이 아니라 <span class="accent">원문을 검증 가능한 전략 데이터로 변환</span></h2><p>출처 정책 → 수집 → 근거 문장 → 기업 식별 → 중복 통합 → 공개 뷰 순서로 데이터 품질을 고정</p></div></div>
@@ -1094,7 +1217,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="기업 데이터" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
+      <section class="slide" data-title="기업 데이터" data-framework="McKinsey · 7S" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
         <div class="bg-carousel" data-theme="기업 카드·관계 구조·데이터 스키마" data-scenes="기업 개요|조직 구조|경영진 근거" aria-hidden="true"><span style="background-image:url('assets/context-bg/05-company-a.svg')"></span><span style="background-image:url('assets/context-bg/05-company-b.svg')"></span><span style="background-image:url('assets/context-bg/05-company-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">05</span><div><div class="eyebrow">COMPANY DATA CONTRACT</div><h2>대기업과 스타트업을 <span class="accent">같은 깊이의 기업 스키마</span>로 정렬</h2><p>규모와 상장 여부가 달라도 개요 · 수익 · 전략 · 조직 · 발언 · 근거의 레벨을 동일하게 유지</p></div></div>
@@ -1112,7 +1235,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="자동 업데이트" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#3b82f6" data-rgb3="59,130,246" aria-hidden="true">
+      <section class="slide" data-title="자동 업데이트" data-framework="Bain · Results Delivery" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#3b82f6" data-rgb3="59,130,246" aria-hidden="true">
         <div class="bg-carousel" data-theme="자동 수집·품질 감시·반복 갱신" data-scenes="예약 수집|자동 검증|공개 갱신" aria-hidden="true"><span style="background-image:url('assets/context-bg/06-automation-a.svg')"></span><span style="background-image:url('assets/context-bg/06-automation-b.svg')"></span><span style="background-image:url('assets/context-bg/06-automation-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">06</span><div><div class="eyebrow">AUTOMATED UPDATE ENGINE</div><h2>최신 정보는 사람이 붙여 넣지 않고 <span class="accent">수집 → 검증 → 교체 → 공개를 자동 반복</span></h2><p>뉴스·주가·실적·기업·스타트업·시장 데이터를 하루 여러 차례 갱신하고 공개 전 품질 검사를 실행</p></div></div>
@@ -1134,7 +1257,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="컨설팅 화면" data-accent="#14b8a6" data-rgb="20,184,166" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
+      <section class="slide" data-title="컨설팅 화면" data-framework="BCG · Strategy Palette" data-accent="#14b8a6" data-rgb="20,184,166" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
         <div class="bg-carousel" data-theme="시장 진단·전략 선택·성장 기회" data-scenes="시장 진단|전략 선택|실행 우선순위" aria-hidden="true"><span style="background-image:url('assets/context-bg/07-consulting-a.svg')"></span><span style="background-image:url('assets/context-bg/07-consulting-b.svg')"></span><span style="background-image:url('assets/context-bg/07-consulting-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">07</span><div><div class="eyebrow">CONSULTING DECISION SYSTEM</div><h2>수집한 데이터는 다섯 개 질문으로 바꿔 <span class="accent">의사결정 가능한 인사이트</span>로 전환</h2><p>근거를 단순 요약하지 않고 시장 매력도 · 밸류체인 · 수익구조 · 승리조건 · 다음 행동으로 재구성</p></div></div>
@@ -1150,7 +1273,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="실제 입력·검증" data-accent="#a855f7" data-rgb="168,85,247" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#22d3ee" data-rgb3="34,211,238" aria-hidden="true">
+      <section class="slide" data-title="실제 입력·검증" data-framework="Bain · RAPID" data-accent="#a855f7" data-rgb="168,85,247" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#22d3ee" data-rgb3="34,211,238" aria-hidden="true">
         <div class="bg-carousel" data-theme="교차 검증·근거 확인·승인 흐름" data-scenes="모델 검토|팩트체크|사람 승인" aria-hidden="true"><span style="background-image:url('assets/context-bg/08-verification-a.svg')"></span><span style="background-image:url('assets/context-bg/08-verification-b.svg')"></span><span style="background-image:url('assets/context-bg/08-verification-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">08</span><div><div class="eyebrow">REAL INPUT TO VERIFIED OUTPUT</div><h2>실제 작업은 <span class="accent">입력 → 구현 → 독립 검토 → 팩트체크 → 승인</span>의 도식으로 운영</h2><p>긴 텍스트 나열을 역할별 카드와 박스 사이 커넥터로 바꿔 초보자도 실행 순서를 바로 이해</p></div></div>
@@ -1168,7 +1291,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="보완 요청" data-accent="#34d399" data-rgb="52,211,153" data-accent2="#22d3ee" data-rgb2="34,211,238" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
+      <section class="slide" data-title="보완 요청" data-framework="BCG · Test &amp; Learn" data-accent="#34d399" data-rgb="52,211,153" data-accent2="#22d3ee" data-rgb2="34,211,238" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
         <div class="bg-carousel" data-theme="보완 요청·화면 개선·성과 변화" data-scenes="문제 분류|정확한 수정|회귀 검증" aria-hidden="true"><span style="background-image:url('assets/context-bg/09-iteration-a.svg')"></span><span style="background-image:url('assets/context-bg/09-iteration-b.svg')"></span><span style="background-image:url('assets/context-bg/09-iteration-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">09</span><div><div class="eyebrow">ITERATION PROMPTS</div><h2>본 사이트는 <span class="accent">콘텐츠 · 시각화 · 동작을 분리해</span> 반복 개선</h2><p>한 번에 전부 바꾸지 않고 데이터 품질 · 컨설팅 표현 · 인터랙션을 각각 요청해 회귀 범위를 축소</p></div></div>
@@ -1184,7 +1307,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="구현·배포" data-accent="#3b82f6" data-rgb="59,130,246" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
+      <section class="slide" data-title="구현·배포" data-framework="Bain · Results Delivery" data-accent="#3b82f6" data-rgb="59,130,246" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
         <div class="bg-carousel" data-theme="구현 단계·시스템 연결·배포 운영" data-scenes="코드 구현|자동검사|공개 배포" aria-hidden="true"><span style="background-image:url('assets/context-bg/10-build-a.svg')"></span><span style="background-image:url('assets/context-bg/10-build-b.svg')"></span><span style="background-image:url('assets/context-bg/10-build-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">10</span><div><div class="eyebrow">BUILD FLOW FOR BEGINNERS</div><h2>초보자는 명령을 외우기보다 <span class="accent">각 단계의 목적과 확인 결과</span>를 이해</h2><p>기존 텍스트 목록을 실제 사이트 구축 순서에 맞춘 여섯 단계 실행 도식으로 전환</p></div></div>
@@ -1206,7 +1329,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="장기 작업 사례" data-accent="#f472b6" data-rgb="244,114,182" data-accent2="#f59e0b" data-rgb2="245,158,11" data-accent3="#3b82f6" data-rgb3="59,130,246" aria-hidden="true">
+      <section class="slide" data-title="장기 작업 사례" data-framework="McKinsey-style · Root Cause Tree" data-accent="#f472b6" data-rgb="244,114,182" data-accent2="#f59e0b" data-rgb2="245,158,11" data-accent3="#3b82f6" data-rgb3="59,130,246" aria-hidden="true">
         <div class="bg-carousel" data-theme="장기 과제·문제 추적·성과 개선" data-scenes="문제 발견|원인 추적|재발 방지" aria-hidden="true"><span style="background-image:url('assets/context-bg/11-long-run-a.svg')"></span><span style="background-image:url('assets/context-bg/11-long-run-b.svg')"></span><span style="background-image:url('assets/context-bg/11-long-run-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">11</span><div><div class="eyebrow">LONG-RUN CASES</div><h2>가장 오래 걸린 작업은 화면보다 <span class="accent">데이터 정확도·일관성·성능을 동시에 맞추는 과정</span></h2><p>실제 본 사이트에서 반복된 문제를 원인 · 해결 · 재발 방지로 정리</p></div></div>
@@ -1219,7 +1342,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="지속 개선" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#34d399" data-rgb2="52,211,153" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
+      <section class="slide" data-title="지속 개선" data-framework="McKinsey · Three Horizons" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#34d399" data-rgb2="52,211,153" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
         <div class="bg-carousel" data-theme="성장 루프·전략 지평선·기회 탐색" data-scenes="발산 탐색|선택 집중|운영 학습" aria-hidden="true"><span style="background-image:url('assets/context-bg/12-operating-loop-a.svg')"></span><span style="background-image:url('assets/context-bg/12-operating-loop-b.svg')"></span><span style="background-image:url('assets/context-bg/12-operating-loop-c.svg')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">12</span><div><div class="eyebrow">DOUBLE DIAMOND OPERATING LOOP</div><h2>사이트는 완성품이 아니라 <span class="accent">질문 → 데이터 → 화면 → 검증이 반복되는 운영 시스템</span></h2><p>새 사업 질문을 넓게 탐색하고 우선순위를 정한 뒤 데이터와 화면을 작게 구현하고 사용 결과로 다시 개선</p></div></div>
@@ -1240,7 +1363,7 @@
         </div>
       </section>
 
-      <section class="slide" data-title="완료 기준" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#a855f7" data-rgb2="168,85,247" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
+      <section class="slide" data-title="완료 기준" data-framework="Bain · Results Delivery" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#a855f7" data-rgb2="168,85,247" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
         <div class="bg-carousel" data-theme="완료 기준·전략 방향·최종 성과" data-scenes="완료 기준|공개 확인|지속 운영" aria-hidden="true"><span style="background-image:url('assets/context-bg/13-publish-a.svg')"></span><span style="background-image:url('assets/context-bg/13-publish-b.svg')"></span><span style="background-image:url('assets/context-bg/13-publish-c.svg')"></span></div>
         <div class="slide-inner finish">
           <div>
@@ -1339,6 +1462,13 @@
         slide.style.setProperty('--accent-rgb-2', slide.dataset.rgb2 || slide.dataset.rgb)
         slide.style.setProperty('--accent-3', slide.dataset.accent3 || '#f59e0b')
         slide.style.setProperty('--accent-rgb-3', slide.dataset.rgb3 || '245,158,11')
+        const titleBody = slide.querySelector('.slide-title > div')
+        if (slide.dataset.framework && titleBody) {
+          const chip = document.createElement('div')
+          chip.className = 'framework-chip'
+          chip.textContent = slide.dataset.framework
+          titleBody.append(chip)
+        }
         slide.querySelectorAll(diagramSelectors).forEach((item, itemIndex) => {
           item.classList.add('diagram-item')
           item.style.setProperty('--card-order', String(itemIndex))
