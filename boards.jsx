@@ -5529,7 +5529,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
 
 
 // ---- 스타트업 분석 보드(2계층·lazy-load): 대형=파트너십 / 소형=인수·투자 ----
-function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, onSelect }) {
+function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, activeCategory = "", onCategoryChange, onSelect }) {
   const inView = useInView(sectionRef);
   // 업체명 클릭 → 다른 기업과 동일한 상세 모달. 추적 기업이면 전체 프로필, 아니면 최신 라이브 데이터로 강화.
   // 밸류체인 기업·스타트업 모두 companies.json(핵심활동·경영진 발언)·monetization.json(수익모델·사업방향)에서
@@ -5643,6 +5643,13 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   const [loaded, setLoaded] = React.useState(false);
   const [tier, setTier] = React.useState("all");
   const [catFilter, setCatFilter] = React.useState("");
+  const selectCategory = categoryId => {
+    setCatFilter(categoryId);
+    if (onCategoryChange) onCategoryChange(categoryId);
+  };
+  React.useEffect(() => {
+    setCatFilter(activeCategory || "");
+  }, [activeCategory]);
   // 단말 신사업 관점 분류 체계 — cat 우선, 없으면 vertical 키워드로 폴백 매핑
   const TAX = window.DASH.STARTUP_TAXONOMY || [];
   const catOf = (s) => {
@@ -5814,7 +5821,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
         <div className="su-tax">
           <div className="su-tax-head">
             <b>분류 기준 <em>단말 신사업 적합도</em></b>
-            {catFilter && <button className="su-tax-clear" onClick={() => setCatFilter("")}>필터 해제 ✕</button>}
+            {catFilter && <button className="su-tax-clear" onClick={() => selectCategory("")}>필터 해제 ✕</button>}
           </div>
           {[["직결", "단말 직결 — 온디바이스·기본앱"], ["제휴", "서비스·B2B 제휴"], ["감시", "기술·인프라 사업 확장"]].map(([tierId, tierLabel]) => (
             <div className="su-tax-tier" key={tierId}>
@@ -5825,7 +5832,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                   return (
                     <button key={t.id} disabled={n === 0} className={"su-tax-cat" + (catFilter === t.id ? " on" : "") + (n === 0 ? " empty" : "")} style={{ "--c": t.accent }}
                       title={`${t.desc}\n▸ 모바일 신사업 관점: ${t.handset}`}
-                      onClick={() => n > 0 && setCatFilter(catFilter === t.id ? "" : t.id)}>
+                      onClick={() => n > 0 && selectCategory(catFilter === t.id ? "" : t.id)}>
                       <i style={{ background: t.accent }} />{t.ko}<em>{n}</em>
                     </button>
                   );
@@ -5843,7 +5850,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
           <div className="mkt-empty">
             <b>‘{catMeta(catFilter)?.ko}’ 필터</b>
             <span>a16z·공식 제품 페이지 전체 비교로 전환</span>
-            <button className="su-tax-clear" onClick={() => setCatFilter("")}>전체 보기</button>
+            <button className="su-tax-clear" onClick={() => selectCategory("")}>전체 보기</button>
           </div>
         ) : (
           <SourcePipeline kind="startup" />

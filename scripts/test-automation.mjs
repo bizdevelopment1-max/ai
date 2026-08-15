@@ -454,7 +454,8 @@ try {
     readFile("components.jsx", "utf8"),
     readFile("anim.jsx", "utf8"),
   ]);
-  const navIds = [...components.matchAll(/\{\s*id:\s*"([^"]+)".*?\}/g)].map(match => match[1]);
+  const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
+  const navIds = [...navSource.matchAll(/\{\s*id:\s*"([^"]+)"/g)].map(match => match[1]);
   const sectionIds = [...app.matchAll(/(?:<LazySection\s+id=|data-section=)"([^"]+)"/g)].map(match => match[1]);
   const expectedOrder = ["overview", "strategy", "opportunity", "themes", "valuechain", "newbiz", "signals", "sanalysis", "evidence", "validation"];
   const missingOnRight = navIds.filter(id => !sectionIds.includes(id));
@@ -463,8 +464,15 @@ try {
     && JSON.stringify(sectionIds) === JSON.stringify(expectedOrder);
   const overviewHeaderRemoved = !app.includes('className="ov-head"')
     && !app.includes('className="ov-title"');
-  const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
   const sidebarBrandSource = components.match(/<span className="sb-logo-txt">[\s\S]*?<\/span>\s*<\/span>/)?.[0] || "";
+  const hierarchyReady = (navSource.match(/children:\s*\[/g) || []).length === expectedOrder.length
+    && components.includes('className={"sb-category"')
+    && components.includes('className="sb-company-list"')
+    && components.includes("sectionCategories[item.id]")
+    && app.includes("const sectionCategories = useMemo")
+    && app.includes('activeCategory={navCategory.section === active ? navCategory.id : ""}')
+    && app.includes('activeCategory={navCategory.section === "sanalysis" ? navCategory.id : ""}')
+    && app.includes('.filter(layer => navCategory.section !== "valuechain" || !navCategory.id || layer.id === navCategory.id)');
   const sidebarCopyClean = !/(?:mobile|모바일)/i.test(`${navSource}\n${sidebarBrandSource}`)
     && navSource.includes('ko: "AI 신사업 브리핑"')
     && navSource.includes('ko: "신사업 기회 DB"')
@@ -478,6 +486,7 @@ try {
     || app.includes('id="audit"')
     || !/for \(const id of NAV_SECTION_IDS\)/.test(app)
     || /if \(REDUCED\) \{ setInView\(true\)/.test(anim)
+    || !hierarchyReady
     || !sidebarCopyClean) {
     throw new Error(`navigation mismatch left-only=${missingOnRight.join(",")} right-only=${missingOnLeft.join(",")}`);
   }
@@ -595,7 +604,8 @@ try {
     && !boards.includes("<h4>방향성 · 추구 가치")
     && app.includes('id="strategy"')
     && components.includes('id: "valuechain"')
-    && expectedLayers.every(id => app.includes(`layerId="${id}"`))
+    && (expectedLayers.every(id => app.includes(`layerId="${id}"`))
+      || (app.includes("(D.VALUE_CHAIN || [])") && app.includes("layerId={layer.id}")))
     && monetizationCrawler.includes("loadDash().COMPANY_LAYER");
   if (JSON.stringify(layerIds) !== JSON.stringify(expectedLayers)
     || normalized.length !== (dash.COMPANIES || []).length

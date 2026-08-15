@@ -78,6 +78,7 @@ function App() {
   const [selected, setSelected] = uS(null);
   const [sidebarOpen, setSidebarOpen] = uS(false);
   const [collapsed, setCollapsed] = uS(false);
+  const [navCategory, setNavCategory] = uS({ section: "", id: "" });
   const refs = {
     overview: uR(null), strategy: uR(null), opportunity: uR(null), themes: uR(null), valuechain: uR(null),
     newbiz: uR(null), signals: uR(null), sanalysis: uR(null), evidence: uR(null), validation: uR(null),
@@ -166,6 +167,7 @@ function App() {
   const [coLive, setCoLive] = uS(null);
   const [companyNews, setCompanyNews] = uS({});
   const [startupsX, setStartupsX] = uS(null);
+  const [startupCatalog, setStartupCatalog] = uS([]);
   const [monet, setMonet] = uS(null);
   uE(() => {
     if (!dataVersion) return;
@@ -205,6 +207,11 @@ function App() {
         (j.large || []).filter(x => x.provenance?.status === "source-backed").forEach(x => { m[x.name] = { overview: x.businessModel, insight: x.partnership, label: x.label, tier: "large" }; });
         (j.small || []).filter(x => x.provenance?.status === "source-backed").forEach(x => { m[x.name] = { overview: x.overview, insight: x.acqAngle, label: x.label, tier: "small" }; });
         setStartupsX(m);
+        setStartupCatalog([
+          ...(j.large || []).map(item => ({ ...item, portfolioTier: "large" })),
+          ...(j.small || []).map(item => ({ ...item, portfolioTier: "small" })),
+          ...(j.institutional || []).map(item => ({ ...item, portfolioTier: "institutional" })),
+        ]);
       } }).catch(() => {});
     return () => { alive = false; };
   }, [needsCompanyExtras, dataVersion]);
@@ -265,6 +272,39 @@ function App() {
     if (strat) merged.strategy = strat;
     return merged;
   }).filter(Boolean), [coLive, startupsX, monet]);
+
+  // 좌측 내비게이션과 본문이 동일한 분류 원장을 사용한다. 밸류체인은
+  // 7개 계층, 파트너 후보는 공개 근거가 있는 분류 전체를 노출한다.
+  const sectionCategories = useMemo(() => {
+    const valuechain = (D.VALUE_CHAIN || []).map(layer => ({
+      ...layer,
+      companies: companiesLive
+        .filter(company => company.layer === layer.id)
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    }));
+    const taxonomy = D.STARTUP_TAXONOMY || [];
+    const trackedNames = new Set(companiesLive.map(company => company.name.replace(/\s*\(.*\)/, "")));
+    const seen = new Set();
+    const classify = startup => {
+      if (startup.cat && taxonomy.some(category => category.id === startup.cat)) return startup.cat;
+      const vertical = String(startup.vertical || "").toLowerCase();
+      return taxonomy.find(category => (category.match || []).some(term => vertical.includes(String(term).toLowerCase())))?.id || "";
+    };
+    const candidates = startupCatalog.filter(startup => {
+      if (!startup?.name || seen.has(startup.name)) return false;
+      if (trackedNames.has(startup.name.replace(/\s*\(.*\)/, ""))) return false;
+      const status = startup.provenance?.status;
+      if (status !== "source-backed" && status !== "source-linked") return false;
+      seen.add(startup.name);
+      return true;
+    });
+    const sanalysis = taxonomy.map(category => ({
+      ...category,
+      companies: candidates.filter(startup => classify(startup) === category.id)
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    }));
+    return { valuechain, sanalysis };
+  }, [companiesLive, startupCatalog]);
   uE(() => {
     if (!selected || !coLive) return;
     const hydrated = companiesLive.find(company => company.name === selected.name);
@@ -462,18 +502,70 @@ function App() {
     })
     : "확인 중";
 
+  const handleSectionNav = id => {
+    setNavCategory({ section: id, id: "" });
+    navTo(id);
+  };
+  const handleCategoryNav = (section, categoryId) => {
+    setNavCategory({ section, id: categoryId });
+    navTo(section);
+  };
+  const handleSidebarCompany = (company, context = {}) => {
+    if (context.section === "sanalysis") {
+      const tracked = companiesLive.find(item => item.name === company.name || item.name.replace(/\s*\(.*\)/, "") === company.name);
+      if (tracked) {
+        setSelected(tracked);
+      } else {
+        const live = (coLive && coLive[company.name]) || {};
+        const profile = live.profile || company.profile || {};
+        const organization = live.organization || company.organization || (D.COMPANY_ORG || {})[company.name] || null;
+        const evidence = [company.latest, ...(company.history || []), ...(company.sourceLinks || [])]
+          .filter(item => item && /^https?:\/\//.test(String(item.url || "")))
+          .slice(0, 10);
+        setSelected({
+          name: company.name,
+          domain: company.domain || profile.officialWebsite || "",
+          cat: "startup",
+          unit: company.vertical || "AI 소프트웨어·서비스",
+          note: company.currentBusiness || company.businessModel || company.overview || company.description || "",
+          direction: company.partnership || company.acqAngle || company.latest?.title || "",
+          layer: "app",
+          vchainVertical: company.vertical || "",
+          profile,
+          org: organization,
+          portfolioTier: company.portfolioTier || "",
+          coverage: live.coverage || company.coverage || null,
+          live: {
+            ...live,
+            profile,
+            organization,
+            coverage: live.coverage || company.coverage || null,
+            latest: live.latest || company.latest || null,
+          },
+          sources: evidence.map(item => ({
+            tier: "reported",
+            label: item.label || item.title || `${company.name} 원문`,
+            asOf: item.date || "",
+            url: item.url,
+          })),
+        });
+      }
+    } else {
+      setSelected(company);
+    }
+    if (context.section && context.category) setNavCategory({ section: context.section, id: context.category });
+    if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) setSidebarOpen(false);
+  };
+
   return (
     <div className={"app d-" + t.density}>
       <Sidebar
-        active={active} onNav={id => {
-          navTo(id);
-          if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) setSidebarOpen(false);
-        }} brand={brand}
-        onLogo={() => navTo("overview")} onBgClick={onSidebarBg} collapsed={collapsed}
-        articleCount={articleCount} companies={D.COMPANIES} cats={cats} onSelectCompany={c => {
-          setSelected(c);
-          if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) setSidebarOpen(false);
-        }}
+        active={active}
+        activeCategory={navCategory.section === active ? navCategory.id : ""}
+        onNav={handleSectionNav} onCategory={handleCategoryNav} brand={brand}
+        onLogo={() => handleSectionNav("overview")} onBgClick={onSidebarBg} collapsed={collapsed}
+        articleCount={articleCount} companies={companiesLive} sectionCategories={sectionCategories}
+        onSelectCompany={handleSidebarCompany}
         open={sidebarOpen} onToggle={() => setSidebarOpen(o => !o)}
       />
 
@@ -514,13 +606,9 @@ function App() {
             <LazySection id="valuechain" active={active} sectionRef={refs.valuechain} height={4500}>
               <SectionStack title="AI 밸류체인" eyebrow="CONTROL POINTS"
                 description="고객 경험에서 모델·런타임까지 7개 계층을 중복 없이 연결">
-                <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} />
-                <ValueChainBoard layerId="agent" companies={companiesLive} onSelect={setSelected} />
-                <ValueChainBoard layerId="service" companies={companiesLive} onSelect={setSelected} />
-                <ValueChainBoard layerId="trust" companies={companiesLive} onSelect={setSelected} />
-                <ValueChainBoard layerId="model" companies={companiesLive} onSelect={setSelected} />
-                <ValueChainBoard layerId="data" companies={companiesLive} onSelect={setSelected} />
-                <ValueChainBoard layerId="infra" companies={companiesLive} onSelect={setSelected} />
+                {(D.VALUE_CHAIN || [])
+                  .filter(layer => navCategory.section !== "valuechain" || !navCategory.id || layer.id === navCategory.id)
+                  .map(layer => <ValueChainBoard key={layer.id} layerId={layer.id} companies={companiesLive} onSelect={setSelected} />)}
               </SectionStack>
             </LazySection>
 
@@ -534,7 +622,10 @@ function App() {
             </LazySection>
 
             <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
-              <StartupScopeBoard dataVersion={dataVersion} companies={companiesLive} coLive={coLive} monet={monet} onSelect={setSelected} />
+              <StartupScopeBoard dataVersion={dataVersion} companies={companiesLive} coLive={coLive} monet={monet}
+                activeCategory={navCategory.section === "sanalysis" ? navCategory.id : ""}
+                onCategoryChange={categoryId => setNavCategory({ section: "sanalysis", id: categoryId })}
+                onSelect={setSelected} />
             </LazySection>
 
             {/* ── 6. 시장 검증: 관찰 근거 → 사업성 검증 ── */}

@@ -198,16 +198,37 @@ function Trend({ v, small, animate }) {
 
 // ---- Sidebar ------------------------------
 const NAV = [
-  { id: "overview", ko: "AI 신사업 브리핑", en: "New Business Brief", icon: "grid", group: "의사결정" },
-  { id: "strategy", ko: "신사업 발굴 프레임", en: "Opportunity Framework", icon: "target", group: "의사결정" },
-  { id: "opportunity", ko: "신사업 기회 DB", en: "Opportunity Database", icon: "report", group: "의사결정" },
-  { id: "themes", ko: "핵심 사업 테마", en: "Priority Business Themes", icon: "spark", group: "사업 포트폴리오" },
-  { id: "valuechain", ko: "AI 밸류체인", en: "AI Value Chain", icon: "ai", group: "사업 포트폴리오" },
-  { id: "newbiz", ko: "AI 서비스 신사업", en: "AI Service Opportunities", icon: "spark", group: "사업 포트폴리오" },
-  { id: "signals", ko: "기술 변화 신호", en: "Technology Signals", icon: "pulse", group: "생태계·기술" },
-  { id: "sanalysis", ko: "파트너·M&A 후보", en: "Partner & M&A Candidates", icon: "target", group: "생태계·기술" },
-  { id: "evidence", ko: "시장·고객 근거", en: "Market & Customer Evidence", icon: "news", group: "시장 검증" },
-  { id: "validation", ko: "수요·시장·재무 검증", en: "Demand, Market & Financial Validation", icon: "chart", group: "시장 검증" },
+  { id: "overview", ko: "AI 신사업 브리핑", en: "New Business Brief", icon: "grid", group: "의사결정", children: [
+    { key: "relationship-map", ko: "산업 관계 지도" }, { key: "executive-brief", ko: "영상·핵심 브리핑" },
+  ] },
+  { id: "strategy", ko: "신사업 발굴 프레임", en: "Opportunity Framework", icon: "target", group: "의사결정", children: [
+    { key: "user-signal", ko: "사용자 신호" }, { key: "experience-design", ko: "경험 설계" },
+    { key: "revenue-partner", ko: "수익·파트너" }, { key: "execution-plan", ko: "실행 계획" },
+  ] },
+  { id: "opportunity", ko: "신사업 기회 DB", en: "Opportunity Database", icon: "report", group: "의사결정", children: [
+    { key: "decision-radar", ko: "의사결정 레이더" }, { key: "opportunity-candidates", ko: "기회 후보·실험" },
+    { key: "monetization-roi", ko: "수익화·ROI" }, { key: "build-buy-partner", ko: "Build·Buy·Partner" },
+  ] },
+  { id: "themes", ko: "핵심 사업 테마", en: "Priority Business Themes", icon: "spark", group: "사업 포트폴리오", children: [
+    { key: "agentic-commerce", ko: "에이전틱 커머스" }, { key: "telco-bundles", ko: "통신사 결합 서비스" },
+    { key: "wearables-form-factors", ko: "웨어러블·폼팩터" },
+  ] },
+  { id: "valuechain", ko: "AI 밸류체인", en: "AI Value Chain", icon: "ai", group: "사업 포트폴리오", children: [] },
+  { id: "newbiz", ko: "AI 서비스 신사업", en: "AI Service Opportunities", icon: "spark", group: "사업 포트폴리오", children: [
+    { key: "service-opportunity", ko: "서비스 기회" }, { key: "revenue-model", ko: "수익 모델" },
+    { key: "execution-hypothesis", ko: "실행 가설" },
+  ] },
+  { id: "signals", ko: "기술 변화 신호", en: "Technology Signals", icon: "pulse", group: "생태계·기술", children: [
+    { key: "technology-shift", ko: "기술 변화" }, { key: "market-shift", ko: "시장 변화" },
+    { key: "action-implication", ko: "실행 시사점" },
+  ] },
+  { id: "sanalysis", ko: "파트너·M&A 후보", en: "Partner & M&A Candidates", icon: "target", group: "생태계·기술", children: [] },
+  { id: "evidence", ko: "시장·고객 근거", en: "Market & Customer Evidence", icon: "news", group: "시장 검증", children: [
+    { key: "institutional-research", ko: "기관 리서치" }, { key: "industry-customer-source", ko: "산업·고객 원문" },
+  ] },
+  { id: "validation", ko: "수요·시장·재무 검증", en: "Demand, Market & Financial Validation", icon: "chart", group: "시장 검증", children: [
+    { key: "survey", ko: "수요 조사" }, { key: "market", ko: "시장 규모" }, { key: "stocks", ko: "상장사·투자" },
+  ] },
 ];
 const NAV_SECTION_IDS = NAV.map(item => item.id);
 
@@ -222,11 +243,15 @@ function sbBg(hex) {
   return `linear-gradient(168deg, ${sh(0.16)} 0%, ${hex} 40%, ${sh(-0.46)} 100%)`;
 }
 
-function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCount, companies, cats, onSelectCompany, open, onToggle }) {
-  const [openCat, setOpenCat] = useState(null);
+function Sidebar({ active, activeCategory, onNav, onCategory, brand, onLogo, onBgClick, collapsed, articleCount, companies, sectionCategories, onSelectCompany, open, onToggle }) {
+  const [openSection, setOpenSection] = useState(active || null);
+  const [openCategory, setOpenCategory] = useState(null);
   const navRef = useRef(null);
-  const isCat = id => id === "native" || id === "bigtech";   // startup은 하위 목록 미표시
   const stop = fn => (e) => { e.stopPropagation(); fn && fn(e); };
+  const categoriesFor = item => {
+    const dynamic = sectionCategories && sectionCategories[item.id];
+    return Array.isArray(dynamic) && dynamic.length ? dynamic : (item.children || []);
+  };
   useEffect(() => {
     const item = navRef.current?.querySelector(`[data-nav-id="${active}"]`);
     item?.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -248,50 +273,61 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
 
       <nav className="sb-nav" ref={navRef} aria-label="대시보드 섹션">
         {NAV.map((n, idx) => {
-          const cat = isCat(n.id) ? (cats || []).find(c => c.id === n.id) : null;
-          const subs = cat ? (companies || []).filter(c => c.cat === n.id) : [];
-          const startupVerts = n.id === "startup" ? ((window.DASH && window.DASH.STARTUP_VERTICALS) || []) : null;
-          const openS = openCat === n.id;
+          const categories = categoriesFor(n);
+          const openS = openSection === n.id;
           const showGroup = n.group && (idx === 0 || NAV[idx - 1].group !== n.group);
           return (
             <React.Fragment key={n.id}>
               {showGroup && <div className="sb-group">{n.group}</div>}
               <button className={"sb-item" + (active === n.id ? " on" : "")} title={n.ko}
                 data-nav-id={n.id} aria-current={active === n.id ? "page" : undefined}
-                onClick={stop(() => { onNav(n.id); if (cat) setOpenCat(openS ? null : n.id); })}>
+                onClick={stop(() => {
+                  onNav(n.id);
+                  setOpenSection(openS ? null : n.id);
+                  setOpenCategory(null);
+                })}>
                 <span className="sb-ic"><Icon name={n.icon} size={17} /></span>
                 <span className="sb-label">{n.ko}</span>
                 {n.id === "articles" && articleCount > 0 && (
                   <span className="sb-badge">{articleCount}</span>
                 )}
-                {cat && <span className={"sb-caret" + (openS ? " open" : "")}><Icon name="chevron" size={13} sw={2.2} /></span>}
+                {categories.length > 0 && <span className={"sb-caret" + (openS ? " open" : "")}><Icon name="chevron" size={13} sw={2.2} /></span>}
               </button>
-              {cat && openS && (
-                <div className="sb-sub">
-                  {startupVerts ? startupVerts.map(v => {
-                    const grp = subs.filter(c => c.vertical === v.ko);
-                    if (!grp.length) return null;
+              {categories.length > 0 && openS && (
+                <div className="sb-sub" aria-label={`${n.ko} 하위 카테고리`}>
+                  {categories.map(category => {
+                    const categoryId = category.id || category.key;
+                    const categoryCompanies = Array.isArray(category.companies) ? category.companies : [];
+                    const categoryOpen = openCategory === `${n.id}:${categoryId}`;
+                    const selectedCategory = active === n.id && activeCategory === categoryId;
                     return (
-                      <React.Fragment key={v.id}>
-                        <div className="sb-sub-group">{v.ko}</div>
-                        {grp.map((c, i) => (
-                          <button key={c.name} className="sb-subitem" title={c.name + " 상세 보기"}
-                            onClick={stop(() => onSelectCompany && onSelectCompany(c))}>
-                            <span className="sb-sub-dot" style={{ background: cat.accent }} />
-                            <span className="sb-sub-name">{c.name}</span>
-                            <span className="sb-sub-val">{c.value}</span>
-                          </button>
-                        ))}
-                      </React.Fragment>
+                      <div className="sb-category-block" key={categoryId}>
+                        <button className={"sb-category" + (selectedCategory ? " on" : "")}
+                          title={`${category.ko}${categoryCompanies.length ? ` · ${categoryCompanies.length}개사` : ""}`}
+                          aria-expanded={categoryCompanies.length ? categoryOpen : undefined}
+                          onClick={stop(() => {
+                            onCategory && onCategory(n.id, categoryId);
+                            if (categoryCompanies.length) setOpenCategory(categoryOpen ? null : `${n.id}:${categoryId}`);
+                          })}>
+                          <span className="sb-category-dot" style={{ background: category.accent || "rgba(255,255,255,.58)" }} />
+                          <span className="sb-category-name">{category.ko}</span>
+                          {categoryCompanies.length > 0 && <span className="sb-category-count">{categoryCompanies.length}</span>}
+                          {categoryCompanies.length > 0 && <span className={"sb-category-caret" + (categoryOpen ? " open" : "")}><Icon name="chevron" size={11} sw={2.2} /></span>}
+                        </button>
+                        {categoryCompanies.length > 0 && categoryOpen && (
+                          <div className="sb-company-list" aria-label={`${category.ko} 기업`}>
+                            {categoryCompanies.map(company => (
+                              <button key={company.name} className="sb-company" title={`${company.name} 상세 보기`}
+                                onClick={stop(() => onSelectCompany && onSelectCompany(company, { section: n.id, category: categoryId }))}>
+                                <span className="sb-company-name">{company.name}</span>
+                                <Icon name="chevron" size={10} sw={2} />
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     );
-                  }) : subs.map((c, i) => (
-                    <button key={i} className="sb-subitem" title={c.name + " 상세 보기"}
-                      onClick={stop(() => onSelectCompany && onSelectCompany(c))}>
-                      <span className="sb-sub-dot" style={{ background: cat.accent }} />
-                      <span className="sb-sub-name">{c.name}</span>
-                      <span className="sb-sub-val">{c.value}</span>
-                    </button>
-                  ))}
+                  })}
                 </div>
               )}
             </React.Fragment>
