@@ -7,7 +7,6 @@
  * 근거를 결합한다. 화면은 이 파일만 읽으므로 추론 문구와 원문 사실을 분리한다.
  */
 import { readFile, writeFile } from "node:fs/promises";
-import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const PORTFOLIO = [
   {
@@ -175,10 +174,9 @@ const sourceBacked = article => article?.displayEligible !== false
   && /^https?:\/\//.test(article?.url || "");
 
 let articles = [];
-const suppression = await loadSuppressionRegistry();
 try {
   const news = JSON.parse(await readFile("news.json", "utf8"));
-  articles = (news.articles || []).filter(sourceBacked).filter(article => !suppression.matches(article, "article"));
+  articles = (news.articles || []).filter(sourceBacked);
 } catch {}
 
 const findLatestEvidence = company => articles

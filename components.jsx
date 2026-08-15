@@ -169,25 +169,25 @@ function Trend({ v, small, animate }) {
 
 // ---- Sidebar ------------------------------
 const NAV = [
-  { id: "overview", ko: "AI 신사업 브리핑", en: "New Business Brief", icon: "grid", group: "신사업 의사결정" },
-  { id: "strategy", ko: "신사업 발굴 프레임", en: "User Need → New Biz", icon: "target", group: "신사업 의사결정" },
-  { id: "ib", ko: "시장·소비자 리서치", en: "Market & Consumer Research", icon: "report", group: "신사업 의사결정" },
-  { id: "opportunity", ko: "AI 신사업 DB", en: "Market · Money · Move", icon: "target", group: "신사업 의사결정" },
-  { id: "articles", ko: "산업·고객 신호", en: "Industry & Customer Signals", icon: "news", group: "신사업 의사결정" },
-  { id: "app", ko: "AI 경험·버티컬", en: "Experience & Verticals", icon: "spark", group: "SW·서비스 밸류체인" },
-  { id: "agent", ko: "에이전트·오케스트레이션", en: "Agents & Orchestration", icon: "ai", group: "SW·서비스 밸류체인" },
-  { id: "service", ko: "서비스 플랫폼·수익화", en: "Platform & Monetization", icon: "grid", group: "SW·서비스 밸류체인" },
-  { id: "trust", ko: "데이터·컨텍스트·신뢰", en: "Data, Context & Trust", icon: "report", group: "SW·서비스 밸류체인" },
-  { id: "model", ko: "모델·온디바이스 지능", en: "Models & On-device", icon: "ai", group: "SW·서비스 밸류체인" },
-  { id: "data", ko: "개발·배포 툴링", en: "Developer & Deployment", icon: "grid", group: "SW·서비스 밸류체인" },
-  { id: "infra", ko: "엣지·클라우드 런타임", en: "Edge & Cloud Runtime", icon: "server", group: "SW·서비스 밸류체인" },
-  { id: "sanalysis", ko: "스타트업·파트너", en: "Startups & Partners", icon: "target", group: "전략·사업개발" },
-  { id: "signals", ko: "기술 변화 신호", en: "Technology Signals", icon: "spark", group: "전략·사업개발" },
-  { id: "newbiz", ko: "AI 서비스 신사업", en: "AI Service Opportunities", icon: "spark", group: "전략·사업개발" },
-  { id: "survey", ko: "수요처 조사", en: "Demand Surveys", icon: "target", group: "시장 검증" },
-  { id: "market", ko: "시장·TAM", en: "Market & TAM", icon: "grid", group: "시장 검증" },
-  { id: "stocks", ko: "Stock 분석", en: "Stock Analysis", icon: "up", group: "시장 검증" },
-  { id: "audit", ko: "데이터 신뢰센터", en: "Data Trust Center", icon: "report", group: "운영·검증" },
+  { id: "overview", ko: "AI 메모리 영상 브리핑", en: "Video Brief", icon: "grid", group: "01 · EXECUTIVE BRIEF" },
+  { id: "strategy", ko: "전략 컨설팅", en: "Pain Point → New Biz", icon: "target", group: "01 · EXECUTIVE BRIEF" },
+  { id: "ib", ko: "산업 리서치", en: "Industry Research", icon: "report", group: "01 · EXECUTIVE BRIEF" },
+  { id: "opportunity", ko: "AI 메모리 신사업 DB", en: "Demand · Bottleneck · Move", icon: "target", group: "01 · EXECUTIVE BRIEF" },
+  { id: "articles", ko: "산업·고객 신호", en: "Industry & Customer Signals", icon: "news", group: "01 · EXECUTIVE BRIEF" },
+  { id: "app", ko: "AI 앱·워크로드", en: "Applications & Workloads", icon: "spark", group: "02 · DEMAND → MEMORY" },
+  { id: "agent", ko: "에이전트·업무 흐름", en: "Agents & Workflows", icon: "ai", group: "02 · DEMAND → MEMORY" },
+  { id: "service", ko: "서비스·플랫폼 경제성", en: "Service Economics", icon: "grid", group: "02 · DEMAND → MEMORY" },
+  { id: "trust", ko: "데이터·RAG·신뢰", en: "Data, RAG & Trust", icon: "report", group: "02 · DEMAND → MEMORY" },
+  { id: "model", ko: "모델·추론 구조", en: "Models & Inference", icon: "ai", group: "02 · DEMAND → MEMORY" },
+  { id: "data", ko: "AI SW·개발·배포", en: "AI Software Stack", icon: "grid", group: "02 · DEMAND → MEMORY" },
+  { id: "infra", ko: "AI 인프라·HW", en: "AI Infrastructure & Hardware", icon: "server", group: "02 · DEMAND → MEMORY" },
+  { id: "sanalysis", ko: "스타트업·파트너", en: "Startups & Partners", icon: "target", group: "03 · PORTFOLIO DESIGN" },
+  { id: "signals", ko: "기술 변화 신호", en: "Technology Signals", icon: "spark", group: "03 · PORTFOLIO DESIGN" },
+  { id: "newbiz", ko: "신규 메모리 Biz.", en: "Memory Business Opportunities", icon: "spark", group: "03 · PORTFOLIO DESIGN" },
+  { id: "survey", ko: "수요처 조사", en: "Demand Surveys", icon: "target", group: "04 · MARKET VALIDATION" },
+  { id: "market", ko: "시장·TAM", en: "Market & TAM", icon: "grid", group: "04 · MARKET VALIDATION" },
+  { id: "stocks", ko: "Stock 분석", en: "Stock Analysis", icon: "up", group: "04 · MARKET VALIDATION" },
+  { id: "audit", ko: "데이터 신뢰센터", en: "Data Trust Center", icon: "report", group: "05 · EVIDENCE GOVERNANCE" },
 ];
 const NAV_SECTION_IDS = NAV.map(item => item.id);
 
@@ -221,7 +221,7 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
         <span className="sb-logo">
           <span className="sb-logo-mark" style={{ color: brand.bg }}><Icon name="pulse" size={18} sw={2.4} /></span>
           <span className="sb-logo-txt">
-            <b>AI</b><span>NEW BUSINESS INTELLIGENCE</span>
+            <b>AI MEMORY</b><span>STRATEGY INTELLIGENCE</span>
           </span>
         </span>
       </div>
@@ -240,6 +240,7 @@ function Sidebar({ active, onNav, brand, onLogo, onBgClick, collapsed, articleCo
                 data-nav-id={n.id} aria-current={active === n.id ? "page" : undefined}
                 onClick={stop(() => { onNav(n.id); if (cat) setOpenCat(openS ? null : n.id); })}>
                 <span className="sb-ic"><Icon name={n.icon} size={17} /></span>
+                <span className="sb-no">{String(idx + 1).padStart(2, "0")}</span>
                 <span className="sb-label">{n.ko}</span>
                 {n.id === "articles" && articleCount > 0 && (
                   <span className="sb-badge">{articleCount}</span>

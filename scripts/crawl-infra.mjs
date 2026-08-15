@@ -22,8 +22,8 @@ const GROUPS = [
     re: /에이전트|agentic|\bagent\b|어시스턴트|assistant|ai 비서|음성 비서|siri|gemini|copilot|comet|컴퓨터 유즈|computer use|tool use|툴 호출|자율 수행|autonomous|작업 자동화|task automation/i },
   { id: "multimodal", ko: "멀티모달·생성 기능", desc: "카메라·이미지·영상·음성 생성/이해 — 단말 기능", accent: "#EA580C",
     re: /멀티모달|multimodal|이미지 생성|image gen|영상 생성|video gen|음성 합성|\bTTS\b|음성 인식|\bSTT\b|보이스|voice|카메라 ai|camera|비전|vision|실시간 통역|translation|생성 편집|generative edit|아바타|avatar/i },
-  { id: "os", ko: "OS·앱·플랫폼 통합", desc: "OS·브라우저·앱 통합·개인화·권한·컨텍스트", accent: "#2D6BFF",
-    re: /운영체제|\bOS\b|android|안드로이드|\biOS\b|앱 통합|app integration|ai 브라우저|browser|개인화|personaliz|권한|permission|컨텍스트|context|플랫폼|platform|\bSDK\b|앱스토어|app store|딥링크|런타임/i },
+  { id: "os", ko: "OS·앱·플랫폼 통합", desc: "OS·브라우저·앱 통합·개인화·메모리·컨텍스트", accent: "#2D6BFF",
+    re: /운영체제|\bOS\b|android|안드로이드|\biOS\b|앱 통합|app integration|ai 브라우저|browser|개인화|personaliz|메모리|memory|컨텍스트|context|플랫폼|platform|\bSDK\b|앱스토어|app store|딥링크|런타임/i },
   { id: "service", ko: "AI 서비스·수익화 신사업", desc: "구독·앱·API·수익화·에코시스템 — 신규 서비스", accent: "#16A34A",
     re: /수익화|monetiz|구독|subscription|서비스 출시|신규 서비스|new service|신사업|new business|에코시스템|ecosystem|앱 매출|과금|pricing|\bARR\b|유료 전환|번들|bundle|마켓플레이스|marketplace/i },
 ];

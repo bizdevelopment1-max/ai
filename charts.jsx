@@ -532,7 +532,7 @@ function StockChart({ stock, rawPoints, years, marketCap, asOf, currency = "$", 
 // ---- Group trend: value-chain sector comparison (rebased to 100) ----
 // One line per STOCK_GROUP. Each group line = average of its member stocks'
 // prices, each rebased to 100 at the start of the selected window. Lets you
-// read how whole value-chain sectors (apps / models / cloud / connectivity …) trend
+// read how whole value-chain sectors (chips / memory / hyperscalers …) trend
 // against each other instead of one ticker at a time.
 function GroupTrendChart({ groups, stocks, stockData, years, theme }) {
   const [ref, inView] = useEyeLevel();

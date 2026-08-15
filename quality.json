@@ -1,38 +1,59 @@
 {
+<<<<<<< HEAD
   "generatedAt": "2026-08-15T00:21:18.737Z",
   "overall": "ok",
+=======
+  "generatedAt": "2026-08-15T00:38:26.307Z",
+  "overall": "warn",
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
-  "summary": "검증 16개 · 정상 16 · 주의 0 · 실패 0",
+  "summary": "검증 16개 · 정상 15 · 주의 1 · 실패 0",
   "checks": [
     {
       "id": "news-coverage",
       "label": "뉴스 수집",
       "status": "ok",
+<<<<<<< HEAD
       "value": "486건"
+=======
+      "value": "500건"
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
     },
     {
       "id": "source-backed",
       "label": "원문 스니펫 근거",
       "status": "ok",
+<<<<<<< HEAD
       "value": "480/486건"
+=======
+      "value": "497/500건"
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
     },
     {
       "id": "source-content-mode",
       "label": "원문 본문 추출",
       "status": "ok",
+<<<<<<< HEAD
       "value": "448/486건"
+=======
+      "value": "496/500건"
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
     },
     {
       "id": "feed-localization",
       "label": "기사 한국어 표시·영문 폴백",
       "status": "ok",
+<<<<<<< HEAD
       "value": "한국어 475 · 영문 폴백 11"
+=======
+      "value": "한국어 493 · 영문 폴백 7"
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
     },
     {
       "id": "collection-health",
       "label": "수집 스트림 상태",
       "status": "ok",
-      "value": "실패 0 · 빈 스트림 13"
+      "value": "실패 0 · 빈 스트림 14"
     },
     {
       "id": "briefing-evidence",
@@ -50,7 +71,7 @@
       "id": "stock-freshness",
       "label": "주가 최신성",
       "status": "ok",
-      "value": "54/54종목"
+      "value": "63/63종목"
     },
     {
       "id": "news-freshness",
@@ -62,25 +83,34 @@
       "id": "infra-evidence",
       "label": "인프라 시그널 근거",
       "status": "ok",
-      "value": "공개 139건 · 보존 1건"
+      "value": "공개 140건 · 보존 0건"
     },
     {
       "id": "bizmodel-evidence",
       "label": "수익화 시그널 근거",
       "status": "ok",
-      "value": "공개 31건 · 보존 14건"
+      "value": "공개 31건 · 보존 15건"
     },
     {
       "id": "research-source",
       "label": "리서치 원문 링크",
       "status": "ok",
+<<<<<<< HEAD
       "value": "공개 55건 · 보존 52건"
+=======
+      "value": "공개 61건 · 보존 45건"
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
     },
     {
       "id": "research-localization",
       "label": "리서치 3줄 표시",
+<<<<<<< HEAD
       "status": "ok",
       "value": "한국어 106 · 영문 폴백 1"
+=======
+      "status": "warn",
+      "value": "한국어 98 · 영문 폴백 2"
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
     },
     {
       "id": "market-source",
@@ -92,16 +122,17 @@
       "id": "market-db-source",
       "label": "신사업 정량 DB 원문 직접 검증",
       "status": "ok",
-      "value": "139/466건"
+      "value": "139/477건"
     },
     {
       "id": "consumer-survey-coverage",
       "label": "소비자 조사 레코드",
       "status": "ok",
-      "value": "18건"
+      "value": "11건"
     }
   ],
   "metrics": {
+<<<<<<< HEAD
     "currentArticles": 486,
     "accumulatedArticles": 616,
     "sourceBackedArticles": 480,
@@ -117,23 +148,48 @@
     "linkedResearch": 55,
     "localizedResearch": 106,
     "localizedFallbackResearch": 1,
+=======
+    "currentArticles": 500,
+    "accumulatedArticles": 608,
+    "sourceBackedArticles": 497,
+    "sourceExcerptArticles": 496,
+    "localizedArticles": 493,
+    "localizedFallbackArticles": 7,
+    "limitedArticles": 3,
+    "limitedRate": 0.006,
+    "freshStocks": 63,
+    "totalStocks": 63,
+    "linkedInfra": 140,
+    "linkedBizmodel": 31,
+    "linkedResearch": 61,
+    "localizedResearch": 98,
+    "localizedFallbackResearch": 2,
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
     "archivedMarketBaselines": 43,
     "linkedMarketRecords": 139,
-    "consumerSurveyRecords": 18
+    "consumerSurveyRecords": 11
   },
   "sources": {
     "news": {
+<<<<<<< HEAD
       "Anthropic": 4,
       "Forbes": 8,
       "The Decoder": 76,
       "TechCrunch": 82,
       "ZDNet": 30,
       "Wired": 44,
+=======
+      "TechCrunch": 88,
+      "The Decoder": 78,
+      "ZDNet": 32,
+      "Wired": 49,
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
       "AI Business": 10,
-      "Engadget": 53,
-      "Ars Technica": 7,
-      "The Verge": 51,
+      "Engadget": 54,
+      "Ars Technica": 5,
+      "The Verge": 54,
       "The Guardian": 2,
+<<<<<<< HEAD
       "9to5Google": 1,
       "MIT Tech Review": 14,
       "VentureBeat": 11,
@@ -153,7 +209,30 @@
       "CNET": 3,
       "aws.amazon.com": 1,
       "forbes.com": 2,
+=======
+      "CNBC": 16,
+      "CNET": 4,
+      "MIT Tech Review": 18,
+      "Semafor": 2,
+      "SiliconANGLE": 13,
+      "IEEE Spectrum": 10,
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
       "South China Morning Post": 2,
+      "WIRED": 1,
+      "NVIDIA Developer": 2,
+      "Forbes": 7,
+      "VentureBeat": 9,
+      "Anthropic": 2,
+      "venturebeat.com": 2,
+      "SK hynix": 1,
+      "businessinsider.com": 1,
+      "MacRumors": 3,
+      "Business Insider": 5,
+      "aws.amazon.com": 2,
+      "the-decoder.com": 2,
+      "forbes.com": 2,
+      "Databricks": 2,
+      "Fortune": 3,
       "AP News": 1,
       "Venturebeat": 1,
       "anthropic.com": 1,
@@ -161,29 +240,43 @@
       "Business Insider Africa": 1,
       "The New York Times": 1,
       "Yahoo Finance": 2,
+<<<<<<< HEAD
       "Fortune": 3,
       "Shaping Europe’s digital future": 1,
       "9to5Mac": 1,
       "Microsoft Source": 3,
       "The Register": 4,
+=======
+      "Shaping Europe’s digital future": 1,
+      "9to5Mac": 1,
+      "Microsoft Source": 3,
+      "The Register": 2,
+      "Android Authority": 1,
+      "Yahoo Finance UK": 1,
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
       "Yahoo Finance Singapore": 1,
       "Reuters": 1
     },
     "stocks": {
-      "nasdaq": 31,
-      "yahoo-spark": 1,
-      "sina": 22
+      "nasdaq": 34,
+      "naver": 1,
+      "yahoo-spark": 2,
+      "sina": 26
     }
   },
   "collection": {
+<<<<<<< HEAD
     "generatedAt": "2026-08-15T00:14:15.748Z",
+=======
+    "generatedAt": "2026-08-15T00:26:09.087Z",
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
     "mode": "source-content-extractive",
     "policyVersion": 2,
     "streams": {
-      "googleNews": 54,
+      "googleNews": 55,
       "directRss": 14
     },
-    "acceptedCandidates": 80,
+    "acceptedCandidates": 82,
     "failedStreams": [],
     "emptyStreams": [
       "google-news:Sierra AI",
@@ -194,8 +287,13 @@
       "google-news:Stability AI",
       "google-news:Kling AI",
       "google-news:Hailuo (MiniMax)",
+<<<<<<< HEAD
       "google-news:Anthropic 공식 공시",
+=======
+      "google-news:AI Infra SW",
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
       "google-news:OpenAI 공식 공시",
+      "google-news:Anthropic 공식 공시",
       "rss:Hugging Face",
       "rss:VentureBeat",
       "rss:The Register"
@@ -204,7 +302,11 @@
   },
   "notices": [
     "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",
+<<<<<<< HEAD
     "검증 제한 기사 비율: 1.2% (6/486)",
+=======
+    "검증 제한 기사 비율: 0.6% (3/500)",
+>>>>>>> 99169a2 (feat: restore AI memory consulting dashboard)
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
     "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다."

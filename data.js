@@ -513,7 +513,7 @@ window.DASH = (function () {
     // ── 시장·산업·디바이스(온디바이스 AI 관점) ──
     { date: "2026-06-18", co: "OpenAI", cat: "native", source: "Axios / The Information", title: "OpenAI, 첫 AI 디바이스 출시 채비 — Jony Ive 협업·스크린리스 기기, Foxconn 4~5천만 대", summary: "· Meta 리얼리티랩스(Quest·AI 글라스) 통신 총괄 Ha Thai 영입 — 디바이스 통신 VP\n· Jony Ive의 io/LoveFrom 협업 스크린리스·음성 중심 기기 · 연내 공개 목표(2027 지연설)·Foxconn 첫해 4~5천만 대 계획\n· 단말 관점: AI 네이티브 단말이 스마트폰·웨어러블에 새 폼팩터 경쟁축 추가 — '화면 없는 AI'가 핵심 실험", tag: "Device", url: "https://www.axios.com/2026/06/18/openai-devices-ha-thai" },
     { date: "2025-03-11", co: "OpenAI", cat: "native", source: "OpenAI", title: "OpenAI, 에이전트 구축 도구 공개 — Responses API·Computer Use·Agents SDK", summary: "· 에이전트를 '사용자를 대신해 독립적으로 작업을 수행하는 시스템'으로 정의 · Responses API·Web/File Search·Computer Use·Agents SDK 공개\n· Computer Use 모델 성공률 WebVoyager 87%·WebArena 58.1%·OSWorld 38.1% — OpenAI도 실수 가능성·휴먼 감독 필요성 명시\n· 모바일 에이전트 UX 시사점: 완전 자동화보다 사용자 승인형·작업 로그·취소/복구·민감 작업 차단이 핵심", tag: "Agent", url: "https://openai.com/index/new-tools-for-building-agents/" },
-    { date: "2026-06-09", co: "Apple", cat: "bigtech", source: "Reuters / Morgan Stanley", title: "Morgan Stanley, 노후 기기가 Apple Siri AI 확산 제약 — 지원 범위가 교체 변수", summary: "· 기존 iPhone 기반의 AI 기능 지원 범위와 체감 품질 격차가 핵심 변수\n· 고급 Siri의 기기 세대별 지원 정책과 업그레이드 경로를 별도 검증할 필요\n· 시사점: AI 기능 수보다 지원 단말 범위·과업 완료율·반복 사용이 교체수요와 프리미엄 전환의 핵심", tag: "Analysis", url: "https://www.reuters.com/business/apples-ai-siri-will-be-held-back-by-aging-devices-morgan-stanley-says-2026-06-09/" },
+    { date: "2026-06-09", co: "Apple", cat: "bigtech", source: "Reuters / Morgan Stanley", title: "Morgan Stanley, 노후 기기가 Apple Siri AI 발목 — 8.5억대 처리 제약", summary: "· iPhone 8.5억대+ 기본 Apple Intelligence 쿼리 처리 곤란 · 13억대+는 고급 Siri 기능 사용 난망\n· 고급 Siri에 12GB 통합 메모리 필요 가능성 — 하드웨어 병목 지적\n· 시사점: 온디바이스 AI는 메모리·SoC 사양이 곧 기능 격차 → 교체수요·프리미엄 전환의 핵심 변수", tag: "Analysis", url: "https://www.reuters.com/business/apples-ai-siri-will-be-held-back-by-aging-devices-morgan-stanley-says-2026-06-09/" },
     { date: "2026-05-15", co: "Apple", cat: "bigtech", source: "Financial Times / IDC", title: "FT·IDC, 생성형 AI 스마트폰 2028년 시장 70%까지 — 폴더블은 2% 미만", summary: "· IDC 전망: 생성형 AI 스마트폰 2028년 전체의 ~70% · 2026년부터 중가 제품군 확산이 관건\n· 폴더블은 전체 출하량 2% 미만 · 평균 판매가격 ~$1,400 수준\n· 시사점: 'AI 침투율'과 '실제 교체수요·프리미엄 전환율'은 분리 필요 — AI 탑재=판매 증가라는 단정은 위험", tag: "Market", url: "https://www.ft.com/content/8b806d9d-1fb6-462e-ba6a-ea357e6357e5" },
     { date: "2026-06-12", co: "", cat: "bigtech", source: "Financial Times", title: "FT, KPMG 'AI 환각' 의심 보고서 철회 — 사례·출처 오류", summary: "· KPMG, AI 환각으로 보이는 잘못된 사례·출처가 포함된 agentic AI 보고서 철회\n· UBS·NHS·스위스연방철도·Transport for London 등이 언급된 사례 부인\n· 시사점: 모든 수치·전망·사례에 소스 등급·검증일·공식/추정/보도 구분의 '팩트체크 레이어' 필요", tag: "Governance", url: "https://www.ft.com/content/b3828e92-4961-4b39-84f0-c42f33be3c3f" },
   ];
@@ -539,7 +539,7 @@ window.DASH = (function () {
     { house: "Gartner (Reuters)", type: "Research", date: "2025-06-25", title: "agentic AI 프로젝트 40%+ 2027년까지 중단 — '에이전트 워싱' 경고", figure: "40%+ 중단", rating: "Caution", url: "https://www.reuters.com/business/over-40-agentic-ai-projects-will-be-scrapped-by-2027-gartner-says-2025-06-25/",
       bullets: ["2027년 말까지 agentic AI 프로젝트 40%+ 중단 가능 — 비용·불명확한 가치·리스크", "2028년 기업 SW 33%에 agentic AI 포함 · 일상 업무 의사결정 15% 에이전트 자율 수행 전망", "'에이전트 대세' 단정 금물 — agent washing·실패율·승인형 실행·거버넌스 리스크 병기"] },
     { house: "Bridgewater (Reuters)", type: "Securities", date: "2026-02-23", title: "빅테크 2026 AI 인프라 투자 ~$650B 전망 (빅4+공급사 전체; 하이퍼스케일러 4사 단독은 ~$350~380B)", figure: "$650B(범위 주의)", rating: "Report", url: "https://www.reuters.com/business/big-tech-invest-about-650-billion-ai-2026-bridgewater-says-2026-02-23/",
-      bullets: ["Alphabet·Amazon·Meta·Microsoft 등 AI 인프라 투자 2025 ~$410B → 2026 ~$650B", "클라우드 AI 비용·컴퓨트 수급·전력 제약이 모바일 AI 서비스 원가와 응답 품질에 직접 영향", "온디바이스 AI는 프라이버시 전략이자 클라우드 추론비·지연 리스크를 줄이는 서비스 원가 전략"] },
+      bullets: ["Alphabet·Amazon·Meta·Microsoft 등 AI 인프라 투자 2025 ~$410B → 2026 ~$650B", "클라우드 AI 비용·컴퓨트 부족·메모리 수요가 모바일·PC BOM과 서비스 원가에 직접 영향", "온디바이스 AI는 프라이버시 전략이자 클라우드 비용·공급망 리스크를 줄이는 원가 전략"] },
   ];
 
   /* ---- Market Growth (global AI market size $B) — Grand View Research 최신판 ----
@@ -672,24 +672,24 @@ window.DASH = (function () {
   ];
 
   /* ---- KPI Cards (6) ---- */
-  /* ---- Executive Top-line: 사용자 수요 → 모바일 경험 → 수익모델 → 실행 의사결정 ---- */
+  /* ---- Executive Top-line: 수요 신호 → 메모리 기회 → 실행 의사결정 ---- */
   const TOPLINE = [
-    { tag: "사용자 Pain point", tone: "warn", nav: "survey",
-      now: "소비자 조사·앱 행동·기기 사용 맥락을 같은 근거 묶음으로 연결",
-      cause: "AI 기능 수보다 반복 과업의 완결성·신뢰·속도·지불 의향이 실제 사용을 결정",
-      decision: "상위 사용자 순간 3개를 정의하고 완료율·주간 유지·유료 전환 기준으로 우선순위 결정" },
-    { tag: "경쟁 플랫폼 변화", tone: "signal", nav: "strategy",
-      now: "OS·기본앱·에이전트·모델·컨텍스트·결제 통제점을 경쟁사별로 추적",
-      cause: "모델이 빠르게 평준화될수록 고객 접점과 앱 간 실행 권한이 차별화의 중심으로 이동",
-      decision: "공통 OS 기능과 자체 통제점을 분리하고 개인 컨텍스트·기기 제어·서비스 유통에 투자 집중" },
-    { tag: "AI 서비스 신사업", tone: "revenue", nav: "newbiz",
-      now: "구독·번들·거래·B2B·성과 과금과 자체 개발·제휴·투자 조합을 비교",
-      cause: "무료 기능만으로는 지속 수익이 어렵고 유통·결제·기업 fleet를 결합해야 반복 매출 확보 가능",
-      decision: "사용자 가치·단위경제성·차별화·실행 가능성을 통과한 기회만 90일 실험으로 전환" },
-    { tag: "온디바이스·클라우드", tone: "compete", nav: "infra",
-      now: "모델별 성능·지연·전력·프라이버시·추론원가를 기능 단위로 비교",
-      cause: "모든 기능을 한 모델이나 한 실행 위치에 고정하면 원가 변동과 품질·규제 리스크가 확대",
-      decision: "기능별 온디바이스 비중과 멀티모델 라우팅 기준을 정해 서비스 원가와 파트너 종속을 관리" },
+    { tag: "고객 Pain point", tone: "warn", nav: "articles",
+      now: "수요처의 제품·워크로드·도입 일정과 메모리 병목을 동일한 근거 묶음으로 연결",
+      cause: "고객의 AI 서비스 목표가 같아도 모델 구조·지연시간·전력·데이터 이동량에 따라 필요한 메모리 조합이 달라짐",
+      decision: "고객별 성능 병목과 구매 조건을 먼저 정의하고 HBM·DRAM·NAND/eSSD·CXL 제안 우선순위를 결정" },
+    { tag: "AI Stack 변화", tone: "signal", nav: "signals",
+      now: "Application·Model·System SW·Accelerator·Storage 변화를 하나의 워크로드 맵으로 추적",
+      cause: "모델 경량화와 에이전트 확산이 동시에 진행돼 용량·대역폭·지연·내구성 요구가 계층별로 분화",
+      decision: "제품 로드맵을 단일 시장 전망이 아니라 워크로드별 메모리 요구량과 고객 채택 시점으로 검증" },
+    { tag: "신규 메모리 Biz.", tone: "revenue", nav: "newbiz",
+      now: "표준 제품 판매를 넘어 Custom HBM·CXL·기업용 SSD·메모리 SW 결합 기회를 비교",
+      cause: "고객의 시스템 병목이 제품 단품보다 데이터 이동·배치·운영 소프트웨어에서 발생",
+      decision: "수요 증거·차별화·실행 가능성·수익성을 통과한 기회만 PoC와 공동 로드맵으로 전환" },
+    { tag: "AI Infra 전략", tone: "compete", nav: "infra",
+      now: "데이터센터의 Compute·Memory·Storage·Network·Power/Cooling 설계를 함께 분석",
+      cause: "AI 인프라 투자 효율은 가속기 성능이 아니라 전체 시스템의 병목 제거와 가동률에서 결정",
+      decision: "국내외 AI Infra 파트너십을 메모리 attach·고객 검증·반복 수주로 연결하는 실행 안건으로 관리" },
   ];
 
   const KPIS = [
@@ -731,6 +731,13 @@ window.DASH = (function () {
     { year: "2025", size: 440, growth: 96, src: "Big 5 합산 추정 — 2026년 대비 +36% 증가분의 역산치(Introl)" },
     { year: "2026E", size: 725, growth: 65, src: "Big 5 컨센서스 — Amazon $200B·Alphabet $175~185B·Meta $115~135B·MS $120B+·Oracle $50B" },
     { year: "2027E", size: 950, growth: 31, src: "Moody's — 2027년 $1T 근접 전망" },
+  ];
+
+  /* ---- HBM(고대역폭메모리) 시장 규모 — AI 가속기 공급망 최대 병목($B) ---- */
+  const HBM_MARKET = [
+    { year: "2025", size: 33, growth: 133, src: "Gartner 인용 — 전년比 +130%+ 성장" },
+    { year: "2026E", size: 55, growth: 67, src: "BofA 추정 — 전년比 +58%, 공급 대부분 선계약 완료" },
+    { year: "2027E", size: 86, growth: 56, src: "Gartner — 2025~2027 CAGR 60.5%" },
   ];
 
   /* ---- AI 가속기 칩 믹스 — GPU 범용 vs 하이퍼스케일러 커스텀 실리콘(%) ---- */
@@ -914,11 +921,12 @@ window.DASH = (function () {
   ];
 
   /* ============================================================
-     STOCK_GROUPS — 휴대폰 AI 신사업과 직접 연결되는 상장사 카테고리.
-     사용자 경험·서비스·모델·클라우드·모바일 컴퓨트·연결·제조를 추적합니다.
+     STOCK_GROUPS — AI 밸류체인 카테고리(칩·메모리·하이퍼스케일러·
+     데이터센터·온디바이스·AI 네이티브). STOCKS[].group 이 이 id를 참조합니다.
      ============================================================ */
   const STOCK_GROUPS = [
     { id: "chip", ko: "AI 칩", en: "AI Chips", accent: "#C026D3" },
+    { id: "memory", ko: "메모리", en: "Memory", accent: "#EA580C" },
     { id: "foundry", ko: "파운드리", en: "Foundry", accent: "#2563EB" },
     { id: "equipment", ko: "반도체 장비", en: "Semiconductor Equipment", accent: "#0F766E" },
     { id: "packaging", ko: "패키징·테스트", en: "Packaging / Test", accent: "#B45309" },
@@ -928,6 +936,7 @@ window.DASH = (function () {
     { id: "software", ko: "AI 소프트웨어·플랫폼", en: "AI Software / Platform", accent: "#DB2777" },
     { id: "device", ko: "온디바이스", en: "On-device", accent: "#16A34A" },
     { id: "native", ko: "AI 네이티브", en: "AI Native", accent: "#7A38D6" },
+    { id: "china-memory", region: "china", ko: "메모리", en: "China Memory", accent: "#0F766E" },
     { id: "china-foundry", region: "china", ko: "파운드리", en: "China Foundry", accent: "#2563EB" },
     { id: "china-equipment", region: "china", ko: "장비", en: "China Equipment", accent: "#0891B2" },
     { id: "china-packaging", region: "china", ko: "패키징·테스트", en: "China Packaging / Test", accent: "#B45309" },
@@ -938,7 +947,7 @@ window.DASH = (function () {
   /* ============================================================
      STOCKS — listed AI companies. 실제 일별 주가는 매일 자동 수집되어
      stocks.json 으로 제공됩니다(scripts/crawl-stocks.mjs · Stooq).
-     group = 휴대폰 AI 신사업 생태계 카테고리(STOCK_GROUPS 참조). 여기에는 메타데이터 +
+     group = AI 밸류체인 카테고리(STOCK_GROUPS 참조). 여기에는 메타데이터 +
      변곡점 설명(에디토리얼)만 둡니다.
      ============================================================ */
   const STOCKS = [
@@ -986,6 +995,16 @@ window.DASH = (function () {
       ticker: "INTC", name: "Intel", group: "chip", domain: "intel.com", cat: "bigtech",
       events: [],
       note: "Intel(나스닥, IDM). Gaudi AI 가속기·파운드리(IFS) 재건으로 AI 반도체 경쟁 재진입 시도 — 턴어라운드 국면.",
+    },
+    {
+      ticker: "MU", name: "Micron", group: "memory", domain: "micron.com", cat: "bigtech",
+      events: [],
+      note: "Micron(나스닥, 메모리). HBM(고대역폭메모리) 3대 공급사 중 하나로 AI 가속기 필수 부품 제공.",
+    },
+    {
+      ticker: "000660.KS", name: "SK hynix", group: "memory", domain: "skhynix.com", cat: "bigtech",
+      exchange: "KRX", events: [],
+      note: "SK hynix(한국거래소). HBM과 서버 DRAM 중심의 글로벌 메모리 공급사.",
     },
     {
       ticker: "ANET", name: "Arista Networks", group: "network", domain: "arista.com", cat: "bigtech",
@@ -1085,6 +1104,18 @@ window.DASH = (function () {
       note: "SPCX 공개 시세가 Yahoo Finance·Stooq·Nasdaq·StockAnalysis에서 확인되는 경우에만 차트에 표시합니다.",
     },
     {
+      ticker: "SNDK", name: "SanDisk", group: "memory", domain: "sandisk.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "SanDisk(나스닥). NAND 플래시와 클라이언트·데이터센터 스토리지 공급사.",
+    },
+    {
+      ticker: "WDC", name: "Western Digital", group: "memory", domain: "westerndigital.com", cat: "bigtech",
+      exchange: "NASDAQ", events: [], note: "Western Digital(나스닥). HDD 중심 데이터 스토리지 공급사.",
+    },
+    {
+      ticker: "285A.T", name: "Kioxia", group: "memory", domain: "kioxia-holdings.com", cat: "bigtech",
+      exchange: "TSE", events: [], note: "Kioxia(도쿄증권거래소). NAND 플래시와 엔터프라이즈 SSD 공급사.",
+    },
+    {
       ticker: "UMC", name: "UMC", group: "foundry", domain: "umc.com", cat: "bigtech",
       exchange: "NYSE", events: [], note: "UMC(뉴욕 ADR). 성숙 공정 중심 글로벌 파운드리.",
     },
@@ -1122,6 +1153,18 @@ window.DASH = (function () {
     },
 
     // 중국 A주 반도체 밸류체인 — 상하이·선전 거래소 상장 종목
+    {
+      ticker: "688825.SS", name: "CXMT", group: "china-memory", region: "china", domain: "cxmt.com",
+      exchange: "SSE STAR", listedAt: "2026-07-27", events: [], note: "CXMT(상하이 STAR). 중국 DRAM 공급사로 신규 상장 이력이 짧아 개별 시세와 장기 그룹 비교를 분리합니다.",
+    },
+    {
+      ticker: "603986.SS", name: "GigaDevice", group: "china-memory", region: "china", domain: "gigadevice.com",
+      exchange: "SSE", events: [], note: "GigaDevice(상하이). NOR Flash·MCU·메모리 제품 공급사.",
+    },
+    {
+      ticker: "688525.SS", name: "BIWIN Storage", group: "china-memory", region: "china", domain: "biwin.com.cn",
+      exchange: "SSE STAR", events: [], note: "BIWIN Storage(상하이 STAR). 임베디드·소비자·기업용 스토리지 공급사.",
+    },
     {
       ticker: "688981.SS", name: "SMIC", group: "china-foundry", region: "china", domain: "smics.com",
       exchange: "SSE STAR", events: [], note: "SMIC(상하이 STAR). 중국 최대 파운드리.",
@@ -1165,6 +1208,10 @@ window.DASH = (function () {
     {
       ticker: "002185.SZ", name: "Huatian Technology", group: "china-packaging", region: "china", domain: "ht-tech.com",
       exchange: "SZSE", events: [], note: "Huatian Technology(선전). 반도체 패키징·테스트 공급사.",
+    },
+    {
+      ticker: "688008.SS", name: "Montage Technology", group: "china-design", region: "china", domain: "montage-tech.com",
+      exchange: "SSE STAR", events: [], note: "Montage Technology(상하이 STAR). 서버 메모리 인터페이스·연결 칩 설계사.",
     },
     {
       ticker: "688521.SS", name: "VeriSilicon", group: "china-design", region: "china", domain: "verisilicon.com",
@@ -1243,84 +1290,85 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  // ── 휴대폰 AI SW·서비스 밸류체인 7계층 ──────────────────────────────
-  // 고객 접점 → 서비스 운영 → 기술 인에이블러 → 후방 인프라 순으로 정렬한다.
+  // ── AI 수요 → 메모리 기회 밸류체인 7계층 ───────────────────────────────
+  // Application → Model/SW → Infrastructure로 내려가며 고객 Pain point가
+  // 어떤 메모리 제품·솔루션 요구로 전환되는지 추적한다.
   // 기업은 대표 계층(primary) 1개와 인접 확장 계층(adjacent)을 함께 가져,
   // 단순 업종 분류가 아니라 "현재 통제점과 다음 확장 방향"을 동시에 보여준다.
   const VALUE_CHAIN = [
     {
-      id: "app", ko: "AI 경험·버티컬 서비스", en: "Experience & Vertical Services",
-      accent: "#EA580C", accentSoft: "#FCEBE0", stance: "OWN", stanceKo: "직접 보유",
-      controlPoint: "홈화면·OS·기본앱·일상 워크플로", economics: "구독·커머스·단말 프리미엄",
-      risk: "킬러 유스케이스 부재·외부 앱에 고객 접점 상실",
-      operatorMove: "생활·업무 버티컬 3~5개를 기본 탑재하고 계정·결제·단말 기능과 결합",
-      desc: "사용자가 휴대폰에서 직접 체감하고 비용을 지불하는 AI 경험 — 비서·검색·생산성·크리에이티브·건강·금융",
+      id: "app", ko: "AI 애플리케이션·워크로드", en: "AI Applications & Workloads",
+      accent: "#315C4A", accentSoft: "#E9F2EE", stance: "DISCOVER", stanceKo: "수요 발굴",
+      controlPoint: "사용량·동시성·응답시간·데이터 유형", economics: "서비스 성장·인프라 비용·고객가치",
+      risk: "데모 성능을 실제 운영 부하와 혼동",
+      operatorMove: "고객 서비스의 토큰·세션·데이터 흐름을 메모리 용량·대역폭·내구성 요구로 변환",
+      desc: "AI 서비스가 만드는 실제 수요 — 생성·검색·코딩·산업별 추론·데이터 처리 워크로드",
     },
     {
-      id: "agent", ko: "에이전트·오케스트레이션", en: "Agents & Orchestration",
-      accent: "#C026D3", accentSoft: "#F8E7F5", stance: "ORCHESTRATE", stanceKo: "오케스트레이션",
-      controlPoint: "의도 해석·도구 호출·멀티모델 라우팅", economics: "에이전트 구독·업무 성과 과금",
-      risk: "모델·OS 사업자가 오케스트레이션 계층을 선점",
-      operatorMove: "개인 컨텍스트와 단말 권한을 쓰는 멀티모델 에이전트 레이어를 핵심 통제점으로 확보",
-      desc: "여러 모델·앱·단말 기능을 연결해 사용자의 의도를 실제 행동으로 바꾸는 실행 계층",
+      id: "agent", ko: "에이전트·업무 흐름", en: "Agents & Workflows",
+      accent: "#4E5D78", accentSoft: "#EDF0F5", stance: "MAP", stanceKo: "동작 분석",
+      controlPoint: "도구 호출·컨텍스트 길이·동시 에이전트·체크포인트", economics: "업무 처리량·세션당 추론비·캐시 효율",
+      risk: "PoC 사용량으로 상용 트래픽을 과대 추정",
+      operatorMove: "에이전트 실행의 KV cache·메모리 풀링·스토리지 I/O 요구를 시나리오별 산출",
+      desc: "멀티스텝 AI가 만드는 장기 컨텍스트·반복 추론·상태 저장 수요",
     },
     {
-      id: "service", ko: "서비스 플랫폼·수익화", en: "Service Platform & Monetization",
-      accent: "#16A34A", accentSoft: "#E3F5EA", stance: "BUILD", stanceKo: "플랫폼 구축",
-      controlPoint: "배포·과금·정산·파트너 마켓플레이스", economics: "수수료·번들·B2B 라이선스·성과 과금",
-      risk: "트래픽만 제공하고 서비스 마진은 파트너가 회수",
-      operatorMove: "AI 서비스 스토어·번들·B2B 배포 패키지로 유통과 과금 주도권 확보",
-      desc: "서비스를 묶고 배포하며 과금·정산하는 플랫폼 계층 — 마켓플레이스·기업 구축·파트너 운영 포함",
+      id: "service", ko: "서비스·플랫폼 경제성", en: "Service & Platform Economics",
+      accent: "#466D63", accentSoft: "#EBF2F0", stance: "SIZE", stanceKo: "기회 산정",
+      controlPoint: "활성 사용자·가격·SLA·추론 원가", economics: "TCO·단위경제성·메모리 attach",
+      risk: "시장 규모와 실제 구매 예산을 혼합",
+      operatorMove: "고객 성장 시나리오를 서버·가속기·메모리 설치 기반과 조달 일정으로 연결",
+      desc: "AI 서비스의 사업모델과 확장 속도가 인프라·메모리 구매로 전환되는 계층",
     },
     {
       id: "trust", ko: "데이터·RAG·신뢰", en: "Data, RAG & Trust",
-      accent: "#0D9488", accentSoft: "#E2F5F2", stance: "CONTROL", stanceKo: "통제권 확보",
-      controlPoint: "개인 컨텍스트·ID·동의·권한·평가", economics: "신뢰 프리미엄·기업 관리·데이터 서비스",
-      risk: "프라이버시 사고·권한 오남용·데이터 이동성 규제",
-      operatorMove: "온디바이스 개인화 금고와 기업용 정책·평가 레이어를 공통 자산으로 구축",
-      desc: "개인화와 기업 배포를 가능하게 하는 컨텍스트·권한·보안·거버넌스·평가 계층",
+      accent: "#2F6F73", accentSoft: "#E8F2F2", stance: "DESIGN", stanceKo: "데이터 설계",
+      controlPoint: "벡터DB·검색·캐시·보안·데이터 지역성", economics: "검색 지연·스토리지 비용·데이터 재사용",
+      risk: "데이터 규모만으로 고성능 스토리지 수요를 단정",
+      operatorMove: "RAG·Vector DB·캐시 계층별 지연·내구성·용량 요구를 eSSD·CXL·DRAM 제안으로 연결",
+      desc: "기업 데이터가 모델에 공급되는 경로와 저장·검색·보안 요구",
     },
     {
-      id: "model", ko: "모델·온디바이스 지능", en: "Models & On-device Intelligence",
-      accent: "#7A38D6", accentSoft: "#F0E9FB", stance: "PARTNER", stanceKo: "멀티소싱",
-      controlPoint: "성능·원가·지연·프라이버시의 균형", economics: "API 사용량·라이선스·소버린 배포",
-      risk: "단일 모델 종속·추론비 변동·기능 차별화 약화",
-      operatorMove: "자체 경량 모델과 2개 이상 외부 모델을 라우팅해 비용·성능·규제 리스크 분산",
-      desc: "클라우드 프런티어 모델과 단말 경량 모델을 조합하는 지능 공급 계층",
+      id: "model", ko: "모델·추론 아키텍처", en: "Models & Inference Architecture",
+      accent: "#565D7C", accentSoft: "#EEEFF4", stance: "TRANSLATE", stanceKo: "요구 변환",
+      controlPoint: "파라미터·정밀도·MoE·컨텍스트·추론 방식", economics: "토큰당 원가·메모리 풋프린트·처리량",
+      risk: "벤치마크 수치를 실서비스 하드웨어 요구로 직결",
+      operatorMove: "학습·추론·미세조정별 메모리 대역폭·용량·전력 민감도를 분리",
+      desc: "Transformer·멀티모달·MoE·경량 모델 구조가 만드는 메모리 요구",
     },
     {
-      id: "data", ko: "개발·배포 툴링", en: "Developer & Deployment Tooling",
-      accent: "#2D6BFF", accentSoft: "#E7EEFF", stance: "ENABLE", stanceKo: "생태계 개방",
-      controlPoint: "SDK·모델 허브·평가·MLOps·배포 자동화", economics: "개발자 플랫폼·호스팅·사용량",
-      risk: "폐쇄형 SDK로 파트너 확장 속도 저하",
-      operatorMove: "단말 API·에이전트 SDK·평가도구를 개방해 외부 서비스의 탑재 비용을 낮춤",
-      desc: "모델을 앱과 서비스로 빠르게 제품화하는 SDK·모델 허브·MLOps·평가·배포 도구",
+      id: "data", ko: "AI SW·개발·배포", en: "AI Software & Deployment",
+      accent: "#3F6382", accentSoft: "#EBF0F4", stance: "OPTIMIZE", stanceKo: "SW 최적화",
+      controlPoint: "Compiler·runtime·serving·scheduler·MLOps", economics: "가동률·메모리 활용률·배포 속도",
+      risk: "하드웨어 증설로 SW 비효율을 가림",
+      operatorMove: "메모리 관리·압축·프리패치·계층화 SW를 제품 차별화와 공동 최적화 기회로 전환",
+      desc: "AI 모델을 운영하는 HW/SW 통합 계층과 메모리 효율화 기술",
     },
     {
-      id: "infra", ko: "엣지·클라우드 런타임", en: "Edge & Cloud Runtime",
-      accent: "#0891B2", accentSoft: "#E0F2F7", stance: "SOURCE", stanceKo: "선택 조달",
-      controlPoint: "추론 원가·지연시간·가용성", economics: "컴퓨트·서빙 사용량",
-      risk: "GPU·클라우드 가격과 공급 제약을 서비스 원가로 전가",
-      operatorMove: "클라우드·칩을 멀티소싱하고 온디바이스 처리율을 높여 변동비를 방어",
-      desc: "단말·엣지·클라우드에서 모델을 실행하는 런타임과 컴퓨트 — 차별화보다 원가·안정성 관리가 핵심",
+      id: "infra", ko: "AI 인프라·HW", en: "AI Infrastructure & Hardware",
+      accent: "#255D70", accentSoft: "#E8F0F3", stance: "CO-DESIGN", stanceKo: "공동 설계",
+      controlPoint: "Compute·Memory·Storage·Network·Power/Cooling", economics: "CapEx·가동률·시스템 TCO",
+      risk: "가속기 수량을 메모리 수요와 일대일로 환산",
+      operatorMove: "고객 아키텍처와 조달 로드맵을 기준으로 HBM·DRAM·NAND/eSSD·CXL 솔루션을 공동 설계",
+      desc: "AI 데이터센터와 엣지 시스템의 성능·전력·용량 병목이 만나는 실행 계층",
     },
   ];
-  // Stock 분석 전용 7계층 — 휴대폰 AI 신사업과 직접 연결되는 상장사를 하류에서 상류 순으로 재분류
+  // Stock 분석 전용 7계층 — 현재 추적 중인 상장사 63개의 실제 사업 영역을 하류에서 상류 순으로 재분류
   const STOCK_VALUE_CHAIN = [
     { id: "applications", ko: "애플리케이션·디바이스", en: "Applications & Devices", accent: "#E54B4B", accentSoft: "#FDECEC" },
     { id: "enterprise", ko: "에이전트·엔터프라이즈 SW", en: "Agents & Enterprise Software", accent: "#C026D3", accentSoft: "#FAE8FF" },
     { id: "foundation", ko: "파운데이션 모델", en: "Foundation Models", accent: "#7A38D6", accentSoft: "#F1EBFC" },
     { id: "cloud", ko: "클라우드·데이터센터", en: "Cloud & Data Centers", accent: "#2563EB", accentSoft: "#EAF0FF" },
-    { id: "compute", ko: "모바일·AI 컴퓨트", en: "Mobile & AI Compute", accent: "#0D9488", accentSoft: "#E5F7F4" },
-    { id: "connectivity", ko: "연결·네트워크", en: "Connectivity & Networking", accent: "#EA580C", accentSoft: "#FFF0E6" },
+    { id: "compute", ko: "인프라·AI 컴퓨트", en: "Infrastructure & AI Compute", accent: "#0D9488", accentSoft: "#E5F7F4" },
+    { id: "memory-network", ko: "메모리·네트워크", en: "Memory & Networking", accent: "#EA580C", accentSoft: "#FFF0E6" },
     { id: "manufacturing", ko: "제조·장비·소재", en: "Manufacturing, Equipment & Materials", accent: "#475569", accentSoft: "#EEF2F6" },
   ];
   // STOCK_GROUP_LAYER는 시장 업종의 기본 연결, STOCK_LAYER는 복합 사업자의 주력 수익모델 기준 우선 분류
   const STOCK_GROUP_LAYER = {
-    chip: "compute", foundry: "manufacturing", equipment: "manufacturing",
-    packaging: "manufacturing", network: "connectivity", hyperscaler: "cloud", datacenter: "cloud",
+    chip: "compute", memory: "memory-network", foundry: "manufacturing", equipment: "manufacturing",
+    packaging: "manufacturing", network: "memory-network", hyperscaler: "cloud", datacenter: "cloud",
     software: "enterprise", device: "applications", native: "foundation",
-    "china-foundry": "manufacturing", "china-equipment": "manufacturing",
+    "china-memory": "memory-network", "china-foundry": "manufacturing", "china-equipment": "manufacturing",
     "china-packaging": "manufacturing", "china-design": "compute", "china-materials": "manufacturing",
   };
   const STOCK_LAYER = {
@@ -1366,132 +1414,132 @@ window.DASH = (function () {
     "ElevenLabs": { layer: "app", vertical: "음성·대화 인터페이스", adjacent: ["agent", "service"], fit: "high" },
   };
 
-  // 사용자 Pain point를 휴대폰 AI 경험·수익모델·경영진 안건으로 전환하는 사업 운영 프레임.
+  // 고객 Pain point를 메모리 솔루션과 경영진 안건으로 전환하는 부서 운영 프레임.
   // 시장 신호는 companies.json의 원문·공식 활동을 합산해 자동 갱신한다.
-  const MOBILE_STRATEGY = {
-    northStar: "모델 자체보다 고객 접점·개인 컨텍스트·서비스 유통·과금을 통제하는 휴대폰 AI 플랫폼",
+  const MEMORY_STRATEGY = {
+    northStar: "SK hynix 주요 고객의 현황·기술·전략을 메모리 Pain point와 맞춤형 실행안으로 전환",
     operatingModel: [
       {
-        no: "01", en: "USER SIGNAL", title: "사용자 Pain point 정의",
-        scope: "소비자 조사·앱 행동·기기 사용 맥락·지역별 수요",
-        question: "어떤 반복 과업과 불편이 AI 기능의 사용·지불 의향으로 이어지는가",
-        output: "User need & moment map", gate: "정량 수요·행동 근거 확인",
+        no: "01", en: "CLIENT SIGNAL", title: "고객 Pain point 정의",
+        scope: "Hyperscaler·OEM·AI 서비스·워크로드",
+        question: "어떤 서비스 병목과 구매 조건이 메모리 선택을 바꾸는가",
+        output: "Key account pain-point map", gate: "고객 근거·담당자 확인",
       },
       {
-        no: "02", en: "EXPERIENCE DESIGN", title: "모바일 경험 설계",
-        scope: "AI App·Agent·OS·Model·Cloud·Device API",
-        question: "사용자 과업을 어떤 온디바이스·클라우드 조합으로 가장 빠르고 안전하게 완결하는가",
-        output: "Experience & control-point map", gate: "완료율·지연·전력·신뢰 검증",
+        no: "02", en: "TECH TRANSLATION", title: "메모리 요구량 변환",
+        scope: "AI App·Model·HW·SW·시스템 구조",
+        question: "기술 변화가 용량·대역폭·지연·전력·내구성에 미치는 영향은 무엇인가",
+        output: "Workload-to-memory requirement", gate: "벤치마크·아키텍처 검증",
       },
       {
-        no: "03", en: "BUSINESS DESIGN", title: "수익모델·파트너 설계",
-        scope: "구독·번들·커머스·B2B·성과 과금·파트너 수익배분",
-        question: "어떤 소유·제휴·투자 구조가 사용자 가치와 반복 매출을 함께 만드는가",
-        output: "Business model & partner case", gate: "ARPU·원가·전환율·차별성",
+        no: "03", en: "BUSINESS DESIGN", title: "솔루션·사업성 설계",
+        scope: "HBM·DRAM·NAND/eSSD·CXL·Software",
+        question: "제품 조합과 파트너 구조가 고객 TCO와 SK hynix 수익을 함께 개선하는가",
+        output: "Solution concept & business case", gate: "TCO·수익성·차별성",
       },
       {
-        no: "04", en: "EXECUTION GATE", title: "실험·출시 전환",
-        scope: "Prototype·A/B test·지역 출시·기본 탑재·파트너 확장",
-        question: "어떤 KPI와 책임자가 90일 안에 다음 투자 결정을 가능하게 하는가",
-        output: "Executive decision & 90-day experiment", gate: "Scale·Iterate·Stop",
+        no: "04", en: "EXECUTION GATE", title: "대내외 실행 전환",
+        scope: "PoC·인증·Design-in·공동 로드맵·반복 수주",
+        question: "누가 언제 어떤 완료 기준으로 다음 단계까지 책임지는가",
+        output: "Executive decision & 90-day action", gate: "Go·Watch·No-Go",
       },
     ],
     decisionOutputs: [
-      { cadence: "USER", title: "사용자 Need-State Map", detail: "사용자·상황·과업·불편·지불 의향을 한 장으로 연결" },
-      { cadence: "EXPERIENCE", title: "Mobile AI Experience Blueprint", detail: "앱·에이전트·OS·모델·단말 기능의 통제점과 경험 흐름을 설계" },
-      { cadence: "BIZ", title: "Revenue & Partner Case", detail: "구독·번들·거래·B2B 수익과 자체 개발·제휴·투자 역할을 비교" },
-      { cadence: "EXECUTE", title: "90-Day Experiment Board", detail: "Prototype·A/B test·출시·확장 게이트와 책임자를 추적" },
+      { cadence: "ACCOUNT", title: "고객 Pain Point Map", detail: "고객별 워크로드·시스템 병목·구매 조건·의사결정자를 한 장으로 연결" },
+      { cadence: "TECH", title: "Memory Requirement Tree", detail: "AI App·HW·SW 변화를 용량·대역폭·지연·전력·내구성 요구로 정량 변환" },
+      { cadence: "BIZ", title: "Opportunity Business Case", detail: "솔루션 조합·TCO·차별성·수익성·파트너 역할을 비교" },
+      { cadence: "EXECUTE", title: "90-Day Decision Board", detail: "PoC·인증·Design-in·수주 게이트와 대내외 책임자를 추적" },
     ],
-    accountScope: "공식 제품·플랫폼·개발자 문서로 확인되는 경쟁사 통제점을 비교하며 비공개 제휴나 미공개 로드맵을 추정하지 않음",
+    accountScope: "공개 공급·제품 통합·협력 발표와 수요 아키텍처를 구분해 관리하며 비공개 매출 고객 명단으로 해석하지 않음",
     accountPortfolio: [
       {
-        name: "Apple", tier: "통합형 경쟁 벤치마크", relation: "OFFICIAL PRODUCT", tone: "navy",
-        platform: "iPhone · iOS · Apple Intelligence", demand: "개인 비서·글쓰기·이미지·기기 내 개인화",
-        signal: "기기·OS·기본앱·계정·서비스를 하나의 경험으로 묶어 AI 기능을 제품 가치에 통합",
-        pain: "프라이버시와 유용성을 유지하면서 반복 사용과 기기 교체 가치를 동시에 증명",
-        move: "기능 수 비교보다 일상 과업 완료율·기본앱 연결·온디바이스 처리·서비스 전환을 벤치마크",
-        gate: "사용자 과업 → 경험 완결 → 신뢰 검증 → 유지율·기기 가치",
-        source: "Apple Intelligence", sourceDate: "공식 제품 페이지",
-        sourceUrl: "https://www.apple.com/apple-intelligence/",
+        name: "NVIDIA", tier: "공개 제품 통합", relation: "DIRECT EVIDENCE", tone: "navy",
+        platform: "GB300 · Vera Rubin 200", demand: "Agentic AI·장문맥 추론·고동시성 inference",
+        signal: "Rubin GPU 기준 HBM4 최대 288GB·22TB/s — decode 구간의 메모리 이동 병목을 시스템 단위로 최적화",
+        pain: "HBM 용량·실효 대역폭·열·전력·수율을 동시에 맞추면서 세대 전환 인증 일정을 단축",
+        move: "HBM4·SOCAMM2·eSSD를 GPU·CPU·냉각 로드맵과 공동 설계하고 12/16단 적층 인증 게이트를 통합",
+        gate: "샘플 → 열·전력 검증 → 시스템 인증 → 양산 Design-in",
+        source: "SK hynix GTC 2026 · NVIDIA Rubin Architecture", sourceDate: "2026-07-21",
+        sourceUrl: "https://developer.nvidia.com/blog/inside-nvidia-rubin-gpu-architecture-powering-the-era-of-agentic-ai/",
       },
       {
-        name: "Google DeepMind", tier: "OS·모델 수직통합", relation: "OFFICIAL PRODUCT", tone: "blue",
-        platform: "Android · Gemini · Google Services", demand: "검색·멀티모달·화면·앱 간 작업 실행",
-        signal: "모델·OS·검색·클라우드·서비스 배포를 결합해 Android 전반으로 AI 접점을 확장",
-        pain: "공통 OS 경험과 제조사별 차별화 사이에서 고객 접점과 데이터 권한을 배분",
-        move: "Android 기본 기능은 활용하되 개인 컨텍스트·기기 제어·서비스 과금은 자체 통제점으로 분리",
-        gate: "OS 의존성 → 차별 기능 → 데이터 권한 → 수익 귀속",
-        source: "Android Gemini", sourceDate: "공식 제품 페이지",
-        sourceUrl: "https://www.android.com/ai/gemini/",
+        name: "Microsoft", tier: "공개 협력 확대 검토", relation: "DISCLOSED REVIEW", tone: "blue",
+        platform: "Azure AI · Maia 200", demand: "클라우드 AI 학습·추론·데이터센터 확장",
+        signal: "SK Group·Microsoft가 HBM과 AI 데이터센터 협력 확대를 논의 — 장기 HBM 공급은 검토 단계로 명시",
+        pain: "자체 가속기와 GPU 혼합 환경에서 공급 안정성·전력·총 배치비용을 함께 낮추는 조달 구조",
+        move: "Maia·Azure 워크로드별 HBM 요구량을 분리하고 장기 공급·공동 검증·클라우드 솔루션을 단계 계약으로 설계",
+        gate: "워크로드 기준선 → HBM 규격 합의 → 장기 공급 조건 → 공동 AI Infra 과제",
+        source: "SK hynix Newsroom", sourceDate: "2026-02-13",
+        sourceUrl: "https://news.skhynix.com/global-big-tech-ai-partnership-ms/",
       },
       {
-        name: "Microsoft", tier: "기업·업무 배포 벤치마크", relation: "OFFICIAL PRODUCT", tone: "teal",
-        platform: "Copilot · Microsoft 365 · Windows", demand: "업무 검색·문서 작성·회의·기업 데이터 연결",
-        signal: "생산성 앱·기업 계정·관리 정책을 묶어 AI를 좌석 기반 반복 매출과 업무 흐름에 연결",
-        pain: "개인용 휴대폰 경험과 기업용 보안·관리·데이터 경계를 동시에 충족",
-        move: "업무용 AI를 단말 기능이 아닌 계정·앱·보안·관리 패키지로 설계해 기업 fleet 수익화 검증",
-        gate: "업무 시나리오 → 기업 정책 → 좌석 활성 → 유지·확장 매출",
-        source: "Microsoft Copilot", sourceDate: "공식 제품 페이지",
-        sourceUrl: "https://www.microsoft.com/en-us/microsoft-copilot/",
+        name: "Meta AI", tier: "공개 공급·공동 최적화", relation: "DIRECT EVIDENCE", tone: "teal",
+        platform: "Meta Data Center · MTIA", demand: "추천·광고·Llama 학습·추론·AI Glasses",
+        signal: "SK hynix Newsroom 기준 eSSD·서버 DRAM 공급과 차세대 MTIA용 HBM 기술 방향 협의가 공개됨",
+        pain: "대규모 추천·추론의 TCO와 MTIA 세대별 HBM 공급 안정성, 웨어러블의 저전력 메모리 요구를 동시 대응",
+        move: "MTIA-HBM 공동 최적화와 eSSD·서버 DRAM attach를 묶고 AI Glasses에는 LPDDR·NAND 저전력 패키지를 별도 설계",
+        gate: "MTIA 요구 확정 → HBM 샘플 → 데이터센터 검증 → 세대별 공급·제품군 확대",
+        source: "SK hynix Newsroom", sourceDate: "2026-02-13",
+        sourceUrl: "https://news.skhynix.com/global-big-tech-ai-partnership-meta/",
       },
       {
-        name: "Meta AI", tier: "앱·광고·웨어러블 확장", relation: "OFFICIAL PRODUCT", tone: "indigo",
-        platform: "Meta AI · Family of Apps · Wearables", demand: "대화·콘텐츠 생성·소셜 공유·카메라 기반 보조",
-        signal: "대규모 앱 유통과 광고 경제를 AI 어시스턴트·크리에이터 도구·웨어러블 경험으로 확장",
-        pain: "무료 사용량을 광고·커머스·기기 가치로 전환하면서 신뢰와 브랜드 안전을 관리",
-        move: "소셜 그래프를 모방하기보다 카메라·통화·기기 제어·개인 컨텍스트 기반 독점 순간을 확보",
-        gate: "도달률 → 주간 사용 → 거래·서비스 전환 → 기기 차별화",
-        source: "Meta AI", sourceDate: "공식 제품 페이지",
-        sourceUrl: "https://www.meta.ai/",
+        name: "Google DeepMind", tier: "수요 아키텍처 기준", relation: "NO DIRECT CLAIM", tone: "indigo",
+        platform: "Google Cloud · Ironwood TPU", demand: "초대형 학습·MoE·decode-heavy inference",
+        signal: "Ironwood 공개 사양은 칩당 HBM 192GiB·약 7.4TB/s, Pod 최대 9,216칩과 HW·XLA·Pallas co-design을 제시",
+        pain: "HBM·VMEM·host memory 간 데이터 이동과 sharding·kernel 최적화가 실효 성능을 좌우",
+        move: "직접 공급 관계를 가정하지 않고 공개 아키텍처를 기준으로 HBM 용량·대역폭·host DRAM·offload 제안 범위를 설계",
+        gate: "공개 workload benchmark → 요구량 모델 → 기술 접점 확인 → 고객 검증",
+        source: "Google Cloud TPU7x Documentation", sourceDate: "2026-07",
+        sourceUrl: "https://docs.cloud.google.com/tpu/docs/tpu7x",
       },
       {
-        name: "OpenAI", tier: "모델·소비자 서비스 파트너", relation: "OFFICIAL PRODUCT", tone: "slate",
-        platform: "ChatGPT · Mobile App · API", demand: "범용 대화·검색·음성·카메라·에이전트 작업",
-        signal: "소비자 앱과 개발자 API를 함께 운영해 프런티어 모델 기능을 빠르게 직접 서비스로 전환",
-        pain: "외부 모델 혁신 속도를 활용하면서 브랜드·고객 데이터·과금 관계의 종속을 제한",
-        move: "단일 독점보다 멀티모델 계약·기능별 라우팅·공동 출시·데이터 경계 조건을 포트폴리오로 관리",
-        gate: "기능 적합 → 원가·지연 → 데이터 권한 → 차별화·수익배분",
-        source: "ChatGPT Mobile", sourceDate: "공식 제품 페이지",
-        sourceUrl: "https://openai.com/chatgpt/download/",
+        name: "Amazon", tier: "수요 아키텍처 기준", relation: "NO DIRECT CLAIM", tone: "slate",
+        platform: "AWS Trainium2 · UltraServer", demand: "Foundation model 학습·실시간 추론·Bedrock",
+        signal: "AWS 공개 사양은 Trainium2 칩당 HBM 96GiB·2.9TB/s, UltraServer 6TiB·185TB/s를 제시",
+        pain: "가속기 메모리와 host DRAM·네트워크·checkpoint storage의 균형, 가격 대비 처리량과 장애 복구",
+        move: "직접 고객으로 단정하지 않고 Trainium 워크로드를 HBM·server DRAM·eSSD 기회 가설과 검증 질문으로 전환",
+        gate: "Neuron profile → 병목 구간 → 제품 조합 → TCO·복구 PoC",
+        source: "AWS News Blog", sourceDate: "2024-12-03",
+        sourceUrl: "https://aws.amazon.com/blogs/aws/amazon-ec2-trn2-instances-and-trn2-ultraservers-for-aiml-training-and-inference-is-now-available/",
       },
     ],
     workloadMap: [
-      { no: "01", workload: "Personal Assistant", shift: "음성·화면·앱·캘린더를 넘나드는 멀티스텝 개인 업무", bottleneck: "권한 동의·앱 간 실행·개인화 정확도·응답 지연", platform: "OS action API + 개인 컨텍스트 금고 + 멀티모델 라우팅", opportunity: "기본 탑재 개인 에이전트와 프리미엄 자동화", proof: "과업 완료율·주간 사용·p95 지연·유료 전환" },
-      { no: "02", workload: "Camera & Creation", shift: "촬영·편집·생성·공유가 한 흐름으로 통합", bottleneck: "실시간 처리·배터리·품질 일관성·콘텐츠 신뢰", platform: "온디바이스 멀티모달 + 클라우드 고품질 생성 + 출처 표시", opportunity: "크리에이터 번들·편집 구독·커머스 연결", proof: "완성 콘텐츠율·처리시간·공유율·ARPU" },
-      { no: "03", workload: "Communication", shift: "통화·메시지·회의의 번역·요약·후속 실행", bottleneck: "실시간성·화자 분리·민감정보·지역별 언어 품질", platform: "통화·메시지 API + 온디바이스 음성 + 동의·보관 정책", opportunity: "통신·회의 프리미엄과 기업 보안 패키지", proof: "사용 세션·정확도·재사용률·기업 좌석" },
-      { no: "04", workload: "Work & Enterprise", shift: "업무 앱·기업 데이터·단말 관리와 에이전트 결합", bottleneck: "기업 ID·데이터 경계·정책 집행·감사 가능성", platform: "Enterprise agent SDK + 정책·평가 + fleet 관리", opportunity: "B2B 라이선스·관리 서비스·파트너 솔루션", proof: "활성 좌석·업무 절감시간·갱신률·보안 사고" },
-      { no: "05", workload: "Commerce & Device Control", shift: "검색·추천·예약·결제·스마트홈 제어를 대화로 완결", bottleneck: "거래 신뢰·수수료 귀속·실행 오류·파트너 연결", platform: "Wallet·ID·결제 + action API + 파트너 마켓플레이스", opportunity: "거래 수수료·리드 과금·서비스 번들", proof: "완료 거래·GMV·오류율·파트너 매출" },
+      { no: "01", workload: "Frontier Training", shift: "Trillion-scale dense·MoE와 대규모 병렬 학습", bottleneck: "모델·activation·optimizer 상주 용량, collective 통신, checkpoint stall", memory: "HBM4 용량·대역폭 + server DRAM + 고처리량 eSSD", opportunity: "Custom HBM·checkpoint eSSD 공동 검증", proof: "MFU·step time·checkpoint recovery·W/TCO" },
+      { no: "02", workload: "Reasoning / Agent", shift: "장문맥·multi-step·tool call·reinforcement learning 확대", bottleneck: "decode memory-bound, KV cache 증가, 동시 sandbox와 CPU orchestration", memory: "고용량 HBM4 + SOCAMM/MRDIMM + 계층형 cache", opportunity: "Inference memory tier·CPU attach memory", proof: "tokens/s·tokens/W·KV hit·tail latency" },
+      { no: "03", workload: "High-throughput Inference", shift: "Batch·quantization·speculative decoding·MoE routing", bottleneck: "실효 대역폭·메모리 locality·전력·서비스 지연", memory: "HBM bandwidth efficiency + 저전력 DRAM", opportunity: "Workload-tuned HBM·저전력 server memory", proof: "achieved BW·p99 latency·cost/token" },
+      { no: "04", workload: "RAG / Vector DB", shift: "기업 데이터 연결·embedding·긴 context retrieval", bottleneck: "랜덤 read·index cache·hot/cold tier 이동·데이터 신선도", memory: "MRDIMM/CXL memory pool + low-latency eSSD", opportunity: "Vector tier reference architecture", proof: "QPS·recall·cache hit·$/query" },
+      { no: "05", workload: "Data / Checkpoint Plane", shift: "지속 학습·모델 버전·대규모 dataset·failure recovery", bottleneck: "ingest·shuffle·checkpoint write·내구성·복구 시간", memory: "Server DRAM buffer + enterprise NAND/eSSD", opportunity: "AI data pipeline eSSD·telemetry", proof: "GB/s·DWPD·recovery time·GPU idle" },
     ],
     opportunityPortfolio: [
-      { horizon: "H1 · CORE", title: "OS-Native Personal Agent", customer: "소비자·프로 사용자", thesis: "기본앱과 단말 기능을 실제로 실행하는 경험이 단순 챗봇보다 높은 반복 가치를 형성", offer: "개인 에이전트·action API·멀티모델 라우팅", gate: "과업 완료율·주간 유지·지연·동의율", score: "Scale now" },
-      { horizon: "H1 · EXPERIENCE", title: "AI Camera & Creator Suite", customer: "크리에이터·일반 소비자", thesis: "카메라는 온디바이스 멀티모달과 생성형 AI를 차별화하기 가장 직접적인 휴대폰 접점", offer: "촬영 보조·생성 편집·공유·커머스 번들", gate: "완성률·공유율·처리 원가·유료 전환", score: "Build PoC" },
-      { horizon: "H2 · CONTROL", title: "Personal Context & Trust Layer", customer: "소비자·기업·개발자", thesis: "앱 간 개인화와 안전한 실행을 위한 동의·권한·평가 계층이 장기 플랫폼 통제점", offer: "컨텍스트 금고·정책 API·감사·평가 서비스", gate: "동의율·재사용 앱·정책 준수·사고율", score: "Productize" },
-      { horizon: "H2 · PLATFORM", title: "AI Service Distribution", customer: "앱 파트너·기업·통신 유통", thesis: "기본 탑재·결제·번들·기업 fleet를 결합하면 파트너의 시장 진입 비용을 낮추고 반복 매출을 확보", offer: "AI 서비스 스토어·B2B 패키지·성과 정산", gate: "파트너 GMV·ARPU·수익배분·갱신률", score: "Incubate" },
+      { horizon: "H1 · CORE", title: "HBM4 / Custom HBM", customer: "NVIDIA·MTIA·Maia 계열", thesis: "decode·장문맥·고동시성에서 용량과 실효 대역폭을 동시 개선", offer: "HBM4·base die·controller·thermal co-design", gate: "고객 인증·yield·W/TCO·양산 일정", score: "Scale now" },
+      { horizon: "H2 · ADJACENCY", title: "CPU Attach Memory", customer: "Agentic AI·host orchestration", thesis: "KV cache·sandbox·CPU orchestration 확대로 accelerator 밖 메모리 계층 중요성 상승", offer: "SOCAMM2·MRDIMM·CXL pooling 조합", gate: "workload attach·latency·SW enablement·JEDEC", score: "Build PoC" },
+      { horizon: "H2 · DATA PLANE", title: "AI eSSD", customer: "Training·RAG·checkpoint", thesis: "GPU 유휴시간을 만드는 ingest·checkpoint·retrieval 병목을 저장장치 단계에서 제거", offer: "고처리량·저지연 eSSD와 telemetry", gate: "endurance·QoS·recovery·$/TBW", score: "Qualify" },
+      { horizon: "H3 · SERVICE", title: "Memory Co-design Service", customer: "Hyperscaler·OEM·AI Infra", thesis: "제품 판매 전 워크로드 profile을 메모리 사양·TCO·로드맵으로 변환하는 반복 가능한 고객 인터페이스", offer: "Profiler·requirement tree·TCO model·qualification kit", gate: "고객 데이터권한·benchmark 재현·수주 전환", score: "Incubate" },
     ],
     expertSignals: [
-      { lens: "DEVICE·OS", title: "Apple Intelligence: 기기·OS·기본앱에 AI 경험 통합", implication: "독립 앱보다 기본 사용 흐름 안에서 과업을 끝내는 경험과 프라이버시 설계를 우선 검증", source: "Apple", date: "공식 제품", url: "https://www.apple.com/apple-intelligence/" },
-      { lens: "OS·MODEL", title: "Android Gemini: 모델을 화면·앱·검색 접점으로 확장", implication: "공통 OS 기능과 차별 기능을 분리하고 개인 컨텍스트·기기 제어·수익 귀속을 자체 통제", source: "Android", date: "공식 제품", url: "https://www.android.com/ai/gemini/" },
-      { lens: "ENTERPRISE", title: "Microsoft Copilot: 계정·생산성 앱·기업 정책의 결합", implication: "업무용 AI를 좌석·보안·관리·데이터 연결이 포함된 반복 매출 패키지로 설계", source: "Microsoft", date: "공식 제품", url: "https://www.microsoft.com/en-us/microsoft-copilot/" },
-      { lens: "APP·AD", title: "Meta AI: 대규모 앱 유통을 어시스턴트·콘텐츠·웨어러블로 확장", implication: "도달률만 보지 않고 주간 사용·거래 전환·기기 차별화까지 하나의 퍼널로 측정", source: "Meta", date: "공식 제품", url: "https://www.meta.ai/" },
-      { lens: "MODEL·SERVICE", title: "ChatGPT Mobile: 프런티어 기능을 소비자 앱과 API로 동시 배포", implication: "모델 성능·원가·데이터 권한·차별화·수익배분을 기능별 파트너 포트폴리오로 관리", source: "OpenAI", date: "공식 제품", url: "https://openai.com/chatgpt/download/" },
+      { lens: "HW", title: "Rubin: agentic inference의 decode가 memory subsystem bound", implication: "HBM4 용량·대역폭을 peak spec이 아닌 achieved bandwidth·tokens/W로 제안", source: "NVIDIA Technical Blog", date: "2026-07-21", url: "https://developer.nvidia.com/blog/inside-nvidia-rubin-gpu-architecture-powering-the-era-of-agentic-ai/" },
+      { lens: "HW·SW", title: "Ironwood: HBM·VMEM·host memory와 XLA·Pallas의 co-design", implication: "메모리 제품 사양과 sharding·kernel·offload 조건을 같은 요구사항 트리에서 검증", source: "Google Cloud", date: "2026-03-23", url: "https://cloud.google.com/blog/products/compute/training-large-models-on-ironwood-tpus" },
+      { lens: "SYSTEM", title: "Trainium2: HBM·NeuronLink·EFA·FSx를 UltraServer로 확장", implication: "가속기 메모리뿐 아니라 host DRAM·network·checkpoint eSSD까지 system TCO로 비교", source: "AWS News Blog", date: "2024-12-03", url: "https://aws.amazon.com/blogs/aws/amazon-ec2-trn2-instances-and-trn2-ultraservers-for-aiml-training-and-inference-is-now-available/" },
+      { lens: "ACCOUNT", title: "Meta: server DRAM·eSSD 공급에서 MTIA-HBM 공동 최적화로 확대", implication: "제품군별 영업을 계정 단위 공동 로드맵과 attach 전략으로 전환", source: "SK hynix Newsroom", date: "2026-02-13", url: "https://news.skhynix.com/global-big-tech-ai-partnership-meta/" },
+      { lens: "ACCOUNT", title: "Microsoft: HBM에서 AI data center·cloud solution까지 협력 범위 검토", implication: "공급 계약·기술 검증·AI Infra 사업을 분리된 게이트로 관리", source: "SK hynix Newsroom", date: "2026-02-13", url: "https://news.skhynix.com/global-big-tech-ai-partnership-ms/" },
     ],
     choices: [
-      { no: "01", title: "Personal Context", where: "데이터·컨텍스트·신뢰", win: "온디바이스 처리·명시적 동의·앱 간 권한을 공통 서비스로 제공", kpi: "온디바이스 처리율 · 동의율 · 컨텍스트 재사용 앱 수" },
-      { no: "02", title: "Multi-model Agent", where: "에이전트·오케스트레이션", win: "성능·가격·프라이버시에 따라 모델을 라우팅하고 단말 기능을 안전하게 실행", kpi: "완료율 · 건당 추론원가 · 재시도율 · 월간 활성 에이전트" },
-      { no: "03", title: "Service Distribution", where: "서비스 플랫폼·수익화", win: "기본 탑재·번들·결제·B2B 배포를 묶어 파트너의 시장진입 비용을 낮춤", kpi: "유료 전환율 · 서비스 ARPU · 파트너 GMV · 수익배분율" },
-      { no: "04", title: "Vertical Portfolio", where: "AI 경험·버티컬 서비스", win: "자체 개발·독점 제휴·지분투자를 조합해 생활·업무 핵심 시나리오를 선점", kpi: "주간 이용률 · 기능당 유지율 · 파트너별 CAC · 번들 해지율" },
+      { no: "01", title: "Customer Pain Point Strategy", where: "주요 고객 현황·기술·전략", win: "고객별 워크로드·구매 조건·시스템 병목을 메모리 관점의 맞춤 전략으로 연결", kpi: "고객 근거 최신성 · Pain point 검증률 · 공동 과제 전환율" },
+      { no: "02", title: "AI App / HW / SW Opportunity", where: "AI Application·Hardware·Software 변화", win: "AI 기술 변화를 용량·대역폭·지연·전력·내구성 요구와 신규 메모리 Biz. 기회로 정량 변환", kpi: "워크로드 커버리지 · 요구량 오차 · 신규 기회 파이프라인" },
+      { no: "03", title: "Memory Solution Design", where: "HBM·DRAM·NAND/eSSD·CXL", win: "제품 단품이 아닌 시스템 TCO·성능 병목 중심의 고객 맞춤 메모리 솔루션 설계", kpi: "고객 PoC · 인증 통과율 · 제품 attach · 반복 수주" },
+      { no: "04", title: "AI Infra Execution Strategy", where: "SK hynix AI Infra 대내·대외", win: "대내 역량·대외 고객·파트너·투자·공동 로드맵을 하나의 실행 포트폴리오로 연결", kpi: "대내 실행률 · 대외 공동 로드맵 · 설계 반영 · 실현 매출" },
     ],
     capabilities: [
-      { no: "01", title: "Consumer Insight", detail: "사용자 과업·불편·지불 의향·지역·세그먼트·교체 요인", output: "Need-state map" },
-      { no: "02", title: "Mobile UX & OS", detail: "기본앱·단말 권한·카메라·통화·메시지·Wallet·멀티디바이스", output: "Experience blueprint" },
-      { no: "03", title: "Agent & Model Economics", detail: "멀티모델 라우팅·온디바이스 비중·지연·품질·건당 추론원가", output: "Unit economics" },
-      { no: "04", title: "Partner & Portfolio", detail: "자체 개발·제휴·라이선스·지분투자·인수·수익배분 구조", output: "Business case" },
-      { no: "05", title: "Trust & Enterprise", detail: "개인정보·동의·정책·평가·기업 ID·fleet 관리·감사", output: "Launch guardrail" },
+      { no: "01", title: "Data Center Workload", detail: "서비스 트래픽·모델 구조·컴퓨트 토폴로지·스토리지 경로", output: "Pain point map" },
+      { no: "02", title: "HW / SW Architecture", detail: "가속기·CPU·네트워크·시스템 SW·데이터 파이프라인", output: "Memory requirement" },
+      { no: "03", title: "Memory & Semiconductor", detail: "HBM·DRAM·NAND/eSSD·CXL의 성능·전력·신뢰성 trade-off", output: "Solution concept" },
+      { no: "04", title: "Strategy & Consulting", detail: "시장 구조·경쟁·고객 경제성·파트너십·사업성", output: "Executive case" },
+      { no: "05", title: "LLM / RAG / Vector DB", detail: "Transformer·Prompt Engineering·RAG·Vector DB 기반 워크로드 변화", output: "Demand scenario" },
     ],
     horizons: [
-      { id: "h1", label: "01 · DISCOVER", title: "수요·통제점 정의", actions: ["사용자 과업·지불 의향·경쟁 경험 근거 수집", "OS·앱·계정·결제·데이터 통제점 분리", "상위 3개 사용 사례와 정보 공백 명시"] },
-      { id: "h2", label: "02 · DESIGN", title: "경험·사업 설계", actions: ["온디바이스·클라우드·멀티모델 조합 비교", "구독·번들·거래·B2B 수익모델 산정", "자체 개발·제휴·투자와 출시 KPI 설정"] },
-      { id: "h3", label: "03 · DECIDE", title: "90일 실험 실행", actions: ["Scale·Iterate·Stop 안건 상정", "제품·서비스·파트너 책임자와 일정 지정", "완료율·유지율·ARPU·원가·신뢰 KPI 추적"] },
+      { id: "h1", label: "01 · DISCOVER", title: "Pain point 정의", actions: ["고객·워크로드·아키텍처 근거 수집", "현재 병목과 구매 조건 분리", "검증 질문과 정보 공백 명시"] },
+      { id: "h2", label: "02 · DESIGN", title: "솔루션·사업 설계", actions: ["메모리 요구량과 시스템 TCO 산정", "제품·SW·파트너 조합 비교", "PoC·인증·수익성 기준 설정"] },
+      { id: "h3", label: "03 · DECIDE", title: "경영진 실행", actions: ["Go/Watch/No-Go 안건 상정", "고객 공동 로드맵과 담당자 지정", "수주·검증·재평가 KPI 추적"] },
     ],
   };
 
@@ -1510,8 +1558,10 @@ window.DASH = (function () {
     "AMD": { founded: "1969", ceo: "Lisa Su", hq: "미국 캘리포니아州 산타클라라", business: ["CPU(Ryzen·EPYC)", "GPU·AI 가속기(Instinct)", "데이터센터·임베디드"] },
     "Broadcom": { founded: "1991/2016(Avago 합병)", ceo: "Hock Tan", hq: "미국 캘리포니아州 팰로앨토", business: ["반도체(네트워킹·커스텀 AI칩)", "인프라 SW(VMware)"] },
     "TSMC": { founded: "1987 · Morris Chang", ceo: "C.C. Wei", hq: "대만 신주", business: ["반도체 파운드리(첨단 공정)", "AI·HPC 칩 위탁생산"] },
+    "Micron": { founded: "1978", ceo: "Sanjay Mehrotra", hq: "미국 아이다호州 보이시", business: ["DRAM·NAND 메모리", "HBM(AI 가속기용)"] },
     "CoreWeave": { founded: "2017", ceo: "Michael Intrator", hq: "미국 뉴저지州", business: ["GPU 클라우드(AI 전용)", "데이터센터 인프라"] },
     "Applied Digital": { founded: "2001", hq: "미국 텍사스州 댈러스", business: ["AI·HPC 데이터센터", "GPU 클라우드 호스팅"] },
+    "SK hynix": { founded: "1983", hq: "대한민국 이천", business: ["DRAM·NAND 메모리", "HBM(AI 가속기 선두)"] },
 
     "OpenAI": { linkedin: "https://www.linkedin.com/company/openai", founded: "2015 · Sam Altman 等", ceo: "Sam Altman", hq: "미국 캘리포니아州 샌프란시스코", business: ["ChatGPT(소비자·기업)", "GPT 모델 API", "Deployment Company(엔터프라이즈 구축)"], shareholders: "비영리 모회사 지배 · Microsoft 등 투자" },
     "Anthropic": { linkedin: "https://www.linkedin.com/company/anthropic", founded: "2021 · Dario·Daniela Amodei 等", ceo: "Dario Amodei", hq: "미국 캘리포니아州 샌프란시스코", business: ["Claude(모델·API)", "엔터프라이즈·Claude Code", "엔터프라이즈 AI 서비스 회사"], shareholders: "Amazon·Google 대형 투자" },
@@ -1814,7 +1864,7 @@ window.DASH = (function () {
     "Hippocratic AI": { mission: "비진단 환자 응대 영역의 안전한 헬스케어 AI 에이전트", leadership: [
       { name: "Munjal Shah", role: "Co-founder·CEO", edu: "Stanford 컴퓨터과학", career: "前 Health IQ 창업 · Like.com 창업(Google 인수)" },
     ] },
-    "Limitless AI": { mission: "대화를 기록·요약해주는 개인 AI 웨어러블", leadership: [
+    "Limitless AI": { mission: "대화를 기록·요약해주는 개인 AI 메모리 웨어러블", leadership: [
       { name: "Dan Siroker", role: "Founder·CEO", edu: "Stanford 컴퓨터과학·경제학", career: "前 Optimizely 공동창업·CEO · Google 프로덕트 매니저 · 오바마 대선캠프 분석 총괄" },
     ] },
     "Poolside": { mission: "코드 특화 프런티어 모델로 소프트웨어 개발 자동화", leadership: [
@@ -1914,5 +1964,5 @@ window.DASH = (function () {
     },
   };
 
-  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MOBILE_STRATEGY, STOCK_VALUE_CHAIN, STOCK_GROUP_LAYER, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
+  return { CATEGORIES, VALUE_CHAIN, COMPANY_LAYER, MEMORY_STRATEGY, STOCK_VALUE_CHAIN, STOCK_GROUP_LAYER, STOCK_LAYER, COMPANY_ORG, LINKEDIN_PROFILES, COMPANY_INVEST, COMPANIES, COMPANY_ORDER, COMPANY_PROFILES, STARTUP_VERTICALS, STARTUP_TAXONOMY, BIGTECH_GROUPS, ARTICLES, REPORTS, MARKET_GROWTH, MARKET_VERTICAL, FUNDING, SHARE, USERS, BAND_PRICE, FUNDING_TREND, AI_DEALS, REVENUE, BIZ_MODELS, PRICING_MODELS, TOKEN_PRICING, KPIS, TOPLINE, INSIGHTS, DC_CAPEX, HBM_MARKET, CHIP_MIX, OPTICAL_TREND, INFRA_STRATEGY, QA_PAIRS, QA_CATS, REVENUE_MONTHLY, REVENUE_QUARTERLY, STOCKS, STOCK_GROUPS, STOCK_SHARES, attachStockEvents };
 })();

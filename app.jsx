@@ -29,13 +29,35 @@ const COLOR_PRESETS = [
 // Keep a stable wrapper for navigation and mount each heavy board before it
 // reaches the viewport. Once mounted it stays warm, so later navigation is
 // immediate without paying the full DOM cost during first paint.
-function LazySection({ id, active, sectionRef, height = 420, children }) {
+function LazySection({ id, active, sectionRef, height = 420, priority = false, children }) {
   const innerRef = uR(null);
+  // Observe well before the board reaches the viewport. Idle prewarming
+  // remains sequential, while the generous margin protects fast scrolling.
   const nearViewport = useInView(sectionRef, 3000);
-  const [ready, setReady] = uS(active === id);
+  const sectionIndex = Math.max(0, NAV_SECTION_IDS.indexOf(id));
+  const [ready, setReady] = uS(priority || active === id);
   uE(() => {
-    if (nearViewport || active === id) setReady(true);
-  }, [nearViewport, active, id]);
+    if (priority || nearViewport || active === id) {
+      setReady(true);
+      return undefined;
+    }
+    if (ready) return undefined;
+
+    // Preserve the first paint for the video and strategy board, then warm
+    // every remaining board in document order while the browser is idle.
+    let idleHandle = 0;
+    const timer = window.setTimeout(() => {
+      if ("requestIdleCallback" in window) {
+        idleHandle = window.requestIdleCallback(() => setReady(true), { timeout: 900 });
+      } else {
+        setReady(true);
+      }
+    }, 700 + sectionIndex * 220);
+    return () => {
+      window.clearTimeout(timer);
+      if (idleHandle && "cancelIdleCallback" in window) window.cancelIdleCallback(idleHandle);
+    };
+  }, [nearViewport, active, id, priority, ready, sectionIndex]);
   return (
     <div ref={sectionRef} className={"board-gate" + (ready ? " is-ready" : " is-pending")}
       style={{ "--gate-height": `${height}px` }} data-section={id} data-active={active === id ? "true" : "false"}>
@@ -300,7 +322,7 @@ function App() {
     accentSoft: softTint(c.id === "native" ? t.colNative : c.id === "bigtech" ? t.colBigtech : t.colStartup, dark),
   })), [t.colNative, t.colBigtech, t.colStartup, dark]);
 
-  // 상장사 원래 시장 업종(칩·클라우드·소프트웨어·디바이스 등) — 상세 보조 분류에 사용
+  // 상장사 원래 시장 업종(칩·메모리·하이퍼스케일러 등) — 상세 보조 분류에 사용
   const stockGroups = useMemo(() => (D.STOCK_GROUPS || []).map(g => ({
     ...g,
     accentSoft: softTint(g.accent, dark),
@@ -326,6 +348,25 @@ function App() {
   );
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
+
+  // A reload must begin with the video brief rather than a browser-restored
+  // position inside the nested dashboard scroller.
+  uE(() => {
+    const previous = "scrollRestoration" in window.history ? window.history.scrollRestoration : "auto";
+    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+    const resetToVideo = () => {
+      if (window.location.hash || !scrollRef.current) return;
+      scrollRef.current.scrollTo({ top: 0, behavior: "auto" });
+      setActive("overview");
+    };
+    const frame = window.requestAnimationFrame(resetToVideo);
+    window.addEventListener("pageshow", resetToVideo);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("pageshow", resetToVideo);
+      if ("scrollRestoration" in window.history) window.history.scrollRestoration = previous;
+    };
+  }, []);
 
   // 일부 Q&A는 통합·이동된 섹션을 가리킴: dynamics→overview(경쟁구도가 ES로 이동), insights→reports
   const NAV_ALIAS = { dynamics: "overview", insights: "ib", reports: "ib", bizmodel: "newbiz", native: "model", bigtech: "infra", startup: "app" };
@@ -477,16 +518,16 @@ function App() {
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
             {/* ── 1. 첫 화면: 관계 지도 + 영상 브리핑 ── */}
-            <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="Mobile AI Video Brief">
+            <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="AI Memory Video Brief">
               <div className="ov-head">
-                <h2 className="ov-title">휴대폰 AI 신사업 발굴 <span>User need · experience · revenue · partner</span></h2>
+                <h2 className="ov-title">AI 메모리 산업 브리핑 <span>Source-backed competitive dynamics</span></h2>
               </div>
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
             </section>
 
             {/* ── 2. 전략 컨설팅: 영상 다음에 바로 노출 ── */}
-            <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={1320}>
-              <MobileStrategyBoard companies={companiesLive} articles={articles} generatedAt={dataGeneratedAt} onNav={navTo} />
+            <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={1320} priority>
+              <MemoryStrategyBoard companies={companiesLive} articles={articles} generatedAt={dataGeneratedAt} onNav={navTo} />
             </LazySection>
 
             {/* ── 3. 리서치·시장 DB ── */}
@@ -505,7 +546,7 @@ function App() {
               <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
             </LazySection>
 
-            {/* ── 4. 휴대폰 AI SW·서비스 밸류체인 ── */}
+            {/* ── 2. AI 수요 → 메모리 기회 밸류체인 ── */}
             <LazySection id="app" active={active} sectionRef={refs.app} height={740}>
               <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
             </LazySection>
@@ -556,7 +597,7 @@ function App() {
             </LazySection>
 
             <footer className="foot">
-              <span>Mobile AI Business Intelligence</span>
+              <span>AI Memory Strategy Intelligence</span>
               <span className="foot-update">최종 업데이트: {renderTime}</span>
               <span>원출처: Bloomberg · TechCrunch · The Information · Pitchbook · Crunchbase · 각 기업 공식 발표</span>
             </footer>

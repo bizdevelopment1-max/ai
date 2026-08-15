@@ -81,8 +81,8 @@ async function translateQuoteToKorean(quoteOriginal) {
 const TICKER_OF = {
   "NVIDIA": "NVDA", "Microsoft": "MSFT", "Amazon": "AMZN", "Apple": "AAPL",
   "Google DeepMind": "GOOGL", "Meta AI": "META", "SpaceX (xAI, Cursor)": "SPCX",
-  "Oracle": "ORCL", "AMD": "AMD", "Broadcom": "AVGO",
-  "TSMC": "TSM", "CoreWeave": "CRWV", "Applied Digital": "APLD",
+  "SK hynix": "SKHY", "Oracle": "ORCL", "AMD": "AMD", "Broadcom": "AVGO",
+  "TSMC": "TSM", "Micron": "MU", "CoreWeave": "CRWV", "Applied Digital": "APLD",
 };
 
 const days = d => { const t = new Date(String(d) + "T00:00:00Z").getTime(); return isNaN(t) ? 999 : (Date.now() - t) / 86400000; };
