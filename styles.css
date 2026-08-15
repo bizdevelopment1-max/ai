@@ -5952,18 +5952,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mxc-hero p { max-width: 720px; color: var(--ink-2); font-size: 11.5px; line-height: 1.55; }
 .mxc-live { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 8px; min-width: 175px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--mxc-green) 30%, var(--line)); border-radius: 10px; background: color-mix(in srgb, var(--mxc-green) 5%, var(--panel)); color: var(--mxc-green); font: 850 9px var(--f); letter-spacing: .08em; }
 .mxc-live small { grid-column: 2; color: var(--muted); font-size: 8px; font-weight: 650; letter-spacing: 0; }
-.mxc-metrics { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 1px; margin: 18px 20px 12px; padding: 1px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--line); }
-.mxc-metrics > div { min-height: 78px; padding: 13px 14px 11px; background: var(--panel); }
-.mxc-metrics em { display: block; color: var(--muted); font: 800 8px var(--f); letter-spacing: .08em; }
-.mxc-metrics b { display: block; margin: 5px 0 2px; color: var(--ink); font: 850 24px/1 var(--f); letter-spacing: -.04em; }
-.mxc-metrics span { color: var(--ink-2); font-size: 8.5px; }
-.mxc-stagebar { display: flex; align-items: center; margin: 0 20px 14px; padding: 9px 12px; border: 1px solid color-mix(in srgb, var(--mxc-blue) 18%, var(--line)); border-radius: 10px; background: var(--mxc-soft); }
-.mxc-stagebar > span { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 5px; flex: 1; }
-.mxc-stagebar > span i { color: var(--mxc-blue); font: 850 7.5px var(--f); }
-.mxc-stagebar > span b { color: var(--ink-2); font: 800 8px var(--f); letter-spacing: .05em; }
-.mxc-stagebar > span em { min-width: 20px; color: var(--ink); font: 850 10px var(--f); text-align: right; }
-.mxc-stagebar > u { width: 12px; height: 1px; margin: 0 5px; background: color-mix(in srgb, var(--mxc-blue) 35%, var(--line)); text-decoration: none; }
-.mxc-tabs { display: flex; gap: 4px; margin: 0 20px; padding: 5px; border: 1px solid var(--line); border-radius: 11px 11px 0 0; background: color-mix(in srgb, var(--panel) 92%, #eef3fa); }
+.mxc-tabs { display: flex; gap: 4px; margin: 18px 20px 0; padding: 5px; border: 1px solid var(--line); border-radius: 11px 11px 0 0; background: color-mix(in srgb, var(--panel) 92%, #eef3fa); }
 .mxc-tabs button { min-height: 32px; flex: 1; border: 0; border-radius: 7px; background: transparent; color: var(--ink-2); font: 750 9.5px var(--f); cursor: pointer; }
 .mxc-tabs button:hover { color: var(--mxc-blue); background: color-mix(in srgb, var(--mxc-blue) 6%, var(--panel)); }
 .mxc-tabs button.on { color: #fff; background: var(--mxc-ink); box-shadow: 0 5px 14px rgba(16,36,62,.16); }
@@ -6286,7 +6275,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mxt-failure a { color: var(--mxc-blue); font: 750 7px var(--f); }
 
 @media (max-width: 1180px) {
-  .mxc-metrics { grid-template-columns: repeat(3,1fr); }
   .mxc-filterbar { grid-template-columns: repeat(4,1fr); }
   .mxc-search { grid-column: span 2; }
   .mxc-radar-layout { grid-template-columns: minmax(300px,.8fr) minmax(400px,1.2fr); }
@@ -6302,9 +6290,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 @media (max-width: 860px) {
   .mxc-hero { padding: 20px; }
   .mxc-live { display: none; }
-  .mxc-metrics { grid-template-columns: repeat(2,1fr); margin-inline: 12px; }
-  .mxc-stagebar { margin-inline: 12px; overflow-x: auto; }
-  .mxc-stagebar > span { min-width: 76px; }
   .mxc-tabs { margin-inline: 12px; overflow-x: auto; }
   .mxc-tabs button { min-width: 125px; }
   .mxc-radar,
@@ -6330,9 +6315,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .mxc-hero { padding: 17px 14px; }
   .mxc-hero h2 { max-width: 100%; font-size: 23px; overflow-wrap: anywhere; }
   .mxc-hero p { font-size: 10px; }
-  .mxc-metrics { grid-template-columns: repeat(2,1fr); }
-  .mxc-metrics > div { min-height: 68px; padding: 10px; }
-  .mxc-metrics b { font-size: 19px; }
   .mxc-filterbar { grid-template-columns: repeat(2,1fr); }
   .mxc-search { grid-column: 1 / -1; }
   .mxc-signal-list { grid-template-columns: 1fr; }

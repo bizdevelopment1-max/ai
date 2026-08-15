@@ -5079,21 +5079,6 @@ function MobileAIBusinessBoard({ sectionRef, dataVersion }) {
         </div>
 
         {!data ? <SourcePipeline kind="market" /> : <React.Fragment>
-          <div className="mxc-metrics">
-            <div><em>ACTIVE SIGNALS</em><b>{summary.activeSignals}</b><span>자동 아카이브 제외</span></div>
-            <div><em>DEVICE MAKERS</em><b>{summary.deviceMakers}</b><span>직접 경쟁 단말</span></div>
-            <div><em>CARRIERS</em><b>{summary.carriers}</b><span>AI 요금제·채널</span></div>
-            <div><em>PARTNER POOL</em><b>{summary.partnersAndComponents}</b><span>부품·서비스 후보</span></div>
-            <div><em>HIGH CONF.</em><b>{summary.highConfidence}</b><span>독립 출처 2+</span></div>
-            <div><em>SOURCE URLs</em><b>{summary.sourceUrls}</b><span>원문 근거</span></div>
-          </div>
-
-          <div className="mxc-stagebar" aria-label="검증 파이프라인">
-            {[["RAW", data.pipeline?.raw], ["DRAFT", data.pipeline?.draft], ["VERIFY", data.pipeline?.verified], ["REVIEW", data.pipeline?.reviewed], ["PUBLISH", data.pipeline?.published], ["RECONCILE", data.pipeline?.reconciled]].map((stage, index) => <React.Fragment key={stage[0]}>
-              <span><i>{String(index + 1).padStart(2, "0")}</i><b>{stage[0]}</b><em>{stage[1]}</em></span>{index < 5 && <u />}
-            </React.Fragment>)}
-          </div>
-
           <div className="mxc-tabs" role="tablist" aria-label="MX 의사결정 DB 보기">
             {[["radar", "Decision Radar"], ["opportunities", "기회 후보·90일 실험"], ["matrix", "단말·기능 Matrix"], ["monetization", "수익화·ROI"], ["osux", "OS·Killer UX"], ["verticals", "보안·헬스·컴패니언"], ["partners", "Partner Score · Network"], ["formfactor", "폼팩터·SLM"], ["compliance", "Compliance"], ["trust", "Build vs Buy · Trust"]].map(tab => (
               <button key={tab[0]} role="tab" aria-selected={view === tab[0]} className={view === tab[0] ? "on" : ""} onClick={() => setView(tab[0])}>{tab[1]}</button>
