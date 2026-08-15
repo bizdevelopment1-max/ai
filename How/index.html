@@ -145,18 +145,24 @@
       position: absolute; inset: -3%; background-size: cover; background-position: center;
       opacity: 0; transform: scale(1.04) translate3d(0,0,0); animation-play-state: paused;
     }
-    .bg-carousel span:first-child { opacity: 1; animation: bgSceneA 15s ease-in-out infinite; }
-    .bg-carousel span:last-child { animation: bgSceneB 15s ease-in-out infinite; }
+    .bg-carousel span:nth-child(1) { opacity: 1; animation: bgSceneA 24s ease-in-out infinite; }
+    .bg-carousel span:nth-child(2) { animation: bgSceneB 24s ease-in-out infinite; }
+    .bg-carousel span:nth-child(3) { animation: bgSceneC 24s ease-in-out infinite; }
     .slide.active .bg-carousel span { animation-play-state: running; will-change: opacity, transform; }
     @keyframes bgSceneA {
-      0%, 38% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
-      55%, 88% { opacity: 0; transform: scale(1.1) translate3d(-1.4%,.8%,0); }
-      100% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
+      0%, 27% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
+      36%, 90% { opacity: 0; transform: scale(1.1) translate3d(-1.4%,.8%,0); }
+      97%, 100% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
     }
     @keyframes bgSceneB {
-      0%, 38% { opacity: 0; transform: scale(1.1) translate3d(1.2%,-.6%,0); }
-      55%, 88% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
-      100% { opacity: 0; transform: scale(1.1) translate3d(1.2%,-.6%,0); }
+      0%, 27% { opacity: 0; transform: scale(1.1) translate3d(1.2%,-.6%,0); }
+      36%, 60% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
+      69%, 100% { opacity: 0; transform: scale(1.1) translate3d(-.8%,.6%,0); }
+    }
+    @keyframes bgSceneC {
+      0%, 60% { opacity: 0; transform: scale(1.1) translate3d(-1%,.7%,0); }
+      69%, 92% { opacity: 1; transform: scale(1.04) translate3d(0,0,0); }
+      100% { opacity: 0; transform: scale(1.1) translate3d(1%,-.5%,0); }
     }
     .intro-video .bg-video {
       filter: saturate(.76) contrast(1.1) brightness(.48);
@@ -695,6 +701,194 @@
     .loop-node b { font-size: 13px; }
     .loop-node span { display:block; margin-top:5px; color:var(--muted); font-size:10px; }
 
+    /* Executive-grade type and diagram system */
+    .deck :where(p, li, dd, dt, span, small, code, kbd, a, button) {
+      font-family: var(--body-font) !important;
+      font-weight: 500;
+    }
+    .deck :where(h1, h2, h3, h4, strong, b, em, .eyebrow, .slide-no, .brand-mark, .page-count) {
+      font-family: var(--title-font) !important;
+      font-weight: 700;
+    }
+    .eyebrow, .flow-card em, .outcome em, .branch em, .arch-layer em, .pipe-step em,
+    .gate em, .strategy-card em, .prompt-panel em, .command-step em, .audit-card em {
+      font-size: clamp(13px, .82vw, 15px);
+      line-height: 1.25;
+    }
+    .takeaway b { font-size: 13px; }
+    .takeaway span { font-size: clamp(15px, .98vw, 18px); line-height: 1.55; }
+    .cover-rule { display: none !important; }
+    .cover-layout {
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+      gap: clamp(30px, 3.3vw, 58px);
+      align-items: center;
+    }
+    .cover-layout > div:first-child { min-width: 0; }
+    .cover-layout h1 {
+      max-width: 100%;
+      font-size: clamp(46px, 3.25vw, 64px);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+    }
+    .cover-title-line {
+      display: block;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    .cover-title-line + .cover-title-line { margin-top: 10px; }
+    .cover-sub { margin-top: 28px; max-width: 920px; }
+    .cover-index div { padding: 18px 16px; }
+    .cover-index em { font-size: 14px; }
+    .cover-index b { font-size: 18px; }
+    .cover-index small { font-size: 14px; line-height: 1.38; }
+
+    /* 01 → 05: sequential illumination with a restrained consulting sheen */
+    .sequential-flow .flow-card {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+    }
+    .sequential-flow .flow-card:nth-of-type(1) { --sequence: 0; }
+    .sequential-flow .flow-card:nth-of-type(2) { --sequence: 1; }
+    .sequential-flow .flow-card:nth-of-type(3) { --sequence: 2; }
+    .sequential-flow .flow-card:nth-of-type(4) { --sequence: 3; }
+    .sequential-flow .flow-card:nth-of-type(5) { --sequence: 4; }
+    .sequential-flow .flow-card::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: -30% auto -30% -70%;
+      width: 46%;
+      transform: skewX(-18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.62), transparent);
+      opacity: 0;
+    }
+    .summary-slide.active .sequential-flow .flow-card {
+      animation:
+        diagramRise .62s cubic-bezier(.18,.82,.2,1) calc(.12s + var(--sequence) * .09s) both,
+        sequentialGlow 5.6s ease-in-out calc(.82s + var(--sequence) * .58s) infinite;
+    }
+    .summary-slide.active .sequential-flow .flow-card::before {
+      animation: sequentialSheen 5.6s ease-in-out calc(.82s + var(--sequence) * .58s) infinite;
+    }
+    .summary-slide .flow-card { min-height: 154px; padding: 20px 18px; }
+    .summary-slide .flow-card b { margin-top: 13px; font-size: clamp(20px, 1.28vw, 24px); }
+    .summary-slide .flow-card span { margin-top: 10px; font-size: clamp(15px, .94vw, 17px); line-height: 1.5; }
+    @keyframes sequentialGlow {
+      0%, 13%, 43%, 100% { filter: brightness(.88) saturate(.88); box-shadow: 0 0 0 rgba(var(--item-rgb),0); }
+      20%, 32% { filter: brightness(1.36) saturate(1.28); box-shadow: 0 0 30px rgba(var(--item-rgb),.52), 0 16px 28px rgba(0,0,0,.34); transform: translateY(-5px); }
+    }
+    @keyframes sequentialSheen {
+      0%, 14% { left: -70%; opacity: 0; }
+      20% { opacity: .92; }
+      33% { left: 128%; opacity: 0; }
+      100% { left: 128%; opacity: 0; }
+    }
+
+    /* Slide 01: mandate → logic spine → three decision lenses */
+    .consulting-brief-tree {
+      display: grid;
+      grid-template-columns: minmax(300px, .84fr) 118px minmax(0, 2.15fr);
+      align-items: stretch;
+      margin-top: 22px;
+    }
+    .brief-mandate {
+      display: flex;
+      min-height: 250px;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 46px 32px 36px;
+      border: 1px solid rgba(139,92,246,.74);
+      background: linear-gradient(138deg, rgba(167,139,250,.78), rgba(124,58,237,.60) 54%, rgba(76,29,149,.44));
+      clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%, 7% 50%);
+      filter: drop-shadow(14px 18px 28px rgba(0,0,0,.32));
+    }
+    .brief-mandate em { color: #e7dcff; font-size: 14px; font-style: normal; letter-spacing: .1em; }
+    .brief-mandate b { display: block; margin-top: 18px; font-size: clamp(23px, 1.58vw, 30px); line-height: 1.34; }
+    .brief-mandate span { display: block; margin-top: 14px; color: #ece7ff; font-size: 16px; line-height: 1.45; }
+    .brief-spine { position: relative; display: grid; place-items: center; min-width: 0; }
+    .brief-spine::before { content: ""; width: 78%; height: 2px; background: linear-gradient(90deg, #a78bfa, #22d3ee); box-shadow: 0 0 14px rgba(34,211,238,.5); }
+    .brief-spine::after { content: ""; position: absolute; right: 4%; width: 22px; height: 34px; background: #22d3ee; clip-path: polygon(0 0, 100% 50%, 0 100%, 35% 50%); }
+    .brief-spine span { position: absolute; top: calc(50% - 42px); width: 110px; color: #bdc9d7; font-size: 13px; line-height: 1.35; text-align: center; }
+    .brief-spine i { position: absolute; width: 11px; height: 11px; border-radius: 50%; background: #fff; box-shadow: 0 0 18px #22d3ee; animation: spinePulse 2.4s ease-in-out infinite; }
+    @keyframes spinePulse { 0%,100% { transform: translateX(-28px); opacity: .45; } 50% { transform: translateX(28px); opacity: 1; } }
+    .brief-pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .brief-pillar {
+      --pillar-rgb: 0,169,224;
+      min-height: 250px;
+      padding: 25px 22px;
+      border: 1px solid rgba(var(--pillar-rgb),.62);
+      background: linear-gradient(145deg, rgba(var(--pillar-rgb),.34), rgba(var(--pillar-rgb),.17) 58%, rgba(var(--pillar-rgb),.06));
+      clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+      transition: transform .3s ease, filter .3s ease, box-shadow .3s ease;
+    }
+    .brief-pillar:nth-child(2) { --pillar-rgb: 139,92,246; }
+    .brief-pillar:nth-child(3) { --pillar-rgb: 20,184,166; }
+    .brief-pillar:hover { transform: translateY(-7px); filter: brightness(1.24); box-shadow: 10px 15px 0 rgba(var(--pillar-rgb),.16), 0 18px 34px rgba(0,0,0,.32); }
+    .brief-pillar em { color: rgb(var(--pillar-rgb)); font-size: 14px; font-style: normal; letter-spacing: .06em; }
+    .brief-pillar h3 { margin: 13px 0 19px; font-size: clamp(21px,1.3vw,25px); }
+    .brief-pillar ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 13px; }
+    .brief-pillar li { position: relative; padding-left: 18px; color: #d1dbe6; font-size: clamp(15px,.94vw,17px); line-height: 1.42; }
+    .brief-pillar li::before { content: ""; position: absolute; left: 0; top: .48em; width: 8px; height: 10px; background: rgb(var(--pillar-rgb)); clip-path: polygon(0 0,100% 50%,0 100%); }
+
+    /* Slide 03: information cascade and MECE responsibility map */
+    .consulting-architecture { margin-top: 16px; }
+    .consulting-architecture .arch-layer { min-height: 168px; padding: 19px 20px; }
+    .consulting-architecture .arch-layer h3 { margin: 13px 0 16px; font-size: clamp(20px,1.26vw,24px); }
+    .consulting-architecture .arch-layer li { font-size: clamp(14px,.88vw,16px); line-height: 1.45; }
+    .mece-role-map {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 120px minmax(0,1fr);
+      align-items: stretch;
+      margin-top: 18px;
+    }
+    .role-panel {
+      padding: 17px 28px;
+      border: 1px solid rgba(var(--role-rgb),.62);
+      background: linear-gradient(138deg, rgba(var(--role-rgb),.31), rgba(var(--role-rgb),.15) 62%, rgba(var(--role-rgb),.05));
+    }
+    .role-main { --role-rgb: 0,169,224; clip-path: polygon(0 0, 96% 0, 100% 50%, 96% 100%, 0 100%); }
+    .role-detail { --role-rgb: 236,72,153; clip-path: polygon(4% 0, 100% 0, 100% 100%, 4% 100%, 0 50%); }
+    .role-panel em { color: rgb(var(--role-rgb)); font-size: 14px; font-style: normal; letter-spacing: .08em; }
+    .role-panel h3 { margin: 8px 0 5px; font-size: clamp(21px,1.35vw,26px); }
+    .role-panel p { color: #d6e0ea; font-size: clamp(15px,.96vw,17px); line-height: 1.45; }
+    .role-panel > div { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .role-panel > div span { padding: 6px 10px; background: rgba(var(--role-rgb),.18); color: #eef7ff; font-size: 13px; }
+    .role-panel:hover {
+      color: #fff;
+      filter: brightness(1.2) saturate(1.16);
+      transform: translateY(-5px);
+      box-shadow: 9px 13px 0 rgba(var(--role-rgb),.14), 0 18px 34px rgba(0,0,0,.3);
+    }
+    .role-panel:hover * { color: #fff !important; }
+    .mece-bridge { position: relative; display: grid; place-content: center; text-align: center; }
+    .mece-bridge::before {
+      content: ""; position: absolute; inset: 50% 0 auto; height: 2px;
+      background: linear-gradient(90deg,#22d3ee,#a78bfa,#ec4899);
+      transform: translateY(-50%); box-shadow: 0 0 12px rgba(167,139,250,.58);
+    }
+    .mece-bridge b { position: relative; z-index: 2; display: grid; width: 70px; height: 70px; place-items: center; margin: 0 auto; background: linear-gradient(145deg,#38bdf8,#7c3aed); color: #fff; font-size: 15px; clip-path: polygon(50% 0,100% 50%,50% 100%,0 50%); }
+    .mece-bridge span { position: relative; z-index: 2; margin-top: 5px; color: #cbd5e1; font-size: 12px; }
+    .decision-rule {
+      display: grid;
+      grid-template-columns: auto minmax(0,1fr) 56px minmax(0,1fr) auto;
+      gap: 15px;
+      align-items: center;
+      margin-top: 12px;
+      padding: 11px 28px;
+      border: 1px solid rgba(139,92,246,.52);
+      background: linear-gradient(100deg,rgba(0,169,224,.18),rgba(139,92,246,.20),rgba(236,72,153,.18));
+      clip-path: polygon(0 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,0 100%,13px 50%);
+    }
+    .decision-rule b { color: #67e8f9; font-size: 14px; }
+    .decision-rule span { color: #e6edf5; font-size: clamp(15px,.96vw,17px); text-align: center; }
+    .decision-rule i { width: 100%; height: 16px; background: linear-gradient(90deg,#22d3ee,#a78bfa,#ec4899); clip-path: var(--consult-arrow); }
+    .decision-rule strong { color: #f9a8d4; font-size: 14px; white-space: nowrap; }
+
+    .pipe-step b { font-size: clamp(15px,.98vw,18px); }
+    .pipe-step span { font-size: clamp(13px,.82vw,15px); line-height: 1.45; }
+
     @media (max-width: 1100px) {
       .slide { padding-left: 5vw; padding-right: 6vw; }
       .cover-layout { grid-template-columns: minmax(0, 1fr) 240px; gap: 26px; }
@@ -717,6 +911,10 @@
       .diamond-stage { min-height: 165px; clip-path: polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%); }
       .loop-strip { grid-template-columns: repeat(5,1fr); gap: 8px; }
       .loop-strip .tri-arrow { display: none; }
+      .consulting-brief-tree { grid-template-columns: minmax(250px,.78fr) 82px minmax(0,2fr); }
+      .brief-mandate, .brief-pillar { min-height: 220px; }
+      .brief-pillar { padding: 21px 17px; }
+      .mece-role-map { grid-template-columns: minmax(0,1fr) 96px minmax(0,1fr); }
     }
 
     @media (max-width: 1040px) and (min-width: 761px) {
@@ -725,7 +923,6 @@
       .cover-index { grid-template-columns: repeat(3, 1fr); }
       .cover-index div { grid-template-columns: 34px 1fr; padding: 11px 12px; }
       .cover-index small { grid-column: 2; }
-      .cover-rule { margin-block: 18px; }
       .cover-tags { margin-top: 18px; }
     }
 
@@ -773,6 +970,21 @@
       .logic-node { min-width: 0; padding: 9px 5px; font-size: 10px; }
       .logic-arrow { width: 30px; }
       .cover-title-line { white-space: normal; }
+      .consulting-brief-tree { grid-template-columns: 1fr; gap: 14px; }
+      .brief-mandate { min-height: 210px; }
+      .brief-spine { min-height: 68px; }
+      .brief-spine::before { width: 2px; height: 58px; }
+      .brief-spine::after { right: auto; bottom: 2px; width: 34px; height: 22px; clip-path: polygon(0 0,50% 100%,100% 0,50% 35%); }
+      .brief-spine span { top: 3px; left: calc(50% + 18px); width: 120px; text-align: left; }
+      .brief-spine i { animation: none; }
+      .brief-pillars { grid-template-columns: 1fr; }
+      .brief-pillar { min-height: 0; }
+      .mece-role-map { grid-template-columns: 1fr; gap: 10px; }
+      .role-main, .role-detail { clip-path: polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px)); }
+      .mece-bridge { min-height: 86px; }
+      .mece-bridge::before { inset: 0 auto; left: 50%; width: 2px; height: 100%; transform: translateX(-50%); }
+      .decision-rule { grid-template-columns: 1fr; text-align: center; clip-path: polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px)); }
+      .decision-rule i { width: 82px; margin: 0 auto; transform: rotate(90deg); }
       .slide-inner { transform: none; }
     }
 
@@ -797,7 +1009,7 @@
       *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
       .bg-video { display: none; }
       .bg-carousel span { animation: none !important; }
-      .bg-carousel span:last-child { display: none; }
+      .bg-carousel span:nth-child(n+2) { display: none; }
     }
   </style>
 </head>
@@ -821,7 +1033,6 @@
           <div>
             <div class="eyebrow reveal">VIBE CODING · REAL BUILD STORY</div>
             <h1 class="reveal" style="--delay:.16s"><span class="cover-title-line">바이브 코딩으로 만든 AI 신사업 인텔리전스</span><span class="cover-title-line accent">첫 입력부터 데이터 자동화·전략 화면·운영까지</span></h1>
-            <div class="cover-rule reveal" style="--delay:.26s"></div>
             <p class="cover-sub reveal" style="--delay:.32s">개발 경험이 없어도 사업 질문을 입력하고 데이터와 화면을 단계적으로 연결해 실제 사이트로 완성한 과정</p>
           </div>
           <div class="cover-index reveal" style="--delay:.46s">
@@ -837,12 +1048,12 @@
         <video class="bg-video" data-src="assets/bg-02.mp4" muted loop playsinline preload="none" poster="assets/poster-02.webp" aria-label="그라데이션 기술 배경 영상"></video>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">00</span><div><div class="eyebrow">SITE BUILD AT A GLANCE</div><h2>이 사이트는 한 번에 만든 화면이 아니라 <span class="accent">다섯 개 층을 순서대로 연결</span></h2><p>사업 질문에서 시작해 정보 구조 · 데이터 엔진 · 전략 프레임 · 자동 운영까지 확장</p></div></div>
-          <div class="flow reveal" style="--delay:.16s">
-            <div class="flow-card"><em>WHY</em><b>사업 질문</b><span>어떤 AI 신사업 결정을 도울지</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>WHAT</em><b>정보 구조</b><span>메인·상세·7개 밸류체인 분리</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>EVIDENCE</em><b>데이터 엔진</b><span>공식 원문·기사·시장·공시 수집</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>SO WHAT</em><b>전략 화면</b><span>시장·수익·경쟁·실행 프레임</span></div><i class="tri-arrow"></i>
-            <div class="flow-card"><em>NOW WHAT</em><b>자동 운영</b><span>검증·갱신·배포·삭제 억제</span></div>
+          <div class="flow sequential-flow reveal" style="--delay:.16s">
+            <div class="flow-card"><em>01 · WHY</em><b>사업 질문</b><span>어떤 AI 신사업 결정을 도울지</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>02 · WHAT</em><b>정보 구조</b><span>메인·상세·7개 밸류체인 분리</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>03 · EVIDENCE</em><b>데이터 엔진</b><span>공식 원문·기사·시장·공시 수집</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>04 · SO WHAT</em><b>전략 화면</b><span>시장·수익·경쟁·실행 프레임</span></div><i class="tri-arrow"></i>
+            <div class="flow-card"><em>05 · NOW WHAT</em><b>자동 운영</b><span>검증·갱신·배포·삭제 억제</span></div>
           </div>
           <div class="three-outcomes reveal" style="--delay:.28s">
             <div class="outcome"><em>COMPARE</em><b>기업 방향 비교</b><span>현재 비즈니스 모델과 다음 전략을 같은 축으로 비교</span></div>
@@ -854,16 +1065,20 @@
       </section>
 
       <section class="slide" data-title="최초 요청" data-accent="#8b5cf6" data-rgb="139,92,246" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-03.webp')"></span><span style="background-image:url('assets/poster-04.webp')"></span></div>
+        <div class="bg-carousel" data-theme="사업 질문·시장 탐색·기업 비교" aria-hidden="true"><span style="background-image:url('assets/poster-03.webp')"></span><span style="background-image:url('assets/poster-04.webp')"></span><span style="background-image:url('assets/poster-05.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">01</span><div><div class="eyebrow">THE FIRST BUSINESS REQUEST</div><h2>최초 입력은 화면 디자인보다 <span class="accent">누가 어떤 결정을 내릴지</span>에서 시작</h2><p>AI 신사업을 발굴하는 담당자가 시장·경쟁·수익모델·기업 근거를 빠르게 비교하는 데이터베이스를 요청</p></div></div>
-          <div class="issue-tree reveal" style="--delay:.14s">
-            <div class="root-question"><b>AI 신사업 후보를<br>시장·수익·기업 움직임으로 비교하고<br>근거 원문까지 확인하게 만들어줘</b></div>
-            <i class="tri-arrow"></i>
-            <div class="branches">
-              <article class="branch"><em>01 · DECISION</em><h3>의사결정 질문</h3><ul><li>어느 시장이 커지는가</li><li>경쟁사는 어떻게 돈을 버는가</li><li>어느 역량을 직접 보유할 것인가</li><li>어떤 기업과 협력할 것인가</li></ul></article>
-              <article class="branch"><em>02 · DATABASE</em><h3>필수 데이터</h3><ul><li>시장 규모와 소비자 조사</li><li>기업 비즈니스 모델과 전략</li><li>경영진·조직·발언·기사</li><li>스타트업·투자·주가·실적</li></ul></article>
-              <article class="branch"><em>03 · EXPERIENCE</em><h3>사용 방식</h3><ul><li>메인에서 방향을 빠르게 비교</li><li>클릭하면 상세 근거 확인</li><li>동일 업체는 한 번만 표시</li><li>최신 정보는 자동으로 반영</li></ul></article>
+          <div class="consulting-brief-tree reveal" style="--delay:.14s">
+            <article class="brief-mandate">
+              <em>BUSINESS MANDATE</em>
+              <b>AI 신사업 후보를 시장·수익·기업 움직임으로 비교</b>
+              <span>근거 원문까지 한 화면에서 추적</span>
+            </article>
+            <div class="brief-spine" aria-hidden="true"><span>질문을 3개 축으로 분해</span><i></i></div>
+            <div class="brief-pillars">
+              <article class="brief-pillar"><em>01 · DECISION</em><h3>의사결정 질문</h3><ul><li>성장 시장과 수익 구조</li><li>직접 보유할 핵심 역량</li><li>협력할 기업과 진입 방식</li></ul></article>
+              <article class="brief-pillar"><em>02 · DATABASE</em><h3>필수 데이터</h3><ul><li>시장 규모와 소비자 조사</li><li>기업 모델·전략·리더십</li><li>스타트업·투자·실적</li></ul></article>
+              <article class="brief-pillar"><em>03 · EXPERIENCE</em><h3>사용 방식</h3><ul><li>메인에서 방향 비교</li><li>상세에서 원문 확인</li><li>중복 제거와 최신값 반영</li></ul></article>
             </div>
           </div>
           <div class="takeaway reveal" style="--delay:.3s"><b>실제 사용한 첫 입력</b><span>AI 신사업 발굴을 위한 데이터베이스형 사이트를 만들어줘 · 시장 규모 · 경쟁사 수익모델 · 기업 전략 · 조직과 경영진 · 스타트업 · 투자 방향을 한곳에서 비교하고 · 모든 주장에는 확인 가능한 원문 링크를 연결해줘</span></div>
@@ -871,7 +1086,7 @@
       </section>
 
       <section class="slide" data-title="북극성 정의" data-accent="#0072ce" data-rgb="0,114,206" data-accent2="#f59e0b" data-rgb2="245,158,11" data-accent3="#34d399" data-rgb3="52,211,153" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-03.webp')"></span><span style="background-image:url('assets/poster-05.webp')"></span></div>
+        <div class="bg-carousel" data-theme="방향 설정·우선순위·성장 목표" aria-hidden="true"><span style="background-image:url('assets/poster-03.webp')"></span><span style="background-image:url('assets/poster-07.webp')"></span><span style="background-image:url('assets/poster-12.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">02</span><div><div class="eyebrow">SITE NORTH STAR</div><h2>사이트의 북극성은 정보량이 아니라 <span class="accent">신사업 결정을 더 빠르게 만드는 것</span></h2><p>사용자 · 판단 과업 · 필요한 근거 · 완료 기준을 먼저 고정해 이후 기능 추가가 흔들리지 않도록 설계</p></div></div>
           <div class="vibe-start reveal" style="--delay:.14s">
@@ -889,25 +1104,26 @@
       </section>
 
       <section class="slide" data-title="정보 구조" data-accent="#ec4899" data-rgb="236,72,153" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-04.webp')"></span><span style="background-image:url('assets/poster-05.webp')"></span></div>
+        <div class="bg-carousel" data-theme="화면 구조·정보 계층·MECE 구분" aria-hidden="true"><span style="background-image:url('assets/poster-04.webp')"></span><span style="background-image:url('assets/poster-09.webp')"></span><span style="background-image:url('assets/poster-10.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">03</span><div><div class="eyebrow">INFORMATION ARCHITECTURE</div><h2>메인과 상세를 분리해 <span class="accent">같은 정보를 반복하지 않는 구조</span>로 설계</h2><p>메인은 비교와 방향성 · 상세는 기업 근거 · 시장과 주가는 별도 분석 화면 · 왼쪽 탐색은 오른쪽 섹션과 일대일 연결</p></div></div>
-          <div class="architecture reveal" style="--delay:.15s">
-            <article class="arch-layer"><em>EXECUTIVE VIEW</em><h3>한 장 요약</h3><ul><li>시장 변화</li><li>핵심 기업 움직임</li><li>신사업 기회</li><li>오늘 확인할 근거</li></ul></article><i class="tri-arrow"></i>
-            <article class="arch-layer"><em>VALUE CHAIN</em><h3>7개 사업 계층</h3><ul><li>AI 경험·버티컬</li><li>에이전트·서비스</li><li>데이터·모델</li><li>개발·런타임</li></ul></article><i class="tri-arrow"></i>
-            <article class="arch-layer"><em>COMPANY DETAIL</em><h3>기업 근거</h3><ul><li>개요·실적·인력</li><li>수익모델·전략</li><li>임원 조직도</li><li>발언·기사·원문</li></ul></article><i class="tri-arrow"></i>
-            <article class="arch-layer"><em>MARKET TOOLS</em><h3>정량 분석</h3><ul><li>시장·소비자 조사</li><li>상장사 주가</li><li>투자 관계망</li><li>신사업 사례</li></ul></article>
+          <div class="architecture consulting-architecture reveal" style="--delay:.15s">
+            <article class="arch-layer"><em>01 · EXECUTIVE VIEW</em><h3>한 장 요약</h3><ul><li>시장 변화</li><li>기업 움직임</li><li>신사업 기회</li></ul></article><i class="tri-arrow"></i>
+            <article class="arch-layer"><em>02 · VALUE CHAIN</em><h3>7개 사업 계층</h3><ul><li>경험·서비스</li><li>데이터·모델</li><li>개발·런타임</li></ul></article><i class="tri-arrow"></i>
+            <article class="arch-layer"><em>03 · COMPANY DETAIL</em><h3>기업 근거</h3><ul><li>개요·실적·전략</li><li>임원 조직도</li><li>발언·기사·원문</li></ul></article><i class="tri-arrow"></i>
+            <article class="arch-layer"><em>04 · MARKET TOOLS</em><h3>정량 분석</h3><ul><li>시장·소비자 조사</li><li>주가·투자 관계망</li><li>신사업 사례</li></ul></article>
           </div>
-          <div class="ledger-split reveal" style="--delay:.28s">
-            <div class="ledger"><b>메인 화면의 역할</b><span>기업별 현재 모델 · 사업 방향 · 전략 이동 · 핵심 수치를 빠르게 비교</span></div>
-            <div class="ledger"><b>상세 화면의 역할</b><span>기업 개요 · 조직도 · 리더 배경 · 발언 · 뉴스 · 수치의 기준일과 원문 확인</span></div>
+          <div class="mece-role-map reveal" style="--delay:.28s">
+            <article class="role-panel role-main"><em>MAIN · COMPARE</em><h3>메인 화면</h3><p>현재 모델 · 사업 방향 · 전략 이동 · 핵심 수치</p><div><span>비교</span><span>우선순위</span><span>방향성</span></div></article>
+            <div class="mece-bridge" aria-label="요약과 근거의 상호 연결"><b>MECE</b><span>요약 ↔ 근거</span></div>
+            <article class="role-panel role-detail"><em>DETAIL · VERIFY</em><h3>상세 화면</h3><p>기업 개요 · 조직도 · 리더 배경 · 발언 · 뉴스 · 기준일 · 원문</p><div><span>검증</span><span>맥락</span><span>출처</span></div></article>
           </div>
-          <div class="takeaway reveal" style="--delay:.38s"><b>구조 입력</b><span>첫 화면과 상세 팝업의 정보를 MECE하게 나눠줘 · 메인은 비교와 방향성만 · 상세는 기업 개요·실적·수익모델·조직·발언·뉴스·원문 근거만 표시하고 · 같은 문장은 두 위치에 반복하지 않게 해줘</span></div>
+          <div class="decision-rule reveal" style="--delay:.38s"><b>구조 원칙</b><span>메인은 비교 가능한 결론만</span><i></i><span>상세는 검증 가능한 근거만</span><strong>동일 문장 반복 금지</strong></div>
         </div>
       </section>
 
       <section class="slide" data-title="데이터 엔진" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#14b8a6" data-rgb2="20,184,166" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-05.webp')"></span><span style="background-image:url('assets/poster-06.webp')"></span></div>
+        <div class="bg-carousel" data-theme="원문 수집·데이터 연결·정규화" aria-hidden="true"><span style="background-image:url('assets/poster-05.webp')"></span><span style="background-image:url('assets/poster-06.webp')"></span><span style="background-image:url('assets/poster-09.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">04</span><div><div class="eyebrow">DATA PIPELINE</div><h2>뉴스를 모으는 것이 아니라 <span class="accent">원문을 검증 가능한 전략 데이터로 변환</span></h2><p>출처 정책 → 수집 → 근거 문장 → 기업 식별 → 중복 통합 → 공개 뷰 순서로 데이터 품질을 고정</p></div></div>
           <div class="pipeline reveal" style="--delay:.14s">
@@ -928,7 +1144,7 @@
       </section>
 
       <section class="slide" data-title="기업 데이터" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#00a9e0" data-rgb3="0,169,224" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-05.webp')"></span><span style="background-image:url('assets/poster-07.webp')"></span></div>
+        <div class="bg-carousel" data-theme="기업 카드·관계 구조·데이터 스키마" aria-hidden="true"><span style="background-image:url('assets/poster-04.webp')"></span><span style="background-image:url('assets/poster-07.webp')"></span><span style="background-image:url('assets/poster-10.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">05</span><div><div class="eyebrow">COMPANY DATA CONTRACT</div><h2>대기업과 스타트업을 <span class="accent">같은 깊이의 기업 스키마</span>로 정렬</h2><p>규모와 상장 여부가 달라도 개요 · 수익 · 전략 · 조직 · 발언 · 근거의 레벨을 동일하게 유지</p></div></div>
           <div class="revision-layout reveal" style="--delay:.14s">
@@ -946,7 +1162,7 @@
       </section>
 
       <section class="slide" data-title="자동 업데이트" data-accent="#f59e0b" data-rgb="245,158,11" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#3b82f6" data-rgb3="59,130,246" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-06.webp')"></span><span style="background-image:url('assets/poster-07.webp')"></span></div>
+        <div class="bg-carousel" data-theme="자동 수집·품질 감시·반복 갱신" aria-hidden="true"><span style="background-image:url('assets/poster-06.webp')"></span><span style="background-image:url('assets/poster-11.webp')"></span><span style="background-image:url('assets/poster-05.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">06</span><div><div class="eyebrow">AUTOMATED UPDATE ENGINE</div><h2>최신 정보는 사람이 붙여 넣지 않고 <span class="accent">수집 → 검증 → 교체 → 공개를 자동 반복</span></h2><p>뉴스·주가·실적·기업·스타트업·시장 데이터를 하루 여러 차례 갱신하고 공개 전 품질 검사를 실행</p></div></div>
           <div class="command-flow reveal" style="--delay:.14s">
@@ -968,7 +1184,7 @@
       </section>
 
       <section class="slide" data-title="컨설팅 화면" data-accent="#14b8a6" data-rgb="20,184,166" data-accent2="#3b82f6" data-rgb2="59,130,246" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-07.webp')"></span><span style="background-image:url('assets/poster-08.webp')"></span></div>
+        <div class="bg-carousel" data-theme="시장 진단·전략 선택·성장 기회" aria-hidden="true"><span style="background-image:url('assets/poster-08.webp')"></span><span style="background-image:url('assets/poster-10.webp')"></span><span style="background-image:url('assets/poster-12.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">07</span><div><div class="eyebrow">CONSULTING DECISION SYSTEM</div><h2>수집한 데이터는 다섯 개 질문으로 바꿔 <span class="accent">의사결정 가능한 인사이트</span>로 전환</h2><p>근거를 단순 요약하지 않고 시장 매력도 · 밸류체인 · 수익구조 · 승리조건 · 다음 행동으로 재구성</p></div></div>
           <div class="gate-grid reveal" style="--delay:.14s">
@@ -984,7 +1200,7 @@
       </section>
 
       <section class="slide" data-title="실제 입력·검증" data-accent="#a855f7" data-rgb="168,85,247" data-accent2="#ec4899" data-rgb2="236,72,153" data-accent3="#22d3ee" data-rgb3="34,211,238" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-08.webp')"></span><span style="background-image:url('assets/poster-09.webp')"></span></div>
+        <div class="bg-carousel" data-theme="교차 검증·근거 확인·승인 흐름" aria-hidden="true"><span style="background-image:url('assets/poster-06.webp')"></span><span style="background-image:url('assets/poster-09.webp')"></span><span style="background-image:url('assets/poster-11.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">08</span><div><div class="eyebrow">REAL INPUT TO VERIFIED OUTPUT</div><h2>실제 작업은 <span class="accent">입력 → 구현 → 독립 검토 → 팩트체크 → 승인</span>의 도식으로 운영</h2><p>긴 텍스트 나열을 역할별 카드와 박스 사이 커넥터로 바꿔 초보자도 실행 순서를 바로 이해</p></div></div>
           <div class="assurance-flow reveal" style="--delay:.14s">
@@ -1002,7 +1218,7 @@
       </section>
 
       <section class="slide" data-title="보완 요청" data-accent="#34d399" data-rgb="52,211,153" data-accent2="#22d3ee" data-rgb2="34,211,238" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-09.webp')"></span><span style="background-image:url('assets/poster-10.webp')"></span></div>
+        <div class="bg-carousel" data-theme="보완 요청·화면 개선·성과 변화" aria-hidden="true"><span style="background-image:url('assets/poster-09.webp')"></span><span style="background-image:url('assets/poster-10.webp')"></span><span style="background-image:url('assets/poster-12.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">09</span><div><div class="eyebrow">ITERATION PROMPTS</div><h2>본 사이트는 <span class="accent">콘텐츠 · 시각화 · 동작을 분리해</span> 반복 개선</h2><p>한 번에 전부 바꾸지 않고 데이터 품질 · 컨설팅 표현 · 인터랙션을 각각 요청해 회귀 범위를 축소</p></div></div>
           <div class="strategy-grid reveal" style="--delay:.14s">
@@ -1018,7 +1234,7 @@
       </section>
 
       <section class="slide" data-title="구현·배포" data-accent="#3b82f6" data-rgb="59,130,246" data-accent2="#8b5cf6" data-rgb2="139,92,246" data-accent3="#14b8a6" data-rgb3="20,184,166" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-10.webp')"></span><span style="background-image:url('assets/poster-11.webp')"></span></div>
+        <div class="bg-carousel" data-theme="구현 단계·시스템 연결·배포 운영" aria-hidden="true"><span style="background-image:url('assets/poster-05.webp')"></span><span style="background-image:url('assets/poster-06.webp')"></span><span style="background-image:url('assets/poster-07.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">10</span><div><div class="eyebrow">BUILD FLOW FOR BEGINNERS</div><h2>초보자는 명령을 외우기보다 <span class="accent">각 단계의 목적과 확인 결과</span>를 이해</h2><p>기존 텍스트 목록을 실제 사이트 구축 순서에 맞춘 여섯 단계 실행 도식으로 전환</p></div></div>
           <div class="command-flow reveal" style="--delay:.14s">
@@ -1040,7 +1256,7 @@
       </section>
 
       <section class="slide" data-title="장기 작업 사례" data-accent="#f472b6" data-rgb="244,114,182" data-accent2="#f59e0b" data-rgb2="245,158,11" data-accent3="#3b82f6" data-rgb3="59,130,246" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-11.webp')"></span><span style="background-image:url('assets/poster-12.webp')"></span></div>
+        <div class="bg-carousel" data-theme="장기 과제·문제 추적·성과 개선" aria-hidden="true"><span style="background-image:url('assets/poster-11.webp')"></span><span style="background-image:url('assets/poster-09.webp')"></span><span style="background-image:url('assets/poster-12.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">11</span><div><div class="eyebrow">LONG-RUN CASES</div><h2>가장 오래 걸린 작업은 화면보다 <span class="accent">데이터 정확도·일관성·성능을 동시에 맞추는 과정</span></h2><p>실제 본 사이트에서 반복된 문제를 원인 · 해결 · 재발 방지로 정리</p></div></div>
           <div class="case-grid reveal" style="--delay:.14s">
@@ -1053,7 +1269,7 @@
       </section>
 
       <section class="slide" data-title="지속 개선" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#34d399" data-rgb2="52,211,153" data-accent3="#8b5cf6" data-rgb3="139,92,246" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-12.webp')"></span><span style="background-image:url('assets/poster-04.webp')"></span></div>
+        <div class="bg-carousel" data-theme="성장 루프·전략 지평선·기회 탐색" aria-hidden="true"><span style="background-image:url('assets/poster-12.webp')"></span><span style="background-image:url('assets/poster-03.webp')"></span><span style="background-image:url('assets/poster-07.webp')"></span></div>
         <div class="slide-inner">
           <div class="slide-title reveal"><span class="slide-no">12</span><div><div class="eyebrow">DOUBLE DIAMOND OPERATING LOOP</div><h2>사이트는 완성품이 아니라 <span class="accent">질문 → 데이터 → 화면 → 검증이 반복되는 운영 시스템</span></h2><p>새 사업 질문을 넓게 탐색하고 우선순위를 정한 뒤 데이터와 화면을 작게 구현하고 사용 결과로 다시 개선</p></div></div>
           <div class="double-diamond reveal" style="--delay:.14s">
@@ -1074,7 +1290,7 @@
       </section>
 
       <section class="slide" data-title="완료 기준" data-accent="#22d3ee" data-rgb="34,211,238" data-accent2="#a855f7" data-rgb2="168,85,247" data-accent3="#f59e0b" data-rgb3="245,158,11" aria-hidden="true">
-        <div class="bg-carousel" aria-hidden="true"><span style="background-image:url('assets/poster-12.webp')"></span><span style="background-image:url('assets/poster-03.webp')"></span></div>
+        <div class="bg-carousel" data-theme="완료 기준·전략 방향·최종 성과" aria-hidden="true"><span style="background-image:url('assets/poster-12.webp')"></span><span style="background-image:url('assets/poster-03.webp')"></span><span style="background-image:url('assets/poster-08.webp')"></span></div>
         <div class="slide-inner finish">
           <div>
             <div class="eyebrow reveal">PUBLISH &amp; OPERATE CHECKLIST</div>
@@ -1155,8 +1371,8 @@
         '지속 개선': ['탐색·선택', '구현·검증', '운영 학습'],
         '완료 기준': ['사업 질문', '근거 시스템', '지속 운영']
       }
-      const diagramSelectors = '.flow-card, .outcome, .branch, .arch-layer, .ledger, .pipe-step, .gate, .strategy-card, .render-box, .performance > div, .check, .cover-index > div, .prompt-panel, .command-step, .proof-strip > div, .audit-card, .verdict, .case-card, .north-star, .pyramid-step, .matrix-cell, .revision-prompt, .diamond-stage, .loop-node'
-      const trackSelectors = '.flow, .three-outcomes, .branches, .architecture, .pipeline, .gate-grid, .strategy-grid, .portfolio-line, .render-flow, .performance, .checklist, .cover-index, .prompt-compare, .command-flow, .assurance-flow, .case-grid, .vibe-start, .prompt-pyramid, .revision-layout, .evidence-matrix, .double-diamond, .loop-strip'
+      const diagramSelectors = '.flow-card, .outcome, .branch, .arch-layer, .ledger, .pipe-step, .gate, .strategy-card, .render-box, .performance > div, .check, .cover-index > div, .prompt-panel, .command-step, .proof-strip > div, .audit-card, .verdict, .case-card, .north-star, .pyramid-step, .matrix-cell, .revision-prompt, .diamond-stage, .loop-node, .brief-mandate, .brief-pillar, .role-panel, .mece-bridge, .decision-rule'
+      const trackSelectors = '.flow, .three-outcomes, .branches, .architecture, .pipeline, .gate-grid, .strategy-grid, .portfolio-line, .render-flow, .performance, .checklist, .cover-index, .prompt-compare, .command-flow, .assurance-flow, .case-grid, .vibe-start, .prompt-pyramid, .revision-layout, .evidence-matrix, .double-diamond, .loop-strip, .consulting-brief-tree, .brief-pillars, .mece-role-map'
       let fitFrame = 0
 
       const fitSlides = () => {
