@@ -222,11 +222,25 @@ export function canonicalizeStartupSnapshot(snapshot, trackedCompanies = []) {
   for (const section of Object.keys(output)) {
     output[section].sort((left, right) => String(left.name).localeCompare(String(right.name)));
   }
+  // A schema-v3 snapshot has already removed product aliases owned by tracked
+  // companies from its visible arrays. If a later organization refresh
+  // exposes a new duplicate and forces re-canonicalization, those historical
+  // tracked references are not reconstructible from the visible rows alone.
+  // Retain their full institutional/product evidence instead of silently
+  // shrinking source coverage.
+  for (const reference of snapshot?.companyRegistry?.trackedReferences || []) {
+    const key = reference.canonicalId || canonicalCompanyId(reference);
+    if (!key || trackedReferences.some(current =>
+      (current.canonicalId || canonicalCompanyId(current)) === key)) continue;
+    trackedReferences.push(reference);
+  }
   const visible = [...output.large, ...output.small, ...output.institutional];
   const a16zCompanies = visible.filter(record => record.a16z || record.institution).length
     + trackedReferences.filter(record => record.a16z || record.institution).length;
-  const rawStartupRecords = (snapshot?.large || []).length + (snapshot?.small || []).length
+  const visibleInputCount = (snapshot?.large || []).length + (snapshot?.small || []).length
     + (snapshot?.institutional || []).length;
+  const rawStartupRecords = Math.max(visibleInputCount, Number(snapshot?.companyRegistry?.rawStartupRecords || 0));
+  duplicateRecordsMerged += Math.max(0, Number(snapshot?.companyRegistry?.duplicateRecordsMerged || 0));
   return {
     ...snapshot,
     schemaVersion: 3,

@@ -1034,6 +1034,10 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
             mece[key] = { ...item, summary, details };
           });
           const hasIntel = meceKeys.some(key => mece[key].summary);
+          const capabilityProfile = intelligence.capabilityProfile || {};
+          const capabilityDimensions = Array.isArray(capabilityProfile.dimensions) ? capabilityProfile.dimensions : [];
+          const strategicImplications = Array.isArray(intelligence.strategicImplications)
+            ? intelligence.strategicImplications : [];
 
           // 핵심 활동(원문 근거 실행 실적) — 2)제품/개발·기술/생산/영업에서 재사용
           const sourcePractices = Array.isArray(intelligence.corePractices) ? intelligence.corePractices : [];
@@ -1162,6 +1166,8 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           const hasInvestment = !!(investPortfolio.length || mece.investmentDirection.summary || directionSignals.length);
           const capabilitySectionIds = [
             "product",
+            capabilityDimensions.length >= 2 && "capability",
+            (mece.strategyDirection.summary || mece.strategyDirection.details.length) && "strategy",
             technologyPractice && "technology",
             infrastructurePractice && "infrastructure",
             hasGoToMarket && "goToMarket",
@@ -1169,7 +1175,8 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
             hasInvestment && "investment",
           ].filter(Boolean);
           const capabilityNo = id => `${capabilitySectionIds.indexOf(id) + 1})`;
-          const hasImplications = !!(mece.strategyDirection.summary || mece.strategyDirection.details.length
+          const hasImplications = !!(strategicImplications.length
+            || mece.strategyDirection.summary || mece.strategyDirection.details.length
             || ventureComparison || ventures.some(venture => venture.handsetImplication));
 
           return (
@@ -1289,6 +1296,43 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                   {mece.currentBusiness.details.length > 0 && <ul className="cd-outline-list">{mece.currentBusiness.details.slice(0, 3).map((detail, index) => <li key={index}>{detail}</li>)}</ul>}
                 </div>
 
+                {capabilityDimensions.length >= 2 && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{capabilityNo("capability")}</b>핵심 역량 <em>Core Capabilities</em></h4>
+                  <div className="cd-capability-grid">
+                    {capabilityDimensions.map(item => (
+                      <div className="cd-capability-item" key={item.id}>
+                        <em>{item.label}</em><b>{item.value}</b>
+                      </div>
+                    ))}
+                  </div>
+                  {(capabilityProfile.evidence || []).length > 0 && (
+                    <div className="cd-capability-sources">
+                      {(capabilityProfile.evidence || []).map((source, index) => (
+                        <a key={`${source.url}-${index}`} href={source.url} target="_blank" rel="noopener">
+                          {source.source || "공식 원문"}{source.date ? ` · ${source.date}` : ""}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>}
+
+                {(mece.strategyDirection.summary || mece.strategyDirection.details.length > 0) && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{capabilityNo("strategy")}</b>전략 방향 <em>Strategy Direction</em></h4>
+                  {mece.strategyDirection.summary && <p className="cd-outline-text">{mece.strategyDirection.summary}</p>}
+                  {mece.strategyDirection.details.length > 0 && (
+                    <ul className="cd-outline-list">{mece.strategyDirection.details.slice(0, 3).map((detail, index) => <li key={index}>{detail}</li>)}</ul>
+                  )}
+                  {(mece.strategyDirection.evidence || []).length > 0 && (
+                    <div className="cd-capability-sources">
+                      {(mece.strategyDirection.evidence || []).slice(0, 3).map((source, index) => (
+                        <a key={`${source.url}-${index}`} href={source.url} target="_blank" rel="noopener">
+                          {source.source || "원문"}{source.date ? ` · ${source.date}` : ""}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>}
+
                 {technologyPractice && <div className="cd-section cd-outline-sub">
                   <h4><b className="cd-outline-no">{capabilityNo("technology")}</b>개발/기술 <em>R&amp;D · Technology</em></h4>
                   <PracticeBlock practice={technologyPractice} />
@@ -1378,9 +1422,34 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
               {hasImplications && <div className="cd-outline-group">
                 <h3 className="cd-outline-head">3. 시사점 <em>Implications</em></h3>
                 <div className="cd-section cd-outline-sub">
-                  {mece.strategyDirection.summary && <p className="cd-outline-text">{mece.strategyDirection.summary}</p>}
-                  {mece.strategyDirection.details.length > 0 && (
-                    <ul className="cd-outline-list">{mece.strategyDirection.details.slice(0, 3).map((d, i) => <li key={i}>{d}</li>)}</ul>
+                  {strategicImplications.length > 0 ? (
+                    <div className="cd-implication-grid">
+                      {strategicImplications.map(item => (
+                        <article className="cd-implication-card" key={item.id}>
+                          <header><b>{item.title}</b><em>{item.actionOption}</em></header>
+                          <p>{item.assessment}</p>
+                          {item.rationale && <dl><dt>판단 근거</dt><dd>{item.rationale}</dd></dl>}
+                          {(item.watchMetrics || []).length > 0 && (
+                            <div className="cd-implication-metrics">
+                              <em>확인 지표</em>{item.watchMetrics.map(metric => <span key={metric}>{metric}</span>)}
+                            </div>
+                          )}
+                          <footer>
+                            <span>{item.confidence === "curated-assessment" ? "큐레이션 판단" : "분류 기반 가설"}</span>
+                            {(item.evidence || []).map((source, index) => (
+                              <a key={`${source.url}-${index}`} href={source.url} target="_blank" rel="noopener">근거 {index + 1}</a>
+                            ))}
+                          </footer>
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <React.Fragment>
+                      {mece.strategyDirection.summary && <p className="cd-outline-text">{mece.strategyDirection.summary}</p>}
+                      {mece.strategyDirection.details.length > 0 && (
+                        <ul className="cd-outline-list">{mece.strategyDirection.details.slice(0, 3).map((d, i) => <li key={i}>{d}</li>)}</ul>
+                      )}
+                    </React.Fragment>
                   )}
                   {ventureComparison && (
                     <div className="cd-venture-comparison">
@@ -1491,6 +1560,9 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
             </React.Fragment>
           );
           const orgCoverage = (live.coverage && live.coverage.organization) || (c.coverage && c.coverage.organization);
+          const orgPublication = org.publication || {};
+          const orgSources = (org.officialPages || []).filter(page => /^https?:\/\//.test(String(page.resolvedUrl || page.url || "")))
+            .slice(0, 3);
           return (
             <React.Fragment>
               {org.mission && (
@@ -1503,8 +1575,19 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                 <div className="cd-section">
                   <h4>상세 조직도 <em>Founders · CEO · CTO · Executive Team</em><b className="cd-prof-live">{filingOfficers.length ? "LIVE 공시 + 리더십 이력" : "창업·리더십"}</b>
                     {orgCoverage && <b className="cd-coverage">커버리지 {orgCoverage.score}%</b>}
+                    {orgPublication.verifiedRoleCount > 0 && <b className="cd-org-verified">직함 검증 {orgPublication.verifiedRoleCount}명</b>}
                     {coLink && <a className="cd-org-colink" href={coLink} target="_blank" rel="noopener" title="회사 LinkedIn 페이지">회사 LinkedIn</a>}
                   </h4>
+                  {(orgPublication.checkedAt || orgSources.length > 0) && (
+                    <div className="cd-org-sourcebar">
+                      {orgPublication.checkedAt && <span>확인 {String(orgPublication.checkedAt).slice(0, 10)}</span>}
+                      {orgSources.map((page, index) => (
+                        <a key={`${page.url}-${index}`} href={page.resolvedUrl || page.url} target="_blank" rel="noopener">
+                          {index === 0 ? "조직·회사 원문" : `추가 근거 ${index + 1}`}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                   <div className="cd-org cd-org-architecture">
                     {lead && (
                       <div className="cd-org-node lead">

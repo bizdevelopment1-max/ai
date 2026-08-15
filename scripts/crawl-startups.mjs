@@ -227,6 +227,34 @@ function retainSourceHistory(rows, previousRows) {
   }
 }
 
+function normalizeSourceProvenance(rows, checkedAt = new Date().toISOString()) {
+  let changed = false;
+  for (const row of rows || []) {
+    const latestUrl = validHttp(row?.latest?.url) ? row.latest.url : "";
+    const historyUrls = (row?.history || [])
+      .map(item => item?.url)
+      .filter(validHttp);
+    const evidenceUrls = [...new Set([latestUrl, ...historyUrls].filter(Boolean))];
+    const next = {
+      status: evidenceUrls.length ? "source-linked" : "pending-source",
+      evidenceCount: evidenceUrls.length,
+      evidenceType: latestUrl
+        ? "publisher-link-latest"
+        : evidenceUrls.length
+          ? "historical-publisher-links"
+          : "catalog-profile",
+      historyCount: historyUrls.length,
+    };
+    const current = row.provenance || {};
+    const currentComparable = Object.fromEntries(Object.keys(next).map(key => [key, current[key]]));
+    if (JSON.stringify(currentComparable) !== JSON.stringify(next) || !current.checkedAt) {
+      row.provenance = { ...next, checkedAt };
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 const startupRecordKey = record => {
   try {
     const value = String(record?.domain || record?.profile?.officialWebsite || "");
@@ -473,7 +501,11 @@ async function main() {
     /[A-Za-z]{4,}\s+[A-Za-z]{4,}\s+[A-Za-z]{4,}/.test(`${x.partnership || ""} ${x.acqAngle || ""} ${x.revenue || ""} ${x.overview || ""}`));
   const needsAiUpgrade = !!llmAvailable() && !String(prev?.engine || "").startsWith("github-models:");
   if (!FORCE_REFRESH && age < 6.5 && !staleShape && prev.engine !== "rules" && !hasEnglish && !needsAiUpgrade) {
-    if (normalizedStoredSnapshot) {
+    const provenanceNormalized = normalizeSourceProvenance(
+      [...(prev.large || []), ...(prev.small || [])],
+      new Date().toISOString(),
+    );
+    if (normalizedStoredSnapshot || provenanceNormalized) {
       prev.generatedAt = new Date().toISOString();
       await writeFile("startups.json", JSON.stringify(prev) + "\n");
     }
@@ -504,6 +536,7 @@ async function main() {
   retainSourceHistory(large, prev?.large);
   retainSourceHistory(small, prev?.small);
   retainSourceHistory(institutional, prev?.institutional);
+  normalizeSourceProvenance([...large, ...small]);
   const previousCompanyRows = [...(prev?.large || []), ...(prev?.small || []), ...(prev?.institutional || [])];
   retainVerifiedCompanyDepth(large, previousCompanyRows);
   retainVerifiedCompanyDepth(small, previousCompanyRows);

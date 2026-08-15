@@ -241,6 +241,7 @@ const evidenceFingerprint = evidence => createHash("sha256")
   .digest("hex").slice(0, 16);
 const analysisCorpus = ({ base, rec, monet, evidence }) => clean(JSON.stringify({
   profile: rec.profile,
+  strategyProfile: rec.strategyProfile,
   officialPages: rec.organization?.officialPages,
   monetization: monet,
   evidence,
@@ -263,12 +264,147 @@ const practiceTypeFor = value => {
   const text = clean(value);
   return PRACTICE_TYPES.find(type => type.re.test(text)) || null;
 };
+const CAPABILITY_ARCHETYPES = {
+  voice: {
+    focus: "실시간 음성 인식·합성·대화 처리",
+    delivery: "음성 모델·API와 사용자 경험",
+    implication: "지연시간·정확도·로컬 처리 범위를 기준으로 서비스 결합 후보 비교",
+    metrics: ["추론 지연시간", "인식·합성 품질", "로컬 처리 비중"],
+  },
+  camera: {
+    focus: "이미지 생성·편집·복원",
+    delivery: "크리에이터 앱·SDK·모델 API",
+    implication: "편집 완성도·처리 원가·반복 사용을 기준으로 크리에이터 기능 결합성 검증",
+    metrics: ["편집 완료율", "처리 원가", "주간 재사용률"],
+  },
+  video: {
+    focus: "영상 생성·편집·아바타",
+    delivery: "크리에이터 앱·기업용 제작 도구·API",
+    implication: "생성 품질·처리시간·유료 전환을 기준으로 미디어 서비스 확장성 검증",
+    metrics: ["생성 완료율", "처리시간", "유료 전환율"],
+  },
+  music: {
+    focus: "음악·오디오 생성",
+    delivery: "소비자 제작 서비스·라이선스 모델",
+    implication: "저작권 범위·생성 품질·결제 전환을 중심으로 콘텐츠 사업 적합성 검증",
+    metrics: ["생성 후 저장률", "유료 전환율", "권리 처리 범위"],
+  },
+  ondevice: {
+    focus: "경량 모델·로컬 추론 최적화",
+    delivery: "런타임·SDK·모델 라이선스",
+    implication: "메모리·전력·지연시간 절감 효과를 기준으로 로컬 실행 역량 검증",
+    metrics: ["메모리 사용량", "전력 소모", "추론 지연시간"],
+  },
+  foundation: {
+    focus: "파운데이션·멀티모달 모델",
+    delivery: "모델 API·기업 배포·라이선스",
+    implication: "모델 효율·차별 성능·라이선스 유연성을 기준으로 공급 포트폴리오 비교",
+    metrics: ["품질 벤치마크", "토큰당 원가", "라이선스 범위"],
+  },
+  infra: {
+    focus: "학습·추론 인프라와 모델 배포",
+    delivery: "클라우드·서빙 플랫폼·가속 하드웨어",
+    implication: "추론 단가·가용성·전환 비용을 기준으로 인프라 파트너 적합성 검증",
+    metrics: ["추론 단가", "가용성", "배포 전환시간"],
+  },
+  trust: {
+    focus: "AI 안전·보안·위변조 탐지",
+    delivery: "탐지 API·SDK·기업 보안 서비스",
+    implication: "탐지 정확도·오탐률·로컬 실행성을 기준으로 신뢰 서비스 결합성 검증",
+    metrics: ["탐지 정확도", "오탐률", "로컬 실행 가능성"],
+  },
+  agent: {
+    focus: "에이전트 실행·개인화·오케스트레이션",
+    delivery: "소비자 서비스·기업용 에이전트·API",
+    implication: "과업 완료율·유지율·권한 통제를 기준으로 에이전트 서비스 결합성 검증",
+    metrics: ["과업 완료율", "주간 유지율", "승인 없는 실행률"],
+  },
+  search: {
+    focus: "검색·리서치·답변 생성",
+    delivery: "검색 서비스·에이전트·API",
+    implication: "답변 품질·재방문·외부 서비스 연결을 기준으로 검색 접점 확장성 검증",
+    metrics: ["답변 성공률", "재방문율", "행동 전환율"],
+  },
+  productivity: {
+    focus: "업무 생산성·문서·워크플로 자동화",
+    delivery: "기업 좌석형 서비스·앱·API",
+    implication: "업무시간 절감·좌석 확장·데이터 통제를 기준으로 기업 서비스 적합성 검증",
+    metrics: ["활성 좌석률", "업무시간 절감", "순매출 유지율"],
+  },
+  vertical: {
+    focus: "산업 특화 데이터·업무 흐름",
+    delivery: "산업별 구독·기업 라이선스·성과형 서비스",
+    implication: "도메인 정확도·규제 요건·기업 계약 확장성을 기준으로 버티컬 진입성 검증",
+    metrics: ["도메인 정확도", "계약 확장률", "규제 충족 범위"],
+  },
+  robotics: {
+    focus: "피지컬 AI·로보틱스·신규 폼팩터",
+    delivery: "하드웨어·제어 모델·연결 서비스",
+    implication: "안전성·원가·사용 빈도를 기준으로 신규 폼팩터 사업성을 단계 검증",
+    metrics: ["과업 성공률", "단위 원가", "주간 사용시간"],
+  },
+};
+const capabilityArchetype = profile => CAPABILITY_ARCHETYPES[clean(profile?.classification?.category).toLowerCase()]
+  || CAPABILITY_ARCHETYPES[clean(profile?.classification?.valueChainLayer).toLowerCase()]
+  || {
+    focus: first(profile?.classification?.vertical, "AI 제품·서비스 차별화"),
+    delivery: "제품·서비스·API 제공 계층",
+    implication: "사용자 가치·차별성·반복 매출 가능성을 기준으로 포트폴리오 적합성 검증",
+    metrics: ["활성 사용자", "유료 전환율", "고객 유지율"],
+  };
+const analystAction = value => {
+  const text = clean(value);
+  const actions = [
+    /인수|M&A/i.test(text) && "M&A",
+    /제휴|파트너|협력|라이선스/i.test(text) && "Partner",
+    /투자/i.test(text) && "Invest",
+  ].filter(Boolean);
+  return actions.length ? actions.join(" · ") : "Watch";
+};
+const capabilityBaseline = ({ rec, currentBusiness, officialEvidence }) => {
+  const strategyProfile = rec.strategyProfile || {};
+  const archetype = capabilityArchetype(strategyProfile);
+  const dimensions = [
+    { id: "business-focus", label: "제품·서비스 초점", value: first(strategyProfile.currentBusiness, currentBusiness) },
+    { id: "capability-focus", label: "핵심 기술·경험", value: archetype.focus },
+    { id: "delivery-layer", label: "제공 계층", value: archetype.delivery },
+    { id: "market-focus", label: "시장·고객 축", value: strategyProfile.classification?.vertical },
+  ].filter(item => clean(item.value)).filter((item, index, rows) =>
+    rows.findIndex(other => nearDuplicateClaim(other.value, item.value)) === index).slice(0, 4);
+  return {
+    schemaVersion: 1,
+    summary: dimensions.map(item => item.value).slice(0, 3).join(" · "),
+    dimensions,
+    evidence: officialEvidence.slice(0, 2),
+    groundingStatus: "profile-and-taxonomy-grounded",
+  };
+};
+const implicationBaseline = ({ rec, currentBusiness, officialEvidence }) => {
+  const strategyProfile = rec.strategyProfile || {};
+  const archetype = capabilityArchetype(strategyProfile);
+  const explicit = clean(strategyProfile.analystImplication);
+  const assessment = explicit || archetype.implication;
+  if (!assessment) return [];
+  return [{
+    id: "portfolio-fit",
+    title: "사업 포트폴리오 검토",
+    actionOption: analystAction(explicit),
+    assessment: clip(assessment, 320),
+    rationale: clip([currentBusiness, strategyProfile.classification?.vertical].filter(Boolean).join(" · "), 300),
+    watchMetrics: archetype.metrics.slice(0, 4),
+    evidence: officialEvidence.slice(0, 1),
+    confidence: explicit ? "curated-assessment" : "taxonomy-inference",
+    groundingStatus: "analyst-inference-separated-from-company-fact",
+  }];
+};
 const publicationProfile = intelligence => {
   const practices = Array.isArray(intelligence.corePractices) ? intelligence.corePractices : [];
   const evidence = [
     ...["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"]
       .flatMap(key => intelligence[key]?.evidence || []),
     ...practices.map(item => item.evidence),
+    ...(intelligence.capabilityProfile?.evidence || []),
+    ...(intelligence.strategicImplications || []).flatMap(item => item.evidence || []),
   ].filter(item => item && /^https?:\/\//.test(String(item.url || "")));
   const latestEvidence = evidence.slice().sort((left, right) =>
     String(right.date || "").localeCompare(String(left.date || "")))[0] || null;
@@ -285,9 +421,11 @@ const publicationProfile = intelligence => {
     clean(intelligence.investmentDirection?.summary) && "investment",
   ].filter(Boolean);
   return {
-    schemaVersion: 1,
-    policy: "core-product-required+source-backed-optional-sections",
-    coreComplete: visibleSections.includes("product"),
+    schemaVersion: 2,
+    policy: "business+capability+implication-required+source-backed-optional-sections",
+    coreComplete: visibleSections.includes("product")
+      && (intelligence.capabilityProfile?.dimensions || []).length >= 2
+      && (intelligence.strategicImplications || []).length >= 1,
     visibleSections,
     omittedSections: ["technology", "infrastructure", "goToMarket", "partnerships", "investment"]
       .filter(section => !visibleSections.includes(section)),
@@ -407,6 +545,35 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
       insight: bulletizeKorean(item.insight),
     };
   });
+  const fallbackCapabilities = fallback.capabilityProfile || { dimensions: [], evidence: [] };
+  const capabilityCandidate = (out.capabilityProfile?.dimensions || []).length >= 2
+    ? out.capabilityProfile : fallbackCapabilities;
+  const capabilityEvidence = (capabilityCandidate.evidence || [])
+    .filter(ref => allowedUrls.has(refKey(ref))).slice(0, 2);
+  out.capabilityProfile = {
+    schemaVersion: 1,
+    summary: bulletizeKorean(clip(capabilityCandidate.summary, 360)),
+    dimensions: (capabilityCandidate.dimensions || []).map(item => ({
+      id: clean(item.id),
+      label: clean(item.label),
+      value: bulletizeKorean(clip(item.value, 240)),
+    })).filter(item => item.id && item.label && item.value).slice(0, 4),
+    evidence: capabilityEvidence,
+    groundingStatus: "profile-and-taxonomy-grounded",
+  };
+  const implicationCandidate = (out.strategicImplications || []).length
+    ? out.strategicImplications : fallback.strategicImplications || [];
+  out.strategicImplications = implicationCandidate.map(item => ({
+    id: clean(item.id) || "portfolio-fit",
+    title: bulletizeKorean(clip(item.title, 100)),
+    actionOption: clean(item.actionOption) || "Watch",
+    assessment: bulletizeKorean(clip(item.assessment, 320)),
+    rationale: bulletizeKorean(clip(item.rationale, 300)),
+    watchMetrics: (item.watchMetrics || []).map(metric => bulletizeKorean(clip(metric, 80))).filter(Boolean).slice(0, 4),
+    evidence: (item.evidence || []).filter(ref => allowedUrls.has(refKey(ref))).slice(0, 2),
+    confidence: clean(item.confidence) || "taxonomy-inference",
+    groundingStatus: "analyst-inference-separated-from-company-fact",
+  })).filter(item => item.assessment && item.rationale).slice(0, 3);
   out.newBusinessModels = (out.newBusinessModels || []).filter(item =>
     item.evidence?.url && allowedUrls.has(refKey(item.evidence))
     && supportedNumbers(`${item.title} ${item.model} ${item.implication}`, corpus)).slice(0, 3)
@@ -491,14 +658,21 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
   const revenueSignals = monet?.monetize || [];
   const directionSignals = monet?.direction || [];
   const primaryModel = modelLabels.get(monet?.primaryModel);
-  const currentBusiness = (profile.business || []).join(" · ") || base?.unit || localizedTitle(rec.latest);
+  const currentBusiness = (profile.business || []).join(" · ")
+    || rec.strategyProfile?.currentBusiness || base?.unit || localizedTitle(rec.latest);
   const revenueEvidence = first(revenueSignals[0]?.signal);
   const revenueSummary = primaryModel
     ? [primaryModel, revenueEvidence].filter(Boolean).join(" 중심 · ")
     : revenueEvidence;
   const actionEvidence = evidence.find(item => isCompanyActionEvidenceFor(base?.name, item));
   const actionEvidenceRows = evidence.filter(item => isCompanyActionEvidenceFor(base?.name, item));
-  const strategySummary = first(directionSignals[0]?.signal, actionEvidence?.titleKo, actionEvidence?.titleOriginal, base?.direction);
+  const strategySummary = first(
+    directionSignals[0]?.signal,
+    actionEvidence?.titleKo,
+    actionEvidence?.titleOriginal,
+    rec.strategyProfile?.strategyDirection,
+    base?.direction,
+  );
   const investSignal = directionSignals.find(signal => ["ma", "invest", "partner"].includes(signal.kind));
   const investmentSummary = investSignal
     ? `${directionLabels.get(investSignal.kind) || "사업 확장"} · ${clip(investSignal.signal, 220)}`
@@ -532,6 +706,8 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
     executiveQuoteSeen.add(key);
     return true;
   }).slice(0, 4);
+  const capabilities = capabilityBaseline({ rec, currentBusiness, officialEvidence });
+  const strategicImplications = implicationBaseline({ rec, currentBusiness, officialEvidence });
   return {
     currentBusiness: { summary: clip(currentBusiness, 360), details: (profile.business || []).slice(0, 4), evidence: officialEvidence },
     revenueModel: {
@@ -572,6 +748,8 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
       implication: "제품·서비스·배포 방식의 변화가 반복 매출과 고객 접점을 확장하는지 추적",
       evidence: { title: signal.signal, source: signal.source, date: signal.date, url: signal.url },
     })),
+    capabilityProfile: capabilities,
+    strategicImplications,
     executiveQuotes,
   };
 };
@@ -657,7 +835,7 @@ async function main() {
   const persistCompanyData = async () => {
     companyData.schemaVersion = 6;
     companyData.generatedAt = new Date().toISOString();
-    companyData.methodology = "normalized-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis+source-backed-section-publication+freshness";
+    companyData.methodology = "normalized-profile+strategy-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis+complete-capability-and-implication-baseline+source-backed-section-publication+freshness";
     const checkpoint = "companies.json.checkpoint";
     await writeFile(checkpoint, `${JSON.stringify(companyData)}\n`);
     await rename(checkpoint, "companies.json");

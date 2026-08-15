@@ -653,6 +653,16 @@ try {
   const people = organizationRows.flatMap(organization => organization.executiveTeam || []);
   const depthReady = organizationRows.every(organization =>
     Array.isArray(organization.executiveTeam) && organization.executiveTeam.length <= 12);
+  const organizationPublicationReady = companyRows.every(company => {
+    const publication = company.organization?.publication || {};
+    return publication.schemaVersion === 1
+      && publication.policy === "verified-people-only+official-source-preferred+no-role-inference"
+      && Number.isInteger(publication.rosterCount)
+      && Number.isInteger(publication.verifiedRoleCount)
+      && Number.isInteger(publication.sourceCount)
+      && ["verified-roster", "curated-roster", "no-public-roster"].includes(publication.status)
+      && publication.checkedAt;
+  });
   const directProfilesVerified = people.filter(person => person.li).every(person =>
     /^https:\/\/(?:(?:www|[a-z]{2,3})\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+\/?$/i.test(person.li)
     && /^(curated-direct-profile|official-jsonld-direct-profile|wikidata-property-direct-profile)$/.test(person.linkedinVerification || ""));
@@ -675,7 +685,7 @@ try {
     && companyCrawler.includes("roleSourceType")
     && companyCrawler.includes("linkedinVerification")
     && startupCrawler.includes("linkedinVerification");
-  if (!depthReady || !directProfilesVerified || !nodeDetailReady || !inlineExecutiveTitlesReady
+  if (!depthReady || !organizationPublicationReady || !directProfilesVerified || !nodeDetailReady || !inlineExecutiveTitlesReady
     || !executiveFeedsReady || !executiveUiReady || !refreshReady) {
     throw new Error("12-person leadership merge, inline executive titles, universal executive feeds, in-node background detail, direct-profile verification, or recurring normalization is incomplete");
   }
@@ -907,11 +917,26 @@ try {
       && groundedOrBlank
       && Array.isArray(value.corePractices) && Array.isArray(value.newBusinessModels)
       && Array.isArray(value.executiveQuotes)
+      && value.capabilityProfile?.schemaVersion === 1
+      && value.capabilityProfile?.dimensions?.length >= 2
+      && value.capabilityProfile.dimensions.every(item => item.id && item.label && item.value)
+      && Array.isArray(value.strategicImplications) && value.strategicImplications.length >= 1
+      && value.strategicImplications.every(item => item.assessment && item.rationale
+        && item.groundingStatus === "analyst-inference-separated-from-company-fact")
       && value.evidenceFingerprint
       && value.groundingStatus === "numeric-and-source-reference-checked"
       && sections.every(key => value[key]?.confidence && value[key]?.groundingStatus);
   });
   const companyRows = Object.values(companies.companies || {});
+  const strategyProfilesReady = companyRows.every(company => {
+    const profile = company.strategyProfile || {};
+    return profile.schemaVersion === 1
+      && profile.currentBusiness
+      && profile.classification && typeof profile.classification === "object"
+      && Array.isArray(profile.sourceUrls)
+      && profile.sourceUrls.some(url => /^https?:\/\//.test(String(url || "")))
+      && profile.checkedAt;
+  });
   const publishedStartupNames = new Set([
     ...(startups.large || []),
     ...(startups.small || []),
@@ -929,8 +954,8 @@ try {
     const publication = value.publication || {};
     const visible = new Set(publication.visibleSections || []);
     const practices = value.corePractices || [];
-    return publication.schemaVersion === 1
-      && publication.policy === "core-product-required+source-backed-optional-sections"
+    return publication.schemaVersion === 2
+      && publication.policy === "business+capability+implication-required+source-backed-optional-sections"
       && publication.coreComplete === true
       && visible.has("product")
       && /^\d{4}-\d{2}-\d{2}$/.test(publication.lastVerifiedAt || "")
@@ -948,7 +973,11 @@ try {
     && !boards.includes("const Empty =")
     && boards.includes("const capabilitySectionIds =")
     && boards.includes('hasGoToMarket && <div className="cd-section cd-outline-sub">')
-    && boards.includes('infrastructurePractice && <div className="cd-section cd-outline-sub">');
+    && boards.includes('infrastructurePractice && <div className="cd-section cd-outline-sub">')
+    && boards.includes('className="cd-capability-grid"')
+    && boards.includes('className="cd-implication-grid"')
+    && boards.includes('핵심 역량 <em>Core Capabilities</em>')
+    && boards.includes('전략 방향 <em>Strategy Direction</em>');
   const aiCompanies = companyRows.filter(company => company.intelligence?.engine?.startsWith("github-models:")).length;
   const configuredAiBudget = Number(workflow.match(/COMPANY_INTELLIGENCE_AI_BUDGET:\s*(\d+)/)?.[1] || 0);
   const a16zReady = a16z.web?.length === 50 && a16z.mobile?.length === 50
@@ -1042,10 +1071,24 @@ try {
         const article = newsByUrl.get(ref.url);
         return !article || articleFocusedOnCompany(name, article);
       })));
-  if (!intelligenceReady
+  if (!intelligenceReady || !strategyProfilesReady
     || !startupProfilesComplete || !publicationPolicyReady || !blankSectionUiRemoved
     || !a16zReady || !ventureReady || !forecastsReady || !workflowReady || !grounded || !officialReady || !companyEvidenceFocused) {
-    throw new Error("company intelligence must remain source-grounded or blank, with a16z 50+50 and strategic-venture automation intact");
+    const causes = [
+      !intelligenceReady && "intelligence",
+      !strategyProfilesReady && "strategy-profiles",
+      !startupProfilesComplete && "startup-profiles",
+      !publicationPolicyReady && "publication-policy",
+      !blankSectionUiRemoved && "detail-ui",
+      !a16zReady && "a16z",
+      !ventureReady && "ventures",
+      !forecastsReady && "forecasts",
+      !workflowReady && "workflow",
+      !grounded && "grounding-guards",
+      !officialReady && "official-sources",
+      !companyEvidenceFocused && "company-focus",
+    ].filter(Boolean).join(", ");
+    throw new Error(`company intelligence must keep complete business, capability, implication and verified-organization baselines while optional claims remain source-grounded or blank (${causes})`);
   }
   console.log(`  OK  기업 인텔리전스 ${companyRows.length}개 · 스타트업 ${publishedStartupNames.size}개 공통 프로필 · 빈 섹션 자동 제외 · AI ${aiCompanies}개 · a16z Web 50/Mobile 50 · DeployCo/JV · 신사업 예측 7개 근거 자동화`);
 } catch (error) {

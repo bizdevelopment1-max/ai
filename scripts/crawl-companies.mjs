@@ -24,6 +24,9 @@ import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { bulletizeKorean } from "./korean-copy.mjs";
 
 const MAX_EXECUTIVES = 12;
+const cleanText = value => String(value || "").replace(/\s+/g, " ").trim();
+const firstText = (...values) => values.map(cleanText).find(Boolean) || "";
+const uniqueText = values => [...new Set((values || []).map(cleanText).filter(Boolean))];
 // A found direct quote+speaker match with no free exact-substring alignment
 // to the article's own curated summary lines used to be dropped entirely —
 // the curated summary rarely happens to preserve the exact quote sentence,
@@ -626,6 +629,48 @@ async function main() {
         : base.coverage?.sourceMode || "official-domain+structured-knowledge-graph+news",
       checkedAt: base.coverage?.checkedAt || nowIso,
     };
+    const classification = dash.COMPANY_LAYER?.[name] || {};
+    const sourceUrls = uniqueText([
+      normalizedProfile.officialWebsite,
+      base.domain ? `https://${String(base.domain).replace(/^https?:\/\//i, "")}/` : "",
+      ...(normalizedProfile.sourceUrls || []),
+      ...(normalizedOrg.officialPages || []).map(page => page.resolvedUrl || page.url),
+      ...(base.sourceLinks || []).map(source => source.url),
+    ]).filter(url => /^https?:\/\//i.test(url)).slice(0, 8);
+    const trackedCompany = trackedCompanies.some(company => company.name === name);
+    rec.strategyProfile = {
+      schemaVersion: 1,
+      sourceType: trackedCompany ? "tracked-company-profile" : "startup-registry-profile",
+      currentBusiness: firstText(
+        base.currentBusiness,
+        base.businessModel,
+        base.overview,
+        base.description,
+        normalizedProfile.business.join(" · "),
+        base.unit,
+      ),
+      revenueModel: firstText(base.revenueModel, base.revenue),
+      strategyDirection: firstText(base.strategyDirection, base.partnership, trackedCompany ? base.direction : ""),
+      analystImplication: firstText(base.implication, base.acqAngle, trackedCompany ? base.direction : ""),
+      classification: {
+        category: firstText(base.cat, classification.category),
+        vertical: firstText(base.vertical, classification.vertical, base.unit),
+        valueChainLayer: firstText(base.layer, classification.layer),
+        stage: firstText(base.stage, base.funding),
+      },
+      sourceUrls,
+      checkedAt: rec.coverage.checkedAt || nowIso,
+    };
+    normalizedOrg.publication = {
+      schemaVersion: 1,
+      policy: "verified-people-only+official-source-preferred+no-role-inference",
+      rosterCount: executiveTeam.length,
+      verifiedRoleCount: verifiedCount,
+      directProfileCount: executiveTeam.filter(person => directLinkedIn(person.li) && person.linkedinVerification).length,
+      sourceCount: sourceUrls.length,
+      status: executiveTeam.length ? (verifiedCount ? "verified-roster" : "curated-roster") : "no-public-roster",
+      checkedAt: rec.coverage.checkedAt || nowIso,
+    };
     const portfolioReference = startupReferenceByName.get(name);
     if (portfolioReference) rec.portfolioReference = portfolioReference;
     rec.updatedAt = nowIso;
@@ -652,7 +697,7 @@ async function main() {
   const out = {
     generatedAt: nowIso,
     schemaVersion: 6,
-    methodology: "canonical-company-registry+normalized-profile+live-financials+official-executive-verification+focused-news-evidence+company-intelligence-ready+source-backed-section-publication",
+    methodology: "canonical-company-registry+normalized-profile+strategy-profile+live-financials+official-executive-verification+focused-news-evidence+company-intelligence-ready+complete-capability-and-implication-baseline+source-backed-section-publication",
     companyRegistry: {
       method: startupRegistry.method || "official-domain+operator-legal-name",
       uniqueCompanies: Object.keys(companies).length,

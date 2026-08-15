@@ -23,6 +23,7 @@ const MISSING_DEPTH_ONLY = /^(1|true|yes)$/i.test(String(process.env.STARTUP_ORG
 const REFRESH_BUDGET = Math.max(1, Number(process.env.STARTUP_ORG_REFRESH_BUDGET || 36));
 const MAX_AGE_DAYS = Math.max(1, Number(process.env.STARTUP_ORG_MAX_AGE_DAYS || 21));
 const CONCURRENCY = Math.max(1, Math.min(10, Number(process.env.STARTUP_ORG_CONCURRENCY || 6)));
+const TARGET_NAMES = new Set(String(process.env.STARTUP_ORG_TARGETS || "").split(",").map(clean => clean.trim()).filter(Boolean));
 const MAX_EXECUTIVES = 12;
 const NOW = new Date().toISOString();
 
@@ -39,13 +40,34 @@ const clip = (value, size = 420) => {
 };
 const validHttp = value => /^https?:\/\//i.test(String(value || ""));
 const canonicalHost = value => {
-  try { return new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`).hostname.toLowerCase().replace(/^www\./, ""); }
+  const raw = clean(value);
+  if (!raw || /^(?:undefined|null)$/i.test(raw)) return "";
+  try { return new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`).hostname.toLowerCase().replace(/^www\./, ""); }
   catch { return ""; }
 };
 const sameDomain = (left, right) => {
   const a = canonicalHost(left);
   const b = canonicalHost(right);
   return !!a && !!b && (a === b || a.endsWith(`.${b}`) || b.endsWith(`.${a}`));
+};
+const sameSourceIdentity = (left, right) => {
+  try {
+    const a = new URL(left);
+    const b = new URL(right);
+    const ah = a.hostname.replace(/^www\./, "").toLowerCase();
+    const bh = b.hostname.replace(/^www\./, "").toLowerCase();
+    if (ah === "apps.apple.com" && bh === "apps.apple.com") {
+      const aid = a.pathname.match(/\/id(\d+)/i)?.[1] || "";
+      const bid = b.pathname.match(/\/id(\d+)/i)?.[1] || "";
+      return !!aid && aid === bid;
+    }
+    if (ah === "play.google.com" && bh === "play.google.com") {
+      const aid = a.searchParams.get("id") || "";
+      const bid = b.searchParams.get("id") || "";
+      return !!aid && aid === bid;
+    }
+  } catch {}
+  return sameDomain(left, right);
 };
 const personKey = value => clean(value).toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
 const ageDays = value => {
@@ -261,14 +283,15 @@ function relevantOfficialLinks(page, domain) {
     try { url = new URL(match[1], page.resolvedUrl || page.url).href; } catch { continue; }
     if (!sameDomain(url, domain)) continue;
     const pathname = new URL(url).pathname;
-    if (!/(?:\/|^)(?:about(?:-us)?|company|team|leadership|management|who-we-are|our-story)(?:\/|$)/i.test(pathname)) continue;
+    if (!/(?:\/|^)(?:about(?:-us)?|company|team|our-team|people|leadership|leadership-team|management|management-team|executives?|founders?|who-we-are|our-story)(?:\/|$)/i.test(pathname)
+      && !/(?:team|leadership|management|founders?|executives?|our people)/i.test(label)) continue;
     if (/(?:blog|news|resource|customer|case-stud|use-case|press|event)/i.test(pathname)) continue;
     url = url.replace(/#.*$/, "");
     if (seen.has(url)) continue;
     seen.add(url);
     rows.push(url);
   }
-  return rows.slice(0, 2);
+  return rows.slice(0, 4);
 }
 
 function jsonLdObjects(html) {
@@ -318,7 +341,7 @@ const plausiblePerson = name => {
 const trustedLeadershipPath = value => {
   try {
     const pathname = new URL(value).pathname;
-    return /(?:\/|^)(?:about(?:-us)?|company|team|leadership|management|who-we-are|our-story)(?:\/|$)/i.test(pathname)
+    return /(?:\/|^)(?:about(?:-us)?|company|team|our-team|people|leadership|leadership-team|management|management-team|executives?|founders?|who-we-are|our-story)(?:\/|$)/i.test(pathname)
       && !/(?:blog|news|resource|customer|case-stud|use-case|press|event)/i.test(pathname);
   } catch {
     return false;
@@ -555,6 +578,33 @@ function retainedSnapshot(record) {
   };
 }
 
+function sourceAlignedSnapshot(record, officialSeed = "") {
+  const prior = retainedSnapshot(record);
+  const expectedUrls = [
+    officialSeed,
+    record?.domain ? `https://${record.domain}/` : "",
+    ...(record?.sourceLinks || []).map(source => source.url),
+  ].filter(validHttp);
+  const profileUrls = [
+    prior.profile?.officialWebsite,
+    ...(prior.profile?.sourceUrls || []),
+  ].filter(validHttp);
+  const organizationUrls = (prior.organization?.officialPages || [])
+    .map(page => page.resolvedUrl || page.url).filter(validHttp);
+  if (!expectedUrls.length) return prior;
+  const aligned = urls => !urls.length || urls.some(retained =>
+    expectedUrls.some(expected => sameSourceIdentity(retained, expected)));
+  const profileAligned = aligned(profileUrls);
+  const organizationAligned = aligned(organizationUrls);
+  if (!profileAligned) console.warn(`[startup-org] discarded mismatched profile snapshot: ${record.name}`);
+  if (!organizationAligned) console.warn(`[startup-org] discarded mismatched organization snapshot: ${record.name}`);
+  return {
+    profile: profileAligned ? prior.profile : {},
+    organization: organizationAligned ? prior.organization : {},
+    coverage: profileAligned && organizationAligned ? prior.coverage : {},
+  };
+}
+
 function normalizeStoredDepth(record) {
   const organization = record.organization || {};
   const storedPeople = (organization.executiveTeam || organization.leadership || []).filter(reliableExtractedPerson);
@@ -607,7 +657,10 @@ function normalizeStoredDepth(record) {
 }
 
 function buildEnrichment(record, wikidata, officialPages, officialSeed = "") {
-  const prior = retainedSnapshot(record);
+  // A canonical app name can outlive a bad historical operator merge. Never
+  // carry that snapshot forward when none of its source domains matches the
+  // record's current official or marketplace-linked source.
+  const prior = sourceAlignedSnapshot(record, officialSeed);
   const official = officialStructuredProfile(officialPages);
   const leadership = mergePeople(
     wikidata.leadership || [],
@@ -696,6 +749,16 @@ function buildEnrichment(record, wikidata, officialPages, officialSeed = "") {
     sourceMode: "official-domain+structured-knowledge-graph",
     checkedAt: NOW,
   };
+  organization.publication = {
+    schemaVersion: 1,
+    policy: "verified-people-only+official-source-preferred+no-role-inference",
+    rosterCount: executiveTeam.length,
+    verifiedRoleCount: officialMatched,
+    directProfileCount: directProfiles,
+    sourceCount: organization.officialPages.length,
+    status: executiveTeam.length ? (officialMatched ? "verified-roster" : "curated-roster") : "no-public-roster",
+    checkedAt: NOW,
+  };
   return { profile, organization, coverage };
 }
 
@@ -712,6 +775,7 @@ async function main() {
     if (!current || (record.profile?.business || []).length > (current.profile?.business || []).length) unique.set(key, record);
   }
   const candidates = [...unique.values()]
+    .filter(record => !TARGET_NAMES.size || TARGET_NAMES.has(record.name))
     .filter(record => MISSING_DEPTH_ONLY
       ? Number(record.coverage?.organization?.executiveCount || 0) === 0
       : FORCE || !record.coverage?.checkedAt || ageDays(record.coverage.checkedAt) >= MAX_AGE_DAYS)
@@ -722,6 +786,10 @@ async function main() {
     })
     .slice(0, FORCE || MISSING_DEPTH_ONLY ? unique.size : REFRESH_BUDGET);
 
+  if (TARGET_NAMES.size) {
+    const matched = [...unique.values()].filter(record => TARGET_NAMES.has(record.name)).map(record => record.name);
+    console.log(`[startup-org] targeted refresh requested ${TARGET_NAMES.size} · matched ${matched.length}: ${matched.join(", ")}`);
+  }
   console.log(`[startup-org] refreshing ${candidates.length}/${unique.size} unique startup domains`);
   const officialSeeds = await mapConcurrent(candidates, Math.min(5, CONCURRENCY), marketplaceOfficialUrl);
   const effectiveCandidates = candidates.map((record, index) => {
@@ -760,12 +828,15 @@ async function main() {
     const pages = home ? [home] : [];
     const relevant = home ? relevantOfficialLinks(home, effectiveRecord.domain) : [];
     if (!relevant.length && effectiveRecord.domain) {
-      try { relevant.push(new URL("/about", homeUrl || `https://${effectiveRecord.domain}/`).href); } catch {}
+      for (const path of ["/about", "/about-us", "/company", "/team", "/leadership"]) {
+        try { relevant.push(new URL(path, homeUrl || `https://${effectiveRecord.domain}/`).href); } catch {}
+      }
     }
-    for (const url of relevant.slice(0, 2)) {
+    for (const url of relevant.slice(0, 4)) {
       if (pages.some(page => page.resolvedUrl === url || page.url === url)) continue;
       const page = await fetchOfficialPage(url);
       if (page) pages.push(page);
+      if (pages.filter(candidate => trustedLeadershipPath(candidate.resolvedUrl || candidate.url)).length >= 2) break;
     }
     const entity = companyMatches.get(recordKey(record));
     const wiki = wikidataProfile(effectiveRecord, entity, entityMap);
