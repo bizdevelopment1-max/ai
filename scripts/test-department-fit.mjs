@@ -73,9 +73,6 @@ const registryIds = [...registrySource.matchAll(/id:\s*"([^"]+)"/g)].map(match =
 const rightSectionIds = [...app.matchAll(/(?:data-section|<LazySection id)="([^"]+)"/g)].map(match => match[1]);
 assert(JSON.stringify(registryIds) === JSON.stringify(rightSectionIds), `좌측 탭과 우측 섹션 순서 불일치: ${registryIds.join(",")} / ${rightSectionIds.join(",")}`);
 assert(/Object\.fromEntries\(NAV_SECTION_IDS\.map/.test(app), "좌우 섹션 ref가 단일 레지스트리에서 생성되어야 합니다");
-assert(/followTarget/.test(app) && /waitingAbove/.test(app) && /minimumSettleMs/.test(app), "지연 렌더링 중에도 클릭한 좌측 탭과 우측 섹션을 재정렬해야 합니다");
-assert(/ResizeObserver\(onScroll\)/.test(app) && /nav-aligning/.test(app), "레이아웃 변경 후 스크롤 스파이가 다시 계산되어야 합니다");
-assert(/sb-progress/.test(components) && /ov-consulting-flow/.test(app), "현재 단계와 컨설팅 의사결정 흐름 인포그래픽이 필요합니다");
 assert(/executive-news-view\.json/.test(app) && /fullNewsLoaded/.test(app), "첫 화면 경량 기사 로딩 후 누적 기사 예열 구조가 필요합니다");
 assert(/01 · EXECUTIVE BRIEF/.test(components) && /05 · EVIDENCE GOVERNANCE/.test(components), "좌측 탭에 컨설팅 워크스트림이 없습니다");
 assert(/needsCompanyExtras/.test(app), "초기 화면과 상세 데이터 요청이 분리되지 않았습니다");
