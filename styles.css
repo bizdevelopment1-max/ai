@@ -6377,3 +6377,89 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mxc-generated-grid dl,.mxc-experiment-grid dl{display:grid;gap:6px;margin:0}.mxc-generated-grid dl>div,.mxc-experiment-grid dl>div{display:grid;grid-template-columns:64px 1fr;gap:8px;font-size:11px}.mxc-generated-grid dt,.mxc-experiment-grid dt{color:var(--muted)}.mxc-generated-grid dd,.mxc-experiment-grid dd{margin:0;color:var(--ink)}.mxc-generated-grid footer{display:flex;gap:8px;margin-top:auto}.mxc-generated-grid footer a,.mxc-generated-grid footer span{font-size:10px;color:var(--accent)}
 .mxc-experiment-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.mxc-experiment-grid>article{padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.mxc-experiment-grid header em{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;font-style:normal;background:var(--accent);color:#fff}.mxc-experiment-grid header b{margin-left:auto;color:var(--ink)}.mxc-experiment-grid footer{margin-top:14px;padding-top:10px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
 @media(max-width:1100px){.mxc-generated-grid,.mxc-experiment-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.mxc-opportunity-summary,.mxc-generated-grid,.mxc-experiment-grid{grid-template-columns:1fr}}
+
+/* ============================================================
+   VALUE-CHAIN READABILITY GUARD
+   Keep hover labels legible and give edge cards/text enough room to render.
+   ============================================================ */
+.msf .msf-section-head {
+  min-width: 0;
+  padding-inline: 10px;
+}
+.msf .msf-section-head > div {
+  min-width: 0;
+  flex: 1 1 360px;
+  flex-wrap: wrap;
+}
+.msf .msf-section-head h3,
+.msf .msf-section-head p {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+.msf .msf-section-head p {
+  flex: 1 1 360px;
+  line-height: 1.45;
+}
+.msf-chain,
+.msf-choices {
+  padding: 8px 10px 24px;
+}
+.msf-layer > b,
+.msf-layer-control,
+.msf-layer-role,
+.msf-layer-evidence em,
+.msf-layer-lead b {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+  text-overflow: clip;
+}
+.msf-layer-role {
+  max-width: calc(100% - 50px);
+  line-height: 1.25;
+  text-align: right;
+}
+.msf-layer-evidence em,
+.msf-layer-lead b {
+  overflow: visible;
+  line-height: 1.25;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* The generic palette-reversal selector carries element specificity from
+     its :is() list. This stronger rule prevents white-on-white role pills. */
+  .msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-role {
+    opacity: 1;
+    color: var(--hover-tone) !important;
+    -webkit-text-fill-color: var(--hover-tone) !important;
+    text-shadow: none !important;
+    transform: none;
+  }
+  .msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-lead :is(em, b) {
+    color: var(--hover-tone) !important;
+    -webkit-text-fill-color: var(--hover-tone) !important;
+    text-shadow: none !important;
+  }
+  .msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-evidence :is(em, b) {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    text-shadow: 0 1px 2px rgba(7, 21, 33, .28);
+  }
+}
+
+@media (max-width: 720px) {
+  .msf .msf-section-head {
+    padding-inline: 8px;
+  }
+  .msf .msf-section-head > div,
+  .msf .msf-section-head p {
+    max-width: none;
+  }
+  .msf-chain,
+  .msf-choices {
+    padding: 7px 8px 20px;
+  }
+}

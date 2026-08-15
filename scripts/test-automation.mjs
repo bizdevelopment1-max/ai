@@ -720,14 +720,20 @@ try {
     ".mkt-card:is(:hover, :focus-visible) .mkt-cagr",
     ".btf-card:is(:hover, :focus-visible) .btf-step",
     ".isg-card:is(:hover, :focus-visible) .isg-quant",
+    ".msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-role",
+    ".msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-lead :is(em, b)",
+    ".msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-evidence :is(em, b)",
   ].every(selector => styles.includes(selector))
     && styles.includes("-webkit-text-fill-color: color-mix(in srgb, var(--hover-tone")
     && styles.includes("background: rgba(255, 255, 255, .96) !important")
-    && styles.includes("background: rgba(255, 255, 255, .12) !important");
+    && styles.includes("background: rgba(255, 255, 255, .12) !important")
+    && styles.includes("-webkit-text-fill-color: var(--hover-tone) !important")
+    && styles.includes("padding: 8px 10px 24px")
+    && styles.includes("overflow-wrap: anywhere");
   if (!hoverContrastReady) {
-    throw new Error("bright nested surfaces must retain readable foreground colors during card hover and keyboard focus");
+    throw new Error("hover labels and bright nested surfaces must stay readable without edge or text clipping");
   }
-  console.log("  OK  hover/focus contrast for nested metric, CAGR, decision-step, and evidence chips");
+  console.log("  OK  hover/focus contrast and value-chain edge/text clipping guards");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  nested hover contrast: ${error.message}`);
