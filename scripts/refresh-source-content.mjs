@@ -8,6 +8,7 @@ const limit = Number(process.env.SOURCE_REFRESH_LIMIT || 0);
 const concurrency = Number(process.env.SOURCE_REFRESH_CONCURRENCY || 4);
 const scope = String(process.env.SOURCE_REFRESH_SCOPE || "all").toLowerCase();
 const force = /^(1|true|yes)$/i.test(String(process.env.SOURCE_REFRESH_FORCE || ""));
+const match = String(process.env.SOURCE_REFRESH_MATCH || "").trim().toLowerCase();
 const readJson = async (file, fallback) => { try { return JSON.parse(await readFile(file, "utf8")); } catch { return fallback; } };
 const suppression = await loadSuppressionRegistry();
 
@@ -17,6 +18,8 @@ async function refresh(file, key) {
   const itemScope = key === "feed" ? "research" : "article";
   const candidates = rows
     .filter(row => !suppression.matches(row, itemScope))
+    .filter(row => !match || [row.url, row.rssUrl, row.title, row.titleEn]
+      .some(value => String(value || "").toLowerCase().includes(match)))
     .filter(row => force || !isContentBacked(row));
   const target = limit > 0 ? candidates.slice(0, limit) : candidates;
   console.log(`[source-refresh] ${file}: ${target.length}/${rows.length} record(s) need source-page extraction`);
