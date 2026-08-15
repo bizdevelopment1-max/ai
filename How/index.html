@@ -307,9 +307,10 @@
     .summary-slide .slide-inner { width: min(1580px, 100%); }
     .summary-slide .slide-title { margin-bottom: clamp(14px, 2.2vh, 24px); }
     .summary-slide .flow {
-      grid-template-columns: minmax(0,1fr) 64px minmax(0,1fr) 64px minmax(0,1fr) 64px minmax(0,1fr) 64px minmax(0,1fr);
+      grid-template-columns: minmax(0,1fr) 40px minmax(0,1fr) 40px minmax(0,1fr) 40px minmax(0,1fr) 40px minmax(0,1fr);
       margin-top: clamp(14px, 2.7vh, 28px);
     }
+    .summary-slide .flow > .tri-arrow { width: 38px; height: 12px; }
     .summary-slide .flow-card { padding: clamp(13px, 1.6vh, 19px) 14px; }
     .summary-slide .three-outcomes { margin-top: clamp(10px, 1.7vh, 17px); }
     .summary-slide .outcome { padding: clamp(12px, 1.7vh, 17px); }
@@ -338,7 +339,8 @@
     .ledger.public { border-color: rgba(0,169,224,.62); }
     .ledger.private { border-color: rgba(77,163,255,.52); }
 
-    .pipeline { display: grid; grid-template-columns: repeat(11, minmax(0, auto)); align-items: stretch; margin-top: 24px; }
+    .pipeline { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr) 34px) minmax(0, 1fr); column-gap: 5px; align-items: stretch; margin-top: 24px; }
+    .pipeline > .tri-arrow { width: 32px; height: 10px; }
     .pipe-step { min-width: 0; padding: 17px 12px; border: 1px solid var(--line); background: var(--blue-panel); }
     .pipe-step em { color: var(--accent); font: 900 9px var(--mono); font-style: normal; }
     .pipe-step b { display: block; margin-top: 8px; font-size: 12px; }
@@ -507,54 +509,6 @@
     .check span { font-size: clamp(12px, .78vw, 14px); }
     .cta { font-size: 15px; }
     .key-grid span { font-size: 13px; }
-
-    /* conclusion-led consulting ribbon */
-    .consulting-ribbon {
-      position: absolute;
-      top: -28px;
-      right: 0;
-      z-index: 6;
-      display: grid;
-      grid-template-columns: repeat(5, auto);
-      align-items: center;
-      min-height: 30px;
-      border: 1px solid rgba(var(--accent-rgb), .42);
-      background: linear-gradient(90deg, rgba(var(--accent-rgb), .08), rgba(var(--accent-rgb), .30), rgba(var(--accent-rgb), .08));
-      backdrop-filter: blur(10px);
-      overflow: hidden;
-    }
-    .logic-node {
-      min-width: 112px;
-      padding: 8px 12px;
-      color: #dce7f1;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: -.01em;
-      text-align: center;
-      white-space: nowrap;
-      transition: color .25s ease, background .25s ease;
-    }
-    .logic-node:first-child { color: var(--accent); }
-    .logic-node:last-child { background: rgba(var(--accent-rgb), .12); }
-    .logic-arrow {
-      position: relative;
-      width: 92px;
-      height: 14px;
-      background: var(--tone-gradient);
-      clip-path: var(--consult-arrow);
-      filter: drop-shadow(0 0 7px rgba(var(--accent-rgb), .72));
-      overflow: hidden;
-      animation: arrowFloat 3.1s ease-in-out infinite;
-    }
-    .logic-arrow::before {
-      content: "";
-      position: absolute; inset: 0; width: 42%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
-      animation: logicArrow 1.45s ease-in-out infinite;
-    }
-    .consulting-ribbon::after { content: none; display: none; }
-    @keyframes logicArrow { 0% { opacity: 0; transform: translateX(-90%); } 35%,70% { opacity: 1; } 100% { opacity: 0; transform: translateX(220%); } }
-    @keyframes ribbonScan { to { left: 108%; } }
 
     /* semantic connection tracks and staged diagram motion */
     .diagram-track { position: relative; isolation: isolate; }
@@ -767,10 +721,10 @@
     .summary-slide.active .sequential-flow .flow-card {
       animation:
         diagramRise .62s cubic-bezier(.18,.82,.2,1) calc(.12s + var(--sequence) * .09s) both,
-        sequentialGlow 5.6s ease-in-out calc(.82s + var(--sequence) * .58s) infinite;
+        sequentialGlow 10.5s ease-in-out calc(1s + var(--sequence) * 1.2s) infinite;
     }
     .summary-slide.active .sequential-flow .flow-card::before {
-      animation: sequentialSheen 5.6s ease-in-out calc(.82s + var(--sequence) * .58s) infinite;
+      animation: sequentialSheen 10.5s ease-in-out calc(1s + var(--sequence) * 1.2s) infinite;
     }
     .summary-slide .flow-card { min-height: 154px; padding: 20px 18px; }
     .summary-slide .flow-card b { margin-top: 13px; font-size: clamp(20px, 1.28vw, 24px); }
@@ -895,6 +849,7 @@
       .cover-layout h1 { font-size: clamp(46px, 5.6vw, 64px); }
       .flow, .pipeline { grid-template-columns: repeat(5, 1fr); gap: 8px; }
       .flow .tri-arrow, .pipeline .tri-arrow { display: none; }
+      .pipeline { grid-template-columns: repeat(3, 1fr); }
       .architecture { grid-template-columns: repeat(2, 1fr); gap: 8px; }
       .architecture .tri-arrow { display: none; }
       .command-flow { grid-template-columns: repeat(3, 1fr); gap: 14px 36px; }
@@ -965,10 +920,7 @@
       h2 { font-size: clamp(34px, 10vw, 54px); }
       h3 { font-size: 21px; }
       .slide-title p, .lead { font-size: 17px; }
-      .consulting-ribbon { position: relative; top: auto; right: auto; width: 100%; margin-bottom: 18px; grid-template-columns: 1fr 18px 1fr 18px 1fr; }
       .slide-inner::after { left: -10px; top: -12px; height: 72px; width: 4px; }
-      .logic-node { min-width: 0; padding: 9px 5px; font-size: 10px; }
-      .logic-arrow { width: 30px; }
       .cover-title-line { white-space: normal; }
       .consulting-brief-tree { grid-template-columns: 1fr; gap: 14px; }
       .brief-mandate { min-height: 210px; }
@@ -997,7 +949,6 @@
 
     @media (max-height: 680px) and (min-width: 761px) {
       .slide { padding-top: 76px; padding-bottom: 46px; }
-      .consulting-ribbon { top: -20px; }
       .slide-title { margin-bottom: 13px; }
       .takeaway { margin-top: 10px; }
       .summary-slide { padding-top: 72px; padding-bottom: 42px; }
@@ -1033,7 +984,7 @@
           <div>
             <div class="eyebrow reveal">VIBE CODING · REAL BUILD STORY</div>
             <h1 class="reveal" style="--delay:.16s"><span class="cover-title-line">바이브 코딩으로 만든 AI 신사업 인텔리전스</span><span class="cover-title-line accent">첫 입력부터 데이터 자동화·전략 화면·운영까지</span></h1>
-            <p class="cover-sub reveal" style="--delay:.32s">개발 경험이 없어도 사업 질문을 입력하고 데이터와 화면을 단계적으로 연결해 실제 사이트로 완성한 과정</p>
+            <p class="cover-sub reveal" style="--delay:.32s">사업 질문을 입력하고 데이터와 화면을 단계적으로 연결해 실제 사이트로 완성한 과정</p>
           </div>
           <div class="cover-index reveal" style="--delay:.46s">
             <div><em>01</em><b>BUSINESS</b><small>의사결정 질문과 사용자 정의</small></div>
@@ -1354,23 +1305,6 @@
       let touchStartX = 0
       let touchStartY = 0
 
-      const consultingLogic = {
-        '표지': ['사업 질문', '데이터 시스템', '전략 화면'],
-        '한 장 요약': ['질문', '근거·분석', '자동 운영'],
-        '최초 요청': ['의사결정', '필수 데이터', '사용 경험'],
-        '북극성 정의': ['사용자', '판단 과업', '완료 기준'],
-        '정보 구조': ['메인 비교', '기업 상세', '시장 도구'],
-        '데이터 엔진': ['원문 수집', '정규화·검증', '공개 뷰'],
-        '기업 데이터': ['기업 개요', '전략·조직', '근거 원문'],
-        '자동 업데이트': ['수집', '품질 게이트', '갱신·배포'],
-        '컨설팅 화면': ['사실', '사업 시사점', '실행 선택지'],
-        '실제 입력·검증': ['입력·구현', '독립 검토', '사람 승인'],
-        '보완 요청': ['문제 분류', '정확한 수정', '자동검사'],
-        '구현·배포': ['구조 분석', '구현·검토', '공개 확인'],
-        '장기 작업 사례': ['문제', '해결', '재발 방지'],
-        '지속 개선': ['탐색·선택', '구현·검증', '운영 학습'],
-        '완료 기준': ['사업 질문', '근거 시스템', '지속 운영']
-      }
       const diagramSelectors = '.flow-card, .outcome, .branch, .arch-layer, .ledger, .pipe-step, .gate, .strategy-card, .render-box, .performance > div, .check, .cover-index > div, .prompt-panel, .command-step, .proof-strip > div, .audit-card, .verdict, .case-card, .north-star, .pyramid-step, .matrix-cell, .revision-prompt, .diamond-stage, .loop-node, .brief-mandate, .brief-pillar, .role-panel, .mece-bridge, .decision-rule'
       const trackSelectors = '.flow, .three-outcomes, .branches, .architecture, .pipeline, .gate-grid, .strategy-grid, .portfolio-line, .render-flow, .performance, .checklist, .cover-index, .prompt-compare, .command-flow, .assurance-flow, .case-grid, .vibe-start, .prompt-pyramid, .revision-layout, .evidence-matrix, .double-diamond, .loop-strip, .consulting-brief-tree, .brief-pillars, .mece-role-map'
       let fitFrame = 0
@@ -1385,10 +1319,8 @@
           const slideStyle = getComputedStyle(slide)
           const availableWidth = slide.clientWidth - parseFloat(slideStyle.paddingLeft) - parseFloat(slideStyle.paddingRight)
           const availableHeight = slide.clientHeight - parseFloat(slideStyle.paddingTop) - parseFloat(slideStyle.paddingBottom)
-          const ribbon = inner.querySelector('.consulting-ribbon')
-          const ribbonAllowance = ribbon ? Math.max(0, Math.abs(parseFloat(getComputedStyle(ribbon).top) || 0) + 4) : 0
           const contentWidth = Math.max(inner.scrollWidth, inner.getBoundingClientRect().width)
-          const contentHeight = inner.scrollHeight + ribbonAllowance
+          const contentHeight = inner.scrollHeight
           const scale = Math.min(1, availableWidth / Math.max(1, contentWidth), availableHeight / Math.max(1, contentHeight))
           inner.style.setProperty('--fit-scale', String(Math.max(.5, scale - .008)))
         })
@@ -1407,26 +1339,6 @@
         slide.style.setProperty('--accent-rgb-2', slide.dataset.rgb2 || slide.dataset.rgb)
         slide.style.setProperty('--accent-3', slide.dataset.accent3 || '#f59e0b')
         slide.style.setProperty('--accent-rgb-3', slide.dataset.rgb3 || '245,158,11')
-        const inner = slide.querySelector('.slide-inner')
-        const logic = consultingLogic[slide.dataset.title] || ['근거', '분석', '실행']
-        if (inner) {
-          const ribbon = document.createElement('div')
-          ribbon.className = 'consulting-ribbon'
-          ribbon.setAttribute('aria-label', `${logic[0]}에서 ${logic[2]}까지의 분석 흐름`)
-          logic.forEach((label, logicIndex) => {
-            const node = document.createElement('span')
-            node.className = 'logic-node'
-            node.textContent = label
-            ribbon.append(node)
-            if (logicIndex < logic.length - 1) {
-              const arrow = document.createElement('i')
-              arrow.className = 'logic-arrow'
-              arrow.setAttribute('aria-hidden', 'true')
-              ribbon.append(arrow)
-            }
-          })
-          inner.prepend(ribbon)
-        }
         slide.querySelectorAll(diagramSelectors).forEach((item, itemIndex) => {
           item.classList.add('diagram-item')
           item.style.setProperty('--card-order', String(itemIndex))
