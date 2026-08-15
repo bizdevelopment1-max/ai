@@ -440,10 +440,11 @@ try {
 }
 
 try {
-  const [app, boards, components, companies, monetizationCrawler] = await Promise.all([
+  const [app, boards, components, styles, companies, monetizationCrawler] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("boards.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
     readFile("companies.json", "utf8").then(JSON.parse),
     readFile("scripts/crawl-monetization.mjs", "utf8"),
   ]);
@@ -474,6 +475,10 @@ try {
     && boards.includes("Strategy &amp;")
     && boards.includes('className="msf-strategy-house"')
     && boards.includes('className="msf-control-logic"')
+    && boards.includes('className="msf-workload-name"')
+    && styles.includes("grid-template-columns: minmax(280px, 1.35fr) minmax(220px, 1fr) 34px minmax(260px, 1.1fr) 34px minmax(240px, 1fr) minmax(210px, .9fr)")
+    && styles.includes(".msf-workload-row { min-width: 1360px; }")
+    && styles.includes("word-break: keep-all; overflow-wrap: break-word; text-wrap: pretty;")
     && boards.includes('className="msf-layer-evidence"')
     && !boards.includes("msf-layer-meter")
     && boards.includes('className="vc-logic-map"')
