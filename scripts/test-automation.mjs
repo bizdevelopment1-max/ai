@@ -1114,7 +1114,10 @@ try {
 }
 
 try {
-  const styles = await readFile("styles.css", "utf8");
+  const [styles, boards] = await Promise.all([
+    readFile("styles.css", "utf8"),
+    readFile("boards.jsx", "utf8"),
+  ]);
   const forbiddenRoundedSideAccents = [
     /\.msf-layer\s*\{[^}]*border-top:/s,
     /\.cd-strategy-frame\s*\{[^}]*border-top:/s,
@@ -1125,15 +1128,29 @@ try {
     /\.acb-camp\s*\{[^}]*border-top:/s,
     /\.mxc-signal-card\.is-selected\s*\{[^}]*inset\s+\d+px\s+0/s,
     /\.mxc-fid\s*>\s*div\s*\{[^}]*border-top:/s,
+    /\.mxc-comparison-grid article\s*\{[^}]*border-left:/s,
   ];
+  const consultingFrameReady = [
+    "mxc-comparison-flow",
+    "COMPARISON FRAMEWORK",
+    "INPUT A",
+    "BASIS GATE",
+    "DECISION",
+  ].every(marker => boards.includes(marker))
+    && styles.includes("Consulting frame policy")
+    && [".site-cli-command-grid button", ".section-stack-head", ".cd-prof-fin", ".source-pipeline>div"].every(selector => styles.includes(selector))
+    && styles.includes(".mxc-reg-grid>article,.mxc-failure-grid article")
+    && styles.includes(".mxc-generated-grid>article.review-pending")
+    && styles.includes(":is(.kpi,.ct-row,.report,.insight-card,.vp-card)::before{display:none!important}");
   if (forbiddenRoundedSideAccents.some(pattern => pattern.test(styles))
+    || !consultingFrameReady
     || !styles.includes(".sp-card")
     || !styles.includes("border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));")
     || !styles.includes(".mxc-signal-card.is-selected .mxc-card-top > em")
     || !styles.includes("background: color-mix(in srgb, #718092 6%, var(--panel))")) {
     throw new Error("rounded strategy cards must use full-card border/background emphasis");
   }
-  console.log("  OK  둥근 카드 단측 강조 제거 · 전체 테두리/배경 강조 적용");
+  console.log("  OK  단측 강조 제거 · 전체 프레임·입력→기준 게이트→의사결정 도식 적용");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  rounded-card emphasis rule: ${error.message}`);

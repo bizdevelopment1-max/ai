@@ -5184,7 +5184,26 @@ function MobileAIBusinessBoard({ sectionRef, dataVersion }) {
             <div className="mxc-companion-grid">{(data.companionEconomics?.headlineMetrics || []).map(item => <article key={item.id}><header><span>{item.period}</span><i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></header><h4>{item.label}</h4><b>{item.display}</b><p>{item.geography} · {item.channel}</p><em>{item.population}</em><a href={item.sourceUrl} target="_blank" rel="noopener">source <Icon name="ext" size={9} /></a></article>)}</div>
             <div className="mxc-comparison-grid">{(data.companionEconomics?.comparisons || []).map(item => {
               const left = companionMetrics.get(item.leftMetricId); const right = companionMetrics.get(item.rightMetricId);
-              return <article key={item.id} className={item.status === "comparable" ? "comparable" : "blocked"}><header><span>COMPARISON GUARD</span><i>{item.status}</i></header><h4>{item.label}</h4>{item.status === "comparable" ? <React.Fragment><b>{item.computedRatio}x</b><p>{left?.display} ÷ {right?.display}</p><em>{left?.geography} · {left?.period} · {left?.channel}</em></React.Fragment> : <React.Fragment><b>{item.headlineSpreadRatio ? `${item.headlineSpreadRatio}x headline spread` : "직접 비교 금지"}</b><p>{item.reason}</p>{item.left && <em>{item.left} ↔ {item.right}</em>}</React.Fragment>}<footer>{item.status === "comparable" ? "동일 basis-key" : "정의·기간·범위 불일치"}</footer></article>;
+              const comparable = item.status === "comparable";
+              const inputLeft = comparable ? left?.display : item.left;
+              const inputRight = comparable ? right?.display : item.right;
+              const output = comparable
+                ? `${item.computedRatio}x`
+                : item.headlineSpreadRatio
+                  ? `${item.headlineSpreadRatio}x headline spread`
+                  : "직접 비교 금지";
+              return <article key={item.id} className={comparable ? "comparable" : "blocked"}>
+                <header><span>COMPARISON FRAMEWORK</span><i>{comparable ? "PASS" : "BLOCK"}</i></header>
+                <h4>{item.label}</h4>
+                <div className="mxc-comparison-flow">
+                  <span><em>INPUT A</em><b>{inputLeft || "—"}</b></span><i aria-hidden="true">→</i>
+                  <span className="gate"><em>BASIS GATE</em><b>{comparable ? "MATCH" : "MISMATCH"}</b></span><i aria-hidden="true">→</i>
+                  <span className="decision"><em>DECISION</em><b>{output}</b></span>
+                </div>
+                <p>{comparable ? `${left?.geography} · ${left?.period} · ${left?.channel}` : item.reason}</p>
+                <em>{inputLeft || "—"} ↔ {inputRight || "—"}</em>
+                <footer>{comparable ? "동일 basis-key" : "정의·기간·범위 불일치"}</footer>
+              </article>;
             })}</div>
             <div className="mxc-companion-shortlist">{(data.companionEconomics?.partnerShortlist || []).map(item => <article key={item.name}><header><b>{item.name}</b><i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></header><p>{item.role}</p><strong>{item.why}</strong><em>{item.status}</em><a href={item.sourceUrl} target="_blank" rel="noopener">screening evidence <Icon name="ext" size={9} /></a></article>)}</div>
             <div className="mxc-companion-thesis">{(data.companionEconomics?.mxThesis || []).map(item => <article key={item.title}><header><span>MX THESIS</span><b className={actionTone(item.actionOption)}>{item.actionOption}</b></header><h4>{item.title}</h4><p>{item.decision}</p><footer>{item.ownerOrg}</footer></article>)}</div>
