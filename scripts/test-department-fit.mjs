@@ -25,7 +25,7 @@ assert(dash.MOBILE_STRATEGY.accountPortfolio.every(account => account.relation =
 assert(dash.MOBILE_STRATEGY.accountPortfolio.every(account => /^https:\/\//.test(account.sourceUrl || "")), "모든 경쟁 플랫폼 카드에 공식 원문 URL이 필요합니다");
 assert(dash.MOBILE_STRATEGY.workloadMap?.length >= 5, "사용자 순간-플랫폼-사업기회 맵은 5개 이상이어야 합니다");
 assert(dash.MOBILE_STRATEGY.workloadMap.every(row => row.bottleneck && row.platform && row.opportunity && row.proof), "사용자 순간 맵은 불편·플랫폼·사업기회·검증 KPI를 모두 포함해야 합니다");
-assert(dash.MOBILE_STRATEGY.opportunityPortfolio?.length >= 9, "휴대폰 AI 신사업 포트폴리오는 보안·헬스·컴패니언·폴더블·위성 AI를 포함한 9개 이상이어야 합니다");
+assert(dash.MOBILE_STRATEGY.opportunityPortfolio?.length >= 9, "모바일 AI 신사업 포트폴리오는 보안·헬스·컴패니언·폴더블·위성 AI를 포함한 9개 이상이어야 합니다");
 for (const id of ["on-device-trust-security", "clinical-health-ai", "companion-distribution"]) {
   assert(dash.MOBILE_STRATEGY.opportunityPortfolio.some(item => item.id === id), `신규 신사업 축이 없습니다: ${id}`);
 }
@@ -43,10 +43,11 @@ for (const required of [
   assert(strategyText.includes(required), `부서 업무 문구가 없습니다: ${required}`);
 }
 assert(/Strategy consulting · user need → mobile experience → revenue → execution/.test(boards), "사용자-경험-수익-실행 컨설팅 흐름이 없습니다");
+assert(/AI Stack별 사업 판단 기준/.test(boards) && /<span>사업 Action<\/span>/.test(boards), "AI Stack 판단 기준의 간결한 제목과 실행 헤더가 필요합니다");
 assert(/zone\.question/.test(boards) && /zone\.output/.test(boards) && /zone\.gate/.test(boards), "운영 모델의 질문·산출물·게이트가 표시되지 않습니다");
 assert(/msf-flow-arrow/.test(boards), "단계 전환 화살표가 없습니다");
-assert(/신사업 발굴 프레임/.test(components) && /AI 서비스 신사업/.test(components), "좌측 내비게이션이 휴대폰 AI 신사업 발굴 업무와 일치하지 않습니다");
-assert(/휴대폰 AI 신사업 발굴 인텔리전스/.test(index), "페이지 메타 정보가 휴대폰 AI 신사업 발굴 목적과 일치하지 않습니다");
+assert(/신사업 발굴 프레임/.test(components) && /AI 서비스 신사업/.test(components), "좌측 내비게이션이 모바일 AI 신사업 발굴 업무와 일치하지 않습니다");
+assert(/모바일 AI 신사업 발굴 인텔리전스/.test(index), "페이지 메타 정보가 모바일 AI 신사업 발굴 목적과 일치하지 않습니다");
 assert(/MX AI DECISION INTELLIGENCE/.test(boards) && /단말·기능 Matrix/.test(boards) && /Partner Score/.test(boards), "MX 의사결정 DB 화면이 필요합니다");
 assert(/예상 BOM 영향/.test(boards) && /특허·소송 리스크/.test(boards) && /SVIC 포트폴리오/.test(boards), "MX 매핑 필드가 필요합니다");
 

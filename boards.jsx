@@ -401,7 +401,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
   );
 }
 
-// ---- 휴대폰 AI 신사업 발굴 프레임 — User → Experience → Business → Decision ----
+// ---- 모바일 AI 신사업 발굴 프레임 — User → Experience → Business → Decision ----
 function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
@@ -423,7 +423,7 @@ function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
   const expertSignals = strategy.expertSignals || [];
   const accountCompany = name => (companies || []).find(company => company.name === name);
   const evidenceArticles = React.useMemo(() => {
-    const mobileTerms = /(?:mobile|smartphone|phone|android|iphone|on[ -]?device|edge ai|agent|assistant|camera|voice|translation|wearable|wallet|consumer|모바일|스마트폰|휴대폰|온디바이스|에이전트|어시스턴트|카메라|음성|통역|웨어러블|결제|소비자)/i;
+    const mobileTerms = /(?:mobile|smartphone|phone|android|iphone|on[ -]?device|edge ai|agent|assistant|camera|voice|translation|wearable|wallet|consumer|모바일|스마트폰|온디바이스|에이전트|어시스턴트|카메라|음성|통역|웨어러블|결제|소비자)/i;
     const generatedDate = generatedAt ? new Date(generatedAt) : null;
     const latestArticleTime = (articles || []).reduce((latest, article) => {
       const time = new Date(`${article.date || ""}T23:59:59Z`).getTime();
@@ -513,7 +513,7 @@ function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
           <div><em>01</em><h3>사용자 신호에서 90일 실험까지</h3></div>
           <p>사용자 Pain point를 모바일 경험·수익모델·파트너 구조·경영진 의사결정으로 순차 변환</p>
         </div>
-        <div className="msf-control-logic" aria-label="휴대폰 AI 신사업 기회 전환 과정">
+        <div className="msf-control-logic" aria-label="모바일 AI 신사업 기회 전환 과정">
           {controlZones.map((zone, index) => (
             <React.Fragment key={zone.no}>
               <div style={{ "--zone-step": index }}>
@@ -566,7 +566,7 @@ function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
 
         <div className="msf-section-head">
           <div><em>03</em><h3>User Moment → Experience Stack → Revenue</h3></div>
-          <p>휴대폰의 반복 사용 순간을 플랫폼 요구·신사업 가설·검증 KPI로 번역</p>
+          <p>모바일의 반복 사용 순간을 플랫폼 요구·신사업 가설·검증 KPI로 번역</p>
         </div>
         <div className="msf-workload-map">
           <div className="msf-workload-head"><span>USER MOMENT / SHIFT</span><span>EXPERIENCE PAIN</span><span>PLATFORM REQUIREMENT</span><span>BUSINESS OPPORTUNITY</span><span>PROOF</span></div>
@@ -619,7 +619,7 @@ function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
 
         <div className="msf-section-head msf-value-chain-head">
           <div><em>06</em><h3>Mobile AI SW · Service Value Chain</h3></div>
-          <p>7개 계층의 통제점·경제성·최근 30일 공개 근거를 휴대폰 신사업 포트폴리오와 연결</p>
+          <p>7개 계층의 통제점·경제성·최근 30일 공개 근거를 모바일 신사업 포트폴리오와 연결</p>
         </div>
         <div className="msf-chain">
           {layerStats.map((l, i) => (
@@ -671,11 +671,11 @@ function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         </div>
 
         <div className="msf-section-head">
-          <div><em>09</em><h3>AI Stack별 휴대폰 사업 판단 기준</h3></div>
-          <p>통제점·수익 구조·휴대폰 사업 Action·과대해석 리스크를 한 화면에서 비교</p>
+          <div><em>09</em><h3>AI Stack별 사업 판단 기준</h3></div>
+          <p>통제점·수익 구조·사업 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
         <div className="msf-matrix">
-          <div className="msf-mrow msf-mhead"><span>계층 / 역할</span><span>통제점</span><span>수익 구조</span><span>휴대폰 사업 Action</span><span>검증 리스크</span></div>
+          <div className="msf-mrow msf-mhead"><span>계층 / 역할</span><span>통제점</span><span>수익 구조</span><span>사업 Action</span><span>검증 리스크</span></div>
           {layers.map(l => (
             <div className="msf-mrow" key={l.id} style={{ "--lc": l.accent }} tabIndex="0">
               <span className="msf-mname"><i /> <b>{l.ko}</b><em>{l.stanceKo}</em></span>
@@ -4351,13 +4351,13 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
           </div>
         </div>
         <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
-          dataVersion={dataVersion} title="Mobile AI 변화 신호" sub="Experience · Agent · Model · Context · Developer Tool · Edge Runtime — 휴대폰 사업 관련 원문 카드만 표시" />
+          dataVersion={dataVersion} title="Mobile AI 변화 신호" sub="Experience · Agent · Model · Context · Developer Tool · Edge Runtime — 모바일 사업 관련 원문 카드만 표시" />
       </AnimCtx.Provider>
     </section>
   );
 }
 
-// 휴대폰 AI 신사업 발굴 — 사용자 Pain point와 AI Stack 변화를 경험·수익모델로 연결.
+// 모바일 AI 신사업 발굴 — 사용자 Pain point와 AI Stack 변화를 경험·수익모델로 연결.
 function NewBizBoard({ sectionRef, articles, dataVersion }) {
   const inView = useInView(sectionRef);
   return (
@@ -4374,7 +4374,7 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
         {/* 1) AI 비즈니스 모델 전체 — 기업별 수익모델·활동 + 7개 수익화 유형(모두 원문 기반) */}
         <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
         <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
-          dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·거래·성과기반 — 휴대폰 고객 접점과 연결되는 원문 확인 카드만 누적 표시" />
+          dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·거래·성과기반 — 모바일 고객 접점과 연결되는 원문 확인 카드만 누적 표시" />
         <BusinessModelForecasts dataVersion={dataVersion} />
 
         {/* 2) 한 단계 아래 — 비즈니스 모델 심화 예시: 배포·AI서비스(수직통합) */}
@@ -5318,7 +5318,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
       <div className="board-head">
         <span className="board-tab" style={{ background: isSurvey ? "#DB2777" : "#0891B2" }} />
         <div className="board-titles">
-          <h2>{isSurvey ? "AI 관련 소비자 조사 결과" : "AI 관련 시장"} <span className="board-en">{isSurvey ? "AI Consumer Surveys" : "AI Market Map"} · 휴대폰 사업 관점</span></h2>
+          <h2>{isSurvey ? "AI 관련 소비자 조사 결과" : "AI 관련 시장"} <span className="board-en">{isSurvey ? "AI Consumer Surveys" : "AI Market Map"} · 모바일 사업 관점</span></h2>
           <p>{isSurvey
             ? "지불의사·수용도·인식 등 소비자 조사 전용 트랙 · 동일 주제 최신 검증값 자동 교체"
             : "시장 규모·예측·출하 등 정량 시장 전용 트랙 · 동일 주제 최신 검증값 자동 교체"}</p>
@@ -5737,7 +5737,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                   const n = catCounts[t.id] || 0;
                   return (
                     <button key={t.id} disabled={n === 0} className={"su-tax-cat" + (catFilter === t.id ? " on" : "") + (n === 0 ? " empty" : "")} style={{ "--c": t.accent }}
-                      title={`${t.desc}\n▸ 휴대폰 신사업 관점: ${t.handset}`}
+                      title={`${t.desc}\n▸ 모바일 신사업 관점: ${t.handset}`}
                       onClick={() => n > 0 && setCatFilter(catFilter === t.id ? "" : t.id)}>
                       <i style={{ background: t.accent }} />{t.ko}<em>{n}</em>
                     </button>

@@ -109,7 +109,7 @@ function finishItem(it, cands) {
 const RULE_AXES = [
   { kw: ["파트너십", "제휴", "탑재", "partnership", "협력", "임대 계약"], labels: ["파트너십 기회"], action: "해당 업체와의 협업 가능성·기존 파트너 계약과의 충돌 여부 검토" },
   { kw: ["인수", "합병", "m&a", "acquisition", "acqui"], labels: ["인수 후보"], action: "대상 기업 밸류에이션·기술 자산·인재 규모 초기 평가" },
-  { kw: ["스마트폰", "휴대폰", "mobile", "on-device", "npu", "배터리", "latency"], labels: ["모바일 경험"], action: "기능별 온디바이스·클라우드 실행 기준과 사용자 체감 품질 검증" },
+  { kw: ["스마트폰", "모바일", "mobile", "on-device", "npu", "배터리", "latency"], labels: ["모바일 경험"], action: "기능별 온디바이스·클라우드 실행 기준과 사용자 체감 품질 검증" },
   { kw: ["규제", "수출", "통제", "규정", "법", "export", "승인"], labels: ["규제"], action: "규제 변화가 모델 탑재·해외 출시 일정에 미치는 영향 점검" },
   { kw: ["에이전트", "어시스턴트", "assistant", "agent", "온디바이스", "on-device"], labels: ["경쟁 위협"], action: "자사 단말 AI 로드맵 대비 기능 격차 분석" },
 ];

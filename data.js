@@ -918,7 +918,7 @@ window.DASH = (function () {
   ];
 
   /* ============================================================
-     STOCK_GROUPS — 휴대폰 AI 신사업과 직접 연결되는 상장사 카테고리.
+     STOCK_GROUPS — 모바일 AI 신사업과 직접 연결되는 상장사 카테고리.
      사용자 경험·서비스·모델·클라우드·모바일 컴퓨트·연결·제조를 추적합니다.
      ============================================================ */
   const STOCK_GROUPS = [
@@ -942,7 +942,7 @@ window.DASH = (function () {
   /* ============================================================
      STOCKS — listed AI companies. 실제 일별 주가는 매일 자동 수집되어
      stocks.json 으로 제공됩니다(scripts/crawl-stocks.mjs · Stooq).
-     group = 휴대폰 AI 신사업 생태계 카테고리(STOCK_GROUPS 참조). 여기에는 메타데이터 +
+     group = 모바일 AI 신사업 생태계 카테고리(STOCK_GROUPS 참조). 여기에는 메타데이터 +
      변곡점 설명(에디토리얼)만 둡니다.
      ============================================================ */
   const STOCKS = [
@@ -1247,7 +1247,7 @@ window.DASH = (function () {
     return { points, events: evs, min, max };
   }
 
-  // ── 휴대폰 AI SW·서비스 밸류체인 7계층 ──────────────────────────────
+  // ── 모바일 AI SW·서비스 밸류체인 7계층 ──────────────────────────────
   // 고객 접점 → 서비스 운영 → 기술 인에이블러 → 후방 인프라 순으로 정렬한다.
   // 기업은 대표 계층(primary) 1개와 인접 확장 계층(adjacent)을 함께 가져,
   // 단순 업종 분류가 아니라 "현재 통제점과 다음 확장 방향"을 동시에 보여준다.
@@ -1258,7 +1258,7 @@ window.DASH = (function () {
       controlPoint: "홈화면·OS·기본앱·일상 워크플로", economics: "구독·커머스·단말 프리미엄",
       risk: "킬러 유스케이스 부재·외부 앱에 고객 접점 상실",
       operatorMove: "생활·업무 버티컬 3~5개를 기본 탑재하고 계정·결제·단말 기능과 결합",
-      desc: "사용자가 휴대폰에서 직접 체감하고 비용을 지불하는 AI 경험 — 비서·검색·생산성·크리에이티브·건강·금융",
+      desc: "사용자가 모바일에서 직접 체감하고 비용을 지불하는 AI 경험 — 비서·검색·생산성·크리에이티브·건강·금융",
     },
     {
       id: "agent", ko: "에이전트·오케스트레이션", en: "Agents & Orchestration",
@@ -1309,7 +1309,7 @@ window.DASH = (function () {
       desc: "단말·엣지·클라우드에서 모델을 실행하는 런타임과 컴퓨트 — 차별화보다 원가·안정성 관리가 핵심",
     },
   ];
-  // Stock 분석 전용 7계층 — 휴대폰 AI 신사업과 직접 연결되는 상장사를 하류에서 상류 순으로 재분류
+  // Stock 분석 전용 7계층 — 모바일 AI 신사업과 직접 연결되는 상장사를 하류에서 상류 순으로 재분류
   const STOCK_VALUE_CHAIN = [
     { id: "applications", ko: "애플리케이션·디바이스", en: "Applications & Devices", accent: "#E54B4B", accentSoft: "#FDECEC" },
     { id: "enterprise", ko: "에이전트·엔터프라이즈 SW", en: "Agents & Enterprise Software", accent: "#C026D3", accentSoft: "#FAE8FF" },
@@ -1370,10 +1370,10 @@ window.DASH = (function () {
     "ElevenLabs": { layer: "app", vertical: "음성·대화 인터페이스", adjacent: ["agent", "service"], fit: "high" },
   };
 
-  // 사용자 Pain point를 휴대폰 AI 경험·수익모델·경영진 안건으로 전환하는 사업 운영 프레임.
+  // 사용자 Pain point를 모바일 AI 경험·수익모델·경영진 안건으로 전환하는 사업 운영 프레임.
   // 시장 신호는 companies.json의 원문·공식 활동을 합산해 자동 갱신한다.
   const MOBILE_STRATEGY = {
-    northStar: "모델 자체보다 고객 접점·개인 컨텍스트·서비스 유통·과금을 통제하는 휴대폰 AI 플랫폼",
+    northStar: "모델 자체보다 고객 접점·개인 컨텍스트·서비스 유통·과금을 통제하는 모바일 AI 플랫폼",
     operatingModel: [
       {
         no: "01", en: "USER SIGNAL", title: "사용자 Pain point 정의",
@@ -1432,7 +1432,7 @@ window.DASH = (function () {
         name: "Microsoft", tier: "기업·업무 배포 벤치마크", relation: "OFFICIAL PRODUCT", tone: "teal",
         platform: "Copilot · Microsoft 365 · Windows", demand: "업무 검색·문서 작성·회의·기업 데이터 연결",
         signal: "생산성 앱·기업 계정·관리 정책을 묶어 AI를 좌석 기반 반복 매출과 업무 흐름에 연결",
-        pain: "개인용 휴대폰 경험과 기업용 보안·관리·데이터 경계를 동시에 충족",
+        pain: "개인용 모바일 경험과 기업용 보안·관리·데이터 경계를 동시에 충족",
         move: "업무용 AI를 단말 기능이 아닌 계정·앱·보안·관리 패키지로 설계해 기업 fleet 수익화 검증",
         gate: "업무 시나리오 → 기업 정책 → 좌석 활성 → 유지·확장 매출",
         source: "Microsoft Copilot", sourceDate: "공식 제품 페이지",
@@ -1473,7 +1473,7 @@ window.DASH = (function () {
     ],
     opportunityPortfolio: [
       { id: "os-native-agent", horizon: "H1 · CORE", title: "OS-Native Personal Agent", customer: "소비자·프로 사용자", thesis: "기본앱과 단말 기능을 실제로 실행하는 경험이 단순 챗봇보다 높은 반복 가치를 형성", offer: "개인 에이전트·action API·멀티모델 라우팅", gate: "과업 완료율·주간 유지·지연·동의율", ownAssets: ["One UI 기본앱·루틴", "Knox 권한·감사", "Galaxy Store·Wallet 결제", "글로벌 단말 설치 기반"], nextMetrics: [{ label: "과업 완료율", value: "내부 PoC baseline 필요", status: "baseline-required" }, { label: "외부 가격 기준", value: "Google AI Plus $7.99/월(US)", status: "official-benchmark" }, { label: "파트너 매칭", value: "radar.json 자동 연결", status: "automated" }], score: "Scale now" },
-      { id: "ai-camera-creator", horizon: "H1 · EXPERIENCE", title: "AI Camera & Creator Suite", customer: "크리에이터·일반 소비자", thesis: "카메라는 온디바이스 멀티모달과 생성형 AI를 차별화하기 가장 직접적인 휴대폰 접점", offer: "촬영 보조·생성 편집·공유·커머스 번들", gate: "완성률·공유율·처리 원가·유료 전환", ownAssets: ["Galaxy 카메라·ISP", "온디바이스 NPU", "Gallery·Studio 편집 동선", "Galaxy Store 인앱결제"], nextMetrics: [{ label: "완성·공유율", value: "기능별 telemetry baseline 필요", status: "baseline-required" }, { label: "ASP 시장 기준", value: "$1,141 → $967", status: "reported-benchmark" }, { label: "처리 원가", value: "ROI simulator 연결", status: "model-ready" }], score: "Build PoC" },
+      { id: "ai-camera-creator", horizon: "H1 · EXPERIENCE", title: "AI Camera & Creator Suite", customer: "크리에이터·일반 소비자", thesis: "카메라는 온디바이스 멀티모달과 생성형 AI를 차별화하기 가장 직접적인 모바일 접점", offer: "촬영 보조·생성 편집·공유·커머스 번들", gate: "완성률·공유율·처리 원가·유료 전환", ownAssets: ["Galaxy 카메라·ISP", "온디바이스 NPU", "Gallery·Studio 편집 동선", "Galaxy Store 인앱결제"], nextMetrics: [{ label: "완성·공유율", value: "기능별 telemetry baseline 필요", status: "baseline-required" }, { label: "ASP 시장 기준", value: "$1,141 → $967", status: "reported-benchmark" }, { label: "처리 원가", value: "ROI simulator 연결", status: "model-ready" }], score: "Build PoC" },
       { id: "personal-context-trust", horizon: "H2 · CONTROL", title: "Personal Context & Trust Layer", customer: "소비자·기업·개발자", thesis: "앱 간 개인화와 안전한 실행을 위한 동의·권한·평가 계층이 장기 플랫폼 통제점", offer: "컨텍스트 금고·정책 API·감사·평가 서비스", gate: "동의율·재사용 앱·정책 준수·사고율", ownAssets: ["Knox Vault", "Samsung Account", "One UI 권한 모델", "SmartThings·Health 데이터 접점"], nextMetrics: [{ label: "동의율", value: "국가·기능별 baseline 필요", status: "baseline-required" }, { label: "규제 게이트", value: "EU·중국·한국·미국 매핑", status: "tracked" }, { label: "보안 사고율", value: "0 목표 · red-team 정의 필요", status: "control-required" }], score: "Productize" },
       { id: "ai-service-distribution", horizon: "H2 · PLATFORM", title: "AI Service Distribution", customer: "앱 파트너·기업·통신 유통", thesis: "기본 탑재·결제·번들·기업 fleet를 결합하면 파트너의 시장 진입 비용을 낮추고 반복 매출을 확보", offer: "AI 서비스 스토어·B2B 패키지·성과 정산", gate: "파트너 GMV·ARPU·수익배분·갱신률", ownAssets: ["Galaxy Store", "Samsung Wallet", "통신사 채널", "Knox Suite·기업 fleet"], nextMetrics: [{ label: "파트너 GMV", value: "외부 공개 baseline 없음", status: "baseline-required" }, { label: "가격 기준", value: "Google $7.99/$19.99/$99.99/$199.99", status: "official-benchmark" }, { label: "파트너 후보", value: "radar.json 자동 연결", status: "automated" }], score: "Incubate" },
       { id: "on-device-trust-security", horizon: "H1 · SECURITY", title: "On-device Trust & Security", customer: "금융사·기업 보안·임원·일반 소비자", thesis: "무료 기본 스캠 경고 위에 금융사 risk API·딥페이크 방어·감사·MDM을 유료 계층으로 분리", offer: "사기방지 API·기업 통화 방어·Knox 정책 add-on", gate: "정탐·오탐·피해 회피액·배터리·책임 분담", ownAssets: ["Samsung Phone", "Knox Suite·Vault", "Galaxy NPU", "Samsung Wallet", "기업 fleet"], nextMetrics: [{ label: "Android 보호 규모", value: "10B+ 경고/차단 월간 · Galaxy 실적 아님", status: "official-benchmark" }, { label: "FraudEdge lab", value: "340KB · 7.9ms · 92mW · 단일 논문", status: "replication-required" }, { label: "90일 PoC", value: "은행 1곳 + 기업 fleet 1곳", status: "proposal" }], score: "Partner PoC" },

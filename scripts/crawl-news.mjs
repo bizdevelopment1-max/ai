@@ -14,6 +14,7 @@ import { enrichSourceBatch, isContentBacked, textSimilarity } from "./source-con
 import { loadDash } from "./load-dash.mjs";
 import { directCompanyNewsMatch, newsQueryFor } from "./company-sources.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
+import { sanitizePublicCopy } from "./public-copy.mjs";
 
 // Company-card facts need first-party disclosures or a named publisher report,
 // rather than an undated category page. The same policy supplies priority
@@ -98,7 +99,7 @@ const TOPICS = [
   { co: "", cat: "bigtech", tag: "AI 폰", topic: true, n: 3, q: '("AI smartphone" OR "AI phone" OR "Pixel AI" OR "Apple Intelligence" OR "on-device AI" phone)' },
   // 경쟁 단말·칩 진영(중국 제조사·모바일 실리콘) — 단말 사업 경쟁 관점 핵심 스트림
   { co: "", cat: "bigtech", tag: "경쟁 단말", topic: true, n: 3, q: '("Xiaomi" OR "Honor" OR "OPPO" OR "vivo" OR "Snapdragon" OR "Dimensity") AI smartphone' },
-  // 휴대폰 AI 신사업 전용 스트림: 사용자 과업·경험·수익화·파트너십
+  // 모바일 AI 신사업 전용 스트림: 사용자 과업·경험·수익화·파트너십
   { co: "", cat: "bigtech", tag: "개인 AI", topic: true, n: 3, q: '("personal AI" OR "AI assistant" OR "mobile agent") (smartphone OR mobile OR Android OR iPhone)' },
   { co: "", cat: "bigtech", tag: "카메라·크리에이터", topic: true, n: 3, q: '("AI camera" OR "generative edit" OR "mobile video" OR "creator AI") (smartphone OR mobile app)' },
   { co: "", cat: "bigtech", tag: "통화·커뮤니케이션", topic: true, n: 3, q: '("live translation" OR "call summary" OR "voice assistant" OR "messaging AI") (phone OR mobile)' },
@@ -646,7 +647,8 @@ async function main() {
     throw new Error("No new candidates were collected from any news source; keeping the previous bundle unchanged.");
   }
   const out = final;
-  await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: out.length, articles: out }, null, 2) + "\n");
+  const publicArticles = sanitizePublicCopy(out);
+  await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: publicArticles.length, articles: publicArticles }, null, 2) + "\n");
   console.log(`Wrote news.json with ${out.length} articles (${sums.filter(isContentBacked).length} new source-page briefings; failed streams: ${sourceHealth.failedStreams.length}).`);
 }
 

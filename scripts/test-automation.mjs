@@ -171,14 +171,17 @@ try {
   ]);
   const expected = `/* ai-dashboard-bundle:${sourceStamp(sources)} */`;
   const expectedData = `/* ai-dashboard-data:${sourceStamp([{ file: DATA_SOURCE_FILE, source: dataSource }])} */`;
+  const forbiddenHandsetWord = "\uD734\uB300\uD3F0";
+  const publicRuntimeCopy = [...sources.map(({ source }) => source), bundle, dataSource, dataBundle, index].join("\n");
   if (!bundle.startsWith(expected)) throw new Error("bundle is stale; run npm run build:browser before publishing");
   if (!dataBundle.startsWith(expectedData)) throw new Error("data bundle is stale; run npm run build:browser before publishing");
+  if (publicRuntimeCopy.includes(forbiddenHandsetWord)) throw new Error("deprecated handset wording must not appear in public runtime copy");
   if (/babel\.min\.js|text\/babel/.test(index)
     || !/defer src="app\.bundle\.js/.test(index)
     || !/defer src="data\.bundle\.js/.test(index)) {
     throw new Error("index must serve the compact browser and data bundles without a runtime compiler");
   }
-  console.log("  정상  browser and data bundles are current (no runtime compiler)");
+  console.log("  정상  browser and data bundles are current · deprecated handset wording removed");
 } catch (error) {
   failed = true;
   console.error(`  실패  browser bundle: ${error.message}`);
@@ -462,7 +465,7 @@ try {
     && !app.includes('className="ov-title"');
   const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
   const sidebarBrandSource = components.match(/<span className="sb-logo-txt">[\s\S]*?<\/span>\s*<\/span>/)?.[0] || "";
-  const sidebarCopyClean = !/(?:mobile|휴대폰)/i.test(`${navSource}\n${sidebarBrandSource}`)
+  const sidebarCopyClean = !/(?:mobile|모바일)/i.test(`${navSource}\n${sidebarBrandSource}`)
     && navSource.includes('ko: "AI 신사업 브리핑"')
     && navSource.includes('ko: "신사업 기회 DB"')
     && !navSource.includes('id: "audit"')
@@ -607,7 +610,7 @@ try {
     ].filter(Boolean).join(", ");
     throw new Error(`seven-layer strategy, MECE portfolio UI, normalized profiles, or verified LinkedIn links are incomplete (${causes})`);
   }
-  console.log(`  OK  휴대폰 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
+  console.log(`  OK  모바일 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  mobile strategy and company normalization: ${error.message}`);
@@ -1698,10 +1701,10 @@ try {
     || pinned.some(brief => !Array.isArray(brief.summaryLines) || brief.summaryLines.length !== 3 || !brief.sourceLine || !brief.sourcePages?.length)) {
     throw new Error("research briefs must remain source-backed and mobile-AI-relevant");
   }
-  console.log(`  정상  휴대폰 AI 리서치 ${mobileBriefs.length}건 · 사용자 제공 브리프 ${pinned.length}건`);
+  console.log(`  정상  모바일 AI 리서치 ${mobileBriefs.length}건 · 사용자 제공 브리프 ${pinned.length}건`);
 } catch (error) {
   failed = true;
-  console.error(`  실패  휴대폰 AI 리서치: ${error.message}`);
+  console.error(`  실패  모바일 AI 리서치: ${error.message}`);
 }
 
 try {
@@ -2022,7 +2025,7 @@ try {
     "china-design",
     "china-materials",
   ];
-  // 주가 보드는 휴대폰 AI 신사업과 직접 연결되는 54개 상장사를 공통 7계층으로 재분류한다.
+  // 주가 보드는 모바일 AI 신사업과 직접 연결되는 54개 상장사를 공통 7계층으로 재분류한다.
   const completeBoard = boards.includes("function StockRegionPanel")
     && boards.includes("function NvidiaInvestmentMap")
     && boards.includes("전체 상장사 밸류체인 분석")
@@ -2090,7 +2093,7 @@ try {
     || !liveHistory || !currencyAware || !responsiveUi || !compactInteractiveInvestmentMap || !stockComparisonCopyRemoved || !initialSevenCategoryView) {
     throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
-  console.log("  OK  휴대폰 AI 신사업 관련 54개 상장사 Stock 분석 + NVIDIA 소형 인터랙티브 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
+  console.log("  OK  모바일 AI 신사업 관련 54개 상장사 Stock 분석 + NVIDIA 소형 인터랙티브 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock value-chain board: ${error.message}`);
@@ -2224,7 +2227,7 @@ try {
 
 try {
   const { newsPolicy } = await import("./news-policy.mjs");
-  const terms = newsPolicy.excludedTerms || [];
+  const terms = [...(newsPolicy.excludedTerms || []), "\uD734\uB300\uD3F0"];
   if (!terms.length) throw new Error("config/news-policy.json has no excludedTerms configured");
   const escape = term => String(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const patternFor = term => {

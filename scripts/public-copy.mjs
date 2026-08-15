@@ -1,4 +1,5 @@
 const DISPLAY_REPLACEMENTS = [
+  [/\uD734\uB300\uD3F0/g, "모바일"],
   [/Samsung Electronics MX/gi, "자사 모바일 사업"],
   [/Samsung MX/gi, "자사 모바일 사업"],
   [/MX\s*사업부/gi, "모바일 사업부"],
@@ -45,7 +46,7 @@ export const sanitizePublicCopy = (value, key = "") => {
 
 export const containsRestrictedDisplayTerm = value => {
   const text = typeof value === "string" ? value : JSON.stringify(value ?? "");
-  return /삼성|samsung|갤럭시|galaxy|\bmx\b/i.test(text);
+  return /\uD734\uB300\uD3F0|삼성|samsung|갤럭시|galaxy|\bmx\b/i.test(text);
 };
 
 export const hasRestrictedPublicCopy = (value, key = "") => {
