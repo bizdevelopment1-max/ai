@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-15T00:21:18.737Z",
+  "generatedAt": "2026-08-15T01:11:20.904Z",
   "overall": "ok",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 16개 · 정상 16 · 주의 0 · 실패 0",
@@ -8,25 +8,25 @@
       "id": "news-coverage",
       "label": "뉴스 수집",
       "status": "ok",
-      "value": "486건"
+      "value": "487건"
     },
     {
       "id": "source-backed",
       "label": "원문 스니펫 근거",
       "status": "ok",
-      "value": "480/486건"
+      "value": "481/487건"
     },
     {
       "id": "source-content-mode",
       "label": "원문 본문 추출",
       "status": "ok",
-      "value": "448/486건"
+      "value": "449/487건"
     },
     {
       "id": "feed-localization",
       "label": "기사 한국어 표시·영문 폴백",
       "status": "ok",
-      "value": "한국어 475 · 영문 폴백 11"
+      "value": "한국어 476 · 영문 폴백 11"
     },
     {
       "id": "collection-health",
@@ -74,13 +74,13 @@
       "id": "research-source",
       "label": "리서치 원문 링크",
       "status": "ok",
-      "value": "공개 55건 · 보존 52건"
+      "value": "공개 55건 · 보존 51건"
     },
     {
       "id": "research-localization",
       "label": "리서치 3줄 표시",
       "status": "ok",
-      "value": "한국어 106 · 영문 폴백 1"
+      "value": "한국어 105 · 영문 폴백 1"
     },
     {
       "id": "market-source",
@@ -102,20 +102,20 @@
     }
   ],
   "metrics": {
-    "currentArticles": 486,
-    "accumulatedArticles": 616,
-    "sourceBackedArticles": 480,
-    "sourceExcerptArticles": 448,
-    "localizedArticles": 475,
+    "currentArticles": 487,
+    "accumulatedArticles": 617,
+    "sourceBackedArticles": 481,
+    "sourceExcerptArticles": 449,
+    "localizedArticles": 476,
     "localizedFallbackArticles": 11,
     "limitedArticles": 6,
-    "limitedRate": 0.012345679012345678,
+    "limitedRate": 0.012320328542094456,
     "freshStocks": 54,
     "totalStocks": 54,
     "linkedInfra": 139,
     "linkedBizmodel": 31,
     "linkedResearch": 55,
-    "localizedResearch": 106,
+    "localizedResearch": 105,
     "localizedFallbackResearch": 1,
     "archivedMarketBaselines": 43,
     "linkedMarketRecords": 139,
@@ -123,30 +123,31 @@
   },
   "sources": {
     "news": {
-      "Anthropic": 4,
-      "Forbes": 8,
+      "The Guardian": 2,
       "The Decoder": 76,
-      "TechCrunch": 82,
-      "ZDNet": 30,
       "Wired": 44,
+      "ZDNet": 30,
+      "TechCrunch": 82,
+      "Anthropic": 4,
       "AI Business": 10,
       "Engadget": 53,
       "Ars Technica": 7,
       "The Verge": 51,
-      "The Guardian": 2,
+      "Forbes": 8,
       "9to5Google": 1,
       "MIT Tech Review": 14,
       "VentureBeat": 11,
-      "Semafor": 2,
-      "SiliconANGLE": 15,
-      "IEEE Spectrum": 9,
       "WIRED": 2,
+      "SiliconANGLE": 15,
+      "Semafor": 2,
+      "IEEE Spectrum": 9,
       "NVIDIA Developer": 2,
-      "CNBC": 15,
       "venturebeat.com": 2,
+      "CNBC": 15,
+      "Microsoft Source": 4,
       "businessinsider.com": 1,
-      "MacRumors": 3,
       "Business Insider": 5,
+      "MacRumors": 3,
       "Databricks": 3,
       "the-decoder.com": 2,
       "Android Authority": 2,
@@ -156,15 +157,14 @@
       "South China Morning Post": 2,
       "AP News": 1,
       "Venturebeat": 1,
-      "anthropic.com": 1,
-      "cnbc.com": 1,
       "Business Insider Africa": 1,
-      "The New York Times": 1,
+      "cnbc.com": 1,
+      "anthropic.com": 1,
       "Yahoo Finance": 2,
+      "The New York Times": 1,
       "Fortune": 3,
-      "Shaping Europe’s digital future": 1,
       "9to5Mac": 1,
-      "Microsoft Source": 3,
+      "Shaping Europe’s digital future": 1,
       "The Register": 4,
       "Yahoo Finance Singapore": 1,
       "Reuters": 1
@@ -176,7 +176,7 @@
     }
   },
   "collection": {
-    "generatedAt": "2026-08-15T00:14:15.748Z",
+    "generatedAt": "2026-08-15T01:03:56.723Z",
     "mode": "source-content-extractive",
     "policyVersion": 2,
     "streams": {
@@ -204,7 +204,7 @@
   },
   "notices": [
     "뉴스 카드는 공개 제목·RSS 스니펫을 정제한 원문 발췌이며, 한국어 문구는 해당 원문 조각만 번역해 표시합니다.",
-    "검증 제한 기사 비율: 1.2% (6/486)",
+    "검증 제한 기사 비율: 1.2% (6/487)",
     "투자·인수·매출 추정치는 의사결정 전 원문과 공시를 다시 확인해야 합니다.",
     "근거 없는 레이더 후보는 reference-only로 분리됩니다.",
     "원문이 연결되지 않은 스타트업 투자·인수 후보와 리서치 1페이지는 화면에서 제외됩니다."
