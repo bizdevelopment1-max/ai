@@ -1,0 +1,1199 @@
+{
+  "asOf": "2026-08-15",
+  "signals": [
+    {
+      "id": "device-apple-intelligence",
+      "name": "Apple",
+      "product": "Apple Intelligence · iPhone",
+      "entityType": "device-maker",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["On-device", "Cloud", "Hybrid"],
+        "integration": ["OS level", "App level", "Service level"],
+        "posture": ["Compete", "Watch"],
+        "regions": ["North America", "Europe", "India"],
+        "maturity": "Scale"
+      },
+      "fact": "Apple은 온디바이스 모델과 Private Cloud Compute를 OS 전반에 결합하고, 시스템 앱과 개발자 프레임워크까지 AI 실행 계층을 확장했다.",
+      "implication": "모델 성능만이 아니라 개인정보 보호형 하이브리드 실행, 시스템 전역 문맥, 앱 개발자 배포면이 프리미엄 단말 차별화 기준이 된다.",
+      "decision": "개인 문맥·권한·앱 액션을 공통 런타임으로 묶는 OS 레벨 경험을 최우선 경쟁 벤치마크로 관리한다.",
+      "actionOption": "Build",
+      "ownerOrg": "R&D",
+      "eventClusterId": "cluster-private-hybrid-os-ai",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 2",
+      "confidence": "medium",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "Private Cloud Compute의 검증 가능한 클라우드 경계와 시스템 전역 개발자 프레임워크가 직접 비교 포인트다.",
+        "bomImpact": { "band": "Unknown", "estimate": "미산정", "basis": "경쟁사 서버·실리콘 원가 공개 근거 없음" },
+        "partnershipHistory": ["Google Gemini: Apple이 2026년 차세대 Foundation Models 협업을 공개", "OpenAI ChatGPT: 2024년 Siri 연동 공개"],
+        "patentLitigationRisk": { "level": "Review", "note": "개인 문맥·클라우드 검증 구조 관련 FTO 별도 필요" },
+        "svicPortfolio": { "status": "not-applicable", "asOf": "2026-08-15" }
+      },
+      "scorecard": { "technologyMaturity": 5, "onDeviceFit": 5, "licenseFlexibility": 1, "mxSynergy": 3, "total": 70 },
+      "financials": { "arr": "비교 불가", "grossMargin": "제품 혼합 공시", "burnRate": "해당 없음", "runway": "해당 없음", "ruleOf40": "해당 없음", "employeeTrend": "별도 추적", "jobOpenings": "별도 추적" },
+      "metrics": [],
+      "evidence": [
+        {
+          "publisher": "Apple Newsroom",
+          "url": "https://www.apple.com/newsroom/2026/06/apple-intelligence-brings-powerful-ai-capabilities-into-everyday-experiences/",
+          "publishedAt": "2026-06-08",
+          "independentKey": "apple",
+          "spans": ["latest models run on device and on servers using Private Cloud Compute", "apps become smarter and more useful", "integrates the latest Apple Foundation Models deep into Apple’s platforms"]
+        }
+      ]
+    },
+    {
+      "id": "device-google-pixel",
+      "name": "Google",
+      "product": "Pixel · Gemini",
+      "entityType": "device-maker",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["On-device", "Cloud", "Hybrid"],
+        "integration": ["OS level", "App level", "Service level"],
+        "posture": ["Compete", "Partner"],
+        "regions": ["North America", "Europe", "India"],
+        "maturity": "Scale"
+      },
+      "fact": "Pixel은 Gemini를 기본 어시스턴트로 배치하고 Google 앱, 카메라 편집, 날씨 등 단말 기능을 하나의 AI 경험으로 연결했다.",
+      "implication": "Android 플랫폼 파트너이자 직접 경쟁 단말이라는 이중 지위 때문에 공통 모델 의존성과 갤럭시 독자 UX의 경계를 명확히 해야 한다.",
+      "decision": "Gemini 공통 기능은 파트너십으로 흡수하되, 개인 문맥·멀티앱 실행·로컬 보안 계층은 독자 자산으로 구축한다.",
+      "actionOption": "Partner",
+      "ownerOrg": "제품기획팀",
+      "eventClusterId": "cluster-android-system-agent",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 1",
+      "confidence": "medium",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "Pixel은 Google 앱·Android·Gemini의 수직 통합이 강점. 갤럭시는 멀티모델 선택권과 디바이스 포트폴리오 연속성으로 차별화 가능.",
+        "bomImpact": { "band": "Unknown", "estimate": "미산정", "basis": "Tensor 및 클라우드 원가 비공개" },
+        "partnershipHistory": ["Google Gemini: Galaxy AI의 공개 핵심 파트너", "Qualcomm: Android 플래그십 생태계 공통 파트너"],
+        "patentLitigationRisk": { "level": "Monitor", "note": "Android·Gemini 계약 범위와 독자 에이전트 권한 경계 검토" },
+        "svicPortfolio": { "status": "not-applicable", "asOf": "2026-08-15" }
+      },
+      "scorecard": { "technologyMaturity": 5, "onDeviceFit": 4, "licenseFlexibility": 3, "mxSynergy": 5, "total": 85 },
+      "financials": { "arr": "Alphabet 서비스에 포함", "grossMargin": "제품별 미공시", "burnRate": "해당 없음", "runway": "해당 없음", "ruleOf40": "해당 없음", "employeeTrend": "별도 추적", "jobOpenings": "별도 추적" },
+      "metrics": [],
+      "evidence": [
+        {
+          "publisher": "Google Blog",
+          "url": "https://blog.google/products-and-platforms/devices/pixel/google-pixel-9-new-ai-features/",
+          "publishedAt": "2024-08-13",
+          "independentKey": "google",
+          "spans": ["Gemini, your built-in personal AI assistant", "Pixel Studio is powered by an on-device diffusion model", "Gemini Nano also generates a custom weather report"]
+        }
+      ]
+    },
+    {
+      "id": "device-xiaomi-hyperai",
+      "name": "Xiaomi",
+      "product": "Xiaomi 15 Ultra · HyperAI",
+      "entityType": "device-maker",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["On-device", "Cloud", "Hybrid"],
+        "integration": ["OS level", "App level"],
+        "posture": ["Compete", "Watch"],
+        "regions": ["Greater China", "Europe", "India"],
+        "maturity": "GA"
+      },
+      "fact": "Xiaomi 15 Ultra는 HyperOS 2, Xiaomi HyperAI, Snapdragon 8 Elite를 묶고 이미지 편집·통역·Gemini Overlay를 제공한다.",
+      "implication": "중국 제조사도 자체 AIGC와 Google 서비스를 병행해 글로벌 시장에서 빠르게 기능 동등성을 확보하고 있다.",
+      "decision": "이미지·통역의 기능 유무 비교를 넘어 지역별 가용성, 처리 위치, 실행 가능한 앱 범위를 분기 단위로 추적한다.",
+      "actionOption": "Watch",
+      "ownerOrg": "제품기획팀",
+      "eventClusterId": "cluster-android-oem-hybrid-ai",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 2",
+      "confidence": "high",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "클라우드 기반 편집 기능은 유사하며, 갤럭시의 멀티디바이스 연속성과 엔터프라이즈 보안 설명력을 별도 검증해야 한다.",
+        "bomImpact": { "band": "Medium", "estimate": "Snapdragon 8 Elite·메모리 용량 영향 정밀 산정 필요", "basis": "공개 부품 구성 기반 방향성, 단가 미확인" },
+        "partnershipHistory": ["Google Gemini: HyperAI 페이지에서 Gemini Overlay·Extensions 공개", "Qualcomm: Snapdragon 8 Elite 탑재 공개"],
+        "patentLitigationRisk": { "level": "Review", "note": "이미지 생성·지우개·반사 제거 기능의 학습데이터/IP 검토 필요" },
+        "svicPortfolio": { "status": "not-applicable", "asOf": "2026-08-15" }
+      },
+      "scorecard": { "technologyMaturity": 4, "onDeviceFit": 4, "licenseFlexibility": 2, "mxSynergy": 2, "total": 60 },
+      "financials": { "arr": "제품별 미공시", "grossMargin": "제품별 미공시", "burnRate": "해당 없음", "runway": "해당 없음", "ruleOf40": "해당 없음", "employeeTrend": "별도 추적", "jobOpenings": "별도 추적" },
+      "metrics": [],
+      "evidence": [
+        {
+          "publisher": "Xiaomi Global",
+          "url": "https://www.mi.com/global/product/xiaomi-15-ultra/",
+          "publishedAt": "2025-03-02",
+          "independentKey": "xiaomi",
+          "spans": ["Powered by Xiaomi HyperOS", "Xiaomi HyperAI", "Snapdragon 8 Elite Mobile Platform"]
+        },
+        {
+          "publisher": "Qualcomm",
+          "url": "https://www.qualcomm.com/news/releases/2024/10/qualcomm-unveils-snapdragon-8-elite-with-the-world-s-fastest-mob",
+          "publishedAt": "2024-10-21",
+          "independentKey": "qualcomm",
+          "spans": ["on-device multi-modal generative AI applications", "Xiaomi", "enhanced Qualcomm Hexagon NPU"]
+        }
+      ]
+    },
+    {
+      "id": "device-honor-magic7",
+      "name": "HONOR",
+      "product": "Magic7 Pro · MagicOS 9",
+      "entityType": "device-maker",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["On-device", "Cloud", "Hybrid"],
+        "integration": ["OS level", "App level"],
+        "posture": ["Compete", "Watch"],
+        "regions": ["Greater China", "Europe", "India"],
+        "maturity": "GA"
+      },
+      "fact": "HONOR는 MagicOS 9의 Magic Portal, 온디바이스 딥페이크 탐지, Gemini 사전 탑재를 하나의 AI Phone 포지셔닝으로 결합했다.",
+      "implication": "보안 기능이 단말 AI의 독립 구매 이유로 전환될 수 있으며, 앱 연결형 포털이 에이전트 UX 경쟁을 앞당긴다.",
+      "decision": "실시간 사기·딥페이크 방지와 화면 문맥 기반 앱 라우팅을 갤럭시 AI 기능 로드맵의 별도 경쟁축으로 둔다.",
+      "actionOption": "Build",
+      "ownerOrg": "R&D",
+      "eventClusterId": "cluster-android-oem-hybrid-ai",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 2",
+      "confidence": "high",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "온디바이스 딥페이크 탐지와 Magic Portal의 빠른 앱 연결이 비교 우위 후보이며 실제 지역·언어 범위 검증이 필요하다.",
+        "bomImpact": { "band": "Medium", "estimate": "카메라·NPU·메모리 영향 산정 필요", "basis": "공개 사양 기반 방향성" },
+        "partnershipHistory": ["Google Gemini: Magic7 Pro 사전 탑재 공개", "Qualcomm: Snapdragon 플래그십 생태계 참여"],
+        "patentLitigationRisk": { "level": "Review", "note": "딥페이크 탐지·화면 객체 인식 관련 FTO 검토" },
+        "svicPortfolio": { "status": "not-applicable", "asOf": "2026-08-15" }
+      },
+      "scorecard": { "technologyMaturity": 4, "onDeviceFit": 5, "licenseFlexibility": 2, "mxSynergy": 3, "total": 70 },
+      "financials": { "arr": "비공개", "grossMargin": "비공개", "burnRate": "비공개", "runway": "비공개", "ruleOf40": "비교 불가", "employeeTrend": "별도 추적", "jobOpenings": "별도 추적" },
+      "metrics": [],
+      "evidence": [
+        {
+          "publisher": "HONOR Global",
+          "url": "https://www.honor.com/global/news/honor-magic7-series-launch/",
+          "publishedAt": "2025-01-15",
+          "independentKey": "honor",
+          "spans": ["integrates both on-device and cloud AI capabilities", "Google Gemini app pre-installed", "on-device AI Deepfake Detection technology"]
+        },
+        {
+          "publisher": "Qualcomm",
+          "url": "https://www.qualcomm.com/news/releases/2024/10/qualcomm-unveils-snapdragon-8-elite-with-the-world-s-fastest-mob",
+          "publishedAt": "2024-10-21",
+          "independentKey": "qualcomm",
+          "spans": ["Honor", "on-device multi-modal generative AI applications", "enhanced Qualcomm Hexagon NPU"]
+        }
+      ]
+    },
+    {
+      "id": "device-oppo-find-x8",
+      "name": "OPPO",
+      "product": "Find X8 · ColorOS 15",
+      "entityType": "device-maker",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["On-device", "Cloud", "Hybrid"],
+        "integration": ["OS level", "App level"],
+        "posture": ["Compete", "Watch"],
+        "regions": ["Greater China", "Europe", "India"],
+        "maturity": "GA"
+      },
+      "fact": "OPPO Find X8은 Dimensity 9400, 온디바이스 카메라 AI, ColorOS 문서·노트 요약과 Gemini 어시스턴트를 결합했다.",
+      "implication": "자체 OS 기능과 외부 모델을 빠르게 조합하는 실행 속도가 높고, 이미지·문서·통신 품질을 하나의 제품 가치로 묶는다.",
+      "decision": "카메라 AI의 품질·전력·지연 KPI와 문서/노트의 앱 간 연결성을 동등 조건으로 벤치마킹한다.",
+      "actionOption": "Watch",
+      "ownerOrg": "제품기획팀",
+      "eventClusterId": "cluster-android-oem-hybrid-ai",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 2",
+      "confidence": "high",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "카메라 후처리와 문서 AI는 기능 동등성이 빠르게 축소되는 영역. 갤럭시의 지연·전력·연속성 KPI 공개가 필요하다.",
+        "bomImpact": { "band": "Medium", "estimate": "Dimensity 9400·카메라 시스템 영향 산정 필요", "basis": "공개 사양, 공급단가 미확인" },
+        "partnershipHistory": ["Google Gemini: ColorOS 디지털 어시스턴트로 공개", "MediaTek: Find X8 최적화 협업 공개"],
+        "patentLitigationRisk": { "level": "Review", "note": "AI 이미지 복원·줌·생성형 채움 관련 FTO 필요" },
+        "svicPortfolio": { "status": "not-applicable", "asOf": "2026-08-15" }
+      },
+      "scorecard": { "technologyMaturity": 4, "onDeviceFit": 4, "licenseFlexibility": 2, "mxSynergy": 2, "total": 60 },
+      "financials": { "arr": "비공개", "grossMargin": "비공개", "burnRate": "비공개", "runway": "비공개", "ruleOf40": "비교 불가", "employeeTrend": "별도 추적", "jobOpenings": "별도 추적" },
+      "metrics": [],
+      "evidence": [
+        {
+          "publisher": "OPPO Global",
+          "url": "https://www.oppo.com/en/newsroom/press/find-x8-series-coloros-15-launch-camera-ai/",
+          "publishedAt": "2024-11-21",
+          "independentKey": "oppo",
+          "spans": ["AI tasks using 35% less power", "AI Summary, AI Speak, AI Reply and AI Writer", "Gemini as ColorOS’s digital assistant"]
+        },
+        {
+          "publisher": "MediaTek",
+          "url": "https://www.mediatek.com/press-room/mediateks-dimensity-9400-flagship-soc-offers-extreme-performance-and-efficiency-for-the-latest-ai-experiences",
+          "publishedAt": "2024-10-09",
+          "independentKey": "mediatek",
+          "spans": ["optimized for edge-AI applications", "on-device LoRA training", "Dimensity Agentic AI Engine"]
+        }
+      ]
+    },
+    {
+      "id": "device-vivo-funtouch15",
+      "name": "vivo",
+      "product": "Funtouch OS 15",
+      "entityType": "device-maker",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["On-device", "Hybrid"],
+        "integration": ["OS level", "App level"],
+        "posture": ["Compete", "Watch"],
+        "regions": ["Greater China", "India"],
+        "maturity": "GA"
+      },
+      "fact": "vivo는 Funtouch OS 15에서 AI Image Lab, 문서 그림자 제거, 개인화 및 크로스디바이스 생산성을 전면에 배치했다.",
+      "implication": "인도·동남아 핵심 경쟁사가 AI를 프리미엄 전용이 아닌 OS 기본 사용성 개선으로 확장하고 있다.",
+      "decision": "중가 단말까지 확장 가능한 경량 모델·기능 패키지를 별도 BOM/전력 제약으로 관리한다.",
+      "actionOption": "Build",
+      "ownerOrg": "R&D",
+      "eventClusterId": "cluster-android-oem-hybrid-ai",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 2",
+      "confidence": "medium",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "중가 단말의 AI 편집·생산성 기능 확산 속도가 핵심 비교 포인트다.",
+        "bomImpact": { "band": "Low-to-Medium", "estimate": "중가 SoC·메모리별 기능 컷라인 산정 필요", "basis": "기능 공개, 부품 원가 미공개" },
+        "partnershipHistory": ["Google Android: Funtouch OS 15는 Android 15 기반", "Qualcomm/MediaTek: 모델별 공급 관계 확인 필요"],
+        "patentLitigationRisk": { "level": "Monitor", "note": "AI 이미지 보정·문서 처리 기능 특허 검토" },
+        "svicPortfolio": { "status": "not-applicable", "asOf": "2026-08-15" }
+      },
+      "scorecard": { "technologyMaturity": 4, "onDeviceFit": 3, "licenseFlexibility": 2, "mxSynergy": 2, "total": 55 },
+      "financials": { "arr": "비공개", "grossMargin": "비공개", "burnRate": "비공개", "runway": "비공개", "ruleOf40": "비교 불가", "employeeTrend": "별도 추적", "jobOpenings": "별도 추적" },
+      "metrics": [],
+      "evidence": [
+        {
+          "publisher": "vivo Global",
+          "url": "https://www.vivo.com/en/about-vivo/news/vivo-unveils-foutouch-os-15",
+          "publishedAt": "2024-09-30",
+          "independentKey": "vivo",
+          "spans": ["AI Image Lab", "automatically enhance photo quality", "optimized Link to Windows feature enhances cross-device collaboration"]
+        }
+      ]
+    },
+    {
+      "id": "device-huawei-xiaoyi",
+      "name": "Huawei",
+      "product": "HarmonyOS · Xiaoyi",
+      "entityType": "device-maker",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["On-device", "Cloud", "Hybrid"],
+        "integration": ["OS level", "App level", "Service level"],
+        "posture": ["Compete", "Watch"],
+        "regions": ["Greater China"],
+        "maturity": "Scale"
+      },
+      "fact": "Huawei는 HarmonyOS의 Xiaoyi를 Pangu·DeepSeek 결합 구조와 에이전트 대화로 확장하고 Mate 60·Pura 70 계열에 배포하고 있다.",
+      "implication": "중화권에서는 Google 비의존 모델·OS·앱 생태계가 별도 경쟁 체계로 작동하므로 글로벌 Android 벤치마크만으로는 공백이 생긴다.",
+      "decision": "중국 전용 모델·규제·스토어·결제까지 분리한 지역 로드맵과 현지 파트너 대안을 운영한다.",
+      "actionOption": "Build",
+      "ownerOrg": "서비스기획",
+      "eventClusterId": "cluster-china-sovereign-device-agent",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 1",
+      "confidence": "medium",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "중국 내 독자 모델·앱 생태계 연결과 로컬 규제 대응 속도가 차이. 갤럭시는 지역 독립형 서비스 조합이 필요하다.",
+        "bomImpact": { "band": "Unknown", "estimate": "Kirin·메모리·로컬 추론 구성 비교 필요", "basis": "공식 기능 설명, 단가 미확인" },
+        "partnershipHistory": ["DeepSeek: Xiaoyi 결합 구조 공개", "Google Gemini: 중국 내 비의존 구조"],
+        "patentLitigationRisk": { "level": "High-review", "note": "통신·OS·AI 특허 및 수출통제 동시 검토" },
+        "svicPortfolio": { "status": "not-applicable", "asOf": "2026-08-15" }
+      },
+      "scorecard": { "technologyMaturity": 5, "onDeviceFit": 4, "licenseFlexibility": 1, "mxSynergy": 1, "total": 55 },
+      "financials": { "arr": "비공개", "grossMargin": "비공개", "burnRate": "비공개", "runway": "비공개", "ruleOf40": "비교 불가", "employeeTrend": "별도 추적", "jobOpenings": "별도 추적" },
+      "metrics": [],
+      "evidence": [
+        {
+          "publisher": "Huawei Support",
+          "url": "https://consumer.huawei.com/cn/support/content/zh-cn16063214/",
+          "publishedAt": "2025-02-25",
+          "independentKey": "huawei",
+          "spans": ["基于盘古大模型与DeepSeek融合架构", "新增智能体对话功能", "支持机型 Mate 60系列、Pura 70系列"]
+        }
+      ]
+    },
+    {
+      "id": "carrier-verizon-gemini-bundle",
+      "name": "Verizon",
+      "product": "Google One AI Premium perk",
+      "entityType": "carrier",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["Cloud"],
+        "integration": ["Service level"],
+        "posture": ["Partner", "License"],
+        "regions": ["North America"],
+        "maturity": "Scale"
+      },
+      "fact": "Verizon은 Google One AI Premium을 이동통신 요금제의 월 10달러 선택형 perk로 묶어 AI 구독을 채널 상품화했다.",
+      "implication": "통신사는 단말 보조금 채널을 넘어 AI 구독의 가격 차별화·청구·리텐션 채널로 이동하고 있다.",
+      "decision": "주요 통신사와 갤럭시 AI 프리미엄·클라우드 저장공간·보호 서비스를 결합한 공동 요금제를 설계한다.",
+      "actionOption": "Partner",
+      "ownerOrg": "서비스기획",
+      "eventClusterId": "cluster-carrier-ai-subscription-bundle",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 1",
+      "confidence": "medium",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "단말 기능이 아닌 요금제·청구·클라우드 저장공간 결합이 차별화 단위가 된다.",
+        "bomImpact": { "band": "Low", "estimate": "단말 BOM 직접 영향 없음", "basis": "서비스 번들 구조" },
+        "partnershipHistory": ["Google Gemini: Google One AI Premium 요금제 perk", "Samsung/MX: 공개 결합 이력은 본 레코드에서 미확인"],
+        "patentLitigationRisk": { "level": "Low", "note": "주요 검토는 라이선스·청구·개인정보 처리 조건" },
+        "svicPortfolio": { "status": "not-applicable", "asOf": "2026-08-15" }
+      },
+      "scorecard": { "technologyMaturity": 5, "onDeviceFit": 1, "licenseFlexibility": 4, "mxSynergy": 5, "total": 75 },
+      "financials": { "arr": "제휴 상품별 미공시", "grossMargin": "미공시", "burnRate": "해당 없음", "runway": "해당 없음", "ruleOf40": "해당 없음", "employeeTrend": "별도 추적", "jobOpenings": "별도 추적" },
+      "metrics": [
+        { "label": "번들 가격", "value": "$10/month", "evidenceLiteral": "$10" },
+        { "label": "일반가 대비", "value": "$9.99 saving", "evidenceLiteral": "$9.99" }
+      ],
+      "evidence": [
+        {
+          "publisher": "Verizon Newsroom",
+          "url": "https://www.verizon.com/about/news/verizon-google-one-gemini-advanced-ai",
+          "publishedAt": "2025-02-04",
+          "independentKey": "verizon",
+          "spans": ["Google One AI Premium as a perk", "$10 a month", "a savings of $9.99"]
+        }
+      ]
+    },
+    {
+      "id": "carrier-skt-adot",
+      "name": "SK Telecom",
+      "product": "A. (A.Dot) · telco AI agent",
+      "entityType": "carrier",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["Cloud", "Hybrid"],
+        "integration": ["App level", "Service level"],
+        "posture": ["Partner", "Watch"],
+        "regions": ["Korea", "North America"],
+        "maturity": "Scale"
+      },
+      "fact": "SK Telecom은 통화 요약·일정·검색을 결합한 A.Dot과 글로벌 에이전트 Aster를 AI B2C의 양대 축으로 운영한다.",
+      "implication": "통신사가 통화 데이터와 가입자 접점을 활용해 단말 제조사와 중첩되는 개인 에이전트 관계를 선점하고 있다.",
+      "decision": "통화·메시지 요약의 중복 개발을 줄이고 통신사 데이터 권한을 활용하는 공동 에이전트 API·번들 PoC를 추진한다.",
+      "actionOption": "Partner",
+      "ownerOrg": "서비스기획",
+      "eventClusterId": "cluster-telco-personal-agent",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 1",
+      "confidence": "medium",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "통신 기록·요금제·본인확인 접점이 강점. 갤럭시의 기기 센서·앱 권한과 결합할 때 상호 보완성이 높다.",
+        "bomImpact": { "band": "Low", "estimate": "단말 BOM 직접 영향 낮음; 추론 OPEX 별도", "basis": "클라우드·앱 중심" },
+        "partnershipHistory": ["글로벌 AI 기업: 모델 성능 강화를 위한 파트너십을 연차보고서에서 공개", "Samsung/MX: 공개 계약 범위 별도 확인 필요"],
+        "patentLitigationRisk": { "level": "Review", "note": "통화 녹음·요약·개인정보 동의 및 데이터 역할 분담 검토" },
+        "svicPortfolio": { "status": "not-applicable", "asOf": "2026-08-15" }
+      },
+      "scorecard": { "technologyMaturity": 5, "onDeviceFit": 2, "licenseFlexibility": 4, "mxSynergy": 5, "total": 80 },
+      "financials": { "arr": "서비스별 미공시", "grossMargin": "서비스별 미공시", "burnRate": "해당 없음", "runway": "해당 없음", "ruleOf40": "해당 없음", "employeeTrend": "별도 추적", "jobOpenings": "별도 추적" },
+      "metrics": [
+        { "label": "A.Dot 가입자", "value": "약 9M", "evidenceLiteral": "9 million" },
+        { "label": "월간 활성", "value": "7.4M", "evidenceLiteral": "7.4 million" }
+      ],
+      "evidence": [
+        {
+          "publisher": "SK Telecom Annual Report",
+          "url": "https://news.sktelecom.com/en/wp-content/uploads/pdfs/SK_Telecom_Annual_Report_2024_ENG_F_0808.pdf",
+          "publishedAt": "2025-08-08",
+          "independentKey": "skt",
+          "spans": ["approximately 9 million subscribers", "7.4 million monthly active users", "recording and summarizing calls"]
+        }
+      ]
+    },
+    {
+      "id": "component-qualcomm-snapdragon",
+      "name": "Qualcomm",
+      "product": "Snapdragon 8 Elite · AI Stack",
+      "entityType": "component-partner",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["On-device"],
+        "integration": ["Component / module", "OS level"],
+        "posture": ["Partner", "License"],
+        "regions": ["North America", "Europe", "Greater China", "India", "Korea"],
+        "maturity": "Scale"
+      },
+      "fact": "Snapdragon 8 Elite는 멀티모달 온디바이스 생성형 AI를 핵심 가치로 두고 OEM·모델 파트너 생태계를 확장했다.",
+      "implication": "NPU 성능·전력·메모리 요구와 AI Stack의 모델 최적화 범위가 갤럭시 AI 기능 출시 속도와 BOM을 동시에 좌우한다.",
+      "decision": "차세대 NPU 로드맵 공동 정의와 모델 최적화 SLA를 구매계약·R&D 게이트에 포함한다.",
+      "actionOption": "Partner",
+      "ownerOrg": "구매",
+      "eventClusterId": "cluster-mobile-npu-agentic-ai",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 2",
+      "confidence": "high",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "공통 SoC를 쓰는 경쟁사와 차이는 모델 최적화·열·전력·메모리 튜닝 및 OS 통합 속도에서 발생한다.",
+        "bomImpact": { "band": "High", "estimate": "SoC·DRAM·열설계 연동 원가 산정 필수", "basis": "플래그십 부품 핵심" },
+        "partnershipHistory": ["Qualcomm: Galaxy 플래그십의 공개 장기 협력 파트너", "Google Gemini: Android AI Stack과 병행 최적화 필요"],
+        "patentLitigationRisk": { "level": "Contract-critical", "note": "SEP·칩 라이선스·AI SDK 사용권 범위 계약 검토" },
+        "svicPortfolio": { "status": "not-portfolio", "asOf": "2026-08-15", "note": "공개 SVIC 포트폴리오 해당 없음" }
+      },
+      "scorecard": { "technologyMaturity": 5, "onDeviceFit": 5, "licenseFlexibility": 3, "mxSynergy": 5, "total": 90 },
+      "financials": { "arr": "제품·라이선스 혼합", "grossMargin": "IR 대사 필요", "burnRate": "해당 없음", "runway": "해당 없음", "ruleOf40": "해당 없음", "employeeTrend": "IR 추적", "jobOpenings": "채용 API 미연결" },
+      "metrics": [],
+      "evidence": [
+        {
+          "publisher": "Qualcomm",
+          "url": "https://www.qualcomm.com/news/releases/2024/10/qualcomm-unveils-snapdragon-8-elite-with-the-world-s-fastest-mob",
+          "publishedAt": "2024-10-21",
+          "independentKey": "qualcomm",
+          "spans": ["on-device multi-modal generative AI applications", "enhanced Qualcomm Hexagon NPU", "Leading OEMs and smartphone brands"]
+        },
+        {
+          "publisher": "OPPO Global",
+          "url": "https://www.oppo.com/en/newsroom/press/find-x8-series-coloros-15-launch-camera-ai/",
+          "publishedAt": "2024-11-21",
+          "independentKey": "oppo",
+          "spans": ["MediaTek Dimensity 9400", "AI tasks using 35% less power", "OPPO and MediaTek have worked closely"]
+        }
+      ]
+    },
+    {
+      "id": "component-mediatek-dimensity",
+      "name": "MediaTek",
+      "product": "Dimensity 9400 · Agentic AI Engine",
+      "entityType": "component-partner",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["On-device", "Hybrid"],
+        "integration": ["Component / module", "OS level"],
+        "posture": ["Partner", "License", "Watch"],
+        "regions": ["Greater China", "India", "Europe", "Korea"],
+        "maturity": "Scale"
+      },
+      "fact": "Dimensity 9400은 온디바이스 LoRA, 비디오 생성, 에이전트 인터페이스를 NPU 로드맵에 포함했다.",
+      "implication": "플래그십 SoC 선택지가 에이전트 생태계와 개발자 API 차원으로 확대되며 공급 협상력과 지역 포트폴리오 설계에 영향을 준다.",
+      "decision": "Qualcomm 단일 기준이 아닌 이원화 PoC로 NPU 성능·전력·SDK·라이선스 유연성을 동등 평가한다.",
+      "actionOption": "Watch",
+      "ownerOrg": "구매",
+      "eventClusterId": "cluster-mobile-npu-agentic-ai",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 2",
+      "confidence": "high",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "지역·가격대별 SoC 이원화가 AI 기능 일관성을 해치지 않도록 공통 런타임 추상화가 필요하다.",
+        "bomImpact": { "band": "High", "estimate": "SoC·DRAM·열설계 포함 should-cost 비교 필요", "basis": "대체 공급원 후보" },
+        "partnershipHistory": ["OPPO: Find X8 공동 최적화 공개", "Samsung/MX: 공개 적용 범위 별도 확인 필요"],
+        "patentLitigationRisk": { "level": "Contract-critical", "note": "SDK·모델 변환·NPU 연산자 라이선스 조건 검토" },
+        "svicPortfolio": { "status": "not-confirmed", "asOf": "2026-08-15", "note": "공개 SVIC 자료에서 확인 필요" }
+      },
+      "scorecard": { "technologyMaturity": 5, "onDeviceFit": 5, "licenseFlexibility": 4, "mxSynergy": 4, "total": 90 },
+      "financials": { "arr": "제품 매출", "grossMargin": "IR 대사 필요", "burnRate": "해당 없음", "runway": "해당 없음", "ruleOf40": "해당 없음", "employeeTrend": "IR 추적", "jobOpenings": "채용 API 미연결" },
+      "metrics": [
+        { "label": "LLM prompt 성능", "value": "+80%", "evidenceLiteral": "80%" },
+        { "label": "AI 전력 효율", "value": "+35%", "evidenceLiteral": "35%" }
+      ],
+      "evidence": [
+        {
+          "publisher": "MediaTek",
+          "url": "https://www.mediatek.com/press-room/mediateks-dimensity-9400-flagship-soc-offers-extreme-performance-and-efficiency-for-the-latest-ai-experiences",
+          "publishedAt": "2024-10-09",
+          "independentKey": "mediatek",
+          "spans": ["up to 80% faster large language model prompt performance", "up to 35% more power efficient", "Dimensity Agentic AI Engine"]
+        },
+        {
+          "publisher": "OPPO Global",
+          "url": "https://www.oppo.com/en/newsroom/press/find-x8-series-coloros-15-launch-camera-ai/",
+          "publishedAt": "2024-11-21",
+          "independentKey": "oppo",
+          "spans": ["MediaTek Dimensity 9400", "OPPO and MediaTek have worked closely", "AI tasks using 35% less power"]
+        }
+      ]
+    },
+    {
+      "id": "candidate-perplexity-android",
+      "name": "Perplexity",
+      "product": "Android Assistant",
+      "entityType": "partner-candidate",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["Cloud", "Hybrid"],
+        "integration": ["App level", "Service level"],
+        "posture": ["Partner", "License", "M&A"],
+        "regions": ["North America", "Europe", "India", "Korea"],
+        "maturity": "GA"
+      },
+      "fact": "Perplexity Android Assistant는 기본 어시스턴트로 설정되어 여러 앱 위에서 음성 질문과 복합 작업 실행을 지원한다.",
+      "implication": "검색 품질보다 기본 어시스턴트 권한과 앱 실행 연결이 단말 내 파트너 가치의 핵심이 된다.",
+      "decision": "기본 탑재가 아닌 제한된 지역·기능의 멀티모델 에이전트 PoC로 실행 성공률과 비용을 비교한다.",
+      "actionOption": "Partner",
+      "ownerOrg": "서비스기획",
+      "eventClusterId": "cluster-third-party-android-agent",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 1",
+      "confidence": "medium",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "답변 검색성·출처 제시와 멀티앱 실행이 강점 후보. 갤럭시 고유 권한·개인 문맥과의 역할 분리를 검증해야 한다.",
+        "bomImpact": { "band": "Low", "estimate": "단말 BOM 영향 낮음; 클라우드 추론·라이선스 비용 발생", "basis": "앱·서비스 통합" },
+        "partnershipHistory": ["Perplexity Android: 기본 어시스턴트 기능 공개", "Samsung/MX 계약: 공개 1차 출처에서 확정 확인 필요"],
+        "patentLitigationRisk": { "level": "High-review", "note": "콘텐츠 저작권 소송·검색 결과 라이선스·면책 조항 실사 필요" },
+        "svicPortfolio": { "status": "not-confirmed", "asOf": "2026-08-15", "note": "공개 SVIC 포트폴리오 대사 필요" }
+      },
+      "scorecard": { "technologyMaturity": 4, "onDeviceFit": 2, "licenseFlexibility": 4, "mxSynergy": 4, "total": 70 },
+      "financials": { "arr": "공식 미공시", "grossMargin": "공식 미공시", "burnRate": "공식 미공시", "runway": "공식 미공시", "ruleOf40": "산정 불가", "employeeTrend": "API 미연결", "jobOpenings": "API 미연결" },
+      "metrics": [],
+      "evidence": [
+        {
+          "publisher": "Perplexity Help Center",
+          "url": "https://www.perplexity.ai/help-center/en/articles/10450852-how-to-use-the-perplexity-android-assistant",
+          "publishedAt": "2026-07-16",
+          "independentKey": "perplexity",
+          "spans": ["voice-activated tasks on your Android device", "integrating with many of your apps", "set it as your default assistant"]
+        }
+      ]
+    },
+    {
+      "id": "candidate-upstage-solar",
+      "name": "Upstage",
+      "product": "Solar Pro 2",
+      "entityType": "partner-candidate",
+      "priority": "P2",
+      "masterData": true,
+      "decisionAxes": {
+        "touchpoint": ["Cloud", "Hybrid"],
+        "integration": ["OS level", "App level", "Service level"],
+        "posture": ["Partner", "License", "M&A"],
+        "regions": ["Korea", "Japan", "North America"],
+        "maturity": "GA"
+      },
+      "fact": "Upstage Solar Pro 2는 31B 규모로 한국어 추론과 도구 연동 작업 실행을 제공하며 API로 배포된다.",
+      "implication": "한국어·로컬 규제·문서 이해에 특화된 모델은 글로벌 모델을 보완하는 지역형 멀티모델 전략 후보가 된다.",
+      "decision": "한국어 개인 비서·문서·콜 요약 PoC에서 품질/지연/비용을 Gemini 계열과 블라인드 비교한다.",
+      "actionOption": "Partner",
+      "ownerOrg": "R&D",
+      "eventClusterId": "cluster-korean-regional-model",
+      "lastVerifiedAt": "2026-08-15T07:00:00Z",
+      "freshnessTier": "Tier 1",
+      "confidence": "medium",
+      "workflow": { "stage": "published", "reviewStatus": "not-required", "humanReview": false },
+      "mxMapping": {
+        "galaxyDifferentiation": "한국어·문서·도구 실행의 지역 특화 성능과 국내 데이터 거버넌스가 강점 후보.",
+        "bomImpact": { "band": "Unknown", "estimate": "31B 전체 온디바이스는 비현실적; 양자화·분할 추론 검증 필요", "basis": "공개 파라미터 규모" },
+        "partnershipHistory": ["AWS·Intel·LG·Polaris Office 공개 협력", "Samsung/MX 계약: 공개 1차 출처에서 확정 확인 필요"],
+        "patentLitigationRisk": { "level": "Review", "note": "학습데이터·모델 라이선스·문서 처리 IP 실사 필요" },
+        "svicPortfolio": { "status": "not-confirmed", "asOf": "2026-08-15", "note": "공개 SVIC 포트폴리오 대사 필요" }
+      },
+      "scorecard": { "technologyMaturity": 4, "onDeviceFit": 2, "licenseFlexibility": 4, "mxSynergy": 5, "total": 75 },
+      "financials": { "arr": "공식 미공시", "grossMargin": "공식 미공시", "burnRate": "공식 미공시", "runway": "공식 미공시", "ruleOf40": "산정 불가", "employeeTrend": "API 미연결", "jobOpenings": "API 미연결" },
+      "metrics": [
+        { "label": "모델 크기", "value": "31B", "evidenceLiteral": "31 billion" }
+      ],
+      "evidence": [
+        {
+          "publisher": "Upstage Newsroom",
+          "url": "https://www.upstage.ai/news/solar-pro-2",
+          "publishedAt": "2025-07-10",
+          "independentKey": "upstage",
+          "spans": ["all with just 31 billion parameters", "complex reasoning and tool-integrated task execution", "available via API through the Upstage Console"]
+        }
+      ]
+    }
+  ],
+  "deviceMatrix": [
+    { "brand": "Samsung (self)", "product": "Galaxy S26 · One UI 8.5", "signalId": "", "isSelf": true, "summary": "System", "translation": "System", "imageEdit": "System", "agent": "OS-wide", "health": "Galaxy Health", "personalization": "Deep", "security": "Samsung Phone · scam alert", "processing": "Hybrid" },
+    { "brand": "Apple", "product": "iPhone · Apple Intelligence", "signalId": "device-apple-intelligence", "summary": "OS-wide", "translation": "System", "imageEdit": "System", "agent": "Hybrid", "health": "Ecosystem", "personalization": "Deep", "processing": "Hybrid" },
+    { "brand": "Google", "product": "Pixel · Gemini", "signalId": "device-google-pixel", "summary": "System", "translation": "System", "imageEdit": "System", "agent": "OS-wide", "health": "Pixel", "personalization": "Deep", "security": "Gemini Nano · on-device", "processing": "Hybrid" },
+    { "brand": "Huawei", "product": "HarmonyOS · Xiaoyi", "signalId": "device-huawei-xiaoyi", "summary": "System", "translation": "System", "imageEdit": "System", "agent": "OS-wide", "health": "Wearable", "personalization": "Deep", "security": "확인 필요", "processing": "Hybrid" },
+    { "brand": "Xiaomi", "product": "15 Ultra · HyperAI", "signalId": "device-xiaomi-hyperai", "summary": "App", "translation": "App", "imageEdit": "Cloud+App", "agent": "Gemini", "health": "Ecosystem", "personalization": "Medium", "security": "확인 필요", "processing": "Hybrid" },
+    { "brand": "HONOR", "product": "Magic7 · MagicOS 9", "signalId": "device-honor-magic7", "summary": "App", "translation": "System", "imageEdit": "System", "agent": "Magic Portal", "health": "Eye", "personalization": "Medium", "security": "On-device deepfake alert", "processing": "Hybrid" },
+    { "brand": "OPPO", "product": "Find X8 · ColorOS 15", "signalId": "device-oppo-find-x8", "summary": "App", "translation": "App", "imageEdit": "System", "agent": "Gemini", "health": "—", "personalization": "Medium", "security": "확인 필요", "processing": "Hybrid" },
+    { "brand": "vivo", "product": "Funtouch OS 15", "signalId": "device-vivo-funtouch15", "summary": "—", "translation": "—", "imageEdit": "App", "agent": "—", "health": "—", "personalization": "Medium", "security": "확인 필요", "processing": "On-device" }
+  ],
+  "featureRoadmap": [
+    { "feature": "요약", "now": "통화·노트·웹", "next": "멀티앱 공통 요약", "horizon": "개인 문맥 기반 능동 브리핑", "owner": "서비스기획" },
+    { "feature": "통역", "now": "통화·대면", "next": "메시지·영상 실시간", "horizon": "온디바이스 상시 통역", "owner": "R&D" },
+    { "feature": "이미지 편집", "now": "지우기·생성 편집", "next": "대화형 다단계 편집", "horizon": "촬영 전후 통합 에이전트", "owner": "제품기획팀" },
+    { "feature": "에이전트", "now": "질문·단일 앱 액션", "next": "멀티앱 도구 실행", "horizon": "개인 목표 기반 자율 실행", "owner": "R&D" },
+    { "feature": "헬스", "now": "센서 인사이트", "next": "개인 코칭", "horizon": "의료 파트너 연결", "owner": "서비스기획" },
+    { "feature": "개인화", "now": "설정·사용패턴", "next": "권한형 문맥 금고", "horizon": "기기 간 장기 메모리", "owner": "R&D" },
+    { "feature": "신뢰·보안", "now": "스팸·스캠 통화 경고", "next": "금융앱 연동·딥페이크 음성/영상", "horizon": "기업·금융권 유료 보안 API", "owner": "R&D" }
+  ],
+  "regulations": [
+    {
+      "id": "eu-ai-act",
+      "region": "Europe",
+      "title": "EU AI Act · Article 50 transparency",
+      "status": "In force",
+      "effectiveAt": "2026-08-02",
+      "affectedFeatures": ["agent", "imageEdit", "personalization"],
+      "risk": "High",
+      "mxControl": "AI 상호작용 고지, 생성·조작 콘텐츠 기계판독 표시, 지역 기능 게이트",
+      "ownerOrg": "서비스기획",
+      "sourceUrl": "https://digital-strategy.ec.europa.eu/en/factpages/quick-facts-transparency-rules-ai-systems",
+      "lastVerifiedAt": "2026-08-15"
+    },
+    {
+      "id": "china-genai",
+      "region": "Greater China",
+      "title": "生成式人工智能服务管理暂行办法",
+      "status": "In force",
+      "effectiveAt": "2023-08-15",
+      "affectedFeatures": ["agent", "summary", "imageEdit", "personalization"],
+      "risk": "High",
+      "mxControl": "현지 모델·알고리즘 신고, 생성물 표시, 개인정보 최소수집, 중국 전용 배포 조합",
+      "ownerOrg": "서비스기획",
+      "sourceUrl": "https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm",
+      "lastVerifiedAt": "2026-08-15"
+    },
+    {
+      "id": "kr-pipa-ai",
+      "region": "Korea",
+      "title": "개인정보 보호법 · 자동화된 결정 / 생성형 AI 안내서",
+      "status": "In force",
+      "effectiveAt": "2025-10-02",
+      "affectedFeatures": ["agent", "health", "personalization"],
+      "risk": "High",
+      "mxControl": "거부·설명·인적개입 경로, PBD 영향평가, 학습데이터 출처와 권리행사 절차",
+      "ownerOrg": "서비스기획",
+      "sourceUrl": "https://www.pipc.go.kr/np/cop/bbs/selectBoardList.do?bbsId=BS217&mCode=D010030030",
+      "lastVerifiedAt": "2026-08-15"
+    },
+    {
+      "id": "us-state-ai",
+      "region": "North America",
+      "title": "US state AI laws · Colorado baseline",
+      "status": "Fragmented",
+      "effectiveAt": "2026-02-01",
+      "affectedFeatures": ["agent", "health", "personalization"],
+      "risk": "Medium",
+      "mxControl": "주별 적용성 매트릭스, 고위험 자동결정 기능 플래그, 배포 전 법무 체크",
+      "ownerOrg": "제품기획팀",
+      "sourceUrl": "https://leg.colorado.gov/bills/sb24-205",
+      "lastVerifiedAt": "2026-08-15"
+    }
+  ],
+  "decisionTree": [
+    { "question": "핵심 차별화·개인 문맥·보안 권한인가?", "yes": "Build", "no": "next" },
+    { "question": "12개월 안에 GA가 필요하고 검증 파트너가 있는가?", "yes": "Partner", "no": "next" },
+    { "question": "IP·인재·데이터를 소유해야 경제성이 성립하는가?", "yes": "Buy", "no": "next" },
+    { "question": "성숙도·규제·BOM 불확실성이 큰가?", "yes": "Watch", "no": "License" }
+  ],
+  "sidebarCategories": [
+    { "id": "agentic-commerce", "label": "에이전틱 커머스", "subtitle": "쇼핑·결제·커미션", "ownerOrg": "서비스기획", "freshnessTier": "Tier 1", "tiers": ["official", "reported", "estimate"] },
+    { "id": "telco-bundles", "label": "통신사 결합 서비스", "subtitle": "요금제·perk·채널", "ownerOrg": "서비스기획", "freshnessTier": "Tier 0", "tiers": ["official", "reported", "estimate"] },
+    { "id": "wearables-form-factors", "label": "웨어러블·폼팩터", "subtitle": "폰 보완·대체 접점", "ownerOrg": "제품기획팀", "freshnessTier": "Tier 1", "tiers": ["official", "reported", "estimate"] }
+  ],
+  "monetizationFramework": {
+    "name": "AI agent pricing decision frame",
+    "axes": [
+      { "id": "autonomy", "label": "자율성", "question": "사람 개입 없이 과업을 얼마나 완결하는가?" },
+      { "id": "attribution", "label": "기여도", "question": "매출·비용·시간 절감에 대한 기여를 분리 측정할 수 있는가?" },
+      { "id": "sophistication", "label": "전문성", "question": "일반 기능인가, 고가치 도메인 판단인가?" }
+    ],
+    "evidenceTier": "official",
+    "sourceName": "Simon-Kucher",
+    "sourceUrl": "https://www.simon-kucher.com/sites/default/files/perspectives-files/2026_WP_Monetizing%20GenAI%20and%20AI%20Agents_Simon-Kucher.pdf"
+  },
+  "monetizationModels": [
+    { "id": "seat", "model": "사용자당 구독", "unit": "활성 사용자/월", "fit": "개인 비서·생산성", "strength": "예측 가능한 반복매출", "risk": "사용량 차이를 반영하지 못함", "evidenceTier": "reported" },
+    { "id": "usage", "model": "사용량 기반", "unit": "토큰·분·호출·크레딧", "fit": "클라우드 추론·API 재판매", "strength": "원가와 과금 연결", "risk": "사용량 불안·예산 통제 필요", "evidenceTier": "reported" },
+    { "id": "task", "model": "과업당 과금", "unit": "완료 작업", "fit": "예약·편집·리서치", "strength": "사용자가 가치를 이해하기 쉬움", "risk": "완료 정의와 실패 환불", "evidenceTier": "reported" },
+    { "id": "outcome", "model": "성과 기반", "unit": "절감액·전환·해결", "fit": "커머스·고객지원", "strength": "구매자 ROI와 정렬", "risk": "기여도 분쟁·감사 비용", "evidenceTier": "reported" },
+    { "id": "bundle", "model": "구독+크레딧 번들", "unit": "기본료+포함량", "fit": "Galaxy AI premium scenario", "strength": "예측성·사용량 균형", "risk": "무료 핵심 기능과 경계 설계", "evidenceTier": "estimate" },
+    { "id": "platform", "model": "플랫폼+사용량", "unit": "기본 라이선스+초과분", "fit": "통신사·기업 번들", "strength": "B2B 최소매출 보장", "risk": "복잡한 정산·SLA", "evidenceTier": "reported" },
+    { "id": "commission", "model": "거래 커미션", "unit": "GMV·매출 배분", "fit": "에이전틱 커머스", "strength": "결과가 나야 과금", "risk": "추천 중립성·광고 고지", "evidenceTier": "reported" }
+  ],
+  "monetizationMethodSource": {
+    "label": "7-model taxonomy",
+    "evidenceTier": "reported",
+    "sourceUrl": "https://www.getmonetizely.com/articles/how-to-monetize-ai-agents-7-proven-pricing-models-for-autonomous-ai-services"
+  },
+  "pricingBenchmarks": [
+    {
+      "id": "genai-phone-asp",
+      "label": "GenAI phone ASP",
+      "value": "$1,141 → $967",
+      "period": "2024 Q1 → 2025 Q3",
+      "change": "-15.2%",
+      "decisionUse": "AI 기능만으로 프리미엄을 유지한다는 가정을 금지하고 기능별 지불의사를 분리 측정",
+      "evidenceTier": "reported",
+      "sourceName": "Economic Times citing Omdia",
+      "sourceUrl": "https://economictimes.indiatimes.com/industry/cons-products/electronics/incoming-call-ai-expected-to-be-core-selling-point-as-smartphone-makers-look-to-stand-out-amid-rising-hardware-costs/articleshow/126239024.cms?from=mdr"
+    },
+    {
+      "id": "global-smartphone-asp-2026",
+      "label": "Global smartphone ASP",
+      "value": "$370 → $414",
+      "period": "2025 → 2026 forecast",
+      "change": "+11.9%",
+      "decisionUse": "메모리·부품 인플레이션과 AI premium을 분리한 가격 워터폴 필요",
+      "evidenceTier": "official",
+      "sourceName": "Counterpoint Research",
+      "sourceUrl": "https://counterpointresearch.com/en/insights/the-1000-dollar-plus-opportunity-in-light-of-memory%20crisis-global-smartphone-trends-and-the-rise-of-ultra-premium"
+    },
+    {
+      "id": "mobile-memory-pressure",
+      "label": "Mobile DRAM contract price",
+      "value": "LPDDR4X +70~75% · LPDDR5X +78~83% QoQ",
+      "period": "2026 Q2 forecast",
+      "change": "상승 압력",
+      "decisionUse": "온디바이스 모델 메모리 상주량·tier별 RAM 요구량을 BOM 게이트에 연결",
+      "evidenceTier": "official",
+      "sourceName": "TrendForce",
+      "sourceUrl": "https://www.trendforce.com/presscenter/news/20260514-13044.html"
+    },
+    {
+      "id": "galaxy-ai-basic-free",
+      "label": "Galaxy AI 기본 기능",
+      "value": "Samsung 제공 기본 기능 무료",
+      "period": "현재 정책",
+      "change": "확정 사실",
+      "decisionUse": "기본 기능 유료화가 아니라 고급·제3자 클라우드·서비스 번들 시나리오로 모델링",
+      "evidenceTier": "official",
+      "sourceName": "Samsung Support",
+      "sourceUrl": "https://www.samsung.com/us/support/answer/ANS10001639/"
+    },
+    {
+      "id": "galaxy-ai-subscription-club",
+      "label": "New 갤럭시 AI 구독클럽",
+      "value": "월 6,900원(1·2년) / 8,900원(3년)",
+      "period": "2026-02 공개",
+      "change": "기기 보유·케어·잔존가치 모델",
+      "decisionUse": "AI 기능 paywall과 구분하고, 기기 교체·케어 반복매출의 기준선으로 사용",
+      "evidenceTier": "official",
+      "sourceName": "Samsung Newsroom Korea",
+      "sourceUrl": "https://news.samsung.com/kr/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90-%EB%8D%94-%EC%95%88%EC%8B%AC%ED%95%A0-%EC%88%98-%EC%9E%88%EB%8A%94new-%EA%B0%A4%EB%9F%AD%EC%8B%9C-ai-%EA%B5%AC%EB%8F%85%ED%81%B4%EB-%EC%97%85%EA%B7%B8"
+    },
+    {
+      "id": "google-ai-plan-ladder-2026",
+      "label": "Google AI 월 구독 가격",
+      "value": "Plus $7.99 · Pro $19.99 · Ultra 5x $99.99 · Ultra 20x $199.99",
+      "period": "US list · 2026-05 이후",
+      "change": "Ultra $250→$200 + $100 진입 tier 신설",
+      "decisionUse": "국가별 가격과 프로모션($4.99 사례)을 표준가와 분리하고, 저가 진입 후 상향판매 시나리오를 기본 비교안으로 사용",
+      "evidenceTier": "official",
+      "sourceName": "Google AI subscriptions",
+      "sourceUrl": "https://blog.google/products-and-platforms/products/google-one/google-ai-subscriptions/",
+      "sourceUrls": [
+        { "label": "Plus $7.99", "url": "https://blog.google/products-and-platforms/products/google-one/google-ai-plus-availability/" },
+        { "label": "Ultra $100/$200", "url": "https://blog.google/products-and-platforms/products/google-one/google-ai-subscriptions/" },
+        { "label": "현재 plan matrix", "url": "https://one.google.com/about/google-ai-plans/" }
+      ],
+      "announcedAt": "2026-05-19",
+      "metricObservedAt": "2026-05-19",
+      "lastVerifiedAt": "2026-08-15"
+    },
+    {
+      "id": "meta-glasses-price-ladder",
+      "label": "Meta AI glasses 가격 사다리",
+      "value": "$299 / $379 / $799+",
+      "period": "US starting price · 2026-06",
+      "change": "자체 Meta 저가 라인 + Ray-Ban 파트너 라인 + display premium",
+      "decisionUse": "디스플레이 유무와 자체·파트너 브랜드를 분리해 XR/글래스 가격·채널 포트폴리오를 비교",
+      "evidenceTier": "official",
+      "sourceName": "Meta Newsroom",
+      "sourceUrl": "https://about.fb.com/news/2026/06/meta-essilorluxottica-partner-launch-meta-glasses/",
+      "announcedAt": "2026-06-23",
+      "metricObservedAt": "2026-06-23",
+      "lastVerifiedAt": "2026-08-15"
+    }
+  ],
+  "roiModel": {
+    "currency": "USD",
+    "disclaimer": "모든 입력값은 estimate 시나리오이며 공개 실적이 아니다.",
+    "defaults": { "eligibleDevicesM": 10, "aspUplift": 15, "paidAttachRate": 8, "monthlyPrice": 8, "annualRetention": 72, "cloudCostPerPaidUserMonth": 2.2, "commerceGmvPerUserYear": 45, "commissionRate": 3 },
+    "formulas": {
+      "aspRevenueM": "eligibleDevicesM * aspUplift",
+      "paidUsersM": "eligibleDevicesM * paidAttachRate / 100",
+      "subscriptionRevenueM": "paidUsersM * monthlyPrice * 12 * annualRetention / 100",
+      "cloudCostM": "paidUsersM * cloudCostPerPaidUserMonth * 12",
+      "commerceRevenueM": "paidUsersM * commerceGmvPerUserYear * commissionRate / 100",
+      "grossContributionM": "aspRevenueM + subscriptionRevenueM + commerceRevenueM - cloudCostM"
+    }
+  },
+  "osAgentStack": [
+    { "platform": "Apple", "runtime": "Apple Intelligence · App Intents", "execution": "On-device + Private Cloud Compute", "appAction": "App Intents·schema·Shortcuts", "mobileReadiness": "GA / expanding", "mxMove": "OS 액션 스키마·개인 문맥·권한 UX 벤치마크", "evidenceTier": "official", "sourceUrl": "https://developer.apple.com/apple-intelligence/" },
+    { "platform": "Google Android", "runtime": "Gemini Nano · AICore · AppFunctions", "execution": "On-device + Firebase/Gemini cloud", "appAction": "AppFunctions·ML Kit GenAI APIs", "mobileReadiness": "GA / device-dependent", "mxMove": "AICore 공통면과 Galaxy 독자 런타임 경계를 정의", "evidenceTier": "official", "sourceUrl": "https://developer.android.com/ai/overview" },
+    { "platform": "Huawei", "runtime": "HarmonyOS · Xiaoyi", "execution": "Hybrid", "appAction": "OS service orchestration", "mobileReadiness": "Scale in China", "mxMove": "중국 내 시스템 에이전트·로컬 모델 통합 비교", "evidenceTier": "reported", "sourceUrl": "https://consumer.huawei.com/cn/harmonyos/" },
+    { "platform": "Xiaomi", "runtime": "HyperOS AI", "execution": "Hybrid", "appAction": "System apps + Gemini by region", "mobileReadiness": "GA", "mxMove": "글로벌·중국 배포 조합과 가격대별 기능 차등 비교", "evidenceTier": "reported", "sourceUrl": "https://www.mi.com/global/hyperos/" },
+    { "platform": "OPPO / vivo", "runtime": "AndesGPT / BlueLM", "execution": "Hybrid", "appAction": "System app actions", "mobileReadiness": "GA / regional", "mxMove": "중국어 SLM·카메라·콜 기능 latency benchmark", "evidenceTier": "reported", "sourceUrl": "https://www.oppo.com/en/newsroom/" },
+    { "platform": "Open protocols", "runtime": "MCP · A2A", "execution": "App/Cloud boundary", "appAction": "tools·data / agent-to-agent", "mobileReadiness": "PoC", "mxMove": "모바일 권한 broker·앱 action registry PoC", "evidenceTier": "official", "sourceUrl": "https://developers.googleblog.com/en/developers-guide-to-ai-agent-protocols/" },
+    { "platform": "Microsoft", "runtime": "Windows AI Foundry · Copilot", "execution": "PC edge + cloud", "appAction": "Windows tools", "mobileReadiness": "Watch: mobile extension unconfirmed", "mxMove": "휴대폰-윈도우 연속성에 한정해 관찰", "evidenceTier": "estimate", "sourceUrl": "https://learn.microsoft.com/windows/ai/" }
+  ],
+  "uxUseCases": [
+    { "id": "search", "useCase": "시각 검색", "benchmarks": "Circle to Search · Google Lens", "successKpi": "주간 활성률·검색 후 행동률·latency", "metricStatus": "connector-required", "mxOwner": "서비스기획" },
+    { "id": "call", "useCase": "AI 통화", "benchmarks": "Pixel Call Assist · Apple Call Recording · Live Translate", "successKpi": "완료율·정확도·스팸 차단율", "metricStatus": "public feature / adoption unavailable", "mxOwner": "제품기획팀" },
+    { "id": "photo", "useCase": "AI 사진 편집", "benchmarks": "Magic Editor · Object Eraser · Photonic Engine", "successKpi": "편집 진입률·저장률·재편집률", "metricStatus": "telemetry-required", "mxOwner": "제품기획팀" },
+    { "id": "health", "useCase": "AI 헬스", "benchmarks": "Galaxy Ring · Apple Watch · Oura · Whoop", "successKpi": "유료 attach·90일 유지·코칭 행동 변화", "metricStatus": "mixed public/paid", "mxOwner": "서비스기획" },
+    { "id": "context", "useCase": "개인 문맥", "benchmarks": "Recall · Personal Context · Rewind", "successKpi": "정답률·삭제/옵트아웃·민감정보 사고", "metricStatus": "privacy-gated", "mxOwner": "R&D" },
+    { "id": "camera", "useCase": "AI 카메라·비디오", "benchmarks": "실시간 segmentation · Video Boost", "successKpi": "촬영 latency·전력·업로드 의존도", "metricStatus": "lab-benchmark-required", "mxOwner": "R&D" },
+    { "id": "game", "useCase": "AI 게임", "benchmarks": "Game Super Resolution · frame generation · NPC", "successKpi": "FPS/W·발열·session length", "metricStatus": "lab-benchmark-required", "mxOwner": "R&D" },
+    { "id": "scam", "useCase": "AI 스캠·딥페이크 방어", "benchmarks": "Pixel Scam Detection · Galaxy S26 Samsung Phone · Halo", "successKpi": "정탐률·오탐률·차단 손실액·기업 좌석·금융사 API 호출", "metricStatus": "public scale / paid conversion unavailable", "mxOwner": "서비스기획" }
+  ],
+  "partnershipNetwork": {
+    "nodes": [
+      { "id": "samsung", "label": "Samsung MX", "type": "manufacturer" }, { "id": "google", "label": "Google", "type": "model-platform" },
+      { "id": "verizon", "label": "Verizon", "type": "carrier" }, { "id": "skt", "label": "SKT", "type": "carrier" },
+      { "id": "perplexity", "label": "Perplexity", "type": "model-app" }, { "id": "kt", "label": "KT", "type": "carrier" },
+      { "id": "microsoft", "label": "Microsoft", "type": "model-platform" }, { "id": "tmobile", "label": "T-Mobile", "type": "carrier" },
+      { "id": "openai", "label": "OpenAI", "type": "model-platform" },
+      { "id": "qualcomm", "label": "Qualcomm", "type": "component" },
+      { "id": "scamai", "label": "Scam.ai", "type": "security-app" },
+      { "id": "india-fintech", "label": "Paytm · Navi", "type": "financial-partner" },
+      { "id": "kddi", "label": "KDDI", "type": "carrier" },
+      { "id": "vmo2", "label": "Virgin Media O2", "type": "carrier" }
+    ],
+    "edges": [
+      { "from": "samsung", "to": "google", "contractType": "기본 탑재·모델 협력", "period": "공개 종료일 없음", "region": "Global", "exclusive": "No / scope-specific", "evidenceTier": "official", "sourceUrl": "https://blog.google/products/android/samsung-galaxy-s24-new-ai-features/" },
+      { "from": "verizon", "to": "google", "contractType": "구독 perk", "period": "$10/month offer", "region": "North America", "exclusive": "Not stated", "evidenceTier": "official", "sourceUrl": "https://www.verizon.com/about/news/verizon-google-one-gemini-advanced-ai" },
+      { "from": "skt", "to": "perplexity", "contractType": "Pro 구독 번들", "period": "1 year benefit", "region": "Korea", "exclusive": "Not stated", "evidenceTier": "official", "sourceUrl": "https://news.sktelecom.com/208055" },
+      { "from": "kt", "to": "microsoft", "contractType": "전략 파트너십·인프라", "period": "2024-09-27 → 2029-09-30", "region": "Korea", "exclusive": "Not stated", "evidenceTier": "official", "sourceUrl": "https://www.sec.gov/Archives/edgar/data/892450/000119312524228339/d834524d6k.htm" },
+      { "from": "tmobile", "to": "openai", "contractType": "IntentCX 고객서비스", "period": "공개 종료일 없음", "region": "North America", "exclusive": "Not a consumer plan bundle", "evidenceTier": "official", "sourceUrl": "https://www.t-mobile.com/news/business/t-mobile-2024-capital-markets-day" },
+      { "from": "qualcomm", "to": "scamai", "contractType": "온디바이스 최적화·생태계 지원", "period": "2026-06 발표", "region": "Global · desktop first", "exclusive": "Not stated", "evidenceTier": "reported", "sourceUrl": "https://www.businesswire.com/news/home/20260623132017/en/" },
+      { "from": "google", "to": "india-fintech", "contractType": "통화 중 화면공유 사기 방지 파일럿", "period": "2025-12 공개", "region": "India", "exclusive": "Not stated", "evidenceTier": "official", "sourceUrl": "https://blog.google/intl/en-in/company-news/protecting-vulnerable-audiences-is-at-the-heart-of-ai-safety-efforts/" },
+      { "from": "samsung", "to": "tmobile", "contractType": "T-Satellite text·data 지원", "period": "2025~ · 2026-02 글로벌 확대 발표", "region": "North America", "exclusive": "No · carrier/model dependent", "evidenceTier": "official", "sourceUrl": "https://news.samsung.com/uk/samsung-brings-satellite-communication-support-to-galaxy-smartphones-across-the-globe" },
+      { "from": "samsung", "to": "vmo2", "contractType": "Galaxy 위성 데이터 연결", "period": "2026 rollout", "region": "Europe / UK", "exclusive": "Not stated", "evidenceTier": "official", "sourceUrl": "https://news.samsung.com/uk/samsung-brings-satellite-communication-support-to-galaxy-smartphones-across-the-globe" },
+      { "from": "samsung", "to": "kddi", "contractType": "위성 text·data·ETWS", "period": "2025~", "region": "Japan", "exclusive": "No · SoftBank/docomo expansion disclosed", "evidenceTier": "official", "sourceUrl": "https://news.samsung.com/uk/samsung-brings-satellite-communication-support-to-galaxy-smartphones-across-the-globe" }
+    ],
+    "proposedEdges": [
+      { "from": "samsung", "to": "qualcomm", "with": "scamai", "contractType": "모바일 NPU 딥페이크 통화 방어 공동 PoC", "status": "MX action proposal · no disclosed contract", "region": "Korea / Global", "evidenceTier": "estimate", "ownerOrg": "R&D" }
+    ]
+  },
+  "formFactors": [
+    {
+      "id": "foldable",
+      "label": "Foldable",
+      "examples": "Galaxy Z Fold7 · Honor Magic V · Pixel Fold",
+      "maturity": "Scale",
+      "mobileRole": "대화면 멀티태스킹·편집 + 온디바이스 AI 생산성",
+      "fact": "Samsung은 Z Fold7의 실시간 번역·Generative Edit 등 온디바이스 처리와 8인치 화면 기반 Split View·Drag & Drop AI UX를 공식 설명한다.",
+      "boundary": "모든 Galaxy AI 기능이 로컬이라는 뜻은 아니며 기능·언어별 cloud 의존성을 개별 표기해야 한다.",
+      "businessOption": "오프라인 폴더블 생산성 Suite · 문서/통역/편집 크레딧 또는 Knox 기업 좌석 번들",
+      "actionOption": "Build",
+      "ownerOrg": "제품기획팀 / R&D",
+      "mxQuestion": "로컬 완결 과업이 폴더블 가격 프리미엄과 유료 전환을 실제로 설명하는가?",
+      "evidenceTier": "official",
+      "sourceUrl": "https://news.samsung.com/global/samsung-galaxy-z-fold7-raising-the-bar-for-smartphones"
+    },
+    { "id": "trifold", "label": "Tri-fold", "examples": "Huawei Mate XT", "maturity": "GA", "mobileRole": "태블릿급 문서·멀티앱 agent", "mxQuestion": "대화면을 위한 멀티앱 action UX와 열·배터리 예산은?", "evidenceTier": "official" },
+    { "id": "rollable", "label": "Rollable", "examples": "display prototypes", "maturity": "Research", "mobileRole": "가변 화면", "mxQuestion": "AI UX가 기구 복잡도와 BOM을 상쇄할 명확한 과업이 있는가?", "evidenceTier": "estimate" },
+    { "id": "glasses", "label": "Smart glasses", "examples": "Meta Glasses $299 · Ray-Ban Meta $379 · Meta Ray-Ban Display $799+ · XREAL · Rokid", "maturity": "GA / PoC", "mobileRole": "상시 카메라·음성 companion", "mxQuestion": "자체 저가 브랜드와 파트너 premium 브랜드를 투트랙으로 운영하고, display tier를 별도 가격대로 둘 것인가?", "evidenceTier": "official", "priceTiers": [{ "brand": "Meta", "display": false, "startingUsd": 299 }, { "brand": "Ray-Ban Meta", "display": false, "startingUsd": 379 }, { "brand": "Meta Ray-Ban Display", "display": true, "startingUsd": 799, "reportedHighUsd": 829 }], "brandStrategy": "Meta 자체 브랜드와 EssilorLuxottica 파트너 브랜드를 가격대별로 병행" },
+    { "id": "ai-wearable", "label": "AI wearable", "examples": "Friend · Limitless · Plaud · Bee", "maturity": "GA / PoC", "mobileRole": "기억·녹음·요약", "mxQuestion": "상시 수집 동의와 구독 유지율이 하드웨어 독립성을 정당화하는가?", "evidenceTier": "reported" },
+    { "id": "automotive", "label": "Car AI", "examples": "Android Automotive · CarPlay Ultra", "maturity": "GA", "mobileRole": "차량-폰 문맥·앱 연속성", "mxQuestion": "차량 OEM과의 권한·데이터 소유권을 어떻게 분리할 것인가?", "evidenceTier": "official" },
+    {
+      "id": "satellite",
+      "label": "Satellite",
+      "examples": "T-Satellite · Verizon eSOS/text · Virgin Media O2 · KDDI",
+      "maturity": "GA / expanding",
+      "mobileRole": "오프로드 연결·긴급 통신 + 저대역폭 AI continuity",
+      "fact": "Samsung은 2026-02-27 Galaxy S26 등을 대상으로 북미·유럽·일본 통신사 위성 text/data 지원 확대를 발표했다.",
+      "boundary": "위성 기반 AI 구독은 아직 공개 상품이 아닌 MX 가설이며 모델·통신사·지역별 지원 차이가 있다.",
+      "businessOption": "통신사 공동 과금형 Always-connected AI · 로컬 SLM 우선, 위성 데이터는 최소 요청·상태 동기화에 사용",
+      "actionOption": "Partner",
+      "ownerOrg": "서비스기획 / 제품기획팀",
+      "mxQuestion": "저대역폭·고지연에서 로컬 SLM이 완결할 과업과 통신사 유료 attach를 어떻게 분리할 것인가?",
+      "evidenceTier": "official",
+      "sourceUrl": "https://news.samsung.com/uk/samsung-brings-satellite-communication-support-to-galaxy-smartphones-across-the-globe"
+    }
+  ],
+  "failureCases": [
+    { "name": "Humane AI Pin", "outcome": "판매 중단·클라우드 기능 종료·HP 자산 인수", "lesson": "클라우드 의존형 전용 하드웨어는 서비스 종료 시 기기 가치가 급락한다. 폰 companion은 오프라인 최소 기능과 데이터 반출을 보장해야 한다.", "evidenceTier": "reported", "sourceUrl": "https://techcrunch.com/2025/02/18/humanes-ai-pin-is-dead-as-hp-buys-startups-assets-for-116m/" },
+    { "name": "Rabbit R1", "outcome": "초기 약속과 실제 action coverage의 격차", "lesson": "데모 가능 과업 목록·성공률·fallback을 출시 전에 공개하고, 별도 기기보다 앱/companion 가치를 먼저 검증한다.", "evidenceTier": "reported", "sourceUrl": "https://www.rabbit.tech/q2-update" }
+  ],
+  "hardwareSlmTrack": [
+    { "layer": "NPU / SoC", "watch": "TOPS보다 sustained tokens/s·전력·메모리 대역폭", "sources": "Qualcomm · MediaTek · Arm · MLPerf", "ownerOrg": "R&D" },
+    { "layer": "Memory / storage", "watch": "LPDDR 용량·대역폭·UFS 모델 업데이트 비용", "sources": "SK hynix · Micron · TrendForce", "ownerOrg": "구매" },
+    { "layer": "SLM", "watch": "1B~8B급 품질·양자화·KV cache·다국어", "sources": "Hugging Face · arXiv · Artificial Analysis", "ownerOrg": "R&D" },
+    { "layer": "Thermal / battery", "watch": "지속 추론 발열·battery drain·latency", "sources": "lab benchmark · OEM disclosures", "ownerOrg": "제품기획팀" }
+  ],
+  "consumerPainPointTrack": {
+    "status": "connector-required",
+    "reason": "리뷰·소셜 약관 준수 API와 지역별 언어 모델 검증 전에는 순위를 생성하지 않음",
+    "channels": ["App Store", "Google Play", "Reddit", "Naver", "Baidu", "X"],
+    "outputSchema": ["region", "feature", "painPoint", "mentionShare", "sentiment", "sampleSize", "period", "sourceTier"],
+    "guardrails": ["표본수 공개", "봇·중복 제거", "지역·언어별 분리", "개인정보 비저장", "인용 원문 링크"]
+  },
+  "appMetricsTrack": {
+    "status": "license-required",
+    "apps": ["ChatGPT", "Gemini", "Claude", "Character.ai", "Perplexity", "Poe"],
+    "fields": ["MAU", "DAU", "downloads", "rank", "averageRating", "newAIApps", "developerAPIAdoption"],
+    "providers": ["Sensor Tower", "data.ai", "Appfigures", "Google Play", "App Store"]
+  },
+  "securityBusinessCases": {
+    "title": "On-device Trust & Security",
+    "productProof": [
+      {
+        "id": "galaxy-s26-scam",
+        "label": "Galaxy S26 · Samsung Phone",
+        "value": "2026-02-25",
+        "fact": "Galaxy S26의 Samsung Phone 앱에 통화 중 스캠 패턴 경고가 도입됐고, Samsung 공식 자료는 One UI 8.5의 AI 통화 필터가 의심 전화를 실시간 분석한다고 설명한다.",
+        "scope": "미국 영어 우선 · 지역/언어 가용성 제한",
+        "evidenceTier": "reported",
+        "sourceUrl": "https://www.androidauthority.com/google-scam-detection-samsung-galaxy-s26-3643942/",
+        "corroboratingUrl": "https://news.samsung.com/br/filtro-de-chamadas-da-galaxy-s26-series-conheca-o-recurso-que-ajuda-a-evitar-spam-e-golpes"
+      },
+      {
+        "id": "android-protection-scale",
+        "label": "Android 보호 규모",
+        "value": "10B+ / month",
+        "fact": "Google은 Android 방어 체계가 의심 악성 통화·메시지를 월 100억 건 이상 차단하거나 경고한다고 밝혔다.",
+        "scope": "Android 전체 다층 방어 · Galaxy 단독 실적 아님",
+        "evidenceTier": "official",
+        "sourceUrl": "https://blog.google/security/strengthening-android-lead-in-scam-protection/"
+      },
+      {
+        "id": "google-pay-warning-scale",
+        "label": "Google Pay 사기 경고",
+        "value": "1M+ / week",
+        "fact": "Google Pay는 인도에서 사기성 거래에 대해 주 100만 건 이상의 경고를 표시한다고 밝혔다.",
+        "scope": "India · Google Pay · Galaxy 전용 성과 아님",
+        "evidenceTier": "official",
+        "sourceUrl": "https://blog.google/intl/en-in/company-news/protecting-vulnerable-audiences-is-at-the-heart-of-ai-safety-efforts/"
+      }
+    ],
+    "offers": [
+      { "id": "enterprise-call-defense", "title": "기업 임원 딥페이크 통화 방어", "buyer": "기업 보안·재무·HR", "revenueModel": "단말/좌석 라이선스 + Knox Suite add-on", "actionOption": "Partner", "ownerOrg": "서비스기획", "gate": "실시간 정탐·오탐·배터리·감사로그·MDM 배포" },
+      { "id": "financial-fraud-api", "title": "갤럭시 전용 금융사 사기방지 API", "buyer": "은행·카드·핀테크", "revenueModel": "B2B2C 최소보장 + 보호 활성 사용자/성과 과금", "actionOption": "Partner", "ownerOrg": "서비스기획", "gate": "피해 회피액·오탐 민원·책임 분담·금융 규제" },
+      { "id": "mass-tier-security", "title": "전 라인업 경량 보안 런타임", "buyer": "중저가 단말·통신사", "revenueModel": "기본 안전 기능 무료 + 기업/금융 고급 정책 유료", "actionOption": "Build", "ownerOrg": "R&D", "gate": "A-series 실측 모델 크기·p95 지연·mW·FPR" }
+    ],
+    "partnerPattern": {
+      "observed": "Google + Google Pay/Navi/Paytm의 통화 중 화면공유 사기 방지 파일럿",
+      "proposal": "MX + 국내 은행·카드사 + Qualcomm/전문 탐지사 공동 PoC",
+      "boundary": "관측된 인도 파일럿은 공동 개발·요금 분담 계약을 입증하지 않으므로 상업조건은 estimate로 유지",
+      "sourceUrl": "https://blog.google/intl/en-in/company-news/protecting-vulnerable-audiences-is-at-the-heart-of-ai-safety-efforts/"
+    },
+    "labBenchmark": {
+      "model": "FraudEdge",
+      "modelSizeKb": 340,
+      "latencyMs": 7.9,
+      "powerMw": 92,
+      "accuracyPct": 98.6,
+      "falsePositivePct": 1.2,
+      "platform": "ARM Cortex-M4 · transaction fraud dataset",
+      "mobileSpotCheck": "Galaxy A33 0.8ms · 145mW (paper claim)",
+      "evidenceTier": "reported",
+      "replicationStatus": "single-paper lab result · independent replication required",
+      "decisionUse": "저가 단말 가능성의 반증 후보일 뿐, 통화·메시지 스캠 성능으로 전이하지 않음",
+      "sourceUrl": "https://ijircce.com/admin/main/storage/app/pdf/13_Edge%20AI%20for%20Real-Time%20Fraud%20Detection%20on%20Resource-Constrained%20Devices%20Using%20Lightweight%20Machine%20Learning%20Models.pdf"
+    },
+    "competitiveTiming": [
+      { "date": "2024-11-13", "player": "Google Pixel", "event": "Phone by Google Scam Detection public beta", "evidenceTier": "official", "sourceUrl": "https://support.google.com/pixelphone/thread/307725284/learn-more-about-the-new-scam-detection-beta?hl=en" },
+      { "date": "2026-02-25", "player": "Samsung Galaxy S26", "event": "Samsung Phone 앱 지원 보도", "evidenceTier": "reported", "sourceUrl": "https://www.androidauthority.com/google-scam-detection-samsung-galaxy-s26-3643942/" },
+      { "date": "2026-06-25", "player": "Qualcomm · Scam.ai", "event": "Halo 데스크톱 영상통화 온디바이스 탐지 발표", "evidenceTier": "reported", "sourceUrl": "https://www.businesswire.com/news/home/20260623132017/en/" }
+    ],
+    "withheldClaims": [
+      "딥페이크 음성 탐지 90%+ 정확도: 평가 데이터셋·언어·FPR 원문 미확인으로 수치 게시 보류",
+      "Halo 모바일 상용화: 공개 자료는 데스크톱 영상통화·vendor 발표 범위이며 모바일 이식은 제안으로만 표시"
+    ],
+    "decision": "스캠 경고의 무료 기본 안전선은 유지하되, 금융사 공동개발 API와 기업용 딥페이크 방어·감사·MDM을 유료 tier로 분리한다.",
+    "actionOption": "Partner",
+    "ownerOrg": "서비스기획"
+  },
+  "healthMonetizationLadder": [
+    {
+      "stage": 1,
+      "title": "Consumer wellness",
+      "revenue": "구독 · 인앱결제 · 광고",
+      "proof": "앱스토어 반복 사용·지불의사",
+      "mxAsset": "Galaxy Watch · Ring · Samsung Health · Store billing",
+      "gate": "90일 유지·유료 attach·임상 주장과 wellness 표현 분리",
+      "evidenceTier": "official",
+      "sourceUrl": "https://developer.apple.com/app-store/business-models/",
+      "mixClaim": "45% / 25% / 20% 수치는 원문 미확인으로 게시 보류"
+    },
+    {
+      "stage": 2,
+      "title": "Clinical evidence · regulated function",
+      "revenue": "처방·임상 파트너 라이선스",
+      "proof": "의료기기 해당성·성능·안전·임상 근거",
+      "mxAsset": "센서·온디바이스 처리·Knox 데이터 경계",
+      "gate": "기능별 FDA/지역 규제 분류 · 플랫폼 사업자 책임 경계",
+      "evidenceTier": "official",
+      "sourceUrl": "https://www.fda.gov/medical-devices/digital-health-center-excellence/device-software-functions-including-mobile-medical-applications"
+    },
+    {
+      "stage": 3,
+      "title": "Payer · employer distribution",
+      "revenue": "보험자 reimbursement · 고용주/건강보험 activation license · outcome contract",
+      "proof": "임상 결과·의료비 절감·활성 코드·ROI",
+      "mxAsset": "글로벌 기기 fleet · Knox Manage · Health longitudinal data",
+      "gate": "보장 범위·수가·책임·결과 귀속·갱신률",
+      "evidenceTier": "reported",
+      "sourceUrl": "https://dtxalliance.org/value-of-dtx/payors/",
+      "mixClaim": "UnitedHealthcare 650만명 사례는 계약 원문 미확인으로 게시 보류"
+    }
+  ],
+  "companionEconomics": {
+    "headlineMetrics": [
+      { "id": "us-engagement", "label": "미국 AI companion 사용시간", "value": 705, "display": "약 705M hours", "unit": "million hours", "period": "2026 Q1", "geography": "US", "channel": "mobile apps", "metricType": "engagement-hours", "population": "Sensor Tower category users", "evidenceTier": "reported", "sourceUrl": "https://prinsessa.com/staysocial/americans-spend-twice-as-much-time-with-ai-companions-as-on-dating-apps/" },
+      { "id": "us-dating-engagement", "label": "미국 dating/social discovery 사용시간", "value": 280, "display": "약 280M hours", "unit": "million hours", "period": "2026 Q1", "geography": "US", "channel": "mobile apps", "metricType": "engagement-hours", "population": "Sensor Tower category users", "evidenceTier": "reported", "sourceUrl": "https://prinsessa.com/staysocial/americans-spend-twice-as-much-time-with-ai-companions-as-on-dating-apps/" },
+      { "id": "companion-revenue-q1-2026", "label": "AI companion 모바일 매출", "value": 150, "display": "$150M", "unit": "USD million", "period": "2026 Q1", "geography": "Global", "channel": "mobile IAP", "metricType": "consumer-app-spend", "population": "Sensor Tower companion category", "evidenceTier": "official", "sourceUrl": "https://sensortower.com/blog/state-of-ai-apps-in-apac-2026-report" },
+      { "id": "companion-revenue-2025-forecast", "label": "2025 companion 앱 매출 전망", "value": 120, "display": "$120M+ forecast", "unit": "USD million", "period": "2025 full-year forecast as of 2025-08", "geography": "Global", "channel": "App Store + Google Play", "metricType": "consumer-app-spend", "population": "337 active revenue-generating apps", "evidenceTier": "reported", "sourceUrl": "https://techcrunch.com/2025/08/12/ai-companion-apps-on-track-to-pull-in-120m-in-2025/" },
+      { "id": "companion-concentration", "label": "상위 10% 매출 집중", "value": 89, "display": "89%", "unit": "percent of category revenue", "period": "2025 H1 / reported 2025-08", "geography": "Global", "channel": "App Store + Google Play", "metricType": "revenue-concentration", "population": "337 active revenue-generating apps", "evidenceTier": "reported", "sourceUrl": "https://techcrunch.com/2025/08/12/ai-companion-apps-on-track-to-pull-in-120m-in-2025/" }
+    ],
+    "comparisons": [
+      { "id": "companion-vs-dating-attention", "label": "Companion vs dating attention", "leftMetricId": "us-engagement", "rightMetricId": "us-dating-engagement", "comparisonAllowed": true },
+      { "id": "broad-market-headline-range", "label": "2026 broad AI companion market headline", "low": 24.09, "high": 49.52, "unit": "USD billion", "comparisonAllowed": false, "reason": "research providers include different combinations of assistant, enterprise, healthcare and companion use cases", "sourceUrls": ["https://www.thebusinessresearchcompany.com/report/artificial-intelligence-ai-companion-global-market-report", "https://www.fortunebusinessinsights.com/ai-companion-market-113258"] },
+      { "id": "character-vs-anthropic", "label": "Character.AI vs Anthropic revenue", "comparisonAllowed": false, "reason": "different company category, period and revenue definition; Character.AI estimate and Anthropic disclosed run-rate are not directly comparable", "left": "$30M annualized · 2025-07 estimate", "right": "$47B annualized · 2026-05 disclosed", "sourceUrls": ["https://sacra.com/c/character-ai/", "https://www.anthropic.com/news/series-h"] }
+    ],
+    "mxThesis": [
+      { "title": "Build보다 distribution", "actionOption": "Partner", "ownerOrg": "서비스기획", "decision": "상위 사업자와 온디바이스 최적화·선탑재·결제를 결합하고 플랫폼 수수료를 검증" },
+      { "title": "소비자 구독에서 멈추지 않기", "actionOption": "Partner", "ownerOrg": "서비스기획", "decision": "기업 복지·헬스·고객지원 라이선스로 확장 가능한 권리·안전·감사 조건을 초기 계약에 포함" },
+      { "title": "집중 리스크 관리", "actionOption": "Watch", "ownerOrg": "제품기획팀", "decision": "상위 10% 집중을 진입장벽으로 보고 2개 이상 파트너·탈퇴/데이터 이전·청소년 안전 게이트를 설계" }
+    ],
+    "partnerShortlist": [
+      { "name": "Character.AI", "role": "선탑재·결제·온디바이스 메모리 최적화 검토", "why": "Appfigures 카테고리 대표 앱이자 높은 소비자 인지도", "status": "public-evidence screen · contract not disclosed", "evidenceTier": "reported", "sourceUrl": "https://techcrunch.com/2025/08/12/ai-companion-apps-on-track-to-pull-in-120m-in-2025/" },
+      { "name": "Replika", "role": "구독·안전·장기 메모리 벤치마크", "why": "장기 운영 companion 대표 앱", "status": "public-evidence screen · contract not disclosed", "evidenceTier": "reported", "sourceUrl": "https://techcrunch.com/2025/08/12/ai-companion-apps-on-track-to-pull-in-120m-in-2025/" },
+      { "name": "PolyBuzz · Chai", "role": "2순위 멀티벤더 대안군", "why": "상위 집중에 따른 단일 파트너 종속 완화", "status": "screening pool · no MX recommendation", "evidenceTier": "reported", "sourceUrl": "https://techcrunch.com/2025/08/12/ai-companion-apps-on-track-to-pull-in-120m-in-2025/" }
+    ]
+  },
+  "dealWatch": {
+    "scope": "Series C+ funding and M&A",
+    "status": "public-source-active / paid-reconciliation-required",
+    "requiredFields": ["company", "eventType", "round", "amount", "valuation", "investorsOrAcquirer", "announcedAt", "evidenceSpan", "sourceUrl"],
+    "records": [
+      { "company": "Humane", "eventType": "M&A / asset acquisition", "round": "n/a", "amount": "$116M", "valuation": "not disclosed", "investorsOrAcquirer": "HP", "announcedAt": "2025-02-18", "evidenceTier": "reported", "sourceUrl": "https://techcrunch.com/2025/02/18/humanes-ai-pin-is-dead-as-hp-buys-startups-assets-for-116m/" }
+    ]
+  },
+  "marketSignals": [
+    {
+      "id": "genai-phone-share-2026",
+      "polarity": "positive",
+      "label": "GenAI 스마트폰 비중 확대",
+      "value": "45%",
+      "period": "2026 forecast",
+      "fact": "GenAI-capable smartphone이 2026년 글로벌 출하의 45%를 차지할 전망.",
+      "mxImplication": "AI 기능은 premium 표준으로 확산되지만 단독 교체 동인은 아직 약해 기능별 유지·지불의사를 검증해야 한다.",
+      "evidenceTier": "official",
+      "sourceUrl": "https://counterpointresearch.com/en/insights/genai-smartphone-share-to-rise-to-45-percent-of-global-shipments-in-2026"
+    },
+    {
+      "id": "smartphone-contraction-2026",
+      "polarity": "negative",
+      "label": "전체 스마트폰 시장 위축",
+      "value": "1.08B · -13.9% YoY",
+      "period": "2026 forecast",
+      "fact": "메모리 공급난으로 2026년 글로벌 스마트폰 출하가 13.9% 감소한 10.8억대로 사상 최저가 될 전망.",
+      "mxImplication": "AI폰 mix 확대를 성장으로 오해하지 말고, 경량 SLM·메모리 상주량·tier별 RAM을 BOM 의사결정에 연결한다.",
+      "evidenceTier": "official",
+      "sourceUrl": "https://counterpointresearch.com/en/insights/genai-smartphone-share-to-rise-to-45-percent-of-global-shipments-in-2026"
+    },
+    {
+      "id": "ai-subscription-price-compression",
+      "polarity": "negative",
+      "label": "AI 구독 가격 인하 경쟁",
+      "value": "$250→$200 + $100 tier",
+      "period": "2026-05",
+      "fact": "Google은 최고 Ultra 가격을 낮추고 $100 진입 Ultra tier를 추가했다.",
+      "mxImplication": "고가 단일 paywall보다 저가 대중화→고급 기능·크레딧 상향판매 구조를 우선 실험한다.",
+      "evidenceTier": "official",
+      "sourceUrl": "https://blog.google/products-and-platforms/products/google-one/google-ai-subscriptions/"
+    },
+    {
+      "id": "anthropic-enterprise-demand",
+      "polarity": "positive",
+      "label": "엔터프라이즈 AI 수요 가속",
+      "value": "$9B→$47B · 5.2x",
+      "period": "2025-12→2026-05",
+      "fact": "Anthropic 연환산 run-rate가 약 $9B에서 $47B로 증가했다. 이는 약 5.2배이며 47배가 아니다.",
+      "mxImplication": "Knox·기업 fleet를 결합한 보안폰·업무 에이전트 PoC의 타이밍 신호로 보되 run-rate 정의와 gross/net 기준을 별도 검증한다.",
+      "evidenceTier": "reported",
+      "sourceUrl": "https://www.anthropic.com/news/series-h"
+    },
+    {
+      "id": "edge-fraud-lightweight",
+      "polarity": "positive",
+      "label": "저가 단말 보안 AI 가능성",
+      "value": "340KB · 7.9ms · 92mW",
+      "period": "2026-05 single-paper lab",
+      "fact": "FraudEdge 논문은 Cortex-M4에서 340KB 모델, 7.9ms, 92mW, 98.6% 정확도를 보고했다. 이는 거래 데이터셋 실험이며 통화 스캠 성능이 아니다.",
+      "mxImplication": "A-series 실기기 재현 시험을 통과할 때만 전 라인업 기본 보안 런타임의 BOM 반박 근거로 승격한다.",
+      "evidenceTier": "reported",
+      "sourceUrl": "https://ijircce.com/admin/main/storage/app/pdf/13_Edge%20AI%20for%20Real-Time%20Fraud%20Detection%20on%20Resource-Constrained%20Devices%20Using%20Lightweight%20Machine%20Learning%20Models.pdf"
+    },
+    {
+      "id": "companion-attention-shift",
+      "polarity": "positive",
+      "label": "AI companion attention 이동",
+      "value": "705M vs 280M hours · 2.52x",
+      "period": "US · 2026 Q1",
+      "fact": "동일 Sensor Tower 분류·분기 기준의 2차 보도에서 AI companion 사용시간은 약 7.05억 시간, dating/social discovery는 약 2.8억 시간으로 제시됐다.",
+      "mxImplication": "자체 콘텐츠 제작보다 선탑재·결제·온디바이스 최적화로 참여 시간을 플랫폼 매출로 전환하는 실험을 우선한다.",
+      "evidenceTier": "reported",
+      "sourceUrl": "https://prinsessa.com/staysocial/americans-spend-twice-as-much-time-with-ai-companions-as-on-dating-apps/"
+    },
+    {
+      "id": "companion-revenue-concentration",
+      "polarity": "negative",
+      "label": "Companion 매출 winner-takes-most",
+      "value": "Top 10% = 89%",
+      "period": "2025-08 report · 337 apps",
+      "fact": "Appfigures 기반 보도는 337개 수익 발생 앱 중 상위 10%가 카테고리 매출의 89%를 차지한다고 밝혔다.",
+      "mxImplication": "자체 앱 단독 진입보다 복수 상위 파트너 제휴를 우선하고, 장기적으로 플랫폼 수수료·기업 라이선스 레버를 결합한다.",
+      "evidenceTier": "reported",
+      "sourceUrl": "https://techcrunch.com/2025/08/12/ai-companion-apps-on-track-to-pull-in-120m-in-2025/"
+    },
+    {
+      "id": "foldable-local-ai-differentiation",
+      "polarity": "positive",
+      "label": "폴더블 AI 차별화의 로컬 처리 이동",
+      "value": "NPU + 8-inch workspace",
+      "period": "Galaxy Z Fold7 · official",
+      "fact": "Samsung은 Z Fold7의 온디바이스 AI 처리 성능과 대화면 전용 Split View·Drag & Drop AI UX를 함께 공개했다.",
+      "mxImplication": "자사 강점은 단순 기능 수가 아니라 큰 화면에서 클라우드 없이 끝낼 수 있는 생산성 과업이다. 기능별 실제 로컬 처리 범위를 검증한 뒤 유료 offline suite를 시험한다.",
+      "evidenceTier": "official",
+      "sourceUrl": "https://news.samsung.com/global/samsung-galaxy-z-fold7-raising-the-bar-for-smartphones"
+    },
+    {
+      "id": "satellite-ai-continuity",
+      "polarity": "positive",
+      "label": "위성 연결의 AI continuity 인프라화",
+      "value": "US · Europe · Japan",
+      "period": "2026-02-27 announcement",
+      "fact": "Samsung은 T-Mobile·Verizon·Virgin Media O2·KDDI 등을 통한 Galaxy 위성 text/data 확대와 다른 Galaxy 제품군 확장 협력을 발표했다.",
+      "mxImplication": "공개 사실은 연결 확대까지다. Always-connected AI 구독은 통신사 공동 PoC로 분리하고 latency·data allowance·attach rate를 검증한다.",
+      "evidenceTier": "official",
+      "sourceUrl": "https://news.samsung.com/uk/samsung-brings-satellite-communication-support-to-galaxy-smartphones-across-the-globe"
+    }
+  ],
+  "opportunities": [
+    { "id": "os-native-agent", "title": "OS-Native Personal Agent", "matchTerms": ["assistant", "agent", "음성", "파운데이션 모델", "검색"], "ownAssets": ["One UI", "Knox", "Galaxy Store", "Samsung Wallet"], "nextMetrics": ["task completion", "WAU", "paid attach", "latency"] },
+    { "id": "ai-camera-creator", "title": "AI Camera & Creator Suite", "matchTerms": ["camera", "creator", "video", "image"], "ownAssets": ["Galaxy Camera", "ISP/NPU", "Gallery", "Galaxy Store"], "nextMetrics": ["edit completion", "share rate", "cloud cost", "paid conversion"] },
+    { "id": "personal-context-trust", "title": "Personal Context & Trust Layer", "matchTerms": ["enterprise", "security", "trust", "사내 검색", "파운데이션 모델"], "ownAssets": ["Knox Vault", "Samsung Account", "One UI permissions", "SmartThings/Health"], "nextMetrics": ["consent", "policy compliance", "incident rate", "reuse apps"] },
+    { "id": "ai-service-distribution", "title": "AI Service Distribution", "matchTerms": ["partner", "enterprise", "검색", "assistant", "bundle"], "ownAssets": ["Galaxy Store", "Samsung Wallet", "carrier channel", "Knox Suite"], "nextMetrics": ["partner GMV", "ARPU", "revenue share", "renewal"] },
+    { "id": "on-device-trust-security", "title": "On-device Trust & Security", "matchTerms": ["security", "fraud", "scam", "deepfake", "금융", "보안", "NPU"], "ownAssets": ["Samsung Phone", "Knox Suite", "Knox Vault", "Galaxy NPU", "Samsung Wallet"], "nextMetrics": ["fraud loss avoided", "false positive rate", "enterprise seats", "bank API attach", "battery impact"] },
+    { "id": "clinical-health-ai", "title": "Clinical & Payer Health AI", "matchTerms": ["health", "medical", "clinical", "insurance", "enterprise", "헬스"], "ownAssets": ["Galaxy Watch", "Galaxy Ring", "Samsung Health", "Knox", "enterprise fleet"], "nextMetrics": ["clinical endpoint", "payer covered lives", "employer activation", "90-day retention", "cost avoided"] },
+    { "id": "companion-distribution", "title": "AI Companion Distribution", "matchTerms": ["companion", "character", "assistant", "consumer", "subscription", "voice"], "ownAssets": ["Galaxy Store", "Samsung Wallet", "on-device NPU", "carrier channel", "Knox permissions"], "nextMetrics": ["WAU hours", "paid attach", "revenue share", "partner concentration", "safety incidents"] },
+    { "id": "foldable-offline-productivity", "title": "Foldable Offline AI Productivity", "matchTerms": ["foldable", "on-device", "translation", "generative edit", "productivity", "NPU"], "ownAssets": ["Galaxy Z Fold", "One UI Multi Window", "Galaxy NPU", "Knox", "S Pen workflow"], "nextMetrics": ["offline task completion", "minutes saved", "paid attach", "NPU energy/task", "enterprise seats"] },
+    { "id": "satellite-ai-continuity", "title": "Satellite Always-connected AI", "matchTerms": ["satellite", "direct-to-cell", "carrier", "connectivity", "agent", "offline"], "ownAssets": ["Galaxy modem/RF", "One UI", "carrier channel", "on-device SLM", "Knox"], "nextMetrics": ["satellite session attach", "data KB/task", "task completion", "carrier revenue share", "battery impact"] }
+  ],
+  "dataQualityTargets": {
+    "directMarketEvidence": { "currentNumerator": 153, "currentDenominator": 466, "currentRate": 0.328, "targetRate": 0.9, "priority": "P1" },
+    "priceReverificationDays": 7,
+    "cardFreshnessBadge": true,
+    "originalLanguageDefault": true,
+    "comparisonGuardrail": "basis-key-match-required",
+    "unverifiedHealthMixClaim": "withheld"
+  }
+}

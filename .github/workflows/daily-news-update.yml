@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: daily-news-update
@@ -79,6 +80,9 @@ jobs:
       - name: Verify evidence, provenance and cumulative history
         run: node scripts/run-with-retry.mjs scripts/verify-pipeline.mjs
 
+      - name: Validate MX decision-intelligence contract
+        run: node scripts/validate-mx-intelligence.mjs
+
       - name: Audit published bundle
         run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
 
@@ -91,23 +95,40 @@ jobs:
       - name: Validate automation and browser bundle
         run: node scripts/run-with-retry.mjs scripts/test-automation.mjs
 
-      - name: Commit changes
+      - name: Package staging-only site preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: mx-recovery-staging-${{ github.run_id }}
+          path: |
+            index.html
+            styles.css
+            app.bundle.js
+            data.bundle.js
+            mobile-ai-business-view.json
+            assets/
+          retention-days: 14
+
+      - name: Open data-only recovery PR
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json company-news.json nvidia-investments.json insights.json briefing.json radar.json research.json startups.json market.json infra.json bizmodel.json monetization.json mobile-ai-business-view.json audit.json quality.json history.json llm-health.json collection-health.json executive-news-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json index.html app.bundle.js data.bundle.js
+          git add news.json company-news.json nvidia-investments.json insights.json briefing.json radar.json research.json startups.json market.json infra.json bizmodel.json monetization.json mobile-ai-business-view.json audit.json quality.json history.json llm-health.json collection-health.json market-reverification-queue.json price-change-flags.json executive-news-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json index.html app.bundle.js data.bundle.js
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else
+            if git diff --cached --name-only | grep -Eq '^(scripts/|config/|\.github/|.*\.jsx$|styles\.css$|package\.json$)'; then
+              echo "Schema/code change detected in data workflow; refusing mixed PR."
+              exit 1
+            fi
+            branch="automation/recovery-refresh-${GITHUB_RUN_ID}"
+            git switch -c "$branch"
             git commit -m "chore: update Ha Thai article summary, add latest AI news and insights [skip ci]"
-            for attempt in 1 2 3; do
-              if git push origin main; then
-                exit 0
-              fi
-              echo "Push raced with a newer main commit; rebasing data commit (attempt $attempt/3)."
-              git fetch origin main
-              git rebase origin/main
-            done
-            echo "Could not push refreshed data after three rebases."
-            exit 1
+            git push origin "$branch"
+            gh pr create \
+              --base main \
+              --head "$branch" \
+              --title "chore: staged source recovery ${GITHUB_RUN_ID}" \
+              --body "Manual recovery data PR. No auto-merge. Review the **mx-recovery-staging-${GITHUB_RUN_ID}** artifact before approval."
           fi

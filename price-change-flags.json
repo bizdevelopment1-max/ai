@@ -1,0 +1,101 @@
+{
+  "generatedAt": "2026-08-15T13:28:03.154Z",
+  "policy": "Compare price fields with the last verified snapshot; do not publish a changed price until its configured evidence literals are verified.",
+  "summary": {
+    "tracked": 2,
+    "changed": 0,
+    "pendingVerification": 0,
+    "verifiedChanges": 0
+  },
+  "rows": [
+    {
+      "metricId": "google-ai-plans-us",
+      "label": "Google AI consumer plans",
+      "kind": "subscription-price",
+      "region": "US",
+      "previousCheckedAt": null,
+      "previousValues": [],
+      "currentValues": [
+        {
+          "plan": "AI Plus",
+          "value": 7.99,
+          "billingPeriod": "month",
+          "status": "official-US-list"
+        },
+        {
+          "plan": "AI Pro",
+          "value": 19.99,
+          "billingPeriod": "month",
+          "status": "official-US-list"
+        },
+        {
+          "plan": "AI Ultra 5x",
+          "value": 99.99,
+          "displayValue": "$100",
+          "billingPeriod": "month",
+          "status": "official-rounded-announcement"
+        },
+        {
+          "plan": "AI Ultra 20x",
+          "value": 199.99,
+          "displayValue": "$200",
+          "billingPeriod": "month",
+          "status": "official-rounded-announcement"
+        }
+      ],
+      "changed": false,
+      "status": "baseline-required",
+      "sourceVerificationStatus": "partial",
+      "detectedAt": "2026-08-15T13:28:03.154Z"
+    },
+    {
+      "metricId": "meta-ai-glasses-us",
+      "label": "Meta AI glasses price ladder",
+      "kind": "device-price",
+      "region": "US",
+      "previousCheckedAt": "2026-08-15T09:44:05.622Z",
+      "previousValues": [
+        {
+          "plan": "Meta Glasses (displayless, Meta brand)",
+          "value": 299,
+          "billingPeriod": "device"
+        },
+        {
+          "plan": "Ray-Ban Meta (displayless, partner brand)",
+          "value": 379,
+          "billingPeriod": "device"
+        },
+        {
+          "plan": "Meta Ray-Ban Display",
+          "value": 799,
+          "rangeHigh": 829,
+          "billingPeriod": "device",
+          "note": "$799 official starting price; $829 configuration requires checkout revalidation"
+        }
+      ],
+      "currentValues": [
+        {
+          "plan": "Meta Glasses (displayless, Meta brand)",
+          "value": 299,
+          "billingPeriod": "device"
+        },
+        {
+          "plan": "Ray-Ban Meta (displayless, partner brand)",
+          "value": 379,
+          "billingPeriod": "device"
+        },
+        {
+          "plan": "Meta Ray-Ban Display",
+          "value": 799,
+          "rangeHigh": 829,
+          "billingPeriod": "device",
+          "note": "$799 official starting price; $829 configuration requires checkout revalidation"
+        }
+      ],
+      "changed": false,
+      "status": "unchanged",
+      "sourceVerificationStatus": "verified",
+      "detectedAt": "2026-08-15T13:28:03.154Z"
+    }
+  ]
+}

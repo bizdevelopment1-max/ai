@@ -64,14 +64,23 @@ const infra = await readJson("infra.json", { items: [] });
 const bizmodel = await readJson("bizmodel.json", { items: [] });
 const priorHistory = await readJson("history.json", { articles: [], runs: [] });
 const collectionHealth = await readJson("collection-health.json", { status: "unknown", failedStreams: [], emptyStreams: [] });
+const volatileMetricConfig = await readJson("config/volatile-metrics.json", { metrics: [] });
+const volatileMetricHistory = await readJson("metric-history.json", { verificationRuns: [] });
+const volatileMetricAudit = await readJson("volatile-metrics-audit.json", { rows: [] });
+const qualityThresholds = await readJson("config/quality-thresholds.json", {});
+const monetization = await readJson("monetization.json", { companies: [] });
+const monetizationReviewQueue = await readJson("monetization-review-queue.json", { total: 0, rows: [] });
+const opportunityView = await readJson("mobile-ai-business-view.json", { generatedOpportunities: [], experimentShortlist: [] });
 
 const articleIssues = [];
 const currentArticles = [];
 const seen = new Set();
+let duplicateArticles = 0;
 
 for (const input of news.articles || []) {
   const url = canonicalUrl(input.url);
-  if (!url || seen.has(url)) continue;
+  if (!url) continue;
+  if (seen.has(url)) { duplicateArticles += 1; continue; }
   seen.add(url);
   const evidenceText = [sourceTitleFor(input), sourceExcerptFor(input), input?.sourceContent?.text].filter(Boolean).join("\n").trim();
   const issues = [];
@@ -330,14 +339,100 @@ const localizedResearch = (research.feed || []).filter(item => item.localization
 const localizedFallbackResearch = (research.feed || []).filter(item => item.localization?.status === "fallback-english").length;
 const archivedMarketBaselines = (market.items || []).length;
 const linkedMarketRecords = (market.records || []).filter(record => record.provenance?.status === "source-backed").length;
+const marketDirectEvidenceRate = (market.records || []).length ? linkedMarketRecords / market.records.length : 0;
+const marketDirectEvidenceTarget = Number(qualityThresholds.directMarketEvidenceRate || 0.9);
 const consumerSurveyRecords = (market.records || []).filter(record => record.type === "consumer-survey" && record.provenance?.status === "source-backed").length;
+const eligibleArticles = currentArticles.filter(article => article.displayEligible !== false).length;
+const sourceContentRate = eligibleArticles ? sourceExcerptArticles / eligibleArticles : 0;
+const duplicateRate = (currentArticles.length + duplicateArticles) ? duplicateArticles / (currentArticles.length + duplicateArticles) : 0;
+const criticalEmptyStreams = (collectionHealth.watchdogBreaches || []).length;
+const publishedMonetizationRows = (monetization.companies || []).flatMap(company => company.monetize || []);
+const ungatedMonetizationRows = publishedMonetizationRows.filter(row => row.classificationGate?.status !== "passed");
+const generatedOpportunities = opportunityView.generatedOpportunities || [];
+const experimentShortlist = opportunityView.experimentShortlist || [];
+const invalidPublishedOpportunities = generatedOpportunities.filter(item => item.status === "published" && (
+  item.evidenceCount < 2 || item.independentSources < (qualityThresholds.minimumIndependentSourcesForDecision || 2)
+));
+
+// Unverified quantitative rows become an explicit work queue. Numeric and
+// pricing records receive the highest priority because they are the most
+// likely to affect an MX business decision when stale or weakly sourced.
+const marketReverificationQueue = (market.records || [])
+  .filter(record => record.provenance?.status !== "source-backed")
+  .map(record => {
+    const text = `${record.title || ""} ${record.topic || ""} ${record.summary || ""}`;
+    const hasNumbers = numericTokens(text).length > 0 || (record.values || record.sourceMetricValues || []).length > 0;
+    const priceSensitive = /price|pricing|subscription|fee|cost|asp|arr|revenue|valuation|funding|가격|요금|구독|매출|밸류/i.test(text);
+    const staleDays = ageDays(record.publishedAt || record.collectedAt);
+    const priorityScore = (priceSensitive ? 40 : 0) + (hasNumbers ? 30 : 0)
+      + (!validHttp(record.sourceUrl) ? 20 : 0) + Math.min(10, Math.floor(staleDays / 30));
+    return {
+      id: record.id || createHash("sha256").update(`${record.sourceUrl || ""}|${record.title || ""}`).digest("hex").slice(0, 16),
+      title: record.titleEn || record.title || record.topic || "Untitled quantitative record",
+      sourceUrl: record.sourceUrl || record.url || "",
+      publishedAt: record.publishedAt || null,
+      collectedAt: record.collectedAt || null,
+      priority: priorityScore >= 70 ? "P0" : priorityScore >= 40 ? "P1" : "P2",
+      priorityScore,
+      reasons: [
+        priceSensitive ? "volatile-price-or-financial-metric" : null,
+        hasNumbers ? "quantitative-claim" : null,
+        !validHttp(record.sourceUrl) ? "publisher-page-unresolved" : null,
+        staleDays > 90 ? "older-than-90-days" : null,
+      ].filter(Boolean),
+      nextAction: validHttp(record.sourceUrl) ? "re-extract-publisher-page" : "resolve-publisher-url-from-discovery-ledger",
+    };
+  })
+  .sort((left, right) => right.priorityScore - left.priorityScore || String(right.publishedAt || "").localeCompare(String(left.publishedAt || "")));
+
+const metricFingerprint = values => JSON.stringify((values || []).map(value => ({
+  plan: value.plan,
+  value: value.value,
+  rangeHigh: value.rangeHigh,
+  unit: value.unit,
+  billingPeriod: value.billingPeriod,
+})));
+const priceKinds = new Set(["subscription-price", "device-price"]);
+const priceChangeRows = (volatileMetricConfig.metrics || []).filter(metric => priceKinds.has(metric.kind)).map(metric => {
+  const runs = (volatileMetricHistory.verificationRuns || []).filter(run => run.metricId === metric.id);
+  const previous = runs.at(-1) || null;
+  const audit = (volatileMetricAudit.rows || []).find(row => row.id === metric.id) || null;
+  const changed = !!previous && metricFingerprint(previous.values) !== metricFingerprint(metric.values);
+  const sourceVerified = audit?.status === "verified";
+  return {
+    metricId: metric.id,
+    label: metric.label,
+    kind: metric.kind,
+    region: metric.region,
+    previousCheckedAt: previous?.checkedAt || null,
+    previousValues: previous?.values || [],
+    currentValues: metric.values || [],
+    changed,
+    status: !previous ? "baseline-required" : changed && !sourceVerified ? "change-pending-verification" : changed ? "verified-change" : "unchanged",
+    sourceVerificationStatus: audit?.status || "not-run",
+    detectedAt: now.toISOString(),
+  };
+});
+const pendingPriceChanges = priceChangeRows.filter(row => row.status === "change-pending-verification");
+const verifiedPriceChanges = priceChangeRows.filter(row => row.status === "verified-change");
+const priceChangeFlags = {
+  generatedAt: now.toISOString(),
+  policy: "Compare price fields with the last verified snapshot; do not publish a changed price until its configured evidence literals are verified.",
+  summary: {
+    tracked: priceChangeRows.length,
+    changed: priceChangeRows.filter(row => row.changed).length,
+    pendingVerification: pendingPriceChanges.length,
+    verifiedChanges: verifiedPriceChanges.length,
+  },
+  rows: priceChangeRows,
+};
 
 const checks = [
   { id: "news-coverage", label: "뉴스 수집", status: currentArticles.length >= 20 ? "ok" : "fail", value: `${currentArticles.length}건` },
   { id: "source-backed", label: "원문 스니펫 근거", status: backedArticles >= Math.max(10, currentArticles.length * 0.35) ? "ok" : "warn", value: `${backedArticles}/${currentArticles.length}건` },
-  { id: "source-content-mode", label: "원문 본문 추출", status: sourceExcerptArticles >= Math.max(10, currentArticles.filter(a => a.displayEligible !== false).length * 0.8) ? "ok" : "warn", value: `${sourceExcerptArticles}/${currentArticles.length}건` },
+  { id: "source-content-mode", label: "원문 본문 추출", status: sourceContentRate >= Number(qualityThresholds.sourceContentExtractionRate || 0.97) ? "ok" : "warn", value: `${sourceExcerptArticles}/${eligibleArticles}건 · ${(sourceContentRate * 100).toFixed(1)}% / 목표 ${((qualityThresholds.sourceContentExtractionRate || 0.97) * 100).toFixed(0)}%` },
   { id: "feed-localization", label: "기사 한국어 표시·영문 폴백", status: localizedArticles + localizedFallbackArticles >= Math.max(10, currentArticles.length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedArticles} · 영문 폴백 ${localizedFallbackArticles}` },
-  { id: "collection-health", label: "수집 스트림 상태", status: collectionHealth.status === "ok" ? "ok" : collectionHealth.status === "partial" ? "warn" : "fail", value: `실패 ${(collectionHealth.failedStreams || []).length} · 빈 스트림 ${(collectionHealth.emptyStreams || []).length}` },
+  { id: "collection-health", label: "수집 스트림 상태", status: (collectionHealth.failedStreams || []).length ? "fail" : criticalEmptyStreams > Number(qualityThresholds.maximumCriticalEmptyStreams ?? 0) || (collectionHealth.emptyStreams || []).length ? "warn" : "ok", value: `실패 ${(collectionHealth.failedStreams || []).length} · 빈 스트림 ${(collectionHealth.emptyStreams || []).length} · 지속 실패 ${criticalEmptyStreams}` },
   { id: "briefing-evidence", label: "브리핑 근거 연결", status: linkedBriefs > 0 ? "ok" : "fail", value: `${linkedBriefs}건` },
   { id: "insight-evidence", label: "인사이트 근거 연결", status: linkedInsights > 0 ? "ok" : "warn", value: `${linkedInsights}건` },
   { id: "stock-freshness", label: "주가 최신성", status: stockFresh >= Math.max(8, stockRows.length * 0.7) ? "ok" : "fail", value: `${stockFresh}/${stockRows.length}종목` },
@@ -347,8 +442,13 @@ const checks = [
   { id: "research-source", label: "리서치 원문 링크", status: linkedResearch >= 3 ? "ok" : "warn", value: `공개 ${linkedResearch}건 · 보존 ${(research.feed || []).length - linkedResearch}건` },
   { id: "research-localization", label: "리서치 3줄 표시", status: localizedResearch + localizedFallbackResearch >= Math.max(3, (research.feed || []).length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedResearch} · 영문 폴백 ${localizedFallbackResearch}` },
   { id: "market-source", label: "시장 기준선 보존", status: "ok", value: `화면 비노출 기준선 ${archivedMarketBaselines}건` },
-  { id: "market-db-source", label: "신사업 정량 DB 원문 직접 검증", status: linkedMarketRecords >= Math.max(3, Math.min(12, (market.records || []).length * 0.25)) ? "ok" : "warn", value: `${linkedMarketRecords}/${(market.records || []).length}건` },
+  { id: "market-db-source", label: "신사업 정량 DB 원문 직접 검증", status: marketDirectEvidenceRate >= marketDirectEvidenceTarget ? "ok" : "warn", value: `${linkedMarketRecords}/${(market.records || []).length}건 · ${(marketDirectEvidenceRate * 100).toFixed(1)}% / 목표 ${(marketDirectEvidenceTarget * 100).toFixed(0)}%` },
+  { id: "market-reverification-queue", label: "정량 DB 우선 재검증 큐", status: marketReverificationQueue.some(row => row.priority === "P0") ? "warn" : "ok", value: `${marketReverificationQueue.length}건 · P0 ${marketReverificationQueue.filter(row => row.priority === "P0").length}건` },
+  { id: "volatile-price-change", label: "가격·요금제 변경 감지", status: pendingPriceChanges.length ? "warn" : "ok", value: `추적 ${priceChangeRows.length}건 · 검증 대기 ${pendingPriceChanges.length}건 · 확인된 변경 ${verifiedPriceChanges.length}건` },
   { id: "consumer-survey-coverage", label: "소비자 조사 레코드", status: consumerSurveyRecords >= 2 ? "ok" : "warn", value: `${consumerSurveyRecords}건` },
+  { id: "duplicate-rate", label: "중복 기사 비율", status: duplicateRate <= Number(qualityThresholds.maximumDuplicateRate || 0.02) ? "ok" : "warn", value: `${duplicateArticles}건 · ${(duplicateRate * 100).toFixed(1)}% / 상한 ${((qualityThresholds.maximumDuplicateRate || 0.02) * 100).toFixed(0)}%` },
+  { id: "monetization-classification-gate", label: "수익모델 분류 게이트", status: ungatedMonetizationRows.length ? "fail" : monetizationReviewQueue.total ? "warn" : "ok", value: `공개 ${publishedMonetizationRows.length}건 · 무게이트 ${ungatedMonetizationRows.length}건 · 검토 대기 ${monetizationReviewQueue.total || 0}건` },
+  { id: "opportunity-generation", label: "월간 기회 후보 자동 생성", status: generatedOpportunities.length >= Number(qualityThresholds.minimumGeneratedOpportunities || 10) && generatedOpportunities.length <= Number(qualityThresholds.maximumGeneratedOpportunities || 20) && experimentShortlist.length <= Number(qualityThresholds.maximumExperimentShortlist || 3) && !invalidPublishedOpportunities.length ? "ok" : "warn", value: `후보 ${generatedOpportunities.length}건 · 실험 ${experimentShortlist.length}건 · 근거 미달 공개 ${invalidPublishedOpportunities.length}건` },
 ];
 
 const fails = checks.filter(c => c.status === "fail").length;
@@ -365,10 +465,15 @@ const quality = {
     accumulatedArticles: historyArticles.length,
     sourceBackedArticles: backedArticles,
     sourceExcerptArticles,
+    sourceContentRate,
+    sourceContentTarget: Number(qualityThresholds.sourceContentExtractionRate || 0.97),
     localizedArticles,
     localizedFallbackArticles,
     limitedArticles: articleIssues.length,
     limitedRate,
+    duplicateArticles,
+    duplicateRate,
+    duplicateRateTarget: Number(qualityThresholds.maximumDuplicateRate || 0.02),
     freshStocks: stockFresh,
     totalStocks: stockRows.length,
     linkedInfra,
@@ -378,7 +483,20 @@ const quality = {
     localizedFallbackResearch,
     archivedMarketBaselines,
     linkedMarketRecords,
+    marketDirectEvidenceRate,
+    marketDirectEvidenceTarget,
+    marketReverificationQueueSize: marketReverificationQueue.length,
+    marketReverificationP0: marketReverificationQueue.filter(row => row.priority === "P0").length,
+    pendingPriceChanges: pendingPriceChanges.length,
+    verifiedPriceChanges: verifiedPriceChanges.length,
     consumerSurveyRecords,
+    criticalEmptyStreams,
+    publishedMonetizationRows: publishedMonetizationRows.length,
+    ungatedMonetizationRows: ungatedMonetizationRows.length,
+    monetizationReviewQueue: monetizationReviewQueue.total || 0,
+    generatedOpportunities: generatedOpportunities.length,
+    experimentShortlist: experimentShortlist.length,
+    invalidPublishedOpportunities: invalidPublishedOpportunities.length,
   },
   sources: { news: sourceCountsNews, stocks: sourceCounts },
   collection: collectionHealth,
@@ -445,6 +563,14 @@ await Promise.all([
   writeFile("bizmodel.json", JSON.stringify(bizmodel) + "\n"),
   writeFile("history.json", JSON.stringify({ generatedAt: now.toISOString(), articles: historyArticles, runs }, null, 2) + "\n"),
   writeFile("quality.json", JSON.stringify(quality, null, 2) + "\n"),
+  writeFile("market-reverification-queue.json", JSON.stringify({
+    generatedAt: now.toISOString(),
+    targetDirectEvidenceRate: marketDirectEvidenceTarget,
+    currentDirectEvidenceRate: marketDirectEvidenceRate,
+    total: marketReverificationQueue.length,
+    queue: marketReverificationQueue,
+  }, null, 2) + "\n"),
+  writeFile("price-change-flags.json", JSON.stringify(priceChangeFlags, null, 2) + "\n"),
   writeFile("llm-health.json", JSON.stringify(llmHealth, null, 2) + "\n"),
 ]);
 

@@ -651,8 +651,8 @@ async function main() {
 
   const out = {
     generatedAt: nowIso,
-    schemaVersion: 5,
-    methodology: "canonical-company-registry+normalized-profile+live-financials+official-executive-verification+focused-news-evidence+company-intelligence-ready",
+    schemaVersion: 6,
+    methodology: "canonical-company-registry+normalized-profile+live-financials+official-executive-verification+focused-news-evidence+company-intelligence-ready+source-backed-section-publication",
     companyRegistry: {
       method: startupRegistry.method || "official-domain+operator-legal-name",
       uniqueCompanies: Object.keys(companies).length,

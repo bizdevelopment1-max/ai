@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "monthlyCandidateTarget": { "min": 10, "max": 20, "experimentShortlist": 3 },
+  "publicationGate": { "minimumEvidenceUnits": 2, "minimumIndependentSources": 2, "minimumOpportunityScore": 45 },
+  "scoreWeights": {
+    "userDemand": 20,
+    "ownedAssetLeverage": 20,
+    "differentiation": 15,
+    "recurringRevenue": 15,
+    "technicalFeasibility": 10,
+    "dataAdvantage": 10,
+    "distributionScale": 10,
+    "riskPenaltyMax": 20
+  },
+  "assetCatalog": [
+    { "id": "os-control", "label": "OS·기본 앱 제어권" },
+    { "id": "account-identity", "label": "계정·ID·동의 체계" },
+    { "id": "secure-workspace", "label": "보안·기업 단말 관리" },
+    { "id": "health-data", "label": "헬스 데이터·센서" },
+    { "id": "wearable-network", "label": "워치·링·이어버드 접점" },
+    { "id": "connected-home", "label": "가전·TV·홈 연결" },
+    { "id": "wallet-payment", "label": "월렛·결제·ID" },
+    { "id": "app-distribution", "label": "앱 유통·과금 채널" },
+    { "id": "camera-media", "label": "카메라·갤러리·미디어" },
+    { "id": "communication", "label": "통화·메시지" },
+    { "id": "large-screen", "label": "대화면·펜·데스크톱 모드" },
+    { "id": "global-channel", "label": "글로벌 단말·통신·기업 채널" }
+  ],
+  "archetypes": [
+    {
+      "id": "personal-action-agent", "title": "Personal Action Agent",
+      "terms": ["agent", "assistant", "app action", "automation", "task completion", "에이전트", "업무 실행"],
+      "assets": ["os-control", "account-identity", "communication", "app-distribution"],
+      "revenueModels": ["subscription", "enterprise", "usage"], "preferredAction": "Build", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 4, "recurring": 5, "feasibility": 4, "data": 4, "distribution": 5, "risk": 2 }
+    },
+    {
+      "id": "context-memory", "title": "Personal Context & Memory",
+      "terms": ["context", "memory", "personalization", "privacy", "consent", "컨텍스트", "개인화", "기억"],
+      "assets": ["account-identity", "secure-workspace", "os-control"],
+      "revenueModels": ["subscription", "enterprise"], "preferredAction": "Build", "ownerOrg": "R&D",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 5, "recurring": 4, "feasibility": 3, "data": 5, "distribution": 4, "risk": 4 }
+    },
+    {
+      "id": "family-ai-bundle", "title": "Family AI Bundle",
+      "terms": ["family", "household", "shared", "parental", "home", "가족", "가정", "공유"],
+      "assets": ["account-identity", "connected-home", "health-data", "wallet-payment"],
+      "revenueModels": ["subscription", "bundle"], "preferredAction": "Build", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 4, "recurring": 5, "feasibility": 3, "data": 4, "distribution": 4, "risk": 3 }
+    },
+    {
+      "id": "health-intelligence", "title": "Health Intelligence",
+      "terms": ["health", "medical", "clinical", "sleep", "stress", "insurance", "헬스", "의료", "수면"],
+      "assets": ["health-data", "wearable-network", "secure-workspace", "global-channel"],
+      "revenueModels": ["subscription", "enterprise", "outcome"], "preferredAction": "Partner", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 4, "recurring": 5, "feasibility": 3, "data": 5, "distribution": 4, "risk": 5 }
+    },
+    {
+      "id": "secure-enterprise-agent", "title": "Secure Enterprise Mobile Agent",
+      "terms": ["enterprise", "fleet", "field worker", "workflow", "secure", "기업", "현장", "보안"],
+      "assets": ["secure-workspace", "os-control", "large-screen", "global-channel"],
+      "revenueModels": ["enterprise", "subscription", "outcome"], "preferredAction": "Build", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 5, "recurring": 5, "feasibility": 4, "data": 4, "distribution": 5, "risk": 3 }
+    },
+    {
+      "id": "camera-creator-commerce", "title": "Camera & Creator Commerce",
+      "terms": ["camera", "creator", "image", "video", "editing", "commerce", "카메라", "영상", "편집"],
+      "assets": ["camera-media", "wallet-payment", "app-distribution", "os-control"],
+      "revenueModels": ["subscription", "usage", "commission"], "preferredAction": "Partner", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 4, "recurring": 4, "feasibility": 4, "data": 3, "distribution": 5, "risk": 2 }
+    },
+    {
+      "id": "communication-concierge", "title": "Communication Concierge",
+      "terms": ["call", "message", "meeting", "translation", "spam", "scam", "통화", "메시지", "번역"],
+      "assets": ["communication", "os-control", "secure-workspace", "global-channel"],
+      "revenueModels": ["subscription", "bundle", "enterprise"], "preferredAction": "Build", "ownerOrg": "제품기획팀",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 4, "recurring": 4, "feasibility": 5, "data": 4, "distribution": 5, "risk": 3 }
+    },
+    {
+      "id": "agent-service-marketplace", "title": "Agent & Service Marketplace",
+      "terms": ["marketplace", "agent store", "developer", "commission", "distribution", "마켓플레이스", "개발자", "수수료"],
+      "assets": ["app-distribution", "wallet-payment", "account-identity", "global-channel"],
+      "revenueModels": ["commission", "usage", "subscription"], "preferredAction": "Partner", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 4, "recurring": 5, "feasibility": 4, "data": 3, "distribution": 5, "risk": 3 }
+    },
+    {
+      "id": "autonomous-home-operator", "title": "Autonomous Home Operator",
+      "terms": ["smart home", "home", "energy", "appliance", "iot", "가전", "에너지", "홈"],
+      "assets": ["connected-home", "account-identity", "wallet-payment", "os-control"],
+      "revenueModels": ["subscription", "bundle", "commission"], "preferredAction": "Build", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 5, "recurring": 4, "feasibility": 4, "data": 5, "distribution": 4, "risk": 3 }
+    },
+    {
+      "id": "accessibility-safety-agent", "title": "Accessibility & Safety Agent",
+      "terms": ["accessibility", "safety", "fraud", "scam", "deepfake", "emergency", "접근성", "안전", "사기"],
+      "assets": ["os-control", "communication", "secure-workspace", "wearable-network"],
+      "revenueModels": ["subscription", "enterprise", "bundle"], "preferredAction": "Partner", "ownerOrg": "제품기획팀",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 5, "recurring": 4, "feasibility": 4, "data": 4, "distribution": 5, "risk": 4 }
+    },
+    {
+      "id": "companion-distribution", "title": "AI Companion Distribution",
+      "terms": ["companion", "character", "conversation", "voice", "engagement", "컴패니언", "대화", "음성"],
+      "assets": ["app-distribution", "wallet-payment", "os-control", "global-channel"],
+      "revenueModels": ["subscription", "commission", "bundle"], "preferredAction": "Partner", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 4, "asset": 4, "differentiation": 3, "recurring": 4, "feasibility": 4, "data": 3, "distribution": 5, "risk": 5 }
+    },
+    {
+      "id": "offline-productivity", "title": "Offline AI Productivity",
+      "terms": ["on-device", "offline", "foldable", "productivity", "translation", "local model", "온디바이스", "오프라인", "생산성"],
+      "assets": ["large-screen", "os-control", "secure-workspace", "camera-media"],
+      "revenueModels": ["subscription", "enterprise", "bundle"], "preferredAction": "Build", "ownerOrg": "R&D",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 5, "recurring": 4, "feasibility": 4, "data": 3, "distribution": 4, "risk": 2 }
+    },
+    {
+      "id": "always-connected-agent", "title": "Always-connected AI Continuity",
+      "terms": ["satellite", "direct-to-cell", "connectivity", "carrier", "offline", "위성", "통신사", "연결"],
+      "assets": ["global-channel", "os-control", "communication", "secure-workspace"],
+      "revenueModels": ["bundle", "subscription", "usage"], "preferredAction": "Partner", "ownerOrg": "제품기획팀",
+      "baseFit": { "demand": 3, "asset": 5, "differentiation": 4, "recurring": 4, "feasibility": 3, "data": 2, "distribution": 5, "risk": 4 }
+    },
+    {
+      "id": "financial-trust-api", "title": "On-device Financial Trust API",
+      "terms": ["fraud", "scam", "phishing", "deepfake", "bank", "payment", "사기", "피싱", "금융", "딥페이크"],
+      "assets": ["communication", "secure-workspace", "wallet-payment", "os-control"],
+      "revenueModels": ["enterprise", "usage", "outcome"], "preferredAction": "Partner", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 5, "asset": 5, "differentiation": 5, "recurring": 5, "feasibility": 4, "data": 5, "distribution": 5, "risk": 4 }
+    },
+    {
+      "id": "carrier-bundle-exchange", "title": "Carrier AI Bundle Exchange",
+      "terms": ["carrier", "telco", "plan", "perk", "bundle", "subscriber", "통신사", "요금제", "번들", "가입자"],
+      "assets": ["global-channel", "app-distribution", "account-identity", "wallet-payment"],
+      "revenueModels": ["bundle", "commission", "subscription"], "preferredAction": "Partner", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 4, "recurring": 5, "feasibility": 5, "data": 3, "distribution": 5, "risk": 2 }
+    },
+    {
+      "id": "agentic-commerce-transaction", "title": "Agentic Commerce Transaction Layer",
+      "terms": ["agentic commerce", "shopping", "checkout", "transaction", "commission", "merchant", "커머스", "결제", "거래", "수수료"],
+      "assets": ["wallet-payment", "account-identity", "app-distribution", "os-control"],
+      "revenueModels": ["commission", "usage", "outcome"], "preferredAction": "Build", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 5, "recurring": 5, "feasibility": 3, "data": 4, "distribution": 5, "risk": 5 }
+    },
+    {
+      "id": "on-device-developer-runtime", "title": "On-device Developer Runtime",
+      "terms": ["SDK", "API", "developer", "runtime", "AICore", "local model", "개발자", "런타임", "온디바이스", "모델 배포"],
+      "assets": ["os-control", "app-distribution", "secure-workspace", "global-channel"],
+      "revenueModels": ["usage", "enterprise", "subscription"], "preferredAction": "Build", "ownerOrg": "R&D",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 5, "recurring": 4, "feasibility": 4, "data": 4, "distribution": 5, "risk": 3 }
+    },
+    {
+      "id": "ambient-wearable-service", "title": "Ambient Wearable Intelligence",
+      "terms": ["wearable", "glasses", "watch", "ring", "ambient", "companion", "웨어러블", "글래스", "워치", "링"],
+      "assets": ["wearable-network", "health-data", "communication", "os-control"],
+      "revenueModels": ["subscription", "bundle", "enterprise"], "preferredAction": "Partner", "ownerOrg": "제품기획팀",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 4, "recurring": 4, "feasibility": 4, "data": 4, "distribution": 4, "risk": 4 }
+    },
+    {
+      "id": "vehicle-context-continuity", "title": "Vehicle Context Continuity",
+      "terms": ["automotive", "vehicle", "car", "driving", "CarPlay", "Android Auto", "자동차", "차량", "운전", "인포테인먼트"],
+      "assets": ["account-identity", "communication", "os-control", "global-channel"],
+      "revenueModels": ["enterprise", "license", "subscription"], "preferredAction": "Partner", "ownerOrg": "서비스기획",
+      "baseFit": { "demand": 3, "asset": 4, "differentiation": 4, "recurring": 4, "feasibility": 3, "data": 3, "distribution": 4, "risk": 4 }
+    },
+    {
+      "id": "device-care-intelligence", "title": "Device Care Intelligence",
+      "terms": ["device care", "battery", "repair", "diagnostic", "support", "trade-in", "배터리", "수리", "진단", "고객지원"],
+      "assets": ["os-control", "account-identity", "secure-workspace", "global-channel"],
+      "revenueModels": ["subscription", "enterprise", "outcome"], "preferredAction": "Build", "ownerOrg": "제품기획팀",
+      "baseFit": { "demand": 4, "asset": 5, "differentiation": 4, "recurring": 4, "feasibility": 5, "data": 5, "distribution": 5, "risk": 2 }
+    }
+  ],
+  "experimentTemplate": {
+    "durationDays": 90,
+    "abVariations": ["기본 기능", "기능+자동화", "기능+자동화+유료 번들"],
+    "priceOptions": ["무료", "월 구독", "구독+사용량"],
+    "successMetrics": ["과업 완료율", "주간 재사용률", "유료 전환", "단위 원가", "신뢰 사고율"],
+    "reviewGates": ["기술·원가", "개인정보", "지역 규제", "파트너 계약", "실사용자 검증"]
+  }
+}

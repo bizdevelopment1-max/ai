@@ -1,0 +1,146 @@
+{
+  "generatedAt": "2026-08-15T09:50:45.753Z",
+  "schemaVersion": 1,
+  "series": [
+    {
+      "id": "anthropic-run-rate",
+      "entity": "Anthropic",
+      "label": "Anthropic revenue run-rate",
+      "unit": "USD billion/year",
+      "definition": "company or named-source annualized revenue pace; not audited revenue",
+      "points": [
+        {
+          "observedAt": "2025-12",
+          "value": 9,
+          "evidenceTier": "reported",
+          "sourceUrl": "https://www.investing.com/news/stock-market-news/exclusiveanthropic-aims-to-nearly-triple-annualized-revenue-in-2026-sources-say-4290452"
+        },
+        {
+          "observedAt": "2026-05",
+          "value": 47,
+          "announcedAt": "2026-05-28",
+          "evidenceTier": "official",
+          "sourceUrl": "https://www.anthropic.com/news/series-h"
+        }
+      ],
+      "derivedChange": "5.2x in roughly five months; not 47x"
+    },
+    {
+      "id": "google-ai-ultra-list-price",
+      "entity": "Google DeepMind",
+      "label": "Google AI Ultra top-tier monthly list price",
+      "unit": "USD/month",
+      "definition": "US standard rounded list price for the highest public tier",
+      "points": [
+        {
+          "observedAt": "2025-05",
+          "value": 250,
+          "evidenceTier": "official",
+          "sourceUrl": "https://blog.google/products-and-platforms/products/google-one/google-ai-ultra/"
+        },
+        {
+          "observedAt": "2026-05",
+          "value": 200,
+          "evidenceTier": "official",
+          "sourceUrl": "https://blog.google/products-and-platforms/products/google-one/google-ai-subscriptions/"
+        }
+      ],
+      "derivedChange": "-20%; a separate Ultra 5x tier launched at $100/month"
+    }
+  ],
+  "verificationRuns": [
+    {
+      "checkedAt": "2026-08-15T09:44:05.622Z",
+      "metricId": "meta-ai-glasses-us",
+      "values": [
+        {
+          "plan": "Meta Glasses (displayless, Meta brand)",
+          "value": 299,
+          "billingPeriod": "device"
+        },
+        {
+          "plan": "Ray-Ban Meta (displayless, partner brand)",
+          "value": 379,
+          "billingPeriod": "device"
+        },
+        {
+          "plan": "Meta Ray-Ban Display",
+          "value": 799,
+          "rangeHigh": 829,
+          "billingPeriod": "device",
+          "note": "$799 official starting price; $829 configuration requires checkout revalidation"
+        }
+      ],
+      "announcedAt": "2026-06-23",
+      "metricObservedAt": "2026-06-23",
+      "lastVerifiedAt": "2026-08-15"
+    },
+    {
+      "checkedAt": "2026-08-15T09:44:05.622Z",
+      "metricId": "anthropic-series-h-2026-05",
+      "values": [
+        {
+          "plan": "Series H",
+          "value": 65,
+          "unit": "USD billion"
+        },
+        {
+          "plan": "post-money valuation",
+          "value": 965,
+          "unit": "USD billion"
+        },
+        {
+          "plan": "revenue run-rate",
+          "value": 47,
+          "unit": "USD billion/year"
+        }
+      ],
+      "announcedAt": "2026-05-28",
+      "metricObservedAt": "2026-05",
+      "lastVerifiedAt": "2026-08-15"
+    },
+    {
+      "checkedAt": "2026-08-15T09:44:05.622Z",
+      "metricId": "counterpoint-genai-phone-2026",
+      "values": [
+        {
+          "plan": "GenAI-capable share",
+          "value": 45,
+          "unit": "% of shipments"
+        },
+        {
+          "plan": "total smartphone shipments",
+          "value": 1.08,
+          "unit": "billion units"
+        },
+        {
+          "plan": "total shipment YoY",
+          "value": -13.9,
+          "unit": "%"
+        }
+      ],
+      "announcedAt": "2026-06-22",
+      "metricObservedAt": "2026 forecast",
+      "lastVerifiedAt": "2026-08-15"
+    },
+    {
+      "checkedAt": "2026-08-15T09:49:39.263Z",
+      "metricId": "microsoft-ai-run-rate-fy26-q3",
+      "values": [
+        {
+          "plan": "AI annual revenue run-rate",
+          "value": 37,
+          "unit": "USD billion/year"
+        },
+        {
+          "plan": "YoY growth",
+          "value": 123,
+          "unit": "%"
+        }
+      ],
+      "announcedAt": "2026-04-29",
+      "metricObservedAt": "FY2026 Q3",
+      "lastVerifiedAt": "2026-08-15"
+    }
+  ]
+}

@@ -294,6 +294,8 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 
   const Row = (c, i, total) => {
     const local = staggerP(prog, i, total);
+    const verifiedAt = Date.parse(c.metricTiming?.lastVerifiedAt || "");
+    const verifiedAgeDays = Number.isFinite(verifiedAt) ? Math.max(0, Math.floor((Date.now() - verifiedAt) / 86400000)) : null;
     return (
       <div className="ct-row" key={c.name}
         style={{ "--accent": cat.accent, opacity: 0.1 + 0.9 * local, transform: `translateY(${(1 - local) * 12}px)` }}>
@@ -302,6 +304,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
           onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(c); } }}>
           <CoLogo name={c.name} domain={c.domain} accent={cat.accent} />
           <b>{c.name}</b>
+          {verifiedAgeDays !== null && <small className={`ct-age-badge ${verifiedAgeDays <= 7 ? "fresh" : verifiedAgeDays <= 30 ? "aging" : "stale"}`} title={`last verified ${c.metricTiming.lastVerifiedAt}`}>{verifiedAgeDays}d</small>}
           <Icon name="chevron" size={12} />
         </span>
         <span className="ct-seg">{c.rel && <em className="ct-rel" style={{ color: cat.accent, borderColor: cat.accent }}>{c.rel}</em>}{c.unit}</span>
@@ -459,11 +462,11 @@ function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
         <div className="msf-consulting-intro">
           <div className="msf-consulting-kicker">Strategy consulting · user need → mobile experience → revenue → execution</div>
           <div className="msf-consulting-title-row">
-            <h2>전략 컨설팅 · 휴대폰 AI 신사업 발굴 포트폴리오</h2>
+            <h2>AI 신사업 발굴 포트폴리오</h2>
             <span className="msf-consulting-evidence">최신 공개 근거 <b>{evidenceArticles.length}</b>건 · {evidenceDate} 기준</span>
           </div>
           <p>
-            <b>사용자의 반복 과업과 지불 의향</b>을 분석하고 OS·앱·계정·결제·개인 컨텍스트를 연결해 새로운 AI 서비스 매출을 설계
+            <b>OS·앱·계정·결제·개인 컨텍스트를 연결해 새로운 AI 서비스 매출 설계</b>
             <span>공개 원문 근거로 우선순위 갱신 · 사실과 전략적 해석 분리 · 사용자 가치와 단위경제성을 같은 의사결정 구조로 연결</span>
           </p>
         </div>
@@ -592,7 +595,9 @@ function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionR
                 <div><dt>WHY NOW</dt><dd>{item.thesis}</dd></div>
                 <div><dt>OFFER</dt><dd>{item.offer}</dd></div>
                 <div><dt>GATE</dt><dd>{item.gate}</dd></div>
+                <div><dt>OWN ASSETS</dt><dd>{(item.ownAssets || []).join(" · ") || "자사 자산 매핑 필요"}</dd></div>
               </dl>
+              <div className="msf-opportunity-metrics">{(item.nextMetrics || []).map(metric => <span key={metric.label} className={metric.status}><em>{metric.label}</em><b>{metric.value}</b></span>)}</div>
             </article>
           ))}
         </div>
@@ -863,6 +868,9 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
   const layer = (window.DASH.VALUE_CHAIN || []).find(l => l.id === c.layer) || {};
   const accent = layer.accent || cat.accent || "#2D6BFF";
   const intelligence = c.live?.intelligence || c.intelligence || {};
+  const publication = intelligence.publication || {};
+  const verifiedAt = publication.lastVerifiedAt || c.live?.profile?.sourceAsOf || c.profile?.sourceAsOf || "";
+  const updatedAt = c.live?.updatedAt || generatedAt || "";
   // Precomputed by the crawler pipeline.  Never fall back to category-level
   // news because a shared category is not evidence that an article is about
   // this company.
@@ -881,7 +889,9 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
               <span className="cd-cat" style={{ color: cat.accent, background: cat.accentSoft }}>{cat.ko}</span>
               {layer.ko && <span className="cd-layer" style={{ color: accent, borderColor: accent }}>{layer.ko}</span>}
               <span>{c.unit}</span>
-              {(c.live?.updatedAt || generatedAt) && <span className="cd-refresh">DATA {String(c.live?.updatedAt || generatedAt).slice(0, 10)}</span>}
+              {verifiedAt
+                ? <span className={`cd-refresh ${publication.freshness || ""}`}>VERIFIED {String(verifiedAt).slice(0, 10)}{Number.isFinite(publication.ageDays) ? ` · ${publication.ageDays}일 전` : ""}</span>
+                : updatedAt && <span className="cd-refresh">UPDATED {String(updatedAt).slice(0, 10)}</span>}
               {c.dataStatus && <span className="cd-data-status">{c.dataStatus}</span>}
             </div>
           </div>
@@ -982,6 +992,28 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           );
         })()}
 
+        {(c.live?.metricHistory || c.metricHistory || []).length > 0 && (
+          <div className="cd-section cd-metric-history">
+            <h4>정량 지표 시계열 <em>Verified Metric History</em><b className="cd-prof-live">공개 화면 · 원장 유지</b></h4>
+            <div className="cd-metric-history-grid">
+              {(c.live?.metricHistory || c.metricHistory || []).map(series => {
+                const max = Math.max(...(series.points || []).map(point => Math.abs(Number(point.value) || 0)), 1);
+                return <article key={series.id}>
+                  <header><b>{series.label}</b><span>{series.unit}</span></header>
+                  <p>{series.definition}</p>
+                  <div>{(series.points || []).map(point => <span key={`${point.observedAt}-${point.value}`}>
+                    <em>{point.observedAt}</em>
+                    <i><u style={{ width: `${Math.max(4, Math.abs(Number(point.value) || 0) / max * 100)}%` }} /></i>
+                    <b>{point.value}</b>
+                    {point.sourceUrl && <a href={point.sourceUrl} target="_blank" rel="noopener">{point.evidenceTier || "source"}</a>}
+                  </span>)}</div>
+                  {series.derivedChange && <strong>{series.derivedChange}</strong>}
+                </article>;
+              })}
+            </div>
+          </div>
+        )}
+
         {(() => {
           const D = window.DASH || {};
           const VC = D.VALUE_CHAIN || [];
@@ -1026,7 +1058,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                 </a>
               )}
             </div>
-          ) : <p className="cd-outline-empty">—</p>;
+          ) : null;
 
           // 원문 신호(한국어 3줄 검증분) — 2-4)영업/2-6)투자현황에서 재사용
           const M = c.monetize || {};
@@ -1115,8 +1147,30 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           investPortfolio.forEach(p => { (investByLayer[p.layer] = investByLayer[p.layer] || []).push(p); });
           const investOrder = VC.map(l => l.id).filter(id => investByLayer[id]);
           const vcMeta = id => VC.find(l => l.id === id) || { ko: id, accent: cat.accent };
-
-          const Empty = () => <p className="cd-outline-empty">—</p>;
+          const productPractice = practiceOf("product");
+          const technologyPractice = practiceOf("model");
+          const infrastructurePractice = practiceOf("infra");
+          const partnershipPractice = practiceOf("partner");
+          const hasMarketPosition = !!(cat.ko || layer.ko || c.vchainVertical || !empty(c.valuation)
+            || (!empty(c.value) && c.metric && c.metric !== "원문 기사") || !empty(c.funding) || c.metricTiming);
+          const hasCompetition = !!(peers.length || segmentShare.length || rivalRows.length || supplyRows.length);
+          const hasFinancials = !!(fin || capLine || empLine);
+          const businessSectionIds = ["domain", hasMarketPosition && "market", hasCompetition && "competition", hasFinancials && "financials"].filter(Boolean);
+          const businessNo = id => `${businessSectionIds.indexOf(id) + 1})`;
+          const hasGoToMarket = !!(monetizeSignals.length || mece.revenueModel.summary || mece.revenueModel.details.length);
+          const hasPartnerships = !!(ventures.length || partnershipPractice);
+          const hasInvestment = !!(investPortfolio.length || mece.investmentDirection.summary || directionSignals.length);
+          const capabilitySectionIds = [
+            "product",
+            technologyPractice && "technology",
+            infrastructurePractice && "infrastructure",
+            hasGoToMarket && "goToMarket",
+            hasPartnerships && "partnerships",
+            hasInvestment && "investment",
+          ].filter(Boolean);
+          const capabilityNo = id => `${capabilitySectionIds.indexOf(id) + 1})`;
+          const hasImplications = !!(mece.strategyDirection.summary || mece.strategyDirection.details.length
+            || ventureComparison || ventures.some(venture => venture.handsetImplication));
 
           return (
             <React.Fragment>
@@ -1130,19 +1184,19 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                   const domainDetails = uniqueMECEValues(mece.currentBusiness.details, businessRows);
                   return (
                     <div className="cd-section cd-outline-sub">
-                      <h4><b className="cd-outline-no">1)</b>사업 영역 <em>Business Domain</em></h4>
+                      <h4><b className="cd-outline-no">{businessNo("domain")}</b>사업 영역 <em>Business Domain</em></h4>
                       {businessRows.length > 0 && <ul className="cd-outline-list">{businessRows.map((b, i) => <li key={i}>{b}</li>)}</ul>}
                       {mece.currentBusiness.summary && !summaryIsBusinessRows && <p className="cd-outline-text">{mece.currentBusiness.summary}</p>}
                       {domainDetails.length > 0 && (
                         <ul className="cd-outline-list">{domainDetails.slice(0, 3).map((d, i) => <li key={i}>{d}</li>)}</ul>
                       )}
-                      {!businessRows.length && !mece.currentBusiness.summary && <Empty />}
+                      {!businessRows.length && !mece.currentBusiness.summary && c.unit && <p className="cd-outline-text">{c.unit}</p>}
                     </div>
                   );
                 })()}
 
-                <div className="cd-section cd-outline-sub">
-                  <h4><b className="cd-outline-no">2)</b>참여 시장 현황 <em>Market Position</em></h4>
+                {hasMarketPosition && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{businessNo("market")}</b>참여 시장 현황 <em>Market Position</em></h4>
                   <div className="cd-outline-facts">
                     {cat.ko && <span><em>기업 분류</em><b>{cat.ko}</b></span>}
                     {layer.ko && <span><em>밸류체인 계층</em><b>{layer.ko}</b></span>}
@@ -1150,12 +1204,12 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                     {!empty(c.valuation) && <span><em>밸류에이션</em><b>{c.valuation}</b>{c.valAsof && <i>'{c.valAsof} 기준</i>}</span>}
                     {!empty(c.value) && c.metric && c.metric !== "원문 기사" && <span><em>{c.metric}</em><b>{c.value}</b>{c.metricAsof && <i>{c.metricAsof} 기준</i>}</span>}
                     {!empty(c.funding) && <span><em>펀딩 단계</em><b>{c.funding}</b></span>}
+                    {c.metricTiming && <span className="cd-metric-timing"><em>측정 시차</em><b>발표 {c.metricTiming.announcedAt}</b><i>관측 {c.metricTiming.metricObservedAt} · 검증 {c.metricTiming.lastVerifiedAt}</i></span>}
                   </div>
-                  {!cat.ko && !layer.ko && !c.vchainVertical && empty(c.valuation) && empty(c.value) && empty(c.funding) && <Empty />}
-                </div>
+                </div>}
 
-                <div className="cd-section cd-outline-sub">
-                  <h4><b className="cd-outline-no">3)</b>경쟁 구도 <em>Competitive Landscape</em></h4>
+                {hasCompetition && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{businessNo("competition")}</b>경쟁 구도 <em>Competitive Landscape</em></h4>
                   {segmentShare.length > 0 && (
                     <div className="cd-outline-facts">
                       {segmentShare.map((s, i) => (
@@ -1180,9 +1234,6 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                       </div>
                     </React.Fragment>
                   ) : null}
-                  {!peers.length && !segmentShare.length && !rivalRows.length && !supplyRows.length && (
-                    <Empty />
-                  )}
                   {rivalRows.length > 0 && (
                     <div className="cd-bd-sec">
                       <h5>경쟁사 경쟁 현황</h5>
@@ -1211,58 +1262,59 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                       </ul>
                     </div>
                   )}
-                </div>
+                </div>}
 
-                <div className="cd-section cd-outline-sub">
-                  <h4><b className="cd-outline-no">4)</b>경영 실적 <em>Financial Performance</em></h4>
-                  {(fin || capLine || empLine) ? (
-                    <div className="cd-outline-facts">
-                      {fin && <span><em>실적</em><b>{fin}</b></span>}
-                      {netMarginPct != null && <span><em>순이익률</em><b>{netMarginPct.toFixed(1)}%</b></span>}
-                      {capLine && <span><em>시가총액</em><b>{capLine.replace(/^시가총액 /, "")}</b></span>}
-                      {empLine && <span><em>인력</em><b>{empLine.replace(/^인력 /, "")}</b></span>}
-                    </div>
-                  ) : <Empty />}
+                {hasFinancials && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{businessNo("financials")}</b>경영 실적 <em>Financial Performance</em></h4>
+                  <div className="cd-outline-facts">
+                    {fin && <span><em>실적</em><b>{fin}</b></span>}
+                    {netMarginPct != null && <span><em>순이익률</em><b>{netMarginPct.toFixed(1)}%</b></span>}
+                    {capLine && <span><em>시가총액</em><b>{capLine.replace(/^시가총액 /, "")}</b></span>}
+                    {empLine && <span><em>인력</em><b>{empLine.replace(/^인력 /, "")}</b></span>}
+                  </div>
                   {netMarginPct != null && (
                     <p className="cd-outline-text">해당 분기 매출 대비 순이익 비중 {netMarginPct.toFixed(1)}% · 매출·순이익 공시 수치로 직접 계산(추정 아님)</p>
                   )}
                   {fin && <i className="cd-outline-note">실적 발표 주기로 자동 갱신</i>}
-                </div>
+                </div>}
               </div>
 
               <div className="cd-outline-group">
                 <h3 className="cd-outline-head">2. 사업 전략 방향 및 주요 역량 <em>Strategy &amp; Capabilities</em></h3>
 
                 <div className="cd-section cd-outline-sub">
-                  <h4><b className="cd-outline-no">1)</b>제품 <em>Product</em></h4>
-                  <PracticeBlock practice={practiceOf("product")} />
+                  <h4><b className="cd-outline-no">{capabilityNo("product")}</b>제품 <em>Product</em></h4>
+                  <PracticeBlock practice={productPractice} />
+                  {mece.currentBusiness.summary && <p className="cd-outline-text">{mece.currentBusiness.summary}</p>}
+                  {mece.currentBusiness.details.length > 0 && <ul className="cd-outline-list">{mece.currentBusiness.details.slice(0, 3).map((detail, index) => <li key={index}>{detail}</li>)}</ul>}
+                </div>
+
+                {technologyPractice && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{capabilityNo("technology")}</b>개발/기술 <em>R&amp;D · Technology</em></h4>
+                  <PracticeBlock practice={technologyPractice} />
+                </div>}
+
+                {infrastructurePractice && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{capabilityNo("infrastructure")}</b>생산 <em>Infrastructure &amp; Production</em></h4>
+                  <PracticeBlock practice={infrastructurePractice} />
+                </div>}
+
+                {hasGoToMarket && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{capabilityNo("goToMarket")}</b>수익화·판매 <em>Monetization &amp; Go-to-Market</em></h4>
                   {mece.revenueModel.summary && <p className="cd-outline-text">{mece.revenueModel.summary}</p>}
-                </div>
-
-                <div className="cd-section cd-outline-sub">
-                  <h4><b className="cd-outline-no">2)</b>개발/기술 <em>R&amp;D · Technology</em></h4>
-                  <PracticeBlock practice={practiceOf("model")} />
-                </div>
-
-                <div className="cd-section cd-outline-sub">
-                  <h4><b className="cd-outline-no">3)</b>생산 <em>Infrastructure &amp; Production</em></h4>
-                  <PracticeBlock practice={practiceOf("infra")} />
-                </div>
-
-                <div className="cd-section cd-outline-sub">
-                  <h4><b className="cd-outline-no">4)</b>영업 <em>Go-to-Market</em></h4>
-                  {monetizeSignals.length > 0 ? (
-                    <div className="cd-bd-sec"><h5>돈 버는 방식 원문 신호</h5>
+                  {mece.revenueModel.details.length > 0 && <ul className="cd-outline-list">{mece.revenueModel.details.slice(0, 3).map((detail, index) => <li key={index}>{detail}</li>)}</ul>}
+                  {monetizeSignals.length > 0 && (
+                    <div className="cd-bd-sec"><h5>수익화 원문 신호</h5>
                       {monetizeSignals.map((s, i) => <SignalRow key={"m" + i} s={s} meta={modelMeta} />)}
                     </div>
-                  ) : <Empty />}
-                </div>
+                  )}
+                </div>}
 
                 {/* 파트너십·생태계 실행 신호(practiceOf partner)는 영업이 아니라 여기 하나에서만 —
                     JV·제휴 공식 사례(ventures)가 있으면 그것을 우선하고, 없으면 같은 성격의
                     원문 실행 신호로 보완한다. 어느 쪽도 없을 때만 빈 상태를 보여준다. */}
-                <div className="cd-section cd-outline-sub">
-                  <h4><b className="cd-outline-no">5)</b>관계사 협력 <em>Partnerships</em></h4>
+                {hasPartnerships && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{capabilityNo("partnerships")}</b>파트너십 <em>Partnerships</em></h4>
                   {ventures.length > 0 ? (
                     <div className="cd-venture-list">
                       {ventures.map(venture => (
@@ -1287,10 +1339,10 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                   ) : (
                     <PracticeBlock practice={practiceOf("partner")} />
                   )}
-                </div>
+                </div>}
 
-                <div className="cd-section cd-outline-sub">
-                  <h4><b className="cd-outline-no">6)</b>스타트업, J/V 투자 현황 <em>Startup &amp; JV Investment</em></h4>
+                {hasInvestment && <div className="cd-section cd-outline-sub">
+                  <h4><b className="cd-outline-no">{capabilityNo("investment")}</b>투자·J/V 현황 <em>Investment &amp; Joint Ventures</em></h4>
                   {investPortfolio.length > 0 && (
                     <React.Fragment>
                       {c.invest.strategy && <p className="cd-outline-text">{c.invest.strategy}</p>}
@@ -1320,13 +1372,10 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                       {directionSignals.map((s, i) => <SignalRow key={"d" + i} s={s} meta={dirMeta} dir />)}
                     </div>
                   )}
-                  {!investPortfolio.length && !mece.investmentDirection.summary && !directionSignals.length && (
-                    <Empty />
-                  )}
-                </div>
+                </div>}
               </div>
 
-              <div className="cd-outline-group">
+              {hasImplications && <div className="cd-outline-group">
                 <h3 className="cd-outline-head">3. 시사점 <em>Implications</em></h3>
                 <div className="cd-section cd-outline-sub">
                   {mece.strategyDirection.summary && <p className="cd-outline-text">{mece.strategyDirection.summary}</p>}
@@ -1344,11 +1393,8 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                   {ventures.filter(v => v.handsetImplication).map(v => (
                     <div className="cd-outline-implication" key={v.id}><em>{v.title}</em><p>{v.handsetImplication}</p></div>
                   ))}
-                  {!mece.strategyDirection.summary && !ventureComparison && !ventures.some(v => v.handsetImplication) && (
-                    <Empty />
-                  )}
                 </div>
-              </div>
+              </div>}
             </React.Fragment>
           );
         })()}
@@ -1522,6 +1568,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           const execRows = [...quoteRows, ...mentionRows]
             .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
             .slice(0, 10);
+          if (!execRows.length) return null;
           const quoteCount = execRows.filter(row => row.kind === "quote").length;
           const mentionCount = execRows.length - quoteCount;
           return (
@@ -1529,8 +1576,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
               <h4>경영진 발언·활동 <em>Executive Voice</em>
                 <b className="cd-prof-live">원문 검증 · 기업 직접 연관 · 자동 갱신</b>
               </h4>
-              {execRows.length > 0 ? (
-                <React.Fragment>
+              <React.Fragment>
                   <p className="cd-outline-text">직접 인용 {quoteCount}건 · 기사 언급 {mentionCount}건 · 최신순</p>
                   <div className="cd-itv">
                     {execRows.map((row, i) => row.kind === "quote" ? (
@@ -1556,8 +1602,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                       </a>
                     ))}
                   </div>
-                </React.Fragment>
-              ) : <p className="cd-outline-empty">—</p>}
+              </React.Fragment>
             </div>
           );
         })()}
@@ -1662,8 +1707,22 @@ function BoldSummary({ text, roles = [] }) {
 
 // Korean is display-only localisation. The source title/excerpt remain intact
 // for evidence verification; a failed quality gate deliberately shows English.
-function displayFeedText(item) {
+function displayFeedText(item, language = "localized") {
   const loc = item && item.localization;
+  if (language === "original") {
+    const originalLines = Array.isArray(item?.summaryLinesEn) && item.summaryLinesEn.length
+      ? item.summaryLinesEn.map(line => safeDisplayString(line)).filter(Boolean)
+      : safeDisplayString(item?.summary || item?.desc).split(/\n+/).filter(Boolean);
+    return {
+      title: safeDisplayString(item?.titleEn || item?.title || item?.titleKo),
+      summary: originalLines.join("\n"),
+      lines: originalLines,
+      roles: Array.isArray(item?.summaryRoles) ? item.summaryRoles : [],
+      translated: false,
+      fallback: false,
+      original: true,
+    };
+  }
   const rawLines = Array.isArray(loc?.summaryLines) && loc.summaryLines.length >= 1
     ? loc.summaryLines
     : (item?.summaryLinesKo || (item?.sum ? [item.sum] : null));
@@ -1689,6 +1748,7 @@ function displayFeedText(item) {
 function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
   const [co, setCo] = React.useState("all");          // company filter within category
+  const [displayLanguage, setDisplayLanguage] = React.useState("original");
   const keyOf = a => a.url || ((a.co || "") + "|" + a.date + "|" + a.title);
   // deleted articles persist in localStorage so ✕'d items never come back (across reloads/crawls)
   const LS_KEY = "aiDashDeletedArticles";
@@ -1745,7 +1805,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
     .filter(a => co === "all" || a.co === co)
     .filter(a => !deleted[keyOf(a)])
     .filter(a => {
-      const display = displayFeedText(a);
+      const display = displayFeedText(a, displayLanguage);
       const haystack = `${a.title || ""} ${display.title || ""} ${a.source || ""} ${a.co || ""}`.toLowerCase();
       return !query || haystack.includes(query.toLowerCase());
     });
@@ -1766,6 +1826,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
         </div>
         <div className="feed-filters">
           <span className="feed-total" aria-live="polite">누적 {sorted.length}건</span>
+          <span className="feed-language" role="group" aria-label="기사 표시 언어"><button className={displayLanguage === "original" ? "on" : ""} onClick={() => setDisplayLanguage("original")}>ORIGINAL</button><button className={displayLanguage === "ko" ? "on" : ""} onClick={() => setDisplayLanguage("ko")}>한국어</button></span>
           <button className={filter === "all" ? "on" : ""} onClick={() => onFilter("all")}>전체</button>
           {cats.map(c => (
             <button key={c.id} className={filter === c.id ? "on" : ""} onClick={() => onFilter(c.id)}
@@ -1793,7 +1854,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
           {shown.map((a, i) => {
             const c = catMap[a.cat] || {};
             const isSel = selKey === keyOf(a);
-            const display = displayFeedText(a);
+            const display = displayFeedText(a, displayLanguage);
             return (
               <div className={"art" + (isSel ? " art-sel" : "")} key={keyOf(a)}
                 onClick={() => setSelKey(isSel ? null : keyOf(a))}>
@@ -1804,7 +1865,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     {a.co && <span className="art-co" style={{ color: c.accent, borderColor: c.accent }}>{a.co}</span>}
                     <span className="art-tag" style={{ color: c.accent, background: c.accentSoft }}>{a.tag}</span>
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
-                    <span className="art-verify">{display.translated ? "원문 번역" : display.fallback ? "원문 영어" : "원문 발췌"}</span>
+                    <span className="art-verify">{display.original ? "ORIGINAL" : display.translated ? "원문 번역" : display.fallback ? "원문 영어" : "원문 발췌"}</span>
                   </span>
                   <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{hlBrief(display.title, "art-title")}</a>
                   {display.summary && <span className="art-summary"><BoldSummary text={display.summary} roles={display.roles} /></span>}
@@ -4735,149 +4796,414 @@ function ExecToplines({ items, insights, onNav }) {
 }
 
 
-// ---- 모바일 AI 신사업 DB: 시장성 → 경쟁 수익모델 → 실행 기회 최신 스냅샷 ----
+// ---- MX AI Decision Intelligence: competitive device · partner · compliance · evidence ----
 function MobileAIBusinessBoard({ sectionRef, dataVersion }) {
   const inView = useInView(sectionRef);
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
-  const [view, setView] = React.useState("all");
-  const [expanded, setExpanded] = React.useState("");
+  const [view, setView] = React.useState("radar");
+  const [query, setQuery] = React.useState("");
+  const [selectedId, setSelectedId] = React.useState("");
+  const [filters, setFilters] = React.useState({ type: "all", touchpoint: "all", integration: "all", posture: "all", region: "all", maturity: "all" });
+  const [roiInputs, setRoiInputs] = React.useState({ eligibleDevicesM: 10, aspUplift: 15, paidAttachRate: 8, monthlyPrice: 8, annualRetention: 72, cloudCostPerPaidUserMonth: 2.2, commerceGmvPerUserYear: 45, commissionRate: 3 });
 
   React.useEffect(() => {
-    if (!inView || loaded || !dataVersion) return;
+    // The board is already mounted by LazySection. It sits inside an
+    // opportunity stack, so the cloned sectionRef is not forwarded directly
+    // to this component; data loading must therefore not depend on inView.
+    if (loaded || !dataVersion) return;
     setLoaded(true);
     fetch(`mobile-ai-business-view.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
       .then(response => response.ok ? response.json() : null)
       .then(payload => {
-        if (payload?.database?.mode === "latest-verified-snapshot") setData(payload);
+        if (payload?.database?.mode === "mx-decision-intelligence" && payload?.schemaVersion >= 3) {
+          setData(payload);
+          setSelectedId(payload.signals?.find(signal => signal.archiveStatus === "active")?.id || "");
+          if (payload.roiModel?.defaults) setRoiInputs(payload.roiModel.defaults);
+        }
       })
       .catch(() => {});
-  }, [inView, loaded, dataVersion]);
+  }, [loaded, dataVersion]);
 
-  const markets = data?.markets || [];
-  const competitors = data?.competitors || [];
-  const opportunities = data?.opportunities || [];
+  const signals = data?.signals || [];
   const summary = data?.summary || {};
-  const show = id => view === "all" || view === id;
-  const toggle = key => setExpanded(current => current === key ? "" : key);
-  const generated = data?.generatedAt ? data.generatedAt.slice(0, 10) : "";
-  const flow = [
-    ["01", "MARKET", "시장 크기·성장"],
-    ["02", "MONEY", "경쟁 수익모델"],
-    ["03", "RIGHT TO WIN", "단말·OS·결제 접점"],
-    ["04", "MOVE", "신사업 우선순위"],
-  ];
+  const activeSignals = signals.filter(signal => signal.archiveStatus === "active");
+  const axisValues = (field, arrayField = true) => [...new Set(activeSignals.flatMap(signal => {
+    const value = signal.decisionAxes?.[field];
+    return arrayField ? (value || []) : [value];
+  }).filter(Boolean))].sort();
+  const options = {
+    type: [...new Set(activeSignals.map(signal => signal.entityType))].sort(),
+    touchpoint: axisValues("touchpoint"),
+    integration: axisValues("integration"),
+    posture: axisValues("posture"),
+    region: axisValues("regions"),
+    maturity: axisValues("maturity", false),
+  };
+  const filtered = activeSignals.filter(signal => {
+    const axes = signal.decisionAxes || {};
+    const text = `${signal.name} ${signal.product} ${signal.fact} ${signal.implication} ${signal.decision}`.toLowerCase();
+    if (query && !text.includes(query.toLowerCase())) return false;
+    if (filters.type !== "all" && signal.entityType !== filters.type) return false;
+    if (filters.touchpoint !== "all" && !(axes.touchpoint || []).includes(filters.touchpoint)) return false;
+    if (filters.integration !== "all" && !(axes.integration || []).includes(filters.integration)) return false;
+    if (filters.posture !== "all" && !(axes.posture || []).includes(filters.posture)) return false;
+    if (filters.region !== "all" && !(axes.regions || []).includes(filters.region)) return false;
+    return filters.maturity === "all" || axes.maturity === filters.maturity;
+  });
+  const selected = filtered.find(signal => signal.id === selectedId) || filtered[0] || activeSignals.find(signal => signal.id === selectedId) || null;
+  const partners = activeSignals.filter(signal => signal.entityType !== "device-maker");
+  const generated = data?.generatedAt ? data.generatedAt.slice(0, 16).replace("T", " ") : "";
+  const entityLabel = { "device-maker": "경쟁 단말", carrier: "통신사", "component-partner": "부품·NPU", "partner-candidate": "파트너 후보" };
+  const filterLabel = { type: "대상", touchpoint: "단말 접점", integration: "통합 레벨", posture: "액션 태그", region: "지역", maturity: "성숙도" };
+  const actionTone = action => String(action || "").toLowerCase();
+  const freshnessText = signal => signal.sourceFreshness?.ageDays === 0 ? "오늘 원문" : `${signal.sourceFreshness?.ageDays ?? "—"}일 전 원문`;
+  const updateFilter = (key, value) => setFilters(current => ({ ...current, [key]: value }));
+  const updateRoi = (key, value) => setRoiInputs(current => ({ ...current, [key]: Number(value) || 0 }));
+  const roi = (() => {
+    const paidUsersM = roiInputs.eligibleDevicesM * roiInputs.paidAttachRate / 100;
+    const aspRevenueM = roiInputs.eligibleDevicesM * roiInputs.aspUplift;
+    const subscriptionRevenueM = paidUsersM * roiInputs.monthlyPrice * 12 * roiInputs.annualRetention / 100;
+    const cloudCostM = paidUsersM * roiInputs.cloudCostPerPaidUserMonth * 12;
+    const commerceRevenueM = paidUsersM * roiInputs.commerceGmvPerUserYear * roiInputs.commissionRate / 100;
+    return { paidUsersM, aspRevenueM, subscriptionRevenueM, cloudCostM, commerceRevenueM, grossContributionM: aspRevenueM + subscriptionRevenueM + commerceRevenueM - cloudCostM };
+  })();
+  const moneyM = value => `$${Number(value || 0).toFixed(1)}M`;
+  const tierLabel = tier => tier === "official" ? "OFFICIAL" : tier === "reported" ? "REPORTED" : "ESTIMATE";
+  const companionMetrics = new Map((data?.companionEconomics?.headlineMetrics || []).map(metric => [metric.id, metric]));
+  const generatedOpportunities = data?.generatedOpportunities || [];
+  const experimentShortlist = data?.experimentShortlist || [];
+  const networkPositions = {
+    samsung: [450, 55], google: [250, 145], verizon: [60, 355], skt: [205, 355], perplexity: [410, 225],
+    kt: [500, 355], microsoft: [675, 220], tmobile: [845, 355], openai: [790, 110],
+    qualcomm: [110, 105], scamai: [45, 220], "india-fintech": [245, 255], kddi: [620, 355], vmo2: [735, 355],
+  };
+
+  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+  const download = (content, type, filename) => {
+    const url = URL.createObjectURL(new Blob([content], { type }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  };
+  const exportRows = () => filtered.map(signal => ({
+    name: signal.name,
+    product: signal.product,
+    type: entityLabel[signal.entityType] || signal.entityType,
+    touchpoint: (signal.decisionAxes?.touchpoint || []).join(" / "),
+    integration: (signal.decisionAxes?.integration || []).join(" / "),
+    posture: (signal.decisionAxes?.posture || []).join(" / "),
+    regions: (signal.decisionAxes?.regions || []).join(" / "),
+    maturity: signal.decisionAxes?.maturity,
+    confidence: signal.confidence,
+    action: signal.actionOption,
+    owner: signal.ownerOrg,
+    fact: signal.fact,
+    implication: signal.implication,
+    decision: signal.decision,
+    lastVerified: signal.lastVerifiedAt,
+  }));
+  const exportCsv = () => {
+    const rows = exportRows();
+    const headers = Object.keys(rows[0] || { name: "" });
+    const quote = value => `"${String(value ?? "").replace(/"/g, '""')}"`;
+    download(`\uFEFF${[headers.join(","), ...rows.map(row => headers.map(key => quote(row[key])).join(","))].join("\n")}`, "text/csv;charset=utf-8", "mobile-ai-decision-filter.csv");
+  };
+  const exportExcel = () => {
+    const rows = exportRows();
+    const headers = Object.keys(rows[0] || { name: "" });
+    const table = `<table><thead><tr>${headers.map(key => `<th>${escapeHtml(key)}</th>`).join("")}</tr></thead><tbody>${rows.map(row => `<tr>${headers.map(key => `<td>${escapeHtml(row[key])}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    download(`\uFEFF<html><head><meta charset="utf-8"></head><body>${table}</body></html>`, "application/vnd.ms-excel;charset=utf-8", "mobile-ai-decision-filter.xls");
+  };
+  const cardDocument = signal => `<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;margin:48px;color:#10243e}h1{font-size:28px;margin:0 0 4px}h2{font-size:13px;color:#4f6b87;margin:0 0 28px}.meta{display:flex;gap:8px;margin-bottom:22px}.meta span{border:1px solid #ccd8e4;border-radius:99px;padding:6px 10px;font-size:11px}.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.box{border-top:4px solid #2962ff;background:#f4f7fb;padding:18px;min-height:160px}.box b{display:block;font-size:11px;color:#2962ff;margin-bottom:10px}.box p{font-size:15px;line-height:1.5}.decision{margin-top:18px;border:1px solid #ccd8e4;padding:16px}.decision strong{color:#2962ff}.foot{margin-top:22px;font-size:10px;color:#657b91}</style></head><body><h1>${escapeHtml(signal.name)}</h1><h2>${escapeHtml(signal.product)} · MOBILE AI DECISION CARD</h2><div class="meta"><span>${escapeHtml(signal.actionOption)}</span><span>${escapeHtml(signal.ownerOrg)}</span><span>${escapeHtml(signal.confidence)}</span><span>Last verified ${escapeHtml(signal.lastVerifiedAt?.slice(0, 10))}</span></div><div class="grid"><div class="box"><b>FACT</b><p>${escapeHtml(signal.fact)}</p></div><div class="box"><b>IMPLICATION</b><p>${escapeHtml(signal.implication)}</p></div><div class="box"><b>DECISION</b><p>${escapeHtml(signal.decision)}</p></div></div><div class="decision"><strong>자사 단말 AI 차별점</strong><p>${escapeHtml(signal.mxMapping?.galaxyDifferentiation)}</p><strong>BOM</strong><p>${escapeHtml(signal.mxMapping?.bomImpact?.estimate)}</p></div><div class="foot">Public-source decision intelligence · ${escapeHtml((signal.evidence || []).map(source => source.publisher).join(" · "))}</div></body></html>`;
+  const exportPpt = signal => download(cardDocument(signal), "application/vnd.ms-powerpoint;charset=utf-8", `${signal.name.replace(/[^a-z0-9가-힣_-]+/gi, "-")}-mobile-card.ppt`);
+  const exportPdf = signal => {
+    const popup = window.open("", "_blank", "width=1100,height=760");
+    if (!popup) return;
+    popup.opener = null;
+    popup.document.write(cardDocument(signal).replace("</body>", "<script>window.onload=()=>window.print()<\/script></body>"));
+    popup.document.close();
+  };
+
+  const SignalCard = ({ signal }) => (
+    <button className={`mxc-signal-card${selected?.id === signal.id ? " is-selected" : ""}`} onClick={() => setSelectedId(signal.id)} data-testid={`mx-signal-${signal.id}`}>
+      <span className="mxc-card-top"><em>{entityLabel[signal.entityType] || signal.entityType}</em><i className={`mxc-freshness ${signal.sourceFreshness?.badge}`}>{freshnessText(signal)}</i></span>
+      <strong>{signal.name}<small>{signal.product}</small></strong>
+      <span className="mxc-card-tags">
+        {(signal.decisionAxes?.touchpoint || []).slice(0, 2).map(tag => <i key={tag}>{tag}</i>)}
+        <i>{signal.decisionAxes?.maturity}</i>
+      </span>
+      <p>{signal.fact}</p>
+      <span className="mxc-card-foot"><b className={actionTone(signal.actionOption)}>{signal.actionOption}</b><em>{signal.ownerOrg}</em><i>{signal.confidence} confidence</i></span>
+    </button>
+  );
+
+  const DetailPanel = ({ signal }) => !signal ? <div className="mxc-empty">조건에 맞는 신호가 없습니다.</div> : (
+    <aside className="mxc-detail" data-testid="mx-detail-panel">
+      <div className="mxc-detail-head">
+        <span><em>{entityLabel[signal.entityType]}</em><h3>{signal.name}</h3><p>{signal.product}</p></span>
+        <div><button onClick={() => exportPpt(signal)}>PPT</button><button onClick={() => exportPdf(signal)}>PDF</button></div>
+      </div>
+      <div className="mxc-axis-strip">
+        <span><em>접점</em>{(signal.decisionAxes?.touchpoint || []).join(" · ")}</span>
+        <span><em>통합</em>{(signal.decisionAxes?.integration || []).join(" · ")}</span>
+        <span><em>지역</em>{(signal.decisionAxes?.regions || []).join(" · ")}</span>
+      </div>
+      <div className="mxc-fid">
+        <div><em>01 · FACT</em><p>{signal.fact}</p></div>
+        <div><em>02 · IMPLICATION</em><p>{signal.implication}</p></div>
+        <div className="decision"><em>03 · DECISION</em><p>{signal.decision}</p><span><b className={actionTone(signal.actionOption)}>{signal.actionOption}</b><i>{signal.ownerOrg}</i></span></div>
+      </div>
+      <section className="mxc-mapping">
+        <h4>MX MAPPING</h4>
+        <dl>
+          <div><dt>갤럭시 AI 대비 차별점</dt><dd>{signal.mxMapping?.galaxyDifferentiation}</dd></div>
+          <div><dt>예상 BOM 영향</dt><dd><b>{signal.mxMapping?.bomImpact?.band}</b> · {signal.mxMapping?.bomImpact?.estimate}<small>{signal.mxMapping?.bomImpact?.basis}</small></dd></div>
+          <div><dt>파트너십 이력</dt><dd>{(signal.mxMapping?.partnershipHistory || []).map(item => <span key={item}>{item}</span>)}</dd></div>
+          <div><dt>특허·소송 리스크</dt><dd><b>{signal.mxMapping?.patentLitigationRisk?.level}</b> · {signal.mxMapping?.patentLitigationRisk?.note}</dd></div>
+          <div><dt>SVIC 포트폴리오</dt><dd><b>{signal.mxMapping?.svicPortfolio?.status}</b>{signal.mxMapping?.svicPortfolio?.note ? ` · ${signal.mxMapping.svicPortfolio.note}` : ""}</dd></div>
+        </dl>
+      </section>
+      <section className="mxc-finance">
+        <h4>DEAL KPI <small>비공개·미확인 값을 추정하지 않음</small></h4>
+        {Object.entries(signal.financials || {}).map(([key, value]) => <span key={key}><em>{key}</em><b>{value}</b></span>)}
+      </section>
+      <section className="mxc-evidence">
+        <h4>EVIDENCE <span>{signal.validation?.evidenceSpanCount} spans · {signal.validation?.independentSources} independent</span></h4>
+        {(signal.evidence || []).map(source => <a key={source.url} href={source.url} target="_blank" rel="noopener">
+          <span><b>{source.publisher}</b><em>{source.publishedAt}</em></span>
+          <p>“{source.spans?.[0]}”</p><Icon name="ext" size={11} />
+        </a>)}
+      </section>
+      <footer><span>Last verified · {signal.lastVerifiedAt?.replace("T", " ").slice(0, 16)} UTC</span><i className={signal.verificationSla?.status}>{signal.verificationSla?.status}</i></footer>
+    </aside>
+  );
 
   return (
-    <section className="board maib" ref={sectionRef} data-screen-label="Mobile AI Business Database">
+    <section className="board maib mxc" ref={sectionRef} data-screen-label="MX AI Decision Intelligence">
       <AnimCtx.Provider value={inView}>
-        <div className="board-head" style={{ "--accent": "#0F5EA8" }}>
-          <span className="board-tab" style={{ background: "#0F5EA8" }} />
-          <div className="board-titles">
-            <h2>모바일 AI 신사업 DB <span className="board-en">Market → Money → Move</span></h2>
-            <p>시장 규모 · 경쟁사의 돈 버는 방식 · 최신 실행 사례 · 신사업 우선순위를 하나의 의사결정 흐름으로 통합</p>
+        <div className="mxc-hero">
+          <div>
+            <span className="mxc-kicker"><i /> MX AI DECISION INTELLIGENCE</span>
+            <h2>AI 신사업 Command Center</h2>
+            <p>단말 · OS · 통신사 · NPU · 파트너 · 규제를 MX의 Buy / Build / Partner / Watch 결정으로 연결</p>
           </div>
-          {generated && <div className="board-count maib-live">LATEST · {generated}</div>}
-        </div>
-
-        <div className="maib-policy">
-          <b>최신값 우선 공개</b>
-          <span>동일 주제의 새 검증값 확인 시 이전 공개값 자동 제거</span>
-          <span>원문·발행일·지표 정의가 확인된 항목만 반영</span>
+          <div className="mxc-live"><i /> LIVE DATA<small>last built {generated} UTC</small></div>
         </div>
 
         {!data ? <SourcePipeline kind="market" /> : <React.Fragment>
-          <div className="maib-summary">
-            <div><em>시장 주제</em><b>{summary.marketTopics || markets.length}</b><span>규모·침투·소비지출</span></div>
-            <div><em>수익모델 사례</em><b>{summary.competitors || competitors.length}</b><span>가격·매출·과금 근거</span></div>
-            <div><em>신사업 기회</em><b>{summary.opportunities || opportunities.length}</b><span>근거 2개 이상만 채택</span></div>
-            <div><em>검증 원문</em><b>{summary.sources || 0}</b><span>클릭 시 발행사 원문</span></div>
+          <div className="mxc-metrics">
+            <div><em>ACTIVE SIGNALS</em><b>{summary.activeSignals}</b><span>자동 아카이브 제외</span></div>
+            <div><em>DEVICE MAKERS</em><b>{summary.deviceMakers}</b><span>직접 경쟁 단말</span></div>
+            <div><em>CARRIERS</em><b>{summary.carriers}</b><span>AI 요금제·채널</span></div>
+            <div><em>PARTNER POOL</em><b>{summary.partnersAndComponents}</b><span>부품·서비스 후보</span></div>
+            <div><em>HIGH CONF.</em><b>{summary.highConfidence}</b><span>독립 출처 2+</span></div>
+            <div><em>SOURCE URLs</em><b>{summary.sourceUrls}</b><span>원문 근거</span></div>
           </div>
 
-          <div className="maib-flow" aria-label="시장성에서 실행까지의 의사결정 흐름">
-            {flow.map((step, index) => <React.Fragment key={step[0]}>
-              <div><em>{step[0]}</em><span>{step[1]}</span><b>{step[2]}</b></div>
-              {index < flow.length - 1 && <i aria-hidden="true" />}
+          <div className="mxc-stagebar" aria-label="검증 파이프라인">
+            {[["RAW", data.pipeline?.raw], ["DRAFT", data.pipeline?.draft], ["VERIFY", data.pipeline?.verified], ["REVIEW", data.pipeline?.reviewed], ["PUBLISH", data.pipeline?.published], ["RECONCILE", data.pipeline?.reconciled]].map((stage, index) => <React.Fragment key={stage[0]}>
+              <span><i>{String(index + 1).padStart(2, "0")}</i><b>{stage[0]}</b><em>{stage[1]}</em></span>{index < 5 && <u />}
             </React.Fragment>)}
           </div>
 
-          <div className="maib-tabs" role="tablist" aria-label="신사업 DB 보기">
-            {[["all", "전체"], ["market", "시장 규모"], ["money", "경쟁 수익화"], ["move", "신사업 기회"]].map(tab => (
-              <button key={tab[0]} role="tab" aria-selected={view === tab[0]}
-                className={view === tab[0] ? "on" : ""} onClick={() => setView(tab[0])}>{tab[1]}</button>
+          <div className="mxc-tabs" role="tablist" aria-label="MX 의사결정 DB 보기">
+            {[["radar", "Decision Radar"], ["opportunities", "기회 후보·90일 실험"], ["matrix", "단말·기능 Matrix"], ["monetization", "수익화·ROI"], ["osux", "OS·Killer UX"], ["verticals", "보안·헬스·컴패니언"], ["partners", "Partner Score · Network"], ["formfactor", "폼팩터·SLM"], ["compliance", "Compliance"], ["trust", "Build vs Buy · Trust"]].map(tab => (
+              <button key={tab[0]} role="tab" aria-selected={view === tab[0]} className={view === tab[0] ? "on" : ""} onClick={() => setView(tab[0])}>{tab[1]}</button>
             ))}
           </div>
 
-          {show("market") && markets.length > 0 && <div className="maib-block">
-            <div className="maib-block-head"><em>01 · MARKET ATTRACTIVENESS</em><h3>시장 크기와 지불 신호</h3><span>동일 주제 최신 검증값</span></div>
-            <div className="maib-market-grid">
-              {markets.map(item => <article className="maib-market-card" key={item.stableKey}>
-                <div className="maib-card-kicker"><span>{item.topic}</span><em>{item.publishedAt}</em></div>
-                <h4>{item.title}</h4>
-                <div className="maib-metrics">{(item.metrics || []).map((metric, index) => (
-                  <div key={`${metric.label}-${index}`}><em>{metric.label}</em><b>{metric.value}</b></div>
-                ))}</div>
-                <p>{item.insight}</p>
-                <a href={item.sourceUrl} target="_blank" rel="noopener">{item.sourceName} <Icon name="ext" size={10} /></a>
-              </article>)}
+          {view === "radar" && <div className="mxc-radar">
+            <div className="mxc-filterbar">
+              <label className="mxc-search"><Icon name="search" size={13} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="기업·제품·의사결정 검색" aria-label="MX 신호 검색" /></label>
+              {Object.keys(filters).map(key => <label key={key}><span>{filterLabel[key]}</span><select value={filters[key]} onChange={event => updateFilter(key, event.target.value)} aria-label={filterLabel[key]}><option value="all">전체</option>{options[key].map(value => <option key={value} value={value}>{entityLabel[value] || value}</option>)}</select></label>)}
+              <button className="mxc-reset" onClick={() => { setQuery(""); setFilters({ type: "all", touchpoint: "all", integration: "all", posture: "all", region: "all", maturity: "all" }); }}>RESET</button>
             </div>
+            <div className="mxc-resultbar"><span><b>{filtered.length}</b> signals</span><div><button onClick={exportCsv}>CSV</button><button onClick={exportExcel}>EXCEL</button></div></div>
+            <div className="mxc-radar-layout"><div className="mxc-signal-list">{filtered.map(signal => <SignalCard signal={signal} key={signal.id} />)}</div><DetailPanel signal={selected} /></div>
           </div>}
 
-          {show("money") && competitors.length > 0 && <div className="maib-block">
-            <div className="maib-block-head"><em>02 · MONETIZATION PROOF</em><h3>경쟁사는 어디서 돈을 버는가</h3><span>기업별 최신 수익 근거</span></div>
-            <div className="maib-company-grid">
-              {competitors.map(item => {
-                const open = expanded === item.stableKey;
-                return <article className={`maib-company-card${open ? " is-open" : ""}`} key={item.stableKey}>
-                  <button className="maib-card-toggle" onClick={() => toggle(item.stableKey)} aria-expanded={open}>
-                    <span><em>{item.segment}</em><b>{item.name}</b></span>
-                    <i aria-hidden="true" />
-                  </button>
-                  <div className="maib-money-model"><em>수익모델</em><b>{item.businessModel}</b></div>
-                  <div className="maib-metrics">{(item.metrics || []).map((metric, index) => (
-                    <div key={`${metric.label}-${index}`}><em>{metric.label}</em><b>{metric.value}</b></div>
-                  ))}</div>
-                  <p>{item.proof}</p>
-                  {open && <div className="maib-card-detail">
-                    <span>최근 근거 · {item.publishedAt}</span>
-                    {(item.evidence || []).slice(1).map((evidence, index) => <a key={index} href={evidence.sourceUrl} target="_blank" rel="noopener">
-                      {evidence.businessModel} · {evidence.publishedAt} <Icon name="ext" size={9} />
-                    </a>)}
-                  </div>}
-                  <a className="maib-source" href={item.sourceUrl} target="_blank" rel="noopener">{item.sourceName} <Icon name="ext" size={10} /></a>
-                </article>;
-              })}
+          {view === "opportunities" && <div className="mxc-viewpad mxc-opportunity-view">
+            <div className="mxc-section-head"><span>MONTHLY CANDIDATES · SCORE DELTA</span><h3>근거 기반 기회 후보와 90일 실험</h3><p>신호 점수·기회 점수·근거 신뢰도·보유 자산 적합도를 분리하고 전월 대비 변화를 표시</p></div>
+            <div className="mxc-opportunity-summary">
+              <span><em>월간 후보</em><b>{generatedOpportunities.length}</b></span>
+              <span><em>공개 기준 통과</em><b>{generatedOpportunities.filter(item => item.status === "published").length}</b></span>
+              <span><em>검토 대기</em><b>{generatedOpportunities.filter(item => item.status === "review-pending").length}</b></span>
+              <span><em>근거 풀</em><b>{data.opportunityGeneration?.evidencePoolSize || 0}</b></span>
             </div>
+            <div className="mxc-generated-grid">{generatedOpportunities.map(item => <article key={item.id} className={item.status}>
+              <header><span>{item.status === "published" ? "PUBLISHED" : "REVIEW QUEUE"}</span><i className={`confidence-${item.evidenceConfidence}`}>{item.evidenceConfidence}</i></header>
+              <h4>{item.title}</h4>
+              <div className="mxc-score-pair"><span><em>SIGNAL</em><b>{item.signalScore}</b></span><span><em>OPPORTUNITY</em><b>{item.opportunityScore}</b></span><span><em>ASSET FIT</em><b>{item.ownAssetFit}%</b></span><span><em>Δ</em><b className={item.trend}>{item.scoreDelta == null ? "NEW" : `${item.scoreDelta > 0 ? "+" : ""}${item.scoreDelta}`}</b></span></div>
+              <p>{item.reason}</p>
+              <div className="mxc-asset-tags">{(item.ownAssets || []).map(asset => <i key={asset}>{asset}</i>)}</div>
+              <dl><div><dt>근거</dt><dd>{item.evidenceCount}건 · 독립 {item.independentSources}개</dd></div><div><dt>수익모델</dt><dd>{(item.revenueModels || []).join(" · ")}</dd></div><div><dt>액션</dt><dd>{item.actionOption} · {item.ownerOrg}</dd></div></dl>
+              <footer>{(item.evidence || []).slice(0, 2).map(row => row.url ? <a key={row.id} href={row.url} target="_blank" rel="noopener">{row.source || "원문"} <Icon name="ext" size={9} /></a> : <span key={row.id}>{row.source}</span>)}</footer>
+            </article>)}</div>
+            <div className="mxc-section-head roadmap"><span>TOP 3 · 90-DAY TEST</span><h3>다음 의사결정까지 검증할 실험</h3><p>실사용자 검증·가격 실험·기술·원가·개인정보 게이트를 한 번에 추적</p></div>
+            <div className="mxc-experiment-grid">{experimentShortlist.map((item, index) => <article key={item.id}><header><em>0{index + 1}</em><span>{item.actionOption}</span><b>{item.ownerOrg}</b></header><h4>{item.title}</h4><p>{item.experimentPlan?.hypothesis}</p><dl><div><dt>프로토타입</dt><dd>{item.experimentPlan?.prototype}</dd></div><div><dt>가격안</dt><dd>{(item.experimentPlan?.priceOptions || []).join(" · ")}</dd></div><div><dt>성공 기준</dt><dd>{(item.experimentPlan?.successMetrics || []).join(" · ")}</dd></div><div><dt>검토 게이트</dt><dd>{(item.experimentPlan?.reviewGates || []).join(" · ")}</dd></div></dl><footer>다음 결정 · {item.experimentPlan?.nextDecisionAt?.slice(0, 10)}</footer></article>)}</div>
           </div>}
 
-          {show("move") && opportunities.length > 0 && <div className="maib-block">
-            <div className="maib-block-head"><em>03 · WHERE TO PLAY / HOW TO WIN</em><h3>신사업 기회 포트폴리오</h3><span>시장·수익 근거 교차 검증</span></div>
-            <div className="maib-opportunity-grid">
-              {opportunities.map(item => {
-                const key = `opportunity:${item.id}`;
-                const open = expanded === key;
-                return <article className={`maib-opportunity-card${open ? " is-open" : ""}`} key={item.id}>
-                  <button className="maib-card-toggle" onClick={() => toggle(key)} aria-expanded={open}>
-                    <span><em>우선순위 {String(item.priority).padStart(2, "0")}</em><b>{item.title}</b></span>
-                    <i aria-hidden="true" />
-                  </button>
-                  <dl>
-                    <div><dt>WHERE</dt><dd>{item.whereToPlay}</dd></div>
-                    <div><dt>WIN</dt><dd>{item.valueCapture}</dd></div>
-                    <div><dt>WHY NOW</dt><dd>{item.rationale}</dd></div>
-                  </dl>
-                  <div className="maib-evidence-count">검증 출처 {item.evidenceCount}개 · 최신 {item.latestEvidenceAt}</div>
-                  {open && <div className="maib-card-detail">
-                    <b>검증 KPI</b>
-                    <div className="maib-kpis">{(item.nextMetrics || []).map(metric => <span key={metric}>{metric}</span>)}</div>
-                    {(item.sources || []).map((source, index) => <a key={`${source.sourceUrl}-${index}`} href={source.sourceUrl} target="_blank" rel="noopener">
-                      {source.sourceName} · {source.publishedAt} <Icon name="ext" size={9} />
-                    </a>)}
-                  </div>}
-                </article>;
-              })}
+          {view === "matrix" && <div className="mxc-viewpad">
+            <div className="mxc-section-head"><span>01 · COMPETITIVE DEVICE MATRIX</span><h3>AI 기능 × 단말 통합 비교</h3><p>기능 유무가 아니라 통합 깊이와 처리 위치를 비교</p></div>
+            <div className="mxc-table-wrap"><table className="mxc-table"><thead><tr><th>브랜드 / 제품</th><th>요약</th><th>통역</th><th>이미지 편집</th><th>에이전트</th><th>헬스</th><th>개인화</th><th>스캠·딥페이크</th><th>처리</th></tr></thead><tbody>{(data.deviceMatrix || []).map(row => <tr key={row.brand} className={row.isSelf ? "is-self" : ""} onClick={() => { if (!row.signalId) return; setSelectedId(row.signalId); setView("radar"); }}><th>{row.brand}<small>{row.product}</small></th><td>{row.summary}</td><td>{row.translation}</td><td>{row.imageEdit}</td><td>{row.agent}</td><td>{row.health}</td><td>{row.personalization}</td><td>{row.security || "—"}</td><td><b>{row.processing}</b></td></tr>)}</tbody></table></div>
+            <div className="mxc-section-head roadmap"><span>02 · FEATURE ADOPTION ROADMAP</span><h3>기능별 Now → Next → Horizon</h3></div>
+            <div className="mxc-roadmap">{(data.featureRoadmap || []).map(row => <article key={row.feature}><strong>{row.feature}<small>{row.owner}</small></strong><span><em>NOW</em>{row.now}</span><i /><span><em>NEXT</em>{row.next}</span><i /><span><em>HORIZON</em>{row.horizon}</span></article>)}</div>
+          </div>}
+
+          {view === "monetization" && <div className="mxc-viewpad">
+            <div className="mxc-section-head"><span>PRICE · ATTACH · RETENTION</span><h3>온디바이스 AI 수익화 설계</h3><p>확정 사실·외부 보도·MX 시나리오를 분리</p></div>
+            <div className="mxc-benchmark-grid">{(data.pricingBenchmarks || []).map(item => <article key={item.id}>
+              <header><span>{item.label}</span><i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></header>
+              <b>{item.value}</b><em>{item.period} · {item.change}</em>{(item.announcedAt || item.lastVerifiedAt) && <small className="mxc-time-meta">발표 {item.announcedAt || "—"} · 관측 {item.metricObservedAt || item.period} · 검증 {item.lastVerifiedAt || "자동 갱신 대상"}</small>}<p>{item.decisionUse}</p>{item.sourceUrls?.length ? <span className="mxc-source-links">{item.sourceUrls.map(source => <a key={source.url} href={source.url} target="_blank" rel="noopener">{source.label} <Icon name="ext" size={8} /></a>)}</span> : <a href={item.sourceUrl} target="_blank" rel="noopener">근거 원문 <Icon name="ext" size={9} /></a>}
+            </article>)}</div>
+            <div className="mxc-section-head roadmap"><span>BALANCED MARKET SIGNALS</span><h3>확산과 시장 위축을 한 화면에서 비교</h3><p>긍정 신호만으로 성장 서사를 만들지 않고 BOM·가격·교체 수요의 반대 신호를 병기</p></div>
+            <div className="mxc-market-signal-grid">{(data.marketSignals || []).map(item => <article key={item.id} className={item.polarity}>
+              <header><i>{item.polarity === "positive" ? "GROWTH" : "RISK"}</i><span>{item.period}</span></header><h4>{item.label}</h4><b>{item.value}</b><p>{item.fact}</p><strong>{item.mxImplication}</strong><a href={item.sourceUrl} target="_blank" rel="noopener">{tierLabel(item.evidenceTier)} <Icon name="ext" size={9} /></a>
+            </article>)}</div>
+            <div className="mxc-section-head roadmap"><span>APPEND-ONLY METRIC LEDGER</span><h3>latest-only를 보완하는 시계열</h3><p>발표일과 실제 관측 월을 분리하고 이전 값을 덮어쓰지 않음</p></div>
+            <div className="mxc-metric-history">{(data.metricHistory || []).map(series => { const max = Math.max(...(series.points || []).map(point => Number(point.value) || 0), 1); return <article key={series.id}><header><b>{series.label}</b><span>{series.unit}</span></header><p>{series.definition}</p><div>{(series.points || []).map(point => <span key={`${point.observedAt}-${point.value}`}><em>{point.observedAt}</em><i><u style={{ width: `${Math.max(4, Number(point.value) / max * 100)}%` }} /></i><b>{point.value}</b><a href={point.sourceUrl} target="_blank" rel="noopener">{tierLabel(point.evidenceTier)}</a></span>)}</div><strong>{series.derivedChange}</strong></article>; })}</div>
+            <div className="mxc-roi-layout">
+              <section className="mxc-roi-inputs"><div className="mxc-section-head"><span>EXECUTIVE SIMULATOR</span><h3>AI 기능 ROI</h3><p>{data.roiModel?.disclaimer}</p></div>
+                <div>{[
+                  ["eligibleDevicesM", "적용 단말", "M units", 0.1], ["aspUplift", "ASP uplift", "$ / device", 1], ["paidAttachRate", "유료 전환", "%", 1],
+                  ["monthlyPrice", "월 구독료", "$", 1], ["annualRetention", "연 유지율", "%", 1], ["cloudCostPerPaidUserMonth", "월 cloud 원가", "$", 0.1],
+                  ["commerceGmvPerUserYear", "연 agent GMV", "$ / user", 1], ["commissionRate", "커미션", "%", 0.5],
+                ].map(field => <label key={field[0]}><span>{field[1]}<small>{field[2]}</small></span><input type="number" step={field[3]} min="0" value={roiInputs[field[0]]} onChange={event => updateRoi(field[0], event.target.value)} /></label>)}</div>
+              </section>
+              <section className="mxc-roi-output"><span>ANNUAL ESTIMATE</span><b>{moneyM(roi.grossContributionM)}</b><em>gross contribution</em><dl>
+                <div><dt>ASP 매출</dt><dd>{moneyM(roi.aspRevenueM)}</dd></div><div><dt>구독 매출</dt><dd>{moneyM(roi.subscriptionRevenueM)}</dd></div><div><dt>커머스 커미션</dt><dd>{moneyM(roi.commerceRevenueM)}</dd></div><div><dt>Cloud 원가</dt><dd>-{moneyM(roi.cloudCostM)}</dd></div><div><dt>유료 사용자</dt><dd>{roi.paidUsersM.toFixed(2)}M</dd></div>
+              </dl><p>내부 실적이 아닌 의사결정 민감도 계산기입니다. 전환율·유지율 입력 전 반드시 실험 cohort를 연결하십시오.</p></section>
+            </div>
+            <div className="mxc-section-head roadmap"><span>7 PRICING MODELS</span><h3>자율성 × 기여도 × 전문성으로 과금 단위 선택</h3><a href={data.monetizationFramework?.sourceUrl} target="_blank" rel="noopener">Simon-Kucher 원문 <Icon name="ext" size={9} /></a></div>
+            <div className="mxc-pricing-models">{(data.monetizationModels || []).map(model => <article key={model.id}><header><b>{model.model}</b><i className={`tier-${model.evidenceTier}`}>{tierLabel(model.evidenceTier)}</i></header><em>{model.unit}</em><p><strong>적합</strong>{model.fit}</p><p><strong>장점</strong>{model.strength}</p><p><strong>리스크</strong>{model.risk}</p></article>)}</div>
+          </div>}
+
+          {view === "osux" && <div className="mxc-viewpad">
+            <div className="mxc-section-head"><span>AGENT · OS INTEGRATION</span><h3>런타임 × 앱 액션 × 모바일 이식성</h3><p>‘Assistant with Bard’ 대신 현재 Gemini·AICore 명칭 적용</p></div>
+            <div className="mxc-table-wrap"><table className="mxc-table mxc-os-table"><thead><tr><th>플랫폼</th><th>런타임</th><th>처리</th><th>앱 액션</th><th>성숙도</th><th>MX 액션</th><th>근거</th></tr></thead><tbody>{(data.osAgentStack || []).map(row => <tr key={row.platform}><th>{row.platform}</th><td>{row.runtime}</td><td>{row.execution}</td><td>{row.appAction}</td><td>{row.mobileReadiness}</td><td>{row.mxMove}</td><td><a href={row.sourceUrl} target="_blank" rel="noopener"><i className={`tier-${row.evidenceTier}`}>{tierLabel(row.evidenceTier)}</i></a></td></tr>)}</tbody></table></div>
+            <div className="mxc-section-head roadmap"><span>KILLER UX MATRIX</span><h3>채택률을 추정하지 않고 측정 가능성부터 표시</h3></div>
+            <div className="mxc-ux-grid">{(data.uxUseCases || []).map(item => <article key={item.id}><header><b>{item.useCase}</b><i>{item.mxOwner}</i></header><p>{item.benchmarks}</p><dl><div><dt>성공 KPI</dt><dd>{item.successKpi}</dd></div><div><dt>데이터</dt><dd>{item.metricStatus}</dd></div></dl></article>)}</div>
+          </div>}
+
+          {view === "verticals" && <div className="mxc-viewpad mxc-verticals-view">
+            <div className="mxc-section-head"><span>ON-DEVICE TRUST · B2B2C</span><h3>무료 안전 기능을 기업·금융 보안 매출로 확장</h3><p>Galaxy 실적과 Android 전체 규모를 분리하고, 상용 계약이 아닌 제안은 ESTIMATE로 표시</p></div>
+            <div className="mxc-security-proof-grid">{(data.securityBusinessCases?.productProof || []).map(item => <article key={item.id}>
+              <header><span>{item.label}</span><i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></header><b>{item.value}</b><p>{item.fact}</p><em>{item.scope}</em><div><a href={item.sourceUrl} target="_blank" rel="noopener">원문 <Icon name="ext" size={9} /></a>{item.corroboratingUrl && <a href={item.corroboratingUrl} target="_blank" rel="noopener">교차 근거 <Icon name="ext" size={9} /></a>}</div>
+            </article>)}</div>
+            <div className="mxc-security-decision">
+              <section><span>MX DECISION</span><h4>{data.securityBusinessCases?.decision}</h4><div><b className={actionTone(data.securityBusinessCases?.actionOption)}>{data.securityBusinessCases?.actionOption}</b><i>{data.securityBusinessCases?.ownerOrg}</i></div></section>
+              <section><span>OBSERVED → PROPOSAL</span><h4>{data.securityBusinessCases?.partnerPattern?.observed}</h4><p>{data.securityBusinessCases?.partnerPattern?.proposal}</p><em>{data.securityBusinessCases?.partnerPattern?.boundary}</em></section>
+            </div>
+            <div className="mxc-business-case-grid">{(data.securityBusinessCases?.offers || []).map(item => <article key={item.id}><header><span>OFFER</span><b className={actionTone(item.actionOption)}>{item.actionOption}</b></header><h4>{item.title}</h4><p>{item.buyer}</p><strong>{item.revenueModel}</strong><em>{item.gate}</em><footer>{item.ownerOrg}</footer></article>)}</div>
+            {data.securityBusinessCases?.labBenchmark && <div className="mxc-lab-benchmark">
+              <section><span>LIGHTWEIGHT EDGE LAB</span><h3>{data.securityBusinessCases.labBenchmark.model}</h3><p>{data.securityBusinessCases.labBenchmark.platform}</p><a href={data.securityBusinessCases.labBenchmark.sourceUrl} target="_blank" rel="noopener">single-paper source <Icon name="ext" size={9} /></a></section>
+              <div><span><em>SIZE</em><b>{data.securityBusinessCases.labBenchmark.modelSizeKb}KB</b></span><span><em>LATENCY</em><b>{data.securityBusinessCases.labBenchmark.latencyMs}ms</b></span><span><em>POWER</em><b>{data.securityBusinessCases.labBenchmark.powerMw}mW</b></span><span><em>ACCURACY</em><b>{data.securityBusinessCases.labBenchmark.accuracyPct}%</b></span><span><em>FPR</em><b>{data.securityBusinessCases.labBenchmark.falsePositivePct}%</b></span></div>
+              <aside><b>{data.securityBusinessCases.labBenchmark.replicationStatus}</b><p>{data.securityBusinessCases.labBenchmark.decisionUse}</p><em>{data.securityBusinessCases.labBenchmark.mobileSpotCheck}</em></aside>
+            </div>}
+            <div className="mxc-section-head roadmap"><span>COMPETITIVE TIMING</span><h3>Pixel 선행 → Galaxy 추격 → 차세대 딥페이크 선점</h3><p>Pixel 최초 베타는 2025년 11월이 아니라 2024년 11월이며, Galaxy 지원까지 약 15개월</p></div>
+            <div className="mxc-security-timeline">{(data.securityBusinessCases?.competitiveTiming || []).map((item, index) => <article key={`${item.date}-${item.player}`}><em>{String(index + 1).padStart(2, "0")}</em><span>{item.date}</span><b>{item.player}</b><p>{item.event}</p><a href={item.sourceUrl} target="_blank" rel="noopener">{tierLabel(item.evidenceTier)}</a></article>)}</div>
+            <div className="mxc-withheld-claims"><span>WITHHELD · EVIDENCE GAP</span>{(data.securityBusinessCases?.withheldClaims || []).map(item => <p key={item}>{item}</p>)}</div>
+
+            <div className="mxc-section-head roadmap"><span>HEALTH MONETIZATION LADDER</span><h3>Wellness 결제 → 임상 근거 → 보험자·고용주 계약</h3><p>45/25/20 mix는 원문 미확인으로 보류하고, 규제·reimbursement 경로만 게시</p></div>
+            <div className="mxc-health-ladder">{(data.healthMonetizationLadder || []).map(item => <article key={item.stage}><em>0{item.stage}</em><header><b>{item.title}</b><i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></header><h4>{item.revenue}</h4><p><strong>PROOF</strong>{item.proof}</p><p><strong>MX ASSET</strong>{item.mxAsset}</p><p><strong>GATE</strong>{item.gate}</p>{item.mixClaim && <small>{item.mixClaim}</small>}<a href={item.sourceUrl} target="_blank" rel="noopener">근거 <Icon name="ext" size={9} /></a></article>)}</div>
+
+            <div className="mxc-section-head roadmap"><span>AI COMPANION ECONOMICS</span><h3>Attention은 크지만 매출 포착은 집중</h3><p>분기 합계·전망·실측·시장 정의를 구분하고 직접 비교 불가 항목은 자동 차단</p></div>
+            <div className="mxc-companion-grid">{(data.companionEconomics?.headlineMetrics || []).map(item => <article key={item.id}><header><span>{item.period}</span><i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></header><h4>{item.label}</h4><b>{item.display}</b><p>{item.geography} · {item.channel}</p><em>{item.population}</em><a href={item.sourceUrl} target="_blank" rel="noopener">source <Icon name="ext" size={9} /></a></article>)}</div>
+            <div className="mxc-comparison-grid">{(data.companionEconomics?.comparisons || []).map(item => {
+              const left = companionMetrics.get(item.leftMetricId); const right = companionMetrics.get(item.rightMetricId);
+              return <article key={item.id} className={item.status === "comparable" ? "comparable" : "blocked"}><header><span>COMPARISON GUARD</span><i>{item.status}</i></header><h4>{item.label}</h4>{item.status === "comparable" ? <React.Fragment><b>{item.computedRatio}x</b><p>{left?.display} ÷ {right?.display}</p><em>{left?.geography} · {left?.period} · {left?.channel}</em></React.Fragment> : <React.Fragment><b>{item.headlineSpreadRatio ? `${item.headlineSpreadRatio}x headline spread` : "직접 비교 금지"}</b><p>{item.reason}</p>{item.left && <em>{item.left} ↔ {item.right}</em>}</React.Fragment>}<footer>{item.status === "comparable" ? "동일 basis-key" : "정의·기간·범위 불일치"}</footer></article>;
+            })}</div>
+            <div className="mxc-companion-shortlist">{(data.companionEconomics?.partnerShortlist || []).map(item => <article key={item.name}><header><b>{item.name}</b><i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></header><p>{item.role}</p><strong>{item.why}</strong><em>{item.status}</em><a href={item.sourceUrl} target="_blank" rel="noopener">screening evidence <Icon name="ext" size={9} /></a></article>)}</div>
+            <div className="mxc-companion-thesis">{(data.companionEconomics?.mxThesis || []).map(item => <article key={item.title}><header><span>MX THESIS</span><b className={actionTone(item.actionOption)}>{item.actionOption}</b></header><h4>{item.title}</h4><p>{item.decision}</p><footer>{item.ownerOrg}</footer></article>)}</div>
+          </div>}
+
+          {view === "partners" && <div className="mxc-viewpad">
+            <div className="mxc-section-head"><span>PARTNER SCORE · LICENSE · M&A</span><h3>기술 성숙도 × 온디바이스 적합성 × 라이선스 유연성</h3><p>공식 수치가 없으면 재무 KPI를 비공개로 유지</p></div>
+            <div className="mxc-opportunity-links">{(data.opportunityPartnerLinks || []).map(opportunity => <article key={opportunity.id}><header><span>OPPORTUNITY</span><b>{opportunity.title}</b></header><p>{(opportunity.ownAssets || []).join(" · ")}</p><div>{(opportunity.partnerMatches || []).map(match => <span key={match.name}><b>{match.name}</b><em>{match.vertical} · radar {match.radarScore}</em><i>{(match.matchedTerms || []).join(" / ")}</i></span>)}</div><footer>{opportunity.matchStatus} · radar.json 자동 매칭</footer></article>)}</div>
+            <div className="mxc-partner-grid">{partners.slice().sort((a, b) => b.scorecard.total - a.scorecard.total).map(signal => <article key={signal.id}>
+              <header><span><em>{entityLabel[signal.entityType]}</em><h4>{signal.name}</h4><p>{signal.product}</p></span><b>{signal.scorecard.total}<small>/100</small></b></header>
+              <div>{[["기술 성숙도", "technologyMaturity"], ["온디바이스 적합성", "onDeviceFit"], ["라이선스 유연성", "licenseFlexibility"], ["MX 시너지", "mxSynergy"]].map(item => <span key={item[1]}><em>{item[0]}</em><i><u style={{ width: `${signal.scorecard[item[1]] * 20}%` }} /></i><b>{signal.scorecard[item[1]]}/5</b></span>)}</div>
+              <footer><b className={actionTone(signal.actionOption)}>{signal.actionOption}</b><span>{signal.ownerOrg}</span><button onClick={() => { setSelectedId(signal.id); setView("radar"); }}>OPEN →</button></footer>
+            </article>)}</div>
+            <div className="mxc-section-head roadmap"><span>PARTNERSHIP NETWORK</span><h3>제조사 · 모델 · 통신사 계약 관계</h3><p>계약 유형·기간·지역·독점 공개 여부</p></div>
+            <div className="mxc-network-layout">
+              <svg className="mxc-network" viewBox="0 0 900 420" role="img" aria-label="AI 파트너십 네트워크 그래프">
+                {(data.partnershipNetwork?.edges || []).map((edge, index) => { const from = networkPositions[edge.from]; const to = networkPositions[edge.to]; return from && to ? <g key={`${edge.from}-${edge.to}`}><line x1={from[0]} y1={from[1]} x2={to[0]} y2={to[1]} /><text x={(from[0] + to[0]) / 2} y={(from[1] + to[1]) / 2 - 6}>{edge.contractType}</text></g> : null; })}
+                {(data.partnershipNetwork?.nodes || []).map(node => { const position = networkPositions[node.id]; return position ? <g className={`mxc-node ${node.type}`} key={node.id} transform={`translate(${position[0]},${position[1]})`}><circle r={node.id === "samsung" ? 37 : 29} /><text y="4">{node.label}</text><text className="type" y="48">{node.type}</text></g> : null; })}
+              </svg>
+              <div className="mxc-edge-list">{(data.partnershipNetwork?.edges || []).map(edge => <article key={`${edge.from}-${edge.to}`}><header><b>{(data.partnershipNetwork?.nodes || []).find(node => node.id === edge.from)?.label} ↔ {(data.partnershipNetwork?.nodes || []).find(node => node.id === edge.to)?.label}</b><i className={`tier-${edge.evidenceTier}`}>{tierLabel(edge.evidenceTier)}</i></header><p>{edge.contractType} · {edge.region}</p><span>{edge.period} · 독점: {edge.exclusive}</span><a href={edge.sourceUrl} target="_blank" rel="noopener">원문 <Icon name="ext" size={9} /></a></article>)}</div>
+            </div>
+            <div className="mxc-proposed-edges">{(data.partnershipNetwork?.proposedEdges || []).map(edge => <article key={`${edge.from}-${edge.to}-${edge.with}`}><header><span>MX PROPOSAL · CONTRACT NOT DISCLOSED</span><i>{tierLabel(edge.evidenceTier)}</i></header><h4>{(data.partnershipNetwork?.nodes || []).find(node => node.id === edge.from)?.label} ↔ {(data.partnershipNetwork?.nodes || []).find(node => node.id === edge.to)?.label} + {(data.partnershipNetwork?.nodes || []).find(node => node.id === edge.with)?.label}</h4><p>{edge.contractType}</p><footer>{edge.region} · {edge.ownerOrg}</footer></article>)}</div>
+            <div className="mxc-deal-watch"><strong>Series C+ · M&A WATCH</strong><span>{data.dealWatch?.status}</span>{(data.dealWatch?.records || []).map(item => <a key={item.company} href={item.sourceUrl} target="_blank" rel="noopener"><b>{item.company}</b>{item.eventType} · {item.amount} · {item.investorsOrAcquirer}<i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></a>)}</div>
+          </div>}
+
+          {view === "formfactor" && <div className="mxc-viewpad">
+            <div className="mxc-section-head"><span>NEXT DEVICE SURFACE</span><h3>웨어러블·폼팩터 × 모바일 역할</h3><p>전용 AI 하드웨어 실패를 Galaxy companion 원칙으로 전환</p></div>
+            <div className="mxc-form-grid">{(data.formFactors || []).map(item => <article key={item.id}><header><span>{item.label}</span><i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></header><b>{item.examples}</b><em>{item.maturity}</em><p>{item.mobileRole}</p>{item.fact && <p className="mxc-form-fact"><b>FACT</b>{item.fact}</p>}{item.businessOption && <p className="mxc-form-option"><b>{item.actionOption || "OPTION"}</b>{item.businessOption}</p>}{item.boundary && <small>{item.boundary}</small>}{item.brandStrategy && <small>{item.brandStrategy}</small>}<strong>{item.mxQuestion}</strong>{item.ownerOrg && <footer>{item.ownerOrg}</footer>}{item.sourceUrl && <a href={item.sourceUrl} target="_blank" rel="noopener">official source <Icon name="ext" size={9} /></a>}</article>)}</div>
+            <div className="mxc-failure-grid">{(data.failureCases || []).map(item => <article key={item.name}><header><b>{item.name}</b><i className={`tier-${item.evidenceTier}`}>{tierLabel(item.evidenceTier)}</i></header><em>{item.outcome}</em><p>{item.lesson}</p><a href={item.sourceUrl} target="_blank" rel="noopener">case source <Icon name="ext" size={9} /></a></article>)}</div>
+            <div className="mxc-section-head roadmap"><span>ON-DEVICE HARDWARE · SLM</span><h3>TOPS가 아닌 지속 성능·메모리·열 예산</h3></div>
+            <div className="mxc-slm-track">{(data.hardwareSlmTrack || []).map(row => <article key={row.layer}><b>{row.layer}</b><p>{row.watch}</p><span>{row.sources}</span><i>{row.ownerOrg}</i></article>)}</div>
+            <div className="mxc-connector-state"><span>CONSUMER PAIN POINT MINING</span><b>{data.consumerPainPointTrack?.status}</b><p>{data.consumerPainPointTrack?.reason}</p><div>{(data.consumerPainPointTrack?.guardrails || []).map(item => <i key={item}>{item}</i>)}</div></div>
+          </div>}
+
+          {view === "compliance" && <div className="mxc-viewpad">
+            <div className="mxc-section-head"><span>GLOBAL RELEASE GATE</span><h3>기능 × 지역 규제 리스크</h3><p>법률 자문 대체가 아닌 제품 출시 사전 분류 뷰</p></div>
+            <div className="mxc-reg-grid">{(data.regulations || []).map(rule => <article key={rule.id}>
+              <header><span>{rule.region}</span><b className={rule.risk.toLowerCase()}>{rule.risk}</b></header><h4>{rule.title}</h4><div><em>{rule.status}</em><span>effective {rule.effectiveAt}</span></div>
+              <p>{rule.mxControl}</p><section>{rule.affectedFeatures.map(feature => <i key={feature}>{feature}</i>)}</section><footer><b>{rule.ownerOrg}</b><a href={rule.sourceUrl} target="_blank" rel="noopener">원문 <Icon name="ext" size={10} /></a></footer>
+            </article>)}</div>
+          </div>}
+
+          {view === "trust" && <div className="mxc-viewpad mxc-trust-view">
+            <div className="mxc-decision-tree"><div className="mxc-section-head"><span>BUILD VS BUY</span><h3>4단계 의사결정 트리</h3></div>{(data.decisionTree || []).map((node, index) => <article key={node.question}><em>{String(index + 1).padStart(2, "0")}</em><p>{node.question}</p><span>YES</span><b className={actionTone(node.yes)}>{node.yes}</b>{index < data.decisionTree.length - 1 && <i>NO ↓</i>}</article>)}</div>
+            <div className="mxc-trust-panel"><div className="mxc-section-head"><span>DATA TRUST CENTER</span><h3>수집·검증 운영 상태</h3></div>
+              <div className="mxc-trust-metrics"><span><em>지역 매체</em><b>{data.sourceCoverage?.regionalPublishers}</b></span><span><em>직접 official</em><b>{(data.sourceCoverage?.directOfficialFeeds || 0) + (data.sourceCoverage?.officialSitemaps || 0)}</b></span><span><em>공급망 소스</em><b>{data.sourceCoverage?.supplyChainSources}</b></span><span><em>직접 검증</em><b>{Math.round((data.marketReverificationQueue?.currentDirectEvidenceRate || data.dataQualityTargets?.directMarketEvidence?.currentRate || 0) * 100)}%</b></span></div>
+              <ul><li><b>숫자 근거</b><span>원문 span 리터럴 대사 · 누락 시 빌드 실패</span><i className="ok">PASS</i></li><li><b>날짜 스키마</b><span>발표일 · 관측시점 · 검증일 분리</span><i className="ok">V1</i></li><li><b>가격 변경 감지</b><span>이전 검증 snapshot diff · 변경값 검증 대기 {data.priceChangeFlags?.summary?.pendingVerification || 0}건</span><i className={data.priceChangeFlags?.summary?.pendingVerification ? "warn" : "ok"}>{data.priceChangeFlags?.summary?.pendingVerification ? "REVIEW" : "PASS"}</i></li><li><b>정량 DB 재검증 큐</b><span>{data.marketReverificationQueue?.total || 0}건 · 숫자·가격·미해결 URL 우선</span><i className={(data.marketReverificationQueue?.queue || []).some(row => row.priority === "P0") ? "warn" : "ok"}>AUTO</i></li><li><b>빈 스트림 official 폴백</b><span>복구 {data.sourceCoverage?.recoveredStreams || 0} · 지속 장애 {data.sourceCoverage?.persistentEmptyStreams || 0} · API connector {data.sourceCoverage?.officialApiConnectors || 0}</span><i className={data.sourceCoverage?.persistentEmptyStreams ? "warn" : "ok"}>{data.sourceCoverage?.persistentEmptyStreams ? "ISSUE" : "WATCH"}</i></li><li><b>자사 benchmark track</b><span>일반 피드 제외 유지 · MX Command Center에서 One UI·Knox·Galaxy Store 자산만 근거 기반 매핑</span><i className={data.sourceCoverage?.selfBenchmarkTrack ? "ok" : "warn"}>{data.sourceCoverage?.selfBenchmarkTrack ? "ACTIVE" : "OFF"}</i></li><li><b>교차 검증</b><span>독립 출처 2개 이상만 confidence=high</span><i className="ok">PASS</i></li><li><b>P1 사람 리뷰</b><span>approved 없이는 published 차단</span><i className="ok">ENFORCED</i></li><li><b>유료 대사</b><span>PitchBook / Crunchbase connector</span><i className="warn">NOT CONNECTED</i></li><li><b>저장소 전환</b><span>startups.json {data.database?.startupFileMb}MB · {data.database?.targetStorage}</span><i className={data.database?.migrationRecommended ? "warn" : "ok"}>{data.database?.migrationRecommended ? "RECOMMENDED" : "OK"}</i></li></ul>
             </div>
           </div>}
+        </React.Fragment>}
+      </AnimCtx.Provider>
+    </section>
+  );
+}
+
+function MXThemeBoard({ sectionRef, dataVersion, kind }) {
+  const inView = useInView(sectionRef);
+  const [data, setData] = React.useState(null);
+  const [loaded, setLoaded] = React.useState(false);
+  React.useEffect(() => {
+    if (loaded || !dataVersion) return;
+    setLoaded(true);
+    fetch(`mobile-ai-business-view.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
+      .then(response => response.ok ? response.json() : null)
+      .then(payload => payload?.schemaVersion >= 4 && setData(payload))
+      .catch(() => {});
+  }, [loaded, dataVersion]);
+  const tier = value => value === "official" ? "OFFICIAL" : value === "reported" ? "REPORTED" : "ESTIMATE";
+  const meta = {
+    "agentic-commerce": ["에이전틱 커머스", "AI Agent Commerce", "쇼핑·결제·커미션을 단말 반복매출로 연결"],
+    "telco-bundles": ["통신사 결합 서비스", "Carrier AI Bundles", "요금제 perk·고객접점·지역 확산을 계약 단위로 비교"],
+    "wearables-form-factors": ["웨어러블·폼팩터", "Wearables & Form Factors", "폰 보완·대체 접점과 전용 AI 하드웨어의 실패 조건"],
+  }[kind] || [kind, "MX Theme", ""];
+  const nodes = new Map((data?.partnershipNetwork?.nodes || []).map(node => [node.id, node]));
+  const carrierEdges = (data?.partnershipNetwork?.edges || []).filter(edge => nodes.get(edge.from)?.type === "carrier" || nodes.get(edge.to)?.type === "carrier");
+  const commerceModels = (data?.monetizationModels || []).filter(item => ["task", "outcome", "bundle", "commission"].includes(item.id));
+  return (
+    <section className="board mxt" ref={sectionRef} data-screen-label={meta[1]}>
+      <AnimCtx.Provider value={inView}>
+        <div className="mxt-head"><div><span>MX PRIORITY THEME</span><h2>{meta[0]} <em>{meta[1]}</em></h2><p>{meta[2]}</p></div><b>{data ? "LIVE DATA" : "LOADING"}</b></div>
+        {!data ? <SourcePipeline kind="market" /> : <React.Fragment>
+          {kind === "agentic-commerce" && <div className="mxt-commerce">
+            <div className="mxt-callout"><span>PRICING DECISION</span><b>자율성 × 기여도 × 전문성</b><p>기여가 감사 가능할 때만 outcome·commission 과금으로 이동하고, 초기에는 구독+크레딧으로 원가 변동을 통제합니다.</p><a href={data.monetizationFramework?.sourceUrl} target="_blank" rel="noopener">Simon-Kucher <Icon name="ext" size={9} /></a></div>
+            <div className="mxt-card-grid">{commerceModels.map(item => <article key={item.id}><header><b>{item.model}</b><i className={`tier-${item.evidenceTier}`}>{tier(item.evidenceTier)}</i></header><em>{item.unit}</em><p>{item.fit}</p><span>{item.risk}</span></article>)}</div>
+          </div>}
+          {kind === "telco-bundles" && <div className="mxt-edge-grid">{carrierEdges.map(edge => <article key={`${edge.from}-${edge.to}`}><header><span>{nodes.get(edge.from)?.label}</span><i>↔</i><span>{nodes.get(edge.to)?.label}</span><b className={`tier-${edge.evidenceTier}`}>{tier(edge.evidenceTier)}</b></header><h3>{edge.contractType}</h3><p>{edge.region} · {edge.period}</p><em>독점: {edge.exclusive}</em><a href={edge.sourceUrl} target="_blank" rel="noopener">계약 근거 <Icon name="ext" size={9} /></a></article>)}</div>}
+          {kind === "wearables-form-factors" && <React.Fragment><div className="mxt-card-grid form">{(data.formFactors || []).map(item => <article key={item.id}><header><b>{item.label}</b><i className={`tier-${item.evidenceTier}`}>{tier(item.evidenceTier)}</i></header><em>{item.examples}</em><p>{item.mobileRole}</p>{item.fact && <strong>{item.fact}</strong>}{item.businessOption && <small><b>{item.actionOption || "OPTION"}</b> · {item.businessOption}</small>}<span>{item.mxQuestion}</span>{item.sourceUrl && <a href={item.sourceUrl} target="_blank" rel="noopener">official source <Icon name="ext" size={9} /></a>}</article>)}</div><div className="mxt-failure">{(data.failureCases || []).map(item => <article key={item.name}><b>{item.name}</b><em>{item.outcome}</em><p>{item.lesson}</p><a href={item.sourceUrl} target="_blank" rel="noopener">case source <Icon name="ext" size={9} /></a></article>)}</div></React.Fragment>}
         </React.Fragment>}
       </AnimCtx.Provider>
     </section>
@@ -5494,4 +5820,4 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   );
 }
 
-Object.assign(window, { BoldSummary, MobileAIBusinessBoard, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+Object.assign(window, { BoldSummary, MobileAIBusinessBoard, MXThemeBoard, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });

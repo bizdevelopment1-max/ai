@@ -1,0 +1,159 @@
+{
+  "version": 2,
+  "updatedAt": "2026-08-15",
+  "purpose": "Direct first-party discovery, API readiness and deterministic fallbacks for streams that are repeatedly empty in Google News or publisher RSS.",
+  "healthPolicy": {
+    "watchdogAfterConsecutiveEmptyRuns": 12,
+    "watchdogAfterEmptyDays": 3,
+    "fallbackOrder": ["official-feed", "official-sitemap", "official-api", "google-news"],
+    "credentialGatedIsFailure": false
+  },
+  "officialFeeds": [
+    {
+      "source": "Samsung Global Newsroom",
+      "company": "Samsung",
+      "url": "https://news.samsung.com/global/feed/rss",
+      "category": "device-and-form-factor",
+      "matchPattern": "AI|Galaxy|fold|satellite|connectivity|wearable",
+      "sourceTier": "official"
+    },
+    {
+      "source": "Google Blog",
+      "company": "Google DeepMind",
+      "url": "https://blog.google/rss/",
+      "category": "device-and-platform",
+      "matchPattern": "AI|Gemini|Android|Pixel|AICore|commerce|subscription",
+      "sourceTier": "official"
+    },
+    {
+      "source": "Stripe Blog",
+      "company": "Stripe",
+      "url": "https://stripe.com/blog/feed.rss",
+      "category": "agentic-commerce",
+      "matchPattern": "AI|agent|agentic|commerce|payment|checkout|token",
+      "sourceTier": "official"
+    },
+    {
+      "source": "GSMA Newsroom",
+      "company": "GSMA",
+      "url": "https://www.gsma.com/newsroom/feed/",
+      "category": "carrier-and-standards",
+      "matchPattern": "AI|satellite|direct.to.device|mobile|network|MWC",
+      "sourceTier": "official"
+    },
+    {
+      "source": "Hugging Face Blog",
+      "company": "Hugging Face",
+      "url": "https://huggingface.co/blog/feed.xml",
+      "category": "model-and-open-source",
+      "matchPattern": ".",
+      "sourceTier": "official"
+    }
+  ],
+  "sitemaps": [
+    { "source": "OpenAI", "company": "OpenAI", "url": "https://openai.com/sitemap.xml", "pathPattern": "/index/|/news/", "category": "model-provider", "status": "active-probe" },
+    { "source": "Anthropic", "company": "Anthropic", "url": "https://www.anthropic.com/sitemap.xml", "pathPattern": "/news/|/research/", "category": "model-provider", "status": "active-probe" },
+    { "source": "Sierra AI", "company": "Sierra AI", "url": "https://sierra.ai/sitemap.xml", "pathPattern": "/blog/|/news/", "category": "company", "status": "active-probe" },
+    { "source": "Lovable", "company": "Lovable", "url": "https://lovable.dev/sitemap.xml", "pathPattern": "/blog/|/news/", "category": "company", "status": "active-probe" },
+    { "source": "Runway", "company": "Runway", "url": "https://runwayml.com/sitemap.xml", "pathPattern": "/news/|/research/", "category": "company", "status": "active-probe" },
+    { "source": "Abridge", "company": "Abridge", "url": "https://www.abridge.com/sitemap.xml", "pathPattern": "/news/|/blog/|/press/", "category": "company", "status": "active-probe" },
+    { "source": "Writer", "company": "Writer", "url": "https://writer.com/sitemap_index.xml", "pathPattern": "/blog/|/news/", "category": "company", "status": "active-probe" },
+    { "source": "Stability AI", "company": "Stability AI", "url": "https://stability.ai/sitemap.xml", "pathPattern": "/news/|/research/", "category": "company", "status": "active-probe" },
+
+    { "source": "HONOR Newsroom", "company": "HONOR", "url": "https://www.honor.com/global/sitemap.xml", "pathPattern": "/news/|/events/|/media/", "category": "competitor-device", "status": "active" },
+    { "source": "OPPO Newsroom", "company": "OPPO", "url": "https://www.oppo.com/sitemap.xml", "pathPattern": "/newsroom/|/events/", "category": "competitor-device", "status": "active" },
+    { "source": "vivo Newsroom", "company": "vivo", "url": "https://www.vivo.com/sitemap.xml", "pathPattern": "/about-vivo/news|/news/", "category": "competitor-device", "status": "disabled-transient-404" },
+    { "source": "Verizon Newsroom", "company": "Verizon", "url": "https://www.verizon.com/about/sitemap.xml", "pathPattern": "/news/|/about/news/", "category": "carrier-bundle", "status": "active" },
+    { "source": "AT&T Newsroom", "company": "AT&T", "url": "https://about.att.com/sitemap.xml", "pathPattern": "/story/|/newsroom/", "category": "carrier-bundle", "status": "active" },
+    { "source": "SKT Newsroom", "company": "SK Telecom", "url": "https://news.sktelecom.com/sitemap.xml", "pathPattern": "/[0-9]+|/press/|/news/", "category": "carrier-bundle", "status": "active" },
+    { "source": "KT Corporate", "company": "KT", "url": "https://corp.kt.com/sitemap.xml", "pathPattern": "/html/promote/|/news/", "category": "carrier-bundle", "status": "active" },
+
+    { "source": "Visa Newsroom", "company": "Visa", "url": "https://usa.visa.com/sitemap.xml", "pathPattern": "/about-visa/newsroom/|/solutions/", "category": "agentic-commerce", "status": "active" },
+    { "source": "Mastercard Newsroom", "company": "Mastercard", "url": "https://www.mastercard.com/sitemap.xml", "pathPattern": "/news/|/stories/", "category": "agentic-commerce", "status": "active" },
+    { "source": "Counterpoint Research", "company": "Counterpoint Research", "url": "https://www.counterpointresearch.com/sitemap.xml", "pathPattern": "/insights/|/press-release/", "category": "research-release", "status": "active" }
+  ],
+  "apiConnectors": [
+    {
+      "id": "sec-edgar-current-filings",
+      "source": "SEC EDGAR",
+      "sourceTier": "official",
+      "category": "filing",
+      "endpoint": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&output=atom&type=8-k",
+      "format": "atom",
+      "requiredEnv": ["SEC_USER_AGENT"],
+      "schedule": "hourly"
+    },
+    {
+      "id": "uspto-open-data",
+      "source": "USPTO Open Data Portal",
+      "sourceTier": "official",
+      "category": "patent",
+      "endpoint": "https://api.uspto.gov/api/v1/patent/applications/search",
+      "format": "json",
+      "requiredEnv": ["USPTO_API_KEY"],
+      "schedule": "daily"
+    },
+    {
+      "id": "wipo-patentscope",
+      "source": "WIPO PATENTSCOPE",
+      "sourceTier": "official",
+      "category": "patent",
+      "endpoint": "https://patentscope.wipo.int/search/en/search.jsf",
+      "format": "licensed-query",
+      "requiredEnv": ["WIPO_PATENTSCOPE_USER", "WIPO_PATENTSCOPE_PASSWORD"],
+      "schedule": "daily"
+    },
+    {
+      "id": "sensor-tower-store-intelligence",
+      "source": "Sensor Tower API",
+      "sourceTier": "official",
+      "category": "app-economics",
+      "endpoint": "https://api.sensortower.com/v1/",
+      "format": "json",
+      "requiredEnv": ["SENSOR_TOWER_TOKEN"],
+      "schedule": "daily"
+    },
+    {
+      "id": "appfigures-app-intelligence",
+      "source": "Appfigures API",
+      "sourceTier": "official",
+      "category": "app-economics",
+      "endpoint": "https://api.appfigures.com/v2/",
+      "format": "json",
+      "requiredEnv": ["APPFIGURES_CLIENT_KEY", "APPFIGURES_ACCESS_TOKEN"],
+      "schedule": "daily"
+    }
+  ],
+  "coverageGaps": [
+    {
+      "entity": "Xiaomi",
+      "preferred": "official-newsroom",
+      "currentFallback": "official-domain Google News discovery",
+      "reason": "The probed global sitemap resolves to an HTML 404 page; do not report it as a healthy direct feed."
+    },
+    {
+      "entity": "T-Mobile",
+      "preferred": "official-newsroom",
+      "currentFallback": "official-domain Google News discovery",
+      "reason": "The probed newsroom RSS URL returns HTTP 404."
+    },
+    {
+      "entity": "vivo",
+      "preferred": "official-newsroom",
+      "currentFallback": "official-domain Google News discovery",
+      "reason": "The official sitemap intermittently changed from valid XML to HTTP 404 during repeated probes; direct polling is disabled until stable."
+    },
+    {
+      "entity": "Coinbase",
+      "preferred": "official-blog",
+      "currentFallback": "official-domain Google News discovery",
+      "reason": "The probed RSS endpoint returns an access challenge."
+    },
+    {
+      "entity": "Omdia/Canalys",
+      "preferred": "press-release feed",
+      "currentFallback": "allowlisted publisher discovery",
+      "reason": "The current press-release endpoint is access-controlled; a licensed connector is required."
+    }
+  ]
+}

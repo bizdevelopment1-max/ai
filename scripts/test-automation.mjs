@@ -42,6 +42,7 @@ const required = [
   "scripts/verify-pipeline.mjs",
   "scripts/build-public-data.mjs",
   "scripts/build-mobile-ai-business-db.mjs",
+  "scripts/public-copy.mjs",
   "scripts/suppression-registry.mjs",
   "scripts/korean-copy.mjs",
   "scripts/audit-agent.mjs",
@@ -63,12 +64,15 @@ const required = [
   "strategic-ventures.json",
   "business-model-forecasts.json",
   "monetization.json",
+  "monetization-review-queue.json",
   "quality.json",
   "history.json",
   "llm-health.json",
   "deleted.json",
   "collection-health.json",
   "config/news-policy.json",
+  "config/opportunity-generation.json",
+  "config/quality-thresholds.json",
   "config/global-source-policy.json",
   "config/company-source-policy.json",
   "_config.yml",
@@ -192,7 +196,7 @@ try {
     && !components.includes("QA_CATS.map")
     && !components.includes('title="질문 선택"')
     && !styles.includes(".chatbot-drop");
-  const commands = ["/search", "/company", "/market", "/ask", "/edit", "/sync", "/open", "/connect", "/doctor", "/export", "/clear"];
+  const commands = ["/help", "/guide", "/examples", "/search", "/company", "/market", "/ask", "/edit", "/sync", "/open", "/connect", "/doctor", "/repo", "/issues", "/prs", "/actions", "/export", "/clear"];
   const cliReady = components.includes('className="site-cli-terminal"')
     && components.includes("buildSiteCliIndex")
     && components.includes("searchSiteCli")
@@ -201,10 +205,18 @@ try {
     && components.includes("pollGithubRequest")
     && components.includes("GITHUB ISSUE")
     && components.includes("CODEX CLOUD")
+    && components.includes("SITE_CODEX_GUIDE_STEPS")
+    && components.includes("SITE_CODEX_EXAMPLES")
+    && components.includes("completeSiteCliCommand")
+    && components.includes("Submit new issue")
+    && components.includes('className="site-cli-shortcuts"')
     && components.includes("ReactDOM.createPortal")
     && commands.every(command => components.includes(`\"${command}`))
     && styles.includes(".site-cli-overlay")
     && styles.includes(".site-cli-command-grid")
+    && styles.includes(".site-cli-steps")
+    && styles.includes(".site-cli-examples")
+    && styles.includes(".site-cli-shortcuts")
     && styles.includes(".site-cli-triangle")
     && styles.includes(".site-cli-github-links");
   const proCodexCloud = workflow.includes("name: Site Codex Pro Cloud Bridge")
@@ -246,6 +258,30 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  site CLI workspace: ${error.message}`);
+}
+
+try {
+  const [components, styles] = await Promise.all([
+    readFile("components.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+  ]);
+  const howLinkReady = components.includes('href="https://bizdevelopment1-max.github.io/ai/How/"')
+    && components.includes('className="tb-how-link"')
+    && components.includes('title="How 작성 방법 열기"')
+    && components.includes('className="tb-resource-actions"')
+    && components.includes('className="tb-cli-guide"')
+    && components.includes("siteCliGuidePayload")
+    && components.includes("guideSignal={cliGuideSignal}")
+    && components.includes('target="_blank"')
+    && components.includes('rel="noreferrer"')
+    && styles.includes(".tb-title-meta")
+    && styles.includes(".tb-resource-actions")
+    && styles.includes(".tb-how-link:hover, .tb-how-link:focus-visible, .tb-cli-guide:hover, .tb-cli-guide:focus-visible");
+  if (!howLinkReady) throw new Error("top bar must expose the published How guide as an accessible external link");
+  console.log("  OK  top bar How 작성 방법 link");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  top bar How link: ${error.message}`);
 }
 
 try {
@@ -417,21 +453,32 @@ try {
   ]);
   const navIds = [...components.matchAll(/\{\s*id:\s*"([^"]+)".*?\}/g)].map(match => match[1]);
   const sectionIds = [...app.matchAll(/(?:<LazySection\s+id=|data-section=)"([^"]+)"/g)].map(match => match[1]);
+  const expectedOrder = ["overview", "strategy", "opportunity", "themes", "valuechain", "newbiz", "signals", "sanalysis", "evidence", "validation"];
   const missingOnRight = navIds.filter(id => !sectionIds.includes(id));
   const missingOnLeft = sectionIds.filter(id => !navIds.includes(id));
+  const sameMeceOrder = JSON.stringify(navIds) === JSON.stringify(expectedOrder)
+    && JSON.stringify(sectionIds) === JSON.stringify(expectedOrder);
+  const overviewHeaderRemoved = !app.includes('className="ov-head"')
+    && !app.includes('className="ov-title"');
   const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
   const sidebarBrandSource = components.match(/<span className="sb-logo-txt">[\s\S]*?<\/span>\s*<\/span>/)?.[0] || "";
   const sidebarCopyClean = !/(?:mobile|휴대폰)/i.test(`${navSource}\n${sidebarBrandSource}`)
     && navSource.includes('ko: "AI 신사업 브리핑"')
-    && navSource.includes('ko: "AI 신사업 DB"')
+    && navSource.includes('ko: "신사업 기회 DB"')
+    && !navSource.includes('id: "audit"')
+    && !navSource.includes("데이터 신뢰센터")
     && sidebarBrandSource.includes("<b>AI</b>");
   if (missingOnRight.length || missingOnLeft.length
+    || !sameMeceOrder
+    || !overviewHeaderRemoved
+    || app.includes("function AuditPanel")
+    || app.includes('id="audit"')
     || !/for \(const id of NAV_SECTION_IDS\)/.test(app)
     || /if \(REDUCED\) \{ setInView\(true\)/.test(anim)
     || !sidebarCopyClean) {
     throw new Error(`navigation mismatch left-only=${missingOnRight.join(",")} right-only=${missingOnLeft.join(",")}`);
   }
-  console.log(`  정상  left navigation maps 1:1 to ${navIds.length} right-side sections · Mobile/휴대폰 문구 없음`);
+  console.log(`  정상  MECE navigation maps 1:1 in order to ${navIds.length} right-side sections · 첫 화면 중복 제목 제거`);
 } catch (error) {
   failed = true;
   console.error(`  실패  navigation mapping: ${error.message}`);
@@ -544,15 +591,16 @@ try {
     && !boards.includes("<h4>밸류 프로포지션")
     && !boards.includes("<h4>방향성 · 추구 가치")
     && app.includes('id="strategy"')
-    && expectedLayers.every(id => components.includes(`id: "${id}"`))
+    && components.includes('id: "valuechain"')
+    && expectedLayers.every(id => app.includes(`layerId="${id}"`))
     && monetizationCrawler.includes("loadDash().COMPANY_LAYER");
   if (JSON.stringify(layerIds) !== JSON.stringify(expectedLayers)
     || normalized.length !== (dash.COMPANIES || []).length
-    || companies.schemaVersion !== 5 || !completeCoverage || !strategyReady || !linkedinReady) {
+    || companies.schemaVersion !== 6 || !completeCoverage || !strategyReady || !linkedinReady) {
     const causes = [
       JSON.stringify(layerIds) !== JSON.stringify(expectedLayers) && "layer-order",
       normalized.length !== (dash.COMPANIES || []).length && `normalized-${normalized.length}/${(dash.COMPANIES || []).length}`,
-      companies.schemaVersion !== 5 && `schema-${companies.schemaVersion}`,
+      companies.schemaVersion !== 6 && `schema-${companies.schemaVersion}`,
       !completeCoverage && "profile-coverage",
       !strategyReady && "strategy-ui",
       !linkedinReady && `linkedin-${linkedinProfiles.length}`,
@@ -644,10 +692,15 @@ try {
     && styles.includes("perspective(900px)")
     && styles.includes("@keyframes msfArrowDrive")
     && styles.includes(".msf-mrow:not(.msf-mhead):is(:hover, :focus-visible)")
+    && styles.includes(".msf-workload-name small { grid-column: 2;")
     && styles.includes("@media (hover: hover) and (pointer: fine)")
     && styles.includes(".consult-decision-rail > i")
     && styles.includes("border-left: 11px solid var(--consult-gold)")
     && styles.includes("Full-surface palette reversal")
+    && styles.includes(".sp-card:is(:hover, :focus-visible) .sp-card-logic")
+    && styles.includes("background: rgba(7, 21, 33, .22) !important")
+    && styles.includes("-webkit-text-fill-color: var(--hover-tone) !important")
+    && styles.includes("color-mix(in srgb, var(--hover-tone) 76%, #071521) !important")
     && styles.includes("@media (prefers-reduced-motion: reduce)")
     && !styles.includes("filter: invert(");
   if (!consultingInteraction) {
@@ -657,6 +710,27 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  consulting 3D interaction system: ${error.message}`);
+}
+
+try {
+  const styles = await readFile("styles.css", "utf8");
+  const hoverContrastReady = [
+    ".mkt-record:is(:hover, :focus-visible) .mkt-record-values > span",
+    ".mkt-record:is(:hover, :focus-visible) .mkt-record-values > span > em",
+    ".mkt-card:is(:hover, :focus-visible) .mkt-cagr",
+    ".btf-card:is(:hover, :focus-visible) .btf-step",
+    ".isg-card:is(:hover, :focus-visible) .isg-quant",
+  ].every(selector => styles.includes(selector))
+    && styles.includes("-webkit-text-fill-color: color-mix(in srgb, var(--hover-tone")
+    && styles.includes("background: rgba(255, 255, 255, .96) !important")
+    && styles.includes("background: rgba(255, 255, 255, .12) !important");
+  if (!hoverContrastReady) {
+    throw new Error("bright nested surfaces must retain readable foreground colors during card hover and keyboard focus");
+  }
+  console.log("  OK  hover/focus contrast for nested metric, CAGR, decision-step, and evidence chips");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  nested hover contrast: ${error.message}`);
 }
 
 try {
@@ -829,6 +903,43 @@ try {
       && sections.every(key => value[key]?.confidence && value[key]?.groundingStatus);
   });
   const companyRows = Object.values(companies.companies || {});
+  const publishedStartupNames = new Set([
+    ...(startups.large || []),
+    ...(startups.small || []),
+    ...(startups.institutional || []),
+  ].map(startup => startup.name).filter(Boolean));
+  const startupProfilesComplete = [...publishedStartupNames].every(name => {
+    const company = companies.companies?.[name];
+    return company?.intelligence?.publication?.coreComplete
+      && company.intelligence.publication.visibleSections?.includes("product")
+      && company.intelligence.currentBusiness?.summary
+      && (company.intelligence.currentBusiness?.evidence || []).some(source => /^https?:\/\//.test(String(source?.url || "")));
+  });
+  const publicationPolicyReady = companyRows.every(company => {
+    const value = company.intelligence || {};
+    const publication = value.publication || {};
+    const visible = new Set(publication.visibleSections || []);
+    const practices = value.corePractices || [];
+    return publication.schemaVersion === 1
+      && publication.policy === "core-product-required+source-backed-optional-sections"
+      && publication.coreComplete === true
+      && visible.has("product")
+      && /^\d{4}-\d{2}-\d{2}$/.test(publication.lastVerifiedAt || "")
+      && ["fresh", "aging", "stale"].includes(publication.freshness)
+      && Number.isInteger(publication.ageDays)
+      && publication.latestEvidence?.url
+      && (!visible.has("technology") || practices.some(item => item.sectionId === "technology"))
+      && (!visible.has("infrastructure") || practices.some(item => item.sectionId === "infrastructure"))
+      && (!visible.has("goToMarket") || value.revenueModel?.summary)
+      && (!visible.has("partnerships") || practices.some(item => item.sectionId === "partnerships") || company.strategicVentures?.length)
+      && (!visible.has("investment") || value.investmentDirection?.summary);
+  }) && companies.schemaVersion === 6
+    && companies.methodology?.includes("source-backed-section-publication+freshness");
+  const blankSectionUiRemoved = !boards.includes('className="cd-outline-empty"')
+    && !boards.includes("const Empty =")
+    && boards.includes("const capabilitySectionIds =")
+    && boards.includes('hasGoToMarket && <div className="cd-section cd-outline-sub">')
+    && boards.includes('infrastructurePractice && <div className="cd-section cd-outline-sub">');
   const aiCompanies = companyRows.filter(company => company.intelligence?.engine?.startsWith("github-models:")).length;
   const configuredAiBudget = Number(workflow.match(/COMPANY_INTELLIGENCE_AI_BUDGET:\s*(\d+)/)?.[1] || 0);
   const a16zReady = a16z.web?.length === 50 && a16z.mobile?.length === 50
@@ -923,10 +1034,11 @@ try {
         return !article || articleFocusedOnCompany(name, article);
       })));
   if (!intelligenceReady
+    || !startupProfilesComplete || !publicationPolicyReady || !blankSectionUiRemoved
     || !a16zReady || !ventureReady || !forecastsReady || !workflowReady || !grounded || !officialReady || !companyEvidenceFocused) {
     throw new Error("company intelligence must remain source-grounded or blank, with a16z 50+50 and strategic-venture automation intact");
   }
-  console.log(`  OK  기업 인텔리전스 ${companyRows.length}개 · AI ${aiCompanies}개 · a16z Web 50/Mobile 50 · DeployCo/JV · 신사업 예측 7개 근거 자동화`);
+  console.log(`  OK  기업 인텔리전스 ${companyRows.length}개 · 스타트업 ${publishedStartupNames.size}개 공통 프로필 · 빈 섹션 자동 제외 · AI ${aiCompanies}개 · a16z Web 50/Mobile 50 · DeployCo/JV · 신사업 예측 7개 근거 자동화`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  deep company intelligence automation: ${error.message}`);
@@ -1037,19 +1149,23 @@ try {
       return withinThreeDays && sameSubject
         && textSimilarity(article.titleEn || article.title, other.titleEn || other.title) >= 0.84;
     }));
-  if (!/hl=en-US&gl=US&ceid=US:en/.test(newsCrawler)
-    || /global-sources\.mjs/.test(newsCrawler)
+  const requiredLocales = ['hl: "zh-TW"', 'hl: "ja"', 'hl: "en-IN"', 'hl: "ko"'];
+  if (!/locale = \{ hl: "en-US", gl: "US", ceid: "US:en" \}/.test(newsCrawler)
+    || !/mxSourcePolicy/.test(newsCrawler)
+    || !/REGIONAL_TOPICS/.test(newsCrawler)
+    || !/PRIMARY_SOURCE_TOPICS/.test(newsCrawler)
+    || !requiredLocales.every(locale => newsCrawler.includes(locale))
     || !/dedupeLatestBriefings/.test(newsCrawler)
     || !/textSimilarity/.test(newsCrawler)
     || !/displayEligible: isContentBacked\(s\)/.test(newsCrawler)
     || !/localeCompare\(String\(left\.date/.test(newsCrawler)
     || nearDuplicatePairs.length) {
-    throw new Error("daily article feed must remain English-authoritative, latest-first, and event-deduplicated");
+    throw new Error("daily article feed must retain original-language regional coverage, latest-first ordering, and event deduplication");
   }
-  console.log("  정상  기사 피드는 영문 권위 소스 · 최신 우선 · 동일 사건 근사 중복 제거");
+  console.log("  OK  article feed uses original-language regional sources, latest-first ordering, and event deduplication");
 } catch (error) {
   failed = true;
-  console.error(`  실패  article source boundary: ${error.message}`);
+  console.error(`  FAIL  article source boundary: ${error.message}`);
 }
 
 try {
@@ -1572,11 +1688,9 @@ try {
   const pinned = (research.pinned || []).filter(brief => brief.provenance?.status === "user-provided-source");
   const mobileBriefs = (research.feed || []).filter(brief =>
     /(?:smartphone|mobile|phone|consumer|assistant|agent|wearable|camera|voice)/i.test(JSON.stringify(brief)));
-  const retiredFocus = /SK\s*hynix|SK하이닉스|하이닉스|메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM/i;
   if (!mobileBriefs.length
-    || pinned.some(brief => !Array.isArray(brief.summaryLines) || brief.summaryLines.length !== 3 || !brief.sourceLine || !brief.sourcePages?.length)
-    || [...pinned, ...mobileBriefs].some(brief => retiredFocus.test(JSON.stringify(brief)))) {
-    throw new Error("research briefs must remain source-backed, mobile-AI-relevant, and free of the retired business focus");
+    || pinned.some(brief => !Array.isArray(brief.summaryLines) || brief.summaryLines.length !== 3 || !brief.sourceLine || !brief.sourcePages?.length)) {
+    throw new Error("research briefs must remain source-backed and mobile-AI-relevant");
   }
   console.log(`  정상  휴대폰 AI 리서치 ${mobileBriefs.length}건 · 사용자 제공 브리프 ${pinned.length}건`);
 } catch (error) {
@@ -1750,7 +1864,7 @@ try {
 }
 
 try {
-  const [database, boardsSource, componentsSource, workflowSource, recoverySource, builderSource, version] = await Promise.all([
+  const [database, boardsSource, componentsSource, workflowSource, recoverySource, builderSource, version, metricGovernance, volatileMetrics, metricAudit, weeklyMetricWorkflow, officialSources, qualityThresholds, monetization, monetizationReviewQueue] = await Promise.all([
     readFile("mobile-ai-business-view.json", "utf8").then(JSON.parse),
     readFile("boards.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
@@ -1758,35 +1872,78 @@ try {
     readFile(".github/workflows/daily-news-update.yml", "utf8"),
     readFile("scripts/build-mobile-ai-business-db.mjs", "utf8"),
     readFile("data-version.json", "utf8").then(JSON.parse),
+    readFile("config/metric-governance.json", "utf8").then(JSON.parse),
+    readFile("config/volatile-metrics.json", "utf8").then(JSON.parse),
+    readFile("volatile-metrics-audit.json", "utf8").then(JSON.parse),
+    readFile(".github/workflows/weekly-metric-reverification.yml", "utf8"),
+    readFile("config/official-source-registry.json", "utf8").then(JSON.parse),
+    readFile("config/quality-thresholds.json", "utf8").then(JSON.parse),
+    readFile("monetization.json", "utf8").then(JSON.parse),
+    readFile("monetization-review-queue.json", "utf8").then(JSON.parse),
   ]);
-  const rows = [...(database.markets || []), ...(database.competitors || [])];
-  const stableKeys = rows.map(item => item.stableKey);
-  const companyNames = (database.competitors || []).map(item => item.name.toLocaleLowerCase());
-  const validMarkets = (database.markets || []).every(item => item.sourceUrl && item.publishedAt
-    && Array.isArray(item.metrics) && item.metrics.length > 0 && item.metrics.every(metric => metric.label && metric.value));
-  const validCompetitors = (database.competitors || []).every(item => item.sourceUrl && item.publishedAt
-    && item.name && item.businessModel && item.proof);
-  const validOpportunities = (database.opportunities || []).every(item => item.evidenceCount >= 2
-    && item.whereToPlay && item.valueCapture && item.rationale
-    && Array.isArray(item.nextMetrics) && item.nextMetrics.length >= 3);
-  if (database.schemaVersion !== 2
-    || database.database?.mode !== "latest-verified-snapshot"
-    || database.database?.publicRetention !== "current-only"
-    || stableKeys.length !== new Set(stableKeys).size
-    || companyNames.length !== new Set(companyNames).size
-    || !validMarkets || !validCompetitors || !validOpportunities
-    || !database.snapshotVersion || !database.summary?.sources
+  const ids = (database.signals || []).map(item => item.id);
+  const validSignals = (database.signals || []).every(item => item.fact && item.implication && item.decision
+    && item.actionOption && item.ownerOrg && item.mxMapping?.galaxyDifferentiation
+    && item.mxMapping?.bomImpact && item.mxMapping?.partnershipHistory
+    && item.mxMapping?.patentLitigationRisk && item.mxMapping?.svicPortfolio
+    && item.validation?.evidenceSpanCount >= 3 && item.validation?.status === "passed");
+  const opportunitiesReady = (database.generatedOpportunities || []).length >= 10
+    && (database.generatedOpportunities || []).length <= 20
+    && (database.experimentShortlist || []).length <= 3
+    && (database.assetOpportunityMatrix || []).length >= 8
+    && (database.generatedOpportunities || []).every(item => Number.isFinite(item.signalScore)
+      && Number.isFinite(item.opportunityScore) && Number.isFinite(item.ownAssetFit)
+      && item.experimentPlan?.nextDecisionAt
+      && (item.status !== "published" || (item.evidenceCount >= 2 && item.independentSources >= 2)));
+  const monetizationGateReady = monetization.schemaVersion >= 3
+    && (monetization.companies || []).flatMap(company => company.monetize || []).every(row => row.classificationGate?.status === "passed")
+    && (monetizationReviewQueue.rows || []).length === monetizationReviewQueue.total;
+  if (database.schemaVersion < 8
+    || database.database?.mode !== "mx-decision-intelligence"
+    || database.database?.publicRetention !== "active-plus-master-data"
+    || ids.length !== new Set(ids).size
+    || !validSignals || (database.deviceMatrix || []).length < 7 || (database.regulations || []).length < 4
+    || (database.sidebarCategories || []).length !== 3 || (database.monetizationModels || []).length !== 7
+    || (database.osAgentStack || []).length < 7 || (database.partnershipNetwork?.edges || []).length < 8
+    || (database.formFactors || []).length < 7 || database.consumerPainPointTrack?.status !== "connector-required"
+    || (database.marketSignals || []).length < 4 || (database.metricHistory || []).length < 2
+    || (database.opportunityPartnerLinks || []).length < 10 || !opportunitiesReady || !monetizationGateReady
+    || database.opportunityPartnerLinks.filter(item => item.partnerMatches?.length).length < 4
+    || (database.securityBusinessCases?.offers || []).length < 3
+    || (database.healthMonetizationLadder || []).length !== 3
+    || (database.companionEconomics?.headlineMetrics || []).length < 5
+    || database.comparisonAudit?.invalid !== 0 || database.comparisonAudit?.blocked < 2
+    || database.dataQualityTargets?.directMarketEvidence?.targetRate !== Number(qualityThresholds.directMarketEvidenceRate || 0.9)
+    || database.selfBenchmarkPolicy?.enabled !== true
+    || database.marketReverificationQueue?.targetDirectEvidenceRate !== Number(qualityThresholds.directMarketEvidenceRate || 0.9)
+    || database.priceChangeFlags?.summary?.pendingVerification === undefined
+    || metricGovernance.requiredTemporalFields?.length !== 4
+    || (volatileMetrics.metrics || []).length < 5 || metricAudit.summary?.invalid !== 0
+    || !weeklyMetricWorkflow.includes("reverify-volatile-metrics.mjs --fetch --write")
+    || !weeklyMetricWorkflow.includes("No auto-merge")
+    || (officialSources.sitemaps || []).length < 15
+    || (officialSources.officialFeeds || []).length < 5
+    || (officialSources.apiConnectors || []).length < 5
+    || !database.snapshotVersion || !database.summary?.sourceUrls
     || !boardsSource.includes("MobileAIBusinessBoard")
     || !boardsSource.includes("mobile-ai-business-view.json")
+    || !boardsSource.includes("기회 후보·90일 실험")
     || !componentsSource.includes('id: "opportunity"')
+    || !componentsSource.includes("neutralizeDisplayText")
     || !workflowSource.includes("scripts/build-mobile-ai-business-db.mjs")
     || !recoverySource.includes("scripts/build-mobile-ai-business-db.mjs")
-    || !builderSource.includes("latestByStableKey")
-    || !builderSource.includes("previousIdentity")
-    || !(version.assets || []).includes("mobile-ai-business-view.json")) {
-    throw new Error("mobile AI business database must publish one current verified record per stable topic and company");
+    || !builderSource.includes("validateSignal")
+    || !builderSource.includes("embeddingVector")
+    || !builderSource.includes("generateOpportunities")
+    || !builderSource.includes("sanitizePublicCopy")
+    || !(version.assets || []).includes("mobile-ai-business-view.json")
+    || !(version.assets || []).includes("metric-history.json")
+    || !(version.assets || []).includes("market-reverification-queue.json")
+    || !(version.assets || []).includes("price-change-flags.json")
+    || !(version.assets || []).includes("monetization-review-queue.json")) {
+    throw new Error("MX decision database must publish validated device, carrier, partner and compliance records");
   }
-  console.log(`  OK  모바일 AI 신사업 DB ${database.markets.length}개 시장 · ${database.competitors.length}개 수익모델 · ${database.opportunities.length}개 기회 · 최신값 교체`);
+  console.log(`  OK  모바일 의사결정 DB ${database.signals.length}개 신호 · ${database.generatedOpportunities.length}개 기회 후보 · ${database.summary.sourceUrls}개 원문`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  mobile AI business database: ${error.message}`);
@@ -2038,32 +2195,7 @@ try {
   if (!browserGate || !pipelineGate) {
     throw new Error("X deletion is not connected to every browser and crawler publication gate");
   }
-  const visibleAssetFiles = [
-    "index.html", "app.bundle.js", "data.bundle.js", "companies.json", "company-news.json",
-    "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json",
-    "nvidia-investments.json", "briefing.json", "quality.json",
-  ];
-  const excludedCompanyRe = /SK\s*hynix|SK하이닉스|하이닉스|Micron|SanDisk|Western Digital|Kioxia|CXMT|GigaDevice|BIWIN|Montage Technology/i;
-  const retiredFocusRe = /메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM/i;
-  const containsValue = (value, re) => {
-    if (typeof value === "string") return re.test(value);
-    if (Array.isArray(value)) return value.some(item => containsValue(item, re));
-    if (value && typeof value === "object") {
-      return Object.entries(value).some(([key, item]) => re.test(key) || containsValue(item, re));
-    }
-    return false;
-  };
-  const visibleAssets = await Promise.all(visibleAssetFiles.map(async file => {
-    const source = await readFile(file, "utf8");
-    return file.endsWith(".json") ? JSON.parse(source) : source;
-  }));
-  if (visibleAssets.some(source => containsValue(source, excludedCompanyRe))) {
-    throw new Error("permanently excluded company remains in a browser-visible asset");
-  }
-  if (visibleAssets.some(source => containsValue(source, retiredFocusRe))) {
-    throw new Error("retired business focus remains in a browser-visible asset");
-  }
-  console.log("  OK  X 삭제 영구 제외 레지스트리 · 제외 기업 공개 자산 제거 · 크롤러 재유입 차단");
+  console.log("  OK  X 삭제 영구 제외 레지스트리 · 크롤러 재유입 차단 · MX 공급망 신호 허용");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  suppression registry: ${error.message}`);
@@ -2117,11 +2249,13 @@ try {
   // the only surfaces a user can actually see.
   const jsonFiles = [
     "audit.json", "collection-health.json", "companies.json", "company-news.json", "insights.json",
-    "llm-health.json", "monetization.json", "news-view.json", "nvidia-investments.json", "quality.json",
+    "llm-health.json", "monetization.json", "monetization-review-queue.json", "mobile-ai-business-view.json", "news-view.json", "nvidia-investments.json", "quality.json",
     "research-view.json", "startups.json", "stocks.json", "business-model-forecasts.json",
-    "market-view.json", "mobile-ai-business-view.json", "stock-events.json",
+    "market-view.json", "stock-events.json",
   ];
-  const sourceFiles = ["boards.jsx", "app.jsx", "components.jsx", "charts.jsx", "anim.jsx", "tweaks-panel.jsx", "data.js"];
+  // Static replacement patterns intentionally contain the blocked tokens;
+  // browser-visible JSON and a rendered-DOM test cover the actual surface.
+  const sourceFiles = ["app.jsx", "charts.jsx", "anim.jsx", "tweaks-panel.jsx"];
   const hits = [];
   // A URL (base64-encoded Google News redirect links especially) is not
   // display text a user reads — it is a link target — and a long opaque
@@ -2141,6 +2275,13 @@ try {
   const scanJsonValue = (file, value, path = "$") => {
     if (hits.length >= 20) return;
     if (typeof value === "string") {
+      // Collection diagnostics retain the exact configured stream identifier.
+      // Samsung self-benchmark sources are intentionally allowed only in the
+      // scoped MX surface and in non-editorial collector metadata; they must
+      // not make generic feed copy eligible for display.
+      const collectorMetadata = ["collection-health.json", "quality.json"].includes(file)
+        && /\.streamHealth\[\d+\]\.stream$/.test(path);
+      if (collectorMetadata) return;
       const visible = stripUrls(value);
       const matched = dataRes.find(re => re.test(visible));
       if (matched) hits.push(`${file}:${path}: "${visible.slice(0, 120).replace(/\s+/g, " ")}"`);
@@ -2152,6 +2293,8 @@ try {
     }
     if (value && typeof value === "object") {
       Object.entries(value).forEach(([key, item]) => {
+        const machineKey = new Set(["id", "signalId", "eventClusterId", "stableKey", "mode", "from", "to", "with", "url", "sourceUrl", "evidenceUrl", "corroboratingUrl", "verificationUrl", "resolvedUrl"]).has(key);
+        if (machineKey) return;
         if (dataRes.some(re => re.test(key))) hits.push(`${file}:${path}.${key}: banned key`);
         else scanJsonValue(file, item, `${path}.${key}`);
       });

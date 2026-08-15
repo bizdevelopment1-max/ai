@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "updatedAt": "2026-08-15",
+  "purpose": "Prevent announcement dates, measurement periods, verification dates and region-specific prices from being collapsed into one asOf field.",
+  "requiredTemporalFields": [
+    "announcedAt",
+    "metricObservedAt",
+    "observedWindow",
+    "lastVerifiedAt"
+  ],
+  "numericEvidence": {
+    "requiredFields": ["value", "unit", "currency", "region", "priceType", "evidenceSpan", "sourceUrl"],
+    "literalMatchRequired": true,
+    "allowRoundedOfficialValues": true,
+    "unconfirmedDayPolicy": "store-month-or-range-and-never-invent-an-exact-day"
+  },
+  "volatileMetricPolicy": {
+    "subscription-price": { "reverifyDays": 7, "archivePreviousValue": true },
+    "device-price": { "reverifyDays": 7, "archivePreviousValue": true },
+    "run-rate": { "reverifyDays": 30, "archivePreviousValue": true },
+    "valuation": { "reverifyDays": 30, "archivePreviousValue": true },
+    "shipment-forecast": { "reverifyDays": 30, "archivePreviousValue": true }
+  },
+  "comparisonGuardrail": {
+    "requiredBasisFields": ["metricType", "unit", "geography", "period", "population", "channel"],
+    "ratioPolicy": "compute-only-when-basis-key-matches",
+    "marketDefinitionPolicy": "show-headline-range-but-block-direct-ratio-when-definitions-differ",
+    "crossCompanyPolicy": "block-direct-ratio-when-revenue-type-or-period-differs",
+    "blockedLabel": "정의 불일치 · 직접 비교 금지"
+  },
+  "kpiDefinitions": {
+    "run-rate": {
+      "definition": "Current-period revenue pace annualized; not audited revenue and not interchangeable with ARR.",
+      "calculation": "publisher/company disclosed annualized pace; retain the disclosed methodology when available",
+      "accountingBasis": "non-GAAP operating metric unless the source explicitly states otherwise"
+    },
+    "ARR": {
+      "definition": "Contracted or recurring subscription revenue annualized under the reporting company's definition.",
+      "calculation": "store company definition, inclusions, exclusions and gross/net presentation",
+      "accountingBasis": "non-GAAP operating metric"
+    },
+    "monthly-revenue": {
+      "definition": "Revenue recognized or reported for one calendar month.",
+      "calculation": "do not annualize without a separate derived record",
+      "accountingBasis": "reported or estimated; tag explicitly"
+    },
+    "subscription-price": {
+      "definition": "Public list price for a named plan, region, billing period and tax treatment.",
+      "calculation": "separate standard, introductory, promotional and partner-bundle prices",
+      "accountingBasis": "price observation"
+    },
+    "valuation": {
+      "definition": "Pre-money or post-money equity value at a named financing or market date.",
+      "calculation": "store pre/post-money basis and round close/announcement separately",
+      "accountingBasis": "transaction or market observation"
+    },
+    "shipment-forecast": {
+      "definition": "Forecast shipment units or mix for a specified geography and period.",
+      "calculation": "retain forecast vintage, scenario and YoY comparison base",
+      "accountingBasis": "research forecast"
+    },
+    "engagement-hours": {
+      "definition": "A named population's aggregate time spent in a specified app category during a fixed period.",
+      "calculation": "retain geography, period, app taxonomy, device channel and data-provider methodology",
+      "accountingBasis": "third-party usage estimate"
+    },
+    "consumer-app-spend": {
+      "definition": "Consumer spend observed or estimated through named app-store channels; not total company revenue or total addressable market.",
+      "calculation": "separate calendar revenue, run-rate, cumulative spend and forecast values",
+      "accountingBasis": "app-intelligence estimate"
+    },
+    "market-size-forecast": {
+      "definition": "Research-provider forecast whose included products, customers and revenue pools must be retained.",
+      "calculation": "never reconcile broad companion/assistant markets with narrow mobile companion-app spend as if equivalent",
+      "accountingBasis": "research forecast"
+    }
+  }
+}

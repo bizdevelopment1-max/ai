@@ -1,0 +1,152 @@
+{
+  "generatedAt": "2026-08-15T09:50:45.753Z",
+  "schemaVersion": 1,
+  "mode": "network-literal-verification",
+  "summary": {
+    "total": 6,
+    "verified": 4,
+    "partial": 1,
+    "invalid": 0,
+    "unverified": 1
+  },
+  "rows": [
+    {
+      "id": "google-ai-plans-us",
+      "kind": "subscription-price",
+      "status": "partial",
+      "schemaIssues": [],
+      "checkedAt": "2026-08-15T09:50:45.753Z",
+      "announcedAt": "2026-05-19",
+      "metricObservedAt": "2026-05-19",
+      "observedWindow": "2026-05-19 onward; live checkout remains region-sensitive",
+      "lastVerifiedAt": "2026-08-15",
+      "sourceChecks": [
+        {
+          "sourceUrl": "https://blog.google/products-and-platforms/products/google-one/google-ai-plus-availability/",
+          "status": "verified",
+          "missing": [],
+          "retrievedChars": 5072
+        },
+        {
+          "sourceUrl": "https://blog.google/products-and-platforms/products/google-one/google-ai-subscriptions/",
+          "status": "verified",
+          "missing": [],
+          "retrievedChars": 11590
+        },
+        {
+          "sourceUrl": "https://one.google.com/about/google-ai-plans/",
+          "status": "literal-missing",
+          "missing": [
+            "Ultra 5x",
+            "Ultra 20x"
+          ],
+          "retrievedChars": 16482
+        }
+      ]
+    },
+    {
+      "id": "meta-ai-glasses-us",
+      "kind": "device-price",
+      "status": "verified",
+      "schemaIssues": [],
+      "checkedAt": "2026-08-15T09:50:45.753Z",
+      "announcedAt": "2026-06-23",
+      "metricObservedAt": "2026-06-23",
+      "observedWindow": "2026-05-01~2026-06-23 official portfolio pages",
+      "lastVerifiedAt": "2026-08-15",
+      "sourceChecks": [
+        {
+          "sourceUrl": "https://about.fb.com/news/2026/06/meta-essilorluxottica-partner-launch-meta-glasses/",
+          "status": "verified",
+          "missing": [],
+          "retrievedChars": 11025
+        },
+        {
+          "sourceUrl": "https://about.fb.com/news/2026/05/which-meta-ai-glasses-are-right-for-you/",
+          "status": "verified",
+          "missing": [],
+          "retrievedChars": 16279
+        }
+      ]
+    },
+    {
+      "id": "openai-series-2026-03",
+      "kind": "valuation",
+      "status": "unverified",
+      "schemaIssues": [],
+      "checkedAt": "2026-08-15T09:50:45.753Z",
+      "announcedAt": "2026-03-31",
+      "metricObservedAt": "2026-03-31",
+      "observedWindow": "official close date is 2026-03-31; a 2026-03-30 secondary date remains unconfirmed",
+      "lastVerifiedAt": "2026-08-15",
+      "sourceChecks": [
+        {
+          "sourceUrl": "https://openai.com/index/accelerating-the-next-phase-ai/",
+          "status": "unreachable",
+          "missing": [
+            "$122B",
+            "$852B"
+          ],
+          "error": "HTTP 403"
+        }
+      ]
+    },
+    {
+      "id": "anthropic-series-h-2026-05",
+      "kind": "run-rate",
+      "status": "verified",
+      "schemaIssues": [],
+      "checkedAt": "2026-08-15T09:50:45.753Z",
+      "announcedAt": "2026-05-28",
+      "metricObservedAt": "2026-05",
+      "observedWindow": "earlier in May 2026; exact day not confirmed by the company",
+      "lastVerifiedAt": "2026-08-15",
+      "sourceChecks": [
+        {
+          "sourceUrl": "https://www.anthropic.com/news/series-h",
+          "status": "verified",
+          "missing": [],
+          "retrievedChars": 6158
+        }
+      ]
+    },
+    {
+      "id": "microsoft-ai-run-rate-fy26-q3",
+      "kind": "run-rate",
+      "status": "verified",
+      "schemaIssues": [],
+      "checkedAt": "2026-08-15T09:50:45.753Z",
+      "announcedAt": "2026-04-29",
+      "metricObservedAt": "FY2026 Q3",
+      "observedWindow": "quarter-end earnings disclosure",
+      "lastVerifiedAt": "2026-08-15",
+      "sourceChecks": [
+        {
+          "sourceUrl": "https://www.microsoft.com/en-us/investor/earnings/FY-2026-Q3/press-release-webcast",
+          "status": "verified",
+          "missing": [],
+          "retrievedChars": 23425
+        }
+      ]
+    },
+    {
+      "id": "counterpoint-genai-phone-2026",
+      "kind": "shipment-forecast",
+      "status": "verified",
+      "schemaIssues": [],
+      "checkedAt": "2026-08-15T09:50:45.753Z",
+      "announcedAt": "2026-06-22",
+      "metricObservedAt": "2026 forecast",
+      "observedWindow": "June 2026 forecast vintage",
+      "lastVerifiedAt": "2026-08-15",
+      "sourceChecks": [
+        {
+          "sourceUrl": "https://counterpointresearch.com/en/insights/genai-smartphone-share-to-rise-to-45-percent-of-global-shipments-in-2026",
+          "status": "verified",
+          "missing": [],
+          "retrievedChars": 8443
+        }
+      ]
+    }
+  ]
+}

@@ -46,6 +46,28 @@ function LazySection({ id, active, sectionRef, height = 420, children }) {
   );
 }
 
+// A single navigation destination can contain several mutually exclusive
+// evidence boards. Each child keeps its own visibility ref so data loading and
+// chart animation still happen only when that board approaches the viewport.
+function SectionStack({ sectionRef, title, eyebrow, description, bodyClassName = "", children }) {
+  const items = React.Children.toArray(children);
+  const childRefs = uR([]);
+  if (childRefs.current.length !== items.length) {
+    childRefs.current = items.map((_, index) => childRefs.current[index] || React.createRef());
+  }
+  return (
+    <section className="section-stack" ref={sectionRef} aria-label={title || undefined}>
+      {title && <header className="section-stack-head">
+        <span>{eyebrow}</span>
+        <div><h2>{title}</h2><p>{description}</p></div>
+      </header>}
+      <div className={`section-stack-body${bodyClassName ? ` ${bodyClassName}` : ""}`}>
+        {items.map((child, index) => React.cloneElement(child, { sectionRef: childRefs.current[index] }))}
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [brandIdx, setBrandIdx] = uS(0);
@@ -57,27 +79,19 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = uS(false);
   const [collapsed, setCollapsed] = uS(false);
   const refs = {
-    ib: uR(null), overview: uR(null), opportunity: uR(null), strategy: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
-    infra: uR(null), model: uR(null), data: uR(null), trust: uR(null), service: uR(null), agent: uR(null), app: uR(null),
-    sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), survey: uR(null), market: uR(null), audit: uR(null),
+    overview: uR(null), strategy: uR(null), opportunity: uR(null), themes: uR(null), valuechain: uR(null),
+    newbiz: uR(null), signals: uR(null), sanalysis: uR(null), evidence: uR(null), validation: uR(null),
   };
   const strategyInView = useInView(refs.strategy);
-  const infraInView = useInView(refs.infra);
-  const modelInView = useInView(refs.model);
-  const dataInView = useInView(refs.data);
-  const trustInView = useInView(refs.trust);
-  const serviceInView = useInView(refs.service);
-  const agentInView = useInView(refs.agent);
-  const appInView = useInView(refs.app);
+  const valueChainInView = useInView(refs.valuechain);
   const startupInView = useInView(refs.sanalysis);
-  const companySectionActive = ["strategy", "app", "agent", "service", "trust", "model", "data", "infra", "sanalysis"].includes(active);
-  const companyInView = strategyInView || infraInView || modelInView || dataInView || trustInView || serviceInView || agentInView || appInView || startupInView || companySectionActive;
+  const companySectionActive = ["strategy", "valuechain", "sanalysis"].includes(active);
+  const companyInView = strategyInView || valueChainInView || startupInView || companySectionActive;
   const needsCompanyData = companyInView || active === "overview" || !!selected;
-  const articlesInView = useInView(refs.articles);
+  const articlesInView = useInView(refs.evidence);
   const signalsInView = useInView(refs.signals);
   const newbizInView = useInView(refs.newbiz);
-  const stocksInView = useInView(refs.stocks);
-  const auditInView = useInView(refs.audit);
+  const stocksInView = useInView(refs.validation);
 
   const D = window.DASH;
   const dark = t.dark;
@@ -85,7 +99,7 @@ function App() {
   const [dataGeneratedAt, setDataGeneratedAt] = uS("");
   const dataUrl = file => `${file}?v=${encodeURIComponent(dataVersion || "bootstrap")}`;
   const needsNews = articlesInView || companyInView || signalsInView || newbizInView
-    || ["overview", "articles", "signals", "newbiz"].includes(active);
+    || ["overview", "evidence", "signals", "newbiz"].includes(active);
 
   // A tiny version manifest is the only uncacheable request. Every sizeable
   // data file is immutable for that version and can therefore be CDN-cached.
@@ -147,14 +161,10 @@ function App() {
     return () => { alive = false; };
   }, [dataVersion]);
 
-  // 증권사 리서치(research.json)·기업 라이브(companies.json)·데이터 감사(audit.json)
+  // 증권사 리서치(research.json)·기업 라이브(companies.json)
   const [research, setResearch] = uS(null);
   const [coLive, setCoLive] = uS(null);
   const [companyNews, setCompanyNews] = uS({});
-  const [audit, setAudit] = uS(null);
-  const [quality, setQuality] = uS(null);
-  const [llmHealth, setLlmHealth] = uS(null);
-  const [collectionHealth, setCollectionHealth] = uS(null);
   const [startupsX, setStartupsX] = uS(null);
   const [monet, setMonet] = uS(null);
   uE(() => {
@@ -199,19 +209,6 @@ function App() {
     return () => { alive = false; };
   }, [needsCompanyExtras, dataVersion]);
 
-  uE(() => {
-    if (!(auditInView || active === "audit") || !dataVersion) return;
-    let alive = true;
-    fetch(dataUrl("audit.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && j.checks) setAudit(j); }).catch(() => {});
-    fetch(dataUrl("quality.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j && j.checks) setQuality(j); }).catch(() => {});
-    fetch(dataUrl("llm-health.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j) setLlmHealth(j); }).catch(() => {});
-    fetch(dataUrl("collection-health.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive && j) setCollectionHealth(j); }).catch(() => {});
-    return () => { alive = false; };
-  }, [auditInView, active, dataVersion]);
   // 지역 기업은 이름·분류만 정적 레지스트리에 두고, 공개 원문/공식 페이지로
   // 확인된 사업 내용만 화면에 합성한다. 고정된 중국 전략·인물·수치 서술은
   // 라이브 근거가 없으면 렌더링하지 않는다.
@@ -277,7 +274,7 @@ function App() {
   const [stockData, setStockData] = uS(null);
   const [nvidiaInvestments, setNvidiaInvestments] = uS(null);
   uE(() => {
-    if (!(stocksInView || active === "stocks") || !dataVersion) return;
+    if (!(stocksInView || active === "validation") || !dataVersion) return;
     let alive = true;
     Promise.all([
       // 주가 파일은 최신 거래일이 핵심이므로 서비스워커·브라우저의 오래된 응답을 재사용하지 않는다.
@@ -327,8 +324,16 @@ function App() {
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
 
-  // 일부 Q&A는 통합·이동된 섹션을 가리킴: dynamics→overview(경쟁구도가 ES로 이동), insights→reports
-  const NAV_ALIAS = { dynamics: "overview", insights: "ib", reports: "ib", bizmodel: "newbiz", native: "model", bigtech: "infra", startup: "app" };
+  // 기존 북마크와 자동 생성 카드의 세부 ID를 MECE 상위 섹션으로 연결.
+  const NAV_ALIAS = {
+    dynamics: "overview", bizmodel: "newbiz",
+    "agentic-commerce": "themes", "telco-bundles": "themes", "wearables-form-factors": "themes",
+    native: "valuechain", bigtech: "valuechain", startup: "valuechain",
+    app: "valuechain", agent: "valuechain", service: "valuechain", trust: "valuechain",
+    model: "valuechain", data: "valuechain", infra: "valuechain",
+    insights: "evidence", reports: "evidence", ib: "evidence", articles: "evidence",
+    survey: "validation", market: "validation", stocks: "validation",
+  };
   const navTo = rawId => {
     const id = NAV_ALIAS[rawId] || rawId;
     if (!NAV_SECTION_IDS.includes(id)) return;
@@ -451,9 +456,11 @@ function App() {
 
   const latestArticleDate = articles.reduce((m, a) => (a.date > m ? a.date : m), "");
   const articleCount = articles.filter(a => a.date === latestArticleDate).length;
-  const now = new Date();
-  const p2 = n => String(n).padStart(2, "0");
-  const renderTime = `${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())} ${p2(now.getHours())}:${p2(now.getMinutes())}`;
+  const verifiedUpdateTime = dataGeneratedAt
+    ? new Date(dataGeneratedAt).toLocaleString("ko-KR", {
+      timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit",
+    })
+    : "확인 중";
 
   return (
     <div className={"app d-" + t.density}>
@@ -478,9 +485,6 @@ function App() {
           <div className="main-inner">
             {/* ── 1. 첫 화면: 관계 지도 + 영상 브리핑 ── */}
             <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="Mobile AI Video Brief">
-              <div className="ov-head">
-                <h2 className="ov-title">휴대폰 AI 신사업 발굴 <span>User need · experience · revenue · partner</span></h2>
-              </div>
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
             </section>
 
@@ -489,75 +493,72 @@ function App() {
               <MobileStrategyBoard companies={companiesLive} articles={articles} generatedAt={dataGeneratedAt} onNav={navTo} />
             </LazySection>
 
-            {/* ── 3. 리서치·시장 DB ── */}
-            <div className="nav-section-anchor" data-section="ib">
-              <IBInsightBoard research={research} reports={[]} sectionRef={refs.ib} />
-            </div>
-
+            {/* ── 3. 기회 DB: 브리프 → 정량 기회 ── */}
             <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={1080}>
-              <div className="opportunity-stack">
+              <SectionStack bodyClassName="opportunity-stack">
                 <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
                 <MobileAIBusinessBoard dataVersion={dataVersion} />
-              </div>
+              </SectionStack>
             </LazySection>
 
-            <LazySection id="articles" active={active} sectionRef={refs.articles} height={840}>
-              <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
+            {/* ── 4. 사업 포트폴리오: 테마 → 밸류체인 → 서비스 기회 ── */}
+            <LazySection id="themes" active={active} sectionRef={refs.themes} height={1900}>
+              <SectionStack title="핵심 사업 테마" eyebrow="BUSINESS PORTFOLIO"
+                description="서로 겹치지 않는 거래·유통·단말 확장 축으로 사업 후보를 분류">
+                <MXThemeBoard dataVersion={dataVersion} kind="agentic-commerce" />
+                <MXThemeBoard dataVersion={dataVersion} kind="telco-bundles" />
+                <MXThemeBoard dataVersion={dataVersion} kind="wearables-form-factors" />
+              </SectionStack>
             </LazySection>
 
-            {/* ── 4. 휴대폰 AI SW·서비스 밸류체인 ── */}
-            <LazySection id="app" active={active} sectionRef={refs.app} height={740}>
-              <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
-            </LazySection>
-            <LazySection id="agent" active={active} sectionRef={refs.agent} height={660}>
-              <ValueChainBoard layerId="agent" companies={companiesLive} onSelect={setSelected} sectionRef={refs.agent} />
-            </LazySection>
-            <LazySection id="service" active={active} sectionRef={refs.service} height={660}>
-              <ValueChainBoard layerId="service" companies={companiesLive} onSelect={setSelected} sectionRef={refs.service} />
-            </LazySection>
-            <LazySection id="trust" active={active} sectionRef={refs.trust} height={620}>
-              <ValueChainBoard layerId="trust" companies={companiesLive} onSelect={setSelected} sectionRef={refs.trust} />
-            </LazySection>
-            <LazySection id="model" active={active} sectionRef={refs.model} height={620}>
-              <ValueChainBoard layerId="model" companies={companiesLive} onSelect={setSelected} sectionRef={refs.model} />
-            </LazySection>
-            <LazySection id="data" active={active} sectionRef={refs.data} height={520}>
-              <ValueChainBoard layerId="data" companies={companiesLive} onSelect={setSelected} sectionRef={refs.data} />
-            </LazySection>
-            <LazySection id="infra" active={active} sectionRef={refs.infra} height={620}>
-              <ValueChainBoard layerId="infra" companies={companiesLive} onSelect={setSelected} sectionRef={refs.infra} />
-            </LazySection>
-            <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
-              <StartupScopeBoard dataVersion={dataVersion} companies={companiesLive} coLive={coLive} monet={monet} onSelect={setSelected} />
-            </LazySection>
-
-            {/* ── 3. 심층 분석 ── */}
-            <LazySection id="signals" active={active} sectionRef={refs.signals} height={900}>
-              <SignalBoard articles={articles} dataVersion={dataVersion} />
+            <LazySection id="valuechain" active={active} sectionRef={refs.valuechain} height={4500}>
+              <SectionStack title="AI 밸류체인" eyebrow="CONTROL POINTS"
+                description="고객 경험에서 모델·런타임까지 7개 계층을 중복 없이 연결">
+                <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} />
+                <ValueChainBoard layerId="agent" companies={companiesLive} onSelect={setSelected} />
+                <ValueChainBoard layerId="service" companies={companiesLive} onSelect={setSelected} />
+                <ValueChainBoard layerId="trust" companies={companiesLive} onSelect={setSelected} />
+                <ValueChainBoard layerId="model" companies={companiesLive} onSelect={setSelected} />
+                <ValueChainBoard layerId="data" companies={companiesLive} onSelect={setSelected} />
+                <ValueChainBoard layerId="infra" companies={companiesLive} onSelect={setSelected} />
+              </SectionStack>
             </LazySection>
 
             <LazySection id="newbiz" active={active} sectionRef={refs.newbiz} height={900}>
               <NewBizBoard articles={articles} dataVersion={dataVersion} />
             </LazySection>
 
-            <LazySection id="survey" active={active} sectionRef={refs.survey} height={620}>
-              <MarketBoard dataVersion={dataVersion} mode="survey" sectionRef={refs.survey} />
-            </LazySection>
-            <LazySection id="market" active={active} sectionRef={refs.market} height={780}>
-              <MarketBoard dataVersion={dataVersion} mode="market" sectionRef={refs.market} />
-            </LazySection>
-            <LazySection id="stocks" active={active} sectionRef={refs.stocks} height={820}>
-              <StockBoard stocks={D.STOCKS} stockData={stockData} nvidiaInvestments={nvidiaInvestments}
-                cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} />
+            {/* ── 5. 생태계·기술: 변화 신호 → 실행 후보 ── */}
+            <LazySection id="signals" active={active} sectionRef={refs.signals} height={900}>
+              <SignalBoard articles={articles} dataVersion={dataVersion} />
             </LazySection>
 
-            <LazySection id="audit" active={active} sectionRef={refs.audit} height={520}>
-              <AuditPanel audit={audit} quality={quality} llmHealth={llmHealth} collectionHealth={collectionHealth} />
+            <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
+              <StartupScopeBoard dataVersion={dataVersion} companies={companiesLive} coLive={coLive} monet={monet} onSelect={setSelected} />
+            </LazySection>
+
+            {/* ── 6. 시장 검증: 관찰 근거 → 사업성 검증 ── */}
+            <LazySection id="evidence" active={active} sectionRef={refs.evidence} height={1800}>
+              <SectionStack title="시장·고객 근거" eyebrow="EVIDENCE"
+                description="기관 리서치와 산업·고객 원문 신호를 한 근거 축으로 통합">
+                <IBInsightBoard research={research} reports={[]} />
+                <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
+              </SectionStack>
+            </LazySection>
+
+            <LazySection id="validation" active={active} sectionRef={refs.validation} height={2400}>
+              <SectionStack title="수요·시장·재무 검증" eyebrow="VALIDATION"
+                description="수요 조사·시장 규모·상장사 지표를 분리해 사업성을 단계적으로 확인">
+                <MarketBoard dataVersion={dataVersion} mode="survey" />
+                <MarketBoard dataVersion={dataVersion} mode="market" />
+                <StockBoard stocks={D.STOCKS} stockData={stockData} nvidiaInvestments={nvidiaInvestments}
+                  cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} />
+              </SectionStack>
             </LazySection>
 
             <footer className="foot">
               <span>Mobile AI Business Intelligence</span>
-              <span className="foot-update">최종 업데이트: {renderTime}</span>
+              <span className="foot-update">데이터 생성 시각: {verifiedUpdateTime}</span>
               <span>원출처: Bloomberg · TechCrunch · The Information · Pitchbook · Crunchbase · 각 기업 공식 발표</span>
             </footer>
           </div>
@@ -573,54 +574,6 @@ function App() {
 }
 
 // soft tint of a hex color for chips/backgrounds
-// ---- 데이터 감사 패널: audit-agent.mjs 산출물(audit.json) 표시 ----
-function AuditPanel({ audit, quality, llmHealth, collectionHealth, sectionRef }) {
-  const [open, setOpen] = uS(false);
-  // Keep a measurable target in the document so the audit JSON can be loaded
-  // lazily before the panel itself has content to render.
-  if (!audit) return <div className="audit-wrap" ref={sectionRef} style={{ minHeight: 1 }} aria-hidden="true" />;
-  const C = { ok: "#16A34A", warn: "#EA580C", fail: "#D23B3B" };
-  return (
-    <div className="audit-wrap" ref={sectionRef}>
-      <button className="audit-chip" onClick={() => setOpen(o => !o)} title="데이터 파이프라인 감사 상태">
-        <i style={{ background: C[audit.overall] || "#8A93A4" }} />
-        데이터 신뢰센터 {audit.overall === "ok" ? "정상" : audit.overall === "warn" ? "주의" : "실패"} · {audit.summary}
-      </button>
-      {open && (
-        <div className="audit-panel">
-          {quality && (
-            <div className="audit-trust">
-              <b>근거 검증 정책</b>
-              <p>{quality.policy}</p>
-              <div className="audit-metrics">
-                <span>현재 기사 <b>{quality.metrics.currentArticles}</b></span>
-                <span>누적 기사 <b>{quality.metrics.accumulatedArticles}</b></span>
-                <span>원문 근거 <b>{quality.metrics.sourceBackedArticles}</b></span>
-                <span>원문 발췌 <b>{quality.metrics.sourceExcerptArticles || 0}</b></span>
-                <span>한글 표시 <b>{quality.metrics.localizedArticles || 0}</b></span>
-                <span>영문 폴백 <b>{quality.metrics.localizedFallbackArticles || 0}</b></span>
-                <span>제한 비율 <b>{((quality.metrics.limitedRate || 0) * 100).toFixed(1)}%</b></span>
-                <span>최신 주가 <b>{quality.metrics.freshStocks}/{quality.metrics.totalStocks}</b></span>
-              </div>
-            </div>
-          )}
-          {llmHealth && <div className="audit-policy-state"><b>요약 엔진</b> {llmHealth.summaryEngine === "source-excerpt" ? "원문 발췌 · 외부 AI API 0회" : "상태 확인 필요"}</div>}
-          {collectionHealth && <div className="audit-policy-state"><b>수집 상태</b> {collectionHealth.status === "ok" ? "정상" : "부분 수집"} · 실패 {(collectionHealth.failedStreams || []).length} · 빈 스트림 {(collectionHealth.emptyStreams || []).length}</div>}
-          {audit.checks.map(c => (
-            <div className="audit-row" key={`${c.file}-${c.tab}`}>
-              <i style={{ background: C[c.status] || "#8A93A4" }} />
-              <b>{c.tab}</b>
-              <span className="audit-meta">{c.items}건 · {c.ageDays}일 전{c.engine ? ` · ${c.engine}` : ""}</span>
-              {c.issues.length > 0 && <span className="audit-issues">{c.issues.join(" / ")}</span>}
-            </div>
-          ))}
-          <p className="audit-note">매 수집 후 최신성·커버리지·출처 연결·수치 근거를 자동 검사하며, 핵심 검증 실패 시 배포하지 않습니다.</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function softTint(hex, dark) {
   const n = hex.replace("#", "");
   const r = parseInt(n.slice(0, 2), 16), g = parseInt(n.slice(2, 4), 16), b = parseInt(n.slice(4, 6), 16);

@@ -5,6 +5,35 @@
 // Raw evidence stays unchanged in JSON; only rendered Korean copy is converted
 // to concise consulting bullets without sentence periods or declarative -다
 const CONSULTING_COPY_CACHE = new Map();
+const DISPLAY_COPY_REPLACEMENTS = [
+  [/Samsung Electronics MX/gi, "자사 모바일 사업"],
+  [/Samsung MX/gi, "자사 모바일 사업"],
+  [/MX\s*사업부/gi, "모바일 사업부"],
+  [/Galaxy AI/gi, "자사 단말 AI"],
+  [/Galaxy Store/gi, "자사 앱스토어"],
+  [/Galaxy Watch/gi, "자사 워치"],
+  [/Galaxy Ring/gi, "자사 링"],
+  [/Samsung Account/gi, "자사 계정"],
+  [/Samsung Health/gi, "자사 헬스 플랫폼"],
+  [/Samsung Wallet/gi, "자사 월렛"],
+  [/Samsung Members/gi, "자사 사용자 커뮤니티"],
+  [/Samsung Phone/gi, "자사 단말"],
+  [/One UI/gi, "자사 UI"],
+  [/Knox Vault/gi, "자사 보안 금고"],
+  [/Knox Suite/gi, "자사 보안 제품군"],
+  [/Knox/gi, "자사 보안 플랫폼"],
+  [/SmartThings/gi, "자사 연결 플랫폼"],
+  [/\bDeX\b/g, "자사 데스크톱 모드"],
+  [/\bSVIC\b/gi, "사내 벤처투자"],
+  [/삼성전자/g, "자사"],
+  [/삼성/g, "자사"],
+  [/Samsung/gi, "자사"],
+  [/갤럭시/g, "자사 단말"],
+  [/Galaxy/gi, "자사 단말"],
+  [/\bMX\b/gi, "모바일 사업"],
+];
+const neutralizeDisplayText = value => DISPLAY_COPY_REPLACEMENTS
+  .reduce((text, [pattern, replacement]) => text.replace(pattern, replacement), String(value ?? ""));
 const CONSULTING_ENDINGS = [
   [/하지 않았습니다$/, "하지 않음"], [/되지 않았습니다$/, "되지 않음"],
   [/있지 않았습니다$/, "있지 않음"], [/있지 않습니다$/, "있지 않음"],
@@ -61,7 +90,7 @@ const nominalizeStatementEnding = clause => {
   return null;
 };
 function consultingBulletText(value) {
-  const source = String(value ?? "");
+  const source = neutralizeDisplayText(value);
   if (!source || !/[가-힣]/.test(source) || /^https?:\/\/\S+$/i.test(source.trim())) return source;
   if (CONSULTING_COPY_CACHE.has(source)) return CONSULTING_COPY_CACHE.get(source);
   const normalized = source
@@ -92,24 +121,24 @@ function consultingBulletText(value) {
 }
 
 const ORIGINAL_CREATE_ELEMENT = React.createElement.bind(React);
-const normalizeDisplayChild = child => {
-  if (typeof child === "string") return consultingBulletText(child);
-  if (Array.isArray(child)) return child.map(normalizeDisplayChild);
+const normalizeDisplayChild = (child, preserve = false) => {
+  if (typeof child === "string") return preserve ? neutralizeDisplayText(child) : consultingBulletText(child);
+  if (Array.isArray(child)) return child.map(item => normalizeDisplayChild(item, preserve));
   return child;
 };
 React.createElement = (type, props, ...children) => {
   const className = typeof props?.className === "string" ? props.className : "";
   const preserve = props?.["data-preserve-copy"] || /(?:^|\s)user(?:\s|$)/.test(className);
   const nextProps = props ? { ...props } : props;
-  if (!preserve && nextProps) {
+  if (nextProps) {
     for (const key of ["title", "aria-label", "placeholder"]) {
-      if (typeof nextProps[key] === "string") nextProps[key] = consultingBulletText(nextProps[key]);
+      if (typeof nextProps[key] === "string") nextProps[key] = preserve ? neutralizeDisplayText(nextProps[key]) : consultingBulletText(nextProps[key]);
     }
   }
   return ORIGINAL_CREATE_ELEMENT(
     type,
     nextProps,
-    ...(preserve ? children : children.map(normalizeDisplayChild)),
+    ...children.map(child => normalizeDisplayChild(child, preserve)),
   );
 };
 
@@ -169,25 +198,16 @@ function Trend({ v, small, animate }) {
 
 // ---- Sidebar ------------------------------
 const NAV = [
-  { id: "overview", ko: "AI 신사업 브리핑", en: "New Business Brief", icon: "grid", group: "신사업 의사결정" },
-  { id: "strategy", ko: "신사업 발굴 프레임", en: "User Need → New Biz", icon: "target", group: "신사업 의사결정" },
-  { id: "ib", ko: "시장·소비자 리서치", en: "Market & Consumer Research", icon: "report", group: "신사업 의사결정" },
-  { id: "opportunity", ko: "AI 신사업 DB", en: "Market · Money · Move", icon: "target", group: "신사업 의사결정" },
-  { id: "articles", ko: "산업·고객 신호", en: "Industry & Customer Signals", icon: "news", group: "신사업 의사결정" },
-  { id: "app", ko: "AI 경험·버티컬", en: "Experience & Verticals", icon: "spark", group: "SW·서비스 밸류체인" },
-  { id: "agent", ko: "에이전트·오케스트레이션", en: "Agents & Orchestration", icon: "ai", group: "SW·서비스 밸류체인" },
-  { id: "service", ko: "서비스 플랫폼·수익화", en: "Platform & Monetization", icon: "grid", group: "SW·서비스 밸류체인" },
-  { id: "trust", ko: "데이터·컨텍스트·신뢰", en: "Data, Context & Trust", icon: "report", group: "SW·서비스 밸류체인" },
-  { id: "model", ko: "모델·온디바이스 지능", en: "Models & On-device", icon: "ai", group: "SW·서비스 밸류체인" },
-  { id: "data", ko: "개발·배포 툴링", en: "Developer & Deployment", icon: "grid", group: "SW·서비스 밸류체인" },
-  { id: "infra", ko: "엣지·클라우드 런타임", en: "Edge & Cloud Runtime", icon: "server", group: "SW·서비스 밸류체인" },
-  { id: "sanalysis", ko: "스타트업·파트너", en: "Startups & Partners", icon: "target", group: "전략·사업개발" },
-  { id: "signals", ko: "기술 변화 신호", en: "Technology Signals", icon: "spark", group: "전략·사업개발" },
-  { id: "newbiz", ko: "AI 서비스 신사업", en: "AI Service Opportunities", icon: "spark", group: "전략·사업개발" },
-  { id: "survey", ko: "수요처 조사", en: "Demand Surveys", icon: "target", group: "시장 검증" },
-  { id: "market", ko: "시장·TAM", en: "Market & TAM", icon: "grid", group: "시장 검증" },
-  { id: "stocks", ko: "Stock 분석", en: "Stock Analysis", icon: "up", group: "시장 검증" },
-  { id: "audit", ko: "데이터 신뢰센터", en: "Data Trust Center", icon: "report", group: "운영·검증" },
+  { id: "overview", ko: "AI 신사업 브리핑", en: "New Business Brief", icon: "grid", group: "의사결정" },
+  { id: "strategy", ko: "신사업 발굴 프레임", en: "Opportunity Framework", icon: "target", group: "의사결정" },
+  { id: "opportunity", ko: "신사업 기회 DB", en: "Opportunity Database", icon: "report", group: "의사결정" },
+  { id: "themes", ko: "핵심 사업 테마", en: "Priority Business Themes", icon: "spark", group: "사업 포트폴리오" },
+  { id: "valuechain", ko: "AI 밸류체인", en: "AI Value Chain", icon: "ai", group: "사업 포트폴리오" },
+  { id: "newbiz", ko: "AI 서비스 신사업", en: "AI Service Opportunities", icon: "spark", group: "사업 포트폴리오" },
+  { id: "signals", ko: "기술 변화 신호", en: "Technology Signals", icon: "pulse", group: "생태계·기술" },
+  { id: "sanalysis", ko: "파트너·M&A 후보", en: "Partner & M&A Candidates", icon: "target", group: "생태계·기술" },
+  { id: "evidence", ko: "시장·고객 근거", en: "Market & Customer Evidence", icon: "news", group: "시장 검증" },
+  { id: "validation", ko: "수요·시장·재무 검증", en: "Demand, Market & Financial Validation", icon: "chart", group: "시장 검증" },
 ];
 const NAV_SECTION_IDS = NAV.map(item => item.id);
 
@@ -317,6 +337,7 @@ function useRelativeTime(iso) {
 // ---- Top bar ----------------------------------------------------
 function TopBar({ dark, onTheme, onMenuToggle, onColorCycle, onNav, generatedAt }) {
   const rel = useRelativeTime(generatedAt);
+  const [cliGuideSignal, setCliGuideSignal] = useState(0);
   return (
     <header className="topbar">
       <button className="tb-menu" onClick={onMenuToggle} title="메뉴">
@@ -324,14 +345,39 @@ function TopBar({ dark, onTheme, onMenuToggle, onColorCycle, onNav, generatedAt 
       </button>
       <div className="tb-title">
         <h1>AI Intelligence</h1>
-        {rel && (
-          <span className="tb-live" title={`데이터 파이프라인 마지막 갱신: ${generatedAt}`}>
-            <i className="tb-live-dot" />LIVE <em>{rel} 갱신</em>
-          </span>
-        )}
+        <div className="tb-title-meta">
+          {rel && (
+            <span className="tb-live" title={`데이터 파이프라인 마지막 갱신: ${generatedAt}`}>
+              <i className="tb-live-dot" />LIVE <em>{rel} 갱신</em>
+            </span>
+          )}
+        </div>
       </div>
+      <nav className="tb-resource-actions" aria-label="작성 및 CLI 도움말">
+        <a
+          className="tb-how-link"
+          href="https://bizdevelopment1-max.github.io/ai/How/"
+          target="_blank"
+          rel="noreferrer"
+          title="How 작성 방법 열기"
+          aria-label="How 작성 방법 새 탭에서 열기"
+        >
+          <i className="tb-resource-icon"><Icon name="report" size={14} sw={1.9} /></i>
+          <span>How · 작성 방법</span>
+          <Icon name="ext" size={10} sw={2} />
+        </a>
+        <button
+          className="tb-cli-guide"
+          onClick={() => setCliGuideSignal(value => value + 1)}
+          title="상단 CLI 활용법 열기"
+          aria-label="상단 CLI 활용법 열기"
+        >
+          <i className="tb-resource-icon"><Icon name="server" size={14} sw={1.9} /></i>
+          <span>CLI 활용법</span>
+        </button>
+      </nav>
       <div className="tb-tools">
-        <AIChatbot onNav={onNav} />
+        <AIChatbot onNav={onNav} guideSignal={cliGuideSignal} />
         <button className="tb-color" onClick={onColorCycle} title="색상 변경">
           <Icon name="palette" size={16} />
         </button>
@@ -410,6 +456,9 @@ const SITE_CODEX_ENVIRONMENTS = "https://chatgpt.com/codex/settings/environments
 const SITE_CODEX_REVIEW = "https://chatgpt.com/codex/settings/code-review";
 const SITE_CODEX_RESULT_MARKER = "<!-- site-codex-result:v1 -->";
 const SITE_CODEX_COMMANDS = [
+  ["/help", "전체 명령과 키보드 사용법"],
+  ["/guide", "GitHub Issue → Codex Cloud → Pull Request 사용 순서"],
+  ["/examples", "복사해서 바로 실행할 수 있는 예시"],
   ["/search <키워드>", "사이트 전체 근거 검색"],
   ["/company <기업명>", "기업 개요·수익 모델·전략 검색"],
   ["/market <키워드>", "시장·소비자 조사 검색"],
@@ -419,9 +468,62 @@ const SITE_CODEX_COMMANDS = [
   ["/open <섹션명>", "대시보드 섹션 이동"],
   ["/connect", "ChatGPT Pro·GitHub 연결 안내"],
   ["/doctor", "GitHub Cloud 브리지 상태"],
+  ["/repo", "GitHub 저장소 바로가기"],
+  ["/issues", "Site Codex 요청 Issue 목록"],
+  ["/prs", "Pull Request 검토 화면"],
+  ["/actions", "자동 검증 Actions 화면"],
   ["/export", "현재 작업 기록 저장"],
   ["/clear", "콘솔 기록 정리"],
 ];
+
+const SITE_CODEX_QUICK_COMMANDS = [
+  ["/guide", "처음 사용"],
+  ["/search ", "사이트 검색"],
+  ["/ask ", "저장소 질문"],
+  ["/edit ", "수정·PR 요청"],
+  ["/sync", "최근 요청 확인"],
+];
+
+const SITE_CODEX_GUIDE_STEPS = [
+  ["1", "명령 선택", "사이트 검색은 /search, 저장소 질문은 /ask, 코드·데이터 수정은 /edit 사용"],
+  ["2", "요청 작성", "명령 뒤에 검색어나 요청을 입력하고 Enter 실행 · Tab 자동완성 지원"],
+  ["3", "GitHub 요청 제출", "/ask·/edit 실행 시 열린 화면에서 Submit new issue를 눌러 요청 등록"],
+  ["4", "Cloud 작업 실행", "cloud-ready 댓글의 실행문을 복사해 연결된 저장소 환경에서 실행"],
+  ["5", "검증 후 적용", "수정 결과의 Pull Request와 Actions를 확인하고 승인 후 병합"],
+];
+
+const siteCliGuidePayload = () => ({
+  role: "assistant",
+  label: "CLI QUICK START",
+  text: "상단 입력창에서 명령을 바로 실행하거나 예시를 선택 · 읽기와 변경 요청을 분리하고 변경은 Pull Request 승인 후 적용",
+  steps: SITE_CODEX_GUIDE_STEPS,
+  examples: SITE_CODEX_EXAMPLES,
+  links: SITE_CODEX_LINKS.map(([, label, url]) => [label, url]),
+});
+
+const SITE_CODEX_EXAMPLES = [
+  "/search 온디바이스 AI 수익화",
+  "/company Apple",
+  "/market AI 스마트폰 출하량",
+  "/ask 현재 수집 자동화의 빈 스트림 원인을 분석해줘",
+  "/edit Apple 카드 호버 대비를 수정하고 자동화 검사를 추가해줘",
+  "/sync",
+];
+
+const SITE_CODEX_GITHUB_PAGES = {
+  repo: ["GITHUB REPOSITORY", SITE_CODEX_WEB],
+  issues: ["SITE CODEX ISSUES", `${SITE_CODEX_WEB}/issues?q=is%3Aissue+label%3Asite-codex`],
+  prs: ["PULL REQUESTS", `${SITE_CODEX_WEB}/pulls`],
+  actions: ["SITE CODEX ACTIONS", `${SITE_CODEX_WEB}/actions/workflows/site-codex.yml`],
+};
+
+function completeSiteCliCommand(value) {
+  const raw = String(value || "");
+  if (!raw.startsWith("/") || /\s/.test(raw)) return raw;
+  const commands = SITE_CODEX_COMMANDS.map(([syntax]) => syntax.split(" ")[0]);
+  const matches = commands.filter(command => command.startsWith(raw.toLowerCase()));
+  return matches.length === 1 ? `${matches[0]} ` : raw;
+}
 
 const SITE_CODEX_LINKS = [
   ["01", "Pro Codex Cloud 로그인", SITE_CODEX_CLOUD],
@@ -559,7 +661,7 @@ function cleanSiteCodexResult(body) {
     .trim();
 }
 
-function AIChatbot({ onNav }) {
+function AIChatbot({ onNav, guideSignal = 0 }) {
   const [launcher, setLauncher] = useState("");
   const [visible, setVisible] = useState(false);
   const [input, setInput] = useState("");
@@ -571,17 +673,32 @@ function AIChatbot({ onNav }) {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [log, setLog] = useState([{
     id: "boot", role: "system", label: "READY",
-    text: "사이트 데이터 인덱스 연결 · ChatGPT Pro Codex Cloud · GitHub 요청·PR 흐름 연결 · /help 명령어 확인",
+    text: "처음 사용하면 /guide · 사이트 내부 검색은 /search · 저장소 질문은 /ask · 수정과 PR 요청은 /edit",
+    commands: SITE_CODEX_QUICK_COMMANDS,
   }]);
   const launcherRef = useRef(null);
   const terminalInputRef = useRef(null);
   const outputRef = useRef(null);
   const pollTimerRef = useRef(null);
+  const guideSignalRef = useRef(0);
 
   const append = entry => setLog(current => [
     ...current,
     { id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, ...entry },
   ]);
+
+  useEffect(() => {
+    if (!guideSignal || guideSignalRef.current === guideSignal) return;
+    guideSignalRef.current = guideSignal;
+    setVisible(true);
+    append(siteCliGuidePayload());
+    setTimeout(() => terminalInputRef.current?.focus(), 40);
+  }, [guideSignal]);
+
+  const chooseCommand = command => {
+    setInput(command);
+    setTimeout(() => terminalInputRef.current?.focus(), 0);
+  };
 
   const checkGithubBridge = async (announce = false) => {
     setGithubState(current => ({ ...current, state: "checking" }));
@@ -742,7 +859,7 @@ function AIChatbot({ onNav }) {
     append({
       role: "system",
       label: "GITHUB REQUEST",
-      text: `${mode === "edit" ? "수정" : "질의"} 요청 ${requestId} · 열린 GitHub 화면에서 Issue 제출 · ${copied ? "Codex Cloud 실행문 복사 완료" : "아래 복사 버튼으로 실행문 복사"}`,
+      text: `${mode === "edit" ? "수정" : "질의"} 요청 ${requestId}\n1. 열린 GitHub 화면에서 Submit new issue 클릭\n2. cloud-ready 댓글 확인\n3. ${copied ? "복사된 실행문을" : "실행문 복사 버튼을 누르고"} Codex Cloud에 붙여넣기\n4. 수정 요청은 Pull Request와 Actions 결과 검토 후 병합`,
       links: [
         ["GitHub 요청 열기", url],
         ["Pro Codex Cloud 열기", SITE_CODEX_CLOUD],
@@ -789,11 +906,20 @@ function AIChatbot({ onNav }) {
     append({ role: "user", label: "YOU", text: raw });
 
     const commandMatch = raw.match(/^\/(\S+)\s*(.*)$/s);
-    const command = commandMatch ? commandMatch[1].toLowerCase() : "ask";
+    let command = commandMatch ? commandMatch[1].toLowerCase() : "ask";
     const args = commandMatch ? commandMatch[2].trim() : raw;
+    if (!commandMatch && ["help", "도움말", "?"].includes(raw.toLowerCase())) command = "help";
 
     if (command === "help") {
-      append({ role: "system", label: "COMMANDS", text: "사이트 검색 · ChatGPT Pro Codex Cloud 질의 · GitHub Pull Request 수정 · Cloud 브리지 상태 확인", commands: SITE_CODEX_COMMANDS });
+      append({ role: "system", label: "COMMANDS", text: "명령을 선택하거나 직접 입력 · Tab 자동완성 · ↑/↓ 이전 명령 · Enter 실행 · Shift+Enter 줄바꿈", commands: SITE_CODEX_COMMANDS });
+      return;
+    }
+    if (command === "guide") {
+      append(siteCliGuidePayload());
+      return;
+    }
+    if (command === "examples") {
+      append({ role: "system", label: "RUNNABLE EXAMPLES", text: "예시를 선택하면 입력창에 채워짐 · 내용 확인 후 Enter로 실행", examples: SITE_CODEX_EXAMPLES });
       return;
     }
     if (command === "clear") { setLog([]); return; }
@@ -801,6 +927,11 @@ function AIChatbot({ onNav }) {
     if (command === "connect") { setGithubPanelOpen(true); checkGithubBridge(true); return; }
     if (command === "doctor" || command === "status") {
       await checkGithubBridge(true);
+      return;
+    }
+    if (SITE_CODEX_GITHUB_PAGES[command]) {
+      const [label, url] = SITE_CODEX_GITHUB_PAGES[command];
+      append({ role: "assistant", label, text: `${SITE_CODEX_REPO} GitHub 화면`, url, actionLabel: "GitHub에서 열기" });
       return;
     }
     if (command === "open") { openSection(args); return; }
@@ -837,6 +968,11 @@ function AIChatbot({ onNav }) {
 
   const onTerminalKey = event => {
     if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); execute(input); return; }
+    if (event.key === "Tab") {
+      const completed = completeSiteCliCommand(input);
+      if (completed !== input) { event.preventDefault(); setInput(completed); }
+      return;
+    }
     if (event.key === "ArrowUp") {
       event.preventDefault();
       const next = Math.min(history.length - 1, historyIndex + 1);
@@ -860,8 +996,14 @@ function AIChatbot({ onNav }) {
           ref={launcherRef}
           value={launcher}
           onChange={event => setLauncher(event.target.value)}
-          onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); launcher.trim() ? execute(launcher) : setVisible(true); } }}
-          placeholder="github-codex · 질문 또는 수정 명령어"
+          onKeyDown={event => {
+            if (event.key === "Tab") {
+              const completed = completeSiteCliCommand(launcher);
+              if (completed !== launcher) { event.preventDefault(); setLauncher(completed); }
+            }
+            if (event.key === "Enter") { event.preventDefault(); launcher.trim() ? execute(launcher) : setVisible(true); }
+          }}
+          placeholder="/guide · /search · /ask · /edit"
           aria-label="사이트 CLI 명령어"
           data-preserve-copy="true"
         />
@@ -908,7 +1050,17 @@ function AIChatbot({ onNav }) {
                   )}
                   {item.commands && (
                     <div className="site-cli-command-grid">
-                      {item.commands.map(([cmd, desc]) => <button key={cmd} onClick={() => setInput(cmd.split(" ")[0] + " ")}><code>{cmd}</code><span>{desc}</span></button>)}
+                      {item.commands.map(([cmd, desc]) => <button key={cmd} onClick={() => chooseCommand(cmd.endsWith(" ") ? cmd : `${cmd.split(" ")[0]} `)}><code>{cmd}</code><span>{desc}</span></button>)}
+                    </div>
+                  )}
+                  {item.steps?.length > 0 && (
+                    <ol className="site-cli-steps">
+                      {item.steps.map(([step, title, desc]) => <li key={step}><span>{step}</span><div><b>{title}</b><p>{desc}</p></div></li>)}
+                    </ol>
+                  )}
+                  {item.examples?.length > 0 && (
+                    <div className="site-cli-examples">
+                      {item.examples.map(example => <button key={example} onClick={() => chooseCommand(example)}><code>{example}</code><span>입력</span></button>)}
                     </div>
                   )}
                   {item.results?.length > 0 && (
@@ -944,6 +1096,13 @@ function AIChatbot({ onNav }) {
               </div>
             )}
 
+            <nav className="site-cli-shortcuts" aria-label="CLI 빠른 명령">
+              <span>QUICK</span>
+              {SITE_CODEX_QUICK_COMMANDS.map(([command, label]) => (
+                <button key={command} onClick={() => chooseCommand(command)}><code>{command.trim()}</code><em>{label}</em></button>
+              ))}
+            </nav>
+
             <footer className="site-cli-input-row">
               <span>github-codex&nbsp;$</span>
               <textarea
@@ -951,7 +1110,7 @@ function AIChatbot({ onNav }) {
                 value={input}
                 onChange={event => setInput(event.target.value)}
                 onKeyDown={onTerminalKey}
-                placeholder="질문 입력 · /help 명령어 확인"
+                placeholder="/guide로 시작 · Tab 자동완성 · ↑/↓ 명령 기록"
                 rows="1"
                 disabled={busy}
                 data-preserve-copy="true"

@@ -1,517 +1,605 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
-import { canonicalUrl } from "./market-db.mjs";
-import { consolidateMarketRecords } from "./market-consolidation.mjs";
-import { isExcludedText } from "./news-policy.mjs";
-import { loadSuppressionRegistry } from "./suppression-registry.mjs";
+import { sanitizePublicCopy } from "./public-copy.mjs";
 
 const OUTPUT = "mobile-ai-business-view.json";
-const now = new Date().toISOString();
-const compact = value => String(value || "").replace(/\s+/g, " ").trim();
-const normalized = value => compact(value).toLocaleLowerCase();
-const dateValue = value => {
-  const parsed = Date.parse(String(value || ""));
-  return Number.isFinite(parsed) ? parsed : 0;
-};
-const stableHash = value => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);
-const readJson = async (file, fallback) => {
-  try { return JSON.parse(await readFile(file, "utf8")); } catch { return fallback; }
-};
+const SEED = "config/mx-intelligence-seed.json";
+const SOURCE_POLICY = "config/mx-source-policy.json";
+const PIPELINE_POLICY = "config/intelligence-pipeline.json";
+const OPPORTUNITY_POLICY = "config/opportunity-generation.json";
+const DAY_MS = 86400000;
 
-const MODEL_LABELS = {
-  subscription: "구독·멤버십",
-  hardware: "기기 판매·가격 프리미엄",
-  ads: "광고·커머스·수수료",
-  usage: "사용량·크레딧",
-  enterprise: "기업 라이선스·관리",
-  outcome: "성과 기반 과금",
-  vertical: "자체 서비스·수직통합",
-};
-
-const COMPETITOR_CANON = {
-  "Google DeepMind": "Google AI",
-  "Meta AI": "Meta",
-  OpenAI: "ChatGPT",
-  Anthropic: "Claude",
-};
-
-const COMPETITOR_SIGNAL_ALIASES = {
-  "Google DeepMind": ["Google", "Gemini"],
-  "Meta AI": ["Meta"],
-  OpenAI: ["OpenAI", "ChatGPT"],
-  Anthropic: ["Anthropic", "Claude"],
-  Apple: ["Apple", "iCloud", "Siri"],
-  Microsoft: ["Microsoft", "Copilot"],
-  Amazon: ["Amazon", "Alexa", "AWS"],
-};
-
-const RESEARCH_SOURCE = /counterpoint|sensor tower|appfigures|idc|canalys|omdia|deloitte|pew research|capgemini|gartner|mckinsey/i;
-const OFFICIAL_HOST = /(?:^|\.)(?:apple\.com|google\.com|blog\.google|about\.fb\.com|openai\.com|anthropic\.com|microsoft\.com|amazon\.com|aws\.amazon\.com|stripe\.com|salesforce\.com)$/i;
-
-const sourceTier = record => {
-  const name = `${record?.sourceName || record?.source || ""}`;
-  let host = "";
-  try { host = new URL(record?.sourceUrl || record?.url || "").hostname; } catch {}
-  if (RESEARCH_SOURCE.test(`${name} ${host}`)) return 3;
-  if (OFFICIAL_HOST.test(host)) return 3;
-  return 1;
-};
-
-const MARKET_TOPICS = [
-  {
-    id: "device-adoption",
-    label: "AI 단말 보급",
-    accent: "#2D6BFF",
-    include: /(?:genai|generative ai|생성형 ai|ai)[^\n]{0,35}(?:smartphone|phone|mobile device|스마트폰|휴대폰|단말)|(?:smartphone|phone|mobile device|스마트폰|휴대폰|단말)[^\n]{0,35}(?:genai|generative ai|생성형 ai|ai)/i,
-  },
-  {
-    id: "mobile-app-economy",
-    label: "모바일 AI 앱 경제",
-    accent: "#66558C",
-    include: /(?:mobile|app|iap|앱|모바일)[^\n]{0,45}(?:generative ai|genai|ai assistant|ai companion|생성형 ai|ai 비서|ai 컴패니언)/i,
-  },
-  {
-    id: "wearable-ai",
-    label: "웨어러블 AI",
-    accent: "#A66B3F",
-    include: /ai[^\n]{0,30}(?:glasses|wearable|earbuds|hearable|smart ring|안경|웨어러블|이어버드|스마트링)|(?:glasses|wearable|earbuds|hearable|smart ring|안경|웨어러블|이어버드|스마트링)[^\n]{0,30}ai/i,
-  },
-  {
-    id: "agent-commerce",
-    label: "에이전트 커머스",
-    accent: "#0E8F6E",
-    include: /(?:agentic|ai agent|assistant|에이전트|ai 비서)[^\n]{0,40}(?:commerce|shopping|payment|checkout|transaction|커머스|쇼핑|결제|거래)/i,
-  },
-  {
-    id: "health-context",
-    label: "건강·개인 컨텍스트",
-    accent: "#DB2777",
-    include: /(?:ai|인공지능)[^\n]{0,35}(?:health|wellness|medical|mental health|건강|웰니스|의료|멘탈)|(?:health|wellness|medical|건강|웰니스|의료)[^\n]{0,35}(?:ai|인공지능)/i,
-  },
-  {
-    id: "trust-safety",
-    label: "신뢰·안전",
-    accent: "#287A78",
-    include: /(?:ai|인공지능)[^\n]{0,35}(?:privacy|security|scam|deepfake|trust|consent|개인정보|보안|스캠|딥페이크|신뢰|동의)/i,
-  },
-];
-
-const SEEDED_MARKETS = [
-  {
-    stableKey: "market:device-adoption",
-    topicId: "device-adoption",
-    topic: "AI 단말 보급",
-    title: "GenAI 지원 스마트폰 출하 비중",
-    metrics: [
-      { label: "2025 출하 비중", value: "36%" },
-      { label: "2026 전망", value: "45%" },
-      { label: "2027 전망", value: "52%" },
-    ],
-    insight: "고가 제품 중심 기능에서 전체 시장의 표준 기능으로 이동 · 교체 유인보다 일상 사용성과 수익모델 증명이 다음 경쟁축",
-    sourceName: "Counterpoint Research",
-    sourceUrl: "https://counterpointresearch.com/en/insights/genai-smartphone-share-to-rise-to-45-percent-of-global-shipments-in-2026",
-    publishedAt: "2026-06-22",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-  {
-    stableKey: "market:mobile-app-economy",
-    topicId: "mobile-app-economy",
-    topic: "모바일 AI 앱 경제",
-    title: "생성형 AI 모바일 앱 인앱결제 시장",
-    metrics: [
-      { label: "2025 Q2–2026 Q1 IAP", value: "$6.1B" },
-      { label: "전년 대비 성장", value: "+232%" },
-      { label: "2026 Q1 매출", value: "$1.9B" },
-    ],
-    insight: "범용 비서 매출은 집중 · 컴패니언·에이전트·이미지·영상 등 버티컬은 성장과 경쟁 분산이 동시에 진행",
-    sourceName: "Sensor Tower",
-    sourceUrl: "https://sensortower.com/blog/state-of-ai-apps-in-apac-2026-report",
-    publishedAt: "2026-06-01",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-  {
-    stableKey: "market:vertical-ai-apps",
-    topicId: "mobile-app-economy",
-    topic: "버티컬 AI 앱",
-    title: "모바일 AI 버티컬의 유료화 깊이",
-    metrics: [
-      { label: "AI 컴패니언 2026 Q1 매출", value: "$150M" },
-      { label: "2023 Q1 대비 성장", value: "12배+" },
-      { label: "전문 AI 기기·앱 다운로드당 매출", value: "$47" },
-    ],
-    insight: "범용 비서와 다른 전문 사용 장면에서 높은 지불의사 확인 · 전용 기기와 앱을 결합한 하이브리드 모델의 수익화 밀도 확대",
-    sourceName: "Sensor Tower",
-    sourceUrl: "https://sensortower.com/blog/state-of-ai-apps-in-apac-2026-report",
-    publishedAt: "2026-06-01",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-  {
-    stableKey: "market:trust-safety",
-    topicId: "trust-safety",
-    topic: "신뢰·안전",
-    title: "일상 AI의 통제권과 신뢰 요구",
-    metrics: [
-      { label: "AI 확산 우려", value: "50%" },
-      { label: "더 많은 통제권 희망", value: "약 60%" },
-      { label: "일상 업무 보조 수용", value: "약 75%" },
-    ],
-    insight: "사용자는 AI 보조 자체보다 데이터 사용과 실행 권한의 통제 가능성을 중시 · 개인 컨텍스트 서비스의 핵심 상품은 모델 성능과 함께 동의·기록·철회 경험",
-    sourceName: "Pew Research Center",
-    sourceUrl: "https://www.pewresearch.org/science/2025/09/17/how-americans-view-ai-and-its-impact-on-people-and-society/",
-    publishedAt: "2025-09-17",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-];
-
-const SEEDED_COMPETITORS = [
-  {
-    stableKey: "competitor:google-ai",
-    name: "Google AI",
-    segment: "AI 비서·생산성 번들",
-    businessModel: "구독·멤버십",
-    modelId: "subscription",
-    metrics: [
-      { label: "AI Plus", value: "$9.99/월" },
-      { label: "AI Pro", value: "$19.99/월" },
-      { label: "AI Ultra", value: "$100/월" },
-    ],
-    proof: "저장공간·생산성 앱·창작 도구·모델 사용 한도를 하나의 등급제로 결합 · 초과 수요는 크레딧으로 추가 과금",
-    sourceName: "Google One · Google Blog",
-    sourceUrl: "https://blog.google/products-and-platforms/products/google-one/google-ai-subscriptions/",
-    publishedAt: "2026-05-19",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-  {
-    stableKey: "competitor:apple",
-    name: "Apple",
-    segment: "OS·개인 AI 경험",
-    businessModel: "구독 번들·기기 생태계",
-    modelId: "subscription",
-    metrics: [
-      { label: "과금 단위", value: "iCloud+ 등급" },
-      { label: "유료 혜택", value: "서버형 AI 사용 한도 확대" },
-    ],
-    proof: "기본 AI 기능은 지원 기기에 포함 · 서버 연산이 필요한 일부 기능의 확대 사용량을 클라우드 구독과 결합",
-    sourceName: "Apple Newsroom",
-    sourceUrl: "https://www.apple.com/newsroom/2026/06/apple-intelligence-brings-powerful-ai-capabilities-into-everyday-experiences/",
-    publishedAt: "2026-06-08",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-  {
-    stableKey: "competitor:meta",
-    name: "Meta",
-    segment: "AI 웨어러블",
-    businessModel: "기기 판매·가격 프리미엄",
-    modelId: "hardware",
-    metrics: [
-      { label: "AI 안경 시작가", value: "$299" },
-      { label: "출시 스타일", value: "26종" },
-      { label: "판매 검증", value: "수백만 대" },
-    ],
-    proof: "패션 파트너의 유통력과 상시형 AI 경험을 결합 · 기기 매출을 먼저 확보하고 개발자 앱 생태계로 확장",
-    sourceName: "Meta Newsroom",
-    sourceUrl: "https://about.fb.com/news/2026/06/meta-essilorluxottica-partner-launch-meta-glasses/",
-    publishedAt: "2026-06-23",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-  {
-    stableKey: "competitor:chatgpt",
-    name: "ChatGPT",
-    segment: "모바일 AI 비서",
-    businessModel: "앱 구독·인앱결제",
-    modelId: "subscription",
-    metrics: [
-      { label: "모바일 누적 소비지출", value: "$5B" },
-      { label: "2026년 3월 다운로드당 매출", value: "$6.73" },
-    ],
-    proof: "대규모 무료 이용자를 반복 구독 매출로 전환 · 모바일 유통이 모델 사용을 소비자 소프트웨어 매출로 연결",
-    sourceName: "Appfigures Intelligence",
-    sourceUrl: "https://appfigures.com/resources/insights/chatgpt-fastest-app-5b-mobile/amp",
-    publishedAt: "2026-06-02",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-  {
-    stableKey: "competitor:claude",
-    name: "Claude",
-    segment: "모바일 AI 비서",
-    businessModel: "앱 구독·인앱결제",
-    modelId: "subscription",
-    metrics: [
-      { label: "모바일 누적 소비지출", value: "$319M" },
-      { label: "2026년 5월 매출", value: "$92M" },
-    ],
-    proof: "고급 모델과 업무 생산성을 유료 구독으로 전환 · 설치 규모보다 고가치 사용자의 지출 확대로 성장",
-    sourceName: "Appfigures Intelligence",
-    sourceUrl: "https://appfigures.com/resources/insights/chatgpt-fastest-app-5b-mobile/amp",
-    publishedAt: "2026-06-02",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-  {
-    stableKey: "competitor:perplexity",
-    name: "Perplexity",
-    segment: "검색·개인 에이전트",
-    businessModel: "앱 구독·인앱결제",
-    modelId: "subscription",
-    metrics: [
-      { label: "모바일 누적 소비지출", value: "$100M+" },
-      { label: "2026년 5월 매출", value: "$14M" },
-    ],
-    proof: "검색과 실행형 에이전트를 고급 구독으로 묶어 반복 매출 확보 · 단말·브라우저 배포로 사용 접점 확장",
-    sourceName: "Appfigures Intelligence",
-    sourceUrl: "https://appfigures.com/resources/insights/chatgpt-fastest-app-5b-mobile/amp",
-    publishedAt: "2026-06-02",
-    sourceTier: 3,
-    provenance: "source-verified",
-  },
-];
-
-const OPPORTUNITY_FRAMEWORK = [
-  {
-    id: "personal-agent-bundle",
-    priority: 1,
-    title: "개인 에이전트 구독 번들",
-    whereToPlay: "통화·메시지·검색·일정·사진을 연결하는 개인 실행 계층",
-    valueCapture: "기본 기능 무료 + 고급 모델·클라우드 연산·가족 공유 월 구독",
-    evidenceKeys: ["market:mobile-app-economy", "competitor:google-ai", "competitor:apple", "competitor:chatgpt"],
-    rationale: "모바일 AI 지출이 빠르게 성장하고 플랫폼 사업자는 저장공간·생산성·모델 한도를 하나의 구독으로 묶는 중",
-    nextMetrics: ["주간 활성 이용자", "유료 전환율", "가입자당 추론원가", "번들 ARPU"],
-  },
-  {
-    id: "vertical-ai-store",
-    priority: 2,
-    title: "버티컬 AI 서비스 스토어",
-    whereToPlay: "건강·학습·여행·크리에이티브·업무 앱의 검증·배포·과금",
-    valueCapture: "구독 수익배분 + 사용량 수수료 + 추천·프로모션",
-    evidenceKeys: ["market:mobile-app-economy", "market:vertical-ai-apps", "competitor:chatgpt", "competitor:claude"],
-    rationale: "범용 비서의 매출 집중과 버티컬 시장의 경쟁 분산이 동시에 진행 · 유통·결제·신뢰 계층의 가치 확대",
-    nextMetrics: ["활성 AI 서비스 수", "유료 GMV", "서비스별 재구매율", "파트너 정산율"],
-  },
-  {
-    id: "wearable-companion",
-    priority: 3,
-    title: "웨어러블 AI 컴패니언",
-    whereToPlay: "카메라·음성·건강 센서를 이용한 상시형 보조 경험",
-    valueCapture: "기기 가격 프리미엄 + 전문 기능 구독 + 파트너 앱 수익배분",
-    evidenceKeys: ["competitor:meta", "market:device-adoption"],
-    rationale: "AI 기능을 화면 밖으로 확장하는 기기 판매 모델이 검증 단계에 진입 · 접근성·업무·운동 등 명확한 사용 장면 확보",
-    nextMetrics: ["일일 착용 시간", "AI 호출 빈도", "기기 총이익", "유료 기능 부착률"],
-  },
-  {
-    id: "private-context-vault",
-    priority: 4,
-    title: "개인 컨텍스트 금고",
-    whereToPlay: "개인 데이터·동의·권한·기기 간 컨텍스트 연속성을 관리하는 신뢰 계층",
-    valueCapture: "개인 구독 + 기업 관리 라이선스 + 파트너 접근 수수료",
-    evidenceKeys: ["competitor:apple", "competitor:google-ai", "market:device-adoption"],
-    rationale: "AI 기능의 차별화가 모델 성능에서 개인 데이터 접근과 안전한 실행 권한으로 이동",
-    nextMetrics: ["로컬 처리 비중", "동의 유지율", "권한형 도구 수", "보안 사고율"],
-  },
-];
-
-const marketText = record => [
-  record.title,
-  record.consolidatedTitle,
-  record.topic,
-  record.metricLabel,
-  record.evidence,
-  ...(record.consolidatedInsights || []),
-  ...(record.sourceQuantifiedLines || []).map(item => item?.line),
-].filter(Boolean).join(" ");
-
-const marketCandidate = record => {
-  if (record?.displayEligible !== true || record?.provenance?.status !== "source-backed") return null;
-  if (!record.sourceUrl || isExcludedText(JSON.stringify(record))) return null;
-  if (!Array.isArray(record.sourceMetricValues) || !record.sourceMetricValues.length) return null;
-  const text = marketText(record);
-  const topic = MARKET_TOPICS.find(item => item.include.test(text));
-  if (!topic || sourceTier(record) < 2) return null;
-  const metrics = record.sourceMetricValues.filter(metric => {
-    const value = compact(metric?.value);
-    const label = compact(metric?.label);
-    return label && value
-      && !/^0\d{2,}(?:\D|$)/.test(value)
-      && !/^20\d{2}$/.test(value)
-      && !/비교 기준 연도|원문 수치/.test(label);
-  }).slice(0, 4);
-  if (metrics.length < 2) return null;
-  return {
-    stableKey: `market:${topic.id}`,
-    topicId: topic.id,
-    topic: topic.label,
-    title: record.consolidatedTitle || record.localization?.title || record.title,
-    metrics: metrics.map(metric => ({ label: metric.label, value: metric.value })),
-    insight: (record.consolidatedInsights || record.summaryLinesKo || record.summaryLinesEn || []).slice(0, 2).join(" · "),
-    sourceName: record.sourceName,
-    sourceUrl: canonicalUrl(record.sourceUrl),
-    publishedAt: record.publishedAt,
-    sourceTier: sourceTier(record),
-    provenance: "source-backed",
-    relatedSources: record.relatedSources || [],
-  };
-};
-
-const latestByStableKey = candidates => {
-  const selected = new Map();
-  for (const candidate of candidates.filter(Boolean)) {
-    if (!candidate.stableKey || !candidate.sourceUrl || isExcludedText(JSON.stringify(candidate))) continue;
-    const existing = selected.get(candidate.stableKey);
-    const newer = !existing
-      || dateValue(candidate.publishedAt) > dateValue(existing.publishedAt)
-      || (dateValue(candidate.publishedAt) === dateValue(existing.publishedAt)
-        && Number(candidate.sourceTier || 0) > Number(existing.sourceTier || 0));
-    if (newer) selected.set(candidate.stableKey, candidate);
+const readJson = async (file, fallback = null) => {
+  try { return JSON.parse(await readFile(file, "utf8")); }
+  catch (error) {
+    if (fallback !== null) return fallback;
+    throw new Error(`${file}: ${error.message}`);
   }
-  return [...selected.values()].sort((left, right) => dateValue(right.publishedAt) - dateValue(left.publishedAt));
 };
 
-const canon = value => canonicalUrl(value) || compact(value).replace(/[?#].*$/, "");
-const strictDynamicCompetitors = (monetization, news) => {
-  const articleByUrl = new Map((news.articles || []).map(article => [canon(article.url), article]));
-  const output = [];
-  for (const company of monetization.companies || []) {
-    if (!company?.name || isExcludedText(company.name)) continue;
-    const displayName = COMPETITOR_CANON[company.name] || company.name;
-    const signals = [];
-    for (const signal of company.monetize || []) {
-      const article = articleByUrl.get(canon(signal.url));
-      if (!article || article.displayEligible === false || article.provenance?.status !== "source-backed") continue;
-      if (article.summaryMode !== "source-content-extractive" || isExcludedText(JSON.stringify(article))) continue;
-      const assigned = normalized(article.co) === normalized(company.name);
-      if (!assigned) continue;
-      const aliases = COMPETITOR_SIGNAL_ALIASES[company.name] || [company.name];
-      if (!aliases.some(alias => normalized(signal.signal).includes(normalized(alias)))) continue;
-      const modelId = signal.model;
-      const moneyContext = /revenue|sales|subscription|pricing|price|paid|premium|bundle|commission|transaction|usage-based|license|매출|판매|구독|가격|유료|프리미엄|번들|수수료|거래|과금|라이선스/i;
-      if (!MODEL_LABELS[modelId] || !moneyContext.test(signal.signal || "")) continue;
-      const tier = sourceTier({ sourceName: signal.source, sourceUrl: signal.url });
-      if (tier < 3) continue;
-      signals.push({
-        modelId,
-        businessModel: MODEL_LABELS[modelId],
-        proof: compact(signal.signal),
-        sourceName: signal.source || article.source,
-        sourceUrl: canon(signal.url),
-        publishedAt: signal.date || article.date,
-        sourceTier: tier,
+const stableHash = value => createHash("sha256")
+  .update(JSON.stringify(value))
+  .digest("hex")
+  .slice(0, 16);
+
+const ageDays = (date, now) => {
+  const value = Date.parse(date || "");
+  return Number.isFinite(value) ? Math.max(0, Math.floor((now - value) / DAY_MS)) : 9999;
+};
+
+const evidenceText = signal => (signal.evidence || [])
+  .flatMap(source => source.spans || [])
+  .join(" ");
+
+const requiredSignalFields = [
+  "id", "name", "product", "entityType", "priority", "decisionAxes",
+  "fact", "implication", "decision", "actionOption", "ownerOrg",
+  "lastVerifiedAt", "confidence", "workflow", "mxMapping", "scorecard",
+  "financials", "evidence",
+];
+
+const validateSignal = signal => {
+  const issues = [];
+  for (const field of requiredSignalFields) {
+    const value = signal[field];
+    if (value === undefined || value === null || value === "") issues.push(`missing:${field}`);
+  }
+
+  const axes = signal.decisionAxes || {};
+  for (const field of ["touchpoint", "integration", "posture", "regions", "maturity"]) {
+    if (!axes[field] || (Array.isArray(axes[field]) && !axes[field].length)) issues.push(`missing-axis:${field}`);
+  }
+  if (!["Buy", "Build", "Partner", "Watch", "License"].includes(signal.actionOption)) issues.push("invalid-action-option");
+  if (!["제품기획팀", "R&D", "서비스기획", "구매"].includes(signal.ownerOrg)) issues.push("invalid-owner-org");
+
+  const mapping = signal.mxMapping || {};
+  for (const field of ["galaxyDifferentiation", "bomImpact", "partnershipHistory", "patentLitigationRisk", "svicPortfolio"]) {
+    if (!mapping[field]) issues.push(`missing-mx-mapping:${field}`);
+  }
+
+  const spans = (signal.evidence || []).flatMap(source => source.spans || []).filter(Boolean);
+  if (spans.length < 3) issues.push("evidence-spans-below-3");
+  if ((signal.evidence || []).some(source => !source.url || !source.publisher || !source.publishedAt)) {
+    issues.push("incomplete-source-record");
+  }
+
+  const independentSources = new Set((signal.evidence || []).map(source => source.independentKey).filter(Boolean)).size;
+  if (signal.confidence === "high" && independentSources < 2) issues.push("high-confidence-needs-2-independent-sources");
+  if (signal.priority === "P1" && !(signal.workflow?.humanReview && signal.workflow?.reviewStatus === "approved")) {
+    issues.push("p1-human-review-required");
+  }
+
+  const sourceText = evidenceText(signal).toLowerCase();
+  for (const metric of signal.metrics || []) {
+    if (!metric.evidenceLiteral || !sourceText.includes(String(metric.evidenceLiteral).toLowerCase())) {
+      issues.push(`numeric-evidence-missing:${metric.label}`);
+    }
+  }
+  return { issues, independentSources, evidenceSpanCount: spans.length };
+};
+
+const metricDiffs = (before = [], after = []) => {
+  const oldValues = new Map(before.map(metric => [metric.label, metric.value]));
+  return after
+    .filter(metric => oldValues.has(metric.label) && oldValues.get(metric.label) !== metric.value)
+    .map(metric => ({ label: metric.label, before: oldValues.get(metric.label), after: metric.value }));
+};
+
+const embeddingVector = (text, dimensions = 384) => {
+  const normalized = String(text || "").toLowerCase().replace(/[^a-z0-9가-힣\s]/g, " ").replace(/\s+/g, " ").trim();
+  const words = normalized.split(" ").filter(token => token.length > 1);
+  const features = [...words, ...words.slice(0, -1).map((word, index) => `${word}_${words[index + 1]}`)];
+  const vector = new Float64Array(dimensions);
+  for (const feature of features) {
+    let hash = 2166136261;
+    for (const char of feature) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
+    vector[Math.abs(hash) % dimensions] += 1;
+  }
+  return vector;
+};
+
+const cosine = (left, right) => {
+  let dot = 0; let leftNorm = 0; let rightNorm = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    dot += left[index] * right[index];
+    leftNorm += left[index] ** 2;
+    rightNorm += right[index] ** 2;
+  }
+  return leftNorm && rightNorm ? dot / Math.sqrt(leftNorm * rightNorm) : 0;
+};
+
+const matchOpportunityPartners = (opportunities = [], picks = []) => opportunities.map(opportunity => {
+  const terms = (opportunity.matchTerms || []).map(term => String(term).toLowerCase());
+  const partnerMatches = picks.map(pick => {
+    const text = [pick.name, pick.vertical, pick.why, pick.partnership, ...(pick.labels || [])].join(" ").toLowerCase();
+    const matchedTerms = terms.filter(term => text.includes(term));
+    return {
+      name: pick.name,
+      vertical: pick.vertical,
+      region: pick.region,
+      radarScore: pick.total,
+      matchScore: matchedTerms.length * 20 + Number(pick.total || 0),
+      matchedTerms,
+      urgent: Boolean(pick.urgent),
+      evidence: (pick.evidence || []).slice(0, 2),
+    };
+  }).filter(match => match.matchedTerms.length)
+    .sort((left, right) => right.matchScore - left.matchScore)
+    .slice(0, 3);
+  return { ...opportunity, partnerMatches, matchStatus: partnerMatches.length ? "matched" : "no-match" };
+});
+
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+const normalizeSourceKey = url => {
+  try { return new URL(url).hostname.replace(/^www\./, "").toLowerCase(); }
+  catch { return String(url || "unknown").toLowerCase(); }
+};
+const textOf = value => Array.isArray(value) ? value.join(" ") : String(value || "");
+
+const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {} }) => {
+  const rows = [];
+  for (const signal of signals) {
+    for (const source of signal.evidence || []) {
+      rows.push({
+        id: `signal:${signal.id}:${stableHash(source.url || source.publisher)}`,
+        type: "decision-signal",
+        title: `${signal.name} · ${signal.product}`,
+        text: [signal.name, signal.product, signal.fact, signal.implication, signal.decision, ...(source.spans || [])].join(" "),
+        url: source.url || "",
+        source: source.publisher || normalizeSourceKey(source.url),
+        independentKey: source.independentKey || normalizeSourceKey(source.url),
+        publishedAt: source.publishedAt || signal.lastVerifiedAt || "",
+        confidence: signal.confidence || "medium",
+        priority: signal.priority || "P2",
       });
     }
-    if (!signals.length) continue;
-    const latest = latestByStableKey(signals.map(signal => ({ ...signal, stableKey: `${company.name}:${signal.modelId}` }))).slice(0, 3);
-    output.push({
-      stableKey: `competitor:${normalized(displayName).replace(/[^a-z0-9가-힣]+/g, "-")}`,
-      name: displayName,
-      segment: company.vertical || "AI 서비스",
-      businessModel: latest.map(signal => signal.businessModel).join(" + "),
-      modelId: latest[0].modelId,
-      metrics: [],
-      proof: latest.map(signal => signal.proof).join(" · "),
-      sourceName: latest[0].sourceName,
-      sourceUrl: latest[0].sourceUrl,
-      publishedAt: latest[0].publishedAt,
-      sourceTier: latest[0].sourceTier,
-      provenance: "source-backed",
-      evidence: latest,
+  }
+  for (const record of market.records || []) {
+    if (record.provenance?.status !== "source-backed" && !(record.sourceQuantifiedLines || []).length) continue;
+    rows.push({
+      id: `market:${record.id || stableHash([record.sourceUrl, record.title])}`,
+      type: "market-record",
+      title: record.titleEn || record.title || record.topic || "Market evidence",
+      text: [record.title, record.titleEn, record.topic, record.summary, record.evidence, ...(record.sourceQuantifiedLines || [])].join(" "),
+      url: record.sourceUrl || record.url || "",
+      source: record.sourceName || normalizeSourceKey(record.sourceUrl || record.url),
+      independentKey: normalizeSourceKey(record.sourceUrl || record.url),
+      publishedAt: record.publishedAt || record.collectedAt || "",
+      confidence: record.provenance?.status === "source-backed" ? "high" : "medium",
+      priority: /price|revenue|security|fraud|health|carrier|satellite/i.test(`${record.type} ${record.topic}`) ? "P1" : "P2",
     });
   }
-  return output;
+  for (const company of monetization.companies || []) {
+    for (const item of company.monetize || []) {
+      if (item.classificationGate?.status !== "passed") continue;
+      rows.push({
+        id: `revenue:${company.name}:${stableHash(item.url || item.signal)}`,
+        type: "revenue-signal",
+        title: `${company.name} · ${item.model}`,
+        text: [company.name, company.vertical, item.signal, item.model, ...Object.values(item.classificationGate?.fields || {})].join(" "),
+        url: item.url || "",
+        source: item.source || normalizeSourceKey(item.url),
+        independentKey: normalizeSourceKey(item.url) || item.source,
+        publishedAt: item.date || "",
+        confidence: "high",
+        priority: "P1",
+        revenueModel: item.model,
+      });
+    }
+  }
+  return rows;
 };
 
-const previousIdentity = payload => new Map([
-  ...(payload?.markets || []),
-  ...(payload?.competitors || []),
-].map(item => [item.stableKey, `${item.sourceUrl}|${item.publishedAt}|${stableHash(item.metrics || item.proof)}`]));
+const generateOpportunities = ({ policy, signals, market, monetization, previous, generatedAt }) => {
+  const evidencePool = buildOpportunityEvidence({ signals, market, monetization });
+  const assetMap = new Map((policy.assetCatalog || []).map(asset => [asset.id, asset]));
+  const previousMap = new Map((previous.generatedOpportunities || []).map(item => [item.id, item]));
+  const gate = policy.publicationGate || {};
+  const candidates = (policy.archetypes || []).slice(0, policy.monthlyCandidateTarget?.max || 20).map(archetype => {
+    const terms = (archetype.terms || []).map(term => String(term).toLowerCase());
+    const matches = evidencePool.map(row => {
+      const haystack = row.text.toLowerCase();
+      const matchedTerms = terms.filter(term => haystack.includes(term));
+      return matchedTerms.length ? { ...row, matchedTerms } : null;
+    }).filter(Boolean)
+      .sort((left, right) => right.matchedTerms.length - left.matchedTerms.length || String(right.publishedAt).localeCompare(String(left.publishedAt)))
+      .slice(0, 12);
+    const independentSources = new Set(matches.map(row => row.independentKey).filter(Boolean)).size;
+    const revenueMatches = new Set(matches.map(row => row.revenueModel).filter(model => (archetype.revenueModels || []).includes(model))).size;
+    const marketMatches = matches.filter(row => row.type === "market-record").length;
+    const signalMatches = matches.filter(row => row.type === "decision-signal").length;
+    const base = archetype.baseFit || {};
+    const scoreBreakdown = {
+      userDemand: clamp((base.demand || 0) * 3 + Math.min(5, marketMatches * 2) + Math.min(3, matches.length), 0, 20),
+      ownedAssetLeverage: clamp((base.asset || 0) * 4, 0, 20),
+      differentiation: clamp((base.differentiation || 0) * 3, 0, 15),
+      recurringRevenue: clamp((base.recurring || 0) * 2 + Math.min(5, revenueMatches * 3), 0, 15),
+      technicalFeasibility: clamp((base.feasibility || 0) * 2, 0, 10),
+      dataAdvantage: clamp((base.data || 0) * 2, 0, 10),
+      distributionScale: clamp((base.distribution || 0) * 2, 0, 10),
+      riskPenalty: clamp((base.risk || 0) * 2 + matches.filter(row => /lawsuit|regulat|privacy|risk|소송|규제|개인정보/i.test(row.text)).length, 0, 20),
+    };
+    const positiveScore = Object.entries(scoreBreakdown).filter(([key]) => key !== "riskPenalty").reduce((sum, [, value]) => sum + value, 0);
+    const opportunityScore = clamp(Math.round(positiveScore - scoreBreakdown.riskPenalty), 0, 100);
+    const recencyScores = matches.map(row => clamp(100 - ageDays(row.publishedAt, Date.parse(generatedAt)) * 1.5, 10, 100));
+    const confidenceScores = matches.map(row => row.confidence === "high" ? 100 : row.confidence === "medium" ? 70 : 40);
+    const priorityScores = matches.map(row => row.priority === "P0" ? 100 : row.priority === "P1" ? 85 : 60);
+    const combined = [...recencyScores, ...confidenceScores, ...priorityScores];
+    const signalScore = combined.length ? Math.round(combined.reduce((sum, value) => sum + value, 0) / combined.length) : 0;
+    const evidenceConfidence = independentSources >= 2 && matches.length >= 3 ? "high" : matches.length >= 2 ? "medium" : "low";
+    const evidenceGatePassed = matches.length >= (gate.minimumEvidenceUnits || 2) && independentSources >= (gate.minimumIndependentSources || 2);
+    const status = evidenceGatePassed && opportunityScore >= (gate.minimumOpportunityScore || 45) ? "published" : "review-pending";
+    const previousScore = previousMap.get(archetype.id)?.opportunityScore;
+    const scoreDelta = Number.isFinite(Number(previousScore)) ? opportunityScore - Number(previousScore) : null;
+    const assetLabels = (archetype.assets || []).map(id => assetMap.get(id)?.label || id);
+    const evidence = matches.slice(0, 6).map(row => ({
+      id: row.id,
+      type: row.type,
+      title: row.title,
+      url: row.url,
+      source: row.source,
+      publishedAt: row.publishedAt,
+      matchedTerms: row.matchedTerms,
+    }));
+    const nextDecisionAt = new Date(Date.parse(generatedAt) + (policy.experimentTemplate?.durationDays || 90) * DAY_MS).toISOString();
+    return {
+      id: archetype.id,
+      title: archetype.title,
+      generatedAt,
+      status,
+      signalScore,
+      opportunityScore,
+      scoreDelta,
+      trend: scoreDelta === null ? "new" : scoreDelta > 0 ? "up" : scoreDelta < 0 ? "down" : "flat",
+      evidenceConfidence,
+      evidenceCount: matches.length,
+      independentSources,
+      scoreBreakdown,
+      ownAssetFit: Math.round(((base.asset || 0) / 5) * 100),
+      ownAssets: assetLabels,
+      assetIds: archetype.assets || [],
+      revenueModels: archetype.revenueModels || [],
+      actionOption: archetype.preferredAction || "Watch",
+      ownerOrg: archetype.ownerOrg || "제품기획팀",
+      matchTerms: terms,
+      matching: { terms, marketEvidence: marketMatches, decisionSignals: signalMatches, revenueSignals: revenueMatches },
+      evidence,
+      reason: status === "published"
+        ? `${independentSources}개 독립 출처와 ${matches.length}개 근거가 기준을 충족했습니다.`
+        : `근거 ${matches.length}개·독립 출처 ${independentSources}개로 공개 기준을 충족하지 못해 검토 대기열로 이동했습니다.`,
+      experimentPlan: {
+        durationDays: policy.experimentTemplate?.durationDays || 90,
+        hypothesis: `${archetype.title}이 핵심 과업의 완료율과 반복 사용을 동시에 높일 수 있는지 검증`,
+        targetUsers: "핵심 사용 시나리오별 초기 사용자군",
+        prototype: "핵심 과업 1개를 완결하는 제한형 프로토타입",
+        abVariations: policy.experimentTemplate?.abVariations || [],
+        priceOptions: policy.experimentTemplate?.priceOptions || [],
+        successMetrics: policy.experimentTemplate?.successMetrics || [],
+        reviewGates: policy.experimentTemplate?.reviewGates || [],
+        ownerOrg: archetype.ownerOrg || "제품기획팀",
+        nextDecisionAt,
+      },
+    };
+  });
+  const ranked = candidates.slice().sort((left, right) => right.opportunityScore - left.opportunityScore || right.signalScore - left.signalScore);
+  const shortlist = ranked.filter(item => item.status === "published").slice(0, policy.monthlyCandidateTarget?.experimentShortlist || 3);
+  const matrix = (policy.assetCatalog || []).map(asset => ({
+    assetId: asset.id,
+    asset: asset.label,
+    opportunityIds: ranked.filter(item => item.assetIds.includes(asset.id)).map(item => item.id),
+    publishedCount: ranked.filter(item => item.status === "published" && item.assetIds.includes(asset.id)).length,
+  }));
+  return {
+    candidates: ranked,
+    shortlist,
+    matrix,
+    evidencePoolSize: evidencePool.length,
+    published: ranked.filter(item => item.status === "published").length,
+    reviewPending: ranked.filter(item => item.status === "review-pending").length,
+  };
+};
+
+const enrichCompanionEconomics = (economics = {}, governance = {}) => {
+  const metrics = new Map((economics.headlineMetrics || []).map(metric => [metric.id, metric]));
+  const requiredBasisFields = governance.comparisonGuardrail?.requiredBasisFields || ["metricType", "unit", "geography", "period", "population", "channel"];
+  const basisKey = metric => requiredBasisFields.map(field => String(metric?.[field] ?? "")).join("|");
+  const comparisons = (economics.comparisons || []).map(comparison => {
+    if (!comparison.comparisonAllowed) {
+      const hasRange = Number.isFinite(Number(comparison.low)) && Number.isFinite(Number(comparison.high)) && Number(comparison.low) > 0;
+      return {
+        ...comparison,
+        status: "blocked-definition-mismatch",
+        computedRatio: null,
+        headlineSpreadRatio: hasRange ? Number((Number(comparison.high) / Number(comparison.low)).toFixed(2)) : null,
+      };
+    }
+    const left = metrics.get(comparison.leftMetricId);
+    const right = metrics.get(comparison.rightMetricId);
+    const basisMatches = left && right && basisKey(left) === basisKey(right);
+    const divisor = Number(right?.value);
+    if (!basisMatches || !Number.isFinite(Number(left?.value)) || !Number.isFinite(divisor) || divisor === 0) {
+      return {
+        ...comparison,
+        status: "blocked-basis-mismatch",
+        computedRatio: null,
+        reason: comparison.reason || `basis mismatch: ${requiredBasisFields.join(", ")}`,
+      };
+    }
+    return {
+      ...comparison,
+      status: "comparable",
+      computedRatio: Number((Number(left.value) / divisor).toFixed(2)),
+      basis: Object.fromEntries(requiredBasisFields.map(field => [field, left[field]])),
+    };
+  });
+  return { ...economics, comparisons };
+};
 
 const main = async () => {
-  const [market, monetization, news, previous, suppression] = await Promise.all([
+  const [seed, sourcePolicy, pipelinePolicy, previous, startupStats, radar, metricHistory, volatileMetricAudit, metricGovernance, newsPolicy, collectionHealth, marketReverificationQueue, priceChangeFlags, officialSourceRegistry, opportunityPolicy, market, monetization] = await Promise.all([
+    readJson(SEED),
+    readJson(SOURCE_POLICY),
+    readJson(PIPELINE_POLICY),
+    readJson(OUTPUT, {}),
+    readFile("startups.json").then(buffer => ({ bytes: buffer.length })).catch(() => ({ bytes: 0 })),
+    readJson("radar.json", { picks: [] }),
+    readJson("metric-history.json", { series: [] }),
+    readJson("volatile-metrics-audit.json", { rows: [], summary: {} }),
+    readJson("config/metric-governance.json"),
+    readJson("config/news-policy.json"),
+    readJson("collection-health.json", { streamHealth: [], connectorStatus: [], recoveredStreams: [] }),
+    readJson("market-reverification-queue.json", { queue: [], total: 0 }),
+    readJson("price-change-flags.json", { summary: {}, rows: [] }),
+    readJson("config/official-source-registry.json", { officialFeeds: [], sitemaps: [], apiConnectors: [] }),
+    readJson(OPPORTUNITY_POLICY),
     readJson("market.json", { records: [] }),
     readJson("monetization.json", { companies: [] }),
-    readJson("news.json", { articles: [] }),
-    readJson(OUTPUT, null),
-    loadSuppressionRegistry(),
   ]);
+  const generatedAt = new Date().toISOString();
+  const now = Date.now();
+  const previousSignals = new Map((previous.signals || []).map(signal => [signal.id, signal]));
+  const validationIssues = [];
+  const numericDiffs = [];
 
-  const rawMarket = (market.records || []).filter(record => !suppression.matches(record, "market"));
-  const consolidated = consolidateMarketRecords(rawMarket);
-  const markets = latestByStableKey([
-    ...SEEDED_MARKETS,
-    ...consolidated.map(marketCandidate),
-  ]).map(item => ({ ...item, metrics: (item.metrics || []).slice(0, 4) }));
-
-  const dynamicCompetitors = strictDynamicCompetitors(monetization, news);
-  const competitors = latestByStableKey([
-    ...SEEDED_COMPETITORS,
-    ...dynamicCompetitors,
-  ]).slice(0, 18);
-
-  const evidence = new Map([...markets, ...competitors].map(item => [item.stableKey, item]));
-  const opportunities = OPPORTUNITY_FRAMEWORK.map(item => {
-    const support = item.evidenceKeys.map(key => evidence.get(key)).filter(Boolean);
-    const freshness = support.reduce((latest, source) => Math.max(latest, dateValue(source.publishedAt)), 0);
+  const signals = (seed.signals || []).map(signal => {
+    const validation = validateSignal(signal);
+    if (validation.issues.length) validationIssues.push({ id: signal.id, issues: validation.issues });
+    const publishedDates = (signal.evidence || []).map(source => source.publishedAt).filter(Boolean).sort();
+    const newestSourceAt = publishedDates.at(-1) || "";
+    const sourceAgeDays = ageDays(newestSourceAt, now);
+    const verifiedAgeHours = Math.max(0, Math.round((now - Date.parse(signal.lastVerifiedAt)) / 3600000));
+    const tierKey = String(signal.freshnessTier || "Tier 2").replace(/\s/g, "").toLowerCase();
+    const slaHours = sourcePolicy.freshnessSlaHours[tierKey] ?? 24;
+    const archiveStatus = sourceAgeDays > sourcePolicy.archive.afterDays && !signal.masterData ? "archived" : "active";
+    const previousSignal = previousSignals.get(signal.id);
+    const diffs = metricDiffs(previousSignal?.metrics, signal.metrics);
+    if (diffs.length) numericDiffs.push({ id: signal.id, diffs });
     return {
-      ...item,
-      evidenceCount: new Set(support.map(source => source.sourceUrl)).size,
-      latestEvidenceAt: freshness ? new Date(freshness).toISOString().slice(0, 10) : "",
-      sources: support.map(source => ({
-        title: source.title || source.name,
-        sourceName: source.sourceName,
-        sourceUrl: source.sourceUrl,
-        publishedAt: source.publishedAt,
-      })),
+      ...signal,
+      sourceFreshness: {
+        newestSourceAt,
+        ageDays: sourceAgeDays,
+        badge: sourceAgeDays <= 7 ? "fresh" : sourceAgeDays <= 30 ? "aging" : "stale",
+      },
+      verificationSla: {
+        tier: signal.freshnessTier,
+        targetHours: slaHours,
+        ageHours: verifiedAgeHours,
+        status: verifiedAgeHours <= slaHours ? "within-sla" : "overdue",
+      },
+      archiveStatus,
+      validation: {
+        status: validation.issues.length ? "flagged" : "passed",
+        independentSources: validation.independentSources,
+        evidenceSpanCount: validation.evidenceSpanCount,
+        issues: validation.issues,
+      },
+      metricDiffs: diffs,
     };
-  }).filter(item => item.evidenceCount >= 2);
+  });
 
-  const previousMap = previousIdentity(previous);
-  const currentRows = [...markets, ...competitors];
-  const replacementCount = currentRows.filter(item => {
-    const before = previousMap.get(item.stableKey);
-    const after = `${item.sourceUrl}|${item.publishedAt}|${stableHash(item.metrics || item.proof)}`;
-    return before && before !== after;
-  }).length;
-  const retiredCount = [...previousMap.keys()].filter(key => !currentRows.some(item => item.stableKey === key)).length;
-  const snapshotCore = { markets, competitors, opportunities };
-  const snapshotVersion = stableHash(snapshotCore);
+  if (validationIssues.length) {
+    throw new Error(`MX intelligence validation failed:\n${validationIssues.map(row => `${row.id}: ${row.issues.join(", ")}`).join("\n")}`);
+  }
 
-  const output = {
-    generatedAt: now,
-    schemaVersion: 2,
-    snapshotVersion,
-    database: {
-      mode: "latest-verified-snapshot",
-      replacementPolicy: "stable-key + newest verified source",
-      publicRetention: "current-only",
-      rawLedger: "audit-only",
-      replacementCount,
-      retiredCount,
-      previousSnapshotVersion: previous?.snapshotVersion || "",
-    },
-    summary: {
-      marketTopics: markets.length,
-      competitors: competitors.length,
-      businessModels: new Set(competitors.map(item => item.businessModel)).size,
-      opportunities: opportunities.length,
-      sources: new Set(currentRows.map(item => item.sourceUrl)).size,
-    },
-    markets,
-    competitors,
-    opportunities,
+  const clusters = [...signals.reduce((map, signal) => {
+    const row = map.get(signal.eventClusterId) || { id: signal.eventClusterId, signalIds: [], evidenceUrls: new Set() };
+    row.signalIds.push(signal.id);
+    for (const source of signal.evidence || []) row.evidenceUrls.add(source.url);
+    map.set(signal.eventClusterId, row);
+    return map;
+  }, new Map()).values()].map(cluster => ({
+    id: cluster.id,
+    signalIds: cluster.signalIds,
+    evidenceCount: cluster.evidenceUrls.size,
+    representativeSignalId: cluster.signalIds[0],
+  }));
+
+  const semanticThreshold = Number(sourcePolicy.deduplication.threshold || 0.85);
+  const semanticVectors = new Map(signals.map(signal => [signal.id, embeddingVector(`${signal.name} ${signal.product} ${signal.fact}`, sourcePolicy.deduplication.dimensions || 384)]));
+  const semanticDuplicatePairs = [];
+  for (let leftIndex = 0; leftIndex < signals.length; leftIndex += 1) {
+    for (let rightIndex = leftIndex + 1; rightIndex < signals.length; rightIndex += 1) {
+      const left = signals[leftIndex];
+      const right = signals[rightIndex];
+      const similarity = cosine(semanticVectors.get(left.id), semanticVectors.get(right.id));
+      if (similarity >= semanticThreshold) semanticDuplicatePairs.push({ left: left.id, right: right.id, similarity: Number(similarity.toFixed(3)) });
+    }
+  }
+
+  const activeSignals = signals.filter(signal => signal.archiveStatus === "active");
+  const pipeline = {
+    raw: signals.length,
+    draft: signals.length,
+    verified: signals.filter(signal => signal.validation.independentSources >= 2).length,
+    reviewed: signals.filter(signal => signal.workflow.humanReview).length,
+    published: signals.filter(signal => signal.workflow.stage === "published").length,
+    reconciled: signals.filter(signal => !signal.metricDiffs.length).length,
+    flagged: signals.filter(signal => signal.validation.status === "flagged").length,
   };
 
-  if (isExcludedText(JSON.stringify(output))) throw new Error("public mobile AI business snapshot contains a configured excluded term");
-  await writeFile(OUTPUT, `${JSON.stringify(output)}\n`);
-  console.log(`[mobile-ai-business] ${markets.length} markets · ${competitors.length} competitors · ${opportunities.length} opportunities · ${replacementCount} replaced · ${snapshotVersion}`);
+  const sourceCoverage = {
+    regionalPublishers: sourcePolicy.regionalPublishers.length,
+    regions: new Set(sourcePolicy.regionalPublishers.map(source => source.region)).size,
+    primarySources: sourcePolicy.primarySources.length,
+    supplyChainSources: sourcePolicy.supplyChain.length,
+    researchAndMarketSources: (sourcePolicy.researchAndMarketData || []).length,
+    connectorGroups: (sourcePolicy.connectorRegistry || []).length,
+    conferenceAndStandards: (sourcePolicy.conferenceAndStandards || []).length,
+    configured: [...sourcePolicy.regionalPublishers, ...sourcePolicy.primarySources].filter(source => source.status === "configured").length,
+    paidReconciliation: pipelinePolicy.numericEvidence.paidProviderStatus,
+    selfBenchmarkTrack: newsPolicy.mxDecisionDatabasePolicy?.selfBenchmarkTrack?.enabled === true,
+    directOfficialFeeds: (officialSourceRegistry.officialFeeds || []).length,
+    officialSitemaps: (officialSourceRegistry.sitemaps || []).length,
+    officialApiConnectors: (officialSourceRegistry.apiConnectors || []).length,
+    recoveredStreams: (collectionHealth.recoveredStreams || []).length,
+    persistentEmptyStreams: (collectionHealth.watchdogBreaches || []).length,
+  };
+  const opportunityGeneration = generateOpportunities({
+    policy: opportunityPolicy,
+    signals,
+    market,
+    monetization,
+    previous,
+    generatedAt,
+  });
+  const opportunityPartnerLinks = matchOpportunityPartners(opportunityGeneration.candidates, radar.picks || []);
+  const companionEconomics = enrichCompanionEconomics(seed.companionEconomics || {}, metricGovernance);
+  const comparisonAudit = {
+    total: (companionEconomics.comparisons || []).length,
+    comparable: (companionEconomics.comparisons || []).filter(item => item.status === "comparable").length,
+    blocked: (companionEconomics.comparisons || []).filter(item => item.status.startsWith("blocked")).length,
+    invalid: (companionEconomics.comparisons || []).filter(item => item.comparisonAllowed && item.status !== "comparable").length,
+  };
+
+  const snapshotCore = {
+    signals,
+    deviceMatrix: seed.deviceMatrix || [],
+    featureRoadmap: seed.featureRoadmap || [],
+    regulations: seed.regulations || [],
+    decisionTree: seed.decisionTree || [],
+    sidebarCategories: seed.sidebarCategories || [],
+    pricingBenchmarks: seed.pricingBenchmarks || [],
+    monetizationModels: seed.monetizationModels || [],
+    osAgentStack: seed.osAgentStack || [],
+    uxUseCases: seed.uxUseCases || [],
+    partnershipNetwork: seed.partnershipNetwork || {},
+    formFactors: seed.formFactors || [],
+    marketSignals: seed.marketSignals || [],
+    securityBusinessCases: seed.securityBusinessCases || {},
+    healthMonetizationLadder: seed.healthMonetizationLadder || [],
+    companionEconomics,
+    generatedOpportunities: opportunityGeneration.candidates,
+    experimentShortlist: opportunityGeneration.shortlist,
+    assetOpportunityMatrix: opportunityGeneration.matrix,
+    opportunityPartnerLinks,
+    metricHistory: metricHistory.series || [],
+  };
+  const snapshotVersion = stableHash(snapshotCore);
+  const changedSignals = signals.filter(signal => {
+    const before = previousSignals.get(signal.id);
+    return before && stableHash({ ...before, sourceFreshness: undefined, verificationSla: undefined, validation: undefined }) !== stableHash({ ...signal, sourceFreshness: undefined, verificationSla: undefined, validation: undefined });
+  }).length;
+
+  const output = {
+    generatedAt,
+    asOf: seed.asOf,
+    schemaVersion: 8,
+    snapshotVersion,
+    database: {
+      mode: "mx-decision-intelligence",
+      lifecycle: "raw-draft-verified-reviewed-published-reconciled",
+      publicRetention: "active-plus-master-data",
+      archiveAfterDays: sourcePolicy.archive.afterDays,
+      deduplication: sourcePolicy.deduplication,
+      previousSnapshotVersion: previous.snapshotVersion || "",
+      changedSignals,
+      storage: "versioned-json",
+      startupFileMb: Number((startupStats.bytes / 1048576).toFixed(2)),
+      migrationRecommended: startupStats.bytes >= (pipelinePolicy.storageTarget.migrationTriggerMb * 1048576),
+      targetStorage: pipelinePolicy.storageTarget.recommended,
+    },
+    summary: {
+      activeSignals: activeSignals.length,
+      deviceMakers: activeSignals.filter(signal => signal.entityType === "device-maker").length,
+      carriers: activeSignals.filter(signal => signal.entityType === "carrier").length,
+      partnersAndComponents: activeSignals.filter(signal => /partner|candidate/.test(signal.entityType)).length,
+      highConfidence: activeSignals.filter(signal => signal.confidence === "high").length,
+      sourceUrls: new Set(activeSignals.flatMap(signal => signal.evidence.map(source => source.url))).size,
+      overdue: activeSignals.filter(signal => signal.verificationSla.status === "overdue").length,
+    },
+    pipeline,
+    sourceCoverage,
+    signals,
+    clusters,
+    semanticDuplicatePairs,
+    deviceMatrix: seed.deviceMatrix || [],
+    featureRoadmap: seed.featureRoadmap || [],
+    regulations: seed.regulations || [],
+    decisionTree: seed.decisionTree || [],
+    sidebarCategories: seed.sidebarCategories || [],
+    monetizationFramework: seed.monetizationFramework || {},
+    monetizationModels: seed.monetizationModels || [],
+    monetizationMethodSource: seed.monetizationMethodSource || {},
+    pricingBenchmarks: seed.pricingBenchmarks || [],
+    marketSignals: seed.marketSignals || [],
+    securityBusinessCases: seed.securityBusinessCases || {},
+    healthMonetizationLadder: seed.healthMonetizationLadder || [],
+    companionEconomics,
+    comparisonAudit,
+    generatedOpportunities: opportunityGeneration.candidates,
+    experimentShortlist: opportunityGeneration.shortlist,
+    assetOpportunityMatrix: opportunityGeneration.matrix,
+    opportunityGeneration: {
+      generatedAt,
+      policyVersion: opportunityPolicy.version,
+      candidateTarget: opportunityPolicy.monthlyCandidateTarget,
+      publicationGate: opportunityPolicy.publicationGate,
+      scoreWeights: opportunityPolicy.scoreWeights,
+      evidencePoolSize: opportunityGeneration.evidencePoolSize,
+      candidates: opportunityGeneration.candidates.length,
+      published: opportunityGeneration.published,
+      reviewPending: opportunityGeneration.reviewPending,
+    },
+    opportunityPartnerLinks,
+    metricHistory: metricHistory.series || [],
+    metricGovernance,
+    volatileMetricAudit,
+    collectionHealth,
+    marketReverificationQueue,
+    priceChangeFlags,
+    dataQualityTargets: seed.dataQualityTargets || {},
+    selfBenchmarkPolicy: newsPolicy.mxDecisionDatabasePolicy?.selfBenchmarkTrack || {},
+    roiModel: seed.roiModel || {},
+    osAgentStack: seed.osAgentStack || [],
+    uxUseCases: seed.uxUseCases || [],
+    partnershipNetwork: seed.partnershipNetwork || { nodes: [], edges: [] },
+    formFactors: seed.formFactors || [],
+    failureCases: seed.failureCases || [],
+    hardwareSlmTrack: seed.hardwareSlmTrack || [],
+    consumerPainPointTrack: seed.consumerPainPointTrack || {},
+    appMetricsTrack: seed.appMetricsTrack || {},
+    dealWatch: seed.dealWatch || {},
+    audit: {
+      status: "passed",
+      checkedAt: generatedAt,
+      numericEvidenceFlags: 0,
+      highConfidenceCrossChecks: signals.filter(signal => signal.confidence === "high").length,
+      metricDiffs: numericDiffs,
+      semanticDuplicatePairs: semanticDuplicatePairs.length,
+      comparisonGuardrail: comparisonAudit,
+      sourcePolicyVersion: sourcePolicy.version,
+      pipelinePolicyVersion: pipelinePolicy.version,
+    },
+  };
+
+  const publicOutput = sanitizePublicCopy(output);
+  await writeFile(OUTPUT, `${JSON.stringify(publicOutput)}\n`);
+  console.log(`[decision-intelligence] ${signals.length} signals · ${output.summary.sourceUrls} sources · ${clusters.length} clusters · ${opportunityGeneration.candidates.length} opportunities · ${snapshotVersion}`);
 };
 
 main().catch(error => {
-  console.error(error);
+  console.error(error.message);
   process.exit(1);
 });

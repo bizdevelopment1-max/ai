@@ -4,15 +4,9 @@ import { resolve } from "node:path";
 import { loadDash } from "./load-dash.mjs";
 
 const root = process.cwd();
-const RETIRED_FOCUS = /(?:SK\s*-?\s*hynix|SK하이닉스|하이닉스|Micron|SanDisk|Western Digital|Kioxia|CXMT|GigaDevice|BIWIN|Montage Technology|메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM)/i;
-const hasRetiredFocus = value => {
-  if (typeof value === "string") return RETIRED_FOCUS.test(value);
-  if (Array.isArray(value)) return value.some(hasRetiredFocus);
-  if (value && typeof value === "object") {
-    return Object.entries(value).some(([key, item]) => RETIRED_FOCUS.test(key) || hasRetiredFocus(item));
-  }
-  return false;
-};
+// Kept as a compatibility step for existing workflows. Component, memory and
+// storage signals are now in scope for MX and must not be removed here.
+const hasRetiredFocus = () => false;
 
 const scrubText = value => {
   const text = String(value || "");

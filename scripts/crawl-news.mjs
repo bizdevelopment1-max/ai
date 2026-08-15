@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 /* ============================================================
-   Daily AI news crawler — authoritative ENGLISH sources only.
-   - Per-company + device-topic (AI agent / AI PC / AI phone) streams
-     from Google News (en-US), filtered to an allowlist of authoritative
-     English outlets. Korean sources are excluded by construction.
+   Daily AI news crawler — original-language, authoritative sources.
+   - Per-company + device-topic + MX regional/supply-chain streams from
+     Google News, filtered to a versioned publisher allowlist.
    - Each card preserves a cleaned publisher/RSS excerpt. No text-generation
      or translation API is called, so the pipeline cannot invent a summary.
    - Source label is always the original English outlet (never an aggregator).
@@ -20,18 +19,26 @@ import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 // rather than an undated category page. The same policy supplies priority
 // streams for the daily crawler, so verified company sources keep refreshing.
 const companySourcePolicy = JSON.parse(await readFile("config/company-source-policy.json", "utf8"));
+const mxSourcePolicy = JSON.parse(await readFile("config/mx-source-policy.json", "utf8"));
+const officialSourceRegistry = JSON.parse(await readFile("config/official-source-registry.json", "utf8"));
 const PRIORITY_STREAMS = Array.isArray(companySourcePolicy.priorityStreams) ? companySourcePolicy.priorityStreams : [];
+const OFFICIAL_SITEMAPS = Array.isArray(officialSourceRegistry.sitemaps)
+  ? officialSourceRegistry.sitemaps.filter(stream => !String(stream.status || "").startsWith("disabled"))
+  : [];
+const OFFICIAL_FEEDS = Array.isArray(officialSourceRegistry.officialFeeds) ? officialSourceRegistry.officialFeeds : [];
+const OFFICIAL_API_CONNECTORS = Array.isArray(officialSourceRegistry.apiConnectors) ? officialSourceRegistry.apiConnectors : [];
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
-const sourceHealth = { failedStreams: [], emptyStreams: [] };
+const sourceHealth = { failedStreams: [], emptyStreams: [], quietStreams: [], reachableStreams: [], successfulStreams: [] };
 
 // 네트워크 복원력: 타임아웃 + 지수 백오프 재시도(소스 확대에 따른 일시적 실패 흡수)
 async function fetchText(url, opts = {}, tries = 3) {
+  const { timeoutMs = 12000, ...fetchOptions } = opts;
   for (let i = 0; i < tries; i++) {
     try {
       const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 12000);
-      const res = await fetch(url, { ...opts, signal: ctrl.signal });
+      const t = setTimeout(() => ctrl.abort(), timeoutMs);
+      const res = await fetch(url, { ...fetchOptions, signal: ctrl.signal });
       clearTimeout(t);
       if (!res.ok) throw new Error("HTTP " + res.status);
       return await res.text();
@@ -54,8 +61,25 @@ const BASE_ALLOW = [
   "the-decoder.com", "sifted.eu", "asia.nikkei.com", "scmp.com", "qz.com", "infoq.com",
   "datacenterdynamics.com", "hpcwire.com", "semianalysis.com", "eetimes.com", "huggingface.co",
   "aibusiness.com", "analyticsindiamag.com", "siliconangle.com", "innovationorigins.com",
+  // MX regional device, carrier and supply-chain coverage
+  "36kr.com", "technode.com", "jiemian.com", "ithome.com", "xinsheng.huawei.com", "mi.com",
+  "xtech.nikkei.com", "itmedia.co.jp", "inc42.com", "yourstory.com", "etnews.com", "zdnet.co.kr",
+  "thelec.net", "digitimes.com", "qualcomm.com", "mediatek.com", "arm.com", "investor.tsmc.com",
+  "news.skhynix.com", "micron.com", "verizon.com", "att.com", "t-mobile.com", "news.sktelecom.com",
+  "cls.cn", "huxiu.com", "geekpark.net", "ifanr.com", "sspai.com", "ijiwei.com", "oppo.com", "vivo.com",
+  "ascii.jp", "entrackr.com", "the-ken.com", "techinasia.com", "kr-asia.com", "thenextweb.com",
+  "handelsblatt.com", "lesechos.fr", "patentscope.wipo.int", "patents.google.com", "paperswithcode.com",
+  "mlcommons.org", "lmarena.ai", "artificialanalysis.ai", "digital-strategy.ec.europa.eu", "support.google.com", "developer.apple.com",
+  "counterpointresearch.com", "omdia.tech.informa.com", "canalys.com", "idc.com", "gartner.com",
+  "fda.gov", "dtxalliance.org", "sensortower.com", "appfigures.com", "scam.ai", "businesswire.com",
+  "stripe.com", "coinbase.com", "gsma.com", "visa.com", "mastercard.com", "news.samsung.com",
 ];
-const ALLOW = [...new Set([...BASE_ALLOW, ...(companySourcePolicy.publisherDomains || [])])];
+const MX_POLICY_DOMAINS = [
+  ...(mxSourcePolicy.regionalPublishers || []).map(source => source.domain),
+  ...(mxSourcePolicy.primarySources || []).map(source => source.domain),
+  ...(mxSourcePolicy.supplyChain || []).map(source => source.domain),
+];
+const ALLOW = [...new Set([...BASE_ALLOW, ...(companySourcePolicy.publisherDomains || []), ...MX_POLICY_DOMAINS])];
 
 // The site registry is the single source of truth.  Adding a company to the
 // dashboard automatically adds a bounded discovery stream on the next run.
@@ -87,6 +111,39 @@ const TOPICS = [
   { co: "", cat: "native", tag: "오픈소스", topic: true, n: 2, q: '("open-weight model" OR "open source LLM" OR "open model release" OR "Llama" OR "sovereign AI")' },
   { co: "", cat: "native", tag: "엔터프라이즈", topic: true, n: 2, q: '("enterprise AI adoption" OR "AI ROI" OR "AI agent enterprise" OR "AI productivity")' },
   { co: "", cat: "bigtech", tag: "웨어러블·XR", topic: true, n: 2, q: '("smart glasses" OR "AI wearable" OR "AI earbuds" OR "mixed reality AI" OR "AR glasses AI")' },
+  { co: "", cat: "bigtech", tag: "통신사 AI 번들", topic: true, n: 3, q: '(SKT OR KT OR Verizon OR AT&T OR T-Mobile) (AI agent OR AI assistant OR Gemini OR Perplexity OR AI plan)' },
+  { co: "", cat: "bigtech", tag: "모바일 공급망", topic: true, n: 3, q: '(Qualcomm OR MediaTek OR Arm OR TSMC OR Micron OR "SK hynix") (mobile NPU OR LPDDR OR UFS OR on-device AI)' },
+  { co: "", cat: "native", tag: "에이전틱 커머스", topic: true, n: 3, q: '("agentic commerce" OR "AI shopping agent" OR "AI checkout" OR "agent commission" OR "Perplexity Shopping" OR "OpenAI Operator" OR UCP OR AP2)' },
+  { co: "", cat: "bigtech", tag: "웨어러블·폼팩터", topic: true, n: 3, q: '("AI wearable" OR "smart glasses" OR "AI pin" OR foldable OR trifold OR rollable OR "Direct-to-Cell") (AI OR agent)' },
+  { co: "", cat: "bigtech", tag: "에이전트·OS 통합", topic: true, n: 3, q: '("App Intents" OR AICore OR "Android AI" OR HyperOS OR Xiaoyi OR AndesGPT OR BlueLM OR MCP OR A2A) (mobile OR smartphone OR OS)' },
+  { co: "", cat: "native", tag: "Series C·M&A", topic: true, n: 2, q: '("Series C" OR "Series D" OR acquisition OR M&A) (AI agent OR on-device AI OR AI startup)' },
+  { co: "", cat: "bigtech", tag: "AI 앱 지표", topic: true, n: 2, q: '(ChatGPT OR Gemini OR Claude OR Character.ai OR Perplexity OR Poe) (downloads OR MAU OR DAU OR app ranking)' },
+  { co: "", cat: "bigtech", tag: "AI UX 페인포인트", topic: true, n: 2, q: '(smartphone AI OR AI assistant OR AI wearable) (review OR complaint OR privacy OR failed OR not useful)' },
+  { co: "", cat: "bigtech", tag: "온디바이스 신뢰·보안", topic: true, n: 3, q: '("on-device scam detection" OR "deepfake call detection" OR "voice clone detection" OR "financial fraud API" OR "Pixel Scam Detection" OR "Samsung Phone scam" OR "Halo deepfake")' },
+  { co: "", cat: "bigtech", tag: "임상·보험형 헬스 AI", topic: true, n: 2, q: '("digital therapeutic" OR "clinical AI wearable" OR "mobile medical app" OR "payer reimbursement" OR "employer digital health") (AI OR app OR wearable)' },
+  { co: "", cat: "native", tag: "AI 컴패니언 경제성", topic: true, n: 3, q: '("AI companion app" OR Character.AI OR Replika) (revenue OR engagement OR subscription OR safety OR market size)' },
+];
+
+const REGIONAL_TOPICS = [
+  { co: "", cat: "bigtech", tag: "중화권 단말", topic: true, n: 3, locale: { hl: "zh-TW", gl: "TW", ceid: "TW:zh-Hant" }, q: '(Xiaomi OR HONOR OR OPPO OR vivo OR Huawei) (AI手機 OR AI phone OR 端側AI OR 大模型)' },
+  { co: "", cat: "bigtech", tag: "일본 모바일 AI", topic: true, n: 2, locale: { hl: "ja", gl: "JP", ceid: "JP:ja" }, q: '(スマートフォン OR モバイル) (生成AI OR オンデバイスAI OR AIエージェント)' },
+  { co: "", cat: "bigtech", tag: "인도 모바일 AI", topic: true, n: 2, locale: { hl: "en-IN", gl: "IN", ceid: "IN:en" }, q: '(smartphone OR telecom) (AI assistant OR on-device AI OR AI subscription)' },
+  { co: "", cat: "bigtech", tag: "국내 모바일 AI", topic: true, n: 2, locale: { hl: "ko", gl: "KR", ceid: "KR:ko" }, q: '(스마트폰 OR 통신사 OR NPU) (AI 에이전트 OR 온디바이스 AI OR AI 요금제)' },
+  { co: "", cat: "bigtech", tag: "중국 AI UX·폼팩터", topic: true, n: 2, locale: { hl: "zh-CN", gl: "CN", ceid: "CN:zh-Hans" }, q: '(折叠屏 OR 三折叠 OR AI眼镜 OR 端侧大模型) (体验 OR 评测 OR 用户)' },
+  { co: "", cat: "native", tag: "인도 AI 앱·통신사", topic: true, n: 2, locale: { hl: "en-IN", gl: "IN", ceid: "IN:en" }, q: '(AI app OR AI agent OR telecom bundle OR on-device AI) (India OR Indian users)' },
+];
+
+// Primary-source discovery streams. Google News is used only as a discovery
+// gateway; the existing publisher-domain gate keeps the resulting record
+// bound to the official filing, patent, model, app-store or certification URL.
+const PRIMARY_SOURCE_TOPICS = [
+  { co: "", cat: "bigtech", tag: "특허 공시", topic: true, n: 2, q: '(site:data.uspto.gov OR site:kipris.or.kr OR site:cnipa.gov.cn) (smartphone OR mobile OR on-device AI OR NPU)' },
+  { co: "", cat: "bigtech", tag: "기업 공시", topic: true, n: 2, q: '(site:sec.gov OR site:dart.fss.or.kr) (AI OR smartphone OR mobile) (10-K OR 10-Q OR 8-K OR 사업보고서)' },
+  { co: "", cat: "native", tag: "모델·코드 공개", topic: true, n: 3, q: '(site:arxiv.org OR site:huggingface.co OR site:github.com) (mobile AI OR on-device model OR Android agent)' },
+  { co: "", cat: "bigtech", tag: "앱 출시·랭킹", topic: true, n: 2, q: '(site:play.google.com OR site:apps.apple.com) (AI assistant OR AI agent OR generative AI)' },
+  { co: "", cat: "bigtech", tag: "단말 인증", topic: true, n: 2, q: '(site:fcc.gov OR site:safetykorea.kr OR site:cnca.gov.cn) (smartphone OR handset OR mobile device)' },
+  { co: "", cat: "native", tag: "벤치마크·표준", topic: true, n: 2, q: '(site:mlcommons.org OR site:lmarena.ai OR site:artificialanalysis.ai OR site:3gpp.org OR site:etsi.org) (mobile AI OR on-device OR agent)' },
+  { co: "", cat: "bigtech", tag: "앱 정책 변경", topic: true, n: 2, q: '(site:developer.apple.com OR site:support.google.com) (App Store Review Guidelines OR Google Play policy) (AI OR subscription OR agent)' },
 ];
 
 // ---- 직접 퍼블리셔 RSS 피드(구글뉴스 비경유 — 소스 다변화, 단일 게이트웨이 리스크 제거) ----
@@ -94,44 +151,110 @@ const DIRECT_FEEDS = [
   { source: "TechCrunch", url: "https://techcrunch.com/category/artificial-intelligence/feed/" },
   { source: "The Verge", url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", atom: true },
   { source: "Ars Technica", url: "https://feeds.arstechnica.com/arstechnica/technology-lab" },
-  { source: "VentureBeat", url: "https://venturebeat.com/category/ai/feed/" },
+  { source: "VentureBeat", url: "https://venturebeat.com/category/ai/feed/", matchPattern: ".", maxAgeDays: 14 },
   { source: "MIT Tech Review", url: "https://www.technologyreview.com/feed/" },
   { source: "IEEE Spectrum", url: "https://spectrum.ieee.org/feeds/topic/artificial-intelligence.rss" },
   // ── 추가 직접 RSS(소스 다변화·복원력) ──
   { source: "The Decoder", url: "https://the-decoder.com/feed/" },
   { source: "ZDNet", url: "https://www.zdnet.com/topic/artificial-intelligence/rss.xml" },
-  { source: "The Register", url: "https://www.theregister.com/headlines.atom", atom: true },
-  { source: "Hugging Face", url: "https://huggingface.co/blog/feed.xml", atom: true },
+  { source: "The Register", url: "https://www.theregister.com/headlines.atom", atom: true, maxAgeDays: 14 },
   { source: "Wired", url: "https://www.wired.com/feed/tag/ai/latest/rss" },
   { source: "Engadget", url: "https://www.engadget.com/rss.xml" },
   { source: "SiliconANGLE", url: "https://siliconangle.com/category/ai/feed/" },
   { source: "AI Business", url: "https://aibusiness.com/rss.xml" },
+  ...OFFICIAL_FEEDS.map(feed => ({ ...feed, official: true })),
 ];
 const AI_RE = /\bAI\b|artificial intelligence|\bLLM\b|GPT|Claude|Gemini|agentic|chatbot|machine learning|foundation model|on-device|smartphone|mobile assistant|mobile agent/i;
 
 async function pullDirect(feed, limit = 2) {
+  const streamName = `${feed.official ? "official-feed" : "rss"}:${feed.source}`;
   try {
     const xml = await fetchText(feed.url, { headers: { "User-Agent": UA, Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml" } });
+    sourceHealth.reachableStreams.push(streamName);
     const blockRe = feed.atom ? /<entry>([\s\S]*?)<\/entry>/g : /<item>([\s\S]*?)<\/item>/g;
     const out = []; let m;
     while ((m = blockRe.exec(xml)) && out.length < limit) {
       const it = m[1];
       const title = decode(tag(it, "title"));
-      if (!title || !AI_RE.test(title)) continue;
+      const match = feed.matchPattern ? new RegExp(feed.matchPattern, "i") : AI_RE;
+      if (!title || !match.test(title)) continue;
       let link = decode(tag(it, "link"));
       if (feed.atom && (!link || !/^http/.test(link))) { const lm = it.match(/<link[^>]*href="([^"]+)"/i); link = lm ? decode(lm[1]) : ""; }
       if (!link) continue;
       const date = pubDateOf(tag(it, "pubDate") || tag(it, "published") || tag(it, "updated"));
-      if ((Date.now() - new Date(date + "T00:00:00Z").getTime()) / 86400000 > 7) continue;   // 최근 7일만
+      const maxAgeDays = Number(feed.maxAgeDays || (feed.official ? 14 : 7));
+      if ((Date.now() - new Date(date + "T00:00:00Z").getTime()) / 86400000 > maxAgeDays) continue;
       const desc = cleanDesc(decode(tag(it, "description") || tag(it, "summary"))).slice(0, 240);
-      out.push({ date, co: deviceCo(title), cat: "bigtech", source: feed.source, title, descEn: desc, url: link, tag: "글로벌" });
+      out.push({
+        date,
+        co: feed.company || deviceCo(title),
+        cat: feed.cat || "bigtech",
+        source: feed.source,
+        title,
+        descEn: desc,
+        url: link,
+        tag: feed.category || "글로벌",
+        evidenceTier: feed.sourceTier || (feed.official ? "official" : "reported"),
+        sourceType: feed.official ? "official-feed" : "publisher-rss",
+      });
     }
-    if (!out.length) sourceHealth.emptyStreams.push(`rss:${feed.source}`);
-    console.log(`[news:rss:${feed.source}] ${out.length} item(s)`);
+    if (!out.length) sourceHealth.quietStreams.push({ stream: streamName, reason: "reachable-no-recent-matching-items" });
+    else sourceHealth.successfulStreams.push(streamName);
+    console.log(`[news:${streamName}] ${out.length} item(s)`);
     return out;
   } catch (e) {
-    sourceHealth.failedStreams.push({ stream: `rss:${feed.source}`, error: e.message });
-    console.warn(`[news:rss:${feed.source}] ${e.message}`);
+    sourceHealth.failedStreams.push({ stream: streamName, error: e.message });
+    console.warn(`[news:${streamName}] ${e.message}`);
+    return [];
+  }
+}
+
+const sitemapBlocks = xml => [...String(xml || "").matchAll(/<url>([\s\S]*?)<\/url>/gi)].map(match => ({
+  url: decode(tag(match[1], "loc")),
+  lastmod: decode(tag(match[1], "lastmod")),
+}));
+const sitemapChildren = xml => [...String(xml || "").matchAll(/<sitemap>([\s\S]*?)<\/sitemap>/gi)]
+  .map(match => decode(tag(match[1], "loc"))).filter(Boolean);
+const titleFromUrl = url => {
+  try {
+    const slug = new URL(url).pathname.split("/").filter(Boolean).at(-1) || "official update";
+    return slug.replace(/[-_]+/g, " ").replace(/\b\w/g, character => character.toUpperCase());
+  } catch { return "Official update"; }
+};
+
+async function pullOfficialSitemap(stream, limit = 2) {
+  const streamName = `official-sitemap:${stream.source}`;
+  try {
+    const rootXml = await fetchText(stream.url, { timeoutMs: 25000, headers: { "User-Agent": UA, Accept: "application/xml,text/xml" } });
+    sourceHealth.reachableStreams.push(streamName);
+    let rows = sitemapBlocks(rootXml);
+    if (!rows.length) {
+      const children = sitemapChildren(rootXml).slice(0, 4);
+      const nested = await Promise.all(children.map(url => fetchText(url, { headers: { "User-Agent": UA, Accept: "application/xml,text/xml" } }).catch(() => "")));
+      rows = nested.flatMap(sitemapBlocks);
+    }
+    const pattern = stream.pathPattern ? new RegExp(stream.pathPattern, "i") : /\/news\/|\/blog\/|\/research\//i;
+    const cutoff = Date.now() - 14 * 86400000;
+    const out = rows
+      .filter(row => row.url && pattern.test(row.url))
+      .filter(row => {
+        const time = Date.parse(row.lastmod || "");
+        return Number.isFinite(time) && time >= cutoff;
+      })
+      .sort((left, right) => Date.parse(right.lastmod) - Date.parse(left.lastmod))
+      .slice(0, limit)
+      .map(row => ({
+        date: pubDateOf(row.lastmod), co: stream.company || stream.source, cat: "native", source: stream.source,
+        title: titleFromUrl(row.url), descEn: "First-party newsroom or research update discovered from the official sitemap.",
+        url: row.url, tag: "공식 발표", evidenceTier: "official", sourceType: "official-sitemap",
+      }));
+    if (!out.length) sourceHealth.quietStreams.push({ stream: streamName, reason: "reachable-no-recent-matching-items" });
+    else sourceHealth.successfulStreams.push(streamName);
+    console.log(`[news:${streamName}] ${out.length} item(s)`);
+    return out;
+  } catch (error) {
+    sourceHealth.failedStreams.push({ stream: streamName, error: error.message });
+    console.warn(`[news:${streamName}] ${error.message}`);
     return [];
   }
 }
@@ -143,6 +266,17 @@ const DEVICE_CO = [
   [/nvidia|geforce|\brtx\b|n1x|\bgb10\b|project digits|jetson/i, "NVIDIA"],
   [/pixel|gemini|\bgoogle\b|android|tensor/i, "Google DeepMind"],
   [/\bmeta\b|llama|ray-ban|quest/i, "Meta AI"],
+  [/xiaomi|redmi|hyperai|샤오미|小米/i, "Xiaomi"],
+  [/\bhonor\b|magic7|아너|荣耀/i, "HONOR"],
+  [/\boppo\b|coloros|오포/i, "OPPO"],
+  [/\bvivo\b|funtouch|비보/i, "vivo"],
+  [/huawei|harmonyos|xiaoyi|화웨이|华为|小艺/i, "Huawei"],
+  [/verizon|버라이즌/i, "Verizon"],
+  [/\bat&t\b|\batt\b/i, "AT&T"],
+  [/t-mobile|티모바일/i, "T-Mobile"],
+  [/sk telecom|\bskt\b|에이닷|a\.dot/i, "SK Telecom"],
+  [/qualcomm|snapdragon|퀄컴/i, "Qualcomm"],
+  [/mediatek|dimensity|미디어텍/i, "MediaTek"],
 ];
 const deviceCo = (title) => { const h = DEVICE_CO.find(([re]) => re.test(title || "")); return h ? h[1] : ""; };
 
@@ -247,15 +381,16 @@ function cleanTitle(t, source) {
   return s.trim() || String(t || "").trim();
 }
 
-async function fetchRss(query) {
-  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query + " when:14d")}&hl=en-US&gl=US&ceid=US:en`;
+async function fetchRss(query, locale = { hl: "en-US", gl: "US", ceid: "US:en" }) {
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query + " when:14d")}&hl=${locale.hl}&gl=${locale.gl}&ceid=${locale.ceid}`;
   return fetchText(url, { headers: { "User-Agent": UA } });
 }
 
 // pull authoritative English items for one query
 async function pull(src, limit) {
+  const streamName = `google-news:${src.tag || src.co || "topic"}`;
   try {
-    const xml = await fetchRss(src.q);
+    const xml = await fetchRss(src.q, src.locale);
     const out = [];
     for (const it of parseItems(xml)) {
       const rawTitle = decode(tag(it, "title"));
@@ -277,11 +412,12 @@ async function pull(src, limit) {
       if (out.length >= limit) break;
     }
     const stream = src.tag || src.co || "topic";
-    if (!out.length) sourceHealth.emptyStreams.push(`google-news:${stream}`);
+    if (!out.length) sourceHealth.emptyStreams.push(streamName);
+    else sourceHealth.successfulStreams.push(streamName);
     console.log(`[news:${stream}] ${out.length} authoritative item(s)`);
     return out;
   } catch (e) {
-    sourceHealth.failedStreams.push({ stream: `google-news:${src.tag || src.co || "topic"}`, error: e.message });
+    sourceHealth.failedStreams.push({ stream: streamName, error: e.message });
     console.warn(`[news:${src.tag || src.co || "topic"}] failed: ${e.message}`);
     return [];
   }
@@ -333,12 +469,91 @@ async function main() {
   const companyItems = (await pool(activeCompanies, 8, c => pull(c, 1))).flat();
   const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
   const priorityItems = (await Promise.all(PRIORITY_STREAMS.map(stream => pull(stream, stream.n || 1)))).flat();
-  const directItems = (await Promise.all(DIRECT_FEEDS.map(f => pullDirect(f, 2)))).flat();
+  const regionalItems = (await Promise.all(REGIONAL_TOPICS.map(stream => pull(stream, stream.n || 1)))).flat();
+  const primaryItems = (await Promise.all(PRIMARY_SOURCE_TOPICS.map(stream => pull(stream, stream.n || 1)))).flat();
+  const directItems = (await Promise.all(DIRECT_FEEDS.map(f => pullDirect(f, f.official ? 3 : 2)))).flat();
+  const officialItems = (await Promise.all(OFFICIAL_SITEMAPS.map(stream => pullOfficialSitemap(stream, 2)))).flat();
+
+  // Treat a direct first-party feed or sitemap as a deterministic recovery
+  // when a company-specific Google News query is empty. Persist each stream's
+  // empty streak so a watchdog can distinguish one quiet day from a broken
+  // collector without relying on model inference.
+  const priorCollectionHealth = await readFile("collection-health.json", "utf8")
+    .then(JSON.parse)
+    .catch(() => ({ streamHealth: [] }));
+  const priorStreamHealth = new Map((priorCollectionHealth.streamHealth || []).map(row => [row.stream, row]));
+  const fallbackRecoveries = sourceHealth.emptyStreams
+    .filter(stream => stream.startsWith("google-news:"))
+    .map(stream => {
+      const company = stream.slice("google-news:".length);
+      const fallback = officialItems.find(item => item.co === company)
+        || directItems.find(item => item.co === company && item.evidenceTier === "official");
+      if (fallback) return { stream, via: fallback.sourceType || "official-source", source: fallback.source, recoveredItems: 1, coverageStatus: "recent-item-recovered" };
+      const sitemapProbe = OFFICIAL_SITEMAPS.find(item => item.company === company);
+      const feedProbe = OFFICIAL_FEEDS.find(item => item.company === company);
+      const probeStream = sitemapProbe ? `official-sitemap:${sitemapProbe.source}` : feedProbe ? `official-feed:${feedProbe.source}` : "";
+      if (probeStream && sourceHealth.reachableStreams.includes(probeStream)) {
+        return { stream, via: sitemapProbe ? "official-sitemap" : "official-feed", source: (sitemapProbe || feedProbe).source, recoveredItems: 0, coverageStatus: "official-source-reachable-no-recent-items" };
+      }
+      return null;
+    })
+    .filter(Boolean);
+  const recoveredKeys = new Set(fallbackRecoveries.map(row => row.stream));
+  const unresolvedEmptyStreams = [...new Set(sourceHealth.emptyStreams.filter(stream => !recoveredKeys.has(stream)))];
+  const failedByStream = new Map(sourceHealth.failedStreams.map(row => [row.stream, row]));
+  const quietByStream = new Map(sourceHealth.quietStreams.map(row => [row.stream, row]));
+  const attemptedStreams = new Set([
+    ...sourceHealth.successfulStreams,
+    ...unresolvedEmptyStreams,
+    ...failedByStream.keys(),
+    ...quietByStream.keys(),
+    ...fallbackRecoveries.map(row => row.stream),
+  ]);
+  const checkedAt = new Date().toISOString();
+  const streamHealth = [...attemptedStreams].sort().map(stream => {
+    const prior = priorStreamHealth.get(stream) || {};
+    const recovery = fallbackRecoveries.find(row => row.stream === stream);
+    const failed = failedByStream.get(stream);
+    const empty = unresolvedEmptyStreams.includes(stream);
+    const quiet = quietByStream.get(stream);
+    const state = recovery ? "recovered-by-official-fallback" : failed ? "failed" : empty ? "empty" : quiet ? "reachable-quiet" : "healthy";
+    const consecutiveEmptyRuns = state === "empty" ? Number(prior.consecutiveEmptyRuns || 0) + 1 : 0;
+    return {
+      stream,
+      state,
+      lastAttemptAt: checkedAt,
+      lastSuccessAt: ["healthy", "recovered-by-official-fallback"].includes(state) ? checkedAt : prior.lastSuccessAt || null,
+      emptySince: state === "empty" ? prior.emptySince || checkedAt : null,
+      consecutiveEmptyRuns,
+      ...(recovery ? { fallback: recovery } : {}),
+      ...(quiet ? { reason: quiet.reason } : {}),
+      ...(failed ? { error: failed.error } : {}),
+    };
+  });
+  const healthPolicy = officialSourceRegistry.healthPolicy || {};
+  const emptyRunLimit = Number(healthPolicy.watchdogAfterConsecutiveEmptyRuns || 3);
+  const emptyDayLimit = Number(healthPolicy.watchdogAfterEmptyDays || 3);
+  const watchdogBreaches = streamHealth.filter(row => row.state === "empty" && (
+    row.consecutiveEmptyRuns >= emptyRunLimit
+    || (Date.now() - Date.parse(row.emptySince || checkedAt)) / 86_400_000 >= emptyDayLimit
+  ));
+  const connectorStatus = OFFICIAL_API_CONNECTORS.map(connector => {
+    const missingEnv = (connector.requiredEnv || []).filter(name => !process.env[name]);
+    return {
+      id: connector.id,
+      source: connector.source,
+      category: connector.category,
+      sourceTier: connector.sourceTier,
+      schedule: connector.schedule,
+      status: missingEnv.length ? "credential-gated" : "configured-ready",
+      missingEnv,
+    };
+  });
 
   // 삭제 블록리스트(비밀번호 삭제) — 해당 URL은 다시 크롤하지 않음
   // de-dupe this run by URL
   const seen = new Set();
-  const raw = [...companyItems, ...topicItems, ...priorityItems, ...directItems]
+  const raw = [...companyItems, ...topicItems, ...priorityItems, ...regionalItems, ...primaryItems, ...directItems, ...officialItems]
     .filter(a => a.url && !seen.has(a.url) && seen.add(a.url))
     .filter(a => !isExcludedText(`${a.title} ${a.descEn || ""}`))
     .filter(a => !suppression.hasUrl(a.url) && !suppression.hasCompany(a.co));
@@ -366,6 +581,8 @@ async function main() {
     return {
       ...(s || a),
       date: a.date, co: a.co, cat: a.cat, source: a.source, tag: a.tag,
+      evidenceTier: a.evidenceTier || "reported",
+      sourceType: a.sourceType || "publisher-discovery",
       ...(s?.rssUrl ? {} : { rssUrl: a.url }),
       collectedAt: new Date().toISOString(),
       needsLLM: false,
@@ -400,14 +617,28 @@ async function main() {
     .slice(0, 500);   // 계속 누적(과거 기사 유지) — UI가 페이지네이션으로 초기 렌더 경량화
 
   const crawlHealth = {
-    generatedAt: new Date().toISOString(),
+    generatedAt: checkedAt,
     mode: "source-content-extractive",
     policyVersion: newsPolicy.version,
-    streams: { googleNews: COMPANIES.length + TOPICS.length + PRIORITY_STREAMS.length, directRss: DIRECT_FEEDS.length },
+    streams: {
+      googleNews: COMPANIES.length + TOPICS.length + PRIORITY_STREAMS.length + REGIONAL_TOPICS.length + PRIMARY_SOURCE_TOPICS.length,
+      regional: REGIONAL_TOPICS.length,
+      primarySource: PRIMARY_SOURCE_TOPICS.length,
+      directRss: DIRECT_FEEDS.length,
+      officialFeeds: OFFICIAL_FEEDS.length,
+      officialSitemaps: OFFICIAL_SITEMAPS.length,
+      officialApiConnectors: OFFICIAL_API_CONNECTORS.length,
+    },
     acceptedCandidates: raw.length,
     failedStreams: sourceHealth.failedStreams,
-    emptyStreams: sourceHealth.emptyStreams,
-    status: sourceHealth.failedStreams.length ? "partial" : "ok",
+    emptyStreams: unresolvedEmptyStreams,
+    recoveredStreams: fallbackRecoveries,
+    quietStreams: sourceHealth.quietStreams,
+    streamHealth,
+    connectorStatus,
+    watchdogPolicy: { emptyRunLimit, emptyDayLimit },
+    watchdogBreaches,
+    status: sourceHealth.failedStreams.length || watchdogBreaches.length ? "partial" : "ok",
   };
   await writeFile("collection-health.json", JSON.stringify(crawlHealth, null, 2) + "\n");
 

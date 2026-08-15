@@ -1,35 +1,89 @@
 {
-  "version": 2,
+  "version": 5,
   "summaryMode": "source-content-extractive",
   "summaryPolicy": "Each visible article stores cleaned public publisher-page text. Its one-to-three display bullets are distinct complete sentences extracted from that stored text; the pipeline does not generate or add claims. The display layer translates only those stored sentences and records their hash. Translation failure or a Korean quality failure displays English.",
   "displayPolicy": "Only records with a retrievable publisher page, stored source text, distinct extracted sentences, and a source link are visible. Records whose source page cannot be retrieved remain in the cumulative database but are withheld from the feed.",
+  "displayLanguagePolicy": {
+    "default": "original",
+    "translation": "optional-user-toggle",
+    "authorityRule": "The original-language headline and source excerpt remain the canonical evidence; Korean is a convenience translation only."
+  },
   "excludedTerms": [
     "삼성",
     "samsung",
     "갤럭시",
     "galaxy",
-    "MX",
-    "SK hynix",
-    "SK하이닉스",
-    "하이닉스",
-    "Micron",
-    "SanDisk",
-    "Western Digital",
-    "Kioxia",
-    "CXMT",
-    "GigaDevice",
-    "BIWIN",
-    "Montage Technology",
-    "메모리",
-    "memory",
-    "HBM",
-    "DRAM",
-    "DDR",
-    "NAND",
-    "eSSD",
-    "CXL",
-    "SOCAMM",
-    "MRDIMM"
+    "MX"
   ],
-  "excludedTermsReason": "휴대폰 AI 신사업 발굴 범위 밖의 특정 브랜드·기업·반도체 저장장치 관점을 수집과 공개 단계에서 제외"
+  "excludedTermsReason": "공개 대시보드의 자기언급 편향을 줄이기 위해 Samsung/Galaxy/MX 자체 기사만 일반 뉴스 피드에서 제외. 경쟁 단말·통신사·NPU·메모리·공급망 신호는 MX 전용 DB에서 수집한다.",
+  "mxDecisionDatabasePolicy": {
+    "allowSelfReferencesForMappingFields": true,
+    "selfReferenceScope": "public-source comparison and partnership history only",
+    "allowCompetitorDevices": true,
+    "allowCarriers": true,
+    "allowComponentsAndSupplyChain": true,
+    "genericFeedSelfExclusion": true,
+    "selfBenchmarkTrack": {
+      "enabled": true,
+      "visibility": "mx-command-center-only",
+      "terms": ["Samsung", "삼성전자", "Galaxy", "갤럭시", "One UI", "Knox", "Galaxy Store", "Galaxy AI"],
+      "allowedUses": ["own-asset hypothesis", "feature parity", "partnership history", "BOM and architecture mapping", "regulatory control mapping"],
+      "prohibitedUses": ["promotional ranking", "unsupported internal performance claim"]
+    }
+  },
+  "mxCollectionCategories": [
+    {
+      "id": "agentic-commerce",
+      "label": "에이전틱 커머스",
+      "ownerOrg": "서비스기획",
+      "freshnessTier": "tier1",
+      "allowedEvidenceTiers": ["official", "reported", "estimate"],
+      "terms": ["agentic commerce", "AI shopping agent", "AI checkout", "agent commission", "Perplexity Shopping", "OpenAI Operator", "UCP", "AP2"]
+    },
+    {
+      "id": "telco-bundles",
+      "label": "통신사 결합 서비스",
+      "ownerOrg": "서비스기획",
+      "freshnessTier": "tier0",
+      "allowedEvidenceTiers": ["official", "reported", "estimate"],
+      "terms": ["AI plan bundle", "AI subscription perk", "Gemini perk", "Perplexity Pro carrier", "SKT AI", "KT Microsoft AI", "Verizon AI", "T-Mobile OpenAI", "AT&T AI"]
+    },
+    {
+      "id": "wearables-form-factors",
+      "label": "웨어러블·폼팩터",
+      "ownerOrg": "제품기획팀",
+      "freshnessTier": "tier1",
+      "allowedEvidenceTiers": ["official", "reported", "estimate"],
+      "terms": ["AI wearable", "smart glasses", "AI pin", "foldable AI", "trifold AI", "rollable display", "XR headset", "Direct-to-Cell AI", "CarPlay Ultra", "Android Automotive AI"]
+    },
+    {
+      "id": "on-device-trust-security",
+      "label": "온디바이스 신뢰·보안",
+      "ownerOrg": "서비스기획",
+      "freshnessTier": "tier0",
+      "allowedEvidenceTiers": ["official", "reported", "estimate"],
+      "terms": ["on-device scam detection", "phone fraud warning", "deepfake call detection", "voice clone detection", "financial fraud API", "Samsung Phone scam", "Pixel Scam Detection", "Halo deepfake"]
+    },
+    {
+      "id": "clinical-health-ai",
+      "label": "임상·보험형 헬스 AI",
+      "ownerOrg": "서비스기획",
+      "freshnessTier": "tier1",
+      "allowedEvidenceTiers": ["official", "reported", "estimate"],
+      "terms": ["digital therapeutic", "clinical AI wearable", "FDA mobile medical app", "payer reimbursement AI", "employer digital health license", "health AI outcome contract"]
+    },
+    {
+      "id": "ai-companion-economics",
+      "label": "AI 컴패니언 경제성",
+      "ownerOrg": "제품기획팀",
+      "freshnessTier": "tier1",
+      "allowedEvidenceTiers": ["official", "reported", "estimate"],
+      "terms": ["AI companion app revenue", "AI companion engagement", "Character.AI revenue", "Replika subscription", "companion app safety", "AI companion market definition"]
+    }
+  ],
+  "evidenceTierRules": {
+    "official": "기업·규제기관·표준단체·공시·개발자 문서 원문",
+    "reported": "출처가 명시된 독립 언론·리서치 보도. 유료 원문 미대사 시 reported 유지",
+    "estimate": "MX 내부 가정·시뮬레이션·전망. 확정 사실과 같은 문장에 혼합 금지"
+  }
 }

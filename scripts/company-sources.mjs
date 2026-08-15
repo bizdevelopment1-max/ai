@@ -100,7 +100,7 @@ export const COMPANY_SOURCES = {
   },
   "Databricks": {
     aliases: ["Databricks"],
-    official: ["https://www.databricks.com/company/leadership"],
+    official: ["https://www.databricks.com/"],
   },
   "SpaceX (xAI, Cursor)": {
     aliases: ["xAI", "SpaceX"],
@@ -148,7 +148,7 @@ export const COMPANY_SOURCES = {
   },
   "Lovable": {
     aliases: ["Lovable"],
-    official: ["https://lovable.dev/about"],
+    official: ["https://lovable.dev/"],
   },
   "Midjourney": {
     aliases: ["Midjourney"],
@@ -156,7 +156,7 @@ export const COMPANY_SOURCES = {
   },
   "Stability AI": {
     aliases: ["Stability AI"],
-    official: ["https://stability.ai/about"],
+    official: ["https://stability.ai/"],
   },
   "Runway": {
     aliases: ["Runway AI", "Runway"],

@@ -1,0 +1,60 @@
+name: Collection stream watchdog
+
+on:
+  schedule:
+    - cron: "50 19 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  inspect-empty-streams:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build persistent empty-stream report
+        run: node scripts/check-collection-watchdog.mjs --write
+
+      - name: Open or update collection watchdog issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('collection-watchdog.json', 'utf8'));
+            if (!report.breachCount) {
+              core.info('No persistent empty streams.');
+              return;
+            }
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const label = 'collection-watchdog';
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: label });
+            } catch {
+              await github.rest.issues.createLabel({ owner, repo, name: label, color: 'D93F0B', description: 'Persistent collection stream outage' });
+            }
+            const title = '[Collection Watchdog] Persistent empty source streams';
+            const body = [
+              `Generated: ${report.generatedAt}`,
+              '',
+              '| Stream | Empty runs | Empty days | Last success |',
+              '|---|---:|---:|---|',
+              ...report.breaches.map(row => `| ${row.stream} | ${row.consecutiveEmptyRuns} | ${row.emptyDays} | ${row.lastSuccessAt || 'never'} |`),
+              '',
+              'The source registry fallback did not recover these streams. Check the official feed/sitemap endpoint or add a licensed API connector.',
+            ].join('\n');
+            const issues = await github.rest.issues.listForRepo({ owner, repo, state: 'open', labels: label, per_page: 20 });
+            const existing = issues.data.find(issue => issue.title === title);
+            if (existing) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body });
+            } else {
+              await github.rest.issues.create({ owner, repo, title, body, labels: [label] });
+            }
+

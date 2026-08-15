@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-15",
+  "stages": [
+    { "id": "raw", "label": "원문 수집", "required": ["sourceUrl", "publisher", "publishedAt", "rawHash"] },
+    { "id": "draft", "label": "LLM 요약", "required": ["fact", "implication", "decision", "evidenceSpans"], "minEvidenceSpans": 3 },
+    { "id": "verified", "label": "교차 검증", "highConfidenceIndependentSources": 2 },
+    { "id": "reviewed", "label": "사람 리뷰", "requiredForPriority": ["P1"] },
+    { "id": "published", "label": "발행", "required": ["lastVerifiedAt", "confidence", "reviewStatus"] },
+    { "id": "reconciled", "label": "정합성 재점검", "numericDiffRequired": true }
+  ],
+  "numericEvidence": {
+    "requireSourceSpan": true,
+    "flagWhenLiteralMissing": true,
+    "reconciliationProviders": ["PitchBook", "Crunchbase"],
+    "paidProviderStatus": "not-connected"
+  },
+  "publishing": {
+    "automatedMerge": false,
+    "minimumApprovals": 1,
+    "automatedDataVisibility": "staging-only",
+    "separateSchemaAndDataPullRequests": true
+  },
+  "storageTarget": {
+    "current": "versioned-json",
+    "recommended": "DuckDB-or-Supabase",
+    "migrationTriggerMb": 1
+  }
+}

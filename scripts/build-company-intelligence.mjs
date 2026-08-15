@@ -250,6 +250,58 @@ const supportedNumbers = (value, corpus) => numericTokens(value)
 const refKey = ref => canon(ref?.url);
 const placeholderCopy = value => /(?:수집|확인|분석|업데이트|준비)\s*중|입력되지|신호\s*(?:없음|대기)|근거\s*매칭\s*대기|표시할\s+.+없|정보\s*없음/i.test(clean(value));
 const blankSection = () => ({ summary: "", details: [], evidence: [] });
+const PRACTICE_TYPES = [
+  { id: "technology", legacyId: "model", label: "개발·기술", re: /\bmodel\b|research|reasoning|inference|benchmark|foundation|multimodal|training|모델|연구|추론|벤치마크|학습|멀티모달/i },
+  { id: "product", legacyId: "product", label: "제품", re: /launch|release|rollout|feature|product|service|\bapp\b|출시|공개|기능|제품|서비스|앱|업데이트/i },
+  { id: "partnerships", legacyId: "partner", label: "파트너십", re: /partner|collaboration|integration|alliance|ecosystem|customer|enterprise|제휴|협력|통합|생태계|고객|계약/i },
+  { id: "infrastructure", legacyId: "infra", label: "인프라·생산", re: /data ?cent(?:er|re)|\bGPU\b|\bNPU\b|chip|compute|cloud|capex|infrastructure|server|factory|manufactur|데이터센터|칩|컴퓨트|클라우드|인프라|서버|공장|생산/i },
+  { id: "capital", legacyId: "capital", label: "자본·인수", re: /funding|raise|invest|acqui|valuation|\bIPO\b|equity|조달|투자|인수|밸류|상장|지분/i },
+  { id: "safety", legacyId: "safety", label: "안전·규제", re: /safety|regulat|policy|govern|lawsuit|copyright|privacy|security|안전|규제|정책|소송|저작권|프라이버시|보안/i },
+  { id: "organization", legacyId: "talent", label: "인재·조직", re: /\bhire\b|talent|executive|leadership|founder|layoff|채용|인재|경영진|리더십|창업|감원|조직/i },
+];
+const practiceTypeFor = value => {
+  const text = clean(value);
+  return PRACTICE_TYPES.find(type => type.re.test(text)) || null;
+};
+const publicationProfile = intelligence => {
+  const practices = Array.isArray(intelligence.corePractices) ? intelligence.corePractices : [];
+  const evidence = [
+    ...["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"]
+      .flatMap(key => intelligence[key]?.evidence || []),
+    ...practices.map(item => item.evidence),
+  ].filter(item => item && /^https?:\/\//.test(String(item.url || "")));
+  const latestEvidence = evidence.slice().sort((left, right) =>
+    String(right.date || "").localeCompare(String(left.date || "")))[0] || null;
+  const verifiedAt = clean(latestEvidence?.date);
+  const verifiedTime = Date.parse(verifiedAt || "");
+  const ageDays = Number.isFinite(verifiedTime)
+    ? Math.max(0, Math.floor((Date.now() - verifiedTime) / 86_400_000)) : null;
+  const visibleSections = [
+    clean(intelligence.currentBusiness?.summary) && "product",
+    practices.some(item => item.sectionId === "technology") && "technology",
+    practices.some(item => item.sectionId === "infrastructure") && "infrastructure",
+    clean(intelligence.revenueModel?.summary) && "goToMarket",
+    practices.some(item => item.sectionId === "partnerships") && "partnerships",
+    clean(intelligence.investmentDirection?.summary) && "investment",
+  ].filter(Boolean);
+  return {
+    schemaVersion: 1,
+    policy: "core-product-required+source-backed-optional-sections",
+    coreComplete: visibleSections.includes("product"),
+    visibleSections,
+    omittedSections: ["technology", "infrastructure", "goToMarket", "partnerships", "investment"]
+      .filter(section => !visibleSections.includes(section)),
+    lastVerifiedAt: verifiedAt,
+    freshness: ageDays === null ? "undated" : ageDays <= 14 ? "fresh" : ageDays <= 90 ? "aging" : "stale",
+    ageDays,
+    latestEvidence: latestEvidence ? {
+      title: latestEvidence.title || "",
+      source: latestEvidence.source || "",
+      date: latestEvidence.date || "",
+      url: latestEvidence.url,
+    } : null,
+  };
+};
 const safeFallback = (fallback, corpus) => {
   const out = { ...fallback };
   for (const key of ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"]) {
@@ -343,11 +395,18 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
     const source = evidenceByUrl.get(refKey(item.evidence));
     const fingerprint = clean(item.title).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
     return source && isCompanyActionEvidenceFor(name, source) && !occupied.has(fingerprint);
-  }).slice(0, 4).map(item => ({
-    ...item,
-    title: bulletizeKorean(item.title),
-    insight: bulletizeKorean(item.insight),
-  }));
+  }).slice(0, 4).map(item => {
+    const type = PRACTICE_TYPES.find(candidate => candidate.legacyId === item.id)
+      || practiceTypeFor(`${item.title || ""} ${item.insight || ""} ${item.evidence?.title || ""}`);
+    return {
+      ...item,
+      id: type?.legacyId || item.id || "",
+      sectionId: type?.id || "",
+      sectionLabel: type?.label || "",
+      title: bulletizeKorean(item.title),
+      insight: bulletizeKorean(item.insight),
+    };
+  });
   out.newBusinessModels = (out.newBusinessModels || []).filter(item =>
     item.evidence?.url && allowedUrls.has(refKey(item.evidence))
     && supportedNumbers(`${item.title} ${item.model} ${item.implication}`, corpus)).slice(0, 3)
@@ -368,6 +427,7 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
   ];
   out.evidenceFingerprint = evidenceFingerprint(evidence);
   out.groundingStatus = "numeric-and-source-reference-checked";
+  out.publication = publicationProfile(out);
   return out;
 };
 
@@ -395,7 +455,11 @@ const normaliseAnalysis = (analysis, evidence, fallback, corpus) => {
   const corePractices = (analysis?.corePractices || []).map(item => {
     const ref = evidence.find(source => source.id === item.evidenceId);
     if (!ref || !clean(item.title)) return null;
+    const type = practiceTypeFor(`${item.title} ${item.insight || ""} ${ref.titleKo || ref.titleOriginal || ""}`);
     return {
+      id: type?.legacyId || "",
+      sectionId: type?.id || "",
+      sectionLabel: type?.label || "",
       title: clip(item.title, 100),
       insight: clip(item.insight, 300),
       evidence: { title: ref.titleKo || ref.titleOriginal, source: ref.source, date: ref.date, url: ref.url },
@@ -440,12 +504,24 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
     ? `${directionLabels.get(investSignal.kind) || "사업 확장"} · ${clip(investSignal.signal, 220)}`
     : "";
   const official = (rec.organization?.officialPages || []).find(page => page.status === "reachable");
+  const profileVerifiedAt = first(profile.sourceAsOf, String(rec.coverage?.checkedAt || "").slice(0, 10));
+  const profileUrls = [...new Set([
+    profile.officialWebsite,
+    ...(profile.sourceUrls || []),
+    ...(COMPANY_SOURCES[base?.name]?.official || []),
+  ].filter(url => /^https?:\/\//.test(String(url || ""))))];
+  const profileEvidence = profileUrls.slice(0, 2).map((url, index) => ({
+    title: index === 0 ? "공식 회사·제품 페이지" : "공식 기업 정보 원문",
+    source: "Official company page",
+    date: profileVerifiedAt,
+    url,
+  }));
   const officialEvidence = official ? [{
     title: "공식 회사·리더십 페이지",
     source: "Official company page",
     date: String(official.checkedAt || "").slice(0, 10),
     url: official.resolvedUrl || official.url,
-  }] : [];
+  }] : profileEvidence;
   const executiveQuoteSeen = new Set();
   const executiveQuotes = [
     ...(rec.executiveFeed?.quotes || []),
@@ -477,11 +553,19 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
       details: directionSignals.filter(signal => ["ma", "invest", "partner"].includes(signal.kind)).slice(0, 3).map(signal => clip(signal.signal, 220)),
       evidence: investSignal ? [{ title: investSignal.signal, source: investSignal.source, date: investSignal.date, url: investSignal.url }] : [],
     },
-    corePractices: evidence.filter(item => isCompanyActionEvidenceFor(base?.name, item)).slice(0, 8).map(item => ({
-      title: item.titleKo || item.titleOriginal,
-      insight: item.linesKo[1] || item.linesKo[0] || item.linesOriginal[0] || item.titleKo,
-      evidence: { title: item.titleKo || item.titleOriginal, source: item.source, date: item.date, url: item.url },
-    })),
+    corePractices: evidence.filter(item => isCompanyActionEvidenceFor(base?.name, item)).slice(0, 8).map(item => {
+      const title = item.titleKo || item.titleOriginal;
+      const insight = item.linesKo[1] || item.linesKo[0] || item.linesOriginal[0] || item.titleKo;
+      const type = practiceTypeFor(`${title || ""} ${insight || ""} ${item.titleOriginal || ""} ${(item.linesOriginal || []).join(" ")}`);
+      return {
+        id: type?.legacyId || "",
+        sectionId: type?.id || "",
+        sectionLabel: type?.label || "",
+        title,
+        insight,
+        evidence: { title, source: item.source, date: item.date, url: item.url },
+      };
+    }),
     newBusinessModels: revenueSignals.slice(0, 2).map(signal => ({
       title: modelLabels.get(signal.model) || "신규 수익화",
       model: clip(signal.signal, 300),
@@ -537,11 +621,12 @@ async function synthesizeBatch(inputs) {
 }
 
 async function main() {
-  const [companyData, newsData, monetData, ventures] = await Promise.all([
+  const [companyData, newsData, monetData, ventures, metricHistory] = await Promise.all([
     readJson("companies.json", { companies: {} }),
     readJson("news.json", { articles: [] }),
     readJson("monetization.json", { companies: [], models: [], directions: [] }),
     readJson("strategic-ventures.json", { companies: {} }),
+    readJson("metric-history.json", { series: [] }),
   ]);
   const dash = loadDash();
   const bases = new Map((dash.COMPANIES || []).map(company => [company.name, company]));
@@ -549,12 +634,30 @@ async function main() {
   const articleByUrl = new Map((newsData.articles || []).map(article => [canon(article.url), article]));
   const modelLabels = new Map((monetData.models || []).map(model => [model.id, model.ko]));
   const directionLabels = new Map((monetData.directions || []).map(direction => [direction.id, direction.ko]));
+  const metricSeriesFor = name => (metricHistory.series || []).filter(series => {
+    if (series.entity === name) return true;
+    const haystack = `${series.id || ""} ${series.label || ""}`.toLowerCase();
+    return aliasesFor(name).some(alias => haystack.includes(String(alias).toLowerCase()));
+  }).map(series => ({
+    id: series.id,
+    label: series.label,
+    unit: series.unit,
+    definition: series.definition,
+    derivedChange: series.derivedChange,
+    points: (series.points || []).map(point => ({
+      observedAt: point.observedAt,
+      announcedAt: point.announcedAt || null,
+      value: point.value,
+      evidenceTier: point.evidenceTier,
+      sourceUrl: point.sourceUrl,
+    })),
+  })).filter(series => series.points.length);
   const prepared = [];
   const engine = llmAvailable();
   const persistCompanyData = async () => {
-    companyData.schemaVersion = 5;
+    companyData.schemaVersion = 6;
     companyData.generatedAt = new Date().toISOString();
-    companyData.methodology = "normalized-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis";
+    companyData.methodology = "normalized-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis+source-backed-section-publication+freshness";
     const checkpoint = "companies.json.checkpoint";
     await writeFile(checkpoint, `${JSON.stringify(companyData)}\n`);
     await rename(checkpoint, "companies.json");
@@ -566,6 +669,7 @@ async function main() {
   };
 
   for (const [name, rec] of Object.entries(companyData.companies || {})) {
+    rec.metricHistory = metricSeriesFor(name);
     const leaders = Array.isArray(rec.organization?.executiveTeam) && rec.organization.executiveTeam.length
       ? rec.organization.executiveTeam : rec.organization?.leadership || [];
     const evidence = mergeEvidence(officialEvidenceFor(rec), evidenceFor(name, newsData.articles || [], leaders));
@@ -598,7 +702,30 @@ async function main() {
         ...groundedFallback,
       };
     rec.strategicVentures = ventures.companies?.[name] || [];
-    if (rec.strategicVentures.length && ventures.comparison) rec.strategicVentureComparison = ventures.comparison;
+    if (rec.strategicVentures.length) {
+      if (ventures.comparison) rec.strategicVentureComparison = ventures.comparison;
+      const publication = rec.intelligence.publication || publicationProfile(rec.intelligence);
+      publication.visibleSections = [...new Set([...(publication.visibleSections || []), "partnerships"])];
+      publication.omittedSections = ["technology", "infrastructure", "goToMarket", "partnerships", "investment"]
+        .filter(section => !publication.visibleSections.includes(section));
+      const latestVentureSource = rec.strategicVentures.flatMap(venture => venture.sources || [])
+        .filter(source => /^https?:\/\//.test(String(source?.url || "")))
+        .sort((left, right) => String(right.date || "").localeCompare(String(left.date || "")))[0];
+      if (latestVentureSource && String(latestVentureSource.date || "") > String(publication.lastVerifiedAt || "")) {
+        publication.lastVerifiedAt = latestVentureSource.date;
+        publication.latestEvidence = {
+          title: latestVentureSource.title || rec.strategicVentures[0]?.title || "",
+          source: latestVentureSource.publisher || "",
+          date: latestVentureSource.date,
+          url: latestVentureSource.url,
+        };
+        const time = Date.parse(latestVentureSource.date || "");
+        publication.ageDays = Number.isFinite(time) ? Math.max(0, Math.floor((Date.now() - time) / 86_400_000)) : null;
+        publication.freshness = publication.ageDays === null ? "undated"
+          : publication.ageDays <= 14 ? "fresh" : publication.ageDays <= 90 ? "aging" : "stale";
+      }
+      rec.intelligence.publication = publication;
+    }
     if (!refreshAi) continue;
     prepared.push({
       name,
@@ -658,7 +785,7 @@ async function main() {
           ...normaliseAnalysis(analysis, item.evidence, item._fallback, item._corpus),
         };
       }
-      // The first schema-v5 run can refresh every company. Persist each batch
+      // The first schema-v6 run can refresh every company. Persist each batch
       // so a runner retry resumes from completed evidence fingerprints.
       await persistCompanyData();
       console.log(`[company-intelligence] batch ${Math.floor(start / batchSize) + 1}/${Math.ceil(modelQueue.length / batchSize)} · ${result ? result.engine : "extractive fallback"}`);

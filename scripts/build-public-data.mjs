@@ -14,11 +14,12 @@ import { normalizeLocalizedRecord } from "./korean-copy.mjs";
 import { consolidateMarketRecords } from "./market-consolidation.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { loadDash } from "./load-dash.mjs";
+import { sanitizePublicCopy } from "./public-copy.mjs";
 
 const root = process.cwd();
 const readJson = async file => JSON.parse(await readFile(resolve(root, file), "utf8"));
-const writeJson = (file, value) => writeFile(resolve(root, file), `${JSON.stringify(value)}\n`);
-const writePrettyJson = (file, value) => writeFile(resolve(root, file), `${JSON.stringify(value, null, 2)}\n`);
+const writeJson = (file, value) => writeFile(resolve(root, file), `${JSON.stringify(sanitizePublicCopy(value))}\n`);
+const writePrettyJson = (file, value) => writeFile(resolve(root, file), `${JSON.stringify(sanitizePublicCopy(value), null, 2)}\n`);
 // 표시 최종 게이트: 실제 필드값을 재귀 검사해 JSON의 이스케이프 문자와
 // 짧은 영문 금지어가 우연히 이어지는 오탐을 방지함
 const hasBanned = value => {
@@ -28,15 +29,10 @@ const hasBanned = value => {
   return false;
 };
 const notBanned = item => !hasBanned(item);
-const RETIRED_FOCUS = /(?:SK\s*-?\s*hynix|SK하이닉스|하이닉스|Micron|SanDisk|Western Digital|Kioxia|CXMT|GigaDevice|BIWIN|Montage Technology|메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM)/i;
-const hasRetiredFocus = value => {
-  if (typeof value === "string") return RETIRED_FOCUS.test(value);
-  if (Array.isArray(value)) return value.some(hasRetiredFocus);
-  if (value && typeof value === "object") {
-    return Object.entries(value).some(([key, item]) => RETIRED_FOCUS.test(key) || hasRetiredFocus(item));
-  }
-  return false;
-};
+// Mobile NPU, DRAM, storage and packaging are first-class MX signals.  The
+// previous memory-sector exclusion is intentionally retired; the normal
+// publisher, suppression and evidence gates remain in force.
+const hasRetiredFocus = () => false;
 const notRetiredFocus = item => !hasRetiredFocus(item);
 const sourceBacked = item => item?.displayEligible !== false
   && item?.summaryMode === "source-content-extractive"
@@ -247,10 +243,10 @@ try {
 
 const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
-  ...await Promise.all(["insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  ...await Promise.all(["insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
-await writeJson("data-version.json", { version, generatedAt, assets: [...Object.keys(views), "company-news.json", "business-model-forecasts.json", "mobile-ai-business-view.json"] });
+await writeJson("data-version.json", { version, generatedAt, assets: [...Object.keys(views), "company-news.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"] });
 
 console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} current market insights · ${consolidatedDuplicateCount} duplicate records consolidated · ${replacedRecordCount} prior topic values replaced · version ${version}`);

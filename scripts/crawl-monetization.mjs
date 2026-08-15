@@ -1,25 +1,13 @@
 #!/usr/bin/env node
-/* ============================================================
-   crawl-monetization.mjs — 'AI 수익화 플레이북' 기업별 누적 갱신
-   입력: news.json(이미 크롤된 최신 기사) — 별도 네트워크 호출 없음.
-   목적: 신사업 발굴 관점에서 "어떤 기업이 ①어떻게 돈을 버는가(수익모델)
-         ②비즈니스 모델 신호 ③앞으로의 투자·사업 방향"을 최신 원문으로 교체.
-   동작:
-     - 대시보드 기업(밸류체인 계층 부여)을 별칭으로 기사에서 탐지.
-     - 각 기사를 7개 수익모델 유형 + 4개 방향(투자·인수·확장·제휴)으로 분류.
-     - 기업별로 modelMix(수익모델 분포)·최신 수익화 시그널·투자/사업 방향 시그널을
-       동일 기업·유형별 최신값만 남겨 monetization.json 생성. 하드코딩 아님 — 기사 근거로 갱신.
-     - 모든 시그널은 displayEligible + 원문 발췌(source-content-extractive) 기사만,
-       사명(삼성/MX/Galaxy) 미출력.
-   ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
 import { loadDash } from "./load-dash.mjs";
+import { sanitizePublicCopy } from "./public-copy.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
-const TODAY = new Date().toISOString().slice(0, 10);
 
-// 대시보드 기업 별칭. 계층·버티컬은 data.js COMPANY_LAYER에서 매 실행 시
-// 읽어 단일 소스로 유지한다(밸류체인 재분류 시 크롤 산출물도 자동 정렬).
+const TODAY = new Date().toISOString().slice(0, 10);
+const volatileMetricConfig = JSON.parse(await readFile("config/volatile-metrics.json", "utf8"));
+
 const COMPANY_ALIASES = [
   { name: "Microsoft", layer: "infra", vertical: "하이퍼스케일 클라우드", alias: ["Microsoft", "Azure", "Copilot"] },
   { name: "Amazon", layer: "infra", vertical: "하이퍼스케일 클라우드", alias: ["Amazon", "AWS", "Bedrock"] },
@@ -31,12 +19,12 @@ const COMPANY_ALIASES = [
   { name: "DeepSeek", layer: "model", vertical: "오픈·저비용 모델", alias: ["DeepSeek"] },
   { name: "Mistral AI", layer: "model", vertical: "오픈·소버린 모델", alias: ["Mistral"] },
   { name: "Cohere", layer: "model", vertical: "엔터프라이즈 모델", alias: ["Cohere"] },
-  { name: "SpaceX (xAI, Cursor)", layer: "model", vertical: "프런티어 모델(xAI)", alias: ["xAI", "Grok"] },
-  { name: "Databricks", layer: "data", vertical: "데이터·레이크하우스", alias: ["Databricks"] },
+  { name: "SpaceX (xAI, Cursor)", layer: "model", vertical: "프런티어 모델", alias: ["xAI", "Grok"] },
+  { name: "Databricks", layer: "data", vertical: "데이터 레이크하우스", alias: ["Databricks"] },
   { name: "Scale AI", layer: "data", vertical: "데이터 라벨링·평가", alias: ["Scale AI"] },
   { name: "Hugging Face", layer: "data", vertical: "모델 허브·오픈소스", alias: ["Hugging Face", "HuggingFace"] },
   { name: "Together AI", layer: "data", vertical: "추론·학습 클라우드", alias: ["Together AI"] },
-  { name: "Apple", layer: "app", vertical: "온디바이스·컨슈머", alias: ["Apple Intelligence", "Apple", "Siri"] },
+  { name: "Apple", layer: "app", vertical: "온디바이스·생태계", alias: ["Apple Intelligence", "Apple", "Siri"] },
   { name: "Perplexity", layer: "app", vertical: "검색·어시스턴트", alias: ["Perplexity"] },
   { name: "Glean", layer: "app", vertical: "엔터프라이즈 검색", alias: ["Glean"] },
   { name: "Sierra AI", layer: "app", vertical: "고객경험 에이전트", alias: ["Sierra AI"] },
@@ -55,167 +43,220 @@ const COMPANY_ALIASES = [
   { name: "Suno", layer: "app", vertical: "크리에이티브·음악", alias: ["Suno"] },
   { name: "ElevenLabs", layer: "app", vertical: "크리에이티브·음성", alias: ["ElevenLabs", "Eleven Labs"] },
 ];
+
 const DASH_LAYER = loadDash().COMPANY_LAYER || {};
-const COMPANIES = COMPANY_ALIASES.map(c => ({
-  ...c,
-  layer: DASH_LAYER[c.name]?.layer || c.layer,
-  vertical: DASH_LAYER[c.name]?.vertical || c.vertical,
+const COMPANIES = COMPANY_ALIASES.map(company => ({
+  ...company,
+  layer: DASH_LAYER[company.name]?.layer || company.layer,
+  vertical: DASH_LAYER[company.name]?.vertical || company.vertical,
 }));
 
-// 별칭을 단어경계 정규식으로(오탐 방지). 알파벳으로 시작/끝나는 별칭에만 \b 부착.
-const bound = s => {
-  const esc = s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const l = /^[A-Za-z0-9]/.test(s) ? "\\b" : "";
-  const r = /[A-Za-z0-9]$/.test(s) ? "\\b" : "";
-  return `${l}${esc}${r}`;
+const bound = value => {
+  const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return `${/^[A-Za-z0-9]/.test(value) ? "\\b" : ""}${escaped}${/[A-Za-z0-9]$/.test(value) ? "\\b" : ""}`;
 };
-const withRegex = list => list.map(c => ({ ...c, re: new RegExp("(?:" + c.alias.map(bound).join("|") + ")") }));
+const withRegex = rows => rows.map(row => ({ ...row, re: new RegExp(`(?:${row.alias.map(bound).join("|")})`, "i") }));
 
-// 7개 수익모델 유형(crawl-bizmodel과 정렬) — 위에서부터 우선 매칭
 const MODELS = [
-  { id: "vertical", ko: "수직통합·자체 서비스", accent: "#66558C",
-    re: /자회사|subsidiary|분사|spin(?:s|ning)?[-\s]?off|spin(?:s|ning)?[-\s]?out|수직통합|vertical integrat|first-?party (?:app|product|service)|자체 (?:앱|서비스|플랫폼)|직접 서비스/i },
-  { id: "subscription", ko: "구독·시트", accent: "#397A68",
-    re: /구독|subscription|월정액|시트당|좌석당|per-seat|premium tier|pro 요금|유료 전환|paywall|멤버십|플러스 요금/i },
-  { id: "usage", ko: "사용량·API·토큰", accent: "#3E648D",
-    re: /\bAPI\b|토큰당|per-token|사용량 기반|usage-based|종량|pay-as-you-go|크레딧|credit|추론 단가|inference cost|호출당|metered/i },
-  { id: "ads", ko: "광고·커머스·수수료", accent: "#A56A35",
-    re: /광고|advertis|\bads\b|커머스|commerce|수수료|commission|중개|affiliate|마켓플레이스|marketplace|take ?rate/i },
-  { id: "hardware", ko: "하드웨어·단말·번들", accent: "#6E607D",
-    re: /단말|디바이스|device|하드웨어|hardware|번들|bundle|기기 판매|웨어러블|이어버드|글라스|가격 프리미엄/i },
-  { id: "outcome", ko: "성과·아웃컴 기반", accent: "#8B5366",
-    re: /성과 기반|아웃컴 기반|해결 건당|per-resolution|성공 보수|success fee|ROI 기반|outcome-based|outcome based|performance-based|per-outcome/i },
-  { id: "enterprise", ko: "엔터프라이즈·라이선스", accent: "#287A78",
-    re: /엔터프라이즈|enterprise|라이선스|licen[sc]e|온프레미스|on-?prem|기업 계약|소버린|sovereign|연간 계약|\bTCV\b|\bACV\b/i },
+  { id: "vertical", ko: "수직통합·자체 서비스", accent: "#66558C", re: /subsidiary|spin[-\s]?(?:off|out)|vertical integrat|first-party|자회사|수직통합|자체 서비스/i },
+  { id: "subscription", ko: "구독·좌석", accent: "#397A68", re: /subscription|per[-\s]?seat|premium tier|pro plan|paywall|membership|구독|좌석|유료 전환/i },
+  { id: "usage", ko: "사용량·API·토큰", accent: "#3E648D", re: /\bAPI\b|per[-\s]?token|usage[-\s]?based|pay[-\s]?as[-\s]?you[-\s]?go|credit|inference|metered|사용량|토큰|호출량/i },
+  { id: "ads", ko: "광고·커머스·수수료", accent: "#A56A35", re: /advertis|\bads\b|commerce|commission|affiliate|marketplace|take rate|광고|커머스|수수료|중개/i },
+  { id: "hardware", ko: "하드웨어·단말·번들", accent: "#6E607D", re: /device|hardware|bundle|phone|wearable|glasses|단말|기기|하드웨어|번들/i },
+  { id: "outcome", ko: "성과 기반", accent: "#8B5366", re: /per[-\s]?resolution|success fee|outcome[-\s]?based|performance[-\s]?based|per[-\s]?outcome|성과 기반|건당 해결/i },
+  { id: "enterprise", ko: "기업용·라이선스", accent: "#287A78", re: /enterprise|licen[sc]e|on[-\s]?prem|sovereign|\bTCV\b|\bACV\b|기업 계약|라이선스|연간 계약/i },
 ];
 
-// 4개 사업 방향 유형 — 앞으로의 투자·사업 방향 신호
 const DIRECTIONS = [
-  { id: "ma", ko: "인수·합병", accent: "#6E607D", re: /인수|합병|acqui|merger|\bM&A\b|매입|takeover/i },
-  { id: "invest", ko: "투자·펀딩", accent: "#397A68", re: /투자|지분|invest|stake|펀딩|funding|조달|라운드|\bround\b|밸류에이션|valuation|\bIPO\b|상장/i },
-  { id: "expand", ko: "확장·신제품", accent: "#3E648D", re: /출시|launch|공개|unveil|roll ?out|신제품|신규 서비스|진출|expand|확장|데이터센터|증설|capacity|신시장|entry/i },
-  { id: "partner", ko: "제휴·파트너십", accent: "#A56A35", re: /파트너십|제휴|partner|협력|collaborat|계약 체결|독점 계약|합작|joint venture/i },
+  { id: "ma", ko: "인수·합병", accent: "#6E607D", re: /acqui|merger|\bM&A\b|takeover|인수|합병/i },
+  { id: "invest", ko: "투자·자금", accent: "#397A68", re: /invest|stake|funding|\bround\b|valuation|\bIPO\b|투자|지분|조달|상장/i },
+  { id: "expand", ko: "확장·신제품", accent: "#3E648D", re: /launch|unveil|roll ?out|expand|capacity|entry|출시|공개|신제품|진출|확장/i },
+  { id: "partner", ko: "제휴·파트너십", accent: "#A56A35", re: /partner|collaborat|joint venture|제휴|협력|합작/i },
 ];
 
-const toLines = sm => String(sm || "").split("\n").map(l => l.replace(/^[·\-•]\s*/, "").trim()).filter(Boolean);
-const firstLine = sm => toLines(sm)[0] || "";
-const classifyFirst = (list, text) => { for (const g of list) if (g.re.test(text)) return g.id; return null; };
-// 여러 후보 문장 중 이 유형(list)의 키워드를 실제로 담은 첫 문장을 골라 {id, line} 반환 —
-// 화면에 보이는 시그널 문장이 태그와 항상 일치하도록.
-const pickTagged = (list, lines) => {
-  for (const line of lines) { const id = classifyFirst(list, line); if (id) return { id, line: line.replace(/[.。]+\s*$/, "").trim() }; }
-  return null;
+const toLines = value => String(value || "").split("\n").map(line => line.replace(/^[•\-*\s]+/, "").trim()).filter(Boolean);
+const canonUrl = value => {
+  const source = String(value || "");
+  try { const url = new URL(source); url.hash = ""; url.search = ""; return url.href.replace(/\/+$/, ""); }
+  catch { return source.replace(/[?#].*$/, "").replace(/\/+$/, ""); }
 };
-const canonUrl = u => { const s = String(u || ""); try { const p = new URL(s); p.hash = ""; p.search = ""; return p.href.replace(/\/+$/, ""); } catch { return s.replace(/[?#].*$/, "").replace(/\/+$/, ""); } };
-const MONEY_CONTEXT = /revenue|sales|subscription|pricing|price|paid|premium|bundle|commission|transaction|usage-based|license|매출|판매|구독|가격|유료|프리미엄|번들|수수료|거래|과금|라이선스/i;
+const classify = (groups, text) => groups.find(group => group.re.test(text)) || null;
+const snippet = (text, pattern) => String(text || "").match(pattern)?.[0]?.trim() || "";
+
+const BUYER_PATTERNS = [
+  /enterprise customers?|business customers?|companies|organizations|developers?|consumers?|subscribers?|users?|carriers?|retailers?|advertisers?|banks?|insurers?|governments?/i,
+  /기업 고객|기업|개발자|소비자|구독자|사용자|통신사|유통사|광고주|은행|보험사|정부/i,
+];
+const OFFERING_PATTERN = /[A-Za-z0-9][A-Za-z0-9+.-]*(?:\s+[A-Za-z0-9][A-Za-z0-9+.-]*){0,4}\s+(?:platform|service|software|product|app|assistant|agent|model|API|device|subscription|plan|suite)|(?:플랫폼|서비스|소프트웨어|제품|앱|어시스턴트|에이전트|모델|API|단말|구독|요금제|솔루션)/i;
+const BILLING_PATTERN = /per (?:month|year|user|seat|token|call|request|transaction|device|resolution)|monthly|annual(?:ly)?|usage[- ]based|subscription|commission|license fee|take rate|월(?:간)?|연(?:간)?|사용자당|좌석당|토큰당|호출당|거래당|단말당|건당|사용량 기반|구독|수수료|라이선스/i;
+const PRICE_REVENUE_PATTERN = /(?:\$|€|£|₩|USD|EUR|GBP|KRW)\s?[0-9][0-9,.]*(?:\s?(?:million|billion|trillion|m|bn))?|[0-9][0-9,.]*\s?(?:달러|원|억원|조원|million|billion)\s*(?:revenue|sales|price|fee|ARR|매출|가격|요금|수수료)?|revenue from|sales from|subscription revenue|license revenue|commission revenue|매출원|구독 매출|라이선스 매출|수수료 매출/i;
+const RECURRING_PATTERN = /subscription|monthly|annual|recurring|renewal|usage[- ]based|per[- ](?:user|seat|token|call|request|transaction|device|resolution)|license|commission|구독|월간|연간|반복 매출|갱신|사용량 기반|사용자당|좌석당|토큰당|호출당|거래당|라이선스|수수료/i;
+const ONE_TIME_PATTERN = /one[- ]time|device sale|hardware sale|upfront purchase|일회성|기기 판매|단말 판매/i;
+
+const commercialGate = ({ company, text }) => {
+  const buyer = BUYER_PATTERNS.map(pattern => snippet(text, pattern)).find(Boolean) || "";
+  const offering = snippet(text, OFFERING_PATTERN);
+  const billingUnit = snippet(text, BILLING_PATTERN);
+  const priceOrRevenue = snippet(text, PRICE_REVENUE_PATTERN);
+  const recurring = RECURRING_PATTERN.test(text) ? "yes" : ONE_TIME_PATTERN.test(text) ? "no" : "";
+  const fields = { seller: company.name, buyer, offering, billingUnit, priceOrRevenue, recurringRevenue: recurring };
+  const missing = Object.entries(fields).filter(([, value]) => !value).map(([key]) => key);
+  return { status: missing.length ? "review-pending" : "passed", fields, missing };
+};
+
+const directionGate = ({ company, line }) => {
+  const sellerMentioned = company.re.test(line);
+  return {
+    status: sellerMentioned ? "passed" : "review-pending",
+    fields: { entity: sellerMentioned ? company.name : "", actionStatement: line },
+    missing: sellerMentioned ? [] : ["entityMentionInEvidenceLine"],
+  };
+};
 
 async function main() {
   const suppression = await loadSuppressionRegistry();
   let news = [];
   try {
-    news = (JSON.parse(await readFile("news.json", "utf8")).articles || [])
-      .filter(article => !suppression.matches(article, "article"));
+    news = (JSON.parse(await readFile("news.json", "utf8")).articles || []).filter(article => !suppression.matches(article, "article"));
+  } catch {
+    console.log("[monetization] news.json이 없어 공개 후보를 만들지 않았습니다.");
   }
-  catch { console.log("[monetization] news.json 없음 — crawl-news.mjs 먼저 실행"); }
 
-  // 스타트업 분석(startups.json)의 업체도 스캔 대상에 자동 포함 — 밸류체인 기업과
-  // 동일한 깊이(수익모델·사업 방향)로 통일. 하드코딩 아님: 매 실행 시 startups.json에서
-  // 이름을 읽어 별칭 스캔 대상으로 편입(신규 스타트업이 추가되면 자동으로 스캔 대상에 포함).
   let startupNames = [];
   try {
-    const su = JSON.parse(await readFile("startups.json", "utf8"));
-    startupNames = [...(su.large || []), ...(su.small || [])]
-      .filter(startup => !suppression.hasCompany(startup.name));
+    const startups = JSON.parse(await readFile("startups.json", "utf8"));
+    startupNames = [...(startups.large || []), ...(startups.small || [])].filter(item => !suppression.hasCompany(item.name));
   } catch {}
-  const knownNames = new Set(COMPANIES.map(c => c.name));
-  const startupEntries = startupNames
-    .filter(s => s.name && !knownNames.has(s.name))
-    .map(s => ({
-      name: s.name,
-      layer: DASH_LAYER[s.name]?.layer || "app",
-      vertical: DASH_LAYER[s.name]?.vertical || s.vertical || "스타트업",
-      alias: [s.name],
-    }));
-  const ALL_COMPANIES = withRegex([...COMPANIES, ...startupEntries]
-    .filter(company => !suppression.hasCompany(company.name)));
-
-  // 기업별 시그널 버킷: 이번 실행의 검증 원문만 사용
-  // 동일 기업·유형은 최신 원문이 이전 공개값을 대체
-  const buckets = new Map();     // name -> { monetize: Map(url->sig), direction: Map(url->sig), modelMix: {id:n} }
-  const bucket = name => {
-    if (!buckets.has(name)) {
-      buckets.set(name, {
-        monetize: new Map(),
-        direction: new Map(),
-      });
-    }
+  const knownNames = new Set(COMPANIES.map(company => company.name));
+  const startupEntries = startupNames.filter(item => item.name && !knownNames.has(item.name)).map(item => ({
+    name: item.name,
+    layer: DASH_LAYER[item.name]?.layer || "app",
+    vertical: DASH_LAYER[item.name]?.vertical || item.vertical || "스타트업",
+    alias: [item.name],
+  }));
+  const allCompanies = withRegex([...COMPANIES, ...startupEntries].filter(company => !suppression.hasCompany(company.name)));
+  const buckets = new Map();
+  const getBucket = name => {
+    if (!buckets.has(name)) buckets.set(name, { monetize: new Map(), direction: new Map() });
     return buckets.get(name);
   };
+  const reviewQueue = [];
+  let candidatesScanned = 0;
 
-  let scanned = 0, added = 0;
-  for (const a of news) {
-    if (a.displayEligible === false || a.summaryMode !== "source-content-extractive") continue;
-    const hay = `${a.title || ""} ${a.tag || ""} ${a.co || ""} ${a.summary || ""}`;
-    if (isExcludedText(hay)) continue;
-    const url = a.url; if (!url) continue;
-    // 태그는 화면에 보일 문장(제목·요약 각 줄) 중 그 유형 키워드를 담은 문장에서만 —
-    // 표시 시그널과 태그가 항상 일치(요약 뒷부분 우연 매칭 오분류 방지).
-    const cand = [a.title || "", ...toLines(a.summary)].map(s => s.trim()).filter(s => s && !isExcludedText(s));
-    if (!cand.length) continue;
-    const modelCandidate = pickTagged(MODELS, cand);        // 수익모델 시그널(있으면)
-    const mHit = modelCandidate && MONEY_CONTEXT.test(modelCandidate.line) ? modelCandidate : null;
-    const dHit = pickTagged(DIRECTIONS, cand);              // 사업 방향 시그널(있으면)
-    if (!mHit && !dHit) continue;
-
-    for (const c of ALL_COMPANIES) {
-      const assigned = a.co ? a.co === c.name : c.re.test(a.title || "");
+  for (const article of news) {
+    if (article.displayEligible === false || article.summaryMode !== "source-content-extractive") continue;
+    const fullText = `${article.title || ""}\n${article.summary || ""}`;
+    if (isExcludedText(fullText) || !article.url) continue;
+    const lines = [article.title || "", ...toLines(article.summary)].filter(line => line && !isExcludedText(line));
+    if (!lines.length) continue;
+    for (const company of allCompanies) {
+      const assigned = article.co ? article.co === company.name : company.re.test(article.title || "");
       if (!assigned) continue;
-      scanned++;
-      const meta = { source: a.source || "", date: a.date || TODAY, url };
-      const k = canonUrl(url);
-      const b = bucket(c.name);
-      if (mHit) {
-        if (!b.monetize.has(k)) added++;
-        b.monetize.set(k, { signal: mHit.line, model: mHit.id, ...meta });
+      const bucket = getBucket(company.name);
+      const key = canonUrl(article.url);
+      const meta = { source: article.source || "", date: article.date || TODAY, url: article.url };
+      for (const line of lines) {
+        const model = classify(MODELS, line);
+        if (model) {
+          candidatesScanned += 1;
+          const gate = commercialGate({ company, text: fullText });
+          const row = { signal: line.replace(/[.。]+$/, "").trim(), model: model.id, classificationGate: gate, ...meta };
+          if (gate.status === "passed") bucket.monetize.set(`${key}:${model.id}`, row);
+          else reviewQueue.push({ type: "monetization", company: company.name, candidateModel: model.id, ...row, reasons: gate.missing.map(field => `missing:${field}`) });
+        }
+        const direction = classify(DIRECTIONS, line);
+        if (direction) {
+          const gate = directionGate({ company, line });
+          const row = { signal: line.replace(/[.。]+$/, "").trim(), kind: direction.id, classificationGate: gate, ...meta };
+          if (gate.status === "passed") bucket.direction.set(`${key}:${direction.id}`, row);
+          else reviewQueue.push({ type: "direction", company: company.name, candidateKind: direction.id, ...row, reasons: gate.missing.map(field => `missing:${field}`) });
+        }
       }
-      if (dHit) b.direction.set(k, { signal: dHit.line, kind: dHit.id, ...meta });
     }
   }
 
-  const recentByType = (m, field, n) => [...m.values()]
-    .filter(s => !isExcludedText(JSON.stringify(s)))
-    .sort((x, y) => (x.date < y.date ? 1 : x.date > y.date ? -1 : 0))
-    .filter((signal, index, rows) => rows.findIndex(candidate => candidate[field] === signal[field]) === index)
-    .slice(0, n);
+  const recentByType = (map, field, limit) => [...map.values()]
+    .filter(row => !isExcludedText(JSON.stringify(row)))
+    .sort((left, right) => String(right.date).localeCompare(String(left.date)))
+    .filter((row, index, rows) => rows.findIndex(candidate => candidate[field] === row[field]) === index)
+    .slice(0, limit);
 
-  const companies = ALL_COMPANIES.map(c => {
-    const b = buckets.get(c.name) || { monetize: new Map(), direction: new Map() };
-    const monetize = recentByType(b.monetize, "model", 3);
-    const direction = recentByType(b.direction, "kind", 3);
-    const mix = {};
-    for (const s of b.monetize.values()) if (s.model) mix[s.model] = (mix[s.model] || 0) + 1;
-    const modelMix = Object.entries(mix).sort((a, b2) => b2[1] - a[1]).map(([id, n]) => ({ id, n }));
-    const primaryModel = modelMix.length ? modelMix[0].id : null;
-    return { name: c.name, layer: c.layer, vertical: c.vertical, primaryModel, modelMix, monetize, direction };
-  }).filter(c => c.monetize.length || c.direction.length);   // 근거 없는 기업은 노출 안 함
+  const companies = allCompanies.map(company => {
+    const bucket = buckets.get(company.name) || { monetize: new Map(), direction: new Map() };
+    const monetize = recentByType(bucket.monetize, "model", 3);
+    const direction = recentByType(bucket.direction, "kind", 3);
+    const counts = {};
+    for (const row of bucket.monetize.values()) counts[row.model] = (counts[row.model] || 0) + 1;
+    const modelMix = Object.entries(counts).sort((left, right) => right[1] - left[1]).map(([id, n]) => ({ id, n }));
+    const volatileMetrics = (volatileMetricConfig.metrics || []).filter(metric => metric.entity === company.name).map(metric => ({
+      id: metric.id,
+      kind: metric.kind,
+      label: metric.label,
+      values: metric.values,
+      marketVariants: metric.marketVariants || [],
+      announcedAt: metric.announcedAt,
+      metricObservedAt: metric.metricObservedAt,
+      observedWindow: metric.observedWindow,
+      lastVerifiedAt: metric.lastVerifiedAt,
+      region: metric.region,
+      currency: metric.currency,
+      priceType: metric.priceType,
+      sources: metric.sources,
+    }));
+    return {
+      name: company.name,
+      layer: company.layer,
+      vertical: company.vertical,
+      primaryModel: modelMix[0]?.id || null,
+      modelMix,
+      monetize,
+      direction,
+      volatileMetrics,
+    };
+  }).filter(company => company.monetize.length || company.direction.length || company.volatileMetrics.length);
 
-  const out = {
-    generatedAt: new Date().toISOString(),
-    schemaVersion: 2,
+  const generatedAt = new Date().toISOString();
+  const output = sanitizePublicCopy({
+    generatedAt,
+    schemaVersion: 3,
     database: {
       mode: "latest-verified-snapshot",
       replacementPolicy: "company + signal type + newest source date",
       publicRetention: "current-only",
     },
+    classificationPolicy: {
+      monetizationRequiredFields: ["seller", "buyer", "offering", "billingUnit", "priceOrRevenue", "recurringRevenue"],
+      directionRequiresEntityInEvidenceLine: true,
+      lowConfidenceDestination: "monetization-review-queue.json",
+    },
+    quality: {
+      candidatesScanned,
+      publishedMonetizationRows: companies.reduce((sum, company) => sum + company.monetize.length, 0),
+      publishedDirectionRows: companies.reduce((sum, company) => sum + company.direction.length, 0),
+      reviewPending: reviewQueue.length,
+    },
     count: companies.length,
-    models: MODELS.map(({ re, ...m }) => m),
-    directions: DIRECTIONS.map(({ re, ...d }) => d),
+    models: MODELS.map(({ re, ...model }) => model),
+    directions: DIRECTIONS.map(({ re, ...direction }) => direction),
+    metricGovernance: "config/metric-governance.json",
+    volatileMetricPolicy: { source: "config/volatile-metrics.json", reverify: "weekly", history: "metric-history.json" },
     companies,
-  };
-  await writeFile("monetization.json", JSON.stringify(out) + "\n");
-  const withMon = companies.filter(c => c.monetize.length).length;
-  console.log(`Wrote monetization.json — ${companies.length} companies (${withMon} with revenue signals · +${added} monetize rows)`);
-  companies.slice(0, 12).forEach(c => console.log(`  [${c.layer}] ${c.name}: model=${c.primaryModel || "-"} mix=${c.modelMix.map(m => m.id + ":" + m.n).join(",") || "-"} dir=${c.direction.length}`));
+  });
+  const reviewOutput = sanitizePublicCopy({
+    generatedAt,
+    schemaVersion: 1,
+    policy: "상업 필드 6개 또는 행위 주체가 모두 확인되지 않으면 공개하지 않고 검토 대기열로 이동합니다.",
+    total: reviewQueue.length,
+    rows: reviewQueue.sort((left, right) => String(right.date).localeCompare(String(left.date))),
+  });
+  await Promise.all([
+    writeFile("monetization.json", `${JSON.stringify(output)}\n`),
+    writeFile("monetization-review-queue.json", `${JSON.stringify(reviewOutput, null, 2)}\n`),
+  ]);
+  console.log(`[monetization] public ${output.quality.publishedMonetizationRows} · direction ${output.quality.publishedDirectionRows} · review ${reviewOutput.total}`);
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main().catch(error => {
+  console.error(error);
+  process.exit(1);
+});

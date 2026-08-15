@@ -1,0 +1,173 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-15",
+  "metrics": [
+    {
+      "id": "google-ai-plans-us",
+      "entity": "Google DeepMind",
+      "kind": "subscription-price",
+      "label": "Google AI consumer plans",
+      "announcedAt": "2026-05-19",
+      "metricObservedAt": "2026-05-19",
+      "observedWindow": "2026-05-19 onward; live checkout remains region-sensitive",
+      "lastVerifiedAt": "2026-08-15",
+      "region": "US",
+      "currency": "USD",
+      "priceType": "standard-list",
+      "values": [
+        { "plan": "AI Plus", "value": 7.99, "billingPeriod": "month", "status": "official-US-list" },
+        { "plan": "AI Pro", "value": 19.99, "billingPeriod": "month", "status": "official-US-list" },
+        { "plan": "AI Ultra 5x", "value": 99.99, "displayValue": "$100", "billingPeriod": "month", "status": "official-rounded-announcement" },
+        { "plan": "AI Ultra 20x", "value": 199.99, "displayValue": "$200", "billingPeriod": "month", "status": "official-rounded-announcement" }
+      ],
+      "marketVariants": [
+        { "plan": "AI Plus", "value": 4.99, "region": "selected markets/offers", "priceType": "regional-or-promotional", "evidenceTier": "reported", "headlineEligible": false }
+      ],
+      "sources": [
+        {
+          "sourceUrl": "https://blog.google/products-and-platforms/products/google-one/google-ai-plus-availability/",
+          "evidenceSpan": "In the U.S., Google AI Plus is available for $7.99/month.",
+          "requiredLiterals": ["$7.99/month"]
+        },
+        {
+          "sourceUrl": "https://blog.google/products-and-platforms/products/google-one/google-ai-subscriptions/",
+          "evidenceSpan": "We're launching a $100/month AI Ultra plan ... reducing the monthly price of our top-tier AI Ultra plan from $250 to $200.",
+          "requiredLiterals": ["$100/month", "$250", "$200"]
+        },
+        {
+          "sourceUrl": "https://one.google.com/about/google-ai-plans/",
+          "evidenceSpan": "Google AI Plus, Google AI Pro, Google AI Ultra 5x and Google AI Ultra 20x are distinct plan tiers; checkout prices vary by country.",
+          "requiredLiterals": ["Google AI Pro", "Ultra 5x", "Ultra 20x"]
+        }
+      ]
+    },
+    {
+      "id": "meta-ai-glasses-us",
+      "entity": "Meta AI",
+      "kind": "device-price",
+      "label": "Meta AI glasses price ladder",
+      "announcedAt": "2026-06-23",
+      "metricObservedAt": "2026-06-23",
+      "observedWindow": "2026-05-01~2026-06-23 official portfolio pages",
+      "lastVerifiedAt": "2026-08-15",
+      "region": "US",
+      "currency": "USD",
+      "priceType": "starting-list",
+      "values": [
+        { "plan": "Meta Glasses (displayless, Meta brand)", "value": 299, "billingPeriod": "device" },
+        { "plan": "Ray-Ban Meta (displayless, partner brand)", "value": 379, "billingPeriod": "device" },
+        { "plan": "Meta Ray-Ban Display", "value": 799, "rangeHigh": 829, "billingPeriod": "device", "note": "$799 official starting price; $829 configuration requires checkout revalidation" }
+      ],
+      "sources": [
+        {
+          "sourceUrl": "https://about.fb.com/news/2026/06/meta-essilorluxottica-partner-launch-meta-glasses/",
+          "evidenceSpan": "Meta Glasses launch with 26 styles and start at $299.",
+          "requiredLiterals": ["26 styles", "$299"]
+        },
+        {
+          "sourceUrl": "https://about.fb.com/news/2026/05/which-meta-ai-glasses-are-right-for-you/",
+          "evidenceSpan": "Ray-Ban Meta starts at $379 and Meta Ray-Ban Display starts at $799.",
+          "requiredLiterals": ["$379", "$799"]
+        }
+      ]
+    },
+    {
+      "id": "openai-series-2026-03",
+      "entity": "OpenAI",
+      "kind": "valuation",
+      "label": "OpenAI March 2026 financing",
+      "announcedAt": "2026-03-31",
+      "metricObservedAt": "2026-03-31",
+      "observedWindow": "official close date is 2026-03-31; a 2026-03-30 secondary date remains unconfirmed",
+      "lastVerifiedAt": "2026-08-15",
+      "region": "Global",
+      "currency": "USD",
+      "priceType": "post-money",
+      "values": [
+        { "plan": "funding committed", "value": 122, "unit": "USD billion" },
+        { "plan": "post-money valuation", "value": 852, "unit": "USD billion" }
+      ],
+      "sources": [
+        {
+          "sourceUrl": "https://openai.com/index/accelerating-the-next-phase-ai/",
+          "evidenceSpan": "We closed $122B in funding commitments at an $852B post-money valuation.",
+          "requiredLiterals": ["$122B", "$852B"]
+        }
+      ]
+    },
+    {
+      "id": "anthropic-series-h-2026-05",
+      "entity": "Anthropic",
+      "kind": "run-rate",
+      "label": "Anthropic Series H and revenue run-rate",
+      "announcedAt": "2026-05-28",
+      "metricObservedAt": "2026-05",
+      "observedWindow": "earlier in May 2026; exact day not confirmed by the company",
+      "lastVerifiedAt": "2026-08-15",
+      "region": "Global",
+      "currency": "USD",
+      "priceType": "company-disclosed-run-rate",
+      "values": [
+        { "plan": "Series H", "value": 65, "unit": "USD billion" },
+        { "plan": "post-money valuation", "value": 965, "unit": "USD billion" },
+        { "plan": "revenue run-rate", "value": 47, "unit": "USD billion/year" }
+      ],
+      "sources": [
+        {
+          "sourceUrl": "https://www.anthropic.com/news/series-h",
+          "evidenceSpan": "Anthropic raised $65 billion at a $965 billion post-money valuation; run-rate revenue crossed $47 billion earlier this month.",
+          "requiredLiterals": ["$65 billion", "$965 billion", "$47 billion", "earlier this month"]
+        }
+      ]
+    },
+    {
+      "id": "microsoft-ai-run-rate-fy26-q3",
+      "entity": "Microsoft",
+      "kind": "run-rate",
+      "label": "Microsoft AI annual revenue run-rate",
+      "announcedAt": "2026-04-29",
+      "metricObservedAt": "FY2026 Q3",
+      "observedWindow": "quarter-end earnings disclosure",
+      "lastVerifiedAt": "2026-08-15",
+      "region": "Global",
+      "currency": "USD",
+      "priceType": "company-disclosed-run-rate",
+      "values": [
+        { "plan": "AI annual revenue run-rate", "value": 37, "unit": "USD billion/year" },
+        { "plan": "YoY growth", "value": 123, "unit": "%" }
+      ],
+      "sources": [
+        {
+          "sourceUrl": "https://www.microsoft.com/en-us/investor/earnings/FY-2026-Q3/press-release-webcast",
+          "evidenceSpan": "Our AI business has surpassed an annual revenue run rate of $37 billion, up 123% year-over-year.",
+          "requiredLiterals": ["$37 billion", "123%"]
+        }
+      ]
+    },
+    {
+      "id": "counterpoint-genai-phone-2026",
+      "entity": "market",
+      "kind": "shipment-forecast",
+      "label": "2026 GenAI smartphone mix and market contraction",
+      "announcedAt": "2026-06-22",
+      "metricObservedAt": "2026 forecast",
+      "observedWindow": "June 2026 forecast vintage",
+      "lastVerifiedAt": "2026-08-15",
+      "region": "Global",
+      "currency": "n/a",
+      "priceType": "research-forecast",
+      "values": [
+        { "plan": "GenAI-capable share", "value": 45, "unit": "% of shipments" },
+        { "plan": "total smartphone shipments", "value": 1.08, "unit": "billion units" },
+        { "plan": "total shipment YoY", "value": -13.9, "unit": "%" }
+      ],
+      "sources": [
+        {
+          "sourceUrl": "https://counterpointresearch.com/en/insights/genai-smartphone-share-to-rise-to-45-percent-of-global-shipments-in-2026",
+          "evidenceSpan": "GenAI-capable smartphones are forecast at 45% while total shipments fall 13.9% YoY to 1.08 billion units.",
+          "requiredLiterals": ["45%", "13.9%", "1.08 billion"]
+        }
+      ]
+    }
+  ]
+}

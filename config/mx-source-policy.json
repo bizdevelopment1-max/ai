@@ -1,0 +1,120 @@
+{
+  "version": 2,
+  "updatedAt": "2026-08-15",
+  "purpose": "Samsung Electronics MX public-source decision intelligence: devices, carriers, partners, components, regulation and primary disclosures.",
+  "display": {
+    "originalLanguageFirst": true,
+    "koreanTranslationOptional": true,
+    "alwaysShowPublisherAndPublishedAt": true
+  },
+  "freshnessSlaHours": {
+    "tier0": 0.5,
+    "tier1": 6,
+    "tier2": 24
+  },
+  "archive": {
+    "afterDays": 90,
+    "exceptions": ["master-data", "valuation", "key-person", "partnership-history", "patent-risk"]
+  },
+  "deduplication": {
+    "strategy": "multilingual-hashed-embedding-cosine",
+    "threshold": 0.85,
+    "dimensions": 384,
+    "render": "representative-with-evidence-array"
+  },
+  "regionalPublishers": [
+    { "region": "Greater China", "name": "36Kr", "domain": "36kr.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "TechNode", "domain": "technode.com", "language": "en", "status": "configured" },
+    { "region": "Greater China", "name": "Jiemian", "domain": "jiemian.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "ITHome", "domain": "ithome.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "Huawei Xinsheng", "domain": "xinsheng.huawei.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "Xiaomi announcements", "domain": "mi.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Japan", "name": "Nikkei XTECH", "domain": "xtech.nikkei.com", "language": "ja", "status": "configured" },
+    { "region": "Japan", "name": "ITmedia", "domain": "itmedia.co.jp", "language": "ja", "status": "configured" },
+    { "region": "India", "name": "Inc42", "domain": "inc42.com", "language": "en-IN", "status": "configured" },
+    { "region": "India", "name": "YourStory", "domain": "yourstory.com", "language": "en-IN", "status": "configured" },
+    { "region": "India", "name": "Analytics India Magazine", "domain": "analyticsindiamag.com", "language": "en-IN", "status": "configured" },
+    { "region": "Korea", "name": "ETNews", "domain": "etnews.com", "language": "ko", "status": "configured" },
+    { "region": "Korea", "name": "ZDNet Korea", "domain": "zdnet.co.kr", "language": "ko", "status": "configured" },
+    { "region": "Korea", "name": "The Elec", "domain": "thelec.net", "language": "en", "status": "configured" },
+    { "region": "Global", "name": "DigiTimes", "domain": "digitimes.com", "language": "en", "status": "configured" },
+    { "region": "Greater China", "name": "CLS 财联社", "domain": "cls.cn", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "Huxiu 虎嗅", "domain": "huxiu.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "GeekPark 极客公园", "domain": "geekpark.net", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "ifanr 爱范儿", "domain": "ifanr.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "SSPAI 少数派", "domain": "sspai.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "IJIWEI 集微网", "domain": "ijiwei.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "OPPO Newsroom", "domain": "oppo.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Greater China", "name": "vivo Newsroom", "domain": "vivo.com", "language": "zh-CN", "status": "configured" },
+    { "region": "Japan", "name": "ASCII.jp", "domain": "ascii.jp", "language": "ja", "status": "configured" },
+    { "region": "India", "name": "Entrackr", "domain": "entrackr.com", "language": "en-IN", "status": "configured" },
+    { "region": "India", "name": "The Ken", "domain": "the-ken.com", "language": "en-IN", "status": "paid-review" },
+    { "region": "Southeast Asia", "name": "Tech in Asia", "domain": "techinasia.com", "language": "en", "status": "paid-review" },
+    { "region": "Asia", "name": "KrASIA", "domain": "kr-asia.com", "language": "en", "status": "configured" },
+    { "region": "Europe", "name": "Sifted", "domain": "sifted.eu", "language": "en", "status": "configured" },
+    { "region": "Europe", "name": "The Next Web", "domain": "thenextweb.com", "language": "en", "status": "configured" },
+    { "region": "Europe", "name": "Handelsblatt Tech", "domain": "handelsblatt.com", "language": "de", "status": "paid-review" },
+    { "region": "Europe", "name": "Les Echos Tech", "domain": "lesechos.fr", "language": "fr", "status": "paid-review" }
+  ],
+  "primarySources": [
+    { "family": "patent", "name": "USPTO Open Data", "domain": "data.uspto.gov", "cadence": "tier2", "status": "configured" },
+    { "family": "patent", "name": "KIPRIS", "domain": "kipris.or.kr", "cadence": "tier2", "status": "configured" },
+    { "family": "patent", "name": "CNIPA patent publication", "domain": "cnipa.gov.cn", "cadence": "tier2", "status": "configured" },
+    { "family": "filing", "name": "SEC EDGAR", "domain": "sec.gov", "cadence": "tier2", "status": "configured" },
+    { "family": "filing", "name": "DART", "domain": "dart.fss.or.kr", "cadence": "tier2", "status": "configured" },
+    { "family": "research", "name": "arXiv", "domain": "arxiv.org", "cadence": "tier1", "status": "configured" },
+    { "family": "model", "name": "Hugging Face model cards", "domain": "huggingface.co", "cadence": "tier1", "status": "configured" },
+    { "family": "developer", "name": "GitHub Trending", "domain": "github.com", "cadence": "tier1", "status": "configured" },
+    { "family": "app", "name": "Google Play", "domain": "play.google.com", "cadence": "tier1", "status": "configured" },
+    { "family": "app", "name": "Apple App Store", "domain": "apps.apple.com", "cadence": "tier1", "status": "configured" },
+    { "family": "certification", "name": "FCC", "domain": "fcc.gov", "cadence": "tier0", "status": "configured" },
+    { "family": "certification", "name": "KC", "domain": "safetykorea.kr", "cadence": "tier0", "status": "configured" },
+    { "family": "certification", "name": "China 3C", "domain": "cnca.gov.cn", "cadence": "tier0", "status": "configured" },
+    { "family": "patent", "name": "WIPO PatentScope", "domain": "patentscope.wipo.int", "cadence": "tier2", "status": "configured" },
+    { "family": "patent", "name": "Google Patents Public Datasets", "domain": "patents.google.com", "cadence": "tier2", "status": "configured" },
+    { "family": "research", "name": "Papers with Code", "domain": "paperswithcode.com", "cadence": "tier1", "status": "configured" },
+    { "family": "benchmark", "name": "MLPerf / MLCommons", "domain": "mlcommons.org", "cadence": "tier2", "status": "configured" },
+    { "family": "benchmark", "name": "LMSYS Chatbot Arena", "domain": "lmarena.ai", "cadence": "tier1", "status": "configured" },
+    { "family": "benchmark", "name": "Artificial Analysis", "domain": "artificialanalysis.ai", "cadence": "tier1", "status": "configured" },
+    { "family": "regulation", "name": "EU AI Act portal", "domain": "digital-strategy.ec.europa.eu", "cadence": "tier2", "status": "configured" },
+    { "family": "policy", "name": "Google Play policy", "domain": "support.google.com", "cadence": "tier1", "status": "configured" },
+    { "family": "policy", "name": "App Store Review Guidelines", "domain": "developer.apple.com", "cadence": "tier1", "status": "configured" }
+  ],
+  "supplyChain": [
+    { "name": "Qualcomm IR / Newsroom", "domain": "qualcomm.com", "focus": ["NPU", "SoC", "modem", "on-device AI"] },
+    { "name": "MediaTek IR / Press", "domain": "mediatek.com", "focus": ["NPU", "SoC", "agentic AI"] },
+    { "name": "Arm Newsroom", "domain": "arm.com", "focus": ["CPU", "Kleidi", "edge AI"] },
+    { "name": "TSMC IR", "domain": "investor.tsmc.com", "focus": ["process node", "capacity", "advanced packaging"] },
+    { "name": "SK hynix Newsroom / IR", "domain": "news.skhynix.com", "focus": ["mobile DRAM", "LPDDR", "UFS", "memory bandwidth"] },
+    { "name": "Micron IR / Newsroom", "domain": "micron.com", "focus": ["mobile DRAM", "LPDDR", "UFS", "power"] }
+  ],
+  "trackedEntities": {
+    "deviceMakers": ["Apple", "Google Pixel", "Huawei", "Xiaomi", "HONOR", "OPPO", "vivo"],
+    "carriers": ["SK Telecom", "KT", "Verizon", "AT&T", "T-Mobile"],
+    "partners": ["Google Gemini", "Qualcomm", "Perplexity", "Upstage"],
+    "components": ["Qualcomm", "MediaTek", "Arm", "TSMC", "SK hynix", "Micron"],
+    "agentPlatforms": ["Apple App Intents", "Android AICore", "Gemini", "MCP", "A2A", "Windows AI Foundry", "HarmonyOS Xiaoyi", "HyperOS AI", "AndesGPT", "BlueLM"],
+    "formFactors": ["foldable", "trifold", "rollable", "smart glasses", "AI wearable", "automotive", "direct-to-cell satellite"],
+    "apps": ["ChatGPT", "Gemini", "Claude", "Character.ai", "Perplexity", "Poe"]
+  },
+  "researchAndMarketData": [
+    { "name": "Counterpoint Research", "domain": "counterpointresearch.com", "status": "public-abstract-paid-detail", "use": ["GenAI phone shipments", "ASP", "semiconductor content"] },
+    { "name": "Omdia", "domain": "omdia.tech.informa.com", "status": "public-abstract-paid-detail", "use": ["AI phone shipments", "features", "ASP"] },
+    { "name": "IDC", "domain": "idc.com", "status": "paid-license-required", "use": ["device shipments", "market share"] },
+    { "name": "Canalys", "domain": "canalys.com", "status": "public-abstract-paid-detail", "use": ["AI PC", "smartphone channels"] },
+    { "name": "Gartner", "domain": "gartner.com", "status": "paid-license-required", "use": ["market forecast", "enterprise adoption"] }
+  ],
+  "connectorRegistry": [
+    { "group": "app-intelligence", "providers": ["Sensor Tower", "data.ai", "Appfigures", "Similarweb"], "status": "license-required", "fields": ["MAU", "DAU", "downloads", "rank", "rating"] },
+    { "group": "deals", "providers": ["PitchBook", "Crunchbase", "CB Insights", "Preqin", "Dealroom", "Tracxn", "IT桔子", "Capital IQ", "FactSet"], "status": "license-or-api-required", "fields": ["funding", "valuation", "Series C+", "M&A", "investors"] },
+    { "group": "talent", "providers": ["LinkedIn Talent Insights", "Levels.fyi", "Glassdoor", "TeamBlind", "Zeki Data"], "status": "license-and-terms-review", "fields": ["headcount", "job openings", "compensation", "talent flow"] },
+    { "group": "consumer", "providers": ["Google Trends", "Naver DataLab", "Baidu Index", "Reddit", "X"], "status": "api-and-terms-review", "fields": ["interest", "pain point", "sentiment", "failure mode"] },
+    { "group": "company-china", "providers": ["天眼查", "企查查"], "status": "license-required", "fields": ["ownership", "funding", "litigation", "filings"] }
+  ],
+  "conferenceAndStandards": [
+    { "name": "MWC / CES / IFA", "status": "configured", "cadence": "tier0" },
+    { "name": "Google I/O / Apple WWDC / Unpacked / Snapdragon Summit / GTC", "status": "configured", "cadence": "tier0" },
+    { "name": "3GPP / ETSI / ITU-T", "status": "configured", "cadence": "tier2" },
+    { "name": "MLCommons / Khronos / OMA SpecWorks", "status": "configured", "cadence": "tier2" }
+  ]
+}
