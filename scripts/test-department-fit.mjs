@@ -79,6 +79,11 @@ assert(/needsCompanyExtras/.test(app), "초기 화면과 상세 데이터 요청
 assert(/fmtNum\(p\.num, p\)/.test(anim), "숫자 첫 화면의 0 플래시 방지가 적용되지 않았습니다");
 assert(/Math\.min\(dur \|\| 420, 620\)/.test(anim), "숫자 애니메이션 시간 상한이 적용되지 않았습니다");
 
+for (const asset of ["styles.css", "data.bundle.js", "app.bundle.js"]) {
+  const escaped = asset.replace(/\./g, "\\.");
+  assert(new RegExp(`${escaped}\\?v=[a-f0-9]{16}`).test(index), `${asset} 캐시 버전이 콘텐츠 해시와 연결되지 않았습니다`);
+}
+
 const sourceGated = new Set(["DeepSeek", "Kling AI", "Hailuo (MiniMax)"]);
 for (const company of dash.COMPANIES || []) {
   if (!sourceGated.has(company.name)) continue;

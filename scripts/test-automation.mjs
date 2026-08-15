@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 import { access, readFile } from "node:fs/promises";
-import { BUNDLE_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
+import {
+  BUNDLE_FILE,
+  DATA_BUNDLE_FILE,
+  DATA_SOURCE_FILE,
+  STYLES_FILE,
+  assetVersion,
+  readBrowserSources,
+  sourceStamp,
+} from "./build-browser-bundle.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, directCompanyNewsMatch } from "./company-sources.mjs";
 import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
@@ -159,23 +167,34 @@ try {
 }
 
 try {
-  const [sources, bundle, dataSource, dataBundle, index] = await Promise.all([
+  const [sources, bundle, dataSource, dataBundle, stylesSource, index, workflow, recoveryWorkflow] = await Promise.all([
     readBrowserSources(),
     readFile(BUNDLE_FILE, "utf8"),
     readFile(DATA_SOURCE_FILE, "utf8"),
     readFile(DATA_BUNDLE_FILE, "utf8"),
+    readFile(STYLES_FILE, "utf8"),
     readFile("index.html", "utf8"),
+    readFile(".github/workflows/daily-news.yml", "utf8"),
+    readFile(".github/workflows/daily-news-update.yml", "utf8"),
   ]);
   const expected = `/* ai-dashboard-bundle:${sourceStamp(sources)} */`;
-  const expectedData = `/* ai-dashboard-data:${sourceStamp([{ file: DATA_SOURCE_FILE, source: dataSource }])} */`;
+  const dataStamp = sourceStamp([{ file: DATA_SOURCE_FILE, source: dataSource }]);
+  const expectedData = `/* ai-dashboard-data:${dataStamp} */`;
+  const expectedAppUrl = `${BUNDLE_FILE}?v=${sourceStamp(sources).slice(0, 16)}`;
+  const expectedDataUrl = `${DATA_BUNDLE_FILE}?v=${dataStamp.slice(0, 16)}`;
+  const expectedStyleUrl = `${STYLES_FILE}?v=${assetVersion(STYLES_FILE, stylesSource)}`;
   if (!bundle.startsWith(expected)) throw new Error("bundle is stale; run npm run build:browser before publishing");
   if (!dataBundle.startsWith(expectedData)) throw new Error("data bundle is stale; run npm run build:browser before publishing");
   if (/babel\.min\.js|text\/babel/.test(index)
     || !/defer src="app\.bundle\.js/.test(index)
-    || !/defer src="data\.bundle\.js/.test(index)) {
+    || !/defer src="data\.bundle\.js/.test(index)
+    || !index.includes(expectedAppUrl)
+    || !index.includes(expectedDataUrl)
+    || !index.includes(expectedStyleUrl)
+    || ![workflow, recoveryWorkflow].every(source => source.includes("index.html app.bundle.js data.bundle.js"))) {
     throw new Error("index must serve the compact browser and data bundles without a runtime compiler");
   }
-  console.log("  정상  browser and data bundles are current (no runtime compiler)");
+  console.log("  OK  browser assets are current and content-hash versioned");
 } catch (error) {
   failed = true;
   console.error(`  실패  browser bundle: ${error.message}`);

@@ -24,6 +24,8 @@ export const BROWSER_SOURCES = [
 export const BUNDLE_FILE = "app.bundle.js";
 export const DATA_SOURCE_FILE = "data.js";
 export const DATA_BUNDLE_FILE = "data.bundle.js";
+export const INDEX_FILE = "index.html";
+export const STYLES_FILE = "styles.css";
 const BABEL_URL = "https://unpkg.com/@babel/standalone@7.29.0/babel.min.js";
 
 export const sourceStamp = sources => createHash("sha256")
@@ -34,6 +36,18 @@ export const sourceStamp = sources => createHash("sha256")
 
 export async function readBrowserSources() {
   return Promise.all(BROWSER_SOURCES.map(async file => ({ file, source: await readFile(file, "utf8") })));
+}
+
+export const assetVersion = (file, source) => sourceStamp([{ file, source }]).slice(0, 16);
+
+export function versionAsset(indexSource, assetName, version) {
+  const escapedName = assetName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const matcher = new RegExp(`(${escapedName})(?:\\?v=[^"']*)?`, "g");
+  const updated = indexSource.replace(matcher, `$1?v=${version}`);
+  if (updated === indexSource && !indexSource.includes(`${assetName}?v=${version}`)) {
+    throw new Error(`${assetName} is missing from ${INDEX_FILE}`);
+  }
+  return updated;
 }
 
 async function loadBabel() {
@@ -47,12 +61,15 @@ async function loadBabel() {
 }
 
 export async function buildBrowserBundle() {
-  const [sources, dataSource] = await Promise.all([
+  const [sources, dataSource, stylesSource, indexSource] = await Promise.all([
     readBrowserSources(),
     readFile(DATA_SOURCE_FILE, "utf8"),
+    readFile(STYLES_FILE, "utf8"),
+    readFile(INDEX_FILE, "utf8"),
   ]);
   const stamp = sourceStamp(sources);
   const dataStamp = sourceStamp([{ file: DATA_SOURCE_FILE, source: dataSource }]);
+  const styleStamp = assetVersion(STYLES_FILE, stylesSource);
   const Babel = await loadBabel();
   const compiled = sources.map(({ file, source }) => Babel.transform(source, {
     filename: file,
@@ -71,12 +88,19 @@ export async function buildBrowserBundle() {
     compact: true,
   }).code;
   const dataBundle = `/* ai-dashboard-data:${dataStamp} */\n${compactData}\n`;
+  const versionedIndex = [
+    [STYLES_FILE, styleStamp],
+    [DATA_BUNDLE_FILE, dataStamp.slice(0, 16)],
+    [BUNDLE_FILE, stamp.slice(0, 16)],
+  ].reduce((html, [assetName, version]) => versionAsset(html, assetName, version), indexSource);
   await Promise.all([
     writeFile(BUNDLE_FILE, bundle),
     writeFile(DATA_BUNDLE_FILE, dataBundle),
+    writeFile(INDEX_FILE, versionedIndex),
   ]);
   console.log(`[bundle] wrote ${BUNDLE_FILE} from ${sources.length} source files (${Math.round(bundle.length / 1024)} KB)`);
   console.log(`[bundle] wrote ${DATA_BUNDLE_FILE} (${Math.round(dataBundle.length / 1024)} KB)`);
+  console.log(`[bundle] versioned browser assets in ${INDEX_FILE}`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
