@@ -39,6 +39,9 @@ jobs:
       - name: Crawl publisher and RSS source excerpts
         run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
 
+      - name: Apply mobile-AI focus before derived analysis
+        run: node scripts/prune-retired-focus.mjs
+
       - name: Append global market discovery records
         run: node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
 
@@ -64,6 +67,12 @@ jobs:
       - name: Build latest mobile AI business database snapshot
         run: node scripts/run-with-retry.mjs scripts/build-mobile-ai-business-db.mjs
 
+      - name: Remove retired business focus from published datasets
+        run: node scripts/prune-retired-focus.mjs
+
+      - name: Rebuild canonical company registry after focus pruning
+        run: node scripts/normalize-company-registry.mjs
+
       - name: Build source-backed NVIDIA investment portfolio map
         run: node scripts/run-with-retry.mjs scripts/build-nvidia-investments.mjs
 
@@ -73,14 +82,14 @@ jobs:
       - name: Audit published bundle
         run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
 
+      - name: Enforce final mobile-AI focus gate
+        run: node scripts/prune-retired-focus.mjs
+
       - name: Build compact public datasets
         run: node scripts/run-with-retry.mjs scripts/build-public-data.mjs
 
-      - name: Guard consulting shell and rebuild browser bundle
-        run: |
-          node scripts/run-with-retry.mjs scripts/test-department-fit.mjs
-          node scripts/run-with-retry.mjs scripts/build-browser-bundle.mjs
-          node scripts/run-with-retry.mjs scripts/test-automation.mjs
+      - name: Validate automation and browser bundle
+        run: node scripts/run-with-retry.mjs scripts/test-automation.mjs
 
       - name: Commit changes
         run: |

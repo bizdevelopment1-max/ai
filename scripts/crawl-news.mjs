@@ -74,16 +74,16 @@ const TOPICS = [
   { co: "", cat: "bigtech", tag: "AI 폰", topic: true, n: 3, q: '("AI smartphone" OR "AI phone" OR "Pixel AI" OR "Apple Intelligence" OR "on-device AI" phone)' },
   // 경쟁 단말·칩 진영(중국 제조사·모바일 실리콘) — 단말 사업 경쟁 관점 핵심 스트림
   { co: "", cat: "bigtech", tag: "경쟁 단말", topic: true, n: 3, q: '("Xiaomi" OR "Honor" OR "OPPO" OR "vivo" OR "Snapdragon" OR "Dimensity") AI smartphone' },
-  // 탭별 전용 스트림: 인프라(Signal 탭)·수익화(BizModel 탭)·규제
-  { co: "", cat: "bigtech", tag: "Infra", topic: true, n: 3, q: '(HBM OR "data center" OR "AI infrastructure" OR "co-packaged optics" OR hyperscaler OR capex) AI' },
-  { co: "", cat: "bigtech", tag: "AI Workload", topic: true, n: 3, q: '("long context" OR "KV cache" OR RAG OR "vector database" OR checkpoint OR "model training" OR inference) (memory OR "data center")' },
-  { co: "", cat: "bigtech", tag: "Memory System", topic: true, n: 3, q: '("memory bandwidth" OR "memory capacity" OR CXL OR SOCAMM OR MRDIMM OR "enterprise SSD") (AI OR accelerator OR server)' },
-  { co: "", cat: "bigtech", tag: "AI Infra SW", topic: true, n: 3, q: '(XLA OR Pallas OR CUDA OR Neuron OR sharding OR quantization OR checkpoint) (memory OR HBM OR "data center")' },
+  // 휴대폰 AI 신사업 전용 스트림: 사용자 과업·경험·수익화·파트너십
+  { co: "", cat: "bigtech", tag: "개인 AI", topic: true, n: 3, q: '("personal AI" OR "AI assistant" OR "mobile agent") (smartphone OR mobile OR Android OR iPhone)' },
+  { co: "", cat: "bigtech", tag: "카메라·크리에이터", topic: true, n: 3, q: '("AI camera" OR "generative edit" OR "mobile video" OR "creator AI") (smartphone OR mobile app)' },
+  { co: "", cat: "bigtech", tag: "통화·커뮤니케이션", topic: true, n: 3, q: '("live translation" OR "call summary" OR "voice assistant" OR "messaging AI") (phone OR mobile)' },
+  { co: "", cat: "bigtech", tag: "모바일 개발·배포", topic: true, n: 3, q: '("on-device AI" OR "mobile AI SDK" OR "agent API" OR "AI app store") (Android OR iOS OR smartphone)' },
   { co: "", cat: "native", tag: "수익화", topic: true, n: 2, q: '("AI pricing" OR "AI subscription" OR "AI revenue" OR "API pricing" OR "AI monetization")' },
   { co: "", cat: "native", tag: "규제", topic: true, n: 2, q: '("AI regulation" OR "AI export control" OR "AI Act" OR "chip export controls")' },
   // ── 신규 스트림(신사업·경쟁 관점 확대) ──
   { co: "", cat: "bigtech", tag: "로보틱스", topic: true, n: 2, q: '("humanoid robot" OR "physical AI" OR "Figure AI" OR "1X robot" OR "robotics foundation model")' },
-  { co: "", cat: "bigtech", tag: "AI 반도체", topic: true, n: 2, q: '("AI accelerator" OR "custom silicon" OR "AI ASIC" OR TSMC OR Blackwell OR "HBM memory") AI chip' },
+  { co: "", cat: "bigtech", tag: "모바일 AI 칩", topic: true, n: 2, q: '("mobile NPU" OR "smartphone AI chip" OR Snapdragon OR Dimensity OR "Apple Neural Engine")' },
   { co: "", cat: "native", tag: "오픈소스", topic: true, n: 2, q: '("open-weight model" OR "open source LLM" OR "open model release" OR "Llama" OR "sovereign AI")' },
   { co: "", cat: "native", tag: "엔터프라이즈", topic: true, n: 2, q: '("enterprise AI adoption" OR "AI ROI" OR "AI agent enterprise" OR "AI productivity")' },
   { co: "", cat: "bigtech", tag: "웨어러블·XR", topic: true, n: 2, q: '("smart glasses" OR "AI wearable" OR "AI earbuds" OR "mixed reality AI" OR "AR glasses AI")' },
@@ -107,7 +107,7 @@ const DIRECT_FEEDS = [
   { source: "SiliconANGLE", url: "https://siliconangle.com/category/ai/feed/" },
   { source: "AI Business", url: "https://aibusiness.com/rss.xml" },
 ];
-const AI_RE = /\bAI\b|artificial intelligence|\bLLM\b|GPT|Claude|Gemini|agentic|chatbot|machine learning|foundation model|inference|GPU|HBM|data center/i;
+const AI_RE = /\bAI\b|artificial intelligence|\bLLM\b|GPT|Claude|Gemini|agentic|chatbot|machine learning|foundation model|on-device|smartphone|mobile assistant|mobile agent/i;
 
 async function pullDirect(feed, limit = 2) {
   try {

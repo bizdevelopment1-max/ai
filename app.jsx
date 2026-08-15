@@ -29,35 +29,13 @@ const COLOR_PRESETS = [
 // Keep a stable wrapper for navigation and mount each heavy board before it
 // reaches the viewport. Once mounted it stays warm, so later navigation is
 // immediate without paying the full DOM cost during first paint.
-function LazySection({ id, active, sectionRef, height = 420, priority = false, children }) {
+function LazySection({ id, active, sectionRef, height = 420, children }) {
   const innerRef = uR(null);
-  // Observe well before the board reaches the viewport. Idle prewarming
-  // remains sequential, while the generous margin protects fast scrolling.
-  const nearViewport = useInView(sectionRef, 4200);
-  const sectionIndex = Math.max(0, NAV_SECTION_IDS.indexOf(id));
-  const [ready, setReady] = uS(priority || active === id);
+  const nearViewport = useInView(sectionRef, 3000);
+  const [ready, setReady] = uS(active === id);
   uE(() => {
-    if (priority || nearViewport || active === id) {
-      setReady(true);
-      return undefined;
-    }
-    if (ready) return undefined;
-
-    // Preserve the first paint for the video and strategy board, then warm
-    // every remaining board in document order while the browser is idle.
-    let idleHandle = 0;
-    const timer = window.setTimeout(() => {
-      if ("requestIdleCallback" in window) {
-        idleHandle = window.requestIdleCallback(() => setReady(true), { timeout: 900 });
-      } else {
-        setReady(true);
-      }
-    }, 120 + sectionIndex * 90);
-    return () => {
-      window.clearTimeout(timer);
-      if (idleHandle && "cancelIdleCallback" in window) window.cancelIdleCallback(idleHandle);
-    };
-  }, [nearViewport, active, id, priority, ready, sectionIndex]);
+    if (nearViewport || active === id) setReady(true);
+  }, [nearViewport, active, id]);
   return (
     <div ref={sectionRef} className={"board-gate" + (ready ? " is-ready" : " is-pending")}
       style={{ "--gate-height": `${height}px` }} data-section={id} data-active={active === id ? "true" : "false"}>
@@ -78,11 +56,11 @@ function App() {
   const [selected, setSelected] = uS(null);
   const [sidebarOpen, setSidebarOpen] = uS(false);
   const [collapsed, setCollapsed] = uS(false);
-  const refsStore = uR(null);
-  if (!refsStore.current) {
-    refsStore.current = Object.fromEntries(NAV_SECTION_IDS.map(id => [id, React.createRef()]));
-  }
-  const refs = refsStore.current;
+  const refs = {
+    ib: uR(null), overview: uR(null), opportunity: uR(null), strategy: uR(null), articles: uR(null), native: uR(null), bigtech: uR(null), startup: uR(null),
+    infra: uR(null), model: uR(null), data: uR(null), trust: uR(null), service: uR(null), agent: uR(null), app: uR(null),
+    sanalysis: uR(null), signals: uR(null), newbiz: uR(null), reports: uR(null), stocks: uR(null), survey: uR(null), market: uR(null), audit: uR(null),
+  };
   const strategyInView = useInView(refs.strategy);
   const infraInView = useInView(refs.infra);
   const modelInView = useInView(refs.model);
@@ -124,44 +102,15 @@ function App() {
   // if provenance cannot be loaded, the feed stays empty rather than showing unverified claims.
   // 캐시버스터: GitHub Pages CDN(edge)은 URL 기준 캐시 → 분 단위 쿼리스트링으로 항상 최신 파일을 받게 함
   const [crawled, setCrawled] = uS([]);
-  const [fullNewsLoaded, setFullNewsLoaded] = uS(false);
-  const fullNewsLoadedRef = uR(false);
   uE(() => {
     if (!dataVersion || !needsNews) return;
     let alive = true;
-    // The first two screens need only the newest, source-backed evidence.
-    // Load that compact payload first; the complete cumulative ledger is
-    // warmed below without blocking the video or consulting framework.
-    fetch(dataUrl("executive-news-view.json"), { cache: "force-cache" })
+    fetch(dataUrl("news-view.json"), { cache: "force-cache" })
       .then(r => (r.ok ? r.json() : null))
-      .then(j => {
-        if (alive && !fullNewsLoadedRef.current) setCrawled(j && Array.isArray(j.articles) ? j.articles : []);
-      })
-      .catch(() => { if (alive && !fullNewsLoadedRef.current) setCrawled([]); });
+      .then(j => { if (alive) setCrawled(j && Array.isArray(j.articles) ? j.articles : []); })
+      .catch(() => { if (alive) setCrawled([]); });
     return () => { alive = false; };
   }, [dataVersion, needsNews]);
-  uE(() => {
-    if (!dataVersion || fullNewsLoaded) return;
-    let alive = true;
-    let idleHandle = 0;
-    const loadFullNews = () => fetch(dataUrl("news-view.json"), { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
-      .then(j => {
-        if (!alive || !Array.isArray(j?.articles)) return;
-        fullNewsLoadedRef.current = true;
-        setCrawled(j.articles);
-        setFullNewsLoaded(true);
-      }).catch(() => {});
-    const timer = window.setTimeout(() => {
-      if ("requestIdleCallback" in window) idleHandle = window.requestIdleCallback(loadFullNews, { timeout: 1400 });
-      else loadFullNews();
-    }, 650);
-    return () => {
-      alive = false;
-      window.clearTimeout(timer);
-      if (idleHandle && "cancelIdleCallback" in window) window.cancelIdleCallback(idleHandle);
-    };
-  }, [dataVersion, fullNewsLoaded]);
   // device-topic articles (co "AI 노트북"/"AI 폰")을 제목 기준으로 실제 업체에 재분류, 매칭 없으면 co 제거
   const DEVICE_CO_MAP = [
     [/iphone|ipad|siri|apple intelligence|\bapple\b|macbook|\bm[0-9] |vision pro/i, "Apple"],
@@ -351,7 +300,7 @@ function App() {
     accentSoft: softTint(c.id === "native" ? t.colNative : c.id === "bigtech" ? t.colBigtech : t.colStartup, dark),
   })), [t.colNative, t.colBigtech, t.colStartup, dark]);
 
-  // 상장사 원래 시장 업종(칩·메모리·하이퍼스케일러 등) — 상세 보조 분류에 사용
+  // 상장사 원래 시장 업종(칩·클라우드·소프트웨어·디바이스 등) — 상세 보조 분류에 사용
   const stockGroups = useMemo(() => (D.STOCK_GROUPS || []).map(g => ({
     ...g,
     accentSoft: softTint(g.accent, dark),
@@ -377,25 +326,6 @@ function App() {
   );
 
   uE(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
-
-  // A reload must begin with the video brief rather than a browser-restored
-  // position inside the nested dashboard scroller.
-  uE(() => {
-    const previous = "scrollRestoration" in window.history ? window.history.scrollRestoration : "auto";
-    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
-    const resetToVideo = () => {
-      if (window.location.hash || !scrollRef.current) return;
-      scrollRef.current.scrollTo({ top: 0, behavior: "auto" });
-      setActive("overview");
-    };
-    const frame = window.requestAnimationFrame(resetToVideo);
-    window.addEventListener("pageshow", resetToVideo);
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("pageshow", resetToVideo);
-      if ("scrollRestoration" in window.history) window.history.scrollRestoration = previous;
-    };
-  }, []);
 
   // 일부 Q&A는 통합·이동된 섹션을 가리킴: dynamics→overview(경쟁구도가 ES로 이동), insights→reports
   const NAV_ALIAS = { dynamics: "overview", insights: "ib", reports: "ib", bizmodel: "newbiz", native: "model", bigtech: "infra", startup: "app" };
@@ -547,22 +477,22 @@ function App() {
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
             {/* ── 1. 첫 화면: 관계 지도 + 영상 브리핑 ── */}
-            <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="AI Memory Video Brief">
+            <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="Mobile AI Video Brief">
               <div className="ov-head">
-                <h2 className="ov-title">AI 메모리 산업 브리핑 <span>Source-backed competitive dynamics</span></h2>
+                <h2 className="ov-title">휴대폰 AI 신사업 발굴 <span>User need · experience · revenue · partner</span></h2>
               </div>
               <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
             </section>
 
             {/* ── 2. 전략 컨설팅: 영상 다음에 바로 노출 ── */}
-            <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={1320} priority>
-              <MemoryStrategyBoard companies={companiesLive} articles={articles} generatedAt={dataGeneratedAt} onNav={navTo} />
+            <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={1320}>
+              <MobileStrategyBoard companies={companiesLive} articles={articles} generatedAt={dataGeneratedAt} onNav={navTo} />
             </LazySection>
 
             {/* ── 3. 리서치·시장 DB ── */}
-            <LazySection id="ib" active={active} sectionRef={refs.ib} height={980}>
+            <div className="nav-section-anchor" data-section="ib">
               <IBInsightBoard research={research} reports={[]} sectionRef={refs.ib} />
-            </LazySection>
+            </div>
 
             <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={1080}>
               <div className="opportunity-stack">
@@ -575,7 +505,7 @@ function App() {
               <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
             </LazySection>
 
-            {/* ── 2. AI 수요 → 메모리 기회 밸류체인 ── */}
+            {/* ── 4. 휴대폰 AI SW·서비스 밸류체인 ── */}
             <LazySection id="app" active={active} sectionRef={refs.app} height={740}>
               <ValueChainBoard layerId="app" companies={companiesLive} onSelect={setSelected} sectionRef={refs.app} />
             </LazySection>
@@ -626,7 +556,7 @@ function App() {
             </LazySection>
 
             <footer className="foot">
-              <span>AI Memory Strategy Intelligence</span>
+              <span>Mobile AI Business Intelligence</span>
               <span className="foot-update">최종 업데이트: {renderTime}</span>
               <span>원출처: Bloomberg · TechCrunch · The Information · Pitchbook · Crunchbase · 각 기업 공식 발표</span>
             </footer>

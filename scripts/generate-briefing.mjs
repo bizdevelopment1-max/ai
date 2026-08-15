@@ -16,6 +16,7 @@
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 const MAX_DAYS = 60;          // 아카이브 보존 일수(누적)
 const MAX_ITEMS = 6;          // 하루 브리핑 카드 수
@@ -108,7 +109,7 @@ function finishItem(it, cands) {
 const RULE_AXES = [
   { kw: ["파트너십", "제휴", "탑재", "partnership", "협력", "임대 계약"], labels: ["파트너십 기회"], action: "해당 업체와의 협업 가능성·기존 파트너 계약과의 충돌 여부 검토" },
   { kw: ["인수", "합병", "m&a", "acquisition", "acqui"], labels: ["인수 후보"], action: "대상 기업 밸류에이션·기술 자산·인재 규모 초기 평가" },
-  { kw: ["메모리", "hbm", "공급 부족", "shortage", "칩", "파운드리", "tsmc"], labels: ["공급망"], action: "부품 조달 로드맵·장기 공급 계약 조건 재점검" },
+  { kw: ["스마트폰", "휴대폰", "mobile", "on-device", "npu", "배터리", "latency"], labels: ["모바일 경험"], action: "기능별 온디바이스·클라우드 실행 기준과 사용자 체감 품질 검증" },
   { kw: ["규제", "수출", "통제", "규정", "법", "export", "승인"], labels: ["규제"], action: "규제 변화가 모델 탑재·해외 출시 일정에 미치는 영향 점검" },
   { kw: ["에이전트", "어시스턴트", "assistant", "agent", "온디바이스", "on-device"], labels: ["경쟁 위협"], action: "자사 단말 AI 로드맵 대비 기능 격차 분석" },
 ];
@@ -133,12 +134,16 @@ function ruleBriefing(cands) {
 
 // ---- main ---------------------------------------------------------------
 async function main() {
+  const suppression = await loadSuppressionRegistry();
   let articles = [];
-  try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
+  try { articles = (JSON.parse(await readFile("news.json", "utf8")).articles || []).filter(article => !suppression.matches(article, "article")); } catch {}
 
   let prev = { days: [] };
   try { prev = JSON.parse(await readFile("briefing.json", "utf8")); } catch {}
-  const prevDays = (prev.days || []).filter(d => d.date !== TODAY);
+  const prevDays = (prev.days || []).filter(d => d.date !== TODAY).map(day => ({
+    ...day,
+    items: (day.items || []).filter(item => !suppression.matches(item, "briefing")),
+  }));
 
   const usedUrls = new Set(prevDays.flatMap(d => (d.items || []).flatMap(it => (it.evidence || []).map(e => e.url))));
   const cands = pickCandidates(articles, usedUrls);

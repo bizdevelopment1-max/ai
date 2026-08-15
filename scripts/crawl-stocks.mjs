@@ -27,12 +27,6 @@ const TICKERS = [
   { t: "ARM", y: "ARM", s: "arm.us" },
   { t: "MRVL", y: "MRVL", s: "mrvl.us" },
   { t: "INTC", y: "INTC", s: "intc.us" },
-  // ── 메모리 ──
-  { t: "MU", y: "MU", s: "mu.us" },
-  { t: "000660.KS", y: "000660.KS", currency: "₩", market: "KRX" },
-  { t: "SNDK", y: "SNDK", s: "sndk.us" },
-  { t: "WDC", y: "WDC", s: "wdc.us" },
-  { t: "285A.T", y: "285A.T", currency: "¥", market: "TSE" },
   // ── 파운드리 ──
   { t: "UMC", y: "UMC", s: "umc.us" },
   { t: "GFS", y: "GFS", s: "gfs.us" },
@@ -62,10 +56,6 @@ const TICKERS = [
   // 공개 시세가 확인되는 경우에만 표시하며 임의 시나리오 가격은 만들지 않음
   { t: "SPCX", y: "SPCX", s: "spcx.us" },
 
-  // ── 중국 A주 · 메모리 ──
-  { t: "688825.SS", y: "688825.SS", currency: "CN¥", market: "SSE STAR", listedAt: "2026-07-27" },
-  { t: "603986.SS", y: "603986.SS", currency: "CN¥", market: "SSE" },
-  { t: "688525.SS", y: "688525.SS", currency: "CN¥", market: "SSE STAR" },
   // ── 중국 A주 · 파운드리 ──
   { t: "688981.SS", y: "688981.SS", currency: "CN¥", market: "SSE STAR" },
   { t: "688347.SS", y: "688347.SS", currency: "CN¥", market: "SSE STAR" },
@@ -81,7 +71,6 @@ const TICKERS = [
   { t: "002156.SZ", y: "002156.SZ", currency: "CN¥", market: "SZSE" },
   { t: "002185.SZ", y: "002185.SZ", currency: "CN¥", market: "SZSE" },
   // ── 중국 A주 · 팹리스·IP·EDA ──
-  { t: "688008.SS", y: "688008.SS", currency: "CN¥", market: "SSE STAR" },
   { t: "688521.SS", y: "688521.SS", currency: "CN¥", market: "SSE STAR" },
   { t: "301269.SZ", y: "301269.SZ", currency: "CN¥", market: "SZSE" },
   { t: "688206.SS", y: "688206.SS", currency: "CN¥", market: "SSE STAR" },
