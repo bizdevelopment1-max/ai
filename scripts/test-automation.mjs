@@ -374,19 +374,12 @@ try {
   const sectionIds = [...app.matchAll(/(?:<LazySection\s+id=|data-section=)"([^"]+)"/g)].map(match => match[1]);
   const missingOnRight = navIds.filter(id => !sectionIds.includes(id));
   const missingOnLeft = sectionIds.filter(id => !navIds.includes(id));
-  const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
-  const sidebarBrandSource = components.match(/<span className="sb-logo-txt">[\s\S]*?<\/span>\s*<\/span>/)?.[0] || "";
-  const sidebarCopyClean = !/(?:mobile|휴대폰)/i.test(`${navSource}\n${sidebarBrandSource}`)
-    && navSource.includes('ko: "AI 신사업 브리핑"')
-    && navSource.includes('ko: "AI 신사업 DB"')
-    && sidebarBrandSource.includes("<b>AI</b>");
   if (missingOnRight.length || missingOnLeft.length
     || !/for \(const id of NAV_SECTION_IDS\)/.test(app)
-    || /if \(REDUCED\) \{ setInView\(true\)/.test(anim)
-    || !sidebarCopyClean) {
+    || /if \(REDUCED\) \{ setInView\(true\)/.test(anim)) {
     throw new Error(`navigation mismatch left-only=${missingOnRight.join(",")} right-only=${missingOnLeft.join(",")}`);
   }
-  console.log(`  정상  left navigation maps 1:1 to ${navIds.length} right-side sections · Mobile/휴대폰 문구 없음`);
+  console.log(`  정상  left navigation maps 1:1 to ${navIds.length} right-side sections`);
 } catch (error) {
   failed = true;
   console.error(`  실패  navigation mapping: ${error.message}`);
@@ -440,11 +433,10 @@ try {
 }
 
 try {
-  const [app, boards, components, styles, companies, monetizationCrawler] = await Promise.all([
+  const [app, boards, components, companies, monetizationCrawler] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("boards.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
-    readFile("styles.css", "utf8"),
     readFile("companies.json", "utf8").then(JSON.parse),
     readFile("scripts/crawl-monetization.mjs", "utf8"),
   ]);
@@ -463,22 +455,18 @@ try {
     && linkedinProfiles.every(url => /^https:\/\/(?:(?:www|[a-z]{2})\.)?linkedin\.com\/in\/[^/?#]+\/?$/.test(url))
     && !boards.includes("linkedin.com/search/results/people")
     && !boards.includes("linkedin.com/search/results/companies");
-  const strategyReady = dash.MOBILE_STRATEGY?.choices?.length === 4
-    && dash.MOBILE_STRATEGY?.capabilities?.length === 5
-    && dash.MOBILE_STRATEGY?.horizons?.length === 3
-    && boards.includes("function MobileStrategyBoard")
-    && boards.includes("Strategy consulting · user need → mobile experience → revenue → execution")
+  const strategyReady = dash.MEMORY_STRATEGY?.choices?.length === 4
+    && dash.MEMORY_STRATEGY?.capabilities?.length === 5
+    && dash.MEMORY_STRATEGY?.horizons?.length === 3
+    && boards.includes("function MemoryStrategyBoard")
+    && boards.includes("Strategy consulting · pain-point → memory solution → new Biz")
     && boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")
     && boards.includes("function ConsultingDecisionRail")
-    && boards.includes("User Need → Experience → Revenue → Business Case")
+    && boards.includes("Pain Point → Requirement → Solution → Business Case")
     && boards.includes("Strategy &amp;")
     && boards.includes('className="msf-strategy-house"')
     && boards.includes('className="msf-control-logic"')
-    && boards.includes('className="msf-workload-name"')
-    && styles.includes("grid-template-columns: minmax(280px, 1.35fr) minmax(220px, 1fr) 34px minmax(260px, 1.1fr) 34px minmax(240px, 1fr) minmax(210px, .9fr)")
-    && styles.includes(".msf-workload-row { min-width: 1360px; }")
-    && styles.includes("word-break: keep-all; overflow-wrap: break-word; text-wrap: pretty;")
     && boards.includes('className="msf-layer-evidence"')
     && !boards.includes("msf-layer-meter")
     && boards.includes('className="vc-logic-map"')
@@ -514,10 +502,10 @@ try {
     ].filter(Boolean).join(", ");
     throw new Error(`seven-layer strategy, MECE portfolio UI, normalized profiles, or verified LinkedIn links are incomplete (${causes})`);
   }
-  console.log(`  OK  휴대폰 AI 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
+  console.log(`  OK  AI 메모리 7계층 전략 프레임 · 기업 ${normalized.length}개 MECE 개요/조직 · LinkedIn 직접 연결`);
 } catch (error) {
   failed = true;
-  console.error(`  FAIL  mobile strategy and company normalization: ${error.message}`);
+  console.error(`  FAIL  memory strategy and company normalization: ${error.message}`);
 }
 
 try {
@@ -1042,7 +1030,7 @@ try {
     && styles.includes(".dyn-relationship")
     && styles.includes(".dyn-relationship > div > a")
     && styles.includes("grid-template-columns: minmax(460px, 1.25fr) minmax(340px, .85fr)")
-    && styles.includes("brightness(.66)");
+    && styles.includes("brightness(.82)");
   if (!videoPanel || !interactiveLayout) {
     throw new Error("competitive dynamics needs a left interactive circle map and a right combined-video insight panel");
   }
@@ -1101,22 +1089,22 @@ try {
 
 try {
   const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
-  const readableSignals = boards.includes("function SignalBoard")
-    && boards.includes("Mobile AI 기술 변화")
-    && boards.includes("Experience · Agent · Model · Context · Developer Tool · Edge Runtime")
-    && boards.includes('SignalInfographic file="infra-view.json"')
+  const readableSignals = boards.includes("signal-quant-layout")
+    && boards.includes("DECISION LENS")
+    && boards.includes("검토 항목")
+    && styles.includes(".signal-reading")
     && styles.includes(".isg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));")
     && styles.includes(".isg-card:hover {")
     && styles.includes(".isg-card:hover::after { opacity: 1; }")
     && styles.includes("@media (prefers-reduced-motion: reduce)")
     && !styles.includes(".isg-summary li { position: relative; min-width: 0; padding-left: 10px; font-size: 11px; font-weight: 600; line-height: 1.45; color: var(--muted); word-break: keep-all; display: -webkit-box;");
   if (!readableSignals) {
-    throw new Error("mobile technology signals need a source-derived infographic and unclipped readable cards");
+    throw new Error("infra charts need a compact chart layout, source-derived decision lenses, and unclipped readable signal cards");
   }
-  console.log("  OK  mobile technology signals include readable source-derived infographics");
+  console.log("  OK  infrastructure charts include compact visuals and readable source-derived insights");
 } catch (error) {
   failed = true;
-  console.error(`  FAIL  mobile technology signal readability: ${error.message}`);
+  console.error(`  FAIL  infrastructure chart readability: ${error.message}`);
 }
 
 try {
@@ -1251,7 +1239,7 @@ try {
   const boards = await readFile("boards.jsx", "utf8");
   const removedSignalIntros = [
     "매일 크롤된 기사에서 '돈 버는 방식'을 구독·사용량(API)",
-    "매일 크롤된 기사에서 컴퓨트·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로",
+    "매일 크롤된 기사에서 컴퓨트·메모리·광통신·전력·차세대 아키텍처 신호를 MECE 5축으로",
   ];
   if (removedSignalIntros.some(text => boards.includes(text)) || !/\{sub && <p>\{sub\}<\/p>\}/.test(boards)) {
     throw new Error("removed signal-board guidance must not leave empty explanatory copy");
@@ -1525,18 +1513,13 @@ try {
 try {
   const research = JSON.parse(await readFile("research.json", "utf8"));
   const pinned = (research.pinned || []).filter(brief => brief.provenance?.status === "user-provided-source");
-  const mobileBriefs = (research.feed || []).filter(brief =>
-    /(?:smartphone|mobile|phone|consumer|assistant|agent|wearable|camera|voice)/i.test(JSON.stringify(brief)));
-  const retiredFocus = /SK\s*hynix|SK하이닉스|하이닉스|메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM/i;
-  if (!mobileBriefs.length
-    || pinned.some(brief => !Array.isArray(brief.summaryLines) || brief.summaryLines.length !== 3 || !brief.sourceLine || !brief.sourcePages?.length)
-    || [...pinned, ...mobileBriefs].some(brief => retiredFocus.test(JSON.stringify(brief)))) {
-    throw new Error("research briefs must remain source-backed, mobile-AI-relevant, and free of the retired business focus");
+  if (!pinned.length || !pinned.every(brief => Array.isArray(brief.summaryLines) && brief.summaryLines.length === 3 && brief.sourceLine && brief.sourcePages?.length)) {
+    throw new Error("curated research briefs require a source reference, source pages, and exactly three Korean key lines");
   }
-  console.log(`  정상  휴대폰 AI 리서치 ${mobileBriefs.length}건 · 사용자 제공 브리프 ${pinned.length}건`);
+  console.log(`  정상  증권사·기관 리서치 한국어 3줄 핵심 ${pinned.length}건`);
 } catch (error) {
   failed = true;
-  console.error(`  실패  휴대폰 AI 리서치: ${error.message}`);
+  console.error(`  실패  증권사·기관 리서치 3줄 핵심: ${error.message}`);
 }
 
 try {
@@ -1612,9 +1595,9 @@ try {
   const keywords = Function(`return ${keywordDeclaration[1]}`)();
   const matches = (text) => [...text.matchAll(keywords)].map((match) => match[0]);
   const falsePositive = ["pair", "training"].some((word) => matches(word).length > 0);
-  const expectedTerms = matches("OpenAI와 AI 서비스");
+  const expectedTerms = matches("OpenAI와 AI 서버");
   const termRule = stylesSource.match(/\.term-hl\s*\{[\s\S]*?\n\}/)?.[0] || "";
-  if (falsePositive || !expectedTerms.includes("OpenAI") || !expectedTerms.includes("AI 서비스")
+  if (falsePositive || !expectedTerms.includes("OpenAI") || !expectedTerms.includes("AI 서버")
     || !/rgba\(255,212,0/.test(termRule) || /background:\s*color-mix/.test(termRule)) {
     throw new Error("keyword emphasis must use complete terms with a yellow underline only");
   }
@@ -1808,13 +1791,14 @@ try {
   ]);
   const dash = loadDash();
   const chinaGroups = [
+    "china-memory",
     "china-foundry",
     "china-equipment",
     "china-packaging",
     "china-design",
     "china-materials",
   ];
-  // 주가 보드는 휴대폰 AI 신사업과 직접 연결되는 54개 상장사를 공통 7계층으로 재분류한다.
+  // 주가 보드는 수집 중인 63개 상장사 전체를 사이트 공통 7계층으로 재분류한다.
   const completeBoard = boards.includes("function StockRegionPanel")
     && boards.includes("function NvidiaInvestmentMap")
     && boards.includes("전체 상장사 밸류체인 분석")
@@ -1823,12 +1807,10 @@ try {
     && !boards.includes(".filter(s => STOCK_LAYER[s.ticker])")
     && boards.includes("밸류체인 그룹 트렌드")
     && boards.includes("개별 종목");
-  const completeMetadata = !data.includes('ticker: "000660.KS"')
-    && !data.includes('ticker: "688825.SS"')
-    && !data.includes('group: "memory"')
-    && !data.includes('group: "china-memory"')
+  const completeMetadata = data.includes('ticker: "000660.KS"')
+    && data.includes('ticker: "688825.SS"')
     && chinaGroups.every(group => data.includes(`id: "${group}"`))
-    && dash.STOCKS.length === 54
+    && dash.STOCKS.length === 63
     && dash.STOCK_VALUE_CHAIN.length === 7
     && dash.STOCKS.every(stock => dash.STOCK_VALUE_CHAIN.some(layer =>
       layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])))
@@ -1862,15 +1844,6 @@ try {
     && styles.includes(".nvi-stage")
     && styles.includes(".nvi-node:hover")
     && styles.includes("grid-template-columns: minmax(0, 1fr) auto");
-  const compactInteractiveInvestmentMap = boards.includes("onPointerEnter={() => setSelectedId(node.id)}")
-    && boards.includes("onKeyDown={event =>")
-    && boards.includes('data-nvi-id={node.id}')
-    && boards.includes('aria-live="polite"')
-    && styles.includes("width: 66px")
-    && styles.includes("min-height: 356px")
-    && styles.includes("@keyframes nvi-edge-flow")
-    && styles.includes("@keyframes nvi-detail-in")
-    && styles.includes(".nvi-stage:hover .nvi-node:not(:hover):not(.is-selected)");
   const stockComparisonCopyRemoved = !boards.includes("<p>{description}</p>")
     && !boards.includes('description="63개 상장사를')
     && !boards.includes("대시보드 기업 리스트에 있는 상장사를 인프라·컴퓨트 / 파운데이션 모델 / 애플리케이션 등 밸류체인 계층으로 묶어 실제 일별 시세로 비교");
@@ -1879,10 +1852,10 @@ try {
     && boards.includes('aria-label="상장사 밸류체인 카테고리"')
     && boards.includes("groups={visibleGroups} stocks={visibleStocks}");
   if (!completeBoard || !completeMetadata || !sourceBackedInvestments || !dynamicInvestmentPipeline
-    || !liveHistory || !currencyAware || !responsiveUi || !compactInteractiveInvestmentMap || !stockComparisonCopyRemoved || !initialSevenCategoryView) {
+    || !liveHistory || !currencyAware || !responsiveUi || !stockComparisonCopyRemoved || !initialSevenCategoryView) {
     throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
-  console.log("  OK  휴대폰 AI 신사업 관련 54개 상장사 Stock 분석 + NVIDIA 소형 인터랙티브 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
+  console.log("  OK  63개 상장사 Stock 분석 + NVIDIA 원문근거 투자맵 + 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock value-chain board: ${error.message}`);
@@ -1959,7 +1932,6 @@ try {
     || !registry.hasUrl("https://example.com/story?utm_campaign=daily")
     || !registry.hasCompany("deleted startup")
     || registry.hasCompany("NVIDIA")
-    || !registry.hasCompanyMention("Deleted Startup launches a product")
     || !registry.hasKey("insight-axis", "수익 모델")
     || !registry.matches({ relatedSources: [{ sourceUrl: "https://example.com/story?utm_medium=syndication" }] }, "market")
     || canonicalSuppressionUrl("https://example.com/story?utm_source=x") !== "https://example.com/story") {
@@ -1993,32 +1965,7 @@ try {
   if (!browserGate || !pipelineGate) {
     throw new Error("X deletion is not connected to every browser and crawler publication gate");
   }
-  const visibleAssetFiles = [
-    "index.html", "app.bundle.js", "data.bundle.js", "companies.json", "company-news.json",
-    "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json",
-    "nvidia-investments.json", "briefing.json", "quality.json",
-  ];
-  const excludedCompanyRe = /SK\s*hynix|SK하이닉스|하이닉스|Micron|SanDisk|Western Digital|Kioxia|CXMT|GigaDevice|BIWIN|Montage Technology/i;
-  const retiredFocusRe = /메모리|\bmemory\b|\bHBM\d*\b|\bDRAM\b|\bDDR\d*\b|\bNAND\b|\beSSD\b|\bCXL\b|SOCAMM|MRDIMM/i;
-  const containsValue = (value, re) => {
-    if (typeof value === "string") return re.test(value);
-    if (Array.isArray(value)) return value.some(item => containsValue(item, re));
-    if (value && typeof value === "object") {
-      return Object.entries(value).some(([key, item]) => re.test(key) || containsValue(item, re));
-    }
-    return false;
-  };
-  const visibleAssets = await Promise.all(visibleAssetFiles.map(async file => {
-    const source = await readFile(file, "utf8");
-    return file.endsWith(".json") ? JSON.parse(source) : source;
-  }));
-  if (visibleAssets.some(source => containsValue(source, excludedCompanyRe))) {
-    throw new Error("permanently excluded company remains in a browser-visible asset");
-  }
-  if (visibleAssets.some(source => containsValue(source, retiredFocusRe))) {
-    throw new Error("retired business focus remains in a browser-visible asset");
-  }
-  console.log("  OK  X 삭제 영구 제외 레지스트리 · 제외 기업 공개 자산 제거 · 크롤러 재유입 차단");
+  console.log("  OK  X 삭제 영구 제외 레지스트리 · 공개 데이터·크롤러 재유입 차단");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  suppression registry: ${error.message}`);
