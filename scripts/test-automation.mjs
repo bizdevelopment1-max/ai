@@ -255,6 +255,12 @@ try {
   const videos = new Set([...how.matchAll(/data-src="([^"]+\.mp4)"/g)].map(match => match[1]));
   const backgroundCarousels = [...how.matchAll(/class="bg-carousel"/g)].length;
   const carouselScenes = [...how.matchAll(/<span style="background-image:url\('assets\/poster-[^']+\.webp'\)"><\/span>/g)].length;
+  const carouselBlocks = [...how.matchAll(/<div class="bg-carousel" data-theme="[^"]+" aria-hidden="true">([\s\S]*?)<\/div>/g)];
+  const tripleContextBackgrounds = carouselBlocks.length === 13
+    && carouselBlocks.every(([, content]) => [...content.matchAll(/<span style="background-image:url\('assets\/poster-[^']+\.webp'\)"><\/span>/g)].length === 3)
+    && how.includes(".bg-carousel span:nth-child(3)")
+    && how.includes("@keyframes bgSceneC")
+    && how.includes(".bg-carousel span:nth-child(n+2) { display: none; }");
   const accentColors = new Set([...how.matchAll(/data-accent="([^"]+)"/g)].map(match => match[1]));
   const secondaryAccentColors = new Set([...how.matchAll(/data-accent2="([^"]+)"/g)].map(match => match[1]));
   const tertiaryAccentColors = new Set([...how.matchAll(/data-accent3="([^"]+)"/g)].map(match => match[1]));
@@ -356,10 +362,23 @@ try {
     && how.includes("video.volume = 0")
     && how.includes(".summary-slide .flow")
     && how.includes(".summary-slide .takeaway");
-  if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 26 || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !vibeCodingCover || !beginnerSiteBuildStory || !crossVerifiedCaseStudy || !noLinesInsideBoxes || !removedLegacyCopy || !analogousGradientSystem || !introVideoExperience) {
+  const consultingScreenRefresh = !how.includes('class="cover-rule')
+    && how.includes('class="flow sequential-flow reveal"')
+    && how.includes("@keyframes sequentialGlow")
+    && how.includes("@keyframes sequentialSheen")
+    && how.includes("calc(.82s + var(--sequence) * .58s)")
+    && how.includes('class="consulting-brief-tree reveal"')
+    && how.includes('class="brief-mandate"')
+    && how.includes('class="brief-pillars"')
+    && how.includes('class="mece-role-map reveal"')
+    && how.includes('class="mece-bridge"')
+    && how.includes('class="decision-rule reveal"')
+    && how.includes(".deck :where(p, li, dd, dt, span, small, code, kbd, a, button)")
+    && how.includes(".deck :where(h1, h2, h3, h4, strong, b, em");
+  if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 39 || !tripleContextBackgrounds || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !vibeCodingCover || !beginnerSiteBuildStory || !crossVerifiedCaseStudy || !noLinesInsideBoxes || !removedLegacyCopy || !analogousGradientSystem || !introVideoExperience || !consultingScreenRefresh) {
     throw new Error("How deck must explain the real AI intelligence site build with 15 slides, 2 muted intro videos, 13 dual-image backgrounds, one-hue gradients, connectors only between boxes, beginner prompts, data automation, consulting frameworks, cross-verification and operating cases");
   }
-  console.log("  OK  How 본 사이트 구축 사례 · 15장 · 사업 질문→데이터→전략→운영 · 박스 내부 선 제거 · 실제 입력·검증·장기 작업 사례");
+  console.log("  OK  How 본 사이트 구축 사례 · 3페이지 이후 문맥별 3장 배경 순환 · 표지 겹침 제거 · 01→05 순차 광택 · MECE 역할 맵");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);
