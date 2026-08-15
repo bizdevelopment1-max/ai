@@ -325,7 +325,7 @@ try {
     && how.includes("HOW · AI 신사업 인텔리전스 바이브 코딩 구축기");
   const beginnerSiteBuildStory = how.includes("SITE BUILD AT A GLANCE")
     && how.includes("THE FIRST BUSINESS REQUEST")
-    && how.includes("SITE NORTH STAR")
+    && how.includes("SITE QUALITY")
     && how.includes("INFORMATION ARCHITECTURE")
     && how.includes("DATA PIPELINE")
     && how.includes("COMPANY DATA CONTRACT")
@@ -396,7 +396,7 @@ try {
     && how.includes(".summary-slide .flow > .tri-arrow { width: 38px; height: 12px; }")
     && how.includes("grid-template-columns: repeat(5, minmax(0, 1fr) 34px) minmax(0, 1fr)")
     && how.includes(".pipeline > .tri-arrow { width: 32px; height: 10px; }")
-    && how.includes('class="consulting-brief-tree reveal"')
+    && how.includes('class="consulting-brief-tree mbb-issue-tree reveal"')
     && how.includes('class="brief-mandate"')
     && how.includes('class="brief-pillars"')
     && how.includes('class="mece-role-map reveal"')
@@ -404,10 +404,26 @@ try {
     && how.includes('class="decision-rule reveal"')
     && how.includes(".deck :where(p, li, dd, dt, span, small, code, kbd, a, button)")
     && how.includes(".deck :where(h1, h2, h3, h4, strong, b, em");
-  if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 39 || !tripleContextBackgrounds || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !vibeCodingCover || !beginnerSiteBuildStory || !crossVerifiedCaseStudy || !noLinesInsideBoxes || !removedLegacyCopy || !analogousGradientSystem || !introVideoExperience || !consultingScreenRefresh) {
+  const frameworkLabels = [...how.matchAll(/data-framework="[^"]+"/g)].length;
+  const mbbQualitySystem = frameworkLabels === 14
+    && how.includes("사이트 Quality는 정보량이 아니라")
+    && !how.includes("사이트의 북극성은")
+    && how.includes("02-quality-a.svg")
+    && !how.includes("02-north-star-a.svg")
+    && how.includes("McKinsey · 7S")
+    && how.includes("McKinsey · Three Horizons")
+    && how.includes("BCG · Strategy Palette")
+    && how.includes("Bain · RAPID")
+    && how.includes("Bain · Results Delivery")
+    && how.includes('class="vertical-arrow"')
+    && how.includes("--consult-arrow-vertical")
+    && how.includes("--type-slide-title")
+    && how.includes("--type-card-body")
+    && how.includes("chip.className = 'framework-chip'");
+  if (slides !== 15 || videos.size !== 2 || backgroundCarousels !== 13 || carouselScenes !== 39 || !tripleContextBackgrounds || !samsungOne || !largerType || !responsiveFit || !consultingMotion || !bcgArrowSystem || !vibeCodingCover || !beginnerSiteBuildStory || !crossVerifiedCaseStudy || !noLinesInsideBoxes || !removedLegacyCopy || !analogousGradientSystem || !introVideoExperience || !consultingScreenRefresh || !mbbQualitySystem) {
     throw new Error("How deck must keep 15 slides, 2 muted intro videos, 13 triple-image backgrounds, compact diagram connectors, slow sequential sheen, beginner prompts, data automation, consulting frameworks and operating cases");
   }
-  console.log("  OK  How 본 사이트 구축 사례 · 3페이지 이후 문맥별 전용 배경 39장 · 3장 교차 전환 · 넓은 데이터 파이프라인");
+  console.log("  OK  How Quality 기준 · MBB 프레임워크 · 세로형 커넥터 · 일관된 장표 타이포 · 문맥별 배경 39장");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  How consulting deck: ${error.message}`);

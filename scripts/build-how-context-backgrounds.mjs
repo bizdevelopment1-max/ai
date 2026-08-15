@@ -1,11 +1,11 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const outputDir = path.resolve("How/assets/context-bg");
 
 const contexts = [
   { slug: "01-decision", title: "사업 질문과 의사결정", type: "question", accent: "7c3aed", accent2: "2563eb" },
-  { slug: "02-north-star", title: "북극성과 우선순위", type: "star", accent: "0072ce", accent2: "14b8a6" },
+  { slug: "02-quality", title: "사이트 Quality와 의사결정 기준", type: "quality", accent: "0072ce", accent2: "14b8a6" },
   { slug: "03-architecture", title: "정보 구조와 화면 계층", type: "layers", accent: "db2777", accent2: "7c3aed" },
   { slug: "04-data-engine", title: "원문 수집과 데이터 파이프라인", type: "pipeline", accent: "00a9e0", accent2: "14b8a6" },
   { slug: "05-company", title: "기업 데이터와 조직", type: "org", accent: "f59e0b", accent2: "db2777" },
@@ -30,7 +30,7 @@ function motif(type, accent, accent2) {
   const muted = `fill="none" stroke="#${accent2}" stroke-opacity=".42" stroke-width="3"`;
   const motifs = {
     question: `<path ${common} d="M220 235c0-112 92-188 210-188 122 0 214 72 214 180 0 91-57 132-133 174-58 32-86 65-86 125"/><circle cx="425" cy="655" r="13" fill="#${accent}"/><path ${muted} d="M162 274C94 392 126 556 250 635M676 256c74 116 49 268-62 361"/>`,
-    star: `<path ${common} d="M420 70l78 218 229 8-180 141 63 224-190-128-190 128 63-224-180-141 229-8z"/><circle ${muted} cx="420" cy="370" r="304"/><circle ${muted} cx="420" cy="370" r="235"/>`,
+    quality: `<path ${common} d="M92 634h656L674 466H166zM166 446h508l-72-160H238zM238 266h364L530 92H310z"/><path ${muted} d="M420 92v542M198 516h444M274 356h292"/><path ${common} d="M332 374l58 57 123-132"/>`,
     layers: `<g ${common}><rect x="118" y="92" width="610" height="150" rx="10"/><rect x="202" y="284" width="610" height="150" rx="10"/><rect x="118" y="476" width="610" height="150" rx="10"/></g><path ${muted} d="M164 168h314M248 360h390M164 552h470"/>`,
     pipeline: `<g ${common}><rect x="72" y="270" width="150" height="118" rx="10"/><rect x="344" y="270" width="150" height="118" rx="10"/><rect x="616" y="270" width="150" height="118" rx="10"/><path d="M222 329h122m150 0h122"/></g><path ${muted} d="M286 190v278M558 190v278"/><circle cx="283" cy="329" r="12" fill="#${accent}"/><circle cx="555" cy="329" r="12" fill="#${accent2}"/>`,
     org: `<g ${common}><rect x="316" y="70" width="210" height="112" rx="12"/><rect x="70" y="456" width="190" height="110" rx="12"/><rect x="325" y="456" width="190" height="110" rx="12"/><rect x="580" y="456" width="190" height="110" rx="12"/><path d="M421 182v136M165 318h510M165 318v138m255-138v138m255-138v138"/></g><circle ${muted} cx="421" cy="318" r="28"/>`,
@@ -76,6 +76,10 @@ function background(context, variant, index) {
 </svg>`;
 }
 
+if (!outputDir.endsWith(path.join("How", "assets", "context-bg"))) {
+  throw new Error(`refusing to rebuild unexpected directory: ${outputDir}`);
+}
+await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
 for (const [index, context] of contexts.entries()) {
   for (const variant of variants) {
