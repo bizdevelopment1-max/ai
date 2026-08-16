@@ -61,6 +61,8 @@ if (publishedRecords.length) {
 }
 if (["working", "staging"].includes(control.state)) expect(publishedRecords.length === 0, `${control.state} decision view contains published records`);
 expect(control.publishedInvariantSatisfied === true, "publication invariant is not satisfied");
+expect(Array.isArray(control.publicationBlockingChecks), "publication blocking check IDs are missing");
+expect(control.criticalPolicyViolations >= control.publicationBlockingChecks.length, "critical policy violation count is smaller than its blocking-check lineage");
 expect(database.claimSummary?.citationCompleteness === control.citationCompleteness, "claim and publication citation summaries differ");
 expect(database.claimSummary?.verifiedClaimRatio === control.verifiedClaimRatio, "claim and publication verification summaries differ");
 

@@ -152,7 +152,7 @@ const isPlaceholderSitemapRow = row => {
 };
 
 async function collectSitemap(source) {
-  const root = await fetchText(source.url, { timeoutMs: Number(source.timeoutMs || 30_000) });
+  const root = await fetchText(source.url, { timeoutMs: Number(source.timeoutMs || 30_000), tries: Number(source.tries || 2) });
   let rows = sitemapRows(root.text);
   if (!rows.length) {
     const children = sitemapChildren(root.text).slice(0, Number(source.maxSitemapChildren || 8));
@@ -229,6 +229,26 @@ async function collectWithFallbacks(source, collector) {
     }
   }
   if (lastReachableEmpty) return { ...lastReachableEmpty, attemptedEndpoints: urls };
+  if (source.fallbackGoogleNewsQuery) {
+    const query = encodeURIComponent(source.fallbackGoogleNewsQuery);
+    const fallbackUrl = `https://news.google.com/rss/search?q=${query}&hl=en-US&gl=US&ceid=US:en`;
+    try {
+      const response = await fetchText(fallbackUrl, { timeoutMs: Number(source.fallbackTimeoutMs || 25_000) });
+      const rows = feedRows(response.text, { ...source, matchPattern: "." }, Number(source.maxItems || 8));
+      if (rows.length) {
+        return {
+          rows,
+          activeEndpoint: fallbackUrl,
+          attemptedEndpoints: [...urls, fallbackUrl],
+          sourceTier: "reported",
+          sourceType: "google-news-fallback",
+          fallbackReason: failures.join(" | ").slice(0, 500),
+        };
+      }
+    } catch (error) {
+      failures.push(`${fallbackUrl}: ${String(error.message || error)}`);
+    }
+  }
   throw new Error(failures.join(" | ").slice(0, 500));
 }
 
@@ -338,6 +358,47 @@ function connectorRequest(connector) {
   };
 }
 
+async function collectSecSubmissions(connector) {
+  const request = connectorRequest(connector);
+  const forms = new Set(connector.forms || ["8-K", "10-Q", "10-K"]);
+  const companies = connector.companies || [];
+  const batches = await Promise.all(companies.map(async company => {
+    const cik = String(company.cik || "").replace(/\D/g, "").padStart(10, "0");
+    if (!cik) return [];
+    const endpoint = String(connector.endpointTemplate || "https://data.sec.gov/submissions/CIK{cik}.json").replace("{cik}", cik);
+    const result = await fetchText(endpoint, { ...request, timeoutMs: Number(connector.timeoutMs || 30_000) });
+    const data = JSON.parse(result.text);
+    const recent = data.filings?.recent || {};
+    const accessions = recent.accessionNumber || [];
+    return accessions.map((accessionNumber, index) => {
+      const form = recent.form?.[index] || "";
+      if (!forms.has(form)) return null;
+      const accessionPath = String(accessionNumber || "").replace(/-/g, "");
+      const primaryDocument = recent.primaryDocument?.[index] || "";
+      const filingUrl = primaryDocument
+        ? `https://www.sec.gov/Archives/edgar/data/${Number(cik)}/${accessionPath}/${primaryDocument}`
+        : `https://www.sec.gov/Archives/edgar/data/${Number(cik)}/${accessionPath}/`;
+      return {
+        externalId: accessionNumber,
+        title: `${company.name || data.name || cik} ${form} filing`,
+        url: filingUrl,
+        publishedAt: normalizedDate(recent.filingDate?.[index]),
+        excerpt: clean([recent.primaryDocDescription?.[index], recent.reportDate?.[index]].filter(Boolean).join(" · ")).slice(0, 700),
+        kind: "filing",
+        metrics: {
+          form,
+          accessionNumber,
+          reportDate: recent.reportDate?.[index] || null,
+          acceptanceDateTime: recent.acceptanceDateTime?.[index] || null,
+        },
+      };
+    }).filter(Boolean);
+  }));
+  return batches.flat()
+    .sort((left, right) => String(right.publishedAt || "").localeCompare(String(left.publishedAt || "")))
+    .slice(0, Number(connector.maxItems || 60));
+}
+
 const registry = await readJson(REGISTRY_FILE, null);
 if (!registry) throw new Error(`${REGISTRY_FILE} is missing or invalid`);
 const complianceAllowsCollection = source => source?.compliance?.collectionAllowed !== false
@@ -355,9 +416,17 @@ async function runStream(stream, collector) {
   try {
     const collected = await collector();
     const rows = Array.isArray(collected) ? collected : collected.rows;
-    observations.push(...rows.map(row => ({ ...row, sourceId: stream.id, source: stream.source, company: stream.company || "", category: stream.category || "uncategorized", sourceTier: stream.sourceTier || "official", sourceType: stream.sourceType })));
+    observations.push(...rows.map(row => ({
+      ...row,
+      sourceId: stream.id,
+      source: stream.source,
+      company: stream.company || "",
+      category: stream.category || "uncategorized",
+      sourceTier: collected?.sourceTier || stream.sourceTier || "official",
+      sourceType: collected?.sourceType || stream.sourceType,
+    })));
     const state = rows.length ? "healthy" : "reachable-quiet";
-    streamHealth.push({ stream: stream.id, source: stream.source, category: stream.category, state, itemCount: rows.length, lastAttemptAt: observedAt, lastSuccessAt: rows.length ? observedAt : previous.lastSuccessAt || null, consecutiveFailureRuns: 0, durationMs: Date.now() - started, ...(collected?.activeEndpoint ? { activeEndpoint: collected.activeEndpoint, attemptedEndpoints: collected.attemptedEndpoints } : {}) });
+    streamHealth.push({ stream: stream.id, source: stream.source, category: stream.category, state, itemCount: rows.length, lastAttemptAt: observedAt, lastSuccessAt: rows.length ? observedAt : previous.lastSuccessAt || null, consecutiveFailureRuns: 0, durationMs: Date.now() - started, ...(collected?.activeEndpoint ? { activeEndpoint: collected.activeEndpoint, attemptedEndpoints: collected.attemptedEndpoints } : {}), ...(collected?.fallbackReason ? { fallbackReason: collected.fallbackReason, fallbackSourceTier: collected.sourceTier } : {}) });
   } catch (error) {
     streamHealth.push({ stream: stream.id, source: stream.source, category: stream.category, state: "failed", itemCount: 0, lastAttemptAt: observedAt, lastSuccessAt: previous.lastSuccessAt || null, failureSince: previous.failureSince || observedAt, consecutiveFailureRuns: Number(previous.consecutiveFailureRuns || 0) + 1, error: String(error.message || error).slice(0, 240), durationMs: Date.now() - started });
   }
@@ -368,7 +437,7 @@ for (const feed of registry.officialFeeds || []) {
   if (String(feed.status || "active").startsWith("disabled") || !complianceAllowsCollection(feed)) continue;
   jobs.push(runStream({ ...feed, id: `official-feed:${feed.source}`, sourceType: "official-feed" }, async () => {
     return collectWithFallbacks(feed, async candidate => {
-      const result = await fetchText(candidate.url);
+      const result = await fetchText(candidate.url, { timeoutMs: Number(candidate.timeoutMs || 25_000), tries: Number(candidate.tries || 2) });
       return feedRows(result.text, candidate, Number(candidate.maxItems || 8));
     });
   }));
@@ -395,6 +464,7 @@ for (const connector of registry.apiConnectors || []) {
   }
   connectorStatus.push({ id: connector.id, source: connector.source, category: connector.category, status: "scheduled" });
   jobs.push(runStream({ ...connector, sourceType: "official-api" }, async () => {
+    if (connector.adapter === "sec-submissions-batch") return collectSecSubmissions(connector);
     const request = connectorRequest(connector);
     if (connector.optionalAuthEnv && process.env[connector.optionalAuthEnv]) request.headers.Authorization = `Bearer ${process.env[connector.optionalAuthEnv]}`;
     const result = await fetchText(resolveTemplate(connector.endpoint), request);

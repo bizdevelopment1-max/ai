@@ -1,14 +1,14 @@
 {
   "schemaVersion": 2,
-  "datasetVersion": "55be10e1840d387e60b97010",
-  "createdAt": "2026-08-16T10:15:30.895Z",
-  "pipelineRunId": "local-2026-08-16T10:15:30.895Z",
-  "codeGitSha": "83af20d892f56d6a380f1fda5de25589949849b8",
+  "datasetVersion": "52cccb8e20f40799c0cf6cc3",
+  "createdAt": "2026-08-16T11:04:36.155Z",
+  "pipelineRunId": "local-2026-08-16T11:04:36.155Z",
+  "codeGitSha": "c475a6289413282f426a0c6ff032fca94eb297c7",
   "catalogVersion": 2,
   "schemaRegistryVersion": 2,
   "sourcePolicyVersion": 4,
   "qualityPolicyVersion": 1,
-  "policyHash": "6befca9a507f8dc9ee8855d9f8637a55042e5b0bd2b3e7b371a87b02b3eb9d47",
+  "policyHash": "8c91c4dfccac277639a3ffd4b53023c42206e64bc61e396159954d4090d3c28c",
   "policyFiles": [
     "config/intelligence-pipeline.json",
     "config/news-policy.json",
@@ -26,7 +26,7 @@
     "minimumApprovals": 1,
     "reviewerId": null
   },
-  "previousVersion": "60ad63cf0df4d2846094f4fb",
+  "previousVersion": "4fdbd0939e9e09f835ee0be7",
   "datasets": [
     {
       "id": "news-ledger",
@@ -34,9 +34,9 @@
       "role": "normalized-ledger",
       "sensitivity": "internal-operational",
       "publication": "never",
-      "recordCount": 500,
-      "bytes": 3494157,
-      "sha256": "532dffe90723b1c79aa9627e6df361670caa197f77d567f34dee98c41c263036",
+      "recordCount": 499,
+      "bytes": 3511127,
+      "sha256": "e0a5a2a2b093df45d77aecd73ff5a83330fd8fc9c6f4274fa1231e7901434b65",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -47,8 +47,8 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": 474,
-      "bytes": 4739066,
-      "sha256": "0791d646df147a5c253f470ed1db4bd9e2b97f5c89dcbf82999cad8e8fb666c7",
+      "bytes": 4738882,
+      "sha256": "2aa11b1bd53192805240fb82073e080a789da69f2d8a763ce8ae47d7054de34f",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -58,9 +58,9 @@
       "role": "audit-ledger",
       "sensitivity": "internal-operational",
       "publication": "never",
-      "recordCount": 832,
-      "bytes": 5426172,
-      "sha256": "52707266b172038c6cce8d57dc1deb88fcb77701c972d54a0a59095e29e5063b",
+      "recordCount": 841,
+      "bytes": 5531030,
+      "sha256": "9e4b57e26ac9fd8faf5b28551cd8034ac9d7a4aff5316daa80721a83270c668a",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -71,8 +71,8 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": null,
-      "bytes": 552372,
-      "sha256": "9ddfa143ee758b49def10f2494095a05f17c775810bf44dbeacbd4b447981491",
+      "bytes": 737282,
+      "sha256": "ec96e0531092490063803ba416514fd03a083ce6501be07421ef72df2e855d6d",
       "files": 3,
       "migrationTriggerExceeded": false
     },
@@ -83,8 +83,8 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": 61,
-      "bytes": 49033,
-      "sha256": "80fc29e58a25a9d5b6563b960798ef130c770139e9bee9246e08e3b4e32e5e51",
+      "bytes": 48989,
+      "sha256": "319a959b5124ca0363a16d044e0bd1deec927d5e37edb60b47202b18075fbad0",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -95,8 +95,8 @@
       "sensitivity": "public-verified-candidate-view",
       "publication": "public",
       "recordCount": 13,
-      "bytes": 1275475,
-      "sha256": "bcc9113d7a8d1f14caf241390129193cf57e7cb11cfb7f1c97279f1c9ccd534b",
+      "bytes": 1276399,
+      "sha256": "3643375c615f1f62fb6a27b803c0c2e27fe388520125864240765586d8edcdc2",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -106,9 +106,9 @@
       "role": "materialized-public-view",
       "sensitivity": "public",
       "publication": "public",
-      "recordCount": 466,
-      "bytes": 1958193,
-      "sha256": "1d2290deb25357e5518f818be2a6c8be09077381de393a32699dbc4eb26511bb",
+      "recordCount": 482,
+      "bytes": 2015768,
+      "sha256": "21efbd1f1a5d3175e7ab383c63345a18ff8cc5de92bd2d40bd592662efff0578",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -119,8 +119,8 @@
       "sensitivity": "public",
       "publication": "public",
       "recordCount": 56,
-      "bytes": 801602,
-      "sha256": "3626462c793f1aa7b38e673c326634a2341b999ecd03078ef0dba3bd4a6e6a44",
+      "bytes": 801418,
+      "sha256": "dcd3a6c80f3bdcbaf9c1099161390c8a94ea89cf061d97f6444ad636c4dd6af3",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -131,8 +131,8 @@
       "sensitivity": "public",
       "publication": "public",
       "recordCount": 12,
-      "bytes": 104469,
-      "sha256": "bcdc852b59ec09e97824ecce35d86ec2e5f3308c141491248e5bec4dce2ff732",
+      "bytes": 104502,
+      "sha256": "0dbdf5e6f5cbb64000d25b5880d927c60062a7a02d7f88b0f71982e5f6e3c669",
       "files": 1,
       "migrationTriggerExceeded": false
     }

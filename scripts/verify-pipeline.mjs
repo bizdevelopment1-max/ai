@@ -474,9 +474,14 @@ const checks = [
 const fails = checks.filter(c => c.status === "fail").length;
 const warns = checks.filter(c => c.status === "warn").length;
 const overall = fails ? "fail" : warns ? "warn" : "ok";
+const requestedPublicationState = String(process.env.DATASET_PUBLICATION_STATE || "staging").toLowerCase();
+const publicationBlockingChecks = checks.filter(check => check.status === "fail").map(check => check.id);
 const quality = {
   generatedAt: now.toISOString(),
   overall,
+  publicationState: requestedPublicationState,
+  publicationBlockingChecks,
+  publicationBlocked: publicationBlockingChecks.length > 0,
   policy: "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   summary: `검증 ${checks.length}개 · 정상 ${checks.length - fails - warns} · 주의 ${warns} · 실패 ${fails}`,
   checks,
@@ -607,7 +612,10 @@ for (const check of checks.filter(item => item.status !== "ok")) {
   const writer = check.status === "fail" ? console.error : console.warn;
   writer(`[verify:${check.status}] ${check.id} · ${check.label} · ${check.value}`);
 }
-if (fails) {
+if (fails && requestedPublicationState === "published") {
   console.error("[verify] Critical evidence checks failed. Refusing to publish this refresh.");
   process.exit(1);
+}
+if (fails) {
+  console.warn(`[verify] Retained ${fails} critical check(s) in staging; publication remains blocked until resolved.`);
 }

@@ -603,7 +603,7 @@ const buildClaimGraph = ({ signals, opportunities, generatedAt }) => {
 };
 
 const main = async () => {
-  const [seed, sourcePolicy, pipelinePolicy, previous, startupStats, radar, metricHistory, volatileMetricAudit, metricGovernance, newsPolicy, collectionHealth, marketReverificationQueue, priceChangeFlags, officialSourceRegistry, opportunityPolicy, decisionGovernance, dedupCalibration, market, monetization] = await Promise.all([
+  const [seed, sourcePolicy, pipelinePolicy, previous, startupStats, radar, metricHistory, volatileMetricAudit, metricGovernance, newsPolicy, quality, collectionHealth, marketReverificationQueue, priceChangeFlags, officialSourceRegistry, opportunityPolicy, decisionGovernance, dedupCalibration, market, monetization] = await Promise.all([
     readJson(SEED),
     readJson(SOURCE_POLICY),
     readJson(PIPELINE_POLICY),
@@ -614,6 +614,7 @@ const main = async () => {
     readJson("volatile-metrics-audit.json", { rows: [], summary: {} }),
     readJson("config/metric-governance.json"),
     readJson("config/news-policy.json"),
+    readJson("quality.json", { publicationBlockingChecks: [], publicationBlocked: false }),
     readJson("collection-health.json", { streamHealth: [], connectorStatus: [], recoveredStreams: [] }),
     readJson("market-reverification-queue.json", { queue: [], total: 0 }),
     readJson("price-change-flags.json", { summary: {}, rows: [] }),
@@ -769,7 +770,8 @@ const main = async () => {
   });
   const claimGraph = buildClaimGraph({ signals, opportunities: opportunityGeneration.candidates, generatedAt });
   const publicationGate = decisionGovernance.publicationGate || {};
-  const criticalPolicyViolations = validationIssues.length;
+  const upstreamBlockingChecks = Array.isArray(quality.publicationBlockingChecks) ? quality.publicationBlockingChecks : [];
+  const criticalPolicyViolations = validationIssues.length + upstreamBlockingChecks.length;
   const claimGatePassed = claimGraph.summary.verifiedClaimRatio >= Number(publicationGate.minimumVerifiedClaimRatio || 0)
     && claimGraph.summary.citationCompleteness === Number(publicationGate.requiredCitationCompleteness ?? 1)
     && criticalPolicyViolations <= Number(publicationGate.criticalPolicyViolationsAllowed ?? 0);
@@ -787,6 +789,7 @@ const main = async () => {
     citationCompleteness: claimGraph.summary.citationCompleteness,
     requiredCitationCompleteness: publicationGate.requiredCitationCompleteness,
     criticalPolicyViolations,
+    publicationBlockingChecks: upstreamBlockingChecks,
     claimGatePassed,
     publishedInvariantSatisfied: publication.state !== "published" || (publication.approved && claimGatePassed),
   };

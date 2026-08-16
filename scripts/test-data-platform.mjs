@@ -6,7 +6,7 @@ const json = async path => JSON.parse(await read(path));
 const failures = [];
 const expect = (condition, message) => { if (!condition) failures.push(message); };
 
-const [catalog, contracts, storage, slo, pipeline, registry, packageJson, jekyll, index, sourceContent, marketCrawler, sourceCompliance, decisionGovernance, publicationValidator] = await Promise.all([
+const [catalog, contracts, storage, slo, pipeline, registry, packageJson, jekyll, index, sourceContent, marketCrawler, sourceCompliance, decisionGovernance, publicationValidator, sourceCollector, verifier, decisionBuilder, dailyWorkflow, recoveryWorkflow] = await Promise.all([
   json("config/data-catalog.json"),
   json("config/data-contracts.json"),
   json("config/storage-backends.json"),
@@ -21,6 +21,11 @@ const [catalog, contracts, storage, slo, pipeline, registry, packageJson, jekyll
   json("source-compliance-report.json"),
   json("config/decision-governance.json"),
   read("scripts/validate-publication-policy.mjs"),
+  read("scripts/collect-source-registry.mjs"),
+  read("scripts/verify-pipeline.mjs"),
+  read("scripts/build-mobile-ai-business-db.mjs"),
+  read(".github/workflows/daily-news.yml"),
+  read(".github/workflows/daily-news-update.yml"),
 ]);
 
 expect(storage.migrationRequired === true, "storage migration must remain explicit until an external backend is configured");
@@ -31,7 +36,12 @@ expect(pipeline.sourceIndependence?.sameWireCopyCountsAsOne === true, "syndicate
 expect((decisionGovernance.taxonomy?.axes || []).length === 16, "decision taxonomy must preserve 16 independent axes");
 expect((decisionGovernance.opportunityScoring?.dimensions || []).reduce((sum, row) => sum + row.weight, 0) === 100, "opportunity rubric weights must total 100");
 expect(publicationValidator.includes("publishedRecords") && publicationValidator.includes("citationCompleteness") && publicationValidator.includes("reviewerId"), "publication invariant validator is incomplete");
-expect((await read("scripts/build-mobile-ai-business-db.mjs")).includes("independentSourceKey"), "decision confidence must use owner-aware source independence");
+expect(decisionBuilder.includes("independentSourceKey"), "decision confidence must use owner-aware source independence");
+expect(verifier.includes('requestedPublicationState === "published"') && verifier.includes("publicationBlockingChecks"), "staging must retain failed checks while published refreshes remain blocked");
+expect(decisionBuilder.includes("quality.publicationBlockingChecks") && decisionBuilder.includes("criticalPolicyViolations"), "upstream quality failures must propagate into the decision publication gate");
+expect(sourceCollector.includes("google-news-fallback") && sourceCollector.includes("fallbackGoogleNewsQuery"), "blocked direct sources need an explicit reported-tier fallback");
+expect(sourceCollector.includes("sec-submissions-batch") && (registry.apiConnectors || []).some(connector => connector.id === "sec-edgar-company-submissions"), "SEC collection must use company submissions instead of the blocked current-filings Atom feed");
+expect([dailyWorkflow, recoveryWorkflow].every(workflow => /SEC_USER_AGENT:\s*\$\{\{\s*secrets\.SEC_USER_AGENT\s*\}\}/.test(workflow)), "SEC automation requires a real contact secret rather than a rejected no-reply address");
 expect(registry.compliancePolicy?.fullTextStorageDefault === false, "publisher full text must not be retained by default");
 expect(registry.storagePolicy?.publisherContentRetention === "evidence-spans-only", "long-lived publisher text must be evidence-only");
 for (const source of sourceCompliance.sources || []) {

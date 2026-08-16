@@ -23,7 +23,7 @@ jobs:
       GITHUB_TOKEN: ${{ github.token }}
       DATASET_PUBLICATION_STATE: staging
       DATASET_APPROVAL_STATUS: pending
-      SEC_USER_AGENT: "bizdevelopment1-max-ai ${{ github.actor }}@users.noreply.github.com"
+      SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
       USPTO_API_KEY: ${{ secrets.USPTO_API_KEY }}
       SENSOR_TOWER_TOKEN: ${{ secrets.SENSOR_TOWER_TOKEN }}
       APPFIGURES_CLIENT_KEY: ${{ secrets.APPFIGURES_CLIENT_KEY }}

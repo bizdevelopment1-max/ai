@@ -2043,7 +2043,7 @@ try {
     || (officialSources.officialFeeds || []).length < 12
     || !(officialSources.htmlIndexes || []).some(source => source.source === "MiniMax News" && source.status === "active")
     || (officialSources.apiConnectors || []).length < 9
-    || !["xiaomi-global-discovery", "coinbase-agentkit-releases", "sec-edgar-current-8k", "uspto-open-data", "sensor-tower-store-intelligence", "appfigures-app-intelligence"]
+    || !["xiaomi-global-discovery", "coinbase-agentkit-releases", "sec-edgar-company-submissions", "uspto-open-data", "sensor-tower-store-intelligence", "appfigures-app-intelligence"]
       .every(id => (officialSources.apiConnectors || []).some(connector => connector.id === id))
     || (sourceReport.streamHealth || []).length < Number(qualityThresholds.minimumDirectSourceStreams || 25)
     || (sourceReport.connectorStatus || []).filter(row => row.status === "executed").length < Number(qualityThresholds.minimumExecutablePublicConnectors || 4)
