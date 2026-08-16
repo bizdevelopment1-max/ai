@@ -62,7 +62,11 @@ jobs:
           git fetch origin main
           if git fetch origin automation/data-staging:refs/remotes/origin/automation/data-staging 2>/dev/null; then
             git switch -C automation/data-staging refs/remotes/origin/automation/data-staging
-            git merge --no-edit origin/main
+            # The staging branch owns generated snapshots and append-only
+            # ledgers. Keep those files on content conflicts while still
+            # absorbing the latest code, policy and workflow changes from
+            # main; the pipeline below rebuilds every derived public view.
+            git merge -X ours --no-edit origin/main
           else
             git switch -c automation/data-staging origin/main
           fi
