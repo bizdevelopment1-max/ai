@@ -47,7 +47,13 @@ const normalizedDate = value => {
   return Number.isFinite(parsed) ? new Date(parsed).toISOString() : null;
 };
 
-async function fetchText(url, { headers = {}, timeoutMs = 25_000, tries = 3 } = {}) {
+const envValue = (name, fallback = "") => process.env[name] || fallback;
+const resolveTemplate = value => String(value || "")
+  .replace(/\{today\}/g, observedAt.slice(0, 10))
+  .replace(/\{yesterday\}/g, new Date(now.getTime() - 86_400_000).toISOString().slice(0, 10))
+  .replace(/\$\{([A-Z0-9_]+)\}/g, (_, name) => envValue(name));
+
+async function fetchText(url, { headers = {}, timeoutMs = 25_000, tries = 3, method = "GET", body } = {}) {
   let lastError;
   for (let attempt = 1; attempt <= tries; attempt += 1) {
     const controller = new AbortController();
@@ -55,6 +61,8 @@ async function fetchText(url, { headers = {}, timeoutMs = 25_000, tries = 3 } = 
     try {
       const response = await fetch(url, {
         headers: { "User-Agent": UA, Accept: "application/rss+xml, application/atom+xml, application/json, application/xml, text/xml, */*", ...headers },
+        method,
+        ...(body !== undefined ? { body } : {}),
         signal: controller.signal,
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -99,6 +107,10 @@ const sitemapRows = xml => [...String(xml).matchAll(/<url>\s*([\s\S]*?)<\/url>/g
 }));
 const sitemapChildren = xml => [...String(xml).matchAll(/<sitemap>\s*([\s\S]*?)<\/sitemap>/gi)]
   .map(match => canonicalUrl(clean(tag(match[1], "loc")))).filter(Boolean);
+const absoluteUrl = (href, base) => {
+  try { return canonicalUrl(new URL(String(href || ""), base).toString()); }
+  catch { return ""; }
+};
 const titleFromUrl = url => {
   try { return decodeURIComponent(new URL(url).pathname.split("/").filter(Boolean).at(-1) || "official update").replace(/[-_]+/g, " "); }
   catch { return "official update"; }
@@ -134,8 +146,70 @@ async function collectSitemap(source) {
     .map(row => ({ externalId: row.url, title: titleFromUrl(row.url), url: row.url, publishedAt: row.lastmod, excerpt: "", kind: row.lastmod ? "article" : "undated-page" }));
 }
 
+const metaContent = (html, keys) => {
+  for (const key of keys) {
+    const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const patterns = [
+      new RegExp(`<meta[^>]+(?:property|name)=["']${escaped}["'][^>]+content=["']([^"']+)["']`, "i"),
+      new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${escaped}["']`, "i"),
+    ];
+    for (const pattern of patterns) {
+      const value = clean(html.match(pattern)?.[1]);
+      if (value) return value;
+    }
+  }
+  return "";
+};
+
+function articleFromHtml(html, url) {
+  const title = metaContent(html, ["og:title", "twitter:title"])
+    || clean(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1])
+    || titleFromUrl(url);
+  const publishedAt = normalizedDate(metaContent(html, ["article:published_time", "datePublished", "date", "pubdate"])
+    || html.match(/["']datePublished["']\s*:\s*["']([^"']+)/i)?.[1]
+    || html.match(/<time[^>]+datetime=["']([^"']+)/i)?.[1]);
+  const excerpt = metaContent(html, ["og:description", "twitter:description", "description"]);
+  return { externalId: url, title, url, publishedAt, excerpt: excerpt.slice(0, 700), kind: publishedAt ? "article" : "undated-page" };
+}
+
+async function collectHtmlIndex(source) {
+  const root = await fetchText(source.url, { timeoutMs: Number(source.timeoutMs || 30_000) });
+  const linkPattern = new RegExp(source.linkPattern || "/news/|/blog/|/discover/", "i");
+  const candidates = [...root.text.matchAll(/<a\b[^>]+href=["']([^"'#]+)["'][^>]*>/gi)]
+    .map(match => absoluteUrl(match[1], source.url))
+    .filter(url => url && linkPattern.test(url));
+  const unique = [...new Set(candidates)].slice(0, Number(source.maxCandidates || 16));
+  const pages = await Promise.all(unique.map(async url => {
+    try {
+      const page = await fetchText(url, { timeoutMs: Number(source.articleTimeoutMs || 20_000), tries: 2 });
+      return articleFromHtml(page.text, url);
+    } catch { return null; }
+  }));
+  return pages.filter(Boolean)
+    .sort((left, right) => String(right.publishedAt || "").localeCompare(String(left.publishedAt || "")))
+    .slice(0, Number(source.maxItems || 8));
+}
+
+async function collectWithFallbacks(source, collector) {
+  const urls = [source.url, ...(source.fallbackUrls || [])].filter(Boolean);
+  const failures = [];
+  let lastReachableEmpty = null;
+  for (const [index, url] of urls.entries()) {
+    try {
+      const rows = await collector({ ...source, url });
+      const result = { rows, activeEndpoint: url, attemptedEndpoints: urls.slice(0, index + 1) };
+      if (rows.length || index === urls.length - 1) return result;
+      lastReachableEmpty = result;
+    } catch (error) {
+      failures.push(`${url}: ${String(error.message || error)}`);
+    }
+  }
+  if (lastReachableEmpty) return { ...lastReachableEmpty, attemptedEndpoints: urls };
+  throw new Error(failures.join(" | ").slice(0, 500));
+}
+
 function apiRows(connector, text) {
-  if (connector.adapter === "atom") return feedRows(text, connector, Number(connector.maxItems || 10));
+  if (["atom", "sec-atom"].includes(connector.adapter)) return feedRows(text, connector, Number(connector.maxItems || 10));
   const data = JSON.parse(text);
   if (connector.adapter === "huggingface-trending") {
     return (data.recentlyTrending || []).slice(0, Number(connector.maxItems || 10)).map(entry => {
@@ -151,6 +225,32 @@ function apiRows(connector, text) {
       metrics: { stars: repo.stargazers_count ?? null, forks: repo.forks_count ?? null, openIssues: repo.open_issues_count ?? null },
     }));
   }
+  if (connector.adapter === "github-releases") {
+    return (Array.isArray(data) ? data : []).slice(0, Number(connector.maxItems || 20)).map(release => ({
+      externalId: String(release.id || release.tag_name), title: release.name || release.tag_name,
+      url: release.html_url, publishedAt: normalizedDate(release.published_at || release.created_at),
+      excerpt: clean(release.body).slice(0, 700), kind: "release",
+      metrics: { prerelease: !!release.prerelease, draft: !!release.draft },
+    })).filter(row => row.externalId && row.url && !row.metrics.draft);
+  }
+  if (connector.adapter === "xiaomi-discovery") {
+    const assemblies = data.data?.page_data || [];
+    const entries = assemblies.flatMap(assembly => assembly.assembly_info || [])
+      .filter(entry => /\/discover\/article/i.test(entry.go_to_url || ""));
+    return entries.slice(0, Number(connector.maxItems || 20)).map(entry => {
+      let extended = {};
+      try { extended = JSON.parse(entry.extended || "{}"); } catch {}
+      const id = extended.material_id || new URL(entry.go_to_url).searchParams.get("id") || entry.view_id;
+      const epoch = Number(extended.online_time || extended.add_time || 0);
+      return {
+        externalId: String(id || ""), title: clean(entry.title),
+        url: `https://www.mi.com/global/discover/article?id=${encodeURIComponent(id)}`,
+        publishedAt: epoch > 1_000_000_000 ? new Date(epoch * 1000).toISOString() : null,
+        excerpt: clean(entry.description).slice(0, 700), kind: "article",
+        metrics: { views: Number(extended.view_cnt || 0) || null, likes: Number(extended.like_cnt || 0) || null },
+      };
+    }).filter(row => row.externalId && row.title);
+  }
   if (connector.adapter === "apple-app-store") {
     const pattern = new RegExp(connector.matchPattern || "AI|ChatGPT|Gemini|Claude|Perplexity|Poe|Character", "i");
     return (data.feed?.results || []).map((app, index) => ({ app, chartRank: index + 1 }))
@@ -160,7 +260,58 @@ function apiRows(connector, text) {
       metrics: { chartRank, chart: data.feed?.title || "top-free" },
     }));
   }
+  if (connector.adapter === "appfigures-products") {
+    const products = Array.isArray(data) ? data : Object.values(data.products || data.entries || data).filter(value => value && typeof value === "object");
+    const pattern = new RegExp(connector.matchPattern || "AI|ChatGPT|Gemini|Claude|Perplexity|Poe|Character", "i");
+    return products.filter(product => pattern.test(`${product.name || ""} ${product.developer || ""}`))
+      .slice(0, Number(connector.maxItems || 20)).map(product => ({
+        externalId: String(product.id || product.vendor_identifier || product.package_name),
+        title: product.name,
+        url: product.store_url || product.url || `https://api.appfigures.com/v2/products/${product.id}`,
+        publishedAt: normalizedDate(product.updated_date || product.release_date || product.added_date),
+        excerpt: product.developer || "",
+        kind: "app",
+        metrics: { store: product.store || null, price: product.price?.price ?? null, currency: product.price?.currency ?? null },
+      })).filter(row => row.externalId && row.title);
+  }
+  if (connector.adapter === "uspto-patent-search") {
+    const rows = data.patentFileWrapperDataBag || data.patentApplicationDataBag || data.results || data.items || [];
+    return rows.slice(0, Number(connector.maxItems || 20)).map(record => {
+      const id = record.applicationNumberText || record.applicationMetaData?.applicationNumberText || record.patentNumber || record.id;
+      const title = record.inventionTitle || record.applicationMetaData?.inventionTitle || record.title || `Patent application ${id}`;
+      return {
+        externalId: String(id || ""), title, url: record.documentUrl || record.url || `https://data.uspto.gov/patent-file-wrapper/search/details/${id}/application-data`,
+        publishedAt: normalizedDate(record.publicationDate || record.applicationMetaData?.publicationDate || record.lastModifiedDateTime || record.filingDate),
+        excerpt: clean([record.applicantName, record.applicationMetaData?.applicantName, record.firstNamedInventorName].filter(Boolean).join(" · ")),
+        kind: "patent",
+      };
+    }).filter(row => row.externalId);
+  }
+  if (connector.adapter === "sensor-tower-apps") {
+    const apps = data.rankings || data.apps || data.data || data.results || data.entries || [];
+    return apps.slice(0, Number(connector.maxItems || 20)).map((app, index) => ({
+      externalId: String(app.app_id || app.id || app.package_name || ""), title: app.name || app.app_name || app.title || `App ${app.app_id || app.id}`,
+      url: app.url || app.store_url || `https://app.sensortower.com/overview/${app.app_id || app.id}`,
+      publishedAt: normalizedDate(app.updated_at || app.release_date || app.date), excerpt: app.publisher_name || app.publisher || "", kind: "app",
+      metrics: { chartRank: app.rank ?? index + 1, downloads: app.downloads ?? null, revenue: app.revenue ?? null },
+    })).filter(row => row.externalId && row.title);
+  }
   throw new Error(`unsupported adapter ${connector.adapter || connector.format || "unknown"}`);
+}
+
+function connectorRequest(connector) {
+  const headers = {};
+  for (const [header, envName] of Object.entries(connector.headersFromEnv || {})) {
+    if (process.env[envName]) headers[header] = process.env[envName];
+  }
+  for (const [header, value] of Object.entries(connector.headers || {})) headers[header] = resolveTemplate(value);
+  if (connector.bearerTokenEnv && process.env[connector.bearerTokenEnv]) headers.Authorization = `Bearer ${process.env[connector.bearerTokenEnv]}`;
+  if (connector.apiKeyEnv && process.env[connector.apiKeyEnv]) headers[connector.apiKeyHeader || "X-API-KEY"] = process.env[connector.apiKeyEnv];
+  return {
+    headers,
+    method: connector.method || "GET",
+    ...(connector.body ? { body: resolveTemplate(typeof connector.body === "string" ? connector.body : JSON.stringify(connector.body)) } : {}),
+  };
 }
 
 const registry = await readJson(REGISTRY_FILE, null);
@@ -176,10 +327,11 @@ async function runStream(stream, collector) {
   const started = Date.now();
   const previous = priorHealth.get(stream.id) || {};
   try {
-    const rows = await collector();
+    const collected = await collector();
+    const rows = Array.isArray(collected) ? collected : collected.rows;
     observations.push(...rows.map(row => ({ ...row, sourceId: stream.id, source: stream.source, company: stream.company || "", category: stream.category || "uncategorized", sourceTier: stream.sourceTier || "official", sourceType: stream.sourceType })));
     const state = rows.length ? "healthy" : "reachable-quiet";
-    streamHealth.push({ stream: stream.id, source: stream.source, category: stream.category, state, itemCount: rows.length, lastAttemptAt: observedAt, lastSuccessAt: rows.length ? observedAt : previous.lastSuccessAt || null, consecutiveFailureRuns: 0, durationMs: Date.now() - started });
+    streamHealth.push({ stream: stream.id, source: stream.source, category: stream.category, state, itemCount: rows.length, lastAttemptAt: observedAt, lastSuccessAt: rows.length ? observedAt : previous.lastSuccessAt || null, consecutiveFailureRuns: 0, durationMs: Date.now() - started, ...(collected?.activeEndpoint ? { activeEndpoint: collected.activeEndpoint, attemptedEndpoints: collected.attemptedEndpoints } : {}) });
   } catch (error) {
     streamHealth.push({ stream: stream.id, source: stream.source, category: stream.category, state: "failed", itemCount: 0, lastAttemptAt: observedAt, lastSuccessAt: previous.lastSuccessAt || null, failureSince: previous.failureSince || observedAt, consecutiveFailureRuns: Number(previous.consecutiveFailureRuns || 0) + 1, error: String(error.message || error).slice(0, 240), durationMs: Date.now() - started });
   }
@@ -189,31 +341,43 @@ const jobs = [];
 for (const feed of registry.officialFeeds || []) {
   if (String(feed.status || "active").startsWith("disabled")) continue;
   jobs.push(runStream({ ...feed, id: `official-feed:${feed.source}`, sourceType: "official-feed" }, async () => {
-    const result = await fetchText(feed.url);
-    return feedRows(result.text, feed, Number(feed.maxItems || 8));
+    return collectWithFallbacks(feed, async candidate => {
+      const result = await fetchText(candidate.url);
+      return feedRows(result.text, candidate, Number(candidate.maxItems || 8));
+    });
   }));
 }
 for (const sitemap of registry.sitemaps || []) {
   if (String(sitemap.status || "active").startsWith("disabled")) continue;
-  jobs.push(runStream({ ...sitemap, id: `official-sitemap:${sitemap.source}`, sourceTier: "official", sourceType: "official-sitemap" }, () => collectSitemap(sitemap)));
+  jobs.push(runStream({ ...sitemap, id: `official-sitemap:${sitemap.source}`, sourceTier: "official", sourceType: "official-sitemap" }, () => collectWithFallbacks(sitemap, collectSitemap)));
+}
+for (const htmlIndex of registry.htmlIndexes || []) {
+  if (String(htmlIndex.status || "active").startsWith("disabled")) continue;
+  jobs.push(runStream({ ...htmlIndex, id: `official-html:${htmlIndex.source}`, sourceTier: "official", sourceType: "official-html" }, () => collectWithFallbacks(htmlIndex, collectHtmlIndex)));
 }
 
 const connectorStatus = [];
 for (const connector of registry.apiConnectors || []) {
   const missingEnv = (connector.requiredEnv || []).filter(name => !process.env[name]);
   if (missingEnv.length || !connector.adapter) {
-    connectorStatus.push({ id: connector.id, source: connector.source, category: connector.category, status: missingEnv.length ? "credential-gated" : "registered-not-executable", missingEnv });
+    connectorStatus.push({ id: connector.id, source: connector.source, category: connector.category, status: missingEnv.length ? "credential-gated" : "licensed-connector-required", missingEnv, ...(connector.activationNote ? { activationNote: connector.activationNote } : {}) });
     continue;
   }
-  connectorStatus.push({ id: connector.id, source: connector.source, category: connector.category, status: "executed" });
+  connectorStatus.push({ id: connector.id, source: connector.source, category: connector.category, status: "scheduled" });
   jobs.push(runStream({ ...connector, sourceType: "official-api" }, async () => {
-    const headers = {};
-    if (connector.optionalAuthEnv && process.env[connector.optionalAuthEnv]) headers.Authorization = `Bearer ${process.env[connector.optionalAuthEnv]}`;
-    const result = await fetchText(connector.endpoint, { headers });
+    const request = connectorRequest(connector);
+    if (connector.optionalAuthEnv && process.env[connector.optionalAuthEnv]) request.headers.Authorization = `Bearer ${process.env[connector.optionalAuthEnv]}`;
+    const result = await fetchText(resolveTemplate(connector.endpoint), request);
     return apiRows(connector, result.text);
   }));
 }
 await Promise.all(jobs);
+for (const connector of connectorStatus.filter(row => row.status === "scheduled")) {
+  const health = streamHealth.find(row => row.stream === connector.id);
+  connector.status = health?.state === "failed" ? "failed" : "executed";
+  connector.itemCount = health?.itemCount || 0;
+  if (health?.error) connector.error = health.error;
+}
 
 const latestByKey = new Map(priorByKey);
 const events = [];
@@ -277,4 +441,8 @@ await Promise.all([
   writeFile(`${LEDGER_DIR}/manifest.json`, `${JSON.stringify(manifest, null, 2)}\n`),
 ]);
 console.log(`[source-registry] ${observations.length} observations · ${events.length} new/revised · ${run.failed} failed · ${manifest.cumulativeEvents} cumulative events`);
+const failedSources = streamHealth.filter(row => row.state === "failed");
+if (failedSources.length) {
+  console.warn(`[source-registry:failed] ${failedSources.map(row => `${row.stream} (${row.error || "unknown error"})`).join(" | ")}`);
+}
 if (process.argv.includes("--strict") && run.failed) process.exitCode = 2;

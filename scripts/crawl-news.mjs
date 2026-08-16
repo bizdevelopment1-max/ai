@@ -31,7 +31,21 @@ const OFFICIAL_SITEMAPS = Array.isArray(officialSourceRegistry.sitemaps)
   ? officialSourceRegistry.sitemaps.filter(stream => !String(stream.status || "").startsWith("disabled"))
   : [];
 const OFFICIAL_FEEDS = Array.isArray(officialSourceRegistry.officialFeeds) ? officialSourceRegistry.officialFeeds : [];
+const OFFICIAL_HTML_INDEXES = Array.isArray(officialSourceRegistry.htmlIndexes)
+  ? officialSourceRegistry.htmlIndexes.filter(stream => !String(stream.status || "").startsWith("disabled"))
+  : [];
 const OFFICIAL_API_CONNECTORS = Array.isArray(officialSourceRegistry.apiConnectors) ? officialSourceRegistry.apiConnectors : [];
+const REGISTRY_SOURCE_DEFINITIONS = [
+  ...OFFICIAL_FEEDS.map(source => ({ ...source, registryId: `official-feed:${source.source}` })),
+  ...OFFICIAL_SITEMAPS.map(source => ({ ...source, registryId: `official-sitemap:${source.source}` })),
+  ...OFFICIAL_HTML_INDEXES.map(source => ({ ...source, registryId: `official-html:${source.source}` })),
+  ...OFFICIAL_API_CONNECTORS.map(source => ({ ...source, registryId: source.id })),
+];
+const normalizedEntity = value => String(value || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+const registrySourceMatches = (source, company) => {
+  const target = normalizedEntity(company);
+  return [source.company, source.source, ...(source.aliases || [])].some(value => normalizedEntity(value) === target);
+};
 const isPlaceholderRegistryEntry = item => {
   const title = String(item.titleEn || item.title || "").trim();
   let decodedPath = "";
@@ -54,6 +68,7 @@ const REGISTRY_ARTICLES = (sourceRegistrySnapshot.items || [])
     co: item.company || "",
     cat: /model|research|open-source|developer/i.test(item.category || "") ? "native" : "bigtech",
     source: item.source,
+    sourceId: item.sourceId,
     title: item.title,
     descEn: item.excerpt || "",
     url: item.url,
@@ -500,6 +515,7 @@ async function main() {
   console.log("Crawling authoritative English AI news… (publisher/RSS excerpts; no AI API)");
   const suppression = await loadSuppressionRegistry();
   const activeCompanies = COMPANIES.filter(company => !suppression.hasCompany(company.name || company.co || company));
+  const criticalGoogleNewsStreams = new Set(activeCompanies.map(company => `google-news:${company.co}`));
   const companyItems = (await pool(activeCompanies, 8, c => pull(c, 1))).flat();
   const topicItems = (await Promise.all(TOPICS.map(t => pull(t, t.n)))).flat();
   const priorityItems = (await Promise.all(PRIORITY_STREAMS.map(stream => pull(stream, stream.n || 1)))).flat();
@@ -521,16 +537,20 @@ async function main() {
     .filter(stream => stream.startsWith("google-news:"))
     .map(stream => {
       const company = stream.slice("google-news:".length);
-      const fallback = registryItems.find(item => item.co === company)
-        || officialItems.find(item => item.co === company)
-        || directItems.find(item => item.co === company && item.evidenceTier === "official");
+      const matchingRegistryIds = new Set(REGISTRY_SOURCE_DEFINITIONS.filter(source => registrySourceMatches(source, company)).map(source => source.registryId));
+      const fallback = registryItems.find(item => normalizedEntity(item.co) === normalizedEntity(company) || matchingRegistryIds.has(item.sourceId))
+        || officialItems.find(item => normalizedEntity(item.co) === normalizedEntity(company))
+        || directItems.find(item => normalizedEntity(item.co) === normalizedEntity(company) && item.evidenceTier === "official");
       if (fallback) return { stream, via: fallback.sourceType || "official-source", source: fallback.source, recoveredItems: 1, coverageStatus: "recent-item-recovered" };
-      const sitemapProbe = OFFICIAL_SITEMAPS.find(item => item.company === company);
-      const feedProbe = OFFICIAL_FEEDS.find(item => item.company === company);
-      const probeStream = sitemapProbe ? `official-sitemap:${sitemapProbe.source}` : feedProbe ? `official-feed:${feedProbe.source}` : "";
+      const sitemapProbe = OFFICIAL_SITEMAPS.find(item => registrySourceMatches(item, company));
+      const feedProbe = OFFICIAL_FEEDS.find(item => registrySourceMatches(item, company));
+      const htmlProbe = OFFICIAL_HTML_INDEXES.find(item => registrySourceMatches(item, company));
+      const probeStream = sitemapProbe ? `official-sitemap:${sitemapProbe.source}`
+        : feedProbe ? `official-feed:${feedProbe.source}`
+          : htmlProbe ? `official-html:${htmlProbe.source}` : "";
       const registryProbe = (sourceRegistryReport.streamHealth || []).find(item => item.stream === probeStream);
       if (probeStream && (sourceHealth.reachableStreams.includes(probeStream) || ["healthy", "reachable-quiet"].includes(registryProbe?.state))) {
-        return { stream, via: sitemapProbe ? "official-sitemap" : "official-feed", source: (sitemapProbe || feedProbe).source, recoveredItems: 0, coverageStatus: "official-source-reachable-no-recent-items" };
+        return { stream, via: sitemapProbe ? "official-sitemap" : feedProbe ? "official-feed" : "official-html", source: (sitemapProbe || feedProbe || htmlProbe).source, recoveredItems: 0, coverageStatus: "official-source-reachable-no-recent-items" };
       }
       return null;
     })
@@ -562,6 +582,7 @@ async function main() {
     const empty = unresolvedEmptyStreams.includes(stream);
     const quiet = quietByStream.get(stream);
     const state = recovery ? "recovered-by-official-fallback" : failed ? "failed" : empty ? "empty" : quiet ? "reachable-quiet" : "healthy";
+    const criticality = stream.startsWith("google-news:") && !criticalGoogleNewsStreams.has(stream) ? "optional-topic" : "critical";
     const consecutiveEmptyRuns = state === "empty" ? Number(prior.consecutiveEmptyRuns || 0) + 1 : 0;
     const consecutiveFailureRuns = state === "failed" ? Number(prior.consecutiveFailureRuns || 0) + 1 : 0;
     return {
@@ -573,6 +594,7 @@ async function main() {
       failureSince: state === "failed" ? prior.failureSince || checkedAt : null,
       consecutiveEmptyRuns,
       consecutiveFailureRuns,
+      criticality,
       ...(recovery ? { fallback: recovery } : {}),
       ...(quiet ? { reason: quiet.reason } : {}),
       ...(failed ? { error: failed.error } : {}),
@@ -583,13 +605,13 @@ async function main() {
   const emptyDayLimit = Number(healthPolicy.watchdogAfterEmptyDays || 3);
   const failureRunLimit = Number(healthPolicy.watchdogAfterConsecutiveFailureRuns || emptyRunLimit);
   const failureDayLimit = Number(healthPolicy.watchdogAfterFailureDays || emptyDayLimit);
-  const watchdogBreaches = streamHealth.filter(row => row.state === "empty" && (
+  const watchdogBreaches = streamHealth.filter(row => row.criticality !== "optional-topic" && (row.state === "empty" && (
     row.consecutiveEmptyRuns >= emptyRunLimit
     || (Date.now() - Date.parse(row.emptySince || checkedAt)) / 86_400_000 >= emptyDayLimit
   ) || row.state === "failed" && (
     Number(row.consecutiveFailureRuns || 0) >= failureRunLimit
     || (Date.now() - Date.parse(row.failureSince || checkedAt)) / 86_400_000 >= failureDayLimit
-  ));
+  )));
   const fallbackConnectorStatus = OFFICIAL_API_CONNECTORS.map(connector => {
     const missingEnv = (connector.requiredEnv || []).filter(name => !process.env[name]);
     return {

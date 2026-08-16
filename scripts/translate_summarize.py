@@ -343,6 +343,15 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
         loc = new_localization(item, title, excerpt, language)
         item["localization"] = loc
         if loc.get("status") in {"accepted", "fallback-english"}:
+            if item.get("house"):
+                cached_lines = loc.get("summaryLines") or []
+                item["displayEligible"] = (
+                    loc.get("status") == "accepted"
+                    and loc.get("displayLanguage") == "ko"
+                    and len(cached_lines) == 3
+                    and all(has_korean(str(line or "")) for line in cached_lines)
+                    and item.get("sourceContent", {}).get("status") == "content-extracted"
+                )
             continue
         work.append((item, clean(title), clean(excerpt), language, loc))
         if source_language_code(language) != "ko" and not has_korean(title):
@@ -376,7 +385,11 @@ def localize_records(records: list[tuple[dict, str, str, str]], translator: Sour
                     # Translation success alone is not enough: a refreshed
                     # source page must still be available for the displayed
                     # three bullets to remain auditable.
-                    item["displayEligible"] = item.get("sourceContent", {}).get("status") == "content-extracted"
+                    item["displayEligible"] = (
+                        len(ko_lines) == 3
+                        and all(has_korean(str(line or "")) for line in ko_lines)
+                        and item.get("sourceContent", {}).get("status") == "content-extracted"
+                    )
                 accepted += 1
             else:
                 raise ValueError("korean-quality-gate-failed")

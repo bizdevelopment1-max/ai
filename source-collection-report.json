@@ -28,6 +28,14 @@
       "itemCount": 28
     },
     {
+      "category": "research-release",
+      "itemCount": 28
+    },
+    {
+      "category": "agentic-commerce",
+      "itemCount": 27
+    },
+    {
       "category": "compute-and-edge",
       "itemCount": 26
     },
@@ -36,12 +44,20 @@
       "itemCount": 23
     },
     {
+      "category": "app-economics",
+      "itemCount": 20
+    },
+    {
       "category": "academic-and-open-source",
       "itemCount": 20
     },
     {
-      "category": "app-economics",
-      "itemCount": 20
+      "category": "model-and-agent-platform",
+      "itemCount": 19
+    },
+    {
+      "category": "competitor-device",
+      "itemCount": 19
     },
     {
       "category": "model-provider",
@@ -72,11 +88,11 @@
       "itemCount": 8
     },
     {
-      "category": "model-and-agent-platform",
+      "category": "platform-and-enterprise",
       "itemCount": 8
     },
     {
-      "category": "platform-and-enterprise",
+      "category": "model-and-research",
       "itemCount": 8
     },
     {
@@ -538,7 +554,39 @@
   ],
   "connectorStatus": [
     {
-      "id": "sec-edgar-current-filings",
+      "id": "xiaomi-global-discovery",
+      "source": "Xiaomi Global Discover API",
+      "category": "competitor-device",
+      "status": "executed",
+      "itemCount": 7
+    },
+    {
+      "id": "coinbase-agentkit-releases",
+      "source": "Coinbase AgentKit Releases",
+      "category": "agentic-commerce",
+      "status": "executed",
+      "itemCount": 18
+    },
+    {
+      "id": "sec-edgar-current-8k",
+      "source": "SEC EDGAR",
+      "category": "filing",
+      "status": "credential-gated",
+      "missingEnv": [
+        "SEC_USER_AGENT"
+      ]
+    },
+    {
+      "id": "sec-edgar-current-10q",
+      "source": "SEC EDGAR",
+      "category": "filing",
+      "status": "credential-gated",
+      "missingEnv": [
+        "SEC_USER_AGENT"
+      ]
+    },
+    {
+      "id": "sec-edgar-current-10k",
       "source": "SEC EDGAR",
       "category": "filing",
       "status": "credential-gated",
@@ -563,7 +611,8 @@
       "missingEnv": [
         "WIPO_PATENTSCOPE_USER",
         "WIPO_PATENTSCOPE_PASSWORD"
-      ]
+      ],
+      "activationNote": "PATENTSCOPE machine access is a separately licensed SOAP/Java web service; credentials alone are not treated as an executable search API."
     },
     {
       "id": "sensor-tower-store-intelligence",
@@ -588,25 +637,29 @@
       "id": "arxiv-on-device-ai",
       "source": "arXiv",
       "category": "academic-and-open-source",
-      "status": "executed"
+      "status": "executed",
+      "itemCount": 20
     },
     {
       "id": "huggingface-trending",
       "source": "Hugging Face Trending",
       "category": "model-and-open-source",
-      "status": "executed"
+      "status": "executed",
+      "itemCount": 20
     },
     {
       "id": "github-ai-repositories",
       "source": "GitHub Repository Search",
       "category": "developer-ecosystem",
-      "status": "executed"
+      "status": "executed",
+      "itemCount": 20
     },
     {
       "id": "apple-app-store-ai-chart",
       "source": "App Store Marketing Tools",
       "category": "app-economics",
-      "status": "executed"
+      "status": "executed",
+      "itemCount": 12
     }
   ],
   "ledger": {

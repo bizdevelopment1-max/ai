@@ -1749,6 +1749,112 @@
     },
     {
       "date": "2026-08-15",
+      "co": "OpenAI",
+      "cat": "native",
+      "source": "OpenAI",
+      "title": "The builder’s guide to GPT‑5.6",
+      "descEn": "Learn how startups use GPT-5.6 to build faster, more cost-efficient AI agents with smarter model selection and new Responses API capabilities.",
+      "url": "https://openai.com/index/builders-guide-to-gpt-5-6",
+      "tag": "model-provider",
+      "evidenceTier": "official",
+      "sourceType": "official-sitemap",
+      "titleEn": "The builder’s guide to GPT‑5.6",
+      "summaryLinesEn": [
+        "Instructing the model on when to invoke subagents can increase the likelihood of spawning agents only in situations where the additional token expenditures would result in better performance.",
+        "The improvements in top-line cost efficiency are compounded with increased accuracy at lower reasoning efforts.",
+        "Evolving the Responses API to architect more efficient agents The GPT‑5.6 model family makes frontier-level agent performance dramatically more affordable, while also advancing the frontier of what is possible."
+      ],
+      "summaryRoles": [
+        "fact",
+        "implication",
+        "implication"
+      ],
+      "summary": "Instructing the model on when to invoke subagents can increase the likelihood of spawning agents only in situations where the additional token expenditures would result in better performance.\nThe improvements in top-line cost efficiency are compounded with increased accuracy at lower reasoning efforts.\nEvolving the Responses API to architect more efficient agents The GPT‑5.6 model family makes frontier-level agent performance dramatically more affordable, while also advancing the frontier of what is possible.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-16T04:03:53.343Z",
+        "originalUrl": "https://openai.com/index/builders-guide-to-gpt-5-6/",
+        "resolvedUrl": "https://openai.com/index/builders-guide-to-gpt-5-6/",
+        "canonicalUrl": "https://openai.com/index/builders-guide-to-gpt-5-6/",
+        "headline": "The builder’s guide to GPT‑5.6",
+        "description": "Learn how startups use GPT-5.6 to build faster, more cost-efficient AI agents with smarter model selection and new Responses API capabilities.",
+        "paragraphs": [
+          "Evolving the Responses API to architect more efficient agents",
+          "The GPT‑5.6 model family makes frontier-level agent performance dramatically more affordable, while also advancing the frontier of what is possible.",
+          "In this guide, we show how startups are using smarter model selection and new API controls that help with reasoning continuity, multi-agent orchestration, and programmatic tool calling to build faster, more capable agents at a fraction of the cost.",
+          "Since GPT‑5, each model generation has sought to tackle longer-horizon tasks with fewer tokens. GPT‑5.6 continues that trajectory: stronger agent performance, lower costs, with minimal changes to the underlying harness.",
+          "The improvements in top-line cost efficiency are compounded with increased accuracy at lower reasoning efforts. For example, on Agents’ Last Exam, GPT‑5.6 Sol at “low” reasoning outperformed GPT‑5.5 at “high” reasoning when the harness was kept constant. We’ve seen similar success stories in production testing where startups report seeing significant cost improvements across a range of workflows by reducing the reasoning effort from the prior defaults.",
+          "Historically, upgrading to a flagship model at the highest reasoning available has been the best option for long-horizon use cases. This has been in large part due to these models being significantly more capable than cost-optimized models at handling longer contexts and tool calling. This has changed with the 5.6-family: with more test-time compute, Luna and Terra can often perform similar to GPT‑5.4 and 5.5 while being significantly cheaper.",
+          "The smaller 5.6-family models are a strong fit for high-volume workloads, latency-sensitive interactions, and repeated steps within agentic workflows. For example, if you’re operating a legal-tech startup that parses handwritten memos prior to agentic analysis, instead of using a frontier model for the entire use case, you can now use Terra or Luna for extraction and register significant cost savings.",
+          "In addition to making GPT‑5.6 more performant out of the box, we also shipped new primitives to the Responses API to unlock further gains. We trained GPT‑5.6 end-to-end with three complementary architectural interventions that enable agents to operate more efficiently:",
+          "Reuse work already performed: by allowing reasoning to be persisted ⁠ (opens in a new window) across model turns and using native compaction ⁠ (opens in a new window) to compress long-running conversations, the model can maintain coherence in its work across longer task horizons without getting confused or having to reconstruct prior context.",
+          "Parallel decomposition where appropriate: using native multi-agent orchestration ⁠ (opens in a new window) allows coordinating multiple agents across parallel workstreams to finish complex tasks faster.",
+          "Move deterministic work into code: using programmatic tool calling ⁠ (opens in a new window) to filter, aggregate, and orchestrate tool outputs outside the model’s context window, reserving model tokens for judgment and reducing cost, latency, and context rot.",
+          "Work that mostly requires moving, filtering, and combining data",
+          "When an agent retrieves 100 filings, filters them by date, and identifies relevant transactions, the model shouldn’t have to reason over every intermediate result in its context window. Programmatic Tool Calling lets GPT‑5.6 write JavaScript to orchestrate tools, run independent calls in parallel, and process their outputs outside the context window. The model is left to focus on what requires intelligence: applying judgment.",
+          "On complex, parallelizable tasks, distributing actions and reasoning across multiple agent workstreams enables faster task completion as well as higher intelligence. In these setups, the primary agent is responsible for orchestrating the subagents and delegating tasks to them. The subagents pursue their objectives in parallel and finally pass back their output to the primary agent for final synthesis. Teams can start leveraging multi-agent natively by enabling multi-agent ⁠ (opens in a new window) in the Responses API. This is also how the ultra capability setting in ChatGPT works.",
+          "Although GPT‑5.6 has a strong sense of the appropriate number of subagents and when to spawn them, multi-agent behavior is very steerable. Instructing the model on when to invoke subagents can increase the likelihood of spawning agents only in situations where the additional token expenditures would result in better performance.",
+          "Across the entire family of models, the prompt cache TTL has been extended to a minimum of 30 minutes and cache breakpoints can now be set deterministically within a model’s context window. This has enabled startups to significantly improve their cache hit rate.",
+          "In addition to setting cache breakpoints, continuing to use an appropriate prompt_cache_key ⁠ (opens in a new window) increases the likelihood of requests landing on the same inference engine as one that previously served the same prefix, thereby reducing latency.",
+          "What stands out across these examples is how much the economics of building agents have changed."
+        ],
+        "text": "Evolving the Responses API to architect more efficient agents\n\nThe GPT‑5.6 model family makes frontier-level agent performance dramatically more affordable, while also advancing the frontier of what is possible.\n\nIn this guide, we show how startups are using smarter model selection and new API controls that help with reasoning continuity, multi-agent orchestration, and programmatic tool calling to build faster, more capable agents at a fraction of the cost.\n\nSince GPT‑5, each model generation has sought to tackle longer-horizon tasks with fewer tokens. GPT‑5.6 continues that trajectory: stronger agent performance, lower costs, with minimal changes to the underlying harness.\n\nThe improvements in top-line cost efficiency are compounded with increased accuracy at lower reasoning efforts. For example, on Agents’ Last Exam, GPT‑5.6 Sol at “low” reasoning outperformed GPT‑5.5 at “high” reasoning when the harness was kept constant. We’ve seen similar success stories in production testing where startups report seeing significant cost improvements across a range of workflows by reducing the reasoning effort from the prior defaults.\n\nHistorically, upgrading to a flagship model at the highest reasoning available has been the best option for long-horizon use cases. This has been in large part due to these models being significantly more capable than cost-optimized models at handling longer contexts and tool calling. This has changed with the 5.6-family: with more test-time compute, Luna and Terra can often perform similar to GPT‑5.4 and 5.5 while being significantly cheaper.\n\nThe smaller 5.6-family models are a strong fit for high-volume workloads, latency-sensitive interactions, and repeated steps within agentic workflows. For example, if you’re operating a legal-tech startup that parses handwritten memos prior to agentic analysis, instead of using a frontier model for the entire use case, you can now use Terra or Luna for extraction and register significant cost savings.\n\nIn addition to making GPT‑5.6 more performant out of the box, we also shipped new primitives to the Responses API to unlock further gains. We trained GPT‑5.6 end-to-end with three complementary architectural interventions that enable agents to operate more efficiently:\n\nReuse work already performed: by allowing reasoning to be persisted ⁠ (opens in a new window) across model turns and using native compaction ⁠ (opens in a new window) to compress long-running conversations, the model can maintain coherence in its work across longer task horizons without getting confused or having to reconstruct prior context.\n\nParallel decomposition where appropriate: using native multi-agent orchestration ⁠ (opens in a new window) allows coordinating multiple agents across parallel workstreams to finish complex tasks faster.\n\nMove deterministic work into code: using programmatic tool calling ⁠ (opens in a new window) to filter, aggregate, and orchestrate tool outputs outside the model’s context window, reserving model tokens for judgment and reducing cost, latency, and context rot.\n\nWork that mostly requires moving, filtering, and combining data\n\nWhen an agent retrieves 100 filings, filters them by date, and identifies relevant transactions, the model shouldn’t have to reason over every intermediate result in its context window. Programmatic Tool Calling lets GPT‑5.6 write JavaScript to orchestrate tools, run independent calls in parallel, and process their outputs outside the context window. The model is left to focus on what requires intelligence: applying judgment.\n\nOn complex, parallelizable tasks, distributing actions and reasoning across multiple agent workstreams enables faster task completion as well as higher intelligence. In these setups, the primary agent is responsible for orchestrating the subagents and delegating tasks to them. The subagents pursue their objectives in parallel and finally pass back their output to the primary agent for final synthesis. Teams can start leveraging multi-agent natively by enabling multi-agent ⁠ (opens in a new window) in the Responses API. This is also how the ultra capability setting in ChatGPT works.\n\nAlthough GPT‑5.6 has a strong sense of the appropriate number of subagents and when to spawn them, multi-agent behavior is very steerable. Instructing the model on when to invoke subagents can increase the likelihood of spawning agents only in situations where the additional token expenditures would result in better performance.\n\nAcross the entire family of models, the prompt cache TTL has been extended to a minimum of 30 minutes and cache breakpoints can now be set deterministically within a model’s context window. This has enabled startups to significantly improve their cache hit rate.\n\nIn addition to setting cache breakpoints, continuing to use an appropriate prompt_cache_key ⁠ (opens in a new window) increases the likelihood of requests landing on the same inference engine as one that previously served the same prefix, thereby reducing latency.\n\nWhat stands out across these examples is how much the economics of building agents have changed.\n\nUse cases that once required a frontier model at every step can now achieve comparable or better results at a fraction of the cost by using smaller models, tuning reasoning effort, and making efficient architectural choices.\n\nThis guide was developed by Samarth Madduru ⁠ (opens in a new window) , Prashant Mital ⁠ (opens in a new window) , Dave Leo ⁠ (opens in a new window) , and Julien Reiman ⁠ (opens in a new window) , based on their experience working closely with startups building on GPT‑5.6 from early testing through production.",
+        "contentHash": "b29b37f0ab53a9a6f29c01445da9f1a472e4aa859149a2a73f57126e042bd987",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://openai.com/index/builders-guide-to-gpt-5-6/",
+      "collectedAt": "2026-08-16T04:04:07.981Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "f621a25a270ec3b7f493975a8eda31103be9c1811fd321c7e576fea3e4086eb6",
+        "sourceLines": [
+          "Instructing the model on when to invoke subagents can increase the likelihood of spawning agents only in situations where the additional token expenditures would result in better performance.",
+          "The improvements in top-line cost efficiency are compounded with increased accuracy at lower reasoning efforts.",
+          "Evolving the Responses API to architect more efficient agents The GPT‑5.6 model family makes frontier-level agent performance dramatically more affordable, while also advancing the frontier of what is possible."
+        ],
+        "checkedAt": "2026-08-16T04:16:34.313253+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "GPT‑5.6 제작 가이드",
+        "summaryLines": [
+          "하위 에이전트를 호출할 시기를 모델에 지시하면 추가 토큰 지출로 인해 성능이 향상되는 상황에서만 에이전트 생성 가능성이 높아질 수 있음",
+          "최고의 비용 효율성 향상은 더 낮은 추론 노력으로 정확성이 향상됨에 따라 더욱 복잡해짐",
+          "Responses API를 발전시켜 보다 효율적인 에이전트 설계 GPT‑5.6 모델 제품군은 프론티어 수준 에이전트 성능을 훨씬 더 저렴하게 만드는 동시에 가능한 것의 한계를 뛰어넘음"
+        ],
+        "summaryRoles": [
+          "fact",
+          "implication",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "GPT‑5.6 제작 가이드",
+      "summaryLinesKo": [
+        "하위 에이전트를 호출할 시기를 모델에 지시하면 추가 토큰 지출로 인해 성능이 향상되는 상황에서만 에이전트 생성 가능성이 높아질 수 있음",
+        "최고의 비용 효율성 향상은 더 낮은 추론 노력으로 정확성이 향상됨에 따라 더욱 복잡해짐",
+        "Responses API를 발전시켜 보다 효율적인 에이전트 설계 GPT‑5.6 모델 제품군은 프론티어 수준 에이전트 성능을 훨씬 더 저렴하게 만드는 동시에 가능한 것의 한계를 뛰어넘음"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-16T04:48:15.719Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-15",
       "cat": "bigtech",
       "source": "Apple",
       "title": "Grok Bot App - App Store",
@@ -5632,6 +5738,112 @@
         "작년에 AI에 대한 대화가 바뀌었음",
         "당사의 현장 팀은 탁월한 고객 경험과 강력한 성장을 제공하기 위해 지역 전역의 기업과 협력할 것임"
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "co": "OpenAI",
+      "cat": "native",
+      "source": "OpenAI",
+      "title": "Reimagining the email experience with AI",
+      "descEn": "Superhuman introduces a new era of email with OpenAI.",
+      "url": "https://openai.com/index/superhuman",
+      "tag": "model-provider",
+      "evidenceTier": "official",
+      "sourceType": "official-sitemap",
+      "titleEn": "Reimagining the email experience with AI",
+      "summaryLinesEn": [
+        "This works out to around 1 trillion human hours a year spent on email.",
+        "The shift to online work has roughly 1 billion professionals spending close to 3 hours managing email each day ⁠ (opens in a new window) .",
+        "At any company, a large portion of the workforce (Superhuman estimates between 30–50%, across roles like finance, sales, and support) spend their days in and out of email, struggling with overflowing inboxes."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "This works out to around 1 trillion human hours a year spent on email.\nThe shift to online work has roughly 1 billion professionals spending close to 3 hours managing email each day ⁠ (opens in a new window) .\nAt any company, a large portion of the workforce (Superhuman estimates between 30–50%, across roles like finance, sales, and support) spend their days in and out of email, struggling with overflowing inboxes.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-16T04:00:47.099Z",
+        "originalUrl": "https://openai.com/index/superhuman/",
+        "resolvedUrl": "https://openai.com/index/superhuman/",
+        "canonicalUrl": "https://openai.com/index/superhuman/",
+        "headline": "Reimagining the email experience with AI",
+        "description": "Superhuman introduces a new era of email with OpenAI.",
+        "paragraphs": [
+          "The shift to online work has roughly 1 billion professionals spending close to 3 hours managing email each day ⁠ (opens in a new window) . This works out to around 1 trillion human hours a year spent on email.",
+          "Superhuman’s goal is to reduce the time spent managing inboxes. They’ve used OpenAI’s API ⁠ to build a suite of next-gen AI email products that are saving users time, driving value, and increasing engagement.",
+          "At any company, a large portion of the workforce (Superhuman estimates between 30–50%, across roles like finance, sales, and support) spend their days in and out of email, struggling with overflowing inboxes. It’s all too easy for emails to be overlooked, leading to delays, or worse, mishandled—leading to errors or even reputational damage.",
+          "Superhuman got its start solving this problem with a popular product that offered an array of built-in email automations and integrated with common email services like Gmail and Outlook. Then came AI, which presented the opportunity to take the company’s vision to the next level and completely transform the email experience.",
+          "Superhuman is making rapid progress on Superhuman AI, which is powered by OpenAI’s API. They’ve already launched a large number of GPT‑driven features like:",
+          "Write with AI , which turns a written prompt into a full email",
+          "Rewrite in Your Voice , which rephrases an email in the user’s personal writing voice and tone",
+          "Write with Your Voice , which turns a dictated statement into a full email, allowing users to compose emails with just a few lines of speech",
+          "Auto Summarize, which always shows an up-to-date one-line summary for each email and thread in users’ inboxes",
+          "Instant Reply , which lets users respond to email in one click by choosing from contextual reply options",
+          "From the start, partnering with OpenAI was a centerpiece of Superhuman’s AI roadmap, for several reasons:",
+          "Startup culture and support: “OpenAI is itself a startup and therefore understands how to work blazingly fast,” Vohra said. “We have constant back-and-forths with various members of the OpenAI team, including engineers, go-to-markets and executives.”",
+          "Privacy-first: Since Superhuman is embedded in confidential email threads, customers are understandably concerned about protecting their data. Because OpenAI offers zero data retention (ZDR) for qualifying use cases, Superhuman has been able to meet its strict privacy and compliance requirements.",
+          "Optimized performance and cost: OpenAI’s API offers access to a range of models with different performance and cost characteristics, which has allowed Superhuman to make informed tradeoffs. “OpenAI is the clear leader in the space with models that are anywhere from six months to a full year plus ahead of the next best models. And this is true for both the quality of model output as well as how fast the models work,” Vohra added.",
+          "Superhuman’s rollout of Superhuman AI has met with tremendous success, seeing high user adoption rates and faster workflows:",
+          "High opt-in rates for AI : More than 85% of Superhuman’s users are opting in to the new GPT‑powered features.",
+          "Growing engagement : Usage stats show that users aren’t just opting in, they’re engaging with the features at a rate that continues to grow over time. For example, users use the Write with AI feature an average of 25 times per week, and this number has grown 55% since launch.",
+          "Inbox processing speed, doubled : “Our AI features help customers get through their inbox about twice as fast as before,” Vohra said."
+        ],
+        "text": "The shift to online work has roughly 1 billion professionals spending close to 3 hours managing email each day ⁠ (opens in a new window) . This works out to around 1 trillion human hours a year spent on email.\n\nSuperhuman’s goal is to reduce the time spent managing inboxes. They’ve used OpenAI’s API ⁠ to build a suite of next-gen AI email products that are saving users time, driving value, and increasing engagement.\n\nAt any company, a large portion of the workforce (Superhuman estimates between 30–50%, across roles like finance, sales, and support) spend their days in and out of email, struggling with overflowing inboxes. It’s all too easy for emails to be overlooked, leading to delays, or worse, mishandled—leading to errors or even reputational damage.\n\nSuperhuman got its start solving this problem with a popular product that offered an array of built-in email automations and integrated with common email services like Gmail and Outlook. Then came AI, which presented the opportunity to take the company’s vision to the next level and completely transform the email experience.\n\nSuperhuman is making rapid progress on Superhuman AI, which is powered by OpenAI’s API. They’ve already launched a large number of GPT‑driven features like:\n\nWrite with AI , which turns a written prompt into a full email\n\nRewrite in Your Voice , which rephrases an email in the user’s personal writing voice and tone\n\nWrite with Your Voice , which turns a dictated statement into a full email, allowing users to compose emails with just a few lines of speech\n\nAuto Summarize, which always shows an up-to-date one-line summary for each email and thread in users’ inboxes\n\nInstant Reply , which lets users respond to email in one click by choosing from contextual reply options\n\nFrom the start, partnering with OpenAI was a centerpiece of Superhuman’s AI roadmap, for several reasons:\n\nStartup culture and support: “OpenAI is itself a startup and therefore understands how to work blazingly fast,” Vohra said. “We have constant back-and-forths with various members of the OpenAI team, including engineers, go-to-markets and executives.”\n\nPrivacy-first: Since Superhuman is embedded in confidential email threads, customers are understandably concerned about protecting their data. Because OpenAI offers zero data retention (ZDR) for qualifying use cases, Superhuman has been able to meet its strict privacy and compliance requirements.\n\nOptimized performance and cost: OpenAI’s API offers access to a range of models with different performance and cost characteristics, which has allowed Superhuman to make informed tradeoffs. “OpenAI is the clear leader in the space with models that are anywhere from six months to a full year plus ahead of the next best models. And this is true for both the quality of model output as well as how fast the models work,” Vohra added.\n\nSuperhuman’s rollout of Superhuman AI has met with tremendous success, seeing high user adoption rates and faster workflows:\n\nHigh opt-in rates for AI : More than 85% of Superhuman’s users are opting in to the new GPT‑powered features.\n\nGrowing engagement : Usage stats show that users aren’t just opting in, they’re engaging with the features at a rate that continues to grow over time. For example, users use the Write with AI feature an average of 25 times per week, and this number has grown 55% since launch.\n\nInbox processing speed, doubled : “Our AI features help customers get through their inbox about twice as fast as before,” Vohra said.\n\n2x email writing speed : Superhuman’s Instant Reply feature uses OpenAI’s API to draft a reply so that all the user needs to do is hit send. “In beta, users were writing emails twice as fast as before,” Vohra explained. “If you multiply that out by how many emails our users send, this feature alone saves you more than an hour per week.”\n\n“Imagine waking up to an inbox where every email thread has a one sentence summary and a draft reply. Simply hit send,” Vohra said. This might have sounded far-fetched just a few years ago. But Superhuman has built and launched this end-to-end experience with OpenAI’s API. Each email comes with an automatic AI-generated summary, and users can choose from several AI-drafted responses to send instantly. “Thanks to AI features like these, Superhuman has seen its user base grow rapidly over the last year, more than doubling the number of weekly new users.”\n\nWhat’s next? Superhuman imagines a world where GPT‑based agents will soon be able to filter, triage, and respond to email automatically—scheduling meetings and appointments, and taking basic actions online and in the real world. The success of Instant Reply proves this agent-led email future is not too far off.\n\nInterested in learning more about ChatGPT for business?",
+        "contentHash": "79acc16efc01ee87808c796b84992cff37cfc03707d1c292cde14e2a41f652da",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://openai.com/index/superhuman/",
+      "collectedAt": "2026-08-16T04:00:57.469Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "313dc5ace8f77f64c68eaf4f463a84d35b7bcf55aa03445f080e3bb717764670",
+        "sourceLines": [
+          "This works out to around 1 trillion human hours a year spent on email.",
+          "The shift to online work has roughly 1 billion professionals spending close to 3 hours managing email each day ⁠ (opens in a new window) .",
+          "At any company, a large portion of the workforce (Superhuman estimates between 30–50%, across roles like finance, sales, and support) spend their days in and out of email, struggling with overflowing inboxes."
+        ],
+        "checkedAt": "2026-08-16T04:16:34.314347+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "AI로 이메일 경험을 재구성하",
+        "summaryLines": [
+          "이는 연간 약 1조 시간을 이메일에 소비하는 것과 같음",
+          "온라인 업무로의 전환으로 인해 약 10억 명의 전문가가 매일 이메일 관리에 약 3시간을 소비하게 되었습니다 ⁠ (새 창에서 열림)",
+          "어느 회사에서든 직원의 상당 부분(재무, 판매, 지원 등의 역할을 통틀어 Superhuman은 30~50%로 추산)은 이메일을 드나들며 하루를 보내며 받은 편지함의 넘쳐나는 문제로 어려움을 겪음"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "AI로 이메일 경험을 재구성하",
+      "summaryLinesKo": [
+        "이는 연간 약 1조 시간을 이메일에 소비하는 것과 같음",
+        "온라인 업무로의 전환으로 인해 약 10억 명의 전문가가 매일 이메일 관리에 약 3시간을 소비하게 되었습니다 ⁠ (새 창에서 열림)",
+        "어느 회사에서든 직원의 상당 부분(재무, 판매, 지원 등의 역할을 통틀어 Superhuman은 30~50%로 추산)은 이메일을 드나들며 하루를 보내며 받은 편지함의 넘쳐나는 문제로 어려움을 겪음"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-16T04:48:15.719Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
     },
     {
       "date": "2026-08-14",
@@ -21297,6 +21509,108 @@
     },
     {
       "date": "2026-08-10",
+      "cat": "bigtech",
+      "source": "The Verge",
+      "title": "Ford’s new AI assistant can check your fuel levels and tire pressure",
+      "descEn": "Ford started rolling out its new AI assistant to mobile app customers. The chatbot can check fuel levels and respond to questions about cargo and towing.",
+      "url": "https://www.theverge.com/transportation/976748/ford-ai-assistant-mobile-app",
+      "tag": "글로벌",
+      "titleEn": "Ford’s new AI assistant can check your fuel levels and tire pressure",
+      "summaryLinesEn": [
+        "The new assistant is being rolled out to customers in waves, with the goal of making it available to 8 million owners of Ford and Lincoln vehicles, the company said.",
+        "Rivian recently launched its own voice assistant, as did Mercedes-Benz.",
+        "Ford is rolling out a new AI-powered assistant that can answer questions about your Ford or Lincoln vehicle, such as how much fuel you’ll need for your next road trip or whether your truck can tow that new motor boat."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "The new assistant is being rolled out to customers in waves, with the goal of making it available to 8 million owners of Ford and Lincoln vehicles, the company said.\nRivian recently launched its own voice assistant, as did Mercedes-Benz.\nFord is rolling out a new AI-powered assistant that can answer questions about your Ford or Lincoln vehicle, such as how much fuel you’ll need for your next road trip or whether your truck can tow that new motor boat.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-10T11:30:46.230Z",
+        "originalUrl": "https://www.theverge.com/transportation/976748/ford-ai-assistant-mobile-app",
+        "resolvedUrl": "https://www.theverge.com/transportation/976748/ford-ai-assistant-mobile-app",
+        "canonicalUrl": "https://www.theverge.com/transportation/976748/ford-ai-assistant-mobile-app",
+        "headline": "Ford’s new AI assistant can check your fuel levels and tire pressure",
+        "description": "Ford started rolling out its new AI assistant to mobile app customers. The chatbot can check fuel levels and respond to questions about cargo and towing.",
+        "paragraphs": [
+          "Transportation Close Transportation Posts from this topic will be added to your daily email digest and your homepage feed. Follow Follow See All Transportation",
+          "The assistant is rolling out to the Ford mobile app now. And by 2027, it will be available through the vehicle itself.",
+          "Posts from this author will be added to your daily email digest and your homepage feed.",
+          "Ford is rolling out a new AI-powered assistant that can answer questions about your Ford or Lincoln vehicle, such as how much fuel you’ll need for your next road trip or whether your truck can tow that new motor boat.",
+          "The app is rolling out first to the Ford and Lincoln mobile apps, where it will work as a chatbot that can answer questions about the vehicle’s capabilities or future service needs. Since the app is linked to the customer’s vehicle, the assistant knows many of the details about the particular make and model, including fuel levels, cargo capacity, and towing capabilities. Ford plans on rolling out a voice-powered assistant that works inside the vehicles themselves sometime in 2027 — but for now, customers will have to make do with the app-based assistant.",
+          "The announcement comes as automakers scramble to add more AI-powered features for their customers in a race to stay on top of the fast-moving technology. Rivian recently launched its own voice assistant, as did Mercedes-Benz. Other automakers are turning to established suppliers, like BMW with Amazon’s Alexa and General Motors with Google’s Gemini . Meanwhile, cars with Google’s built-in operating system, like Volvo and Polestar, will also be getting Gemini .",
+          "Ford first announced its plans to introduce a chatbot earlier this year, alongside promises for a future Level 3 “eyes off” driver assist system. At the time, the automaker didn’t disclose which AI developers it was working with, noting that it was designing its assistant to be chatbot-agnostic so it can work with a variety of different large language models. As a stopgap measure, the company will be integrating Gemini into its vehicles as an “opt-in alternative” to Google Assistant, a partnership that was first previewed earlier this year .",
+          "Ford says that by starting with its mobile app, it can introduce more customers to its assistant than it could through a software update. The new assistant is being rolled out to customers in waves, with the goal of making it available to 8 million owners of Ford and Lincoln vehicles, the company said.",
+          "“By taking an app-first approach, we are bringing the future of Ford intelligence directly to customers instantly,” Mike Aragon, Ford’s president for integrated services, wrote in a blog post. “You don’t have to wait to buy a brand-new vehicle; we’re upgrading the ownership experience you already have, starting today.”",
+          "Aragon said that Ford’s assistant can answer questions from the owner’s manual, as well as offer live updates provided by the vehicle’s telemetry system. Owners can even upload pictures to check whether their vehicle is capable of carrying or towing certain payloads.",
+          "But the “true magic” will be when the assistant migrates from owners’ phones to their dashboard screens, Aragon predicts. This won’t be through phone mirroring, like Apple CarPlay or Android Auto, but through “deep, thoughtful intelligence embedded directly into the driving experience.” The automaker’s Android-based Ford and Lincoln Digital Experiences will feature Gemini in the meantime, which can help with navigation, sending text messages, or playing media.",
+          "In the future, Ford envisions all these tasks handled by the new assistant, merging vehicle-specific requests with infotainment-level queries to enable vehicle owners to create their own custom system tailored to their preferences.",
+          "Ford said the assistant will be free to use, rather than placed behind a paywall or subscription — though the company wouldn’t say whether that will remain the case after the assistant becomes available through the vehicle’s own operating system.",
+          "Zuckerberg’s yacht was closer, but someone else saved a stranded boat",
+          "49ers coach says his Tesla was on Autopilot when he crashed",
+          "Buc-ee’s dodges John Oliver to sue another small business",
+          "Is this $450 laptop from an unknown brand too good to be true?"
+        ],
+        "text": "Transportation Close Transportation Posts from this topic will be added to your daily email digest and your homepage feed. Follow Follow See All Transportation\n\nThe assistant is rolling out to the Ford mobile app now. And by 2027, it will be available through the vehicle itself.\n\nPosts from this author will be added to your daily email digest and your homepage feed.\n\nFord is rolling out a new AI-powered assistant that can answer questions about your Ford or Lincoln vehicle, such as how much fuel you’ll need for your next road trip or whether your truck can tow that new motor boat.\n\nThe app is rolling out first to the Ford and Lincoln mobile apps, where it will work as a chatbot that can answer questions about the vehicle’s capabilities or future service needs. Since the app is linked to the customer’s vehicle, the assistant knows many of the details about the particular make and model, including fuel levels, cargo capacity, and towing capabilities. Ford plans on rolling out a voice-powered assistant that works inside the vehicles themselves sometime in 2027 — but for now, customers will have to make do with the app-based assistant.\n\nThe announcement comes as automakers scramble to add more AI-powered features for their customers in a race to stay on top of the fast-moving technology. Rivian recently launched its own voice assistant, as did Mercedes-Benz. Other automakers are turning to established suppliers, like BMW with Amazon’s Alexa and General Motors with Google’s Gemini . Meanwhile, cars with Google’s built-in operating system, like Volvo and Polestar, will also be getting Gemini .\n\nFord first announced its plans to introduce a chatbot earlier this year, alongside promises for a future Level 3 “eyes off” driver assist system. At the time, the automaker didn’t disclose which AI developers it was working with, noting that it was designing its assistant to be chatbot-agnostic so it can work with a variety of different large language models. As a stopgap measure, the company will be integrating Gemini into its vehicles as an “opt-in alternative” to Google Assistant, a partnership that was first previewed earlier this year .\n\nFord says that by starting with its mobile app, it can introduce more customers to its assistant than it could through a software update. The new assistant is being rolled out to customers in waves, with the goal of making it available to 8 million owners of Ford and Lincoln vehicles, the company said.\n\n“By taking an app-first approach, we are bringing the future of Ford intelligence directly to customers instantly,” Mike Aragon, Ford’s president for integrated services, wrote in a blog post. “You don’t have to wait to buy a brand-new vehicle; we’re upgrading the ownership experience you already have, starting today.”\n\nAragon said that Ford’s assistant can answer questions from the owner’s manual, as well as offer live updates provided by the vehicle’s telemetry system. Owners can even upload pictures to check whether their vehicle is capable of carrying or towing certain payloads.\n\nBut the “true magic” will be when the assistant migrates from owners’ phones to their dashboard screens, Aragon predicts. This won’t be through phone mirroring, like Apple CarPlay or Android Auto, but through “deep, thoughtful intelligence embedded directly into the driving experience.” The automaker’s Android-based Ford and Lincoln Digital Experiences will feature Gemini in the meantime, which can help with navigation, sending text messages, or playing media.\n\nIn the future, Ford envisions all these tasks handled by the new assistant, merging vehicle-specific requests with infotainment-level queries to enable vehicle owners to create their own custom system tailored to their preferences.\n\nFord said the assistant will be free to use, rather than placed behind a paywall or subscription — though the company wouldn’t say whether that will remain the case after the assistant becomes available through the vehicle’s own operating system.\n\nZuckerberg’s yacht was closer, but someone else saved a stranded boat\n\n49ers coach says his Tesla was on Autopilot when he crashed\n\nBuc-ee’s dodges John Oliver to sue another small business\n\nIs this $450 laptop from an unknown brand too good to be true?",
+        "contentHash": "d8cd60edd1fd58370097dff523e7f081d5fd247e12a093c797b03bf303fd9871",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.theverge.com/transportation/976748/ford-ai-assistant-mobile-app",
+      "collectedAt": "2026-08-10T11:30:47.912Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "e4a79388a9ee72fe41d67fcad68c94d7a86621c34d47b723c3c9ffc82772f43f",
+        "sourceLines": [
+          "The new assistant is being rolled out to customers in waves, with the goal of making it available to 8 million owners of Ford and Lincoln vehicles, the company said.",
+          "Rivian recently launched its own voice assistant, as did Mercedes-Benz.",
+          "Ford is rolling out a new AI-powered assistant that can answer questions about your Ford or Lincoln vehicle, such as how much fuel you’ll need for your next road trip or whether your truck can tow that new motor boat."
+        ],
+        "checkedAt": "2026-08-10T11:36:27.925013+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "포드의 새로운 AI 비서는 연료 수준과 타이어 공기압을 확인할 수 있음",
+        "summaryLines": [
+          "회사는 새로운 어시스턴트가 800만 명의 포드 및 링컨 차량 소유자에게 제공되는 것을 목표로 고객에게 순차적으로 출시되고 있다고 밝힘",
+          "Rivian은 최근 Mercedes-Benz와 마찬가지로 자체 음성 비서를 출시함",
+          "Ford는 다음 번 여행에 연료가 얼마나 필요한지, 트럭이 새 모터보트를 견인할 수 있는지 등 Ford 또는 Lincoln 차량에 대한 질문에 답할 수 있는 새로운 AI 기반 도우미를 출시하고 있음"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "포드의 새로운 AI 비서는 연료 수준과 타이어 공기압을 확인할 수 있음",
+      "summaryLinesKo": [
+        "회사는 새로운 어시스턴트가 800만 명의 포드 및 링컨 차량 소유자에게 제공되는 것을 목표로 고객에게 순차적으로 출시되고 있다고 밝힘",
+        "Rivian은 최근 Mercedes-Benz와 마찬가지로 자체 음성 비서를 출시함",
+        "Ford는 다음 번 여행에 연료가 얼마나 필요한지, 트럭이 새 모터보트를 견인할 수 있는지 등 Ford 또는 Lincoln 차량에 대한 질문에 답할 수 있는 새로운 AI 기반 도우미를 출시하고 있음"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-16T04:48:15.719Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-10",
       "co": "Meta AI",
       "cat": "native",
       "source": "The Register",
@@ -25383,6 +25697,86 @@
         "arXiv 커뮤니티에 가치를 더할 프로젝트에 대한 아이디어가 있습니까",
         "arXivLabs와 협력하는 개인과 조직 모두 개방성, 커뮤니티, 우수성 및 사용자 데이터 개인 정보 보호에 대한 우리의 가치를 수용하고 받아들였음 · arXiv는 이러한 가치를 약속하며 이를 준수하는 파트너와만 협력함"
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "co": "Xiaomi",
+      "cat": "bigtech",
+      "source": "Xiaomi Global Discover API",
+      "title": "Xiaomi Global Home",
+      "descEn": "Welcome to Xiaomi global official website to buy your favorite products. Here you can buy the latest Xiaomi smartphones, Redmi smartphones, Mi Bands, Power banks and other popular products, as well as various irregular discounts, all on mi.com/global.",
+      "url": "https://www.mi.com/global/discover/article",
+      "tag": "competitor-device",
+      "evidenceTier": "official",
+      "sourceType": "official-api",
+      "rssUrl": "https://www.mi.com/global/discover/article?id=6329",
+      "titleEn": "Xiaomi Global Home",
+      "summaryLinesEn": [
+        "Please enable JavaScript or switch to a supported browser to continue using mi.com/global.",
+        "We’ve detected that JavaScript is disabled in this browser."
+      ],
+      "summaryRoles": [
+        "implication",
+        "evidence"
+      ],
+      "summary": "Please enable JavaScript or switch to a supported browser to continue using mi.com/global.\nWe’ve detected that JavaScript is disabled in this browser.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-16T04:00:50.864Z",
+        "originalUrl": "https://www.mi.com/global/discover/article?id=6329",
+        "resolvedUrl": "https://www.mi.com/global/discover/article?id=6329",
+        "canonicalUrl": "https://www.mi.com/global/discover/article/",
+        "headline": "Xiaomi Global Home",
+        "description": "Welcome to Xiaomi global official website to buy your favorite products. Here you can buy the latest Xiaomi smartphones, Redmi smartphones, Mi Bands, Power banks and other popular products, as well as various irregular discounts, all on mi.com/global.",
+        "paragraphs": [
+          "We’ve detected that JavaScript is disabled in this browser. Please enable JavaScript or switch to a supported browser to continue using mi.com/global."
+        ],
+        "text": "We’ve detected that JavaScript is disabled in this browser. Please enable JavaScript or switch to a supported browser to continue using mi.com/global.",
+        "contentHash": "e0b7ea00735098be42204dc0c9100dda81720105f490d73001f0307114352370",
+        "selectionVersion": 7
+      },
+      "collectedAt": "2026-08-16T04:00:57.469Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "505d872c4fcc356116a1fbd0abfef76b9ecc74357fb827afcda31259ec47015b",
+        "sourceLines": [
+          "Please enable JavaScript or switch to a supported browser to continue using mi.com/global.",
+          "We’ve detected that JavaScript is disabled in this browser."
+        ],
+        "checkedAt": "2026-08-16T04:19:34.317349+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "fallback-english",
+        "displayLanguage": "en",
+        "title": "Xiaomi Global Home",
+        "summaryLines": [
+          "Please enable JavaScript or switch to a supported browser to continue using mi.com/global",
+          "We’ve detected that JavaScript is disabled in this browser"
+        ],
+        "summaryRoles": [
+          "implication",
+          "evidence"
+        ],
+        "provider": "public-source-translation",
+        "issues": [
+          "korean-quality-gate-failed"
+        ]
+      },
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-16T04:48:15.719Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
     },
     {
       "date": "2026-08-07",
@@ -34332,6 +34726,206 @@
     },
     {
       "date": "2026-08-04",
+      "co": "IDC",
+      "cat": "native",
+      "source": "IDC Research",
+      "title": "Business Expansion Architects",
+      "descEn": "IDC examines consumer markets by devices, applications, networks, and services to provide complete solutions for succeeding in these expanding markets.",
+      "url": "https://www.idc.com/research/emerging-vendor/business-expansion-architects",
+      "tag": "research-release",
+      "evidenceTier": "official",
+      "sourceType": "official-sitemap",
+      "titleEn": "Business Expansion Architects",
+      "summaryLinesEn": [
+        "Read blog How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business.",
+        "IDC’s proprietary data and insights give you the information you need to recognize new opportunities for business growth.",
+        "IDC can help you identify the right partners and channels, and work with you to develop a strategy for expansion."
+      ],
+      "summaryRoles": [
+        "fact",
+        "implication",
+        "implication"
+      ],
+      "summary": "Read blog How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business.\nIDC’s proprietary data and insights give you the information you need to recognize new opportunities for business growth.\nIDC can help you identify the right partners and channels, and work with you to develop a strategy for expansion.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-16T04:00:52.626Z",
+        "originalUrl": "https://www.idc.com/research/emerging-vendor/business-expansion-architects/",
+        "resolvedUrl": "https://www.idc.com/research/emerging-vendor/business-expansion-architects/",
+        "canonicalUrl": "https://www.idc.com/research/emerging-vendor/business-expansion-architects/",
+        "headline": "Business Expansion Architects",
+        "description": "IDC examines consumer markets by devices, applications, networks, and services to provide complete solutions for succeeding in these expanding markets.",
+        "paragraphs": [
+          "You are looking to expand your company reach. Identify new potential markets and product needs. IDC’s proprietary data and insights give you the information you need to recognize new opportunities for business growth.",
+          "Be the first to know shifts in the industry to satisfy your customers’ needs and stay ahead of the competition. IDC’s predictive analysis gives you insight into the future of technology, trends in customer behavior, and technological advancements to give you the competitive edge you need.",
+          "One way to expand your business is by developing relationships with key partners. IDC can help you identify the right partners and channels, and work with you to develop a strategy for expansion.",
+          "We’re a mature company and in some ways, we really understand our market. Now we need to understand where we‘re going to take our platform. What should we be building, who should be selling to, who should we be partnering with? This is where we use help from IDC.",
+          "IDC Emerging Vendor solutions for expanding tech vendors",
+          "Designed for established tech companies looking to expand into new markets and channels, IDC’s Emerging Vendor Solutions offer the flexibility to build a partnership with IDC that meets the strategic goals of your company.",
+          "Unparalleled access to IDC’s gold-standard data and research to shape your market positioning and identify expansion opportunities",
+          "Consultations with any of IDC’s 1,000+ market experts to gain insights into local, national, and international market intelligence",
+          "Expertise in channel/partner strategies and market forecasts to develop strategic plans to expand into new markets",
+          "Dedicated Customer Support to help you navigate your IDC Experience",
+          "For more examples of actionable insights from IDC analysts visit our Resource Center .",
+          "The future of content marketing: Exploring generative AI techniques The future of content marketing: Exploring generative AI techniques Find out how to incorporate generative AI into your content marketing and achieve better results, faster. Explore now",
+          "From downturn to funding success: The entrepreneur's handbook for raising capital From downturn to funding success: The entrepreneur's handbook for raising capital Get armed with the right knowledge and strategy and learn about proven and innovative ways to secure investors. Get your copy",
+          "Transform your business with generative AI Transform your business with generative AI Generative AI can be hugely beneficial to companies. Learn the possibilities and understand the limits of this technology to future-proof your business. Transform now",
+          "AI everywhere: How empathetic generative AI transforms content creation processes AI everywhere: How empathetic generative AI transforms content creation processes Discover how empathetic generative AI revolutionizes content creation and explore analyst-approved actions to take today. Read blog",
+          "How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business. Read our blog for key actions you can take today to grow your market tomorrow. Read blog"
+        ],
+        "text": "You are looking to expand your company reach. Identify new potential markets and product needs. IDC’s proprietary data and insights give you the information you need to recognize new opportunities for business growth.\n\nBe the first to know shifts in the industry to satisfy your customers’ needs and stay ahead of the competition. IDC’s predictive analysis gives you insight into the future of technology, trends in customer behavior, and technological advancements to give you the competitive edge you need.\n\nOne way to expand your business is by developing relationships with key partners. IDC can help you identify the right partners and channels, and work with you to develop a strategy for expansion.\n\nWe’re a mature company and in some ways, we really understand our market. Now we need to understand where we‘re going to take our platform. What should we be building, who should be selling to, who should we be partnering with? This is where we use help from IDC.\n\nIDC Emerging Vendor solutions for expanding tech vendors\n\nDesigned for established tech companies looking to expand into new markets and channels, IDC’s Emerging Vendor Solutions offer the flexibility to build a partnership with IDC that meets the strategic goals of your company.\n\nUnparalleled access to IDC’s gold-standard data and research to shape your market positioning and identify expansion opportunities\n\nConsultations with any of IDC’s 1,000+ market experts to gain insights into local, national, and international market intelligence\n\nExpertise in channel/partner strategies and market forecasts to develop strategic plans to expand into new markets\n\nDedicated Customer Support to help you navigate your IDC Experience\n\nFor more examples of actionable insights from IDC analysts visit our Resource Center .\n\nThe future of content marketing: Exploring generative AI techniques The future of content marketing: Exploring generative AI techniques Find out how to incorporate generative AI into your content marketing and achieve better results, faster. Explore now\n\nFrom downturn to funding success: The entrepreneur's handbook for raising capital From downturn to funding success: The entrepreneur's handbook for raising capital Get armed with the right knowledge and strategy and learn about proven and innovative ways to secure investors. Get your copy\n\nTransform your business with generative AI Transform your business with generative AI Generative AI can be hugely beneficial to companies. Learn the possibilities and understand the limits of this technology to future-proof your business. Transform now\n\nAI everywhere: How empathetic generative AI transforms content creation processes AI everywhere: How empathetic generative AI transforms content creation processes Discover how empathetic generative AI revolutionizes content creation and explore analyst-approved actions to take today. Read blog\n\nHow to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business. Read our blog for key actions you can take today to grow your market tomorrow. Read blog",
+        "contentHash": "8283fdc733d52ea44defb5fce9c3f7f482e68ed6268f76118eca06b20060e19d",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.idc.com/research/emerging-vendor/business-expansion-architects/",
+      "collectedAt": "2026-08-16T04:00:57.469Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "77815d957ec2805ddd3d0f544afadb94a7049c8ee8169b7607e2d7d16d920d79",
+        "sourceLines": [
+          "Read blog How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business.",
+          "IDC’s proprietary data and insights give you the information you need to recognize new opportunities for business growth.",
+          "IDC can help you identify the right partners and channels, and work with you to develop a strategy for expansion."
+        ],
+        "checkedAt": "2026-08-16T04:19:34.319329+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "fallback-english",
+        "displayLanguage": "en",
+        "title": "Business Expansion Architects",
+        "summaryLines": [
+          "Read blog How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business",
+          "IDC’s proprietary data and insights give you the information you need to recognize new opportunities for business growth",
+          "IDC can help you identify the right partners and channels, and work with you to develop a strategy for expansion"
+        ],
+        "summaryRoles": [
+          "fact",
+          "implication",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": [
+          "korean-quality-gate-failed"
+        ]
+      },
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-16T04:48:15.719Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-04",
+      "co": "IDC",
+      "cat": "native",
+      "source": "IDC Research",
+      "title": "Market Intelligence Seekers",
+      "descEn": "IDC examines consumer markets by devices, applications, networks, and services to provide complete solutions for succeeding in these expanding markets.",
+      "url": "https://www.idc.com/research/emerging-vendor/market-intelligence-seekers",
+      "tag": "research-release",
+      "evidenceTier": "official",
+      "sourceType": "official-sitemap",
+      "titleEn": "Market Intelligence Seekers",
+      "summaryLinesEn": [
+        "Read blog How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business.",
+        "Growing your company means understanding and expanding your Total Addressable Market.",
+        "For nearly 60 years, IDC has worked with tech companies to help identify new marketing opportunities and channels."
+      ],
+      "summaryRoles": [
+        "fact",
+        "implication",
+        "implication"
+      ],
+      "summary": "Read blog How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business.\nGrowing your company means understanding and expanding your Total Addressable Market.\nFor nearly 60 years, IDC has worked with tech companies to help identify new marketing opportunities and channels.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-16T04:00:52.271Z",
+        "originalUrl": "https://www.idc.com/research/emerging-vendor/market-intelligence-seekers/",
+        "resolvedUrl": "https://www.idc.com/research/emerging-vendor/market-intelligence-seekers/",
+        "canonicalUrl": "https://www.idc.com/research/emerging-vendor/market-intelligence-seekers/",
+        "headline": "Market Intelligence Seekers",
+        "description": "IDC examines consumer markets by devices, applications, networks, and services to provide complete solutions for succeeding in these expanding markets.",
+        "paragraphs": [
+          "To grow your company, you need to know the real time trends for your key markets, competitors, and customers to develop the right growth strategy for your business. IDC’s proprietary data can provide you with the information you need to make strategic business decisions.",
+          "Growing your company means understanding and expanding your Total Addressable Market. For nearly 60 years, IDC has worked with tech companies to help identify new marketing opportunities and channels. Our analysts work with you to develop marketing and sales enablement tools to drive top of funnel growth.",
+          "Staying top of mind to changes and trends in the industry can give you a competitive advantage in the market. IDC’s predictive analysis can help you anticipate future tech trends, consumer behavior changes, and innovative customer solutions.",
+          "We are not a household name; we need partners that can help convey the message and validate the position about our company and industry.",
+          "IDC Emerging Vendor solutions for growth-minded tech companies",
+          "Designed with growing tech companies in mind, IDC’s Emerging Vendor Program offers the flexibility to build a partnership with IDC that meets the strategic goals of your company.",
+          "Unparalleled access to IDC’s gold-standard data and research to shape your competitive positioning and growth opportunities",
+          "Consultations with any of IDC’s 1,000+ market experts to gain insights into competitive intelligence, market predictions, product evaluations, and more",
+          "Extensive knowledge of channel/partner strategies and market forecasts",
+          "Dedicated Customer Support to help you navigate your IDC Experience",
+          "For more examples of actionable insights from IDC analysts visit our Resource center .",
+          "The future of content marketing: Exploring generative AI techniques The future of content marketing: Exploring generative AI techniques Find out how to incorporate generative AI into your content marketing and achieve better results, faster. Explore now",
+          "From downturn to funding success: The entrepreneur's handbook for raising capital From downturn to funding success: The entrepreneur's handbook for raising capital Get armed with the right knowledge and strategy and learn about proven and innovative ways to secure investors. Get your copy",
+          "Transform your business with generative AI Transform your business with generative AI Generative AI can be hugely beneficial to companies. Learn the possibilities and understand the limits of this technology to future-proof your business. Transform now",
+          "AI Everywhere: How Empathetic Generative AI Transforms Content Creation Processes AI Everywhere: How Empathetic Generative AI Transforms Content Creation Processes Discover how empathetic generative AI revolutionizes content creation and explore analyst-approved actions to take today. Read blog",
+          "How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business. Read our blog for key actions you can take today to grow your market tomorrow. Read blog"
+        ],
+        "text": "To grow your company, you need to know the real time trends for your key markets, competitors, and customers to develop the right growth strategy for your business. IDC’s proprietary data can provide you with the information you need to make strategic business decisions.\n\nGrowing your company means understanding and expanding your Total Addressable Market. For nearly 60 years, IDC has worked with tech companies to help identify new marketing opportunities and channels. Our analysts work with you to develop marketing and sales enablement tools to drive top of funnel growth.\n\nStaying top of mind to changes and trends in the industry can give you a competitive advantage in the market. IDC’s predictive analysis can help you anticipate future tech trends, consumer behavior changes, and innovative customer solutions.\n\nWe are not a household name; we need partners that can help convey the message and validate the position about our company and industry.\n\nIDC Emerging Vendor solutions for growth-minded tech companies\n\nDesigned with growing tech companies in mind, IDC’s Emerging Vendor Program offers the flexibility to build a partnership with IDC that meets the strategic goals of your company.\n\nUnparalleled access to IDC’s gold-standard data and research to shape your competitive positioning and growth opportunities\n\nConsultations with any of IDC’s 1,000+ market experts to gain insights into competitive intelligence, market predictions, product evaluations, and more\n\nExtensive knowledge of channel/partner strategies and market forecasts\n\nDedicated Customer Support to help you navigate your IDC Experience\n\nFor more examples of actionable insights from IDC analysts visit our Resource center .\n\nThe future of content marketing: Exploring generative AI techniques The future of content marketing: Exploring generative AI techniques Find out how to incorporate generative AI into your content marketing and achieve better results, faster. Explore now\n\nFrom downturn to funding success: The entrepreneur's handbook for raising capital From downturn to funding success: The entrepreneur's handbook for raising capital Get armed with the right knowledge and strategy and learn about proven and innovative ways to secure investors. Get your copy\n\nTransform your business with generative AI Transform your business with generative AI Generative AI can be hugely beneficial to companies. Learn the possibilities and understand the limits of this technology to future-proof your business. Transform now\n\nAI Everywhere: How Empathetic Generative AI Transforms Content Creation Processes AI Everywhere: How Empathetic Generative AI Transforms Content Creation Processes Discover how empathetic generative AI revolutionizes content creation and explore analyst-approved actions to take today. Read blog\n\nHow to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business. Read our blog for key actions you can take today to grow your market tomorrow. Read blog",
+        "contentHash": "c50e73544411b74f9e7fd356a666e6e1c077c77d7a055e3e181044e1515135ba",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.idc.com/research/emerging-vendor/market-intelligence-seekers/",
+      "collectedAt": "2026-08-16T04:00:57.469Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "f57c926a1ffe906fa55c6da4ade0f96af917db71d6eccb401bcff3f690be4035",
+        "sourceLines": [
+          "Read blog How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business.",
+          "Growing your company means understanding and expanding your Total Addressable Market.",
+          "For nearly 60 years, IDC has worked with tech companies to help identify new marketing opportunities and channels."
+        ],
+        "checkedAt": "2026-08-16T04:19:34.319407+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "fallback-english",
+        "displayLanguage": "en",
+        "title": "Market Intelligence Seekers",
+        "summaryLines": [
+          "Read blog How to grow your total addressable market in today’s economy How to grow your total addressable market in today’s economy Understanding your total addressable market (TAM) is crucial for the growth of your business",
+          "Growing your company means understanding and expanding your Total Addressable Market",
+          "For nearly 60 years, IDC has worked with tech companies to help identify new marketing opportunities and channels"
+        ],
+        "summaryRoles": [
+          "fact",
+          "implication",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": [
+          "korean-quality-gate-failed"
+        ]
+      },
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-16T04:48:15.719Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
+    },
+    {
+      "date": "2026-08-04",
       "co": "GitHub",
       "cat": "native",
       "source": "GitHub AI and ML",
@@ -36597,6 +37191,110 @@
         "arXiv 커뮤니티에 가치를 더할 프로젝트에 대한 아이디어가 있습니까",
         "arXivLabs와 협력하는 개인과 조직 모두 개방성, 커뮤니티, 우수성 및 사용자 데이터 개인 정보 보호에 대한 우리의 가치를 수용하고 받아들였음 · arXiv는 이러한 가치를 약속하며 이를 준수하는 파트너와만 협력함"
       ]
+    },
+    {
+      "date": "2026-08-03",
+      "co": "IDC",
+      "cat": "native",
+      "source": "IDC Research",
+      "title": "CIO Executive Council Resources",
+      "url": "https://www.idc.com/research/tech-buyer/leadership-and-development/cio-executive-council/resources",
+      "tag": "research-release",
+      "evidenceTier": "official",
+      "sourceType": "official-sitemap",
+      "titleEn": "CIO Executive Council Resources",
+      "summaryLinesEn": [
+        "This IDC Survey Spotlight, prepared by Gina Smith , PhD, Senior Research Director, IT Skills for Digital Business, examines data from IDC’s 2026 Future Enterprise Resiliency and Spending Survey to explore how organizations are grappling with IT skills validation across four key regions: North America, Asia Pacific, Western Europe, and the Middle East and North Africa.",
+        "As AI becomes integral to enterprise operations, CIOs are shifting focus from rapid deployment to engineering sustainable AI economics.",
+        "The survey highlights that leadership perspectives on modernization priorities, business drivers, obstacles, IT budget allocation, decision criteria, data architecture maturity, data quality, and the data-related initiatives organizations are prioritizing to enable AI use cases over the next 12–18 months."
+      ],
+      "summaryRoles": [
+        "fact",
+        "change",
+        "implication"
+      ],
+      "summary": "This IDC Survey Spotlight, prepared by Gina Smith , PhD, Senior Research Director, IT Skills for Digital Business, examines data from IDC’s 2026 Future Enterprise Resiliency and Spending Survey to explore how organizations are grappling with IT skills validation across four key regions: North America, Asia Pacific, Western Europe, and the Middle East and North Africa.\nAs AI becomes integral to enterprise operations, CIOs are shifting focus from rapid deployment to engineering sustainable AI economics.\nThe survey highlights that leadership perspectives on modernization priorities, business drivers, obstacles, IT budget allocation, decision criteria, data architecture maturity, data quality, and the data-related initiatives organizations are prioritizing to enable AI use cases over the next 12–18 months.",
+      "summaryVersion": 5,
+      "summaryMode": "source-content-extractive",
+      "summaryEngine": "source-content-extractive",
+      "displayEligible": true,
+      "sourceContent": {
+        "version": 1,
+        "status": "content-extracted",
+        "retrievedAt": "2026-08-16T04:00:53.315Z",
+        "originalUrl": "https://www.idc.com/research/tech-buyer/leadership-and-development/cio-executive-council/resources/",
+        "resolvedUrl": "https://www.idc.com/research/tech-buyer/leadership-and-development/cio-executive-council/resources/",
+        "canonicalUrl": "https://www.idc.com/research/tech-buyer/leadership-and-development/cio-executive-council/resources/",
+        "headline": "CIO Executive Council Resources",
+        "paragraphs": [
+          "The CIO Executive Council is an exclusive, member-only community of CIOs activating empowerment and transformation through a distinctive blend of networking, events, and relevant resources.",
+          "How Does Agentic AI Change AI Spend Control and Governance Expectations?",
+          "This IDC Survey Spotlight, prepared by Neil Ward-Dutton, Research VP, Agentic Automation & AI Technologies, explores how organizations see agentic AI developments impacting AI spend control and governance and provides guidance to agentic AI platform vendors to help them effectively reflect and respond to enterprise concerns about the potential cost implications of agentic AI.",
+          "This report explores the results of IDC’s CIO/CTO Pulse Survey on Technology Modernization and Data Readiness to provide insights into how senior IT leaders are approaching technology modernization and data readiness in the context of scaling AI initiatives. The survey highlights that leadership perspectives on modernization priorities, business drivers, obstacles, IT budget allocation, decision criteria, data architecture maturity, data quality, and the data-related initiatives organizations are prioritizing to enable AI use cases over the next 12–18 months. This analysis is based on the full international set of respondents from IDC’s CIO/CTO Pulse Survey on Technology Modernization and Data Readiness.",
+          "Engineering Sustainable AI Economics in the Agentic Era",
+          "This IDC study highlights the growing complexity of AI cost structures, the impact of agentic AI on resource consumption, and the need for robust cost governance. As AI becomes integral to enterprise operations, CIOs are shifting focus from rapid deployment to engineering sustainable AI economics. Best practices include early FinOps integration, architectural optimization, and disciplined vendor management to ensure measurable business value and cost efficiency as AI adoption scales.",
+          "Effective Agent Cost Management: A Practitioner's Framework for Planning, Sourcing, Implementation, and Operations",
+          "This IDC Perspective, prepared by Robert Parker, Shari Lava, Daniel Saroff, Stephen Elliot, Jevin Jensen, Heather Herbst, Tiffany McCormick, Alessandro Perilli, Teodora Snoddy, and Tim Law, details a framework built for practitioners: architects, platform engineers, and product managers deploying agents at scale who need a repeatable approach to controlling costs without stifling innovation. It is also intended for technology and business leaders who need to understand how to govern AI consumption without slowing down the teams building on it.",
+          "Regional and Local AI: Moving Fast, Scaling Deliberately",
+          "This IDC presentation, prepared by Alison Brooks, PhD, Research Vice President, Worldwide Public Safety, and Ruthbea Yesner, GVP, Government Insights, Education & Smart Cities, analyzes how U.S. regional and local governments are moving AI from pilot to production. The study draws on an IDC survey of 383 senior IT and non–IT leaders across state agencies, counties, and municipalities, combined with analysis of publicly disclosed AI use cases from state CIO offices, NASCIO reporting, and municipal AI inventories.",
+          "This IDC Perspective, authored by Dr. Ron Babin, adjunct research advisor for IDC’s IT Executive Programs, explains that as IT portfolios grow in complexity — driven by SaaS sprawl, cloud proliferation, and decentralized procurement — vendor rationalization has become a strategic imperative for CIOs. This document addresses three questions: Why to rationalize, when to act, and how to execute? The document presents a phased framework anchored in AI-powered discovery, the 4R decision model, TCO modeling, and continuous governance — transforming rationalization from a periodic exercise into a living capability that reduces costs, mitigates risk, and builds a resilient IT supply chain.",
+          "This IDC Survey Spotlight, prepared by Gina Smith , PhD, Senior Research Director, IT Skills for Digital Business, examines data from IDC’s 2026 Future Enterprise Resiliency and Spending Survey to explore how organizations are grappling with IT skills validation across four key regions: North America, Asia Pacific, Western Europe, and the Middle East and North Africa.",
+          "Elevating Technology Team Performance: Actionable Models for Upskilling and Leadership",
+          "This IDC Perspective, authored by Niel Nickolaisen, adjunct research advisor for IDC’s IT Executive Programs, describes specific models and tools that leaders can use for the internal upskilling and talent development of the current members of a technology organization. IDC data indicates that upskilling and developing the technology team are consistent priorities for technology leaders. Team development is built around individual development plans that align the talent and interests of technology team members with the evolving needs of the organization in an intentional and consistent way.",
+          "This IDC Perspective, prepared by Rick Villars, Group Vice President Worldwide Research, and Teodora Snoddy, Research Manager, CIO and CTO Buyer Insights, discusses the CIO peer perspective on IT market outlook and leadership in uncertain times. This year, economic consequences from policy decisions are materializing, and geopolitical consequences are unfolding amid tension from unpredictable world leaders. C-suite executives are leaning on their CIO and technology teams to navigate uncertainty, using technology to enable strategic decision-making and sustain operational resilience.",
+          "Navigating Semiconductor Scarcity: Protecting Mission-Critical Technology in the Public Sector",
+          "Semiconductor shortages fueled by AI infrastructure demand are no longer a temporary disruption — and state and local governments are bearing the consequences. This presentation examines what structural semiconductor scarcity means for government technology planning through 2027, and how agencies can reduce risk, protect budgets, and sustain service continuity in an increasingly constrained supply environment.",
+          "As AI increasingly shapes decisions, strategy, and execution, weak thinking is amplified—not replaced. This 60‑minute moderated panel was designed to help leaders move beyond basic AI adoption toward true AI readiness, with a central focus on the critical thinking skills required to work effectively with AI."
+        ],
+        "text": "The CIO Executive Council is an exclusive, member-only community of CIOs activating empowerment and transformation through a distinctive blend of networking, events, and relevant resources.\n\nHow Does Agentic AI Change AI Spend Control and Governance Expectations?\n\nThis IDC Survey Spotlight, prepared by Neil Ward-Dutton, Research VP, Agentic Automation & AI Technologies, explores how organizations see agentic AI developments impacting AI spend control and governance and provides guidance to agentic AI platform vendors to help them effectively reflect and respond to enterprise concerns about the potential cost implications of agentic AI.\n\nThis report explores the results of IDC’s CIO/CTO Pulse Survey on Technology Modernization and Data Readiness to provide insights into how senior IT leaders are approaching technology modernization and data readiness in the context of scaling AI initiatives. The survey highlights that leadership perspectives on modernization priorities, business drivers, obstacles, IT budget allocation, decision criteria, data architecture maturity, data quality, and the data-related initiatives organizations are prioritizing to enable AI use cases over the next 12–18 months. This analysis is based on the full international set of respondents from IDC’s CIO/CTO Pulse Survey on Technology Modernization and Data Readiness.\n\nEngineering Sustainable AI Economics in the Agentic Era\n\nThis IDC study highlights the growing complexity of AI cost structures, the impact of agentic AI on resource consumption, and the need for robust cost governance. As AI becomes integral to enterprise operations, CIOs are shifting focus from rapid deployment to engineering sustainable AI economics. Best practices include early FinOps integration, architectural optimization, and disciplined vendor management to ensure measurable business value and cost efficiency as AI adoption scales.\n\nEffective Agent Cost Management: A Practitioner's Framework for Planning, Sourcing, Implementation, and Operations\n\nThis IDC Perspective, prepared by Robert Parker, Shari Lava, Daniel Saroff, Stephen Elliot, Jevin Jensen, Heather Herbst, Tiffany McCormick, Alessandro Perilli, Teodora Snoddy, and Tim Law, details a framework built for practitioners: architects, platform engineers, and product managers deploying agents at scale who need a repeatable approach to controlling costs without stifling innovation. It is also intended for technology and business leaders who need to understand how to govern AI consumption without slowing down the teams building on it.\n\nRegional and Local AI: Moving Fast, Scaling Deliberately\n\nThis IDC presentation, prepared by Alison Brooks, PhD, Research Vice President, Worldwide Public Safety, and Ruthbea Yesner, GVP, Government Insights, Education & Smart Cities, analyzes how U.S. regional and local governments are moving AI from pilot to production. The study draws on an IDC survey of 383 senior IT and non–IT leaders across state agencies, counties, and municipalities, combined with analysis of publicly disclosed AI use cases from state CIO offices, NASCIO reporting, and municipal AI inventories.\n\nThis IDC Perspective, authored by Dr. Ron Babin, adjunct research advisor for IDC’s IT Executive Programs, explains that as IT portfolios grow in complexity — driven by SaaS sprawl, cloud proliferation, and decentralized procurement — vendor rationalization has become a strategic imperative for CIOs. This document addresses three questions: Why to rationalize, when to act, and how to execute? The document presents a phased framework anchored in AI-powered discovery, the 4R decision model, TCO modeling, and continuous governance — transforming rationalization from a periodic exercise into a living capability that reduces costs, mitigates risk, and builds a resilient IT supply chain.\n\nThis IDC Survey Spotlight, prepared by Gina Smith , PhD, Senior Research Director, IT Skills for Digital Business, examines data from IDC’s 2026 Future Enterprise Resiliency and Spending Survey to explore how organizations are grappling with IT skills validation across four key regions: North America, Asia Pacific, Western Europe, and the Middle East and North Africa.\n\nElevating Technology Team Performance: Actionable Models for Upskilling and Leadership\n\nThis IDC Perspective, authored by Niel Nickolaisen, adjunct research advisor for IDC’s IT Executive Programs, describes specific models and tools that leaders can use for the internal upskilling and talent development of the current members of a technology organization. IDC data indicates that upskilling and developing the technology team are consistent priorities for technology leaders. Team development is built around individual development plans that align the talent and interests of technology team members with the evolving needs of the organization in an intentional and consistent way.\n\nThis IDC Perspective, prepared by Rick Villars, Group Vice President Worldwide Research, and Teodora Snoddy, Research Manager, CIO and CTO Buyer Insights, discusses the CIO peer perspective on IT market outlook and leadership in uncertain times. This year, economic consequences from policy decisions are materializing, and geopolitical consequences are unfolding amid tension from unpredictable world leaders. C-suite executives are leaning on their CIO and technology teams to navigate uncertainty, using technology to enable strategic decision-making and sustain operational resilience.\n\nNavigating Semiconductor Scarcity: Protecting Mission-Critical Technology in the Public Sector\n\nSemiconductor shortages fueled by AI infrastructure demand are no longer a temporary disruption — and state and local governments are bearing the consequences. This presentation examines what structural semiconductor scarcity means for government technology planning through 2027, and how agencies can reduce risk, protect budgets, and sustain service continuity in an increasingly constrained supply environment.\n\nAs AI increasingly shapes decisions, strategy, and execution, weak thinking is amplified—not replaced. This 60‑minute moderated panel was designed to help leaders move beyond basic AI adoption toward true AI readiness, with a central focus on the critical thinking skills required to work effectively with AI.\n\nCoding by Prompt is Coming to Your Business Units: What CIOs Should Do Next\n\nIn this blog, author Gerald Johnston, Adjunct Research Advisor, IDC, examines the growing complexity of the CIO role. He shares “IT has never been an easy job for CIOs and their teams. There’s the day-to-day reality of running the business, keeping systems available, managing risk, supporting customers, and delivering new capabilities. At the same time, CIOs are expected to keep pace with both the evolution of existing technologies and the steady stream of new ones entering the market. Some of the toughest challenges aren’t technical. They come from friction across roles, overlap, turf, and unclear ownership across IT and the business.” Johnston then considers how AI can help on the technology, while also introducing a new set of challenges.\n\nHow Are Regional and Industry Differences Shaping Onsite Work Strategies in 2026?\n\nThis IDC Survey Spotlight, prepared by Amy Loomis, Ph.D. and Wayne Kurtzman, ‘examines how regional and industry differences are shaping onsite workplace strategies for 2026. Findings highlight three global priorities — redesigning meeting spaces, adding office AI tools, and optimizing space via subleasing — with clear regional variation (APAC strongest on redesign/subleasing, North America on AI tools, and EMEA more balanced).’\n\nAs AI transforms how organizations operate, technology leaders play a pivotal role in shaping the cultural response. Within this presentation, Frank Feagans, former VP IT & CIO, University of Texas at Dallas, examines the ways in which AI adoption affects team dynamics, decision-making, and leadership models. He also shares how to foster a culture of innovation, trust, and ethical AI use to ensure your organization thrives in an AI-driven future.\n\nAI Process Optimization to Maximize Benefits and Avoid Risk\n\n“Embedding AI into business processes has tremendous potential, but it also can introduce increased risk without the right preparation,” says Karen D. Schwartz, adjunct research analyst, IDC’s IT Executive Programs (IEP). “It’s critical to ensure that processes are ready for AI, along with choosing the best use cases, because some processes aren’t good candidates.”\n\nEnterprise Core Platforms: Stewardship, Integration Risk, and Strategic CIO Decisions\n\nThis IDC Perspective, written by Clay Miller, Senior Executive Advisor, maintains that most organizations are solving the wrong problem in core platform decisions. By treating these commitments as onetime procurement events that optimize for current feature sets and initial pricing, enterprises defer the governance decisions that will actually determine long-term outcomes. In an environment where more than half of organizations are considering switching their primary ERP or CRM vendor, where 68% of CIOs are running active vendor consolidation initiatives, and where 40% of organizations are already projected to miss their 2026 AI goals because of implementation complexity and governance gaps, the cost of this deferral is rising sharply.\n\nAI Agents That Deliver Value: What’s Required for Scale and Safety\n\nAgentic AI in State and Local Government: Strategic Choices for Scaling AI\n\nBuilding High-Performance Teams in the Age of AI and Rapid Change",
+        "contentHash": "d91f2c3d6bc29c36a3580cd180911144e36320650f9ca76366aa4fa6bbe68939",
+        "selectionVersion": 7
+      },
+      "rssUrl": "https://www.idc.com/research/tech-buyer/leadership-and-development/cio-executive-council/resources/",
+      "collectedAt": "2026-08-16T04:00:57.470Z",
+      "needsLLM": false,
+      "localization": {
+        "version": 14,
+        "sourceHash": "b7b2fc412d3787f237189d6c0363e9f3ed4060ac39fe376dbeac24a947e8b070",
+        "sourceLines": [
+          "This IDC Survey Spotlight, prepared by Gina Smith , PhD, Senior Research Director, IT Skills for Digital Business, examines data from IDC’s 2026 Future Enterprise Resiliency and Spending Survey to explore how organizations are grappling with IT skills validation across four key regions: North America, Asia Pacific, Western Europe, and the Middle East and North Africa.",
+          "As AI becomes integral to enterprise operations, CIOs are shifting focus from rapid deployment to engineering sustainable AI economics.",
+          "The survey highlights that leadership perspectives on modernization priorities, business drivers, obstacles, IT budget allocation, decision criteria, data architecture maturity, data quality, and the data-related initiatives organizations are prioritizing to enable AI use cases over the next 12–18 months."
+        ],
+        "checkedAt": "2026-08-16T04:16:34.320764+00:00",
+        "method": "source-fragment-translation",
+        "sourceLanguage": "English",
+        "status": "accepted",
+        "displayLanguage": "ko",
+        "title": "CIO 집행위원회 리소스",
+        "summaryLines": [
+          "디지털 비즈니스를 위한 IT 기술 부문 수석 연구 책임자인 Gina Smith 박사가 준비한 이 IDC 설문조사 스포트라이트는 IDC의 2026년 미래 기업 탄력성 및 지출 설문조사의 데이터를 조사하여 북미, 아시아 태평양, 서유럽, 중동 및 북아프리카 등 4개 주요 지역에서 조직이 IT 기술 검증과 어떻게 씨름하고 있는지 살펴봄",
+          "AI가 기업 운영에 필수가 되면서 CIO는 신속한 배포에서 지속 가능한 AI 경제성 엔지니어링으로 초점을 전환하고 있음",
+          "설문조사에서는 조직이 향후 12~18개월 동안 AI 사용 사례를 활성화하기 위해 우선순위를 정하는 현대화 우선 순위, 비즈니스 동인, 장애물, IT 예산 할당, 결정 기준, 데이터 아키텍처 성숙도, 데이터 품질 및 데이터 관련 이니셔티브에 대한 리더십 관점을 강조함"
+        ],
+        "summaryRoles": [
+          "fact",
+          "change",
+          "implication"
+        ],
+        "provider": "public-source-translation",
+        "issues": []
+      },
+      "titleKo": "CIO 집행위원회 리소스",
+      "summaryLinesKo": [
+        "디지털 비즈니스를 위한 IT 기술 부문 수석 연구 책임자인 Gina Smith 박사가 준비한 이 IDC 설문조사 스포트라이트는 IDC의 2026년 미래 기업 탄력성 및 지출 설문조사의 데이터를 조사하여 북미, 아시아 태평양, 서유럽, 중동 및 북아프리카 등 4개 주요 지역에서 조직이 IT 기술 검증과 어떻게 씨름하고 있는지 살펴봄",
+        "AI가 기업 운영에 필수가 되면서 CIO는 신속한 배포에서 지속 가능한 AI 경제성 엔지니어링으로 초점을 전환하고 있음",
+        "설문조사에서는 조직이 향후 12~18개월 동안 AI 사용 사례를 활성화하기 위해 우선순위를 정하는 현대화 우선 순위, 비즈니스 동인, 장애물, IT 예산 할당, 결정 기준, 데이터 아키텍처 성숙도, 데이터 품질 및 데이터 관련 이니셔티브에 대한 리더십 관점을 강조함"
+      ],
+      "provenance": {
+        "status": "source-backed",
+        "evidenceType": "publisher-page-text",
+        "summaryMode": "source-content-extractive",
+        "verificationTier": "publisher-page-extractive",
+        "checkedAt": "2026-08-16T04:48:15.719Z",
+        "issues": [],
+        "unsupportedNumbers": []
+      }
     },
     {
       "date": "2026-08-03",
