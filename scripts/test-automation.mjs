@@ -1361,8 +1361,9 @@ try {
     && boards.includes("Experience · Agent · Model · Context · Developer Tool · Edge Runtime")
     && boards.includes('SignalInfographic file="infra-view.json"')
     && styles.includes(".isg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));")
-    && styles.includes(".isg-card:hover {")
-    && styles.includes(".isg-card:hover::after { opacity: 1; }")
+    && styles.includes(".isg-card:hover, .isg-card:focus-within {")
+    && styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { opacity: 0; }")
+    && styles.includes("Non-inverting signal-card interaction contract")
     && styles.includes("@media (prefers-reduced-motion: reduce)")
     && !styles.includes(".isg-summary li { position: relative; min-width: 0; padding-left: 10px; font-size: 11px; font-weight: 600; line-height: 1.45; color: var(--muted); word-break: keep-all; display: -webkit-box;");
   if (!readableSignals) {

@@ -107,7 +107,7 @@ body {
   color: #1D4ED8; font-weight: 800; padding: 0 1px; border-radius: 2px;
   background: linear-gradient(transparent 60%, rgba(255,212,0,.52) 60%, rgba(255,212,0,.52) 95%, transparent 95%);
 }
-[data-theme="dark"] .num-hl { background: linear-gradient(transparent 60%, rgba(255,212,0,.2) 60%, rgba(255,212,0,.2) 95%, transparent 95%); }
+[data-theme="dark"] .num-hl { color: #8BD2E8; background: linear-gradient(transparent 60%, rgba(255,212,0,.2) 60%, rgba(255,212,0,.2) 95%, transparent 95%); }
 [data-theme="dark"] .term-hl { color: #9FC0FF; background: linear-gradient(transparent 60%, rgba(255,212,0,.30) 60%, rgba(255,212,0,.30) 95%, transparent 95%); }
 .ct-row:hover .num-hl, .art:hover .num-hl { color: #FFE76A; background: none; }
 .ct-row:hover .term-hl, .art:hover .term-hl { color: #FFF4A3; background: linear-gradient(transparent 60%, rgba(255,212,0,.58) 60%, rgba(255,212,0,.58) 95%, transparent 95%); }
@@ -1551,21 +1551,30 @@ a[href]:hover .rainbow-on-hover,
   transition: background .12s, box-shadow .15s, outline-color .15s; position: relative;
   outline: 2px solid transparent; outline-offset: -2px; cursor: pointer;
 }
-.art:hover { background: linear-gradient(115deg, var(--accent, #2A6FDB) 0%, color-mix(in srgb, var(--accent, #2A6FDB) 58%, #000) 60%, color-mix(in srgb, var(--accent, #2A6FDB) 40%, #000) 100%); }
+.art:hover, .art:focus-within {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent, #2A6FDB) 7%, var(--panel));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent, #2A6FDB) 42%, var(--line));
+}
 /* 클릭 선택 시: 색상 반전(호버와 동일) + 외곽선 박스 */
-.art-sel { background: linear-gradient(115deg, var(--accent, #2A6FDB) 0%, color-mix(in srgb, var(--accent, #2A6FDB) 58%, #000) 60%, color-mix(in srgb, var(--accent, #2A6FDB) 40%, #000) 100%); outline-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent), var(--shadow-lg); }
-.art-sel .art-title { color: #fff; }
-.art-sel .art-src { color: #fff; }
-.art-sel .art-summary { color: rgba(255,255,255,.82); }
-.art-sel .art-catname { color: rgba(255,255,255,.7); }
-.art-sel .art-date { color: #fff; background: rgba(255,255,255,.18); border-color: transparent; }
-.art-sel .art-co { color: #fff !important; border-color: rgba(255,255,255,.6) !important; }
+.art-sel {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent, #2A6FDB) 9%, var(--panel));
+  outline-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent), var(--shadow-lg);
+}
+.art-sel .art-title { color: var(--ink); }
+.art-sel .art-src { color: var(--ink-2); }
+.art-sel .art-summary { color: var(--ink-2); }
+.art-sel .art-catname { color: var(--muted); }
+.art-sel .art-date { color: var(--ink-2); background: var(--panel-2); border-color: var(--line-2); }
+.art-sel .art-co { color: var(--accent) !important; border-color: var(--accent) !important; }
 .art-sel .art-del { opacity: 1; }
-.art-sel .num-hl { color: #FFE76A; background: none; }
+.art-sel .num-hl { color: var(--accent); background: linear-gradient(transparent 60%, rgba(255,212,0,.42) 60%, rgba(255,212,0,.42) 95%, transparent 95%); }
 .art-src, .art-summary { transition: color .15s; }
-.art:hover .art-src { color: #fff; }
-.art:hover .art-summary { color: rgba(255,255,255,.82); }
-.art:hover .art-catname { color: rgba(255,255,255,.7); }
+.art:hover .art-src, .art:focus-within .art-src { color: var(--ink-2); }
+.art:hover .art-summary, .art:focus-within .art-summary { color: var(--ink-2); }
+.art:hover .art-catname, .art:focus-within .art-catname { color: var(--muted); }
 .art-cat { width: 3px; align-self: stretch; border-radius: 3px; flex-shrink: 0; }
 .art-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 /* 기사 제목·요약 텍스트는 드래그 선택/복사 가능하게(링크 안이라도) */
@@ -1584,7 +1593,10 @@ a[href]:hover .rainbow-on-hover,
 .art-sum-line { display: block; position: relative; padding-left: 16px; margin-top: 2px; }
 .art-sum-line::before { content: "•"; position: absolute; left: 2px; top: 0; color: var(--accent); font-size: 11px; font-weight: 900; }
 .art-insight-role { display: inline-block; margin: 0 6px 0 0; padding: 1px 5px; border-radius: 4px; color: color-mix(in srgb, var(--accent) 82%, var(--ink)); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); font-size: 9px; font-style: normal; font-weight: 850; letter-spacing: .01em; line-height: 1.35; vertical-align: 1px; }
-.art:hover .art-insight-role, .art-sel .art-insight-role { color: #fff; background: rgba(255,255,255,.18); }
+.art:hover .art-insight-role, .art:focus-within .art-insight-role, .art-sel .art-insight-role {
+  color: color-mix(in srgb, var(--accent) 82%, var(--ink));
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+}
 .d-compact .art-summary { display: none; }
 .feed-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-top: 4px; }
 .feed-list .art { min-width: 0; align-items: stretch; border: 1px solid transparent; }
@@ -1593,7 +1605,7 @@ a[href]:hover .rainbow-on-hover,
   font-size: 10.5px; color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums;
   white-space: nowrap; padding: 1px 7px; border-radius: 5px; background: var(--panel-2); border: 1px solid var(--line-2);
 }
-.art:hover .art-date { color: #fff; background: rgba(255,255,255,.18); border-color: transparent; }
+.art:hover .art-date, .art:focus-within .art-date { color: var(--ink-2); background: var(--panel-2); border-color: var(--line-2); }
 /* .art:hover .art-title color handled by rainbow animation */
 .art > svg { color: var(--muted); flex-shrink: 0; opacity: 0; transition: opacity .12s; }
 .art:hover > svg { opacity: 1; }
@@ -2787,7 +2799,7 @@ a[href]:hover .rainbow-on-hover,
   font-size: 9.5px; font-weight: 800; padding: 1px 7px; border-radius: 4px;
   border: 1px solid currentColor; white-space: nowrap;
 }
-.art:hover .art-co { color: #fff !important; border-color: rgba(255,255,255,.6) !important; }
+.art:hover .art-co, .art:focus-within .art-co { color: var(--accent) !important; border-color: var(--accent) !important; }
 .art-del {
   flex-shrink: 0; width: 26px; height: 26px; border-radius: 7px;
   border: 1px solid var(--line); background: var(--panel); color: var(--muted);
@@ -3735,7 +3747,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 }
 .isg-card::after {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0;
-  background: linear-gradient(125deg, color-mix(in srgb, var(--gc, var(--accent)) 90%, #07111F), color-mix(in srgb, var(--gc, var(--accent)) 64%, #07111F));
+  background: transparent;
   transition: opacity .26s ease;
 }
 .isg-card-top { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 9px; padding-right: 20px; }
@@ -3751,24 +3763,28 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .isg-summary li::before { content: "•"; position: absolute; left: 0; color: var(--gc, var(--accent)); font-weight: 900; }
 .isg-card .ct-del { position: absolute; top: 8px; right: 8px; float: none; margin: 0; }
 @media (hover: hover) {
-  .isg-card:hover {
+  /* Non-inverting signal-card interaction contract: background, foreground,
+     rich-text highlights and source links remain readable in both themes. */
+  .isg-card:hover, .isg-card:focus-within {
     transform: translateY(-4px) scale(1.006);
-    background: color-mix(in srgb, var(--gc, var(--accent)) 58%, #07111F);
-    border-color: color-mix(in srgb, var(--gc, var(--accent)) 70%, #fff);
+    color: var(--ink);
+    background: color-mix(in srgb, var(--gc, var(--accent)) 7%, var(--panel));
+    border-color: color-mix(in srgb, var(--gc, var(--accent)) 58%, var(--line));
     box-shadow: 0 14px 28px color-mix(in srgb, var(--gc, var(--accent)) 24%, transparent);
   }
-  .isg-card:hover::after { opacity: 1; }
-  .isg-card:hover .isg-src, .isg-card:hover .isg-src a,
-  .isg-card:hover .isg-lead, .isg-card:hover .isg-lead:hover,
-  .isg-card:hover .isg-summary li { color: #fff; }
-  .isg-card:hover .isg-summary li::before { color: rgba(255,255,255,.78); }
-  .isg-card:hover .isg-quant {
-    color: color-mix(in srgb, var(--gc, var(--accent)) 85%, #07111F);
-    background: rgba(255,255,255,.96); border-color: rgba(255,255,255,.96);
+  .isg-card:hover::after, .isg-card:focus-within::after { opacity: 0; }
+  :is(.isg-card:hover, .isg-card:focus-within) :is(.isg-src, .isg-src a) { color: var(--muted); }
+  :is(.isg-card:hover, .isg-card:focus-within) .isg-lead { color: var(--ink); }
+  :is(.isg-card:hover, .isg-card:focus-within) .isg-summary li { color: var(--ink-2); }
+  :is(.isg-card:hover, .isg-card:focus-within) .isg-summary li::before { color: var(--gc, var(--accent)); }
+  :is(.isg-card:hover, .isg-card:focus-within) .isg-quant {
+    color: color-mix(in srgb, var(--gc, var(--accent)) 78%, var(--ink));
+    background: var(--panel); border-color: color-mix(in srgb, var(--gc, var(--accent)) 70%, var(--line));
     transform: translateY(-1px);
   }
-  .isg-card:hover .term-hl, .isg-card:hover .num-hl { color: #fff; background: none; }
-  .isg-card:hover .ct-del { color: #fff; border-color: rgba(255,255,255,.45); background: rgba(255,255,255,.12); }
+  :is(.isg-card:hover, .isg-card:focus-within) .term-hl { color: #1D4ED8; }
+  :is(.isg-card:hover, .isg-card:focus-within) .num-hl { color: var(--gc, var(--accent)); }
+  :is(.isg-card:hover, .isg-card:focus-within) .ct-del { color: var(--ink-2); border-color: var(--line); background: var(--panel); }
 }
 @media (prefers-reduced-motion: reduce) {
   .isg-card, .isg-card::after, .isg-card:hover .isg-quant { transition: none; transform: none; }
@@ -6716,6 +6732,13 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     color: var(--ink-2) !important;
     -webkit-text-fill-color: currentColor !important;
     text-shadow: none !important;
+  }
+  /* A source-signal pseudo-element once restored the old dark gradient after
+     the shared light hover contract had run. Keep the overlay transparent so
+     card surfaces and their foreground tokens cannot diverge again. */
+  .isg-card:is(:hover, :focus-visible, :focus-within)::after {
+    opacity: 0 !important;
+    background: transparent !important;
   }
 }
 
