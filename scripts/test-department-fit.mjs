@@ -21,7 +21,7 @@ const [dash, strategy, opportunityDb, strategyBuilder, boards, components, app, 
 assert(strategy.sourceMode === "generated-from-verified-ledgers", "전략 화면이 생성 데이터가 아닙니다");
 assert(!Object.hasOwn(strategy, "choices"), "삭제된 우선 플레이 데이터가 전략 뷰에 남아 있습니다");
 assert(strategy.capabilities?.length === 5, "분석 툴킷은 5개 축이 필요합니다");
-assert(strategy.operatingModel?.length === 4, "사용자 신호부터 실행까지 4단계 운영 모델이 필요합니다");
+assert(!Object.hasOwn(strategy, "operatingModel"), "삭제된 4단계 운영 모델이 전략 뷰에 남아 있습니다");
 assert(strategy.decisionOutputs?.length === 4, "경영진 의사결정 산출물은 4개 축이 필요합니다");
 assert(!Object.hasOwn(strategy, "accountPortfolio"), "삭제된 경쟁 기업 포트폴리오가 전략 뷰에 남아 있습니다");
 assert(strategy.workloadMap?.length >= 5, "사용자 순간-플랫폼-사업기회 맵은 5개 이상이어야 합니다");
@@ -61,7 +61,7 @@ assert(strategy.lineage?.generatedFrom?.includes("mobile-ai-business-view.json")
 "신사업 포트폴리오의 누적 원장 lineage가 없습니다");
 assert(/Strategy consulting · user need → mobile experience → revenue → execution/.test(boards), "사용자-경험-수익-실행 컨설팅 흐름이 없습니다");
 assert(/AI Stack별 사업 판단 기준/.test(boards) && /<span>사업 Action<\/span>/.test(boards), "AI Stack 판단 기준의 간결한 제목과 실행 헤더가 필요합니다");
-assert(/zone\.question/.test(boards) && /zone\.output/.test(boards) && /zone\.gate/.test(boards), "운영 모델의 질문·산출물·게이트가 표시되지 않습니다");
+assert(!/zone\.question|zone\.output|zone\.gate|controlZones/.test(boards), "삭제된 운영 모델 렌더링이 남아 있습니다");
 assert(/msf-flow-arrow/.test(boards), "단계 전환 화살표가 없습니다");
 assert(/신사업 발굴 프레임/.test(components) && /AI 서비스 신사업/.test(components), "좌측 내비게이션이 모바일 AI 신사업 발굴 업무와 일치하지 않습니다");
 assert(/모바일 AI 신사업 발굴 인텔리전스/.test(index), "페이지 메타 정보가 모바일 AI 신사업 발굴 목적과 일치하지 않습니다");

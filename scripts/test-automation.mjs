@@ -660,7 +660,7 @@ try {
     && boards.includes("User Need → Experience → Revenue → Business Case")
     && boards.includes("Strategy &amp;")
     && boards.includes('className="msf-strategy-house"')
-    && boards.includes('className="msf-control-logic"')
+    && !boards.includes('className="msf-control-logic"')
     && boards.includes('className="msf-workload-name"')
     && styles.includes("grid-template-columns: minmax(280px, 1.35fr) minmax(220px, 1fr) 34px minmax(260px, 1.1fr) 34px minmax(240px, 1fr) minmax(210px, .9fr)")
     && styles.includes(".msf-workload-row { min-width: 1360px; }")
