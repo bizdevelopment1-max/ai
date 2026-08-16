@@ -15,6 +15,7 @@ import { consolidateMarketRecords } from "./market-consolidation.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { sanitizePublicCopy } from "./public-copy.mjs";
+import { buildStrategyView } from "./strategy-view.mjs";
 
 const root = process.cwd();
 const readJson = async file => JSON.parse(await readFile(resolve(root, file), "utf8"));
@@ -322,6 +323,33 @@ try {
   throw new Error(`Could not build overview-view.json: ${error.message}`);
 }
 
+// Strategy copy is a generated materialized view. The browser owns only the
+// visual framework; companies, opportunities, proof counts and priorities are
+// rebuilt from the newest verified ledgers on every publication run.
+try {
+  const dash = loadDash();
+  const [companyLedger, opportunityDb] = await Promise.all([
+    readJson("companies.json"),
+    readJson("mobile-ai-business-view.json"),
+  ]);
+  const strategyView = buildStrategyView({
+    generatedAt,
+    framework: dash.DECISION_FRAMEWORK || {},
+    registry: dash.COMPANIES || [],
+    companies: companyLedger.companies || {},
+    articles: visibleArticles,
+    opportunityDb,
+  });
+  let previous = null;
+  try { previous = await readJson("strategy-view.json"); } catch {}
+  if (previous && JSON.stringify({ ...previous, generatedAt: "" }) === JSON.stringify({ ...strategyView, generatedAt: "" })) {
+    strategyView.generatedAt = previous.generatedAt || generatedAt;
+  }
+  await writeJson("strategy-view.json", strategyView);
+} catch (error) {
+  throw new Error(`Could not build strategy-view.json: ${error.message}`);
+}
+
 try {
   const dash = loadDash();
   const allowedTickers = new Set((dash.STOCKS || []).map(item => item.ticker));
@@ -339,10 +367,10 @@ try {
 const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
   createHash("sha256").update(await readFile(resolve(root, "assets/competitive-dynamics.mp4"))).digest("hex"),
-  ...await Promise.all(["overview-view.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  ...await Promise.all(["overview-view.json", "strategy-view.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
-await writeJson("data-version.json", { version, generatedAt, assets: ["overview-view.json", ...Object.keys(views), "company-news.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"] });
+await writeJson("data-version.json", { version, generatedAt, assets: ["overview-view.json", "strategy-view.json", ...Object.keys(views), "company-news.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"] });
 
 console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} current market insights · ${consolidatedDuplicateCount} duplicate records consolidated · ${replacedRecordCount} prior topic values replaced · version ${version}`);

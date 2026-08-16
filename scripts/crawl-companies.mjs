@@ -13,9 +13,8 @@
    자동 편입 — 밸류체인 기업과 스타트업의 표시 레벨을 통일. co 필드 태깅 없이도
    기사 제목·요약 전문에서 업체명을 단어경계로 스캔(전문 매칭)해 라이브 레코드 생성.
 
-   경영진 발언(execMentions) 대상 인물은 data.js COMPANY_ORG에서 자동 파생 —
-   별도 하드코딩 목록을 유지하지 않는다. org 큐레이션에 인물을 추가하면 다음
-   실행부터 자동으로 경영진 발언 스캔 대상이 된다(단일 소스 원칙).
+   경영진 발언 대상은 이전 누적 companies.json의 검증된 조직 원장에서 자동
+   파생한다. 새 실행은 기존 원장을 보존하면서 공시·공식 페이지로 갱신한다.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { loadDash } from "./load-dash.mjs";
@@ -361,7 +360,9 @@ async function main() {
     startupRegistry = startups.companyRegistry || startupRegistry;
   } catch {}
   const dash = loadDash();
-  const orgSource = { ...(dash.COMPANY_ORG || {}) };
+  const orgSource = Object.fromEntries(Object.entries(previousCompanies)
+    .filter(([, company]) => company?.organization)
+    .map(([name, company]) => [name, company.organization]));
   for (const startup of startupRows) {
     if (!startup?.name || !startup.organization) continue;
     const curated = orgSource[startup.name] || {};
@@ -371,8 +372,17 @@ async function main() {
       leadership: curated.leadership || startup.organization.executiveTeam || startup.organization.leadership || [],
     };
   }
-  const linkedinSource = dash.LINKEDIN_PROFILES || {};
-  const profileSource = dash.COMPANY_PROFILES || {};
+  const linkedinSource = {};
+  for (const company of Object.values(previousCompanies)) {
+    for (const person of company?.organization?.executiveTeam || []) {
+      if (person?.name && /^https:\/\/(?:www\.)?linkedin\.com\/in\//i.test(person.li || "")) {
+        linkedinSource[person.name] = person.li;
+      }
+    }
+  }
+  const profileSource = Object.fromEntries(Object.entries(previousCompanies)
+    .filter(([, company]) => company?.profile)
+    .map(([name, company]) => [name, company.profile]));
   const trackedCompanies = (dash.COMPANIES || []).filter(company => !suppression.hasCompany(company.name));
   const leaders = deriveLeaders(orgSource);
   const lastFreq = computeLastNameFrequency(orgSource);

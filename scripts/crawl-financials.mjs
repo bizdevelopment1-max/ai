@@ -93,7 +93,7 @@ async function fetchQuoteSummary(ticker, sess) {
 // hostFrom + domainMatches: for ambiguous, non-brand-name private companies
 // (e.g. "Harvey", "Writer", "Glean" collide with common-word Wikidata entries),
 // only trust a match whose own official-website claim (P856) resolves to the
-// domain already curated for that company in data.js. Well-known tickers skip
+// domain already registered for that company in dashboard-taxonomy.json. Well-known tickers skip
 // this check — their COMPANY_QUERY search term is already unambiguous.
 const hostFrom = value => { try { return new URL(value).hostname.replace(/^www\./, "").toLowerCase(); } catch { return ""; } };
 const domainMatches = (host, expected) => {
@@ -267,7 +267,7 @@ async function main() {
   // Non-tickered tracked companies (private: OpenAI, Anthropic, Databricks,
   // most startups' large-company peers, etc.) have no Yahoo Finance quote to
   // join, so their headcount was frozen at whatever was curated once in
-  // data.js. Give them the same Wikidata fallback, keyed by company display
+  // the private registry. Give them the same Wikidata fallback, keyed by company display
   // name instead of ticker. Ambiguous, common-word company names (Harvey,
   // Writer, Glean, ...) only accept a match whose own official-website claim
   // resolves to the domain already curated for that company — otherwise skip

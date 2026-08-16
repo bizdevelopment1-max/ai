@@ -115,21 +115,21 @@ a { color: inherit; text-decoration: none; transition: color .2s; }
 a:hover { color: var(--accent); }
 b, strong { font-weight: 700; }
 
-/* rainbow shimmer on link hover — bright, animated, for any real link */
-@keyframes rainbowShift { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+/* Link hover keeps a real foreground color in every rendering mode. */
 .art:hover .art-title,
 .report:hover .rep-title,
 .cd-art:hover .cd-art-title,
 .sb-subitem:hover .sb-sub-name,
 a[href]:hover .rainbow-on-hover,
 .rainbow-link:hover {
-  background: linear-gradient(90deg, #173F5F, #287A78, #B0813C, #3E648D, #173F5F);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-  animation: rainbowShift 1.6s linear infinite;
+  background: none;
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: currentColor;
+  background-clip: border-box;
+  color: inherit;
+  animation: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ---------- shell layout ---------- */
@@ -272,8 +272,7 @@ a[href]:hover .rainbow-on-hover,
 .tb-title h1 {
   font-size: 18px; font-weight: 900; letter-spacing: -.01em; line-height: 1.25; white-space: nowrap;
   padding: 1px 2px 2px 0; overflow: visible;
-  background: linear-gradient(95deg, var(--ink) 35%, var(--accent));
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  color: var(--ink); background: none; -webkit-text-fill-color: currentColor;
 }
 .tb-title-meta { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .tb-sub { font-size: 11.5px; font-weight: 500; color: var(--muted); letter-spacing: 0; white-space: nowrap; }
@@ -1033,10 +1032,9 @@ a[href]:hover .rainbow-on-hover,
 .kpi-row { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 2px; }
 .kpi-val {
   font-size: 25px; font-weight: 800; letter-spacing: -.02em;
-  background: linear-gradient(100deg, var(--ink) 20%, color-mix(in srgb, var(--accent) 80%, var(--ink)));
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  color: var(--ink); background: none; -webkit-text-fill-color: currentColor;
 }
-.kpi:hover .kpi-val { background: #fff; -webkit-background-clip: text; background-clip: text; }
+.kpi:hover .kpi-val { background: none; -webkit-background-clip: border-box; background-clip: border-box; -webkit-text-fill-color: currentColor; }
 .kpi-sub { font-size: 10.5px; color: var(--muted); font-weight: 500; margin-top: 7px; }
 .kpi-src { font-size: 9px; color: var(--muted); font-weight: 500; margin-top: 5px; line-height: 1.35; opacity: 0; transition: opacity .2s; border-top: 1px solid var(--line-2); padding-top: 5px; }
 .kpi:hover .kpi-src { opacity: 1; }
@@ -2711,7 +2709,15 @@ a[href]:hover .rainbow-on-hover,
   color: #FFF; background: rgba(255,255,255,.12); transform: translateX(2px); outline: none;
 }
 .dyn-relationship strong { color: #FFF; font-weight: 900; }
-.dyn-relationship a > span { min-width: 0; color: #DCE8FF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dyn-relationship a > span {
+  min-width: 0;
+  color: #DCE8FF;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
 .dyn-relationship em { grid-column: 2; color: #AABBE0; font-size: 8.5px; font-style: normal; font-weight: 700; }
 .es-cm-live {
   display: inline-flex; align-items: center; margin-left: 2px; padding: 3px 7px;
@@ -6575,4 +6581,154 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .msf-choices {
     padding: 7px 8px 20px;
   }
+}
+
+/* ============================================================
+   Readability contract · safe in light/dark and hover/focus modes
+   ============================================================ */
+:where(
+  .board-titles h2, .board-titles p, .board-en,
+  .section-stack-head h2, .section-stack-head p,
+  .sp-card-company b, .sp-card-company em,
+  .msf-account h4, .msf-account p, .msf-account b, .msf-account span,
+  .msf-workload-row span, .msf-opportunity h4, .msf-opportunity p,
+  .mkt-record-title, .mkt-record-values b, .mkt-record-values em,
+  .isg-lead, .isg-summary li, .maib-market-card h4,
+  .maib-company-card p, .maib-opportunity-card dd,
+  .mplay-card, .cd-sf-card, .btf-card
+) {
+  max-width: 100%;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+
+.tb-title { flex: 0 1 auto; }
+.tb-title h1, .tb-sub { white-space: normal; text-wrap: balance; }
+.board-titles { min-width: 0; }
+.board-titles h2 { flex-wrap: wrap; row-gap: 3px; }
+.msf-workload-map { max-width: 100%; overflow-x: auto; overflow-y: visible; scroll-padding-inline: 12px; }
+.msf-workload-row > span { min-width: 0; line-height: 1.5; }
+
+:where(
+  a, button, [role="button"], [tabindex="0"],
+  .sp-card, .msf-layer, .msf-choice, .msf-opportunity,
+  .mkt-card, .mkt-record, .isg-card, .maib-market-card,
+  .maib-company-card, .maib-opportunity-card
+):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent, #2E6BFF) 72%, #FFFFFF);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Consulting cards use a subtle surface tint instead of full-card colour
+     reversal. This removes white-on-white nested pills in both themes. */
+  :is(
+    .sp-card,
+    .msf-layer,
+    .msf-control-logic > div,
+    .msf-mrow:not(.msf-mhead),
+    .msf-choice,
+    .msf-horizon,
+    .msf-house-pillars > div,
+    .msf-synthesis-flow > div,
+    .vc-logic-map > div,
+    .consult-decision-rail > div,
+    .source-pipeline > div,
+    .cd-mece-route > span,
+    .cd-sf-card,
+    .cd-org-node,
+    .cd-org-tier,
+    .mkt-card,
+    .mkt-record,
+    .btf-card,
+    .fda-step,
+    .isg-card,
+    .mplay-card,
+    .mplay-framework-flow > div
+  ):is(:hover, :focus-visible, :focus-within) {
+    color: var(--ink) !important;
+    background: color-mix(in srgb, var(--hover-tone, var(--accent, #2E6BFF)) 6%, var(--panel)) !important;
+    border-color: color-mix(in srgb, var(--hover-tone, var(--accent, #2E6BFF)) 58%, var(--line)) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--hover-tone, var(--accent, #2E6BFF)) 14%, transparent) !important;
+  }
+  :is(
+    .sp-card, .msf-layer, .msf-control-logic > div, .msf-mrow:not(.msf-mhead),
+    .msf-choice, .msf-horizon, .msf-house-pillars > div, .msf-synthesis-flow > div,
+    .vc-logic-map > div, .consult-decision-rail > div, .source-pipeline > div,
+    .cd-mece-route > span, .cd-sf-card, .cd-org-node, .cd-org-tier,
+    .mkt-card, .mkt-record, .btf-card, .fda-step, .isg-card,
+    .mplay-card, .mplay-framework-flow > div
+  ):is(:hover, :focus-visible, :focus-within) :is(h2, h3, h4, b, strong, a) {
+    color: var(--ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+    text-shadow: none !important;
+  }
+  :is(
+    .sp-card, .msf-layer, .msf-control-logic > div, .msf-mrow:not(.msf-mhead),
+    .msf-choice, .msf-horizon, .msf-house-pillars > div, .msf-synthesis-flow > div,
+    .vc-logic-map > div, .consult-decision-rail > div, .source-pipeline > div,
+    .cd-mece-route > span, .cd-sf-card, .cd-org-node, .cd-org-tier,
+    .mkt-card, .mkt-record, .btf-card, .fda-step, .isg-card,
+    .mplay-card, .mplay-framework-flow > div
+  ):is(:hover, :focus-visible, :focus-within) :is(p, span, em, small, dt, dd, li, time) {
+    color: var(--ink-2) !important;
+    -webkit-text-fill-color: currentColor !important;
+    text-shadow: none !important;
+  }
+
+  :is(.sp-card, .mkt-card, .mkt-record, .isg-card, .msf-layer, .mplay-card):is(:hover, :focus-visible, :focus-within)
+  :is(.sp-card-badge, .sp-card-institution, .ct-rel, .mkt-record-type, .mkt-record-locale, .mkt-record-merged, .msf-layer-role, .mplay-model, .mplay-tag) {
+    color: var(--hover-tone, var(--accent, #173F5F)) !important;
+    -webkit-text-fill-color: currentColor !important;
+    background: color-mix(in srgb, var(--hover-tone, var(--accent, #2E6BFF)) 10%, var(--panel)) !important;
+    border-color: color-mix(in srgb, var(--hover-tone, var(--accent, #2E6BFF)) 42%, var(--line)) !important;
+  }
+
+  .art:hover,
+  .ct-row:hover,
+  .kpi:hover,
+  .maib-summary > div:hover,
+  .maib-market-card:hover,
+  .maib-company-card:hover,
+  .maib-opportunity-card:hover,
+  .bmf-card:hover,
+  .kg-detail-article:hover,
+  .tl-card:hover {
+    color: var(--ink) !important;
+    background: color-mix(in srgb, var(--accent, var(--card-accent, #2E6BFF)) 6%, var(--panel)) !important;
+    border-color: color-mix(in srgb, var(--accent, var(--card-accent, #2E6BFF)) 50%, var(--line)) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 22px color-mix(in srgb, var(--accent, var(--card-accent, #2E6BFF)) 13%, transparent) !important;
+  }
+  :is(.art, .ct-row, .kpi, .maib-summary > div, .maib-market-card, .maib-company-card, .maib-opportunity-card, .bmf-card, .kg-detail-article, .tl-card):hover
+  :is(h2, h3, h4, b, strong, a, .art-title, .ct-name, .ct-mval, .ct-val, .kpi-val) {
+    color: var(--ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+    text-shadow: none !important;
+  }
+  :is(.art, .ct-row, .kpi, .maib-summary > div, .maib-market-card, .maib-company-card, .maib-opportunity-card, .bmf-card, .kg-detail-article, .tl-card):hover
+  :is(p, span, em, small, dt, dd, li, time, .art-summary, .art-src, .art-catname, .kpi-label, .kpi-sub, .kpi-src) {
+    color: var(--ink-2) !important;
+    -webkit-text-fill-color: currentColor !important;
+    text-shadow: none !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .tb-title h1 { font-size: 16px; }
+  .board-head { align-items: flex-start; }
+  .board-titles h2 { line-height: 1.35; }
+  .msf-workload-head, .msf-workload-row { min-width: 920px; }
+}
+
+@media (max-width: 620px) {
+  .tb-title { min-width: 118px; }
+  .tb-title-meta { align-items: flex-start; flex-direction: column; gap: 2px; }
+  .tb-live { white-space: normal; }
+  .board-en { width: 100%; }
 }

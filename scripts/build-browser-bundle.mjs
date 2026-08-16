@@ -23,16 +23,15 @@ export const BROWSER_SOURCES = [
   "app.jsx",
 ];
 export const BUNDLE_FILE = "app.bundle.js";
-export const DATA_SOURCE_FILE = "data.js";
+export const DATA_SOURCE_FILE = "config/dashboard-taxonomy.json";
 export const DATA_BUNDLE_FILE = "data.bundle.js";
 export const INDEX_FILE = "index.html";
 export const STYLES_FILE = "styles.css";
 const BABEL_URL = "https://unpkg.com/@babel/standalone@7.29.0/babel.min.js";
 const RUNTIME_DATA_KEYS = [
-  "BIGTECH_GROUPS", "BIZ_MODELS", "CATEGORIES", "COMPANY_LAYER", "COMPANY_ORDER",
-  "LINKEDIN_PROFILES", "MOBILE_STRATEGY", "PRICING_MODELS", "STARTUP_TAXONOMY",
-  "STARTUP_VERTICALS", "STOCK_GROUPS", "STOCK_GROUP_LAYER", "STOCK_LAYER",
-  "STOCK_VALUE_CHAIN", "TOKEN_PRICING", "VALUE_CHAIN",
+  "BIGTECH_GROUPS", "CATEGORIES", "COMPANY_LAYER", "COMPANY_ORDER",
+  "DECISION_FRAMEWORK", "STARTUP_TAXONOMY", "STARTUP_VERTICALS", "STOCK_GROUPS",
+  "STOCK_GROUP_LAYER", "STOCK_LAYER", "STOCK_VALUE_CHAIN", "VALUE_CHAIN",
 ];
 
 export function buildRuntimeDash(dash = loadDash()) {
@@ -95,7 +94,7 @@ async function loadBabel() {
 }
 
 export async function buildBrowserBundle() {
-  const [sources, dataSource, stylesSource, indexSource] = await Promise.all([
+  const [sources, taxonomySource, stylesSource, indexSource] = await Promise.all([
     readBrowserSources(),
     readFile(DATA_SOURCE_FILE, "utf8"),
     readFile(STYLES_FILE, "utf8"),
@@ -106,7 +105,10 @@ export async function buildBrowserBundle() {
   // Hash the emitted runtime payload, not only its source ledger. Changes to
   // pruning/normalization logic must produce a new URL or an old CDN response
   // can survive a deployment.
-  const dataStamp = sourceStamp([{ file: "runtime-data.js", source: compactData }]);
+  const dataStamp = sourceStamp([
+    { file: DATA_SOURCE_FILE, source: taxonomySource },
+    { file: "runtime-data.js", source: compactData },
+  ]);
   const styleStamp = assetVersion(STYLES_FILE, stylesSource);
   const Babel = await loadBabel();
   const compiled = sources.map(({ file, source }) => Babel.transform(source, {
