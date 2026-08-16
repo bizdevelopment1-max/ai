@@ -2072,7 +2072,7 @@ try {
     || (version.assets || []).some(file => /source-(snapshot|collection-report)|source-ledger/.test(file))
     || !["source-snapshot.json", "source-collection-report.json", "source-ledger"].every(file => jekyllConfig.includes(`- ${file}`))
     || qualityThresholds.maximumFailedStreamsBeforeBlock !== 3
-    || !verifySource.includes("failedStreamCount > failedStreamBlockThreshold")
+    || !verifySource.includes("persistentFailureStreams > failedStreamBlockThreshold")
     || !verifySource.includes("[verify:${check.status}]")
     || !database.snapshotVersion || !database.summary?.sourceUrls
     || !boardsSource.includes("MobileAIBusinessBoard")

@@ -441,4 +441,8 @@ await Promise.all([
   writeFile(`${LEDGER_DIR}/manifest.json`, `${JSON.stringify(manifest, null, 2)}\n`),
 ]);
 console.log(`[source-registry] ${observations.length} observations · ${events.length} new/revised · ${run.failed} failed · ${manifest.cumulativeEvents} cumulative events`);
+const failedSources = streamHealth.filter(row => row.state === "failed");
+if (failedSources.length) {
+  console.warn(`[source-registry:failed] ${failedSources.map(row => `${row.stream} (${row.error || "unknown error"})`).join(" | ")}`);
+}
 if (process.argv.includes("--strict") && run.failed) process.exitCode = 2;
