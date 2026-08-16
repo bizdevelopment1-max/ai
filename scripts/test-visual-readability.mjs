@@ -22,6 +22,7 @@ assert(styles.includes("Non-inverting signal-card interaction contract"), "signa
 assert(styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { opacity: 0; }"), "signal-card dark hover overlay is still enabled");
 assert(!/\.isg-card:hover::after\s*\{\s*opacity:\s*1/.test(styles), "signal-card hover restores a dark pseudo-element overlay");
 assert(!/\.art-sel\s*\{[^}]*background:\s*linear-gradient\([^}]*#000/s.test(styles), "article selected state still uses a dark inverse gradient");
+assert(styles.includes('[data-theme="dark"] .num-hl { color: #8BD2E8;'), "dark-mode numeric highlights lack a readable foreground");
 
 assert(taxonomy.publicFacts === "none-generated-views-only", "registry still declares public mutable facts");
 assert(!Object.hasOwn(taxonomy, "MOBILE_STRATEGY"), "legacy strategy facts remain in runtime taxonomy");
