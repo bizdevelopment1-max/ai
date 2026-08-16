@@ -68,46 +68,13 @@ const selectOpportunityPortfolio = (opportunities, limit = 12) => {
   return selected.slice(0, limit);
 };
 
-const companyAccount = (base, company) => {
-  const intelligence = company?.intelligence || {};
-  const current = intelligence.currentBusiness || {};
-  const direction = intelligence.strategyDirection || {};
-  const revenue = intelligence.revenueModel || {};
-  const official = (current.evidence || []).find(evidenceUrl);
-  if (!official || current.groundingStatus !== "source-grounded") return null;
-  const profileBusiness = Array.isArray(company?.profile?.business) ? company.profile.business.join(" · ") : "";
-  const latest = company?.latest || {};
-  const mentions30 = Number(company?.mentions30 || 0);
-  return {
-    name: base.name,
-    relation: "SOURCE-GROUNDED",
-    tier: text(base.group || base.cat || "tracked company").toUpperCase(),
-    platform: firstSentence(current.summary || profileBusiness || base.unit),
-    demand: firstSentence(latest.title || profileBusiness || current.summary),
-    signal: firstSentence(direction.summary || latest.title || current.summary),
-    pain: firstSentence(revenue.summary || direction.details?.[0] || "공개 근거와 실제 이용·수익 지표의 간극 검증"),
-    move: firstSentence(direction.summary || intelligence.investmentDirection?.summary || current.summary),
-    gate: `${mentions30}건의 최근 30일 연결 근거 · ${current.evidenceCount || current.evidence?.length || 1}건 직접 근거`,
-    source: text(official.source || official.title || "Official source"),
-    sourceDate: text(official.date || company.updatedAt || "").slice(0, 10),
-    sourceUrl: official.url,
-    mentions30,
-  };
-};
-
-export function buildStrategyView({ generatedAt, framework, registry, companies, articles, opportunityDb }) {
+export function buildStrategyView({ generatedAt, framework, articles, opportunityDb }) {
   const generatedOpportunities = (opportunityDb?.generatedOpportunities || [])
     .filter(item => item?.decisionEligible !== false && ["verified", "reviewed", "published"].includes(item?.workflow?.stage || item?.status) && item?.evidenceConfidence !== "low")
     .filter(item => (item.evidence || []).some(evidenceUrl))
     .sort((left, right) => scoreOf(right) - scoreOf(left))
     .map(compactOpportunity);
   const opportunityPortfolio = selectOpportunityPortfolio(generatedOpportunities, 12);
-
-  const accountPortfolio = (registry || [])
-    .map(base => companyAccount(base, companies?.[base.name]))
-    .filter(Boolean)
-    .sort((left, right) => right.mentions30 - left.mentions30 || left.name.localeCompare(right.name))
-    .slice(0, 8);
 
   const sourceSeen = new Set();
   const expertSignals = [...(articles || [])]
@@ -153,21 +120,18 @@ export function buildStrategyView({ generatedAt, framework, registry, companies,
     northStar: opportunityPortfolio.length
       ? `${opportunityPortfolio.slice(0, 3).map(item => item.title).join(" · ")} — ${evidenceTotal}건 근거로 우선순위 자동 갱신`
       : "검증된 근거가 확보될 때까지 전략 후보 공개 보류",
-    accountScope: `${accountPortfolio.length}개 기업의 공식·원문 근거와 최근 30일 신호를 동일 기준으로 비교`,
     operatingModel: framework?.operatingModel || [],
     decisionOutputs: framework?.decisionOutputs || [],
     capabilities: framework?.capabilities || [],
     horizons: framework?.horizons || [],
     choices,
     workloadMap,
-    accountPortfolio,
     opportunityPortfolio,
     expertSignals,
     lineage: {
-      companies: accountPortfolio.length,
       opportunities: opportunityPortfolio.length,
       articles: expertSignals.length,
-      generatedFrom: ["companies.json", "news.json", "mobile-ai-business-view.json", "config/dashboard-taxonomy.json"],
+      generatedFrom: ["news.json", "mobile-ai-business-view.json", "config/dashboard-taxonomy.json"],
     },
   };
 }
