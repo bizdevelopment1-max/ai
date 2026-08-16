@@ -1211,28 +1211,17 @@ try {
     /\.tl-card\s*\{[^}]*border-left:/s,
     /\.nbz-deal\s*\{[^}]*border-top:/s,
     /\.acb-camp\s*\{[^}]*border-top:/s,
-    /\.mxc-signal-card\.is-selected\s*\{[^}]*inset\s+\d+px\s+0/s,
-    /\.mxc-fid\s*>\s*div\s*\{[^}]*border-top:/s,
-    /\.mxc-comparison-grid article\s*\{[^}]*border-left:/s,
   ];
-  const consultingFrameReady = [
-    "mxc-comparison-flow",
-    "COMPARISON FRAMEWORK",
-    "INPUT A",
-    "BASIS GATE",
-    "DECISION",
-  ].every(marker => boards.includes(marker))
-    && styles.includes("Consulting frame policy")
+  const commandCenterRemoved = ["MobileAIBusinessBoard", "AI 신사업 Command Center", "Decision Radar", "mxc-"].every(marker => !boards.includes(marker))
+    && !/\.mxc(?:[-\s.{:#>])/.test(styles);
+  const consultingFrameReady = styles.includes("Consulting frame policy")
     && [".site-cli-command-grid button", ".section-stack-head", ".cd-prof-fin", ".source-pipeline>div"].every(selector => styles.includes(selector))
-    && styles.includes(".mxc-reg-grid>article,.mxc-failure-grid article")
-    && styles.includes(".mxc-generated-grid>article.review-pending")
     && styles.includes(":is(.kpi,.ct-row,.report,.insight-card,.vp-card)::before{display:none!important}");
   if (forbiddenRoundedSideAccents.some(pattern => pattern.test(styles))
     || !consultingFrameReady
+    || !commandCenterRemoved
     || !styles.includes(".sp-card")
-    || !styles.includes("border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));")
-    || !styles.includes(".mxc-signal-card.is-selected .mxc-card-top > em")
-    || !styles.includes("background: color-mix(in srgb, #718092 6%, var(--panel))")) {
+    || !styles.includes("border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));")) {
     throw new Error("rounded strategy cards must use full-card border/background emphasis");
   }
   console.log("  OK  단측 강조 제거 · 전체 프레임·입력→기준 게이트→의사결정 도식 적용");
@@ -2133,9 +2122,9 @@ try {
     || !verifySource.includes("persistentFailureStreams > failedStreamBlockThreshold")
     || !verifySource.includes("[verify:${check.status}]")
     || !database.snapshotVersion || !database.summary?.sourceUrls
-    || !boardsSource.includes("MobileAIBusinessBoard")
-    || !boardsSource.includes("mobile-ai-business-view.json")
-    || !boardsSource.includes("기회 후보·90일 실험")
+    || boardsSource.includes("MobileAIBusinessBoard")
+    || boardsSource.includes("AI 신사업 Command Center")
+    || boardsSource.includes('className="mxc')
     || !componentsSource.includes('id: "opportunity"')
     || !componentsSource.includes("neutralizeDisplayText")
     || !workflowSource.includes("scripts/build-mobile-ai-business-db.mjs")

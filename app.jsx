@@ -638,7 +638,6 @@ function App() {
             <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={1080}>
               <SectionStack bodyClassName="opportunity-stack">
                 <ExecToplines items={[]} insights={insights} onNav={navTo} />
-                <MobileAIBusinessBoard dataVersion={dataVersion} />
               </SectionStack>
             </LazySection>
 
