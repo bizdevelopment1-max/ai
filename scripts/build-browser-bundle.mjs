@@ -60,6 +60,8 @@ export function buildRuntimeDash(dash = loadDash()) {
   return runtime;
 }
 
+export const runtimeDataSource = (dash = loadDash()) => `window.DASH=${JSON.stringify(buildRuntimeDash(dash))};`;
+
 export const sourceStamp = sources => createHash("sha256")
   // Git checks out LF on Actions and CRLF locally on this workspace. The
   // stamp represents source content, not platform-specific line endings.
@@ -100,7 +102,11 @@ export async function buildBrowserBundle() {
     readFile(INDEX_FILE, "utf8"),
   ]);
   const stamp = sourceStamp(sources);
-  const dataStamp = sourceStamp([{ file: DATA_SOURCE_FILE, source: dataSource }]);
+  const compactData = runtimeDataSource();
+  // Hash the emitted runtime payload, not only its source ledger. Changes to
+  // pruning/normalization logic must produce a new URL or an old CDN response
+  // can survive a deployment.
+  const dataStamp = sourceStamp([{ file: "runtime-data.js", source: compactData }]);
   const styleStamp = assetVersion(STYLES_FILE, stylesSource);
   const Babel = await loadBabel();
   const compiled = sources.map(({ file, source }) => Babel.transform(source, {
@@ -112,7 +118,6 @@ export async function buildBrowserBundle() {
     compact: true,
   }).code);
   const bundle = `/* ai-dashboard-bundle:${stamp} */\n${compiled.join("\n")}\n`;
-  const compactData = `window.DASH=${JSON.stringify(buildRuntimeDash())};`;
   const dataBundle = `/* ai-dashboard-data:${dataStamp} */\n${compactData}\n`;
   const versionedIndex = [
     [STYLES_FILE, styleStamp],

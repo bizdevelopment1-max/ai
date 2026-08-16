@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { access, readFile } from "node:fs/promises";
-import { BUNDLE_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, buildRuntimeDash, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
+import { BUNDLE_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, buildRuntimeDash, readBrowserSources, runtimeDataSource, sourceStamp } from "./build-browser-bundle.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, directCompanyNewsMatch } from "./company-sources.mjs";
 import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
@@ -171,7 +171,7 @@ try {
     readFile("index.html", "utf8"),
   ]);
   const expected = `/* ai-dashboard-bundle:${sourceStamp(sources)} */`;
-  const expectedData = `/* ai-dashboard-data:${sourceStamp([{ file: DATA_SOURCE_FILE, source: dataSource }])} */`;
+  const expectedData = `/* ai-dashboard-data:${sourceStamp([{ file: "runtime-data.js", source: runtimeDataSource() }])} */`;
   const forbiddenHandsetWord = "\uD734\uB300\uD3F0";
   const publicRuntimeCopy = [...sources.map(({ source }) => source), bundle, dataSource, dataBundle, index].join("\n");
   if (!bundle.startsWith(expected)) throw new Error("bundle is stale; run npm run build:browser before publishing");
