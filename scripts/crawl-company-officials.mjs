@@ -4,7 +4,7 @@
  * by exact full-name presence. A missing or blocked page never deletes the
  * prior roster; it only lowers verification status.
  */
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { loadDash } from "./load-dash.mjs";
 import { COMPANY_SOURCES } from "./company-sources.mjs";
 import { isExcludedText } from "./news-policy.mjs";
@@ -97,7 +97,11 @@ async function fetchOfficial(source) {
 async function main() {
   const dash = loadDash();
   const tracked = dash.COMPANIES || [];
-  const orgs = dash.COMPANY_ORG || {};
+  let priorCompanies = {};
+  try { priorCompanies = JSON.parse(await readFile("companies.json", "utf8")).companies || {}; } catch {}
+  const orgs = Object.fromEntries(Object.entries(priorCompanies)
+    .filter(([, company]) => company?.organization)
+    .map(([name, company]) => [name, company.organization]));
   const companies = {};
   let cursor = 0;
   const collect = async () => {

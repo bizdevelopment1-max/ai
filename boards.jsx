@@ -402,10 +402,10 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 }
 
 // ---- 모바일 AI 신사업 발굴 프레임 — User → Experience → Business → Decision ----
-function MobileStrategyBoard({ companies, articles, generatedAt, onNav, sectionRef }) {
+function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = window.DASH.MOBILE_STRATEGY || { choices: [], horizons: [] };
+  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), choices: [], horizons: [], accountPortfolio: [], workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -1533,14 +1533,9 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
             key, ko, en, people: reports.filter(person => tierOf(person) === key),
           })).filter(group => group.people.length);
           // 검증된 직접 프로필 URL만 연결한다. 검색 결과 페이지는 상세 링크로 사용하지 않는다.
-          const D = window.DASH || {};
-          const directProfiles = D.LINKEDIN_PROFILES || {};
-          const liName = name => String(name).split("(")[0].split("·")[0].replace(/[^\p{L}\p{N}\s.'-]/gu, "").trim();
           const isDirectLinkedIn = value => /^https:\/\/(?:(?:www|[a-z]{2,3})\.)?linkedin\.com\/in\/[A-Za-z0-9._%-]+\/?$/i.test(String(value || ""));
           const liOf = p => {
             if (!p) return "";
-            const mapped = directProfiles[p.name] || directProfiles[liName(p.name)] || "";
-            if (isDirectLinkedIn(mapped)) return mapped;
             const verified = /^(curated-direct-profile|official-jsonld-direct-profile|wikidata-property-direct-profile)$/.test(p.linkedinVerification || "");
             return verified && isDirectLinkedIn(p.li) ? p.li : "";
           };

@@ -171,7 +171,10 @@ try {
     readFile("index.html", "utf8"),
   ]);
   const expected = `/* ai-dashboard-bundle:${sourceStamp(sources)} */`;
-  const expectedData = `/* ai-dashboard-data:${sourceStamp([{ file: "runtime-data.js", source: runtimeDataSource() }])} */`;
+  const expectedData = `/* ai-dashboard-data:${sourceStamp([
+    { file: DATA_SOURCE_FILE, source: dataSource },
+    { file: "runtime-data.js", source: runtimeDataSource() },
+  ])} */`;
   const forbiddenHandsetWord = "\uD734\uB300\uD3F0";
   const publicRuntimeCopy = [...sources.map(({ source }) => source), bundle, dataSource, dataBundle, index].join("\n");
   if (!bundle.startsWith(expected)) throw new Error("bundle is stale; run npm run build:browser before publishing");
@@ -557,12 +560,13 @@ try {
 }
 
 try {
-  const [app, boards, components, styles, companies, monetizationCrawler] = await Promise.all([
+  const [app, boards, components, styles, companies, strategyView, monetizationCrawler] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("boards.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
     readFile("styles.css", "utf8"),
     readFile("companies.json", "utf8").then(JSON.parse),
+    readFile("strategy-view.json", "utf8").then(JSON.parse),
     readFile("scripts/crawl-monetization.mjs", "utf8"),
   ]);
   const dash = loadDash();
@@ -575,14 +579,17 @@ try {
     && Array.isArray(company.organization?.executiveTeam)
     && Number.isFinite(company.coverage?.organization?.executiveCount)
     && company.updatedAt);
-  const linkedinProfiles = Object.values(dash.LINKEDIN_PROFILES || {});
+  const linkedinProfiles = normalized.flatMap(company => (company.organization?.executiveTeam || [])
+    .map(person => person.li).filter(Boolean));
   const linkedinReady = linkedinProfiles.length >= 10
     && linkedinProfiles.every(url => /^https:\/\/(?:(?:www|[a-z]{2})\.)?linkedin\.com\/in\/[^/?#]+\/?$/.test(url))
     && !boards.includes("linkedin.com/search/results/people")
     && !boards.includes("linkedin.com/search/results/companies");
-  const strategyReady = dash.MOBILE_STRATEGY?.choices?.length === 4
-    && dash.MOBILE_STRATEGY?.capabilities?.length === 5
-    && dash.MOBILE_STRATEGY?.horizons?.length === 3
+  const strategyReady = strategyView?.sourceMode === "generated-from-verified-ledgers"
+    && strategyView?.choices?.length === 4
+    && strategyView?.capabilities?.length === 5
+    && strategyView?.horizons?.length === 3
+    && strategyView?.opportunityPortfolio?.length >= 9
     && boards.includes("function MobileStrategyBoard")
     && boards.includes("Strategy consulting · user need → mobile experience → revenue → execution")
     && boards.includes("분석 툴킷")
@@ -732,17 +739,16 @@ try {
     && styles.includes("@media (hover: hover) and (pointer: fine)")
     && styles.includes(".consult-decision-rail > i")
     && styles.includes("border-left: 11px solid var(--consult-gold)")
-    && styles.includes("Full-surface palette reversal")
-    && styles.includes(".sp-card:is(:hover, :focus-visible) .sp-card-logic")
-    && styles.includes("background: rgba(7, 21, 33, .22) !important")
-    && styles.includes("-webkit-text-fill-color: var(--hover-tone) !important")
-    && styles.includes("color-mix(in srgb, var(--hover-tone) 76%, #071521) !important")
+    && styles.includes("Readability contract · safe in light/dark and hover/focus modes")
+    && styles.includes("subtle surface tint instead of full-card colour")
+    && styles.includes("-webkit-text-fill-color: currentColor")
+    && !/\.rainbow-link:hover[\s\S]{0,400}color:\s*transparent/.test(styles)
     && styles.includes("@media (prefers-reduced-motion: reduce)")
     && !styles.includes("filter: invert(");
   if (!consultingInteraction) {
-    throw new Error("consulting flow, triangular arrows, full-palette reversal, and reduced-motion-safe 3D interaction are required");
+    throw new Error("consulting flow, triangular arrows, theme-safe hover contrast, and reduced-motion interaction are required");
   }
-  console.log("  OK  컨설팅 의사결정 도식 · 삼각형 화살표 · 전체 색상 반전 · 3D 호버");
+  console.log("  OK  컨설팅 의사결정 도식 · 삼각형 화살표 · 테마 안전 호버 · 가독성 계약");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  consulting 3D interaction system: ${error.message}`);
@@ -750,22 +756,14 @@ try {
 
 try {
   const styles = await readFile("styles.css", "utf8");
-  const hoverContrastReady = [
-    ".mkt-record:is(:hover, :focus-visible) .mkt-record-values > span",
-    ".mkt-record:is(:hover, :focus-visible) .mkt-record-values > span > em",
-    ".mkt-card:is(:hover, :focus-visible) .mkt-cagr",
-    ".btf-card:is(:hover, :focus-visible) .btf-step",
-    ".isg-card:is(:hover, :focus-visible) .isg-quant",
-    ".msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-role",
-    ".msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-lead :is(em, b)",
-    ".msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-evidence :is(em, b)",
-  ].every(selector => styles.includes(selector))
-    && styles.includes("-webkit-text-fill-color: color-mix(in srgb, var(--hover-tone")
-    && styles.includes("background: rgba(255, 255, 255, .96) !important")
-    && styles.includes("background: rgba(255, 255, 255, .12) !important")
-    && styles.includes("-webkit-text-fill-color: var(--hover-tone) !important")
-    && styles.includes("padding: 8px 10px 24px")
-    && styles.includes("overflow-wrap: anywhere");
+  const hoverContrastReady = styles.includes("Readability contract · safe in light/dark and hover/focus modes")
+    && styles.includes("background: color-mix(in srgb, var(--hover-tone")
+    && styles.includes("-webkit-text-fill-color: currentColor !important")
+    && styles.includes("outline: 3px solid")
+    && styles.includes("text-wrap: pretty")
+    && styles.includes("overflow-wrap: anywhere")
+    && styles.includes("word-break: keep-all")
+    && !/\.art:hover[\s\S]{0,500}-webkit-text-fill-color:\s*transparent/.test(styles);
   if (!hoverContrastReady) {
     throw new Error("hover labels and bright nested surfaces must stay readable without edge or text clipping");
   }
@@ -780,7 +778,7 @@ try {
     readFile("index.html", "utf8"),
     readFile("boards.jsx", "utf8"),
     readFile("styles.css", "utf8"),
-    readFile("data.js", "utf8"),
+    readFile("config/dashboard-taxonomy.json", "utf8"),
     readFile("scripts/source-content.mjs", "utf8"),
     readFile("scripts/crawl-monetization.mjs", "utf8"),
   ]);
@@ -1121,17 +1119,16 @@ try {
 }
 
 try {
-  const [data, financialCrawler] = await Promise.all([
-    readFile("data.js", "utf8"),
+  const [taxonomy, financialCrawler] = await Promise.all([
+    readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
     readFile("scripts/crawl-financials.mjs", "utf8"),
   ]);
-  if (data.includes("승계 예정") || data.includes("2026.09.01 사임")
-    || /headcount:\s*"약 [^"]+보도 추정/.test(data)
+  if ((taxonomy.COMPANIES || []).some(company => ["valuation", "funding", "headcount", "note", "direction"].some(key => Object.hasOwn(company, key)))
     || !financialCrawler.includes("HEADCOUNT_MAX_AGE_MONTHS")
     || !financialCrawler.includes("employeesStale")) {
-    throw new Error("unverified succession or stale headcount can still be presented as current");
+    throw new Error("mutable company facts or stale headcount can still be presented from registry configuration");
   }
-  console.log("  OK  비공식 승계설 제거 · 오래된 인력 수 현행값 차단");
+  console.log("  OK  레지스트리 변동 사실 제거 · 오래된 인력 수 현행값 차단");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  volatile fact freshness: ${error.message}`);
@@ -1192,36 +1189,26 @@ try {
 }
 
 try {
-  const [companyPolicy, crawler, data, boards] = await Promise.all([
+  const [companyPolicy, crawler, companies, boards] = await Promise.all([
     readFile("config/company-source-policy.json", "utf8").then(JSON.parse),
     readFile("scripts/crawl-news.mjs", "utf8"),
-    readFile("data.js", "utf8"),
+    readFile("companies.json", "utf8").then(JSON.parse),
     readFile("boards.jsx", "utf8"),
   ]);
-  const block = name => {
-    const start = data.indexOf(`name: "${name}"`);
-    const end = data.indexOf("\n    },", start);
-    return start >= 0 && end > start ? data.slice(start, end) : "";
-  };
-  const openai = block("OpenAI");
-  const anthropic = block("Anthropic");
-  const amazon = block("Amazon");
-  const meta = block("Meta AI");
-  const databricks = block("Databricks");
+  const publishedSections = Object.values(companies.companies || {}).flatMap(company =>
+    Object.values(company.intelligence || {}).filter(section => section?.groundingStatus === "source-grounded"));
+  const groundedSections = publishedSections.every(section => (section.evidence || []).some(item => /^https?:\/\//.test(item?.url || "")));
   const requiredDomains = ["openai.com", "anthropic.com", "nvidianews.nvidia.com", "investors.cerebras.ai"];
   if (companyPolicy.cardRules?.requireIndividualSourceUrl !== true
     || companyPolicy.cardRules?.separateOfficialFromEstimate !== true
     || !requiredDomains.every(domain => companyPolicy.publisherDomains?.includes(domain))
     || !Array.isArray(companyPolicy.priorityStreams) || companyPolicy.priorityStreams.length < 4
     || !/PRIORITY_STREAMS/.test(crawler) || !/companySourcePolicy\.publisherDomains/.test(crawler)
-    || !openai.includes("공모 시점 미정") || openai.includes("2026.09 상장")
-    || !anthropic.includes("3자 추정 $69B") || !anthropic.includes('tier: "official"')
-    || amazon.includes("AWS AI ARR") || amazon.includes("$14B+")
-    || meta.includes("QoQ -5% 역대 첫 감소") || !databricks.includes('valuation: "$188B"')
+    || !publishedSections.length || !groundedSections
     || !/source\.tier === "official"/.test(boards) || !/source\.url/.test(boards)) {
-    throw new Error("company facts need dated individual sources, estimate labels, and corrected priority-card claims");
+    throw new Error("company facts need dated individual sources and source-grounded publication gates");
   }
-  console.log("  OK  company fact policy, priority source streams, and corrected dated card claims");
+  console.log(`  OK  company fact policy · priority source streams · source-grounded sections ${publishedSections.length}`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  company fact governance: ${error.message}`);
@@ -2147,9 +2134,9 @@ try {
 }
 
 try {
-  const [boards, data, charts, crawler, styles, investmentData, investmentBuilder, appSource, workflowSource] = await Promise.all([
+  const [boards, taxonomy, charts, crawler, styles, investmentData, investmentBuilder, appSource, workflowSource] = await Promise.all([
     readFile("boards.jsx", "utf8"),
-    readFile("data.js", "utf8"),
+    readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
     readFile("charts.jsx", "utf8"),
     readFile("scripts/crawl-stocks.mjs", "utf8"),
     readFile("styles.css", "utf8"),
@@ -2175,11 +2162,11 @@ try {
     && !boards.includes(".filter(s => STOCK_LAYER[s.ticker])")
     && boards.includes("밸류체인 그룹 트렌드")
     && boards.includes("개별 종목");
-  const completeMetadata = !data.includes('ticker: "000660.KS"')
-    && !data.includes('ticker: "688825.SS"')
-    && !data.includes('group: "memory"')
-    && !data.includes('group: "china-memory"')
-    && chinaGroups.every(group => data.includes(`id: "${group}"`))
+  const taxonomyText = JSON.stringify(taxonomy);
+  const completeMetadata = !taxonomyText.includes('000660.KS')
+    && !taxonomyText.includes('688825.SS')
+    && !(taxonomy.STOCKS || []).some(stock => ["memory", "china-memory"].includes(stock.group))
+    && chinaGroups.every(group => (taxonomy.STOCK_GROUPS || []).some(item => item.id === group))
     && dash.STOCKS.length === 54
     && dash.STOCK_VALUE_CHAIN.length === 7
     && dash.STOCKS.every(stock => dash.STOCK_VALUE_CHAIN.some(layer =>
@@ -2226,7 +2213,7 @@ try {
   const stockComparisonCopyRemoved = !boards.includes("<p>{description}</p>")
     && !boards.includes('description="63개 상장사를')
     && !boards.includes("대시보드 기업 리스트에 있는 상장사를 인프라·컴퓨트 / 파운데이션 모델 / 애플리케이션 등 밸류체인 계층으로 묶어 실제 일별 시세로 비교");
-  const initialSevenCategoryView = data.includes("const STOCK_VALUE_CHAIN = [")
+  const initialSevenCategoryView = taxonomy.STOCK_VALUE_CHAIN?.length === 7
     && boards.includes("window.DASH.STOCK_VALUE_CHAIN")
     && boards.includes('aria-label="상장사 밸류체인 카테고리"')
     && boards.includes("groups={visibleGroups} stocks={visibleStocks}");
@@ -2353,7 +2340,7 @@ try {
 
 try {
   const stockReasonSources = await Promise.all([
-    "data.js",
+    "config/dashboard-taxonomy.json",
     "stock-events.json",
     "scripts/crawl-stock-events.mjs",
   ].map(file => readFile(file, "utf8")));

@@ -90,6 +90,17 @@
       "publication": "public",
       "upstream": ["market-ledger"],
       "downstream": ["static-site"]
+    },
+    {
+      "id": "public-strategy-view",
+      "path": "strategy-view.json",
+      "recordPath": "opportunityPortfolio",
+      "role": "materialized-public-view",
+      "sensitivity": "public",
+      "publication": "public",
+      "retention": "latest-view-with-ledger-lineage",
+      "upstream": ["company-intelligence", "news-ledger", "decision-intelligence", "dashboard-taxonomy"],
+      "downstream": ["static-site"]
     }
   ],
   "sensitiveFieldPolicy": {

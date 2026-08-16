@@ -89,6 +89,7 @@ function App() {
     newbiz: uR(null), signals: uR(null), sanalysis: uR(null), evidence: uR(null), validation: uR(null),
   };
   const startupInView = useInView(refs.sanalysis);
+  const strategyInView = useInView(refs.strategy);
   const needsFullCompanyData = startupInView || active === "sanalysis" || !!selected;
   const articlesInView = useInView(refs.evidence);
   const signalsInView = useInView(refs.signals);
@@ -119,6 +120,7 @@ function App() {
   const [crawled, setCrawled] = uS([]);
   const [coOverview, setCoOverview] = uS(null);
   const [insights, setInsights] = uS({ cards: [], engine: "rules" });
+  const [strategyView, setStrategyView] = uS(null);
   uE(() => {
     let alive = true;
     // Start the first-screen payload in parallel with data-version.json. It is
@@ -139,6 +141,17 @@ function App() {
       });
     return () => { alive = false; };
   }, []);
+
+  // Strategy facts are a generated view, not component copy. Load it only
+  // when the section approaches the viewport or is directly requested.
+  uE(() => {
+    if (!dataVersion || !(strategyInView || active === "strategy")) return;
+    let alive = true;
+    loadJson(dataUrl("strategy-view.json"))
+      .then(value => { if (alive && value?.sourceMode === "generated-from-verified-ledgers") setStrategyView(value); })
+      .catch(() => { if (alive) setStrategyView(null); });
+    return () => { alive = false; };
+  }, [dataVersion, strategyInView, active]);
 
   // The complete evidence ledger is needed only by evidence-heavy views. The
   // overview and strategy screen stay on the generated compact snapshot.
@@ -618,7 +631,8 @@ function App() {
 
             {/* ── 2. 전략 컨설팅: 영상 다음에 바로 노출 ── */}
             <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={1320}>
-              <MobileStrategyBoard companies={companiesLive} articles={articles} generatedAt={dataGeneratedAt} onNav={navTo} />
+              <MobileStrategyBoard companies={companiesLive} articles={articles} strategyData={strategyView}
+                generatedAt={dataGeneratedAt} onNav={navTo} />
             </LazySection>
 
             {/* ── 3. 기회 DB: 브리프 → 정량 기회 ── */}

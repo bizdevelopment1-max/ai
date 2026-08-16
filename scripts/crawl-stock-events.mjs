@@ -6,7 +6,7 @@
          LLM 없이 규칙(임계 등락률) + 뉴스 제목 매칭으로만 생성.
    입력: stocks.json(일별 points) + news.json(articles: co·date·title·url·source)
    출력: stock-events.json { generatedAt, thresholdPct, events: { [ticker]: [ {date,dir,label,reason,changePct,url,source,auto} ] } }
-   병합: 프런트에서 에디토리얼 이벤트(data.js)와 합쳐 표시(같은 날짜는 에디토리얼 우선).
+   병합: 프런트에서 누적 원장 이벤트와 합쳐 표시한다.
    ============================================================ */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";

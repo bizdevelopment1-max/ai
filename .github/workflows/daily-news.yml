@@ -226,7 +226,9 @@ jobs:
           node scripts/test-data-platform.mjs
 
       - name: Validate automation and browser bundle
-        run: node scripts/run-with-retry.mjs scripts/test-automation.mjs
+        run: |
+          node scripts/run-with-retry.mjs scripts/test-automation.mjs
+          node scripts/test-visual-readability.mjs
 
       - name: Archive verifiable pipeline records
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -264,7 +266,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js
+          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json strategy-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js
           if git diff --staged --quiet; then
             echo "No data changes."
           else

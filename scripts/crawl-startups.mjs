@@ -9,7 +9,7 @@
    - small  (초기·중소): 업체 개요·정량 지표(펀딩/밸류)·인수/투자 관점
             {name, domain, vertical, stage, funding, overview, acqAngle, label, latest}
 
-   대상 풀: data.js cat:"startup" + 글로벌 얼리스테이지 시드 풀.
+   대상 풀: dashboard-taxonomy.json cat:"startup" + 글로벌 얼리스테이지 시드 풀.
    각 사 Google News 최신 기사 크롤 + LLM 관점 분석(주 1회).
    LLM 실패 시 시드 베이스라인 유지 — 죽은 데이터 방지.
    사이트에는 사명(삼성/MX/갤럭시) 미표기 — '단말 제조사' 관점만.
@@ -44,7 +44,7 @@ const LABELS_L = ["파트너십 기회", "전략 제휴", "탑재 후보", "사�
 const LABELS_S = ["인수 후보", "투자 검토", "기술 적용", "사업 모델 검토"];
 
 // ── 대형(밸류 ≥ $10B) — 비즈니스 모델·수익구조 시드(플레인) ──
-// cat = STARTUP_TAXONOMY(data.js) 카테고리 id — 단말 신사업 관점 분류
+// cat = STARTUP_TAXONOMY(private registry) category id
 const LARGE = [
   { name: "Databricks", domain: "databricks.com", vertical: "데이터·AI 플랫폼", cat: "data", val: "$134B", bm: "데이터 레이크하우스 SaaS — 컴퓨트 소비량(DBU)·플랫폼 구독으로 과금", rev: "ARR $30억+ 추정, 엔터프라이즈 데이터·AI 워크로드 확대", part: "온디바이스 개인화 데이터 파이프라인·MLOps 백엔드 제휴 각도" },
   // (Cursor 제외 — 이미 인수 완료된 업체 · Perplexity 제외 — 사용자 요청)
@@ -60,7 +60,7 @@ const LARGE = [
 
 // ── 소형/초기(< $10B or 얼리스테이지) — 개요·정량·인수/투자 관점 시드 ──
 const SMALL = [
-  // data.js 소형
+  // private registry seed
   { name: "Replit", domain: "replit.com", vertical: "코딩 플랫폼", cat: "coding", stage: "$9B", funding: "밸류 $9B", ov: "브라우저 개발환경+AI 에이전트, 교육·크리에이터 접점", acq: "개발자 온보딩·교육 생태계 확보 관점 투자 검토" },
   { name: "Glean", domain: "glean.com", vertical: "사내 검색", cat: "productivity", stage: "$7.2B", funding: "밸류 $7.2B", ov: "엔터프라이즈 검색·어시스턴트, B2B 지식 접근", acq: "B2B 단말 번들 제휴·전략 투자 각도" },
   { name: "Lovable", domain: "lovable.dev", vertical: "앱 생성", cat: "coding", stage: "$6.6B", funding: "밸류 $6.6B", ov: "자연어 앱 빌더(스웨덴), 앱 생태계 롱테일 확장", acq: "스토어 생태계 활성화 관점 투자 검토" },
