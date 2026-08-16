@@ -12,10 +12,11 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { globalLocales, googleNewsUrl } from "./global-sources.mjs";
 import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
+import { CRAWLER_USER_AGENT } from "./crawler-identity.mjs";
 import { isExcludedText } from "./news-policy.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
-const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
+const UA = CRAWLER_USER_AGENT;
 const TODAY = new Date().toISOString().slice(0, 10);
 
 const HOUSES = [

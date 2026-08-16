@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-16",
+  "currentMode": "git-manifest-and-materialized-views",
+  "migrationRequired": true,
+  "migrationTriggerMb": 1,
+  "rawRetentionTarget": "object-storage-or-mounted-data-lake",
+  "normalizedQueryTarget": "DuckDB-Parquet-or-PostgreSQL",
+  "backends": [
+    {
+      "id": "mounted-immutable-store",
+      "status": "adapter-ready",
+      "environment": "DATA_LAKE_ROOT",
+      "writer": "scripts/archive-immutable-snapshot.mjs",
+      "notes": "The configured path must be external to the repository. Existing content hashes make writes idempotent."
+    },
+    {
+      "id": "duckdb-parquet",
+      "status": "selection-required",
+      "notes": "Recommended for batch analytics after the external storage location is selected."
+    },
+    {
+      "id": "postgresql",
+      "status": "selection-required",
+      "notes": "Recommended when authenticated multi-user access, transactions and row-level security are required."
+    }
+  ]
+}

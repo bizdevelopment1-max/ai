@@ -2,6 +2,8 @@
 
 GitHub Pages dashboard: <https://bizdevelopment1-max.github.io/ai/>
 
+Data contracts, retention, lineage, SLOs, and external storage activation: [`DATA_PLATFORM.md`](DATA_PLATFORM.md)
+
 ## ChatGPT Pro · GitHub Codex Cloud
 
 GitHub Pages의 Site CLI는 `/ask`와 `/edit` 요청을 GitHub Issue로 기록하고 ChatGPT Pro 계정의 Codex Cloud 실행문을 생성한다. 최초 1회 `https://chatgpt.com/codex`에서 Pro 계정으로 로그인하고 `bizdevelopment1-max/ai` 저장소 환경을 연결한 뒤, 복사된 실행문을 Codex Cloud에 붙여넣어 작업한다.

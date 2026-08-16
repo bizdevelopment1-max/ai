@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizdevelopment1-max.github.io/ai/schemas/market.schema.json",
+  "title": "Market observation ledger",
+  "type": "object",
+  "required": ["generatedAt", "schemaVersion", "database", "records"],
+  "properties": {
+    "generatedAt": { "type": "string", "minLength": 10 },
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "database": { "type": "object", "required": ["recordCount"] },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "title", "sourceUrl", "publishedAt", "displayEligible", "provenance", "observedAt"],
+        "properties": {
+          "id": { "type": "string", "minLength": 4 },
+          "type": { "type": "string", "minLength": 2 },
+          "title": { "type": "string", "minLength": 2 },
+          "sourceUrl": { "type": "string", "pattern": "^https?://" },
+          "publishedAt": { "type": "string", "minLength": 1 },
+          "displayEligible": { "type": "boolean" },
+          "observedAt": { "type": "string", "minLength": 10 },
+          "provenance": { "type": "object", "required": ["status"] }
+        }
+      }
+    }
+  }
+}

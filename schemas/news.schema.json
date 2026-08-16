@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizdevelopment1-max.github.io/ai/schemas/news.schema.json",
+  "title": "Normalized news ledger",
+  "type": "object",
+  "required": ["generatedAt", "count", "articles"],
+  "properties": {
+    "generatedAt": { "type": "string", "minLength": 10 },
+    "count": { "type": "integer", "minimum": 0 },
+    "articles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "source", "title", "url", "displayEligible", "sourceContent", "observedAt"],
+        "properties": {
+          "date": { "type": "string", "minLength": 8 },
+          "source": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 2 },
+          "url": { "type": "string", "pattern": "^https?://" },
+          "displayEligible": { "type": "boolean" },
+          "observedAt": { "type": "string", "minLength": 10 },
+          "sourceContent": {
+            "type": "object",
+            "required": ["status"],
+            "properties": {
+              "status": { "type": "string", "enum": ["content-extracted", "unavailable"] },
+              "contentHash": { "type": "string" },
+              "text": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

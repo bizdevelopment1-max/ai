@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "dialect": "https://json-schema.org/draft/2020-12/schema",
+  "contracts": [
+    { "dataset": "news.json", "schema": "schemas/news.schema.json", "stages": ["ingest", "publish"] },
+    { "dataset": "market.json", "schema": "schemas/market.schema.json", "stages": ["normalize", "publish"] },
+    { "dataset": "mobile-ai-business-view.json", "schema": "schemas/decision-intelligence.schema.json", "stages": ["publish"] },
+    { "dataset": "dataset-manifest.json", "schema": "schemas/dataset-manifest.schema.json", "stages": ["publish"] }
+  ]
+}

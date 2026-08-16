@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-16",
+  "defaultOwner": "Data Platform",
+  "defaultSteward": "Intelligence Operations",
+  "datasets": [
+    {
+      "id": "news-ledger",
+      "path": "news.json",
+      "recordPath": "articles",
+      "role": "normalized-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "retention": "append-with-history",
+      "schema": "schemas/news.schema.json",
+      "upstream": ["official-source-registry", "publisher-pages"],
+      "downstream": ["news-view", "company-intelligence"]
+    },
+    {
+      "id": "market-ledger",
+      "path": "market.json",
+      "recordPath": "records",
+      "role": "normalized-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "retention": "append-only-observations",
+      "schema": "schemas/market.schema.json",
+      "upstream": ["market-discovery", "publisher-pages"],
+      "downstream": ["market-view", "reverification-queue"]
+    },
+    {
+      "id": "history-ledger",
+      "path": "history.json",
+      "recordPath": "articles",
+      "role": "audit-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "retention": "append-only",
+      "upstream": ["news-ledger"],
+      "downstream": ["audit", "rollback"]
+    },
+    {
+      "id": "source-observation-ledger",
+      "path": "source-ledger",
+      "role": "raw-immutable-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "retention": "monthly-jsonl-until-external-migration",
+      "upstream": ["source-adapters"],
+      "downstream": ["source-snapshot"]
+    },
+    {
+      "id": "source-compliance-catalog",
+      "path": "source-compliance-report.json",
+      "recordPath": "sources",
+      "role": "source-governance-control",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "retention": "versioned-policy-snapshot",
+      "upstream": ["official-source-registry"],
+      "downstream": ["collector-gates", "audit"]
+    },
+    {
+      "id": "decision-intelligence",
+      "path": "mobile-ai-business-view.json",
+      "recordPath": "signals",
+      "role": "decision-view",
+      "sensitivity": "public-template-only",
+      "publication": "public",
+      "schema": "schemas/decision-intelligence.schema.json",
+      "upstream": ["news-ledger", "market-ledger", "partner-radar"],
+      "downstream": ["static-site"]
+    },
+    {
+      "id": "public-news-view",
+      "path": "news-view.json",
+      "recordPath": "articles",
+      "role": "materialized-public-view",
+      "sensitivity": "public",
+      "publication": "public",
+      "upstream": ["news-ledger"],
+      "downstream": ["static-site"]
+    },
+    {
+      "id": "public-market-view",
+      "path": "market-view.json",
+      "recordPath": "records",
+      "role": "materialized-public-view",
+      "sensitivity": "public",
+      "publication": "public",
+      "upstream": ["market-ledger"],
+      "downstream": ["static-site"]
+    }
+  ],
+  "sensitiveFieldPolicy": {
+    "publicForbiddenKeys": [
+      "internalComment",
+      "contractPrice",
+      "negotiationPosition",
+      "nonPublicRoadmap",
+      "privateOwnerEmail",
+      "customerPii",
+      "restrictedEvidence"
+    ],
+    "rule": "Public views may contain generic decision templates but must never contain internal annotations, negotiated terms, personal data or non-public plans."
+  }
+}

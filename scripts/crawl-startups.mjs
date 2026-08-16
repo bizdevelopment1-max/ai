@@ -19,12 +19,13 @@ import { llmJSON, llmAvailable } from "./llm.mjs";
 import { rotatingLocales, googleNewsUrl } from "./global-sources.mjs";
 import { isExcludedText } from "./news-policy.mjs";
 import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
+import { CRAWLER_USER_AGENT } from "./crawler-identity.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { canonicalizeStartupSnapshot } from "./company-identity.mjs";
 import { bulletizeKorean } from "./korean-copy.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
-const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
+const UA = CRAWLER_USER_AGENT;
 const TODAY = new Date().toISOString().slice(0, 10);
 const FORCE_REFRESH = /^(1|true|yes)$/i.test(String(process.env.STARTUP_REFRESH_FORCE || ""));
 const operationalCopy = /(?:수집|확인|분석|업데이트|준비)\s*중|신호\s*(?:없음|대기)|데이터\s*없음/i;

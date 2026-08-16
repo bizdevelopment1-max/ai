@@ -70,6 +70,7 @@ const volatileMetricAudit = await readJson("volatile-metrics-audit.json", { rows
 const qualityThresholds = await readJson("config/quality-thresholds.json", {});
 const monetization = await readJson("monetization.json", { companies: [] });
 const monetizationReviewQueue = await readJson("monetization-review-queue.json", { total: 0, rows: [] });
+const priorMarketReverificationQueue = await readJson("market-reverification-queue.json", { queue: [] });
 const opportunityView = await readJson("mobile-ai-business-view.json", { generatedOpportunities: [], experimentShortlist: [] });
 const sourceRegistryReport = await readJson("source-collection-report.json", { streamHealth: [], connectorStatus: [], categoryCoverage: [] });
 const sourceRegistrySnapshot = await readJson("source-snapshot.json", { items: [] });
@@ -265,7 +266,6 @@ const marketSourceStatus = record => {
     && !googleNews
     && content.status === "content-extracted"
     && record?.summaryMode === "source-content-extractive"
-    && record?.displayEligible === true
     && sourceText.length >= 120
     && summaryLines.length === 3
     && summaryLines.every(line => sourceText.includes(cleanLocalizationText(line)))
@@ -368,6 +368,7 @@ const invalidPublishedOpportunities = generatedOpportunities.filter(item => item
 // Unverified quantitative rows become an explicit work queue. Numeric and
 // pricing records receive the highest priority because they are the most
 // likely to affect an MX business decision when stale or weakly sourced.
+const priorQueueById = new Map((priorMarketReverificationQueue.queue || []).map(row => [row.id, row]));
 const marketReverificationQueue = (market.records || [])
   .filter(record => record.provenance?.status !== "source-backed")
   .map(record => {
@@ -377,12 +378,19 @@ const marketReverificationQueue = (market.records || [])
     const staleDays = ageDays(record.publishedAt || record.collectedAt);
     const priorityScore = (priceSensitive ? 40 : 0) + (hasNumbers ? 30 : 0)
       + (!validHttp(record.sourceUrl) ? 20 : 0) + Math.min(10, Math.floor(staleDays / 30));
+    const id = record.id || createHash("sha256").update(`${record.sourceUrl || ""}|${record.title || ""}`).digest("hex").slice(0, 16);
+    const priorQueueItem = priorQueueById.get(id);
+    const firstSeenAt = priorQueueItem?.firstSeenAt || priorQueueItem?.queuedAt || now.toISOString();
     return {
-      id: record.id || createHash("sha256").update(`${record.sourceUrl || ""}|${record.title || ""}`).digest("hex").slice(0, 16),
+      id,
       title: record.titleEn || record.title || record.topic || "Untitled quantitative record",
       sourceUrl: record.sourceUrl || record.url || "",
       publishedAt: record.publishedAt || null,
       collectedAt: record.collectedAt || null,
+      queuedAt: firstSeenAt,
+      firstSeenAt,
+      lastQueuedAt: now.toISOString(),
+      attemptCount: Number(priorQueueItem?.attemptCount || 0) + 1,
       priority: priorityScore >= 70 ? "P0" : priorityScore >= 40 ? "P1" : "P2",
       priorityScore,
       reasons: [

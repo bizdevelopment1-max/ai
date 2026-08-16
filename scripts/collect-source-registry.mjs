@@ -8,12 +8,13 @@
  */
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
+import { CRAWLER_USER_AGENT } from "./crawler-identity.mjs";
 
 const REGISTRY_FILE = "config/official-source-registry.json";
 const SNAPSHOT_FILE = "source-snapshot.json";
 const REPORT_FILE = "source-collection-report.json";
 const LEDGER_DIR = "source-ledger";
-const UA = process.env.SOURCE_COLLECTOR_USER_AGENT || "bizdevelopment1-max-ai/1.0 source-registry-collector";
+const UA = process.env.SOURCE_COLLECTOR_USER_AGENT || CRAWLER_USER_AGENT;
 const now = new Date();
 const observedAt = now.toISOString();
 const month = observedAt.slice(0, 7);
@@ -65,11 +66,34 @@ async function fetchText(url, { headers = {}, timeoutMs = 25_000, tries = 3, met
         ...(body !== undefined ? { body } : {}),
         signal: controller.signal,
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return { text: await response.text(), contentType: response.headers.get("content-type") || "" };
+      if (!response.ok) {
+        const error = new Error(`HTTP ${response.status}`);
+        error.status = response.status;
+        error.nonRetryable = [400, 401, 403, 404, 405, 410].includes(response.status);
+        const retryAfter = response.headers.get("retry-after");
+        if (retryAfter) {
+          const seconds = Number(retryAfter);
+          error.retryAfterMs = Number.isFinite(seconds) ? seconds * 1000 : Math.max(0, Date.parse(retryAfter) - Date.now());
+        }
+        throw error;
+      }
+      const text = await response.text();
+      return {
+        text,
+        contentType: response.headers.get("content-type") || "",
+        statusCode: response.status,
+        bytes: Buffer.byteLength(text),
+        etag: response.headers.get("etag") || null,
+        lastModified: response.headers.get("last-modified") || null,
+        contentHash: sha(text),
+      };
     } catch (error) {
       lastError = error;
-      if (attempt < tries) await new Promise(resolve => setTimeout(resolve, 350 * (2 ** (attempt - 1))));
+      if (error.nonRetryable) break;
+      if (attempt < tries) {
+        const backoff = Number(error.retryAfterMs) || (350 * (2 ** (attempt - 1)) + Math.floor(Math.random() * 200));
+        await new Promise(resolve => setTimeout(resolve, backoff));
+      }
     } finally {
       clearTimeout(timer);
     }
@@ -316,6 +340,8 @@ function connectorRequest(connector) {
 
 const registry = await readJson(REGISTRY_FILE, null);
 if (!registry) throw new Error(`${REGISTRY_FILE} is missing or invalid`);
+const complianceAllowsCollection = source => source?.compliance?.collectionAllowed !== false
+  && source?.compliance?.robotsPolicy !== "disallow";
 const priorSnapshot = await readJson(SNAPSHOT_FILE, { items: [] });
 const priorReport = await readJson(REPORT_FILE, { streamHealth: [] });
 const priorByKey = new Map((priorSnapshot.items || []).map(item => [item.stableKey, item]));
@@ -339,7 +365,7 @@ async function runStream(stream, collector) {
 
 const jobs = [];
 for (const feed of registry.officialFeeds || []) {
-  if (String(feed.status || "active").startsWith("disabled")) continue;
+  if (String(feed.status || "active").startsWith("disabled") || !complianceAllowsCollection(feed)) continue;
   jobs.push(runStream({ ...feed, id: `official-feed:${feed.source}`, sourceType: "official-feed" }, async () => {
     return collectWithFallbacks(feed, async candidate => {
       const result = await fetchText(candidate.url);
@@ -348,16 +374,20 @@ for (const feed of registry.officialFeeds || []) {
   }));
 }
 for (const sitemap of registry.sitemaps || []) {
-  if (String(sitemap.status || "active").startsWith("disabled")) continue;
+  if (String(sitemap.status || "active").startsWith("disabled") || !complianceAllowsCollection(sitemap)) continue;
   jobs.push(runStream({ ...sitemap, id: `official-sitemap:${sitemap.source}`, sourceTier: "official", sourceType: "official-sitemap" }, () => collectWithFallbacks(sitemap, collectSitemap)));
 }
 for (const htmlIndex of registry.htmlIndexes || []) {
-  if (String(htmlIndex.status || "active").startsWith("disabled")) continue;
+  if (String(htmlIndex.status || "active").startsWith("disabled") || !complianceAllowsCollection(htmlIndex)) continue;
   jobs.push(runStream({ ...htmlIndex, id: `official-html:${htmlIndex.source}`, sourceTier: "official", sourceType: "official-html" }, () => collectWithFallbacks(htmlIndex, collectHtmlIndex)));
 }
 
 const connectorStatus = [];
 for (const connector of registry.apiConnectors || []) {
+  if (!complianceAllowsCollection(connector)) {
+    connectorStatus.push({ id: connector.id, source: connector.source, category: connector.category, status: "compliance-blocked", missingEnv: [] });
+    continue;
+  }
   const missingEnv = (connector.requiredEnv || []).filter(name => !process.env[name]);
   if (missingEnv.length || !connector.adapter) {
     connectorStatus.push({ id: connector.id, source: connector.source, category: connector.category, status: missingEnv.length ? "credential-gated" : "licensed-connector-required", missingEnv, ...(connector.activationNote ? { activationNote: connector.activationNote } : {}) });

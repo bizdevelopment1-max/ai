@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-16",
+  "nodes": [
+    { "id": "collect-sources", "dependsOn": [], "outputs": ["source-snapshot.json", "source-ledger"] },
+    { "id": "collect-news", "dependsOn": ["collect-sources"], "outputs": ["news.json"] },
+    { "id": "collect-markets", "dependsOn": ["collect-sources"], "outputs": ["market.json"] },
+    { "id": "normalize-temporal", "dependsOn": ["collect-news", "collect-markets"], "outputs": ["news.json", "market.json"] },
+    { "id": "verify-evidence", "dependsOn": ["normalize-temporal"], "outputs": ["quality.json", "history.json", "market-reverification-queue.json"] },
+    { "id": "build-decisions", "dependsOn": ["verify-evidence"], "outputs": ["mobile-ai-business-view.json"] },
+    { "id": "minimize-retention", "dependsOn": ["verify-evidence", "build-decisions"], "outputs": ["news.json", "market.json", "history.json", "research.json"] },
+    { "id": "materialize-public", "dependsOn": ["minimize-retention"], "outputs": ["overview-view.json", "news-view.json", "market-view.json", "data.bundle.js"] },
+    { "id": "build-lineage", "dependsOn": ["materialize-public"], "outputs": ["dataset-manifest.json", "slo-report.json"] },
+    { "id": "publication-gates", "dependsOn": ["build-lineage"], "outputs": ["staging-artifact"] }
+  ]
+}

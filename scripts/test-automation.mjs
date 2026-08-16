@@ -2108,7 +2108,7 @@ if (major < 20) {
 }
 
 console.log("  정보  기사 사실: 원문 발췌 · 기업 전략: GitHub Models 근거 제한 종합");
-console.log("  정보  기본 파이프라인: 매일 06:30 · 12:30 · 19:30 · 00:30 KST");
+console.log("  정보  기본 파이프라인: 매일 06:30 · 12:30 · 18:30 · 00:30 KST");
 console.log("  정보  보조 업데이트: 수동 복구 전용(동시 쓰기 방지)");
 
 const pipelineScripts = [
