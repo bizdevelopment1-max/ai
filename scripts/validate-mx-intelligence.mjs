@@ -34,7 +34,11 @@ if ((database.osAgentStack || []).length < 7 || (database.uxUseCases || []).leng
 if ((database.partnershipNetwork?.edges || []).length < 5) fail("AI partnership network is incomplete");
 if ((database.formFactors || []).length < 7 || (database.hardwareSlmTrack || []).length < 4) fail("form-factor and SLM tracks are incomplete");
 if (database.consumerPainPointTrack?.status !== "connector-required") fail("consumer pain-point mining must not publish synthetic rankings");
-if (database.schemaVersion < 8) fail("decision-intelligence schema v8 is not active");
+if (database.schemaVersion < 9) fail("claim-linked decision-intelligence schema v9 is not active");
+if ((database.taxonomyAxes?.axes || []).length < 16) fail("independent decision taxonomy axes are incomplete");
+if (!(database.claims || []).length || !(database.evidenceSpans || []).length) fail("claim/evidence graph is empty");
+if (database.claimSummary?.citationCompleteness !== 1) fail("claim citations are incomplete");
+if (database.publicationControl?.state === "staging" && database.pipeline?.published !== 0) fail("staging snapshot contains published decisions");
 if ((database.securityBusinessCases?.offers || []).length < 3 || (database.securityBusinessCases?.competitiveTiming || []).length < 3) fail("on-device trust business case is incomplete");
 if ((database.healthMonetizationLadder || []).length !== 3 || !String(database.healthMonetizationLadder[0]?.mixClaim).includes("게시 보류")) fail("health monetization evidence gate is incomplete");
 if ((database.companionEconomics?.headlineMetrics || []).length < 5 || (database.companionEconomics?.comparisons || []).length < 3) fail("companion economics coverage is incomplete");
@@ -46,6 +50,8 @@ if ((database.assetOpportunityMatrix || []).length < 8) fail("asset-to-opportuni
 for (const opportunity of database.generatedOpportunities || []) {
   if (!Number.isFinite(opportunity.signalScore) || !Number.isFinite(opportunity.opportunityScore) || !Number.isFinite(opportunity.ownAssetFit)) fail(`${opportunity.id}: score fields are incomplete`);
   if (!opportunity.evidenceConfidence || !opportunity.experimentPlan?.nextDecisionAt) fail(`${opportunity.id}: confidence or experiment plan is incomplete`);
+  if (!opportunity.rubricVersion || !opportunity.scoredAt || !opportunity.scoredBy?.id || !opportunity.claimIds?.length || !opportunity.evidenceIds?.length) fail(`${opportunity.id}: score lineage is incomplete`);
+  if ((opportunity.scorecard || []).length !== 8 || opportunity.scorecard.some(row => !row.evidenceIds?.length)) fail(`${opportunity.id}: evidence-linked scorecard is incomplete`);
   if (opportunity.status === "published" && (opportunity.evidenceCount < 2 || opportunity.independentSources < 2)) fail(`${opportunity.id}: evidence gate bypassed`);
 }
 const foldable = (database.formFactors || []).find(item => item.id === "foldable");

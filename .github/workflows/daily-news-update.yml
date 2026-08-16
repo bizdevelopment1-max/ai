@@ -21,7 +21,9 @@ jobs:
     env:
       RETRY_ATTEMPTS: 3
       GITHUB_TOKEN: ${{ github.token }}
-      SEC_USER_AGENT: "bizdevelopment1-max-ai ${{ github.actor }}@users.noreply.github.com"
+      DATASET_PUBLICATION_STATE: staging
+      DATASET_APPROVAL_STATUS: pending
+      SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
       USPTO_API_KEY: ${{ secrets.USPTO_API_KEY }}
       SENSOR_TOWER_TOKEN: ${{ secrets.SENSOR_TOWER_TOKEN }}
       APPFIGURES_CLIENT_KEY: ${{ secrets.APPFIGURES_CLIENT_KEY }}
@@ -128,6 +130,8 @@ jobs:
       - name: Validate publication contracts and boundaries
         run: |
           node scripts/validate-data-contracts.mjs --stage=publish
+          node scripts/validate-publication-policy.mjs
+          node scripts/calibrate-dedup-threshold.mjs
           node scripts/validate-data-boundaries.mjs
           node scripts/validate-pipeline-dag.mjs
           node scripts/test-data-platform.mjs
@@ -147,6 +151,7 @@ jobs:
             app.bundle.js
             data.bundle.js
             overview-view.json
+            strategy-view.json
             mobile-ai-business-view.json
             assets/
           retention-days: 14

@@ -1,6 +1,9 @@
 {
   "generatedAt": "2026-08-16T09:08:54.243Z",
   "overall": "warn",
+  "publicationState": "staging",
+  "publicationBlockingChecks": [],
+  "publicationBlocked": false,
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 22개 · 정상 18 · 주의 4 · 실패 0",
   "checks": [
@@ -197,6 +200,8 @@
       "VentureBeat": 6,
       "CNET": 4,
       "ZDNet": 21,
+      "CNBC": 11,
+      "CNET": 4,
       "AI Business": 4,
       "Ars Technica": 3,
       "Verizon Newsroom": 5,
@@ -240,8 +245,6 @@
       "Xiaomi Global Discover API": 1,
       "Databricks": 2,
       "MacRumors": 1,
-      "IEEE Spectrum": 4,
-      "the-decoder.com": 2,
       "vivo Newsroom": 1,
       "GSMA Newsroom": 4,
       "Arm Newsroom": 8,
@@ -279,8 +282,8 @@
       "directRss": 13,
       "officialFeeds": 14,
       "officialSitemaps": 25,
-      "officialApiConnectors": 13,
-      "registrySnapshotArticles": 249
+      "officialApiConnectors": 11,
+      "registrySnapshotArticles": 265
     },
     "acceptedCandidates": 342,
     "failedStreams": [
@@ -361,11 +364,11 @@
         "coverageStatus": "official-source-reachable-no-recent-items"
       },
       {
-        "stream": "google-news:Hailuo (MiniMax)",
-        "via": "official-html",
-        "source": "MiniMax News",
-        "recoveredItems": 0,
-        "coverageStatus": "official-source-reachable-no-recent-items"
+        "stream": "google-news:Writer",
+        "via": "official-sitemap",
+        "source": "Writer",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
       },
       {
         "stream": "google-news:Kling AI",
@@ -373,6 +376,13 @@
         "source": "Kuaishou Investor News",
         "recoveredItems": 1,
         "coverageStatus": "recent-item-recovered"
+      },
+      {
+        "stream": "google-news:Hailuo (MiniMax)",
+        "via": "official-html",
+        "source": "MiniMax News",
+        "recoveredItems": 0,
+        "coverageStatus": "official-source-reachable-no-recent-items"
       }
     ],
     "quietStreams": [
@@ -1168,7 +1178,7 @@
         "lastSuccessAt": null,
         "emptySince": "2026-08-15T11:07:45.636Z",
         "failureSince": null,
-        "consecutiveEmptyRuns": 14,
+        "consecutiveEmptyRuns": 15,
         "consecutiveFailureRuns": 0,
         "criticality": "optional-topic"
       },
@@ -1278,7 +1288,7 @@
         "lastSuccessAt": null,
         "emptySince": "2026-08-15T11:07:45.636Z",
         "failureSince": null,
-        "consecutiveEmptyRuns": 14,
+        "consecutiveEmptyRuns": 15,
         "consecutiveFailureRuns": 0,
         "criticality": "optional-topic"
       },
@@ -1385,7 +1395,7 @@
         "lastAttemptAt": "2026-08-16T09:00:23.939Z",
         "lastSuccessAt": "2026-08-16T09:00:23.939Z",
         "consecutiveFailureRuns": 0,
-        "durationMs": 273,
+        "durationMs": 52,
         "activeEndpoint": "https://www.apple.com/newsroom/rss-feed.rss",
         "attemptedEndpoints": [
           "https://www.apple.com/newsroom/rss-feed.rss"
@@ -2321,6 +2331,10 @@
           "itemCount": 40
         },
         {
+          "category": "agentic-commerce",
+          "itemCount": 39
+        },
+        {
           "category": "model-and-open-source",
           "itemCount": 28
         },
@@ -2331,10 +2345,6 @@
         {
           "category": "research-release",
           "itemCount": 28
-        },
-        {
-          "category": "agentic-commerce",
-          "itemCount": 27
         },
         {
           "category": "compute-and-edge",
@@ -2359,6 +2369,10 @@
         {
           "category": "competitor-device",
           "itemCount": 19
+        },
+        {
+          "category": "carrier-bundle",
+          "itemCount": 18
         },
         {
           "category": "consumer-survey",

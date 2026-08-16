@@ -8,6 +8,8 @@ const config = await readJson("config/data-contracts.json");
 const errors = [];
 
 const typeMatches = (value, type) => {
+  if (Array.isArray(type)) return type.some(candidate => typeMatches(value, candidate));
+  if (type === "null") return value === null;
   if (type === "array") return Array.isArray(value);
   if (type === "object") return value !== null && typeof value === "object" && !Array.isArray(value);
   if (type === "integer") return Number.isInteger(value);

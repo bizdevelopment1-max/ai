@@ -14,7 +14,9 @@
     "config/news-policy.json",
     "config/official-source-registry.json",
     "config/source-independence.json",
-    "config/slo-policy.json"
+    "config/slo-policy.json",
+    "config/decision-governance.json",
+    "config/dedup-calibration.json"
   ],
   "catalogHash": "b7e8dd3958f77e7609910701d38ee580fb3f0a7b25ff2b874810cb66d39267ed",
   "publicationState": "staging",
@@ -85,13 +87,13 @@
       "id": "decision-intelligence",
       "path": "mobile-ai-business-view.json",
       "role": "decision-view",
-      "sensitivity": "public-template-only",
+      "sensitivity": "public-verified-candidate-view",
       "publication": "public",
       "recordCount": 13,
       "bytes": 583552,
       "sha256": "d398fdb94c22d416ef120f48e984987f79c0b1ae6a1f6e585606b1ce3a8db33d",
       "files": 1,
-      "migrationTriggerExceeded": false
+      "migrationTriggerExceeded": true
     },
     {
       "id": "public-news-view",
@@ -134,6 +136,7 @@
     "currentMode": "git-manifest-and-materialized-views",
     "migrationRequired": true,
     "externalImmutableStore": "not-configured",
+    "migrationGate": "staging-warning",
     "recommendedTargets": [
       {
         "id": "mounted-immutable-store",

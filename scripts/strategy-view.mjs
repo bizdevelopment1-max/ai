@@ -97,7 +97,7 @@ const companyAccount = (base, company) => {
 
 export function buildStrategyView({ generatedAt, framework, registry, companies, articles, opportunityDb }) {
   const generatedOpportunities = (opportunityDb?.generatedOpportunities || [])
-    .filter(item => item?.status === "published" && item?.evidenceConfidence !== "low")
+    .filter(item => item?.decisionEligible !== false && ["verified", "reviewed", "published"].includes(item?.workflow?.stage || item?.status) && item?.evidenceConfidence !== "low")
     .filter(item => (item.evidence || []).some(evidenceUrl))
     .sort((left, right) => scoreOf(right) - scoreOf(left))
     .map(compactOpportunity);

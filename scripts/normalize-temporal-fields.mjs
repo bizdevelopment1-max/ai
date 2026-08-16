@@ -27,13 +27,24 @@ for (const file of files) {
   for (const record of file.records(data)) {
     const temporal = parseEffective(record.publishedAt || record.date || record.asOf);
     const observedAt = record.observedAt || record.collectedAt || record.sourceContent?.retrievedAt || fallbackObservedAt;
-    if (record.effectiveFrom !== temporal.effectiveFrom || record.effectivePrecision !== temporal.effectivePrecision || record.observedAt !== observedAt) changed++;
+    const publishedAt = record.publishedAt || record.date || null;
+    const eventAt = record.eventAt || record.eventDate || record.asOf || temporal.effectiveFrom || publishedAt;
+    const retrievedAt = record.retrievedAt || record.sourceContent?.retrievedAt || observedAt;
+    const verifiedAt = record.verifiedAt || record.provenance?.verifiedAt || (record.displayEligible ? observedAt : null);
+    if (record.effectiveFrom !== temporal.effectiveFrom || record.effectivePrecision !== temporal.effectivePrecision
+      || record.observedAt !== observedAt || record.eventAt !== eventAt || record.retrievedAt !== retrievedAt || record.verifiedAt !== verifiedAt) changed++;
     record.effectiveFrom = temporal.effectiveFrom;
     record.effectiveTo ??= null;
     record.effectivePrecision = temporal.effectivePrecision;
     record.observedAt = observedAt;
+    record.eventAt = eventAt;
+    record.publishedAt = publishedAt;
+    record.retrievedAt = retrievedAt;
+    record.verifiedAt = verifiedAt;
     record.supersededAt ??= null;
   }
-  await writeFile(file.path, `${JSON.stringify(data, null, 2)}\n`);
+  // Git is only a transitional ledger store; keep normalized snapshots
+  // compact until the external immutable store migration is completed.
+  await writeFile(file.path, `${JSON.stringify(data)}\n`);
 }
 console.log(`[temporal] normalized ${changed} records with valid-time and system-time fields`);

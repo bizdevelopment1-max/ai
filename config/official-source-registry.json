@@ -49,6 +49,10 @@
       "source": "Owned-device Newsroom",
       "company": "Owned-device Maker",
       "url": "https://news.samsung.com/global/feed/rss",
+      "fallbackUrls": ["https://news.samsung.com/global/feed/"],
+      "fallbackGoogleNewsQuery": "site:news.samsung.com/global (AI OR fold OR satellite OR wearable)",
+      "timeoutMs": 15000,
+      "tries": 1,
       "category": "device-and-form-factor",
       "matchPattern": "AI|fold|satellite|connectivity|wearable|device",
       "sourceTier": "official"
@@ -182,12 +186,12 @@
     { "source": "OPPO Newsroom", "company": "OPPO", "url": "https://www.oppo.com/sitemap.xml", "pathPattern": "/newsroom/|/events/", "category": "competitor-device", "status": "active" },
     { "source": "vivo Newsroom", "company": "vivo", "url": "https://www.vivo.com/sitemap.xml", "pathPattern": "/about-vivo/news|/news/", "category": "competitor-device", "status": "disabled-transient-404" },
     { "source": "Verizon Newsroom", "company": "Verizon", "url": "https://www.verizon.com/about/sitemap.xml", "pathPattern": "/news/|/about/news/", "category": "carrier-bundle", "status": "active" },
-    { "source": "AT&T Newsroom", "company": "AT&T", "url": "https://about.att.com/sitemap.xml", "pathPattern": "/story/|/newsroom/", "category": "carrier-bundle", "status": "active" },
+    { "source": "AT&T Newsroom", "company": "AT&T", "url": "https://about.att.com/sitemap.xml", "pathPattern": "/story/|/newsroom/", "category": "carrier-bundle", "status": "active", "fallbackGoogleNewsQuery": "site:about.att.com (AI OR agent OR connectivity)", "maxItems": 10, "timeoutMs": 12000, "tries": 1 },
     { "source": "SKT Newsroom", "company": "SK Telecom", "url": "https://news.sktelecom.com/sitemap.xml", "pathPattern": "/[0-9]+|/press/|/news/", "category": "carrier-bundle", "status": "active" },
     { "source": "KT Corporate", "company": "KT", "url": "https://corp.kt.com/sitemap.xml", "pathPattern": "/html/promote/|/news/", "category": "carrier-bundle", "status": "active" },
 
     { "source": "Visa Newsroom", "company": "Visa", "url": "https://usa.visa.com/sitemap.xml", "pathPattern": "/about-visa/newsroom/|/solutions/", "category": "agentic-commerce", "status": "active" },
-    { "source": "Mastercard Newsroom", "company": "Mastercard", "url": "https://www.mastercard.com/sitemap.xml", "pathPattern": "/news/|/stories/", "category": "agentic-commerce", "status": "active" },
+    { "source": "Mastercard Newsroom", "company": "Mastercard", "url": "https://www.mastercard.com/sitemap.xml", "pathPattern": "/news/|/stories/", "category": "agentic-commerce", "status": "active", "fallbackGoogleNewsQuery": "site:mastercard.com/news (AI OR agentic commerce OR payment)", "maxItems": 12, "timeoutMs": 12000, "tries": 1 },
     { "source": "Counterpoint Research", "company": "Counterpoint Research", "url": "https://www.counterpointresearch.com/sitemap.xml", "pathPattern": "/insights/|/press-release/", "category": "research-release", "status": "active" },
     { "source": "Sensor Tower", "company": "Sensor Tower", "url": "https://sensortower.com/sitemap.xml", "pathPattern": "/press/|/blog/|/report/", "category": "app-economics", "status": "active" },
     { "source": "Juniper Research", "company": "Juniper Research", "url": "https://www.juniperresearch.com/sitemap.xml", "pathPattern": "/research/|/press-release/|/whitepaper/", "category": "research-release", "status": "active" },
@@ -202,6 +206,28 @@
     ,{ "source": "MiniMax News Sitemap", "company": "MiniMax", "aliases": ["Hailuo (MiniMax)", "Hailuo AI"], "url": "https://www.minimax.io/sitemap.xml", "pathPattern": "/news/", "category": "model-and-agent-platform", "status": "disabled-replaced-by-official-html", "maxAgeDays": 120, "maxItems": 12, "validatedAt": "2026-08-16" }
   ],
   "htmlIndexes": [
+    {
+      "source": "AT&T AI and Data Science",
+      "company": "AT&T",
+      "url": "https://about.att.com/innovation/ai-and-data-science",
+      "linkPattern": "/story/|/innovation/",
+      "category": "carrier-bundle",
+      "status": "disabled-replaced-by-sitemap-fallback",
+      "maxCandidates": 20,
+      "maxItems": 10,
+      "validatedAt": "2026-08-16"
+    },
+    {
+      "source": "Mastercard Europe Press Releases",
+      "company": "Mastercard",
+      "url": "https://www.mastercard.com/news/europe/en/newsroom/press-releases/",
+      "linkPattern": "/news/.*/press-releases/|/news-and-trends/",
+      "category": "agentic-commerce",
+      "status": "disabled-replaced-by-sitemap-fallback",
+      "maxCandidates": 24,
+      "maxItems": 12,
+      "validatedAt": "2026-08-16"
+    },
     {
       "source": "MiniMax News",
       "company": "MiniMax",
@@ -290,46 +316,32 @@
       "validatedAt": "2026-08-16"
     },
     {
-      "id": "sec-edgar-current-8k",
-      "source": "SEC EDGAR",
+      "id": "sec-edgar-company-submissions",
+      "source": "SEC EDGAR Submissions API",
       "sourceTier": "official",
       "category": "filing",
-      "endpoint": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&output=atom&type=8-k",
-      "format": "atom",
-      "adapter": "sec-atom",
+      "endpointTemplate": "https://data.sec.gov/submissions/CIK{cik}.json",
+      "format": "json",
+      "adapter": "sec-submissions-batch",
       "headersFromEnv": { "User-Agent": "SEC_USER_AGENT" },
-      "matchPattern": "Alphabet|Apple|Amazon|Meta Platforms|Microsoft|NVIDIA|Qualcomm|Micron|Verizon|AT&T|Coinbase",
-      "maxItems": 20,
+      "forms": ["8-K", "10-Q", "10-K"],
+      "companies": [
+        { "name": "Alphabet", "cik": "1652044" },
+        { "name": "Apple", "cik": "320193" },
+        { "name": "Amazon", "cik": "1018724" },
+        { "name": "Meta Platforms", "cik": "1326801" },
+        { "name": "Microsoft", "cik": "789019" },
+        { "name": "NVIDIA", "cik": "1045810" },
+        { "name": "Qualcomm", "cik": "804328" },
+        { "name": "Micron", "cik": "723125" },
+        { "name": "Verizon", "cik": "732712" },
+        { "name": "AT&T", "cik": "732717" },
+        { "name": "Coinbase", "cik": "1679788" }
+      ],
+      "maxItems": 80,
       "requiredEnv": ["SEC_USER_AGENT"],
-      "schedule": "hourly"
-    },
-    {
-      "id": "sec-edgar-current-10q",
-      "source": "SEC EDGAR",
-      "sourceTier": "official",
-      "category": "filing",
-      "endpoint": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&output=atom&type=10-q",
-      "format": "atom",
-      "adapter": "sec-atom",
-      "headersFromEnv": { "User-Agent": "SEC_USER_AGENT" },
-      "matchPattern": "Alphabet|Apple|Amazon|Meta Platforms|Microsoft|NVIDIA|Qualcomm|Micron|Verizon|AT&T|Coinbase",
-      "maxItems": 20,
-      "requiredEnv": ["SEC_USER_AGENT"],
-      "schedule": "six-hourly"
-    },
-    {
-      "id": "sec-edgar-current-10k",
-      "source": "SEC EDGAR",
-      "sourceTier": "official",
-      "category": "filing",
-      "endpoint": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&output=atom&type=10-k",
-      "format": "atom",
-      "adapter": "sec-atom",
-      "headersFromEnv": { "User-Agent": "SEC_USER_AGENT" },
-      "matchPattern": "Alphabet|Apple|Amazon|Meta Platforms|Microsoft|NVIDIA|Qualcomm|Micron|Verizon|AT&T|Coinbase",
-      "maxItems": 20,
-      "requiredEnv": ["SEC_USER_AGENT"],
-      "schedule": "daily"
+      "schedule": "hourly",
+      "validatedAt": "2026-08-16"
     },
     {
       "id": "uspto-open-data",

@@ -9,6 +9,8 @@ const SEED = "config/mx-intelligence-seed.json";
 const SOURCE_POLICY = "config/mx-source-policy.json";
 const PIPELINE_POLICY = "config/intelligence-pipeline.json";
 const OPPORTUNITY_POLICY = "config/opportunity-generation.json";
+const DECISION_GOVERNANCE = "config/decision-governance.json";
+const DEDUP_CALIBRATION = "config/dedup-calibration.json";
 const DAY_MS = 86400000;
 
 const readJson = async (file, fallback = null) => {
@@ -67,10 +69,6 @@ const validateSignal = signal => {
 
   const independentSources = new Set((signal.evidence || []).map(independentSourceKey).filter(Boolean)).size;
   if (signal.confidence === "high" && independentSources < 2) issues.push("high-confidence-needs-2-independent-sources");
-  if (signal.priority === "P1" && !(signal.workflow?.humanReview && signal.workflow?.reviewStatus === "approved")) {
-    issues.push("p1-human-review-required");
-  }
-
   const sourceText = evidenceText(signal).toLowerCase();
   for (const metric of signal.metrics || []) {
     if (!metric.evidenceLiteral || !sourceText.includes(String(metric.evidenceLiteral).toLowerCase())) {
@@ -138,6 +136,82 @@ const normalizeSourceKey = url => {
 };
 const textOf = value => Array.isArray(value) ? value.join(" ") : String(value || "");
 
+const publicationContext = governance => {
+  const requestedState = String(process.env.DATASET_PUBLICATION_STATE || governance.publicationGate?.nonPublishedDefaultState || "staging").toLowerCase();
+  const reviewerId = String(process.env.DATASET_REVIEWER_ID || process.env.DATASET_APPROVED_BY || "").trim() || null;
+  const approvalStatus = String(process.env.DATASET_APPROVAL_STATUS || (reviewerId ? "approved" : "pending")).toLowerCase();
+  const approved = requestedState === "published"
+    && Boolean(reviewerId)
+    && approvalStatus === governance.publicationGate?.approvalStatusRequired;
+  if (requestedState === "published" && !approved) {
+    throw new Error("published decision snapshot requires DATASET_REVIEWER_ID/DATASET_APPROVED_BY and DATASET_APPROVAL_STATUS=approved");
+  }
+  return { requestedState, state: approved ? "published" : requestedState === "working" ? "working" : "staging", reviewerId, approvalStatus, approved };
+};
+
+const taxonomyForOpportunity = ({ archetype, evidenceConfidence, workflowStage }) => {
+  const id = String(archetype.id || "");
+  const terms = (archetype.terms || []).map(value => String(value).toLowerCase());
+  const assets = archetype.assets || [];
+  const revenues = archetype.revenueModels || [];
+  const has = pattern => pattern.test(`${id} ${terms.join(" ")}`);
+  const vertical = has(/health|medical|clinical|헬스|의료/) ? "health"
+    : has(/financial|commerce|purchase|payment|bank|금융|결제|커머스/) ? "commerce-finance"
+      : has(/enterprise|field|기업|현장/) ? "enterprise"
+        : has(/home|가전|홈/) ? "connected-home"
+          : has(/vehicle|car|자동차|차량/) ? "automotive" : "horizontal";
+  const device = assets.includes("wearable-network") ? ["wearable", "multi-device"]
+    : assets.includes("large-screen") ? ["large-screen", "multi-device"]
+      : assets.includes("camera-media") ? ["camera-device", "multi-device"] : ["multi-device"];
+  const modality = has(/camera|image|video|vision|glasses|카메라|영상|글래스/) ? ["vision", "multimodal"]
+    : has(/voice|call|message|통화|음성|메시지/) ? ["voice", "text"] : ["text", "multimodal"];
+  const payer = [...new Set([
+    revenues.includes("enterprise") ? "enterprise" : null,
+    revenues.includes("subscription") ? "consumer-or-seat-subscriber" : null,
+    revenues.some(value => ["commission", "outcome", "usage"].includes(value)) ? "partner-or-transaction-payer" : null,
+  ].filter(Boolean))];
+  return {
+    user_need: [id],
+    value_chain_layer: [...new Set(assets.map(asset => asset === "os-control" ? "experience-and-runtime"
+      : asset === "app-distribution" || asset === "wallet-payment" ? "service-platform-and-monetization"
+        : asset === "account-identity" || asset === "secure-workspace" ? "data-context-and-trust"
+          : asset === "global-channel" ? "distribution" : "device-and-sensor"))],
+    ai_capability: [has(/agent|automation|action|에이전트|자동화/) ? "agentic-action" : "intelligence-service"],
+    modality,
+    device,
+    inference_location: has(/on-device|offline|secure|trust|privacy|온디바이스|오프라인|보안/) ? ["on-device", "hybrid"] : ["hybrid"],
+    business_model: revenues,
+    payer: payer.length ? payer : ["undetermined"],
+    industry_vertical: [vertical],
+    geography: ["global"],
+    maturity: [(archetype.baseFit?.feasibility || 0) >= 4 ? "PoC-to-GA" : "research-to-PoC"],
+    strategic_posture: [archetype.preferredAction || "Watch"],
+    risk: [(archetype.baseFit?.risk || 0) >= 4 ? "heightened-review" : "standard-review"],
+    source_tier: [evidenceConfidence === "high" ? "multi-source" : "limited-source"],
+    confidence: [evidenceConfidence],
+    workflow_stage: [workflowStage],
+  };
+};
+
+const taxonomyForSignal = (signal, workflowStage) => ({
+  user_need: [signal.product || signal.name],
+  value_chain_layer: Array.isArray(signal.decisionAxes?.integration) ? signal.decisionAxes.integration : [signal.decisionAxes?.integration].filter(Boolean),
+  ai_capability: Array.isArray(signal.decisionAxes?.touchpoint) ? signal.decisionAxes.touchpoint : [signal.decisionAxes?.touchpoint].filter(Boolean),
+  modality: Array.isArray(signal.modality) ? signal.modality : [signal.modality || "multimodal"],
+  device: Array.isArray(signal.device) ? signal.device : [signal.device || signal.entityType || "multi-device"],
+  inference_location: Array.isArray(signal.decisionAxes?.touchpoint) ? signal.decisionAxes.touchpoint : [signal.decisionAxes?.touchpoint].filter(Boolean),
+  business_model: signal.financials?.revenueModel ? [signal.financials.revenueModel] : ["undetermined"],
+  payer: signal.payer ? [signal.payer] : ["undetermined"],
+  industry_vertical: signal.industryVertical ? [signal.industryVertical] : ["horizontal"],
+  geography: signal.decisionAxes?.regions || [],
+  maturity: [signal.decisionAxes?.maturity || "Research"],
+  strategic_posture: signal.decisionAxes?.posture || [signal.actionOption],
+  risk: [signal.mxMapping?.patentLitigationRisk || "review-required"],
+  source_tier: [signal.confidence === "high" ? "multi-source" : "limited-source"],
+  confidence: [signal.confidence || "low"],
+  workflow_stage: [workflowStage],
+});
+
 const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {} }) => {
   const rows = [];
   for (const signal of signals) {
@@ -152,6 +226,11 @@ const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {}
         independentKey: independentSourceKey(source),
         sourceOwnerGroup: sourceOwnerGroup(source) || null,
         publishedAt: source.publishedAt || signal.lastVerifiedAt || "",
+        observedAt: source.observedAt || signal.lastVerifiedAt || "",
+        retrievedAt: source.retrievedAt || signal.lastVerifiedAt || "",
+        verifiedAt: signal.lastVerifiedAt || "",
+        spans: (source.spans || []).filter(Boolean).slice(0, 3),
+        sourceTier: source.tier || (signal.confidence === "high" ? "reported" : "estimate"),
         confidence: signal.confidence || "medium",
         priority: signal.priority || "P2",
       });
@@ -169,6 +248,11 @@ const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {}
       independentKey: independentSourceKey(record),
       sourceOwnerGroup: sourceOwnerGroup(record) || null,
       publishedAt: record.publishedAt || record.collectedAt || "",
+      observedAt: record.observedAt || record.collectedAt || "",
+      retrievedAt: record.sourceContent?.retrievedAt || record.collectedAt || "",
+      verifiedAt: record.provenance?.verifiedAt || record.collectedAt || "",
+      spans: (record.sourceQuantifiedLines || record.sourceContent?.evidenceSpans || []).filter(Boolean).slice(0, 3),
+      sourceTier: record.provenance?.status === "source-backed" ? "reported" : "estimate",
       confidence: record.provenance?.status === "source-backed" ? "high" : "medium",
       priority: /price|revenue|security|fraud|health|carrier|satellite/i.test(`${record.type} ${record.topic}`) ? "P1" : "P2",
     });
@@ -186,6 +270,11 @@ const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {}
         independentKey: independentSourceKey({ ...item, sourceName: item.source, sourceUrl: item.url }),
         sourceOwnerGroup: sourceOwnerGroup({ ...item, sourceName: item.source, sourceUrl: item.url }) || null,
         publishedAt: item.date || "",
+        observedAt: item.observedAt || item.date || "",
+        retrievedAt: item.retrievedAt || item.date || "",
+        verifiedAt: item.verifiedAt || item.date || "",
+        spans: [item.signal, item.classificationGate?.reason].filter(Boolean).slice(0, 3),
+        sourceTier: "reported",
         confidence: "high",
         priority: "P1",
         revenueModel: item.model,
@@ -195,7 +284,7 @@ const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {}
   return rows;
 };
 
-const generateOpportunities = ({ policy, signals, market, monetization, previous, generatedAt }) => {
+const generateOpportunities = ({ policy, governance, publication, signals, market, monetization, previous, generatedAt }) => {
   const evidencePool = buildOpportunityEvidence({ signals, market, monetization });
   const assetMap = new Map((policy.assetCatalog || []).map(asset => [asset.id, asset]));
   const previousMap = new Map((previous.generatedOpportunities || []).map(item => [item.id, item]));
@@ -214,18 +303,35 @@ const generateOpportunities = ({ policy, signals, market, monetization, previous
     const marketMatches = matches.filter(row => row.type === "market-record").length;
     const signalMatches = matches.filter(row => row.type === "decision-signal").length;
     const base = archetype.baseFit || {};
-    const scoreBreakdown = {
-      userDemand: clamp((base.demand || 0) * 3 + Math.min(5, marketMatches * 2) + Math.min(3, matches.length), 0, 20),
-      ownedAssetLeverage: clamp((base.asset || 0) * 4, 0, 20),
-      differentiation: clamp((base.differentiation || 0) * 3, 0, 15),
-      recurringRevenue: clamp((base.recurring || 0) * 2 + Math.min(5, revenueMatches * 3), 0, 15),
-      technicalFeasibility: clamp((base.feasibility || 0) * 2, 0, 10),
-      dataAdvantage: clamp((base.data || 0) * 2, 0, 10),
-      distributionScale: clamp((base.distribution || 0) * 2, 0, 10),
-      riskPenalty: clamp((base.risk || 0) * 2 + matches.filter(row => /lawsuit|regulat|privacy|risk|소송|규제|개인정보/i.test(row.text)).length, 0, 20),
+    const riskMentions = matches.filter(row => /lawsuit|regulat|privacy|risk|소송|규제|개인정보/i.test(row.text)).length;
+    const ratings = {
+      marketSizeGrowth: clamp((base.demand || 1) + Math.min(1, marketMatches * 0.2), 1, 5),
+      strategicFit: clamp(base.asset || 1, 1, 5),
+      executionFeasibility: clamp(base.feasibility || 1, 1, 5),
+      defensibleAdvantage: clamp(((base.differentiation || 1) + (base.data || 1)) / 2, 1, 5),
+      monetizationClarity: clamp((base.recurring || 1) + Math.min(1, revenueMatches * 0.25), 1, 5),
+      customerProblem: clamp((base.demand || 1) + Math.min(0.5, signalMatches * 0.1), 1, 5),
+      competitivePosition: clamp(base.differentiation || 1, 1, 5),
+      regulatoryControllability: clamp(6 - (base.risk || 3) - Math.min(1, riskMentions * 0.1), 1, 5),
     };
-    const positiveScore = Object.entries(scoreBreakdown).filter(([key]) => key !== "riskPenalty").reduce((sum, [, value]) => sum + value, 0);
-    const opportunityScore = clamp(Math.round(positiveScore - scoreBreakdown.riskPenalty), 0, 100);
+    const evidenceIdsFor = type => {
+      const selected = type === "market" ? matches.filter(row => row.type === "market-record")
+        : type === "revenue" ? matches.filter(row => row.type === "revenue-signal")
+          : type === "signal" ? matches.filter(row => row.type === "decision-signal") : matches;
+      return (selected.length ? selected : matches).slice(0, 6).map(row => row.id);
+    };
+    const evidenceType = { marketSizeGrowth: "market", strategicFit: "signal", executionFeasibility: "signal", defensibleAdvantage: "signal", monetizationClarity: "revenue", customerProblem: "signal", competitivePosition: "signal", regulatoryControllability: "all" };
+    const scoringDimensions = governance.opportunityScoring?.dimensions || [];
+    const scorecard = scoringDimensions.map(dimension => ({
+      dimension: dimension.id,
+      label: dimension.label,
+      weight: dimension.weight,
+      rating: Number(ratings[dimension.id].toFixed(2)),
+      weightedPoints: Number((dimension.weight * ratings[dimension.id] / 5).toFixed(2)),
+      evidenceIds: evidenceIdsFor(evidenceType[dimension.id]),
+    }));
+    const scoreBreakdown = Object.fromEntries(scorecard.map(row => [row.dimension, row.weightedPoints]));
+    const opportunityScore = Number(clamp(scorecard.reduce((sum, row) => sum + row.weightedPoints, 0), 0, 100).toFixed(1));
     const recencyScores = matches.map(row => clamp(100 - ageDays(row.publishedAt, Date.parse(generatedAt)) * 1.5, 10, 100));
     const confidenceScores = matches.map(row => row.confidence === "high" ? 100 : row.confidence === "medium" ? 70 : 40);
     const priorityScores = matches.map(row => row.priority === "P0" ? 100 : row.priority === "P1" ? 85 : 60);
@@ -233,7 +339,9 @@ const generateOpportunities = ({ policy, signals, market, monetization, previous
     const signalScore = combined.length ? Math.round(combined.reduce((sum, value) => sum + value, 0) / combined.length) : 0;
     const evidenceConfidence = independentSources >= 2 && matches.length >= 3 ? "high" : matches.length >= 2 ? "medium" : "low";
     const evidenceGatePassed = matches.length >= (gate.minimumEvidenceUnits || 2) && independentSources >= (gate.minimumIndependentSources || 2);
-    const status = evidenceGatePassed && opportunityScore >= (gate.minimumOpportunityScore || 45) ? "published" : "review-pending";
+    const decisionEligible = evidenceGatePassed && opportunityScore >= (gate.minimumOpportunityScore || 45);
+    const workflowStage = decisionEligible ? (publication.approved ? "published" : "verified") : "draft";
+    const status = workflowStage;
     const previousScore = previousMap.get(archetype.id)?.opportunityScore;
     const scoreDelta = Number.isFinite(Number(previousScore)) ? opportunityScore - Number(previousScore) : null;
     const assetLabels = (archetype.assets || []).map(id => assetMap.get(id)?.label || id);
@@ -245,6 +353,11 @@ const generateOpportunities = ({ policy, signals, market, monetization, previous
       source: row.source,
       publishedAt: row.publishedAt,
       matchedTerms: row.matchedTerms,
+      spans: (row.spans || []).slice(0, 3),
+      sourceTier: row.sourceTier || "reported",
+      observedAt: row.observedAt || row.publishedAt,
+      retrievedAt: row.retrievedAt || row.observedAt || row.publishedAt,
+      verifiedAt: row.verifiedAt || generatedAt,
     }));
     const nextDecisionAt = new Date(Date.parse(generatedAt) + (policy.experimentTemplate?.durationDays || 90) * DAY_MS).toISOString();
     return {
@@ -260,6 +373,20 @@ const generateOpportunities = ({ policy, signals, market, monetization, previous
       evidenceCount: matches.length,
       independentSources,
       scoreBreakdown,
+      scorecard,
+      rubricVersion: governance.opportunityScoring?.rubricVersion,
+      scoredAt: generatedAt,
+      scoredBy: { type: "deterministic-rule", id: governance.opportunityScoring?.scorer },
+      evidenceIds: evidence.map(row => row.id),
+      claimIds: [`claim:opportunity:${archetype.id}`],
+      decisionEligible,
+      workflow: {
+        stage: workflowStage,
+        reviewStatus: publication.approved ? "approved" : "pending",
+        reviewerId: publication.reviewerId,
+        approvalStatus: publication.approvalStatus,
+      },
+      taxonomy: taxonomyForOpportunity({ archetype, evidenceConfidence, workflowStage }),
       ownAssetFit: Math.round(((base.asset || 0) / 5) * 100),
       ownAssets: assetLabels,
       assetIds: archetype.assets || [],
@@ -270,8 +397,10 @@ const generateOpportunities = ({ policy, signals, market, monetization, previous
       matching: { terms, marketEvidence: marketMatches, decisionSignals: signalMatches, revenueSignals: revenueMatches },
       evidence,
       reason: status === "published"
-        ? `${independentSources}개 독립 출처와 ${matches.length}개 근거가 기준을 충족했습니다.`
-        : `근거 ${matches.length}개·독립 출처 ${independentSources}개로 공개 기준을 충족하지 못해 검토 대기열로 이동했습니다.`,
+        ? `${independentSources}개 독립 출처·${matches.length}개 근거·승인 조건을 모두 충족했습니다.`
+        : decisionEligible
+          ? `${independentSources}개 독립 출처와 ${matches.length}개 근거를 충족했으며 사람 승인을 기다립니다.`
+          : `근거 ${matches.length}개·독립 출처 ${independentSources}개로 검증 기준을 충족하지 못했습니다.`,
       experimentPlan: {
         durationDays: policy.experimentTemplate?.durationDays || 90,
         hypothesis: `${archetype.title}이 핵심 과업의 완료율과 반복 사용을 동시에 높일 수 있는지 검증`,
@@ -287,11 +416,12 @@ const generateOpportunities = ({ policy, signals, market, monetization, previous
     };
   });
   const ranked = candidates.slice().sort((left, right) => right.opportunityScore - left.opportunityScore || right.signalScore - left.signalScore);
-  const shortlist = ranked.filter(item => item.status === "published").slice(0, policy.monthlyCandidateTarget?.experimentShortlist || 3);
+  const shortlist = ranked.filter(item => item.decisionEligible).slice(0, policy.monthlyCandidateTarget?.experimentShortlist || 3);
   const matrix = (policy.assetCatalog || []).map(asset => ({
     assetId: asset.id,
     asset: asset.label,
     opportunityIds: ranked.filter(item => item.assetIds.includes(asset.id)).map(item => item.id),
+    verifiedCandidateCount: ranked.filter(item => item.decisionEligible && item.assetIds.includes(asset.id)).length,
     publishedCount: ranked.filter(item => item.status === "published" && item.assetIds.includes(asset.id)).length,
   }));
   return {
@@ -300,7 +430,8 @@ const generateOpportunities = ({ policy, signals, market, monetization, previous
     matrix,
     evidencePoolSize: evidencePool.length,
     published: ranked.filter(item => item.status === "published").length,
-    reviewPending: ranked.filter(item => item.status === "review-pending").length,
+    verified: ranked.filter(item => item.status === "verified").length,
+    reviewPending: ranked.filter(item => item.decisionEligible && item.status !== "published").length,
   };
 };
 
@@ -340,8 +471,139 @@ const enrichCompanionEconomics = (economics = {}, governance = {}) => {
   return { ...economics, comparisons };
 };
 
+const buildClaimGraph = ({ signals, opportunities, generatedAt }) => {
+  const evidenceSpans = new Map();
+  const addEvidence = ({ source, spanText, index = 0, fallbackId = "" }) => {
+    const sourceUrl = source.url || "";
+    const documentId = `document:${stableHash(sourceUrl || fallbackId || source.title || source.source)}`;
+    const evidenceSpanId = `evidence:${stableHash([documentId, spanText, index])}`;
+    if (!evidenceSpans.has(evidenceSpanId)) {
+      const publishedAt = source.publishedAt || source.date || "";
+      const observedAt = source.observedAt || source.collectedAt || publishedAt || generatedAt;
+      const retrievedAt = source.retrievedAt || observedAt;
+      const verifiedAt = source.verifiedAt || generatedAt;
+      evidenceSpans.set(evidenceSpanId, {
+        evidenceSpanId,
+        documentId,
+        sourceUrl,
+        publisher: source.publisher || source.source || normalizeSourceKey(sourceUrl),
+        sourceTier: source.sourceTier || source.tier || "reported",
+        spanText: String(spanText || source.title || "").trim(),
+        spanHash: stableHash(String(spanText || source.title || "")),
+        eventAt: source.eventAt || publishedAt || null,
+        publishedAt: publishedAt || null,
+        observedAt,
+        retrievedAt,
+        verifiedAt,
+        validFrom: source.effectiveFrom || publishedAt || null,
+        validTo: source.effectiveTo ?? null,
+        systemFrom: observedAt,
+        systemTo: source.supersededAt ?? null,
+      });
+    }
+    return { evidenceSpanId, documentId };
+  };
+
+  const claims = [];
+  for (const signal of signals) {
+    const links = [];
+    for (const source of signal.evidence || []) {
+      const spans = (source.spans || []).filter(Boolean);
+      (spans.length ? spans : [source.title || signal.fact]).forEach((spanText, index) => {
+        links.push(addEvidence({ source, spanText, index, fallbackId: signal.id }));
+      });
+    }
+    const evidenceSpanIds = [...new Set(links.map(link => link.evidenceSpanId))];
+    const documentIds = [...new Set(links.map(link => link.documentId))];
+    for (const [claimType, value] of [["fact", signal.fact], ["implication", signal.implication], ["decision", signal.decision]]) {
+      claims.push({
+        claimId: `claim:signal:${signal.id}:${claimType}`,
+        entityId: signal.id,
+        predicate: claimType,
+        claimType,
+        value,
+        evidenceSpanIds,
+        documentIds,
+        eventAt: evidenceSpans.get(evidenceSpanIds[0])?.eventAt || null,
+        publishedAt: evidenceSpans.get(evidenceSpanIds[0])?.publishedAt || null,
+        observedAt: signal.lastVerifiedAt || generatedAt,
+        retrievedAt: evidenceSpans.get(evidenceSpanIds[0])?.retrievedAt || generatedAt,
+        verifiedAt: signal.lastVerifiedAt || generatedAt,
+        validFrom: evidenceSpans.get(evidenceSpanIds[0])?.validFrom || null,
+        validTo: null,
+        systemFrom: generatedAt,
+        systemTo: null,
+        workflowStage: signal.workflow?.stage || "draft",
+        reviewStatus: signal.workflow?.reviewStatus === "approved" ? "approved" : "unreviewed",
+        reviewerId: signal.workflow?.reviewerId || null,
+        confidence: signal.confidence || "low",
+        verificationStatus: evidenceSpanIds.length && Number(signal.validation?.independentSources || 0) >= 2 ? "verified" : "draft",
+        taxonomy: signal.taxonomy,
+        extraction: { method: claimType === "fact" ? "deterministic-source-span" : "evidence-linked-analysis", extractorVersion: "claim-graph-v1" },
+        supersedesId: null,
+        correctionReason: null,
+      });
+    }
+  }
+
+  for (const opportunity of opportunities) {
+    const links = [];
+    for (const source of opportunity.evidence || []) {
+      const spans = (source.spans || []).filter(Boolean);
+      (spans.length ? spans : [source.title]).filter(Boolean).forEach((spanText, index) => {
+        links.push(addEvidence({ source, spanText, index, fallbackId: source.id || opportunity.id }));
+      });
+    }
+    const evidenceSpanIds = [...new Set(links.map(link => link.evidenceSpanId))];
+    const documentIds = [...new Set(links.map(link => link.documentId))];
+    claims.push({
+      claimId: `claim:opportunity:${opportunity.id}`,
+      entityId: opportunity.id,
+      predicate: "opportunity-score",
+      claimType: "opportunity-assessment",
+      value: opportunity.opportunityScore,
+      unit: "score-out-of-100",
+      evidenceSpanIds,
+      documentIds,
+      eventAt: evidenceSpans.get(evidenceSpanIds[0])?.eventAt || null,
+      publishedAt: evidenceSpans.get(evidenceSpanIds[0])?.publishedAt || null,
+      observedAt: generatedAt,
+      retrievedAt: evidenceSpans.get(evidenceSpanIds[0])?.retrievedAt || generatedAt,
+      verifiedAt: generatedAt,
+      validFrom: generatedAt,
+      validTo: null,
+      systemFrom: generatedAt,
+      systemTo: null,
+      workflowStage: opportunity.workflow?.stage || "draft",
+      reviewStatus: opportunity.workflow?.reviewStatus === "approved" ? "approved" : "unreviewed",
+      reviewerId: opportunity.workflow?.reviewerId || null,
+      confidence: opportunity.evidenceConfidence || "low",
+      verificationStatus: opportunity.decisionEligible && evidenceSpanIds.length ? "verified" : "draft",
+      taxonomy: opportunity.taxonomy,
+      extraction: { method: "deterministic-evidence-weighted-score", extractorVersion: opportunity.rubricVersion },
+      supersedesId: null,
+      correctionReason: null,
+    });
+  }
+
+  const evidenceIds = new Set(evidenceSpans.keys());
+  const citedClaims = claims.filter(claim => claim.evidenceSpanIds.length && claim.evidenceSpanIds.every(id => evidenceIds.has(id))).length;
+  const verifiedClaims = claims.filter(claim => claim.verificationStatus === "verified").length;
+  return {
+    claims,
+    evidenceSpans: [...evidenceSpans.values()],
+    summary: {
+      claims: claims.length,
+      evidenceSpans: evidenceSpans.size,
+      verifiedClaims,
+      verifiedClaimRatio: claims.length ? Number((verifiedClaims / claims.length).toFixed(4)) : 0,
+      citationCompleteness: claims.length ? Number((citedClaims / claims.length).toFixed(4)) : 0,
+    },
+  };
+};
+
 const main = async () => {
-  const [seed, sourcePolicy, pipelinePolicy, previous, startupStats, radar, metricHistory, volatileMetricAudit, metricGovernance, newsPolicy, collectionHealth, marketReverificationQueue, priceChangeFlags, officialSourceRegistry, opportunityPolicy, market, monetization] = await Promise.all([
+  const [seed, sourcePolicy, pipelinePolicy, previous, startupStats, radar, metricHistory, volatileMetricAudit, metricGovernance, newsPolicy, quality, collectionHealth, marketReverificationQueue, priceChangeFlags, officialSourceRegistry, opportunityPolicy, decisionGovernance, dedupCalibration, market, monetization] = await Promise.all([
     readJson(SEED),
     readJson(SOURCE_POLICY),
     readJson(PIPELINE_POLICY),
@@ -352,15 +614,19 @@ const main = async () => {
     readJson("volatile-metrics-audit.json", { rows: [], summary: {} }),
     readJson("config/metric-governance.json"),
     readJson("config/news-policy.json"),
+    readJson("quality.json", { publicationBlockingChecks: [], publicationBlocked: false }),
     readJson("collection-health.json", { streamHealth: [], connectorStatus: [], recoveredStreams: [] }),
     readJson("market-reverification-queue.json", { queue: [], total: 0 }),
     readJson("price-change-flags.json", { summary: {}, rows: [] }),
     readJson("config/official-source-registry.json", { officialFeeds: [], sitemaps: [], apiConnectors: [] }),
     readJson(OPPORTUNITY_POLICY),
+    readJson(DECISION_GOVERNANCE),
+    readJson(DEDUP_CALIBRATION),
     readJson("market.json", { records: [] }),
     readJson("monetization.json", { companies: [] }),
   ]);
   const generatedAt = new Date().toISOString();
+  const publication = publicationContext(decisionGovernance);
   const now = Date.now();
   const marketRecords = Array.isArray(market.records) ? market.records : [];
   const directMarketEvidenceCount = marketRecords.filter(record => record.provenance?.status === "source-backed"
@@ -395,8 +661,24 @@ const main = async () => {
     const previousSignal = previousSignals.get(signal.id);
     const diffs = metricDiffs(previousSignal?.metrics, signal.metrics);
     if (diffs.length) numericDiffs.push({ id: signal.id, diffs });
+    const evidenceVerified = validation.independentSources >= 2 && validation.issues.length === 0;
+    const reviewed = Boolean(publication.reviewerId) && publication.approvalStatus === "approved";
+    const workflowStage = publication.approved && validation.issues.length === 0
+      ? "published"
+      : reviewed ? "reviewed" : evidenceVerified ? "verified" : "draft";
     return {
       ...signal,
+      workflow: {
+        ...signal.workflow,
+        stage: workflowStage,
+        reviewStatus: reviewed ? "approved" : "pending",
+        humanReview: reviewed,
+        reviewerId: publication.reviewerId,
+        approvalStatus: publication.approvalStatus,
+      },
+      taxonomy: taxonomyForSignal(signal, workflowStage),
+      claimIds: ["fact", "implication", "decision"].map(type => `claim:signal:${signal.id}:${type}`),
+      evidenceIds: (signal.evidence || []).map(source => `document:${stableHash(source.url || source.publisher)}`),
       sourceFreshness: {
         newestSourceAt,
         ageDays: sourceAgeDays,
@@ -436,7 +718,7 @@ const main = async () => {
     representativeSignalId: cluster.signalIds[0],
   }));
 
-  const semanticThreshold = Number(sourcePolicy.deduplication.threshold || 0.85);
+  const semanticThreshold = Number(dedupCalibration.defaultThreshold || sourcePolicy.deduplication.threshold || 0.85);
   const semanticVectors = new Map(signals.map(signal => [signal.id, embeddingVector(`${signal.name} ${signal.product} ${signal.fact}`, sourcePolicy.deduplication.dimensions || 384)]));
   const semanticDuplicatePairs = [];
   for (let leftIndex = 0; leftIndex < signals.length; leftIndex += 1) {
@@ -478,12 +760,39 @@ const main = async () => {
   };
   const opportunityGeneration = generateOpportunities({
     policy: opportunityPolicy,
+    governance: decisionGovernance,
+    publication,
     signals,
     market,
     monetization,
     previous,
     generatedAt,
   });
+  const claimGraph = buildClaimGraph({ signals, opportunities: opportunityGeneration.candidates, generatedAt });
+  const publicationGate = decisionGovernance.publicationGate || {};
+  const upstreamBlockingChecks = Array.isArray(quality.publicationBlockingChecks) ? quality.publicationBlockingChecks : [];
+  const criticalPolicyViolations = validationIssues.length + upstreamBlockingChecks.length;
+  const claimGatePassed = claimGraph.summary.verifiedClaimRatio >= Number(publicationGate.minimumVerifiedClaimRatio || 0)
+    && claimGraph.summary.citationCompleteness === Number(publicationGate.requiredCitationCompleteness ?? 1)
+    && criticalPolicyViolations <= Number(publicationGate.criticalPolicyViolationsAllowed ?? 0);
+  if (publication.approved && !claimGatePassed) {
+    throw new Error(`published decision snapshot failed claim gate: verified=${claimGraph.summary.verifiedClaimRatio}, citations=${claimGraph.summary.citationCompleteness}, critical=${criticalPolicyViolations}`);
+  }
+  const publicationControl = {
+    state: publication.state,
+    requestedState: publication.requestedState,
+    approvalStatus: publication.approvalStatus,
+    reviewerId: publication.reviewerId,
+    minimumApprovals: pipelinePolicy.publishing?.minimumApprovals || 1,
+    verifiedClaimRatio: claimGraph.summary.verifiedClaimRatio,
+    verifiedClaimRatioThreshold: publicationGate.minimumVerifiedClaimRatio,
+    citationCompleteness: claimGraph.summary.citationCompleteness,
+    requiredCitationCompleteness: publicationGate.requiredCitationCompleteness,
+    criticalPolicyViolations,
+    publicationBlockingChecks: upstreamBlockingChecks,
+    claimGatePassed,
+    publishedInvariantSatisfied: publication.state !== "published" || (publication.approved && claimGatePassed),
+  };
   const opportunityPartnerLinks = matchOpportunityPartners(opportunityGeneration.candidates, radar.picks || []);
   const companionEconomics = enrichCompanionEconomics(seed.companionEconomics || {}, metricGovernance);
   const comparisonAudit = {
@@ -515,6 +824,9 @@ const main = async () => {
     assetOpportunityMatrix: opportunityGeneration.matrix,
     opportunityPartnerLinks,
     metricHistory: metricHistory.series || [],
+    claims: claimGraph.claims,
+    evidenceSpans: claimGraph.evidenceSpans,
+    publicationControl,
   };
   const snapshotVersion = stableHash(snapshotCore);
   const changedSignals = signals.filter(signal => {
@@ -525,17 +837,17 @@ const main = async () => {
   const output = {
     generatedAt,
     asOf: seed.asOf,
-    schemaVersion: 8,
+    schemaVersion: 9,
     snapshotVersion,
     database: {
       mode: "mx-decision-intelligence",
       lifecycle: "raw-draft-verified-reviewed-published-reconciled",
       publicRetention: "active-plus-master-data",
       archiveAfterDays: sourcePolicy.archive.afterDays,
-      deduplication: sourcePolicy.deduplication,
+      deduplication: { ...sourcePolicy.deduplication, threshold: semanticThreshold, calibration: dedupCalibration },
       previousSnapshotVersion: previous.snapshotVersion || "",
       changedSignals,
-      storage: "versioned-json",
+      storage: "git-materialized-view-with-external-immutable-migration-gate",
       startupFileMb: Number((startupStats.bytes / 1048576).toFixed(2)),
       migrationRecommended: startupStats.bytes >= (pipelinePolicy.storageTarget.migrationTriggerMb * 1048576),
       targetStorage: pipelinePolicy.storageTarget.recommended,
@@ -550,6 +862,11 @@ const main = async () => {
       overdue: activeSignals.filter(signal => signal.verificationSla.status === "overdue").length,
     },
     pipeline,
+    publicationControl,
+    taxonomyAxes: decisionGovernance.taxonomy,
+    claims: claimGraph.claims,
+    evidenceSpans: claimGraph.evidenceSpans,
+    claimSummary: claimGraph.summary,
     sourceCoverage,
     signals,
     clusters,
@@ -577,9 +894,12 @@ const main = async () => {
       candidateTarget: opportunityPolicy.monthlyCandidateTarget,
       publicationGate: opportunityPolicy.publicationGate,
       scoreWeights: opportunityPolicy.scoreWeights,
+      rubricVersion: decisionGovernance.opportunityScoring?.rubricVersion,
+      scorer: decisionGovernance.opportunityScoring?.scorer,
       evidencePoolSize: opportunityGeneration.evidencePoolSize,
       candidates: opportunityGeneration.candidates.length,
       published: opportunityGeneration.published,
+      verified: opportunityGeneration.verified,
       reviewPending: opportunityGeneration.reviewPending,
     },
     opportunityPartnerLinks,
@@ -611,6 +931,10 @@ const main = async () => {
       comparisonGuardrail: comparisonAudit,
       sourcePolicyVersion: sourcePolicy.version,
       pipelinePolicyVersion: pipelinePolicy.version,
+      decisionGovernanceVersion: decisionGovernance.version,
+      taxonomyVersion: decisionGovernance.taxonomy?.version,
+      dedupCalibrationVersion: dedupCalibration.version,
+      dedupCalibrationStatus: dedupCalibration.status,
     },
   };
 

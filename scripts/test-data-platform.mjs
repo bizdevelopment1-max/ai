@@ -6,7 +6,7 @@ const json = async path => JSON.parse(await read(path));
 const failures = [];
 const expect = (condition, message) => { if (!condition) failures.push(message); };
 
-const [catalog, contracts, storage, slo, pipeline, registry, packageJson, jekyll, index, sourceContent, marketCrawler, sourceCompliance] = await Promise.all([
+const [catalog, contracts, storage, slo, pipeline, registry, packageJson, jekyll, index, sourceContent, marketCrawler, sourceCompliance, decisionGovernance, publicationValidator, sourceCollector, verifier, decisionBuilder, dailyWorkflow, recoveryWorkflow] = await Promise.all([
   json("config/data-catalog.json"),
   json("config/data-contracts.json"),
   json("config/storage-backends.json"),
@@ -19,6 +19,13 @@ const [catalog, contracts, storage, slo, pipeline, registry, packageJson, jekyll
   read("scripts/source-content.mjs"),
   read("scripts/crawl-markets.mjs"),
   json("source-compliance-report.json"),
+  json("config/decision-governance.json"),
+  read("scripts/validate-publication-policy.mjs"),
+  read("scripts/collect-source-registry.mjs"),
+  read("scripts/verify-pipeline.mjs"),
+  read("scripts/build-mobile-ai-business-db.mjs"),
+  read(".github/workflows/daily-news.yml"),
+  read(".github/workflows/daily-news-update.yml"),
 ]);
 
 expect(storage.migrationRequired === true, "storage migration must remain explicit until an external backend is configured");
@@ -26,7 +33,15 @@ expect(storage.currentMode === "git-manifest-and-materialized-views", "Git must 
 expect(pipeline.temporalModel?.mode === "bitemporal", "the normalized data contract must be bitemporal");
 expect(pipeline.lanes?.decisionPublication?.minimumApprovals === 1, "decision publication requires one reviewer");
 expect(pipeline.sourceIndependence?.sameWireCopyCountsAsOne === true, "syndicated copies must count as one source");
-expect((await read("scripts/build-mobile-ai-business-db.mjs")).includes("independentSourceKey"), "decision confidence must use owner-aware source independence");
+expect((decisionGovernance.taxonomy?.axes || []).length === 16, "decision taxonomy must preserve 16 independent axes");
+expect((decisionGovernance.opportunityScoring?.dimensions || []).reduce((sum, row) => sum + row.weight, 0) === 100, "opportunity rubric weights must total 100");
+expect(publicationValidator.includes("publishedRecords") && publicationValidator.includes("citationCompleteness") && publicationValidator.includes("reviewerId"), "publication invariant validator is incomplete");
+expect(decisionBuilder.includes("independentSourceKey"), "decision confidence must use owner-aware source independence");
+expect(verifier.includes('requestedPublicationState === "published"') && verifier.includes("publicationBlockingChecks"), "staging must retain failed checks while published refreshes remain blocked");
+expect(decisionBuilder.includes("quality.publicationBlockingChecks") && decisionBuilder.includes("criticalPolicyViolations"), "upstream quality failures must propagate into the decision publication gate");
+expect(sourceCollector.includes("google-news-fallback") && sourceCollector.includes("fallbackGoogleNewsQuery"), "blocked direct sources need an explicit reported-tier fallback");
+expect(sourceCollector.includes("sec-submissions-batch") && (registry.apiConnectors || []).some(connector => connector.id === "sec-edgar-company-submissions"), "SEC collection must use company submissions instead of the blocked current-filings Atom feed");
+expect([dailyWorkflow, recoveryWorkflow].every(workflow => /SEC_USER_AGENT:\s*\$\{\{\s*secrets\.SEC_USER_AGENT\s*\}\}/.test(workflow)), "SEC automation requires a real contact secret rather than a rejected no-reply address");
 expect(registry.compliancePolicy?.fullTextStorageDefault === false, "publisher full text must not be retained by default");
 expect(registry.storagePolicy?.publisherContentRetention === "evidence-spans-only", "long-lived publisher text must be evidence-only");
 for (const source of sourceCompliance.sources || []) {
@@ -40,7 +55,7 @@ expect(marketCrawler.includes("candidateBudgetFor") && marketCrawler.includes("p
 const tier0 = (slo.serviceClasses || []).find(item => item.tier === "Tier 0");
 expect(tier0?.targetMinutes === 30 && tier0?.guaranteed === false, "Tier 0 must disclose the 30-minute target without claiming a scheduler guarantee");
 
-for (const script of ["build:manifest", "build:slo", "build:source-compliance", "archive:immutable", "minimize:source-content", "normalize:temporal", "validate:contracts", "validate:boundaries", "validate:dag"]) {
+for (const script of ["build:manifest", "build:slo", "build:source-compliance", "archive:immutable", "minimize:source-content", "normalize:temporal", "validate:contracts", "validate:publication", "calibrate:dedup", "validate:boundaries", "validate:dag"]) {
   expect(Boolean(packageJson.scripts?.[script]), `package script missing: ${script}`);
 }
 

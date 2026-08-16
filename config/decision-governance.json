@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-16",
+  "taxonomy": {
+    "version": 1,
+    "axes": [
+      "user_need",
+      "value_chain_layer",
+      "ai_capability",
+      "modality",
+      "device",
+      "inference_location",
+      "business_model",
+      "payer",
+      "industry_vertical",
+      "geography",
+      "maturity",
+      "strategic_posture",
+      "risk",
+      "source_tier",
+      "confidence",
+      "workflow_stage"
+    ]
+  },
+  "publicationGate": {
+    "minimumVerifiedClaimRatio": 0.8,
+    "requiredCitationCompleteness": 1,
+    "reviewerRequired": true,
+    "approvalStatusRequired": "approved",
+    "criticalPolicyViolationsAllowed": 0,
+    "publishedState": "published",
+    "nonPublishedDefaultState": "staging"
+  },
+  "opportunityScoring": {
+    "rubricVersion": "opportunity-rubric-v2-2026-08-16",
+    "scorer": "deterministic-evidence-weighted-v2",
+    "scale": { "minimum": 1, "maximum": 5 },
+    "dimensions": [
+      { "id": "marketSizeGrowth", "weight": 20, "label": "시장규모·성장성" },
+      { "id": "strategicFit", "weight": 20, "label": "내부역량·전략적 적합성" },
+      { "id": "executionFeasibility", "weight": 15, "label": "기술성숙도·실행가능성" },
+      { "id": "defensibleAdvantage", "weight": 10, "label": "독자 데이터·디바이스·유통 우위" },
+      { "id": "monetizationClarity", "weight": 10, "label": "수익모델·단위경제성 명확성" },
+      { "id": "customerProblem", "weight": 10, "label": "고객 문제 강도·사용빈도" },
+      { "id": "competitivePosition", "weight": 8, "label": "경쟁 차별화 가능성" },
+      { "id": "regulatoryControllability", "weight": 7, "label": "규제·윤리·법적 리스크 통제성" }
+    ]
+  },
+  "claimPolicy": {
+    "requiredLinks": ["claimId", "evidenceSpanIds", "documentIds"],
+    "factExtraction": "deterministic-first",
+    "analysisRole": "structured-extractor-and-analyst-assistant",
+    "llmMayPublishFacts": false
+  },
+  "temporal": {
+    "requiredFields": ["eventAt", "publishedAt", "observedAt", "retrievedAt", "verifiedAt"],
+    "bitemporal": {
+      "validTime": ["validFrom", "validTo"],
+      "systemTime": ["systemFrom", "systemTo"]
+    }
+  },
+  "storageGate": {
+    "blockPublishedSnapshotWhenMigrationRequiredAndExternalStoreMissing": true,
+    "allowStagingWithWarning": true
+  }
+}

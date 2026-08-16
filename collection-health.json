@@ -9,8 +9,8 @@
     "directRss": 13,
     "officialFeeds": 14,
     "officialSitemaps": 25,
-    "officialApiConnectors": 13,
-    "registrySnapshotArticles": 249
+    "officialApiConnectors": 11,
+    "registrySnapshotArticles": 265
   },
   "acceptedCandidates": 342,
   "failedStreams": [
@@ -91,11 +91,11 @@
       "coverageStatus": "official-source-reachable-no-recent-items"
     },
     {
-      "stream": "google-news:Hailuo (MiniMax)",
-      "via": "official-html",
-      "source": "MiniMax News",
-      "recoveredItems": 0,
-      "coverageStatus": "official-source-reachable-no-recent-items"
+      "stream": "google-news:Writer",
+      "via": "official-sitemap",
+      "source": "Writer",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
     },
     {
       "stream": "google-news:Kling AI",
@@ -103,6 +103,13 @@
       "source": "Kuaishou Investor News",
       "recoveredItems": 1,
       "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:Hailuo (MiniMax)",
+      "via": "official-html",
+      "source": "MiniMax News",
+      "recoveredItems": 0,
+      "coverageStatus": "official-source-reachable-no-recent-items"
     }
   ],
   "quietStreams": [
@@ -898,7 +905,7 @@
       "lastSuccessAt": null,
       "emptySince": "2026-08-15T11:07:45.636Z",
       "failureSince": null,
-      "consecutiveEmptyRuns": 14,
+      "consecutiveEmptyRuns": 15,
       "consecutiveFailureRuns": 0,
       "criticality": "optional-topic"
     },
@@ -1008,7 +1015,7 @@
       "lastSuccessAt": null,
       "emptySince": "2026-08-15T11:07:45.636Z",
       "failureSince": null,
-      "consecutiveEmptyRuns": 14,
+      "consecutiveEmptyRuns": 15,
       "consecutiveFailureRuns": 0,
       "criticality": "optional-topic"
     },
@@ -1115,7 +1122,7 @@
       "lastAttemptAt": "2026-08-16T09:00:23.939Z",
       "lastSuccessAt": "2026-08-16T09:00:23.939Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 273,
+      "durationMs": 52,
       "activeEndpoint": "https://www.apple.com/newsroom/rss-feed.rss",
       "attemptedEndpoints": [
         "https://www.apple.com/newsroom/rss-feed.rss"
@@ -2051,6 +2058,10 @@
         "itemCount": 40
       },
       {
+        "category": "agentic-commerce",
+        "itemCount": 39
+      },
+      {
         "category": "model-and-open-source",
         "itemCount": 28
       },
@@ -2061,10 +2072,6 @@
       {
         "category": "research-release",
         "itemCount": 28
-      },
-      {
-        "category": "agentic-commerce",
-        "itemCount": 27
       },
       {
         "category": "compute-and-edge",
@@ -2089,6 +2096,10 @@
       {
         "category": "competitor-device",
         "itemCount": 19
+      },
+      {
+        "category": "carrier-bundle",
+        "itemCount": 18
       },
       {
         "category": "consumer-survey",

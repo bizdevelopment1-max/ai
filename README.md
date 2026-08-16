@@ -24,6 +24,8 @@ The main company and startup cards use a shared consulting structure: current bu
 
 The browser bundle contains only identity, taxonomy, and decision-framework configuration from `config/dashboard-taxonomy.json`. Mutable company facts, scores, prices, news, opportunities, and strategy statements are generated from cumulative ledgers. `scripts/build-public-data.mjs` materializes bounded public views, including `strategy-view.json`, on every automated refresh, while raw observations remain in append-only history and source-ledger partitions.
 
+Decision candidates are generated as a claim-linked staging view. Each score stores its rubric version, deterministic scorer, eight weighted dimensions and evidence IDs; every signal and opportunity carries 16 independent taxonomy axes. Automated runs may advance candidates to `verified`, but `scripts/validate-publication-policy.mjs` prevents `published` state without a reviewer, approval, complete citations, the configured verified-claim ratio and a passing storage migration gate.
+
 The startup ledger includes the complete a16z Top 100 Gen AI Consumer Apps 6th Edition lists (50 web products and 50 mobile apps) and gives those products the same business-model detail structure as every other company. The list is refreshed weekly from the official institution page and each product's linked page metadata.
 
 ## Reliable collection policy
@@ -32,7 +34,11 @@ The news feed combines regional Google News discovery with allowlisted publisher
 
 Direct-source collection is layered: official RSS/Atom first, official sitemap second, and an allowlisted official HTML index or public API when a stable feed is unavailable. Named-company Google News gaps are recovered from that registry and recorded as `recovered-by-official-fallback`; broad topic queries are non-critical discovery streams and may be `quiet` without creating a false outage. A stream that is reachable but has no recent matching item is distinct from a network or parser failure.
 
+When an allowlisted first-party endpoint rejects cloud-runner traffic, the collector records the rejected endpoint and switches to its configured Google News query. Those observations are explicitly downgraded to `reported / google-news-fallback`; they are never mislabeled as official evidence. Runtime and retry limits are configured per source so a blocked endpoint cannot consume the complete collection SLA.
+
 Public connectors run without credentials for Xiaomi Discover, Coinbase AgentKit releases, arXiv, Hugging Face, GitHub repository search, and the App Store chart. SEC EDGAR, USPTO Open Data, Sensor Tower, and Appfigures adapters activate only when their repository secrets are present. WIPO PATENTSCOPE remains explicitly license-gated because its machine service requires a separate service agreement. Connector state is reported as `executed`, `credential-gated`, `licensed-connector-required`, or `failed`; missing commercial credentials never masquerade as a successful collection.
+
+The `SEC_USER_AGENT` Actions secret must contain a real application identity and monitored contact email accepted by the regulator. A GitHub no-reply address is intentionally not substituted; when the secret is absent, the submissions connector stays `credential-gated` rather than creating a false failure. Staging runs retain all failed quality-check IDs and continue producing diagnostic artifacts, while the same IDs propagate into the decision publication gate and block any approved public snapshot until resolved.
 
 `config/news-policy.json` is the single, versioned location for display exclusions and the source-excerpt policy. Existing evidence is retained in `history.json`; unverified or legacy entries are marked limited and excluded from the main feed rather than deleted. Direct-source changes are stored separately in append-only monthly JSONL partitions under `source-ledger/`, while `source-snapshot.json` remains the bounded current working set.
 

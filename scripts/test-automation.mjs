@@ -2004,16 +2004,22 @@ try {
     && (database.assetOpportunityMatrix || []).length >= 8
     && (database.generatedOpportunities || []).every(item => Number.isFinite(item.signalScore)
       && Number.isFinite(item.opportunityScore) && Number.isFinite(item.ownAssetFit)
+      && item.rubricVersion && item.scoredAt && item.scoredBy?.id
+      && item.claimIds?.length && item.evidenceIds?.length && item.scorecard?.length === 8
+      && item.scorecard.every(row => row.evidenceIds?.length)
       && item.experimentPlan?.nextDecisionAt
       && (item.status !== "published" || (item.evidenceCount >= 2 && item.independentSources >= 2)));
   const monetizationGateReady = monetization.schemaVersion >= 3
     && (monetization.companies || []).flatMap(company => company.monetize || []).every(row => row.classificationGate?.status === "passed")
     && (monetizationReviewQueue.rows || []).length === monetizationReviewQueue.total;
-  if (database.schemaVersion < 8
+  if (database.schemaVersion < 9
     || database.database?.mode !== "mx-decision-intelligence"
     || database.database?.publicRetention !== "active-plus-master-data"
     || ids.length !== new Set(ids).size
     || !validSignals || (database.deviceMatrix || []).length < 7 || (database.regulations || []).length < 4
+    || (database.taxonomyAxes?.axes || []).length < 16 || !(database.claims || []).length
+    || !(database.evidenceSpans || []).length || database.claimSummary?.citationCompleteness !== 1
+    || database.publicationControl?.publishedInvariantSatisfied !== true
     || (database.sidebarCategories || []).length !== 3 || (database.monetizationModels || []).length !== 7
     || (database.osAgentStack || []).length < 7 || (database.partnershipNetwork?.edges || []).length < 8
     || (database.formFactors || []).length < 7 || database.consumerPainPointTrack?.status !== "connector-required"
@@ -2037,7 +2043,7 @@ try {
     || (officialSources.officialFeeds || []).length < 12
     || !(officialSources.htmlIndexes || []).some(source => source.source === "MiniMax News" && source.status === "active")
     || (officialSources.apiConnectors || []).length < 9
-    || !["xiaomi-global-discovery", "coinbase-agentkit-releases", "sec-edgar-current-8k", "uspto-open-data", "sensor-tower-store-intelligence", "appfigures-app-intelligence"]
+    || !["xiaomi-global-discovery", "coinbase-agentkit-releases", "sec-edgar-company-submissions", "uspto-open-data", "sensor-tower-store-intelligence", "appfigures-app-intelligence"]
       .every(id => (officialSources.apiConnectors || []).some(connector => connector.id === id))
     || (sourceReport.streamHealth || []).length < Number(qualityThresholds.minimumDirectSourceStreams || 25)
     || (sourceReport.connectorStatus || []).filter(row => row.status === "executed").length < Number(qualityThresholds.minimumExecutablePublicConnectors || 4)
