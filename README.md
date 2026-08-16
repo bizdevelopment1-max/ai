@@ -24,6 +24,8 @@ The main company and startup cards use a shared consulting structure: current bu
 
 The browser bundle contains only identity, taxonomy, and decision-framework configuration from `config/dashboard-taxonomy.json`. Mutable company facts, scores, prices, news, opportunities, and strategy statements are generated from cumulative ledgers. `scripts/build-public-data.mjs` materializes bounded public views, including `strategy-view.json`, on every automated refresh, while raw observations remain in append-only history and source-ledger partitions.
 
+Decision candidates are generated as a claim-linked staging view. Each score stores its rubric version, deterministic scorer, eight weighted dimensions and evidence IDs; every signal and opportunity carries 16 independent taxonomy axes. Automated runs may advance candidates to `verified`, but `scripts/validate-publication-policy.mjs` prevents `published` state without a reviewer, approval, complete citations, the configured verified-claim ratio and a passing storage migration gate.
+
 The startup ledger includes the complete a16z Top 100 Gen AI Consumer Apps 6th Edition lists (50 web products and 50 mobile apps) and gives those products the same business-model detail structure as every other company. The list is refreshed weekly from the official institution page and each product's linked page metadata.
 
 ## Reliable collection policy

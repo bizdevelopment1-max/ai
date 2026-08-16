@@ -24,6 +24,8 @@
     "test:platform": "node scripts/test-data-platform.mjs",
     "test:visual": "node scripts/test-visual-readability.mjs",
     "validate:contracts": "node scripts/validate-data-contracts.mjs --stage=publish",
+    "validate:publication": "node scripts/validate-publication-policy.mjs",
+    "calibrate:dedup": "node scripts/calibrate-dedup-threshold.mjs",
     "validate:boundaries": "node scripts/validate-data-boundaries.mjs",
     "validate:dag": "node scripts/validate-pipeline-dag.mjs",
     "verify": "node scripts/verify-pipeline.mjs && node scripts/validate-mx-intelligence.mjs",

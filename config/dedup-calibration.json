@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-16",
+  "embeddingDimensions": 384,
+  "defaultThreshold": 0.85,
+  "status": "gold-set-collection-required",
+  "goldSet": {
+    "targetPairs": 1000,
+    "stretchTargetPairs": 2000,
+    "languages": ["ko", "en", "zh"],
+    "requiredLabels": ["same-event", "different-event"],
+    "selectionRule": "precision-first"
+  },
+  "corpusThresholds": {
+    "ko": { "threshold": 0.85, "calibrated": false },
+    "en": { "threshold": 0.85, "calibrated": false },
+    "zh": { "threshold": 0.85, "calibrated": false },
+    "cross-lingual": { "threshold": 0.85, "calibrated": false }
+  }
+}

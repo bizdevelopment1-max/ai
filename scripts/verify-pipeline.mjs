@@ -579,7 +579,7 @@ const llmHealth = {
 };
 
 await Promise.all([
-  writeFile("news.json", JSON.stringify(news, null, 2) + "\n"),
+  writeFile("news.json", JSON.stringify(news) + "\n"),
   writeFile("briefing.json", JSON.stringify(briefing) + "\n"),
   writeFile("insights.json", JSON.stringify(insights) + "\n"),
   writeFile("radar.json", JSON.stringify(radar) + "\n"),
@@ -588,7 +588,7 @@ await Promise.all([
   writeFile("market.json", JSON.stringify(market) + "\n"),
   writeFile("infra.json", JSON.stringify(infra) + "\n"),
   writeFile("bizmodel.json", JSON.stringify(bizmodel) + "\n"),
-  writeFile("history.json", JSON.stringify({ generatedAt: now.toISOString(), articles: historyArticles, runs }, null, 2) + "\n"),
+  writeFile("history.json", JSON.stringify({ generatedAt: now.toISOString(), articles: historyArticles, runs }) + "\n"),
   writeFile("quality.json", JSON.stringify(quality, null, 2) + "\n"),
   writeFile("market-reverification-queue.json", JSON.stringify({
     generatedAt: now.toISOString(),

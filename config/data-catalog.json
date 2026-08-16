@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "updatedAt": "2026-08-16",
   "defaultOwner": "Data Platform",
   "defaultSteward": "Intelligence Operations",
@@ -65,10 +65,10 @@
       "path": "mobile-ai-business-view.json",
       "recordPath": "signals",
       "role": "decision-view",
-      "sensitivity": "public-template-only",
+      "sensitivity": "public-verified-candidate-view",
       "publication": "public",
       "schema": "schemas/decision-intelligence.schema.json",
-      "upstream": ["news-ledger", "market-ledger", "partner-radar"],
+      "upstream": ["news-ledger", "market-ledger", "partner-radar", "claim-evidence-graph"],
       "downstream": ["static-site"]
     },
     {

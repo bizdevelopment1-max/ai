@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "updatedAt": "2026-08-16",
   "stages": [
     {
@@ -33,6 +33,18 @@
       "label": "정합성 재점검",
       "numericDiffRequired": true
     }
+  ],
+  "normalizationSequence": [
+    "canonical-url-and-redirect-resolution",
+    "unicode-and-language-normalization",
+    "event-published-observed-retrieved-date-separation",
+    "legal-entity-and-product-alias-resolution",
+    "currency-and-unit-normalization",
+    "exact-content-hash-deduplication",
+    "semantic-near-duplicate-detection",
+    "event-clustering",
+    "claim-extraction",
+    "independent-source-verification"
   ],
   "lanes": {
     "evidence": {

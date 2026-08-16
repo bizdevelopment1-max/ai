@@ -52,6 +52,6 @@ for (const file of files) {
     if (result.changed) records++;
     saved += result.saved;
   }
-  await writeFile(file, `${JSON.stringify(data, null, 2)}\n`);
+  await writeFile(file, `${JSON.stringify(data)}\n`);
 }
 console.log(`[retention] minimized ${records} records; saved ${(saved / 1_048_576).toFixed(2)} MB; evidence spans retained`);

@@ -34,7 +34,7 @@ async function fingerprint(path) {
   };
 }
 
-const [catalog, storage, quality, contracts, sourceRegistry, qualityPolicy, llmHealth] = await Promise.all([
+const [catalog, storage, quality, contracts, sourceRegistry, qualityPolicy, llmHealth, pipelinePolicy, decisionGovernance] = await Promise.all([
   readJson("config/data-catalog.json"),
   readJson("config/storage-backends.json"),
   readJson("quality.json"),
@@ -42,6 +42,8 @@ const [catalog, storage, quality, contracts, sourceRegistry, qualityPolicy, llmH
   readJson("config/official-source-registry.json"),
   readJson("config/quality-thresholds.json"),
   readJson("llm-health.json"),
+  readJson("config/intelligence-pipeline.json"),
+  readJson("config/decision-governance.json"),
 ]);
 const datasets = [];
 for (const dataset of catalog.datasets || []) {
@@ -76,13 +78,27 @@ const policyFiles = [
   "config/official-source-registry.json",
   "config/source-independence.json",
   "config/slo-policy.json",
+  "config/decision-governance.json",
+  "config/dedup-calibration.json",
 ];
 const policyHash = sha256((await Promise.all(policyFiles.map(async file => `${file}\0${sha256(await readFile(file))}`))).join("\n"));
 const catalogHash = sha256(await readFile("config/data-catalog.json", "utf8"));
 const datasetVersion = sha256(JSON.stringify({ codeGitSha, policyHash, catalogHash, datasets: datasets.map(row => [row.id, row.sha256]) })).slice(0, 24);
 const checks = quality.checks || [];
+const publicationState = process.env.DATASET_PUBLICATION_STATE || "working";
+const reviewerId = String(process.env.DATASET_REVIEWER_ID || process.env.DATASET_APPROVED_BY || "").trim() || null;
+const approvalStatus = String(process.env.DATASET_APPROVAL_STATUS || (reviewerId ? "approved" : "pending")).toLowerCase();
+const migrationRequired = datasets.some(row => row.migrationTriggerExceeded);
+const externalStoreConfigured = Boolean(process.env.DATA_LAKE_ROOT);
+if (publicationState === "published" && (!reviewerId || approvalStatus !== "approved")) {
+  throw new Error("published manifest requires an approved reviewer identity");
+}
+if (publicationState === "published" && migrationRequired && !externalStoreConfigured
+  && decisionGovernance.storageGate?.blockPublishedSnapshotWhenMigrationRequiredAndExternalStoreMissing) {
+  throw new Error("published manifest blocked: migration trigger exceeded and DATA_LAKE_ROOT is not configured");
+}
 const manifest = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   datasetVersion,
   createdAt,
   pipelineRunId: process.env.GITHUB_RUN_ID || `local-${createdAt}`,
@@ -94,14 +110,22 @@ const manifest = {
   policyHash,
   policyFiles,
   catalogHash,
-  publicationState: process.env.DATASET_PUBLICATION_STATE || "working",
-  approvedBy: process.env.DATASET_APPROVED_BY || null,
+  publicationState,
+  approvedBy: reviewerId,
+  approval: {
+    status: approvalStatus,
+    minimumApprovals: Number(pipelinePolicy.publishing?.minimumApprovals || 1),
+    reviewerId,
+  },
   previousVersion: (await readJson("dataset-manifest.json")).datasetVersion || null,
   datasets,
   storage: {
     currentMode: storage.currentMode,
-    migrationRequired: datasets.some(row => row.migrationTriggerExceeded),
-    externalImmutableStore: process.env.DATA_LAKE_ROOT ? "configured" : "not-configured",
+    migrationRequired,
+    externalImmutableStore: externalStoreConfigured ? "configured" : "not-configured",
+    migrationGate: migrationRequired && !externalStoreConfigured
+      ? publicationState === "published" ? "blocked" : "staging-warning"
+      : "passed",
     recommendedTargets: storage.backends?.map(row => ({ id: row.id, status: row.status })) || [],
   },
   qualitySummary: {

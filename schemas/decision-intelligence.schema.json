@@ -1,13 +1,67 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://bizdevelopment1-max.github.io/ai/schemas/decision-intelligence.schema.json",
-  "title": "Decision intelligence materialized view",
+  "title": "Claim-linked decision intelligence materialized view",
   "type": "object",
-  "required": ["schemaVersion", "snapshotVersion", "signals", "generatedOpportunities"],
+  "required": [
+    "schemaVersion", "snapshotVersion", "publicationControl", "taxonomyAxes",
+    "claims", "evidenceSpans", "claimSummary", "signals", "generatedOpportunities"
+  ],
   "properties": {
-    "schemaVersion": { "type": "integer", "minimum": 8 },
+    "schemaVersion": { "type": "integer", "minimum": 9 },
     "snapshotVersion": { "type": "string", "minLength": 6 },
-    "signals": { "type": "array", "minItems": 1 },
-    "generatedOpportunities": { "type": "array", "minItems": 1 }
+    "publicationControl": {
+      "type": "object",
+      "required": ["state", "approvalStatus", "verifiedClaimRatio", "citationCompleteness", "criticalPolicyViolations", "publishedInvariantSatisfied"],
+      "properties": {
+        "state": { "type": "string", "enum": ["working", "staging", "published"] },
+        "approvalStatus": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "reviewerId": { "type": ["string", "null"] },
+        "verifiedClaimRatio": { "type": "number", "minimum": 0 },
+        "citationCompleteness": { "type": "number", "minimum": 0 },
+        "criticalPolicyViolations": { "type": "integer", "minimum": 0 },
+        "publishedInvariantSatisfied": { "type": "boolean" }
+      }
+    },
+    "taxonomyAxes": {
+      "type": "object",
+      "required": ["version", "axes"],
+      "properties": {
+        "version": { "type": "integer", "minimum": 1 },
+        "axes": { "type": "array", "minItems": 16, "items": { "type": "string", "minLength": 2 } }
+      }
+    },
+    "claims": { "type": "array", "minItems": 1, "items": { "type": "object" } },
+    "evidenceSpans": { "type": "array", "minItems": 1, "items": { "type": "object" } },
+    "claimSummary": {
+      "type": "object",
+      "required": ["claims", "evidenceSpans", "verifiedClaims", "verifiedClaimRatio", "citationCompleteness"],
+      "properties": {
+        "claims": { "type": "integer", "minimum": 1 },
+        "evidenceSpans": { "type": "integer", "minimum": 1 },
+        "verifiedClaims": { "type": "integer", "minimum": 0 },
+        "verifiedClaimRatio": { "type": "number", "minimum": 0 },
+        "citationCompleteness": { "type": "number", "minimum": 0 }
+      }
+    },
+    "signals": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "workflow", "taxonomy", "claimIds", "evidenceIds", "validation"]
+      }
+    },
+    "generatedOpportunities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id", "status", "workflow", "taxonomy", "rubricVersion", "scoredAt", "scoredBy",
+          "scorecard", "opportunityScore", "claimIds", "evidenceIds", "decisionEligible"
+        ]
+      }
+    }
   }
 }
