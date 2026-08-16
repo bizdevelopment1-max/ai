@@ -1,5 +1,24 @@
 # Source-only automation
 
+## Unified site refresh
+
+All visible sections are registered in `config/site-content-registry.json` and
+updated through one entry point:
+
+- `npm run update:site` runs the complete collection, normalization,
+  verification, materialization, browser build and quality gates.
+- `npm run update:site:recovery` reruns the source recovery subset and then the
+  identical publication gates.
+- `npm run update:site:publish` rebuilds and validates public views from the
+  current ledgers without collecting from the network.
+
+The runner writes `automation-status.json` for the current execution and
+appends the complete stage record to
+`source-ledger/pipeline-runs-YYYY-MM.jsonl`. `site-content-manifest.json`
+reports record count, checksum, source timestamp and SLA state for every
+browser dataset. Missing content is hidden; UI components do not substitute
+mutable company, market or opportunity facts.
+
 The dashboard refreshes on a six-hour cadence (KST 06:30, 12:30, 18:30, 00:30).
 
 - Discovery: Google News RSS, direct publisher feeds, first-party feeds and sitemaps, plus executable public APIs in `config/official-source-registry.json`.

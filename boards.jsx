@@ -405,7 +405,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), priorityFramework: { items: [], criteria: [], eligibilityGate: {} }, workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
+  const strategy = strategyData || { priorityFramework: { items: [], criteria: [], eligibilityGate: {} }, workloadMap: [], opportunityPortfolio: [], expertSignals: [], decisionOutputs: [] };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -4399,18 +4399,6 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
           dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·거래·성과기반 — 모바일 고객 접점과 연결되는 원문 확인 카드만 누적 표시" />
         <BusinessModelForecasts dataVersion={dataVersion} />
 
-        {/* 2) 한 단계 아래 — 비즈니스 모델 심화 예시: 배포·AI서비스(수직통합) */}
-        <div className="nb-example-head">
-          <span className="nb-example-badge">심화 · 서비스 사업화</span>
-          <div>
-            <h3>기업 AI 공동 설계·배포 <em>Co-design & Deployment</em></h3>
-            <p>모델 API 제공을 넘어 업무 진단·에이전트 구축·현장 배포·운영·반복 과금으로 이어지는 서비스 모델</p>
-          </div>
-        </div>
-        <NewBizDeepDive />
-        <ForwardDeployedAIModel />
-        <AIConsultingBuildSection />
-        <VerticalIntegrationTables />
       </AnimCtx.Provider>
     </section>
   );

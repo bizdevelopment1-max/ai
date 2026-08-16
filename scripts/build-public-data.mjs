@@ -7,7 +7,7 @@
  * accepted the resulting source evidence.
  */
 import { createHash } from "node:crypto";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, stat, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { isExcludedText } from "./news-policy.mjs";
 import { normalizeLocalizedRecord } from "./korean-copy.mjs";
@@ -359,13 +359,86 @@ try {
   await writeJson("stock-events.json", stockEvents);
 } catch {}
 
+// Build one browser-facing content inventory from the declarative registry.
+// Components can therefore rely only on generated views, while operators can
+// see missing, empty and stale sections before approving publication.
+const contentRegistry = await readJson("config/site-content-registry.json");
+const valueAtPath = (value, path) => String(path || "").split(".").filter(Boolean)
+  .reduce((current, key) => current == null ? undefined : current[key], value);
+const contentDatasets = [];
+for (const definition of contentRegistry.datasets || []) {
+  try {
+    const [payload, fileStat, raw] = await Promise.all([
+      readJson(definition.path),
+      stat(resolve(root, definition.path)),
+      readFile(resolve(root, definition.path)),
+    ]);
+    const records = valueAtPath(payload, definition.recordPath);
+    const recordCount = definition.countMode === "object"
+      ? Object.keys(records || {}).length
+      : Array.isArray(records) ? records.length : records == null ? 0 : 1;
+    const sourceTimestamp = payload.generatedAt || payload.updatedAt || payload.lastUpdated || fileStat.mtime.toISOString();
+    const timestamp = Date.parse(sourceTimestamp);
+    const ageHours = Number.isFinite(timestamp) ? Math.max(0, (Date.now() - timestamp) / 3600000) : null;
+    const status = recordCount === 0
+      ? "empty"
+      : ageHours != null && ageHours > Number(definition.maxAgeHours || 24) ? "stale" : "current";
+    contentDatasets.push({
+      id: definition.id,
+      path: definition.path,
+      section: definition.section,
+      collector: definition.collector,
+      required: definition.required !== false,
+      recordCount,
+      sourceTimestamp,
+      maxAgeHours: definition.maxAgeHours,
+      ageHours: ageHours == null ? null : Number(ageHours.toFixed(2)),
+      status,
+      checksum: createHash("sha256").update(raw).digest("hex").slice(0, 16),
+    });
+  } catch {
+    contentDatasets.push({
+      id: definition.id,
+      path: definition.path,
+      section: definition.section,
+      collector: definition.collector,
+      required: definition.required !== false,
+      recordCount: 0,
+      sourceTimestamp: null,
+      maxAgeHours: definition.maxAgeHours,
+      ageHours: null,
+      status: "missing",
+      checksum: null,
+    });
+  }
+}
+const contentSummary = contentDatasets.reduce((summary, dataset) => {
+  summary[dataset.status] = (summary[dataset.status] || 0) + 1;
+  return summary;
+}, { current: 0, stale: 0, empty: 0, missing: 0 });
+const siteContentManifest = {
+  schemaVersion: 1,
+  generatedAt,
+  refreshCadenceHours: contentRegistry.refreshCadenceHours,
+  publicationPolicy: contentRegistry.publicationPolicy,
+  summary: contentSummary,
+  datasets: contentDatasets,
+};
+await writeJson("site-content-manifest.json", siteContentManifest);
+
 const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
+  JSON.stringify(siteContentManifest),
   createHash("sha256").update(await readFile(resolve(root, "assets/competitive-dynamics.mp4"))).digest("hex"),
-  ...await Promise.all(["overview-view.json", "strategy-view.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  ...await Promise.all(["overview-view.json", "strategy-view.json", "site-content-manifest.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
-await writeJson("data-version.json", { version, generatedAt, assets: ["overview-view.json", "strategy-view.json", ...Object.keys(views), "company-news.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"] });
+await writeJson("data-version.json", {
+  version,
+  generatedAt,
+  contentStatus: contentSummary,
+  assets: ["site-content-manifest.json", ...new Set((contentRegistry.datasets || []).map(dataset => dataset.path)), "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"],
+});
 
 console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} current market insights · ${consolidatedDuplicateCount} duplicate records consolidated · ${replacedRecordCount} prior topic values replaced · version ${version}`);

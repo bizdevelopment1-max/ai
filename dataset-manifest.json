@@ -1,10 +1,10 @@
 {
   "schemaVersion": 2,
-  "datasetVersion": "52cccb8e20f40799c0cf6cc3",
-  "createdAt": "2026-08-16T11:04:36.155Z",
-  "pipelineRunId": "local-2026-08-16T11:04:36.155Z",
-  "codeGitSha": "c475a6289413282f426a0c6ff032fca94eb297c7",
-  "catalogVersion": 2,
+  "datasetVersion": "972b5d808fcc8113f398004e",
+  "createdAt": "2026-08-16T15:03:16.884Z",
+  "pipelineRunId": "local-2026-08-16T15:03:16.884Z",
+  "codeGitSha": "1450290329b2a10c4aacfe6d46d467fe737529e5",
+  "catalogVersion": 3,
   "schemaRegistryVersion": 2,
   "sourcePolicyVersion": 4,
   "qualityPolicyVersion": 1,
@@ -18,15 +18,15 @@
     "config/decision-governance.json",
     "config/dedup-calibration.json"
   ],
-  "catalogHash": "175168c1bee64951404863b7a593cadffa0a9a1d7ac11841500c26fff06701c3",
-  "publicationState": "staging",
+  "catalogHash": "824f7adc60cd58d276349ef922d170167bafb36287ed80d2cf8456e05837796f",
+  "publicationState": "working",
   "approvedBy": null,
   "approval": {
     "status": "pending",
     "minimumApprovals": 1,
     "reviewerId": null
   },
-  "previousVersion": "4fdbd0939e9e09f835ee0be7",
+  "previousVersion": "52cccb8e20f40799c0cf6cc3",
   "datasets": [
     {
       "id": "news-ledger",
@@ -35,8 +35,8 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": 499,
-      "bytes": 3511127,
-      "sha256": "e0a5a2a2b093df45d77aecd73ff5a83330fd8fc9c6f4274fa1231e7901434b65",
+      "bytes": 3482251,
+      "sha256": "37b8cd1fd3c694a01dec41bf059c115b7042811fe2bcdf0d1d09dca9cd8549ad",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -48,7 +48,7 @@
       "publication": "never",
       "recordCount": 474,
       "bytes": 4738882,
-      "sha256": "2aa11b1bd53192805240fb82073e080a789da69f2d8a763ce8ae47d7054de34f",
+      "sha256": "bddcd2655d23f976228c35c0e145e6aeed9c6abb444a4802826c2673ca88c9f3",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -59,8 +59,8 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": 841,
-      "bytes": 5531030,
-      "sha256": "9e4b57e26ac9fd8faf5b28551cd8034ac9d7a4aff5316daa80721a83270c668a",
+      "bytes": 5502431,
+      "sha256": "e35351a19b9fc3ce4fbf0986d42925bd85bbc51282fd7753aef6fa6163ded3b3",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -84,7 +84,7 @@
       "publication": "never",
       "recordCount": 61,
       "bytes": 48989,
-      "sha256": "319a959b5124ca0363a16d044e0bd1deec927d5e37edb60b47202b18075fbad0",
+      "sha256": "77df838f8ce0528033514f1d395dd3963957151d3ea88804ba2df239e5963406",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -96,7 +96,7 @@
       "publication": "public",
       "recordCount": 13,
       "bytes": 1276399,
-      "sha256": "3643375c615f1f62fb6a27b803c0c2e27fe388520125864240765586d8edcdc2",
+      "sha256": "c924bfcea65118ee223ec27cae94fbe5e1be2e0f1a29b700d5fb5c54e0b59271",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -108,7 +108,7 @@
       "publication": "public",
       "recordCount": 482,
       "bytes": 2015768,
-      "sha256": "21efbd1f1a5d3175e7ab383c63345a18ff8cc5de92bd2d40bd592662efff0578",
+      "sha256": "036376cbc862d5d5418debe751353d4b6f219b21a5e42865af83dd492baff842",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -120,7 +120,7 @@
       "publication": "public",
       "recordCount": 56,
       "bytes": 801418,
-      "sha256": "dcd3a6c80f3bdcbaf9c1099161390c8a94ea89cf061d97f6444ad636c4dd6af3",
+      "sha256": "35eb9c0b1ed4ce58c481966ea0c6f86289e35f3e32463d0d6b655bcefdeb8776",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -131,8 +131,32 @@
       "sensitivity": "public",
       "publication": "public",
       "recordCount": 12,
-      "bytes": 104502,
-      "sha256": "0dbdf5e6f5cbb64000d25b5880d927c60062a7a02d7f88b0f71982e5f6e3c669",
+      "bytes": 110653,
+      "sha256": "72099c4841d34f4016a73786ea900c8ac3759ec46a67bc2e7b2620f1bbf1f12a",
+      "files": 1,
+      "migrationTriggerExceeded": false
+    },
+    {
+      "id": "site-content-manifest",
+      "path": "site-content-manifest.json",
+      "role": "public-content-observability",
+      "sensitivity": "public",
+      "publication": "public",
+      "recordCount": 16,
+      "bytes": 4495,
+      "sha256": "bf0cc37de49f1dcdd32c6cc4b5e38d7d1210330ab8c844382af97b3c310185f3",
+      "files": 1,
+      "migrationTriggerExceeded": false
+    },
+    {
+      "id": "automation-status",
+      "path": "automation-status.json",
+      "role": "pipeline-run-status",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "recordCount": 9,
+      "bytes": 1242,
+      "sha256": "1e9d644555149431fc39edbf9104eaf33affe896f56db4cb521bd3b92edec058",
       "files": 1,
       "migrationTriggerExceeded": false
     }
