@@ -5,11 +5,17 @@
 
 :root {
   --f: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-code: ui-monospace, "SFMono-Regular", Consolas, "Malgun Gothic", monospace;
   /* 시스템 폰트 기반 숫자 스택으로 별도 Google Fonts 요청을 제거한다. */
   --f-head: var(--f);
   --f-display: var(--f);
   --f-nano: var(--f);
-  --mono: ui-monospace, "SFMono-Regular", Consolas, "Malgun Gothic", monospace;
+  /* Use one interface face throughout the site. Monospace is reserved for
+     commands and machine-readable output rather than decorative labels. */
+  --mono: var(--f);
+  --text-xs: 11.5px;
+  --text-sm: 12px;
+  --text-body: 14px;
   --brand: #183B56;
 
   /* light theme (default) */
@@ -18,7 +24,7 @@
   --panel-2: #F7F9FA;
   --ink: #132536;
   --ink-2: #405466;
-  --muted: #687B8C;
+  --muted: #586B7C;
   --line: #DCE4E8;
   --line-2: #EAF0F2;
   --grid: #E5ECEF;
@@ -35,10 +41,10 @@
   --panel: #10151F;
   --panel-2: #0C111A;
   --ink: #E8ECF4;
-  --ink-2: #AEB8C9;
-  --muted: #6F7B90;
-  --line: #1C2433;
-  --line-2: #161D29;
+  --ink-2: #C3CDDB;
+  --muted: #98A7BA;
+  --line: #2B3547;
+  --line-2: #202A3A;
   --grid: #1B2330;
   --up: #2FBE76;
   --down: #F0625F;
@@ -67,6 +73,8 @@ button, .sb-item, .stock-tabs, .stock-tab, .feed-filters, .feed-filters *,
 
 body {
   font-family: var(--f);
+  font-size: var(--text-body);
+  line-height: 1.55;
   background: linear-gradient(168deg,
     color-mix(in srgb, var(--accent) 8%, var(--bg)) 0%,
     var(--bg) 36%,
@@ -109,8 +117,8 @@ body {
 }
 [data-theme="dark"] .num-hl { color: #8BD2E8; background: linear-gradient(transparent 60%, rgba(255,212,0,.2) 60%, rgba(255,212,0,.2) 95%, transparent 95%); }
 [data-theme="dark"] .term-hl { color: #9FC0FF; background: linear-gradient(transparent 60%, rgba(255,212,0,.30) 60%, rgba(255,212,0,.30) 95%, transparent 95%); }
-.ct-row:hover .num-hl, .art:hover .num-hl { color: #FFE76A; background: none; }
-.ct-row:hover .term-hl, .art:hover .term-hl { color: #FFF4A3; background: linear-gradient(transparent 60%, rgba(255,212,0,.58) 60%, rgba(255,212,0,.58) 95%, transparent 95%); }
+.ct-row:hover .num-hl, .art:hover .num-hl { color: #0B6B62; background: color-mix(in srgb, #0B6B62 10%, transparent); }
+.ct-row:hover .term-hl, .art:hover .term-hl { color: #174EA6; background: color-mix(in srgb, #174EA6 10%, transparent); }
 a { color: inherit; text-decoration: none; transition: color .2s; }
 a:hover { color: var(--accent); }
 b, strong { font-weight: 700; }
@@ -4489,10 +4497,11 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   --consult-navy: #102A43;
   --consult-blue: #173F5F;
   --consult-teal: #007F78;
-  --consult-gold: #B58A42;
+  --consult-gold: #8A641F;
   --consult-paper: #FCFCFA;
   --consult-rule: #D7DDE0;
 }
+[data-theme="dark"] { --consult-gold: #D7B56D; }
 
 /* 보고서 페이지처럼 각 보드의 전체 상단을 강조한다. */
 .board {
@@ -5768,9 +5777,9 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     text-shadow: none !important;
   }
   .msf-chain .msf-layer:is(:hover, :focus-visible) .msf-layer-evidence :is(em, b) {
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-    text-shadow: 0 1px 2px rgba(7, 21, 33, .28);
+    color: var(--ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+    text-shadow: none !important;
   }
 }
 
@@ -5937,4 +5946,404 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .tb-title-meta { align-items: flex-start; flex-direction: column; gap: 2px; }
   .tb-live { white-space: normal; }
   .board-en { width: 100%; }
+}
+
+/* ============================================================
+   TYPOGRAPHY + CONSULTING VISUAL CONTRACT V2
+   Readable type floors, balanced framing and non-inverting interaction.
+   ============================================================ */
+
+/* Semantic font policy */
+.site-cli-panel,
+.site-cli-input,
+.site-cli-output,
+.site-cli-output code,
+.site-cli-output pre { font-family: var(--f-code); }
+
+.main { font-size: var(--text-body); }
+.main :where(p, li, dd) { line-height: 1.58; }
+.main :where(h2, h3, h4) { line-height: 1.32; text-wrap: balance; }
+.main :where(p, li, dd, figcaption) { text-wrap: pretty; word-break: keep-all; overflow-wrap: anywhere; }
+
+/* Global semantic labels never fall below the readable metadata floor. */
+.main :where(dt, small, time, figcaption),
+.sidebar :where(.sb-group, .sb-sub-val, .sb-logo-txt span),
+.topbar :where(.tb-live, .tb-how-link, .tb-cli-guide),
+.site-cli-panel :where(small, em, span, button) {
+  font-size: var(--text-xs) !important;
+  line-height: 1.45;
+}
+
+/* Common data-label families across every lazy-loaded board. */
+.main :is(
+  [class*="-meta"], [class*="-kicker"], [class*="-eyebrow"],
+  [class*="-label"], [class*="-badge"], [class*="-tag"],
+  [class*="-date"], [class*="-asof"], [class*="-source"], [class*="-src"]
+) :where(em, small, span, a, time),
+.main :is(
+  [class$="-meta"], [class$="-kicker"], [class$="-eyebrow"],
+  [class$="-label"], [class$="-badge"], [class$="-tag"],
+  [class$="-date"], [class$="-asof"], [class$="-source"], [class$="-src"]
+) {
+  font-size: var(--text-xs) !important;
+  line-height: 1.45;
+}
+
+/* Strategy framework: the former 6.5–10px annotations are decision data,
+   not decoration, so they receive an explicit readable scale. */
+:is(
+  .msf-consulting-kicker, .msf-consulting-evidence,
+  .msf-house-roof span, .msf-house-foundation em,
+  .msf-section-head em, .msf-workload-head span,
+  .msf-workload-row span, .msf-workload-name em,
+  .msf-workload-name small, .msf-workload-proof span,
+  .msf-priority-rank em, .msf-priority-rank span,
+  .msf-priority-card span, .msf-priority-card small, .msf-priority-card em,
+  .msf-layer-no, .msf-layer-role, .msf-layer-control,
+  .msf-layer-evidence em, .msf-layer-evidence b,
+  .msf-layer-lead em, .msf-layer-lead b,
+  .msf-capability > span, .msf-capability > em,
+  .msf-mrow > span, .msf-mhead > span, .msf-mname em,
+  .msf-opportunity-customer, .msf-opportunity dt,
+  .msf-opportunity dd, .msf-opportunity em, .msf-opportunity span,
+  .msf-expert em, .msf-expert b, .msf-expert small,
+  .msf-expert h4, .msf-expert p,
+  .msf-synthesis-head span, .msf-synthesis-flow em, .msf-synthesis-flow span,
+  .mplay-framework-flow span, .mplay-framework-flow small,
+  .dyn-video-head span, .dyn-selected-meta span,
+  .dyn-relationship b, .dyn-relationship strong,
+  .dyn-relationship span, .dyn-relationship em, .dyn-relationship a
+) {
+  font-size: var(--text-xs) !important;
+  line-height: 1.46;
+}
+
+:is(
+  .msf-workload-name b, .msf-opportunity h4,
+  .msf-layer > b, .msf-capability b,
+  .mplay-card h4, .dyn-selected-card strong
+) { font-size: var(--text-sm) !important; }
+
+/* Value-chain cards contain strategic evidence, not footnotes. */
+:is(
+  .vc-thesis b, .vc-thesis span, .vc-filter-bar button, .vc-filter-bar em,
+  .vc-logic-map em, .vc-logic-map span,
+  .sp-card-company em, .sp-card-badge, .sp-card-institution,
+  .sp-card-logic span, .sp-card-intel span,
+  .sp-card-foot em, .sp-card-foot b, .sp-card-foot span,
+  .msf-priority-card > p, .msf-capability p
+) {
+  font-size: var(--text-xs) !important;
+  line-height: 1.48;
+}
+
+/* Remaining cross-board footnotes and framework keys share the same floor. */
+:is(
+  .bmf-revenue b, .bmf-flow-step b, .bmf-method,
+  .mplay-framework-head p, .es-cm-live,
+  .su-tax-cat em, .source-pipeline em,
+  .mkt-foot, .stock-updated,
+  .tl-ev-chip, .es-score em,
+  .es-framework-key b, .es-framework-key em,
+  .es-col-h, .es-col-h em, .es-score-note, .es-axis-label,
+  .mkt-db-summary em
+) {
+  font-size: var(--text-xs) !important;
+  line-height: 1.48;
+}
+.es-score-note,
+.es-axis-label { color: var(--muted) !important; }
+
+/* Saturated category hues are softened into a readable foreground on light
+   cards while their full hue remains available for borders and connectors. */
+:root:not([data-theme="dark"]) :is(
+  .msf-layer-no, .msf-layer-role, .msf-layer-lead b,
+  .msf-mname em
+) {
+  color: color-mix(in srgb, var(--lc) 66%, #102A43) !important;
+}
+
+/* SVG and canvas-adjacent labels use the same interface family. */
+.main svg text {
+  font-family: var(--f) !important;
+  font-size: 10.5px !important;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: color-mix(in srgb, var(--panel) 84%, transparent);
+  stroke-width: 1.4px;
+  stroke-linejoin: round;
+}
+
+/* Important terms use role-based consulting colors, not neon markers. */
+.hl,
+.term-hl {
+  color: #174EA6;
+  font-weight: 850;
+}
+.num-hl {
+  color: #0B6B62;
+  font-weight: 850;
+}
+.hl-mark,
+.hl-y,
+.term-hl,
+.num-hl {
+  padding: 1px 3px;
+  border-radius: 3px;
+  background: color-mix(in srgb, currentColor 9%, transparent);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.term-hl { border-bottom: 2px solid color-mix(in srgb, #174EA6 48%, transparent); }
+.num-hl { border-bottom: 2px solid color-mix(in srgb, #0B6B62 48%, transparent); }
+[data-theme="dark"] :is(.hl, .term-hl) { color: #9FC4FF; }
+[data-theme="dark"] .num-hl { color: #79D8CB; }
+[data-theme="dark"] :is(.hl-mark, .hl-y, .term-hl, .num-hl) {
+  background: color-mix(in srgb, currentColor 16%, transparent);
+}
+
+/* Balanced consulting frames: complete perimeter, symmetric rails and a
+   central decision marker replace one-sided card accents. */
+.section-stack-head {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px;
+  padding-block: 19px;
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--consult-navy) 7%, transparent),
+      transparent 34%,
+      color-mix(in srgb, var(--consult-teal) 6%, transparent) 50%,
+      transparent 66%,
+      color-mix(in srgb, var(--consult-gold) 7%, transparent)),
+    var(--panel);
+  box-shadow:
+    inset 0 2px var(--consult-navy),
+    inset 0 -2px var(--consult-teal),
+    var(--shadow);
+}
+.section-stack-head::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--panel);
+  background: var(--consult-gold);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.section-stack-head > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  padding: 4px 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line));
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 7%, var(--panel));
+  font-size: var(--text-xs) !important;
+}
+
+.board {
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(18, 48, 71, .08);
+}
+.board-head {
+  border: 1px solid transparent;
+  border-bottom-color: var(--line);
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--consult-navy) 5%, var(--panel)),
+      var(--panel) 45%,
+      var(--panel) 55%,
+      color-mix(in srgb, var(--consult-teal) 5%, var(--panel)));
+  box-shadow: inset 0 1px var(--line), inset 0 -1px var(--line);
+}
+.board-titles h2 { font-size: 18px; }
+.board-titles p,
+.board-en { font-size: var(--text-sm); line-height: 1.5; }
+
+/* Full perimeter carries category colour; remove the old single top stripe. */
+.sp-card::before { display: none !important; }
+
+/* Framework rows read as a process: equal cells, shared rail, explicit arrow. */
+:is(.msf-chain, .msf-synthesis-flow, .mplay-framework-flow, .source-pipeline) {
+  position: relative;
+  isolation: isolate;
+}
+:is(.msf-chain, .msf-synthesis-flow, .mplay-framework-flow, .source-pipeline)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 3%;
+  right: 3%;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--consult-navy), var(--consult-teal), var(--consult-gold));
+  opacity: .28;
+}
+.msf-layer,
+.msf-opportunity,
+.msf-expert,
+.mplay-framework-flow > div,
+.source-pipeline > div {
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(18, 48, 71, .06);
+}
+
+/* KPI proof is rendered as a compact evidence matrix instead of a run-on
+   sentence, preserving the data-driven content at every card width. */
+.msf-opportunity-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+}
+.msf-opportunity-metrics > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 6px 7px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--panel-2);
+}
+.msf-opportunity-metrics em {
+  color: var(--muted);
+  font-size: var(--text-xs) !important;
+  font-style: normal;
+  font-weight: 800;
+}
+.msf-opportunity-metrics b {
+  color: var(--ink);
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+}
+
+/* Dark surfaces keep the same hierarchy with light foreground tokens. */
+[data-theme="dark"] .msf-layer { color: var(--ink); }
+[data-theme="dark"] .msf-layer > b,
+[data-theme="dark"] .msf-layer-evidence b { color: var(--ink); }
+[data-theme="dark"] :is(
+  .msf-layer-no, .msf-layer-role, .msf-layer-lead b,
+  .msf-mname em
+) { color: color-mix(in srgb, var(--lc) 58%, #FFFFFF) !important; }
+[data-theme="dark"] :is(
+  .msf-opportunity > div:first-child em,
+  .msf-opportunity-customer,
+  .msf-workload-opportunity,
+  .msf-section-head em
+) { color: #9FC4FF; }
+[data-theme="dark"] .msf-opportunity > div:first-child span {
+  color: #F0D18B;
+  background: color-mix(in srgb, var(--consult-gold) 15%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--consult-gold) 40%, var(--line));
+}
+[data-theme="dark"] .msf-opportunity :is(dt, dd) { color: var(--ink-2); }
+
+/* Final interaction contract: never invert an information card. Hue is a
+   border/keyword signal; readable foreground tokens remain stable. */
+@media (hover: hover) and (pointer: fine) {
+  :is(
+    .sp-card, .msf-layer, .msf-mrow:not(.msf-mhead),
+    .msf-opportunity, .msf-expert, .msf-synthesis-flow > div,
+    .vc-logic-map > div, .consult-decision-rail > div,
+    .source-pipeline > div, .cd-mece-route > span,
+    .cd-sf-card, .cd-org-node, .cd-org-tier,
+    .mkt-card, .mkt-record, .btf-card, .fda-step,
+    .isg-card, .mplay-card, .mplay-framework-flow > div,
+    .art, .ct-row, .kpi, .maib-summary > div,
+    .maib-market-card, .maib-company-card, .maib-opportunity-card,
+    .bmf-card, .kg-detail-article, .tl-card
+  ):is(:hover, :focus-visible, :focus-within) {
+    color: var(--ink) !important;
+    background: color-mix(in srgb, var(--hover-tone, var(--accent, #1E5A73)) 7%, var(--panel)) !important;
+    border-color: color-mix(in srgb, var(--hover-tone, var(--accent, #1E5A73)) 58%, var(--line)) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--hover-tone, var(--accent, #1E5A73)) 14%, transparent) !important;
+  }
+  :is(
+    .sp-card, .msf-layer, .msf-mrow:not(.msf-mhead),
+    .msf-opportunity, .msf-expert, .msf-synthesis-flow > div,
+    .vc-logic-map > div, .consult-decision-rail > div,
+    .source-pipeline > div, .cd-mece-route > span,
+    .cd-sf-card, .cd-org-node, .cd-org-tier,
+    .mkt-card, .mkt-record, .btf-card, .fda-step,
+    .isg-card, .mplay-card, .mplay-framework-flow > div,
+    .art, .ct-row, .kpi, .maib-summary > div,
+    .maib-market-card, .maib-company-card, .maib-opportunity-card,
+    .bmf-card, .kg-detail-article, .tl-card
+  ):is(:hover, :focus-visible, :focus-within) :is(h2, h3, h4, b, strong, a) {
+    color: var(--ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+    text-shadow: none !important;
+  }
+  :is(
+    .sp-card, .msf-layer, .msf-mrow:not(.msf-mhead),
+    .msf-opportunity, .msf-expert, .msf-synthesis-flow > div,
+    .vc-logic-map > div, .consult-decision-rail > div,
+    .source-pipeline > div, .cd-mece-route > span,
+    .cd-sf-card, .cd-org-node, .cd-org-tier,
+    .mkt-card, .mkt-record, .btf-card, .fda-step,
+    .isg-card, .mplay-card, .mplay-framework-flow > div,
+    .art, .ct-row, .kpi, .maib-summary > div,
+    .maib-market-card, .maib-company-card, .maib-opportunity-card,
+    .bmf-card, .kg-detail-article, .tl-card
+  ):is(:hover, :focus-visible, :focus-within) :is(p, span, em, small, dt, dd, li, time) {
+    color: var(--ink-2) !important;
+    -webkit-text-fill-color: currentColor !important;
+    text-shadow: none !important;
+  }
+  :is(.term-hl, .hl):is(:hover, :focus-visible),
+  :is(.art, .ct-row, .isg-card, .msf-layer):is(:hover, :focus-visible, :focus-within) :is(.term-hl, .hl) {
+    color: #174EA6 !important;
+  }
+  :is(.num-hl):is(:hover, :focus-visible),
+  :is(.art, .ct-row, .isg-card, .msf-layer):is(:hover, :focus-visible, :focus-within) .num-hl {
+    color: #0B6B62 !important;
+  }
+  [data-theme="dark"] :is(.art, .ct-row, .isg-card, .msf-layer):is(:hover, :focus-visible, :focus-within) :is(.term-hl, .hl) {
+    color: #9FC4FF !important;
+  }
+  [data-theme="dark"] :is(.art, .ct-row, .isg-card, .msf-layer):is(:hover, :focus-visible, :focus-within) .num-hl {
+    color: #79D8CB !important;
+  }
+  .msf-chain .msf-layer:is(:hover, :focus-visible, :focus-within) .msf-layer-evidence em,
+  .msf-chain .msf-layer:is(:hover, :focus-visible, :focus-within) .msf-layer-lead em {
+    color: var(--ink-2) !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+  .msf-chain .msf-layer:is(:hover, :focus-visible, :focus-within) .msf-layer-evidence b,
+  .msf-chain .msf-layer:is(:hover, :focus-visible, :focus-within) .msf-layer-lead b {
+    color: var(--ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .main-inner { padding-inline: 14px; }
+  .section-stack-head { padding: 17px 14px; }
+  .board-titles h2 { font-size: 16px; }
+  .main svg text { font-size: 10px !important; }
+}
+
+@media (max-width: 1480px) and (min-width: 981px) {
+  .msf-opportunity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .msf-expert-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .msf-workload-head,
+  .msf-workload-row { min-width: 1180px; }
+}
+
+/* A single relationship group must use the full video-card width; the former
+   fixed two-column grid squeezed headlines into one-character columns. */
+.dyn-relationships {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+.dyn-relationship > div > :is(a, span) {
+  grid-template-columns: minmax(82px, auto) minmax(0, 1fr);
+  column-gap: 8px;
 }
