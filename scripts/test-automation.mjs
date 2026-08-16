@@ -611,11 +611,38 @@ try {
   const strategyReady = strategyView?.sourceMode === "generated-from-verified-ledgers"
     && strategyView?.choices?.length === 4
     && strategyView?.capabilities?.length === 5
-    && strategyView?.horizons?.length === 3
+    && !Object.hasOwn(strategyView, "horizons")
     && strategyView?.opportunityPortfolio?.length >= 9
     && !Object.hasOwn(strategyView, "accountPortfolio")
     && boards.includes("function MobileStrategyBoard")
     && !boards.includes("Competitive Platform Portfolio")
+    && ![
+      "OS·앱·계정·결제·개인 컨텍스트를 연결해 새로운 AI 서비스 매출 설계",
+      "공개 원문 근거로 우선순위 갱신",
+      "각 산출물에 근거일·책임자·다음 의사결정·완료 기준",
+      "사용자 Pain point를 모바일 경험",
+      "모바일의 반복 사용 순간을 플랫폼 요구",
+      "핵심 경험·크리에이터 도구·컨텍스트 통제",
+      "공식 제품 근거를 고객 접점",
+      "90-Day Execution Roadmap",
+      "Discover · Design · Decide",
+      "수요·통제점 정의",
+      "사용자 과업·지불 의향·경쟁 경험 근거 수집",
+      "OS·앱·계정·결제·데이터 통제점 분리",
+      "상위 3개 사용 사례와 정보 공백 명시",
+      "경험·사업 설계",
+      "온디바이스·클라우드·멀티모델 조합 비교",
+      "구독·번들·거래·B2B 수익모델 산정",
+      "자체 개발·제휴·투자와 출시 KPI 설정",
+      "90일 실험 실행",
+      "Scale·Iterate·Stop 안건 상정",
+      "제품·서비스·파트너 책임자와 일정 지정",
+      "완료율·유지율·ARPU·원가·신뢰 KPI 추적",
+      "매일 확인한 원문 근거(복수 출처·반복 신호·추출 수치)",
+      "Evidence-led",
+      "상대 중요도 기준",
+      "단말 · OS · 통신사 · NPU · 파트너 · 규제",
+    ].some(copy => boards.includes(copy))
     && boards.includes("Strategy consulting · user need → mobile experience → revenue → execution")
     && boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")

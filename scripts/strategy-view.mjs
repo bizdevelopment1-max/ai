@@ -123,7 +123,6 @@ export function buildStrategyView({ generatedAt, framework, articles, opportunit
     operatingModel: framework?.operatingModel || [],
     decisionOutputs: framework?.decisionOutputs || [],
     capabilities: framework?.capabilities || [],
-    horizons: framework?.horizons || [],
     choices,
     workloadMap,
     opportunityPortfolio,

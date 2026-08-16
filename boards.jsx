@@ -405,7 +405,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), choices: [], horizons: [], workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
+  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), choices: [], workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -463,10 +463,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
             <h2>AI 신사업 발굴 포트폴리오</h2>
             <span className="msf-consulting-evidence">최신 공개 근거 <b>{evidenceArticles.length}</b>건 · {evidenceDate} 기준</span>
           </div>
-          <p>
-            <b>OS·앱·계정·결제·개인 컨텍스트를 연결해 새로운 AI 서비스 매출 설계</b>
-            <span>공개 원문 근거로 우선순위 갱신 · 사실과 전략적 해석 분리 · 사용자 가치와 단위경제성을 같은 의사결정 구조로 연결</span>
-          </p>
         </div>
 
         <div className="msf-exec-architecture">
@@ -503,13 +499,11 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
                 </React.Fragment>
               ))}
             </div>
-            <p>각 산출물에 근거일·책임자·다음 의사결정·완료 기준을 기록해 제품·서비스·파트너 판단을 같은 리듬으로 운영</p>
           </div>
         </div>
 
         <div className="msf-section-head">
           <div><em>01</em><h3>사용자 신호에서 90일 실험까지</h3></div>
-          <p>사용자 Pain point를 모바일 경험·수익모델·파트너 구조·경영진 의사결정으로 순차 변환</p>
         </div>
         <div className="msf-control-logic" aria-label="모바일 AI 신사업 기회 전환 과정">
           {controlZones.map((zone, index) => (
@@ -531,7 +525,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
 
         <div className="msf-section-head">
           <div><em>02</em><h3>User Moment → Experience Stack → Revenue</h3></div>
-          <p>모바일의 반복 사용 순간을 플랫폼 요구·신사업 가설·검증 KPI로 번역</p>
         </div>
         <div className="msf-workload-map">
           <div className="msf-workload-head"><span>USER MOMENT / SHIFT</span><span>EXPERIENCE PAIN</span><span>PLATFORM REQUIREMENT</span><span>BUSINESS OPPORTUNITY</span><span>PROOF</span></div>
@@ -548,7 +541,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
 
         <div className="msf-section-head">
           <div><em>03</em><h3>Mobile AI New Business Portfolio</h3></div>
-          <p>핵심 경험·크리에이터 도구·컨텍스트 통제·서비스 유통을 서로 다른 투자 게이트로 관리</p>
         </div>
         <div className="msf-opportunity-grid">
           {opportunityPortfolio.map((item, index) => (
@@ -569,7 +561,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
 
         <div className="msf-section-head">
           <div><em>04</em><h3>Mobile AI Product · Platform · Business Evidence</h3></div>
-          <p>공식 제품 근거를 고객 접점·플랫폼 통제·수익모델·파트너 의사결정 시사점으로 요약</p>
         </div>
         <div className="msf-expert-grid">
           {expertSignals.map((signal, index) => (
@@ -649,19 +640,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
           ))}
         </div>
 
-        <div className="msf-section-head">
-          <div><em>09</em><h3>90-Day Execution Roadmap</h3></div>
-          <p>Discover · Design · Decide</p>
-        </div>
-        <div className="msf-horizons">
-          {(strategy.horizons || []).map((h, i) => (
-            <div className="msf-horizon" key={h.id} tabIndex="0">
-              <span>{h.label}</span><h4>{h.title}</h4>
-              <ul>{(h.actions || []).map((a, j) => <li key={j}>{a}</li>)}</ul>
-              {i < strategy.horizons.length - 1 && <i className="msf-harr" aria-hidden="true" />}
-            </div>
-          ))}
-        </div>
       </AnimCtx.Provider>
     </section>
   );
@@ -4754,14 +4732,6 @@ function ExecToplines({ items, insights, onNav }) {
     : (items || []).map(t => ({ tag: t.tag, tone: t.tone, nav: t.nav, now: t.now, cause: t.cause, decision: t.decision, action: t.action, evidence: [], digest: "", keywords: [], signals: [], score: null })))
     .filter(c => !delEs[c.tag]);
   if (!cards.length) return null;
-  // 엔진 provenance 배지 — 사용자가 자동/규칙/시드 생성 여부를 즉시 판별
-  const eng = (insights && insights.engine) || (usingLive ? "rules" : "seed");
-  const ENGINE_BADGE = {
-    "llm": { ko: "LLM 자동 생성", cls: "llm" }, "llm-gh": { ko: "LLM 자동 생성", cls: "llm" },
-    "crawl-synthesis": { ko: "원문 인사이트 종합", cls: "llm" },
-    "rules": { ko: "규칙 기반 자동", cls: "rules" }, "seed": { ko: "시드(초기값)", cls: "seed" },
-  };
-  const eb = ENGINE_BADGE[eng] || ENGINE_BADGE.rules;
   const priorityMeta = (rawScore) => {
     const score = Math.max(0, Math.min(100, Math.round(rawScore)));
     if (score >= 67) return { label: "P1", range: "67–100", meaning: "상위 우선순위" };
@@ -4778,11 +4748,6 @@ function ExecToplines({ items, insights, onNav }) {
         <div>
           <span className="es-brief-kicker">STRATEGIC DECISION BRIEF</span>
           <h3>핵심 신호를 의사결정으로 연결</h3>
-          <p>매일 확인한 원문 근거(복수 출처·반복 신호·추출 수치)를 종합해 사업적 의미와 다음 실행으로 구조화 · 고정 문구가 아닌 최신 원문에 따라 갱신</p>
-        </div>
-        <div className="es-brief-note" title="상대 중요도 0~100 = 최신성 × 출처신뢰도 × 주제적합도">
-          <strong>Evidence-led</strong>
-          <span>{eb.ko} · 상대 중요도 기준</span>
         </div>
       </header>
       <div className="es-framework-key" aria-label="전략 브리프 읽는 순서">
@@ -5055,7 +5020,6 @@ function MobileAIBusinessBoard({ sectionRef, dataVersion }) {
           <div>
             <span className="mxc-kicker"><i /> MX AI DECISION INTELLIGENCE</span>
             <h2>AI 신사업 Command Center</h2>
-            <p>단말 · OS · 통신사 · NPU · 파트너 · 규제를 MX의 Buy / Build / Partner / Watch 결정으로 연결</p>
           </div>
           <div className="mxc-live"><i /> LIVE DATA<small>last built {generated} UTC</small></div>
         </div>
