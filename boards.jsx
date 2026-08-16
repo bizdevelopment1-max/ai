@@ -5274,43 +5274,6 @@ function MobileAIBusinessBoard({ sectionRef, dataVersion }) {
   );
 }
 
-function MXThemeBoard({ sectionRef, dataVersion, kind }) {
-  const inView = useInView(sectionRef);
-  const [data, setData] = React.useState(null);
-  const [loaded, setLoaded] = React.useState(false);
-  React.useEffect(() => {
-    if (loaded || !dataVersion) return;
-    setLoaded(true);
-    loadJson(`mobile-ai-business-view.json?v=${encodeURIComponent(dataVersion)}`)
-      .then(payload => payload?.schemaVersion >= 4 && setData(payload))
-      .catch(() => {});
-  }, [loaded, dataVersion]);
-  const tier = value => value === "official" ? "OFFICIAL" : value === "reported" ? "REPORTED" : "ESTIMATE";
-  const meta = {
-    "agentic-commerce": ["에이전틱 커머스", "AI Agent Commerce", "쇼핑·결제·커미션을 단말 반복매출로 연결"],
-    "telco-bundles": ["통신사 결합 서비스", "Carrier AI Bundles", "요금제 perk·고객접점·지역 확산을 계약 단위로 비교"],
-    "wearables-form-factors": ["웨어러블·폼팩터", "Wearables & Form Factors", "폰 보완·대체 접점과 전용 AI 하드웨어의 실패 조건"],
-  }[kind] || [kind, "MX Theme", ""];
-  const nodes = new Map((data?.partnershipNetwork?.nodes || []).map(node => [node.id, node]));
-  const carrierEdges = (data?.partnershipNetwork?.edges || []).filter(edge => nodes.get(edge.from)?.type === "carrier" || nodes.get(edge.to)?.type === "carrier");
-  const commerceModels = (data?.monetizationModels || []).filter(item => ["task", "outcome", "bundle", "commission"].includes(item.id));
-  return (
-    <section className="board mxt" ref={sectionRef} data-screen-label={meta[1]}>
-      <AnimCtx.Provider value={inView}>
-        <div className="mxt-head"><div><span>MX PRIORITY THEME</span><h2>{meta[0]} <em>{meta[1]}</em></h2><p>{meta[2]}</p></div><b>{data ? "LIVE DATA" : "LOADING"}</b></div>
-        {!data ? <SourcePipeline kind="market" /> : <React.Fragment>
-          {kind === "agentic-commerce" && <div className="mxt-commerce">
-            <div className="mxt-callout"><span>PRICING DECISION</span><b>자율성 × 기여도 × 전문성</b><p>기여가 감사 가능할 때만 outcome·commission 과금으로 이동하고, 초기에는 구독+크레딧으로 원가 변동을 통제합니다.</p><a href={data.monetizationFramework?.sourceUrl} target="_blank" rel="noopener">Simon-Kucher <Icon name="ext" size={9} /></a></div>
-            <div className="mxt-card-grid">{commerceModels.map(item => <article key={item.id}><header><b>{item.model}</b><i className={`tier-${item.evidenceTier}`}>{tier(item.evidenceTier)}</i></header><em>{item.unit}</em><p>{item.fit}</p><span>{item.risk}</span></article>)}</div>
-          </div>}
-          {kind === "telco-bundles" && <div className="mxt-edge-grid">{carrierEdges.map(edge => <article key={`${edge.from}-${edge.to}`}><header><span>{nodes.get(edge.from)?.label}</span><i>↔</i><span>{nodes.get(edge.to)?.label}</span><b className={`tier-${edge.evidenceTier}`}>{tier(edge.evidenceTier)}</b></header><h3>{edge.contractType}</h3><p>{edge.region} · {edge.period}</p><em>독점: {edge.exclusive}</em><a href={edge.sourceUrl} target="_blank" rel="noopener">계약 근거 <Icon name="ext" size={9} /></a></article>)}</div>}
-          {kind === "wearables-form-factors" && <React.Fragment><div className="mxt-card-grid form">{(data.formFactors || []).map(item => <article key={item.id}><header><b>{item.label}</b><i className={`tier-${item.evidenceTier}`}>{tier(item.evidenceTier)}</i></header><em>{item.examples}</em><p>{item.mobileRole}</p>{item.fact && <strong>{item.fact}</strong>}{item.businessOption && <small><b>{item.actionOption || "OPTION"}</b> · {item.businessOption}</small>}<span>{item.mxQuestion}</span>{item.sourceUrl && <a href={item.sourceUrl} target="_blank" rel="noopener">official source <Icon name="ext" size={9} /></a>}</article>)}</div><div className="mxt-failure">{(data.failureCases || []).map(item => <article key={item.name}><b>{item.name}</b><em>{item.outcome}</em><p>{item.lesson}</p><a href={item.sourceUrl} target="_blank" rel="noopener">case source <Icon name="ext" size={9} /></a></article>)}</div></React.Fragment>}
-        </React.Fragment>}
-      </AnimCtx.Provider>
-    </section>
-  );
-}
-
 // ---- AI 신사업 시장 보드: lazy-load(inView 시에만 fetch), MECE 그룹, 플레인 텍스트, 삭제/숨김 ----
 function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
   const inView = useInView(sectionRef);
@@ -5926,4 +5889,4 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   );
 }
 
-Object.assign(window, { BoldSummary, MobileAIBusinessBoard, MXThemeBoard, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
+Object.assign(window, { BoldSummary, MobileAIBusinessBoard, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });

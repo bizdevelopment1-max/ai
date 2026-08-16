@@ -209,10 +209,6 @@ const NAV = [
     { key: "decision-radar", ko: "의사결정 레이더" }, { key: "opportunity-candidates", ko: "기회 후보·실험" },
     { key: "monetization-roi", ko: "수익화·ROI" }, { key: "build-buy-partner", ko: "Build·Buy·Partner" },
   ] },
-  { id: "themes", ko: "핵심 사업 테마", en: "Priority Business Themes", icon: "spark", group: "사업 포트폴리오", children: [
-    { key: "agentic-commerce", ko: "에이전틱 커머스" }, { key: "telco-bundles", ko: "통신사 결합 서비스" },
-    { key: "wearables-form-factors", ko: "웨어러블·폼팩터" },
-  ] },
   { id: "valuechain", ko: "AI 밸류체인", en: "AI Value Chain", icon: "ai", group: "사업 포트폴리오", children: [] },
   { id: "newbiz", ko: "AI 서비스 신사업", en: "AI Service Opportunities", icon: "spark", group: "사업 포트폴리오", children: [
     { key: "service-opportunity", ko: "서비스 기회" }, { key: "revenue-model", ko: "수익 모델" },
