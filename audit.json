@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-15T11:20:20.503Z",
+  "generatedAt": "2026-08-16T01:37:55.406Z",
   "overall": "warn",
-  "summary": "36개 검사 · 정상 34 · 주의 2 · 실패 0",
+  "summary": "39개 검사 · 정상 35 · 주의 4 · 실패 0",
   "checks": [
     {
       "file": "news.json",
@@ -9,14 +9,14 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 499
+      "items": 469
     },
     {
       "file": "briefing.json",
       "tab": "모닝 브리핑",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
+      "ageDays": 0,
       "items": 6
     },
     {
@@ -24,7 +24,7 @@
       "tab": "Executive Summary",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
+      "ageDays": 0,
       "items": 6
     },
     {
@@ -32,15 +32,15 @@
       "tab": "증권사 인사이트",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
-      "items": 108
+      "ageDays": 0,
+      "items": 113
     },
     {
       "file": "radar.json",
       "tab": "스타트업 레이더",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
+      "ageDays": 0,
       "items": 4
     },
     {
@@ -48,15 +48,15 @@
       "tab": "스타트업 분석",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
-      "items": 131
+      "ageDays": 0,
+      "items": 130
     },
     {
       "file": "a16z-startups.json",
       "tab": "a16z Top 100 원장",
       "status": "ok",
       "issues": [],
-      "ageDays": 1.8,
+      "ageDays": 2.4,
       "items": 100
     },
     {
@@ -64,7 +64,7 @@
       "tab": "AI 서비스 JV·DeployCo",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
+      "ageDays": 0,
       "items": 2
     },
     {
@@ -72,7 +72,7 @@
       "tab": "기업 움직임 기반 신사업 예측",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
+      "ageDays": 0,
       "items": 7
     },
     {
@@ -81,30 +81,30 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 163
+      "items": 164
     },
     {
       "file": "company-news.json",
       "tab": "기업 직접 연관 뉴스",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
-      "items": 17
+      "ageDays": 0,
+      "items": 18
     },
     {
       "file": "market.json",
       "tab": "AI 신사업 정량·소비자 DB",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
-      "items": 466
+      "ageDays": 0,
+      "items": 491
     },
     {
       "file": "infra.json",
       "tab": "인프라·미래기술",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
+      "ageDays": 0,
       "items": 140
     },
     {
@@ -112,23 +112,23 @@
       "tab": "수익화 모델",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
-      "items": 45
+      "ageDays": 0,
+      "items": 55
     },
     {
       "file": "monetization.json",
       "tab": "AI 수익화 플레이북",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.1,
-      "items": 19
+      "ageDays": 0,
+      "items": 18
     },
     {
       "file": "stocks.json",
       "tab": "Stock 분석",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
+      "ageDays": 0,
       "items": 54
     },
     {
@@ -136,7 +136,7 @@
       "tab": "NVIDIA 투자 포트폴리오",
       "status": "ok",
       "issues": [],
-      "ageDays": 0.3,
+      "ageDays": 0,
       "items": 9
     },
     {
@@ -145,7 +145,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": 667
+      "items": 682
     },
     {
       "file": "quality.json",
@@ -153,7 +153,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "499건"
+      "items": "469건"
     },
     {
       "file": "quality.json",
@@ -161,7 +161,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "495/499건"
+      "items": "448/469건"
     },
     {
       "file": "quality.json",
@@ -169,7 +169,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "472/499건"
+      "items": "469/469건 · 100.0% / 목표 97%"
     },
     {
       "file": "quality.json",
@@ -177,15 +177,17 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "한국어 483 · 영문 폴백 16"
+      "items": "한국어 453 · 영문 폴백 16"
     },
     {
       "file": "quality.json",
       "tab": "수집 스트림 상태",
-      "status": "ok",
-      "issues": [],
+      "status": "warn",
+      "issues": [
+        "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다."
+      ],
       "ageDays": 0,
-      "items": "실패 0 · 빈 스트림 8"
+      "items": "실패 2/3 허용 · 빈 스트림 8 · 지속 실패 0"
     },
     {
       "file": "quality.json",
@@ -225,7 +227,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "공개 140건 · 보존 0건"
+      "items": "공개 133건 · 보존 7건"
     },
     {
       "file": "quality.json",
@@ -233,7 +235,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "공개 31건 · 보존 14건"
+      "items": "공개 40건 · 보존 15건"
     },
     {
       "file": "quality.json",
@@ -241,7 +243,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "공개 61건 · 보존 47건"
+      "items": "공개 61건 · 보존 52건"
     },
     {
       "file": "quality.json",
@@ -249,7 +251,7 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "한국어 106 · 영문 폴백 1"
+      "items": "한국어 112 · 영문 폴백 1"
     },
     {
       "file": "quality.json",
@@ -267,7 +269,7 @@
         "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다."
       ],
       "ageDays": 0,
-      "items": "153/466건 · 32.8% / 목표 60%"
+      "items": "179/491건 · 36.5% / 목표 90%"
     },
     {
       "file": "quality.json",
@@ -277,7 +279,7 @@
         "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다."
       ],
       "ageDays": 0,
-      "items": "313건 · P0 65건"
+      "items": "312건 · P0 57건"
     },
     {
       "file": "quality.json",
@@ -293,7 +295,33 @@
       "status": "ok",
       "issues": [],
       "ageDays": 0,
-      "items": "24건"
+      "items": "29건"
+    },
+    {
+      "file": "quality.json",
+      "tab": "중복 기사 비율",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": "0건 · 0.0% / 상한 2%"
+    },
+    {
+      "file": "quality.json",
+      "tab": "수익모델 분류 게이트",
+      "status": "warn",
+      "issues": [
+        "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다."
+      ],
+      "ageDays": 0,
+      "items": "공개 6건 · 무게이트 0건 · 검토 대기 172건"
+    },
+    {
+      "file": "quality.json",
+      "tab": "월간 기회 후보 자동 생성",
+      "status": "ok",
+      "issues": [],
+      "ageDays": 0,
+      "items": "후보 24건 · 실험 3건 · 근거 미달 공개 0건"
     }
   ]
 }
