@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T04:48:15.719Z",
+  "generatedAt": "2026-08-16T06:29:46.535Z",
   "overall": "warn",
   "policy": "뉴스 사실은 원문 제목·RSS 스니펫에서 정제한 발췌만 사용합니다. 한국어 화면 문구는 저장된 원문 조각만 번역하고 해시로 연결합니다. 3줄·한글 품질 검사 또는 번역 요청에 실패하면 원문 영어를 표시합니다.",
   "summary": "검증 22개 · 정상 18 · 주의 4 · 실패 0",
@@ -62,7 +62,7 @@
       "id": "news-freshness",
       "label": "뉴스 번들 최신성",
       "status": "ok",
-      "value": "0.0일"
+      "value": "0.1일"
     },
     {
       "id": "infra-evidence",
@@ -80,7 +80,7 @@
       "id": "research-source",
       "label": "리서치 원문 링크",
       "status": "ok",
-      "value": "공개 61건 · 보존 47건"
+      "value": "공개 60건 · 보존 48건"
     },
     {
       "id": "research-localization",
@@ -98,13 +98,13 @@
       "id": "market-db-source",
       "label": "신사업 정량 DB 원문 직접 검증",
       "status": "warn",
-      "value": "161/474건 · 34.0% / 목표 90%"
+      "value": "175/474건 · 36.9% / 목표 90%"
     },
     {
       "id": "market-reverification-queue",
       "label": "정량 DB 우선 재검증 큐",
       "status": "warn",
-      "value": "313건 · P0 65건"
+      "value": "299건 · P0 57건"
     },
     {
       "id": "volatile-price-change",
@@ -116,7 +116,7 @@
       "id": "consumer-survey-coverage",
       "label": "소비자 조사 레코드",
       "status": "ok",
-      "value": "27건"
+      "value": "28건"
     },
     {
       "id": "duplicate-rate",
@@ -155,18 +155,18 @@
     "totalStocks": 54,
     "linkedInfra": 135,
     "linkedBizmodel": 31,
-    "linkedResearch": 61,
+    "linkedResearch": 60,
     "localizedResearch": 107,
     "localizedFallbackResearch": 1,
     "archivedMarketBaselines": 43,
-    "linkedMarketRecords": 161,
-    "marketDirectEvidenceRate": 0.339662447257384,
+    "linkedMarketRecords": 175,
+    "marketDirectEvidenceRate": 0.3691983122362869,
     "marketDirectEvidenceTarget": 0.9,
-    "marketReverificationQueueSize": 313,
-    "marketReverificationP0": 65,
+    "marketReverificationQueueSize": 299,
+    "marketReverificationP0": 57,
     "pendingPriceChanges": 0,
     "verifiedPriceChanges": 0,
-    "consumerSurveyRecords": 27,
+    "consumerSurveyRecords": 28,
     "criticalEmptyStreams": 0,
     "persistentFailureStreams": 0,
     "activeRegistryStreams": 46,
@@ -1503,9 +1503,9 @@
         "lastSuccessAt": "2026-08-16T04:10:19.304Z",
         "consecutiveFailureRuns": 0,
         "durationMs": 3820,
-        "activeEndpoint": "https://news.samsung.com/global/feed/rss",
+        "activeEndpoint": "https://news.자사.com/global/feed/rss",
         "attemptedEndpoints": [
-          "https://news.samsung.com/global/feed/rss"
+          "https://news.자사.com/global/feed/rss"
         ],
         "registryCollector": true
       },
@@ -1526,8 +1526,8 @@
         "registryCollector": true
       },
       {
-        "stream": "official-feed:SK hynix Newsroom",
-        "source": "SK hynix Newsroom",
+        "stream": "",
+        "source": "",
         "category": "memory-and-supply-chain",
         "state": "healthy",
         "itemCount": 8,

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizdevelopment1-max.github.io/ai/schemas/dataset-manifest.schema.json",
+  "title": "Immutable dataset snapshot manifest",
+  "type": "object",
+  "required": ["schemaVersion", "datasetVersion", "createdAt", "codeGitSha", "catalogVersion", "datasets", "qualitySummary", "publicationState"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "datasetVersion": { "type": "string", "minLength": 12 },
+    "createdAt": { "type": "string", "minLength": 10 },
+    "codeGitSha": { "type": "string", "minLength": 7 },
+    "catalogVersion": { "type": "integer", "minimum": 1 },
+    "datasets": { "type": "array", "minItems": 1 },
+    "qualitySummary": { "type": "object" },
+    "publicationState": { "type": "string", "enum": ["working", "staging", "published", "rejected"] }
+  }
+}

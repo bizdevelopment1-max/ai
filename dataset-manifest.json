@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "datasetVersion": "5893be7f7d887fb216ef220d",
+  "createdAt": "2026-08-16T06:39:04.767Z",
+  "pipelineRunId": "local-2026-08-16T06:39:04.767Z",
+  "codeGitSha": "0d27e29b7d6d7e1f9950d20baff5e496fb3a77da",
+  "catalogVersion": 1,
+  "schemaRegistryVersion": 1,
+  "sourcePolicyVersion": 4,
+  "qualityPolicyVersion": 1,
+  "policyHash": "d6af7e2033bd841f8381c70c7ab8e8350fc7d81eae2d13da35a4fcfd7bcd5a30",
+  "policyFiles": [
+    "config/intelligence-pipeline.json",
+    "config/news-policy.json",
+    "config/official-source-registry.json",
+    "config/source-independence.json",
+    "config/slo-policy.json"
+  ],
+  "catalogHash": "e48ba9b6bec9ababd5fc6e8f6be6fb2edf75fde6ba5873b537192a22ac11e195",
+  "publicationState": "staging",
+  "approvedBy": null,
+  "previousVersion": "2fea7ea1ed2331d538be1a25",
+  "datasets": [
+    {
+      "id": "news-ledger",
+      "path": "news.json",
+      "role": "normalized-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "recordCount": 500,
+      "bytes": 3875950,
+      "sha256": "3af00c7d07041d6b403cefa91f0740c153fdd41528638c5843f4e215f736d362",
+      "files": 1,
+      "migrationTriggerExceeded": true
+    },
+    {
+      "id": "market-ledger",
+      "path": "market.json",
+      "role": "normalized-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "recordCount": 474,
+      "bytes": 5482321,
+      "sha256": "6dbbe44d0d92c4f78cd2461ab6f7e8a83f959efd76e52127a8c56756e5102edc",
+      "files": 1,
+      "migrationTriggerExceeded": true
+    },
+    {
+      "id": "history-ledger",
+      "path": "history.json",
+      "role": "audit-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "recordCount": 832,
+      "bytes": 6075973,
+      "sha256": "801d057745c56fbd421152b142ded33540d12fe2aae629795f7d1c599b5029a5",
+      "files": 1,
+      "migrationTriggerExceeded": true
+    },
+    {
+      "id": "source-observation-ledger",
+      "path": "source-ledger",
+      "role": "raw-immutable-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "recordCount": null,
+      "bytes": 552372,
+      "sha256": "9ddfa143ee758b49def10f2494095a05f17c775810bf44dbeacbd4b447981491",
+      "files": 3,
+      "migrationTriggerExceeded": false
+    },
+    {
+      "id": "source-compliance-catalog",
+      "path": "source-compliance-report.json",
+      "role": "source-governance-control",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "recordCount": 61,
+      "bytes": 49033,
+      "sha256": "841b86b3fc38e1ec3e039e020b2741db00986e849ae8bc95d296498bb37ca82e",
+      "files": 1,
+      "migrationTriggerExceeded": false
+    },
+    {
+      "id": "decision-intelligence",
+      "path": "mobile-ai-business-view.json",
+      "role": "decision-view",
+      "sensitivity": "public-template-only",
+      "publication": "public",
+      "recordCount": 13,
+      "bytes": 583096,
+      "sha256": "6713455e1a462db5563145ec4395db68fe3ca05b95c1003b07911acb038ae520",
+      "files": 1,
+      "migrationTriggerExceeded": false
+    },
+    {
+      "id": "public-news-view",
+      "path": "news-view.json",
+      "role": "materialized-public-view",
+      "sensitivity": "public",
+      "publication": "public",
+      "recordCount": 466,
+      "bytes": 1958193,
+      "sha256": "e36230731c08696aba6bd936ade905b8cf8a5f049ac61038e9d044ed3a0fb8ac",
+      "files": 1,
+      "migrationTriggerExceeded": true
+    },
+    {
+      "id": "public-market-view",
+      "path": "market-view.json",
+      "role": "materialized-public-view",
+      "sensitivity": "public",
+      "publication": "public",
+      "recordCount": 56,
+      "bytes": 801602,
+      "sha256": "d12e03d9773cd6e1b6d2700e4f422699cc28cc98e08cc1885f0741e9bac90fbe",
+      "files": 1,
+      "migrationTriggerExceeded": false
+    }
+  ],
+  "storage": {
+    "currentMode": "git-manifest-and-materialized-views",
+    "migrationRequired": true,
+    "externalImmutableStore": "not-configured",
+    "recommendedTargets": [
+      {
+        "id": "mounted-immutable-store",
+        "status": "adapter-ready"
+      },
+      {
+        "id": "duckdb-parquet",
+        "status": "selection-required"
+      },
+      {
+        "id": "postgresql",
+        "status": "selection-required"
+      }
+    ]
+  },
+  "qualitySummary": {
+    "overall": "warn",
+    "checks": 22,
+    "ok": 18,
+    "warn": 4,
+    "fail": 0
+  },
+  "modelSummary": {
+    "externalModelApiCalls": 0,
+    "provider": "none",
+    "model": null
+  }
+}

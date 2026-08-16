@@ -11,6 +11,7 @@
 import { writeFile, readFile } from "node:fs/promises";
 import { isExcludedText, newsPolicy } from "./news-policy.mjs";
 import { enrichSourceBatch, isContentBacked, textSimilarity } from "./source-content.mjs";
+import { CRAWLER_USER_AGENT } from "./crawler-identity.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { directCompanyNewsMatch, newsQueryFor } from "./company-sources.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
@@ -77,7 +78,7 @@ const REGISTRY_ARTICLES = (sourceRegistrySnapshot.items || [])
     sourceType: item.sourceType || "official-registry",
   }));
 
-const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
+const UA = CRAWLER_USER_AGENT;
 const sourceHealth = { failedStreams: [], emptyStreams: [], quietStreams: [], reachableStreams: [], successfulStreams: [] };
 
 // 네트워크 복원력: 타임아웃 + 지수 백오프 재시도(소스 확대에 따른 일시적 실패 흡수)

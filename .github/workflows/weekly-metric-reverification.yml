@@ -10,7 +10,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: weekly-volatile-metrics
+  group: intelligence-data-writer
   cancel-in-progress: false
 
 jobs:
@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: main
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "24"
       - name: Reverify official price and KPI literals
@@ -33,8 +33,19 @@ jobs:
           node scripts/build-mobile-ai-business-db.mjs
           node scripts/build-public-data.mjs
           node scripts/test-automation.mjs
+      - name: Build and validate lineage outputs
+        env:
+          DATASET_PUBLICATION_STATE: staging
+        run: |
+          node scripts/build-source-compliance-catalog.mjs
+          node scripts/build-dataset-manifest.mjs
+          node scripts/build-slo-report.mjs
+          node scripts/validate-data-contracts.mjs --stage=publish
+          node scripts/validate-data-boundaries.mjs
+          node scripts/validate-pipeline-dag.mjs
+          node scripts/test-data-platform.mjs
       - name: Upload staging audit
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: volatile-metric-audit-${{ github.run_id }}
           path: |
@@ -42,6 +53,9 @@ jobs:
             metric-history.json
             overview-view.json
             mobile-ai-business-view.json
+            source-compliance-report.json
+            dataset-manifest.json
+            slo-report.json
           retention-days: 30
       - name: Open review-only data PR
         env:
@@ -49,7 +63,7 @@ jobs:
         run: |
           git config user.name "mx-metric-bot"
           git config user.email "mx-metric-bot@users.noreply.github.com"
-          git add volatile-metrics-audit.json metric-history.json overview-view.json mobile-ai-business-view.json data-version.json index.html app.bundle.js data.bundle.js
+          git add volatile-metrics-audit.json metric-history.json overview-view.json mobile-ai-business-view.json data-version.json source-compliance-report.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js
           if git diff --staged --quiet; then
             echo "No metric changes."
           else

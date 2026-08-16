@@ -117,6 +117,15 @@ const QUERIES = [...EXPANSION_QUERIES, ...BASE_QUERIES]
   .map(config => ({ ...config, track: collectionTrackOf(config) }));
 const QUERY_SET_VERSION = 5;
 
+const candidateBudgetFor = (p0Count, policy) => {
+  const configured = Number(process.env.MARKET_NEW_RECORD_BUDGET);
+  if (Number.isFinite(configured) && configured >= 0) return Math.floor(configured);
+  const backlog = policy?.qualityBacklog || {};
+  if (p0Count >= 50) return Number(backlog.newMarketCandidateBudgetWhenP0AtLeast50 || 8);
+  if (p0Count >= 20) return Number(backlog.newMarketCandidateBudgetWhenP0AtLeast20 || 16);
+  return Number(backlog.normalNewMarketCandidateBudget || 32);
+};
+
 const quantified = text => {
   const found = [
     ...String(text || "").matchAll(/(?:US\$|USD|\$|EUR|€|GBP|£|JPY|CNY|CN¥|¥|KRW|₩|INR|₹|BRL|R\$)\s?\d[\d,.]*(?:\s?(?:trillion|billion|million|trn|bn|mn|T|B|M|조|억|만|억엔|億元|亿|万))?/gi),
@@ -163,6 +172,12 @@ async function main() {
   const startedAt = now();
   const migration = ensureMarketDatabase(data, startedAt);
   const suppression = await loadSuppressionRegistry();
+  const [queueDocument, sloPolicy] = await Promise.all([
+    readFile("market-reverification-queue.json", "utf8").then(JSON.parse).catch(() => ({ queue: [] })),
+    readFile("config/slo-policy.json", "utf8").then(JSON.parse).catch(() => ({})),
+  ]);
+  const p0ReverificationBacklog = (queueDocument.queue || []).filter(item => item.priority === "P0").length;
+  const candidateBudget = candidateBudgetFor(p0ReverificationBacklog, sloPolicy);
   const ageHours = data.database?.lastCrawledAt ? (Date.now() - Date.parse(data.database.lastCrawledAt)) / 3_600_000 : 999;
   const querySetChanged = Number(data.database?.querySetVersion || 0) !== QUERY_SET_VERSION;
   if (ageHours < 20 && !querySetChanged && process.env.MARKET_FORCE !== "1") {
@@ -243,7 +258,10 @@ async function main() {
 
   if (!fetched && failures === QUERIES.length * locales.length) throw new Error("All global market-data sources failed; refusing to mark the database refreshed");
   const existingIds = new Set((data.records || []).map(record => record.id));
-  const added = appendRecords(data, candidates, startedAt);
+  // When direct-evidence P0 work is high, cap new discovery debt. Existing
+  // ledgers remain untouched and the next run can reconsider skipped rows.
+  const budgetedCandidates = candidates.slice(0, candidateBudget);
+  const added = appendRecords(data, budgetedCandidates, startedAt);
   const appendedRecords = (data.records || []).filter(record => !existingIds.has(record.id));
   const streamSummary = Object.fromEntries(["consumer-survey", "ai-market"].map(track => {
     const configs = QUERIES.filter(config => config.track === track);
@@ -268,6 +286,10 @@ async function main() {
       queries: QUERIES.length,
       locales: locales.map(locale => ({ id: locale.id, region: locale.region, language: locale.language })),
       rssRows: fetched,
+      candidatesDiscovered: candidates.length,
+      candidatesConsidered: budgetedCandidates.length,
+      candidateBudget,
+      p0ReverificationBacklog,
       appended: added,
       failures,
       streams: streamSummary,
@@ -276,7 +298,7 @@ async function main() {
   data.freshAt = startedAt;
   data.generatedAt = startedAt;
   await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
-  console.log(`[market-db] appended ${added} discovery records awaiting publisher-page extraction; retained ${data.records.length}; RSS rows ${fetched}/${QUERIES.length * locales.length} global query streams`);
+  console.log(`[market-db] appended ${added}/${budgetedCandidates.length} budgeted discovery records; P0 backlog ${p0ReverificationBacklog}; retained ${data.records.length}; RSS rows ${fetched}/${QUERIES.length * locales.length} global query streams`);
 }
 
 main().catch(error => { console.error(error); process.exit(1); });

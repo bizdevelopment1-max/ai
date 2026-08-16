@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-16",
+  "serviceClasses": [
+    {
+      "tier": "Tier 0",
+      "targetMinutes": 30,
+      "guaranteed": false,
+      "mode": "event-or-external-scheduler-required",
+      "note": "GitHub scheduled workflows are not treated as a hard 30-minute SLA."
+    },
+    {
+      "tier": "Tier 1",
+      "targetMinutes": 360,
+      "guaranteed": false,
+      "mode": "six-hour-github-schedule"
+    },
+    {
+      "tier": "Tier 2",
+      "targetMinutes": 1440,
+      "guaranteed": false,
+      "mode": "daily-or-weekly-source-specific"
+    }
+  ],
+  "qualityBacklog": {
+    "p0TargetHours": 4,
+    "p1TargetHours": 24,
+    "owner": "Intelligence Operations",
+    "escalation": "persistent-breach-github-issue",
+    "newMarketCandidateBudgetWhenP0AtLeast50": 8,
+    "newMarketCandidateBudgetWhenP0AtLeast20": 16,
+    "normalNewMarketCandidateBudget": 32
+  },
+  "qualityTargets": {
+    "directEvidenceRate": 0.9,
+    "schemaValidationFailures": 0,
+    "persistentSourceFailures": 0,
+    "publicBoundaryViolations": 0
+  },
+  "metrics": [
+    "sourceFreshnessLagMinutes",
+    "publicationLagMinutes",
+    "directEvidenceRate",
+    "p0ReverificationQueueAgeHours",
+    "schemaValidationFailures",
+    "persistentSourceFailures",
+    "publicSnapshotAgeMinutes"
+  ]
+}

@@ -6,8 +6,9 @@
  * claim, so every displayed bullet can be checked against sourceContent.text.
  */
 import { createHash } from "node:crypto";
+import { CRAWLER_USER_AGENT } from "./crawler-identity.mjs";
 
-const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
+const UA = CRAWLER_USER_AGENT;
 const MAX_TEXT = 18_000;   // 원문 추출 확장 — 정량 문장 발굴 범위 확대
 const JUNK = /(?:^|\b)(?:advertisement|advertising|affiliate commission|purchase through links|subscribe|sign up|read more|cookie|privacy policy|all rights reserved|share this article|follow us|related articles?|news tips|newsletters?|get this delivered to your inbox|confidential news tip|data is a real-time snapshot|global business and financial news|stock quotes and market data|sorry, an error occurred while processing your request|we(?:'|’)re aware of the situation and are working to address the problem|we harness every resource|our award-winning podcast|we help entrepreneurs|proactive financial news|all our content is produced independently|our human content creators|request a demo|talk to your .* team|no new portal|no new login|see how it works|what it means for your organization|already use.*tools)(?:\b|$)/i;
 const GENERIC_LEDE = /(?:^|\b)(?:every vendor claims|this is what actually happens|you don['’]t have to take .* word for it|at the .* webinar|here['’]s what .* says|that['’]s the theory|elsewhere in the workforce|the team delivers news|we are experts in|we(?:'|’)re focused on providing|stay ahead in a rapidly evolving market|whether you['’]re driving innovation|everything you need to track the market|the architecture.*easier to evaluate|you know|i mean|all right|thanks for joining|today is|i['’]m .* (?:here|with)|trading floor)(?:\b|$)/i;
@@ -269,6 +270,8 @@ export async function enrichSourceRecord(record) {
       paragraphs: paragraphs.slice(0, 18),
       text: sourceText,
       contentHash: createHash("sha256").update(`${headline}\n${sourceText}`).digest("hex"),
+      retentionMode: "transient-fulltext",
+      originalTextBytes: Buffer.byteLength(sourceText),
     };
     return {
       ...record,

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizdevelopment1-max.github.io/ai/schemas/decision-intelligence.schema.json",
+  "title": "Decision intelligence materialized view",
+  "type": "object",
+  "required": ["schemaVersion", "snapshotVersion", "signals", "generatedOpportunities"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 8 },
+    "snapshotVersion": { "type": "string", "minLength": 6 },
+    "signals": { "type": "array", "minItems": 1 },
+    "generatedOpportunities": { "type": "array", "minItems": 1 }
+  }
+}

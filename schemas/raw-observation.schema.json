@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizdevelopment1-max.github.io/ai/schemas/raw-observation.schema.json",
+  "title": "Raw source observation",
+  "type": "object",
+  "required": ["sourceId", "canonicalUrl", "fetchedAt", "statusCode", "rawHash", "contentHash", "parserVersion"],
+  "properties": {
+    "sourceId": { "type": "string", "minLength": 2 },
+    "canonicalUrl": { "type": "string", "pattern": "^https?://" },
+    "fetchedAt": { "type": "string", "minLength": 10 },
+    "statusCode": { "type": "integer", "minimum": 100 },
+    "rawHash": { "type": "string", "minLength": 32 },
+    "contentHash": { "type": "string", "minLength": 32 },
+    "parserVersion": { "type": "string", "minLength": 1 },
+    "storageUri": { "type": "string" }
+  }
+}

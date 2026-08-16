@@ -1,6 +1,6 @@
 # Source-only automation
 
-The dashboard refreshes four times daily (KST 06:30, 12:30, 19:30, 00:30).
+The dashboard refreshes on a six-hour cadence (KST 06:30, 12:30, 18:30, 00:30).
 
 - Discovery: Google News RSS, direct publisher feeds, first-party feeds and sitemaps, plus executable public APIs in `config/official-source-registry.json`.
 - Direct-source collector: `scripts/collect-source-registry.mjs` polls every active registry source, reports failures, and never treats credential-gated connectors as healthy executions.

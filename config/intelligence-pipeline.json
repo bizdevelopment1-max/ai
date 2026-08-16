@@ -1,14 +1,51 @@
 {
-  "version": 1,
-  "updatedAt": "2026-08-15",
+  "version": 2,
+  "updatedAt": "2026-08-16",
   "stages": [
-    { "id": "raw", "label": "원문 수집", "required": ["sourceUrl", "publisher", "publishedAt", "rawHash"] },
-    { "id": "draft", "label": "LLM 요약", "required": ["fact", "implication", "decision", "evidenceSpans"], "minEvidenceSpans": 3 },
-    { "id": "verified", "label": "교차 검증", "highConfidenceIndependentSources": 2 },
-    { "id": "reviewed", "label": "사람 리뷰", "requiredForPriority": ["P1"] },
-    { "id": "published", "label": "발행", "required": ["lastVerifiedAt", "confidence", "reviewStatus"] },
-    { "id": "reconciled", "label": "정합성 재점검", "numericDiffRequired": true }
+    {
+      "id": "raw",
+      "label": "원문 수집",
+      "required": ["sourceUrl", "publisher", "publishedAt", "rawHash"]
+    },
+    {
+      "id": "draft",
+      "label": "초안 요약",
+      "required": ["fact", "implication", "decision", "evidenceSpans"],
+      "minEvidenceSpans": 3
+    },
+    {
+      "id": "verified",
+      "label": "교차 검증",
+      "highConfidenceIndependentSources": 2
+    },
+    {
+      "id": "reviewed",
+      "label": "사람 리뷰",
+      "requiredForPriority": ["P1"]
+    },
+    {
+      "id": "published",
+      "label": "발행",
+      "required": ["lastVerifiedAt", "confidence", "reviewStatus"]
+    },
+    {
+      "id": "reconciled",
+      "label": "정합성 재점검",
+      "numericDiffRequired": true
+    }
   ],
+  "lanes": {
+    "evidence": {
+      "automation": "append-and-archive",
+      "mergeApproval": "not-required-for-external-archive",
+      "publication": "never"
+    },
+    "decisionPublication": {
+      "automation": "materialize-staging-view",
+      "minimumApprovals": 1,
+      "publication": "reviewed-pull-request-only"
+    }
+  },
   "numericEvidence": {
     "requireSourceSpan": true,
     "flagWhenLiteralMissing": true,
@@ -19,11 +56,32 @@
     "automatedMerge": false,
     "minimumApprovals": 1,
     "automatedDataVisibility": "staging-only",
-    "separateSchemaAndDataPullRequests": true
+    "separateSchemaAndDataPullRequests": true,
+    "datasetManifestRequired": true
   },
   "storageTarget": {
-    "current": "versioned-json",
-    "recommended": "DuckDB-or-Supabase",
-    "migrationTriggerMb": 1
+    "current": "git-manifest-and-materialized-public-views",
+    "rawLedgerTarget": "external-immutable-object-store",
+    "normalizedTarget": "DuckDB-Parquet-or-PostgreSQL",
+    "migrationStatus": "required",
+    "migrationTriggerMb": 1,
+    "adapterEnvironmentVariable": "DATA_LAKE_ROOT"
+  },
+  "temporalModel": {
+    "mode": "bitemporal",
+    "validTimeFields": ["effectiveFrom", "effectiveTo"],
+    "systemTimeFields": ["observedAt", "supersededAt"],
+    "latestViewRule": "newest verified record per stable key"
+  },
+  "sourceIndependence": {
+    "requiredForHighConfidence": 2,
+    "publisherGroupKey": "sourceOwnerGroup",
+    "syndicationGroupKey": "syndicationClusterId",
+    "sameWireCopyCountsAsOne": true
+  },
+  "lineage": {
+    "requiredManifest": "dataset-manifest.json",
+    "hashAlgorithm": "sha256",
+    "fields": ["inputDatasetHashes", "policyHash", "codeGitSha", "generatedAt", "publicationState"]
   }
 }

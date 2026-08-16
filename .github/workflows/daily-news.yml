@@ -7,7 +7,7 @@ on:
   schedule:
     - cron: "30 21 * * *"   # 06:30 KST — 아침 업데이트(07:00 KST 이전 완료)
     - cron: "30 3 * * *"    # 12:30 KST — 점심 업데이트
-    - cron: "30 10 * * *"   # 19:30 KST — 저녁 업데이트
+    - cron: "30 9 * * *"    # 18:30 KST — 6시간 간격 업데이트
     - cron: "30 15 * * *"   # 00:30 KST — 심야 업데이트
   workflow_dispatch:         # manual run
     inputs:
@@ -27,7 +27,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: daily-news
+  group: intelligence-data-writer
   cancel-in-progress: false
 
 jobs:
@@ -49,7 +49,7 @@ jobs:
       WIPO_PATENTSCOPE_PASSWORD: ${{ secrets.WIPO_PATENTSCOPE_PASSWORD }}
     steps:
       - name: Checkout main
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: main
           fetch-depth: 0
@@ -72,14 +72,19 @@ jobs:
           fi
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "24"
 
       - name: Setup Python for source-fragment translation
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
+
+      - name: Validate ingest data contracts
+        run: |
+          node scripts/normalize-temporal-fields.mjs
+          node scripts/validate-data-contracts.mjs --stage=ingest
 
       - name: Collect direct registry sources and append observations
         run: node scripts/run-with-retry.mjs scripts/collect-source-registry.mjs
@@ -182,7 +187,12 @@ jobs:
         run: node scripts/run-with-retry.mjs scripts/build-nvidia-investments.mjs
 
       - name: Verify evidence, provenance and cumulative history
-        run: node scripts/run-with-retry.mjs scripts/verify-pipeline.mjs
+        run: |
+          node scripts/normalize-temporal-fields.mjs
+          node scripts/run-with-retry.mjs scripts/verify-pipeline.mjs
+
+      - name: Rebuild decision view from verified evidence
+        run: node scripts/run-with-retry.mjs scripts/build-mobile-ai-business-db.mjs
 
       - name: Validate MX decision-intelligence contract
         run: node scripts/validate-mx-intelligence.mjs
@@ -190,17 +200,36 @@ jobs:
       - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
         run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
 
+      - name: Minimize retained publisher content to evidence spans
+        run: node scripts/minimize-retained-source-content.mjs
+
       - name: Enforce final mobile-AI focus gate
         run: node scripts/prune-retired-focus.mjs
 
       - name: Build compact source-backed public datasets
         run: node scripts/run-with-retry.mjs scripts/build-public-data.mjs
 
+      - name: Build lineage manifest and SLO report
+        env:
+          DATASET_PUBLICATION_STATE: staging
+        run: |
+          node scripts/build-source-compliance-catalog.mjs
+          node scripts/build-dataset-manifest.mjs
+          node scripts/build-slo-report.mjs
+          node scripts/archive-immutable-snapshot.mjs
+
+      - name: Validate publication contracts and boundaries
+        run: |
+          node scripts/validate-data-contracts.mjs --stage=publish
+          node scripts/validate-data-boundaries.mjs
+          node scripts/validate-pipeline-dag.mjs
+          node scripts/test-data-platform.mjs
+
       - name: Validate automation and browser bundle
         run: node scripts/run-with-retry.mjs scripts/test-automation.mjs
 
       - name: Archive verifiable pipeline records
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: pipeline-audit-${{ github.run_id }}
           path: |
@@ -212,10 +241,13 @@ jobs:
             source-collection-report.json
             source-snapshot.json
             source-ledger/
+            source-compliance-report.json
+            dataset-manifest.json
+            slo-report.json
           retention-days: 90
 
       - name: Package staging-only site preview
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: mx-staging-site-${{ github.run_id }}
           path: |
@@ -232,7 +264,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json index.html app.bundle.js data.bundle.js
+          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js
           if git diff --staged --quiet; then
             echo "No data changes."
           else

@@ -2,6 +2,7 @@
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { sanitizePublicCopy } from "./public-copy.mjs";
+import { independentSourceKey, sourceOwnerGroup } from "./source-independence.mjs";
 
 const OUTPUT = "mobile-ai-business-view.json";
 const SEED = "config/mx-intelligence-seed.json";
@@ -64,7 +65,7 @@ const validateSignal = signal => {
     issues.push("incomplete-source-record");
   }
 
-  const independentSources = new Set((signal.evidence || []).map(source => source.independentKey).filter(Boolean)).size;
+  const independentSources = new Set((signal.evidence || []).map(independentSourceKey).filter(Boolean)).size;
   if (signal.confidence === "high" && independentSources < 2) issues.push("high-confidence-needs-2-independent-sources");
   if (signal.priority === "P1" && !(signal.workflow?.humanReview && signal.workflow?.reviewStatus === "approved")) {
     issues.push("p1-human-review-required");
@@ -148,7 +149,8 @@ const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {}
         text: [signal.name, signal.product, signal.fact, signal.implication, signal.decision, ...(source.spans || [])].join(" "),
         url: source.url || "",
         source: source.publisher || normalizeSourceKey(source.url),
-        independentKey: source.independentKey || normalizeSourceKey(source.url),
+        independentKey: independentSourceKey(source),
+        sourceOwnerGroup: sourceOwnerGroup(source) || null,
         publishedAt: source.publishedAt || signal.lastVerifiedAt || "",
         confidence: signal.confidence || "medium",
         priority: signal.priority || "P2",
@@ -164,7 +166,8 @@ const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {}
       text: [record.title, record.titleEn, record.topic, record.summary, record.evidence, ...(record.sourceQuantifiedLines || [])].join(" "),
       url: record.sourceUrl || record.url || "",
       source: record.sourceName || normalizeSourceKey(record.sourceUrl || record.url),
-      independentKey: normalizeSourceKey(record.sourceUrl || record.url),
+      independentKey: independentSourceKey(record),
+      sourceOwnerGroup: sourceOwnerGroup(record) || null,
       publishedAt: record.publishedAt || record.collectedAt || "",
       confidence: record.provenance?.status === "source-backed" ? "high" : "medium",
       priority: /price|revenue|security|fraud|health|carrier|satellite/i.test(`${record.type} ${record.topic}`) ? "P1" : "P2",
@@ -180,7 +183,8 @@ const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {}
         text: [company.name, company.vertical, item.signal, item.model, ...Object.values(item.classificationGate?.fields || {})].join(" "),
         url: item.url || "",
         source: item.source || normalizeSourceKey(item.url),
-        independentKey: normalizeSourceKey(item.url) || item.source,
+        independentKey: independentSourceKey({ ...item, sourceName: item.source, sourceUrl: item.url }),
+        sourceOwnerGroup: sourceOwnerGroup({ ...item, sourceName: item.source, sourceUrl: item.url }) || null,
         publishedAt: item.date || "",
         confidence: "high",
         priority: "P1",

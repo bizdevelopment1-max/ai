@@ -14,7 +14,35 @@
     "mode": "append-only-monthly-jsonl",
     "snapshotRetentionDays": 120,
     "publicViews": "latest-verified-only",
-    "rawLedgerPubliclyLoaded": false
+    "rawLedgerPubliclyLoaded": false,
+    "longTermTarget": "external-immutable-object-store",
+    "publisherContentRetention": "evidence-spans-only"
+  },
+  "compliancePolicy": {
+    "defaultLicenseClass": "unreviewed-public-web",
+    "defaultRobotsPolicy": "respect",
+    "fullTextStorageDefault": false,
+    "excerptAllowedDefault": true,
+    "redistributionDefault": "metadata-and-evidence-spans-only",
+    "termsReviewRequired": true,
+    "personalDataClass": "none-expected",
+    "requiredCatalogFields": [
+      "licenseClass",
+      "termsUrlHash",
+      "robotsPolicy",
+      "apiAllowed",
+      "crawlAllowed",
+      "fullTextStorageAllowed",
+      "excerptAllowed",
+      "redistributionRule",
+      "redistributionAllowed",
+      "commercialUseAllowed",
+      "retentionDays",
+      "termsReviewedAt",
+      "personalDataClass",
+      "legalOwner"
+    ],
+    "runtimeRule": "Full publisher text may exist only during extraction. Long-lived ledgers retain bounded evidence spans and hashes."
   },
   "officialFeeds": [
     {
