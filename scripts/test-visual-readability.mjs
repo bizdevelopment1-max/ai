@@ -18,6 +18,10 @@ assert(styles.includes("-webkit-text-fill-color: currentColor"), "solid text-fil
 assert(styles.includes("text-wrap: pretty") && styles.includes("overflow-wrap: anywhere") && styles.includes("word-break: keep-all"), "multiline readability guards are incomplete");
 assert(styles.includes(':focus-visible {') && styles.includes("outline: 3px solid"), "keyboard focus contrast is missing");
 assert(styles.includes("background: color-mix(in srgb, var(--hover-tone") && styles.includes("var(--panel)) !important"), "theme-aware hover surface is missing");
+assert(styles.includes("Non-inverting signal-card interaction contract"), "signal-card hover contract is missing");
+assert(styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { opacity: 0; }"), "signal-card dark hover overlay is still enabled");
+assert(!/\.isg-card:hover::after\s*\{\s*opacity:\s*1/.test(styles), "signal-card hover restores a dark pseudo-element overlay");
+assert(!/\.art-sel\s*\{[^}]*background:\s*linear-gradient\([^}]*#000/s.test(styles), "article selected state still uses a dark inverse gradient");
 
 assert(taxonomy.publicFacts === "none-generated-views-only", "registry still declares public mutable facts");
 assert(!Object.hasOwn(taxonomy, "MOBILE_STRATEGY"), "legacy strategy facts remain in runtime taxonomy");
