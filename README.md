@@ -24,10 +24,10 @@ The startup ledger includes the complete a16z Top 100 Gen AI Consumer Apps 6th E
 
 ## Reliable collection policy
 
-The news feed is collected from Google News RSS (`en-US`) and an allowlisted set of direct publisher RSS feeds. Each displayed article card links to the source and contains a cleaned source excerpt. Company-level strategic synthesis is a separate layer: it is restricted to stored publisher evidence IDs, preserves source links, and never replaces the article fact layer.
+The news feed combines regional Google News discovery with allowlisted publisher feeds and the executable first-party registry in `config/official-source-registry.json`. The registry collector polls validated RSS/Atom feeds, sitemaps, and public research, model, repository, and app-chart APIs before the news build. Each displayed article card links to the publisher page and contains a cleaned source excerpt. Company-level strategic synthesis is a separate layer: it is restricted to stored publisher evidence IDs, preserves source links, and never replaces the article fact layer.
 
-`config/news-policy.json` is the single, versioned location for display exclusions and the source-excerpt policy. Existing evidence is retained in `history.json`; unverified or legacy entries are marked limited and excluded from the main feed rather than deleted.
+`config/news-policy.json` is the single, versioned location for display exclusions and the source-excerpt policy. Existing evidence is retained in `history.json`; unverified or legacy entries are marked limited and excluded from the main feed rather than deleted. Direct-source changes are stored separately in append-only monthly JSONL partitions under `source-ledger/`, while `source-snapshot.json` remains the bounded current working set.
 
 `config/global-source-policy.json` separately governs non-news collection: market intelligence, consumer surveys, institution research, and startup discovery rotate through global regional and language-specific RSS locales. This wider policy never changes the English-authoritative restriction of the daily article feed.
 
-The Data Trust Center exposes the quality report, collection health, and model-call health. Every workflow run also archives these records for 90 days.
+The Data Trust Center exposes the quality report, collection health, and model-call health. Every workflow run also archives these records for 90 days. Routine refreshes resume a persistent staging branch and update a single review PR, so unapproved observations continue accumulating without bypassing the one-person approval gate; raw ledgers are never loaded by the browser.

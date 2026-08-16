@@ -11,17 +11,26 @@ const ageDays = value => {
 };
 
 const breaches = (health.streamHealth || [])
-  .filter(row => row.state === "empty")
+  .filter(row => ["empty", "failed"].includes(row.state))
   .map(row => ({
     stream: row.stream,
+    state: row.state,
     consecutiveEmptyRuns: Number(row.consecutiveEmptyRuns || 0),
+    consecutiveFailureRuns: Number(row.consecutiveFailureRuns || 0),
     emptyDays: Number(ageDays(row.emptySince).toFixed(1)),
+    failureDays: Number(ageDays(row.failureSince).toFixed(1)),
     emptySince: row.emptySince || null,
+    failureSince: row.failureSince || null,
     lastSuccessAt: row.lastSuccessAt || null,
+    error: row.error || null,
   }))
   .filter(row => row.consecutiveEmptyRuns >= Number(policy.emptyRunLimit || 3)
-    || row.emptyDays >= Number(policy.emptyDayLimit || 3))
-  .sort((left, right) => right.consecutiveEmptyRuns - left.consecutiveEmptyRuns || right.emptyDays - left.emptyDays);
+    || row.emptyDays >= Number(policy.emptyDayLimit || 3)
+    || row.consecutiveFailureRuns >= Number(policy.failureRunLimit || policy.emptyRunLimit || 3)
+    || row.failureDays >= Number(policy.failureDayLimit || policy.emptyDayLimit || 3))
+  .sort((left, right) => right.consecutiveFailureRuns - left.consecutiveFailureRuns
+    || right.consecutiveEmptyRuns - left.consecutiveEmptyRuns
+    || Math.max(right.failureDays, right.emptyDays) - Math.max(left.failureDays, left.emptyDays));
 
 const report = {
   generatedAt: now.toISOString(),
@@ -39,4 +48,3 @@ if (process.argv.includes("--write")) {
 }
 console.log(`[collection-watchdog] ${report.status} · ${breaches.length} persistent empty stream(s)`);
 if (process.argv.includes("--strict") && breaches.length) process.exitCode = 2;
-

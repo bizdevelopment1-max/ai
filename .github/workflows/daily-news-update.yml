@@ -37,6 +37,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Collect direct registry sources and append observations
+        run: node scripts/run-with-retry.mjs scripts/collect-source-registry.mjs
+
       - name: Crawl publisher and RSS source excerpts
         run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
 
@@ -109,13 +112,23 @@ jobs:
             assets/
           retention-days: 14
 
+      - name: Archive direct-source observations
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-ledger-${{ github.run_id }}
+          path: |
+            source-collection-report.json
+            source-snapshot.json
+            source-ledger/
+          retention-days: 90
+
       - name: Open data-only recovery PR
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "ai-news-bot"
           git config user.email "ai-news-bot@users.noreply.github.com"
-          git add news.json company-news.json nvidia-investments.json insights.json briefing.json radar.json research.json startups.json market.json infra.json bizmodel.json monetization.json mobile-ai-business-view.json audit.json quality.json history.json llm-health.json collection-health.json market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json index.html app.bundle.js data.bundle.js
+          git add news.json company-news.json nvidia-investments.json insights.json briefing.json radar.json research.json startups.json market.json infra.json bizmodel.json monetization.json mobile-ai-business-view.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json index.html app.bundle.js data.bundle.js
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else

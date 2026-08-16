@@ -71,6 +71,9 @@ const qualityThresholds = await readJson("config/quality-thresholds.json", {});
 const monetization = await readJson("monetization.json", { companies: [] });
 const monetizationReviewQueue = await readJson("monetization-review-queue.json", { total: 0, rows: [] });
 const opportunityView = await readJson("mobile-ai-business-view.json", { generatedOpportunities: [], experimentShortlist: [] });
+const sourceRegistryReport = await readJson("source-collection-report.json", { streamHealth: [], connectorStatus: [], categoryCoverage: [] });
+const sourceRegistrySnapshot = await readJson("source-snapshot.json", { items: [] });
+const sourceLedgerManifest = await readJson("source-ledger/manifest.json", { cumulativeEvents: 0, cumulativeRuns: 0, partitions: [] });
 
 const articleIssues = [];
 const currentArticles = [];
@@ -347,6 +350,11 @@ const sourceContentRate = eligibleArticles ? sourceExcerptArticles / eligibleArt
 const duplicateRate = (currentArticles.length + duplicateArticles) ? duplicateArticles / (currentArticles.length + duplicateArticles) : 0;
 const criticalEmptyStreams = (collectionHealth.watchdogBreaches || []).length;
 const failedStreamCount = (collectionHealth.failedStreams || []).length;
+const activeRegistryStreams = (sourceRegistryReport.streamHealth || []).length;
+const healthyRegistryStreams = (sourceRegistryReport.streamHealth || []).filter(row => ["healthy", "reachable-quiet"].includes(row.state)).length;
+const executedPublicConnectors = (sourceRegistryReport.connectorStatus || []).filter(row => row.status === "executed").length;
+const registryCategoryCoverage = (sourceRegistryReport.categoryCoverage || []).filter(row => Number(row.itemCount || 0) > 0).length;
+const sourceRegistryFresh = ageDays(sourceRegistryReport.generatedAt) <= 1;
 const failedStreamBlockThreshold = Number(qualityThresholds.maximumFailedStreamsBeforeBlock ?? 3);
 const publishedMonetizationRows = (monetization.companies || []).flatMap(company => company.monetize || []);
 const ungatedMonetizationRows = publishedMonetizationRows.filter(row => row.classificationGate?.status !== "passed");
@@ -435,6 +443,7 @@ const checks = [
   { id: "source-content-mode", label: "원문 본문 추출", status: sourceContentRate >= Number(qualityThresholds.sourceContentExtractionRate || 0.97) ? "ok" : "warn", value: `${sourceExcerptArticles}/${eligibleArticles}건 · ${(sourceContentRate * 100).toFixed(1)}% / 목표 ${((qualityThresholds.sourceContentExtractionRate || 0.97) * 100).toFixed(0)}%` },
   { id: "feed-localization", label: "기사 한국어 표시·영문 폴백", status: localizedArticles + localizedFallbackArticles >= Math.max(10, currentArticles.length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedArticles} · 영문 폴백 ${localizedFallbackArticles}` },
   { id: "collection-health", label: "수집 스트림 상태", status: failedStreamCount > failedStreamBlockThreshold ? "fail" : failedStreamCount || criticalEmptyStreams > Number(qualityThresholds.maximumCriticalEmptyStreams ?? 0) || (collectionHealth.emptyStreams || []).length ? "warn" : "ok", value: `실패 ${failedStreamCount}/${failedStreamBlockThreshold} 허용 · 빈 스트림 ${(collectionHealth.emptyStreams || []).length} · 지속 실패 ${criticalEmptyStreams}` },
+  { id: "direct-source-registry", label: "직접 소스 자동 수집", status: sourceRegistryFresh && activeRegistryStreams >= Number(qualityThresholds.minimumDirectSourceStreams || 25) && executedPublicConnectors >= Number(qualityThresholds.minimumExecutablePublicConnectors || 4) && registryCategoryCoverage >= Number(qualityThresholds.minimumSourceCategories || 8) && Number(sourceLedgerManifest.cumulativeEvents || 0) >= (sourceRegistrySnapshot.items || []).length ? "ok" : "warn", value: `스트림 ${healthyRegistryStreams}/${activeRegistryStreams} · 공개 API ${executedPublicConnectors} · 범주 ${registryCategoryCoverage} · 누적 변경 ${sourceLedgerManifest.cumulativeEvents || 0}` },
   { id: "briefing-evidence", label: "브리핑 근거 연결", status: linkedBriefs > 0 ? "ok" : "fail", value: `${linkedBriefs}건` },
   { id: "insight-evidence", label: "인사이트 근거 연결", status: linkedInsights > 0 ? "ok" : "warn", value: `${linkedInsights}건` },
   { id: "stock-freshness", label: "주가 최신성", status: stockFresh >= Math.max(8, stockRows.length * 0.7) ? "ok" : "fail", value: `${stockFresh}/${stockRows.length}종목` },
@@ -493,6 +502,12 @@ const quality = {
     verifiedPriceChanges: verifiedPriceChanges.length,
     consumerSurveyRecords,
     criticalEmptyStreams,
+    activeRegistryStreams,
+    healthyRegistryStreams,
+    executedPublicConnectors,
+    registryCategoryCoverage,
+    sourceLedgerEvents: Number(sourceLedgerManifest.cumulativeEvents || 0),
+    sourceLedgerRuns: Number(sourceLedgerManifest.cumulativeRuns || 0),
     publishedMonetizationRows: publishedMonetizationRows.length,
     ungatedMonetizationRows: ungatedMonetizationRows.length,
     monetizationReviewQueue: monetizationReviewQueue.total || 0,

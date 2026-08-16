@@ -22,12 +22,45 @@ import { sanitizePublicCopy } from "./public-copy.mjs";
 const companySourcePolicy = JSON.parse(await readFile("config/company-source-policy.json", "utf8"));
 const mxSourcePolicy = JSON.parse(await readFile("config/mx-source-policy.json", "utf8"));
 const officialSourceRegistry = JSON.parse(await readFile("config/official-source-registry.json", "utf8"));
+const sourceRegistrySnapshot = await readFile("source-snapshot.json", "utf8").then(JSON.parse).catch(() => ({ items: [] }));
+const sourceRegistryReport = await readFile("source-collection-report.json", "utf8").then(JSON.parse).catch(() => ({ streamHealth: [], connectorStatus: [] }));
+const registryReportAgeMs = Date.now() - Date.parse(sourceRegistryReport.generatedAt || 0);
+const registryCollectionFresh = Number.isFinite(registryReportAgeMs) && registryReportAgeMs >= 0 && registryReportAgeMs <= 8 * 60 * 60 * 1000;
 const PRIORITY_STREAMS = Array.isArray(companySourcePolicy.priorityStreams) ? companySourcePolicy.priorityStreams : [];
 const OFFICIAL_SITEMAPS = Array.isArray(officialSourceRegistry.sitemaps)
   ? officialSourceRegistry.sitemaps.filter(stream => !String(stream.status || "").startsWith("disabled"))
   : [];
 const OFFICIAL_FEEDS = Array.isArray(officialSourceRegistry.officialFeeds) ? officialSourceRegistry.officialFeeds : [];
 const OFFICIAL_API_CONNECTORS = Array.isArray(officialSourceRegistry.apiConnectors) ? officialSourceRegistry.apiConnectors : [];
+const isPlaceholderRegistryEntry = item => {
+  const title = String(item.titleEn || item.title || "").trim();
+  let decodedPath = "";
+  try { decodedPath = decodeURIComponent(new URL(item.url || item.rssUrl || "").pathname); } catch {}
+  return /^(?:official update|index|home|news|blog|\d+|\d+\s*(?:day|week|month|year)s?|page\s*\d+)$/i.test(title)
+    || /\/(?:tag|category)\/\d/i.test(decodedPath);
+};
+const UNDATED_REGISTRY_URLS = new Set((sourceRegistrySnapshot.items || [])
+  .filter(item => item.kind === "undated-page")
+  .map(item => item.url));
+const REGISTRY_ARTICLES = (sourceRegistrySnapshot.items || [])
+  .filter(item => item.kind === "article" && /^https?:\/\//.test(item.url || "") && Number.isFinite(Date.parse(item.publishedAt || "")))
+  .filter(item => !isPlaceholderRegistryEntry(item))
+  .filter(item => {
+    const published = Date.parse(item.publishedAt || 0);
+    return Number.isFinite(published) && published >= Date.now() - 45 * 86_400_000;
+  })
+  .map(item => ({
+    date: String(item.publishedAt || item.lastSeenAt).slice(0, 10),
+    co: item.company || "",
+    cat: /model|research|open-source|developer/i.test(item.category || "") ? "native" : "bigtech",
+    source: item.source,
+    title: item.title,
+    descEn: item.excerpt || "",
+    url: item.url,
+    tag: item.category || "official-source",
+    evidenceTier: item.sourceTier || "official",
+    sourceType: item.sourceType || "official-registry",
+  }));
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const sourceHealth = { failedStreams: [], emptyStreams: [], quietStreams: [], reachableStreams: [], successfulStreams: [] };
@@ -163,7 +196,7 @@ const DIRECT_FEEDS = [
   { source: "Engadget", url: "https://www.engadget.com/rss.xml" },
   { source: "SiliconANGLE", url: "https://siliconangle.com/category/ai/feed/" },
   { source: "AI Business", url: "https://aibusiness.com/rss.xml" },
-  ...OFFICIAL_FEEDS.map(feed => ({ ...feed, official: true })),
+  ...(registryCollectionFresh ? [] : OFFICIAL_FEEDS.map(feed => ({ ...feed, official: true }))),
 ];
 const AI_RE = /\bAI\b|artificial intelligence|\bLLM\b|GPT|Claude|Gemini|agentic|chatbot|machine learning|foundation model|on-device|smartphone|mobile assistant|mobile agent/i;
 
@@ -473,7 +506,8 @@ async function main() {
   const regionalItems = (await Promise.all(REGIONAL_TOPICS.map(stream => pull(stream, stream.n || 1)))).flat();
   const primaryItems = (await Promise.all(PRIMARY_SOURCE_TOPICS.map(stream => pull(stream, stream.n || 1)))).flat();
   const directItems = (await Promise.all(DIRECT_FEEDS.map(f => pullDirect(f, f.official ? 3 : 2)))).flat();
-  const officialItems = (await Promise.all(OFFICIAL_SITEMAPS.map(stream => pullOfficialSitemap(stream, 2)))).flat();
+  const officialItems = registryCollectionFresh ? [] : (await Promise.all(OFFICIAL_SITEMAPS.map(stream => pullOfficialSitemap(stream, 2)))).flat();
+  const registryItems = registryCollectionFresh ? REGISTRY_ARTICLES : [];
 
   // Treat a direct first-party feed or sitemap as a deterministic recovery
   // when a company-specific Google News query is empty. Persist each stream's
@@ -487,13 +521,15 @@ async function main() {
     .filter(stream => stream.startsWith("google-news:"))
     .map(stream => {
       const company = stream.slice("google-news:".length);
-      const fallback = officialItems.find(item => item.co === company)
+      const fallback = registryItems.find(item => item.co === company)
+        || officialItems.find(item => item.co === company)
         || directItems.find(item => item.co === company && item.evidenceTier === "official");
       if (fallback) return { stream, via: fallback.sourceType || "official-source", source: fallback.source, recoveredItems: 1, coverageStatus: "recent-item-recovered" };
       const sitemapProbe = OFFICIAL_SITEMAPS.find(item => item.company === company);
       const feedProbe = OFFICIAL_FEEDS.find(item => item.company === company);
       const probeStream = sitemapProbe ? `official-sitemap:${sitemapProbe.source}` : feedProbe ? `official-feed:${feedProbe.source}` : "";
-      if (probeStream && sourceHealth.reachableStreams.includes(probeStream)) {
+      const registryProbe = (sourceRegistryReport.streamHealth || []).find(item => item.stream === probeStream);
+      if (probeStream && (sourceHealth.reachableStreams.includes(probeStream) || ["healthy", "reachable-quiet"].includes(registryProbe?.state))) {
         return { stream, via: sitemapProbe ? "official-sitemap" : "official-feed", source: (sitemapProbe || feedProbe).source, recoveredItems: 0, coverageStatus: "official-source-reachable-no-recent-items" };
       }
       return null;
@@ -501,9 +537,14 @@ async function main() {
     .filter(Boolean);
   const recoveredKeys = new Set(fallbackRecoveries.map(row => row.stream));
   const unresolvedEmptyStreams = [...new Set(sourceHealth.emptyStreams.filter(stream => !recoveredKeys.has(stream)))];
-  const failedByStream = new Map(sourceHealth.failedStreams.map(row => [row.stream, row]));
+  const registryHealthRows = registryCollectionFresh ? (sourceRegistryReport.streamHealth || []) : [];
+  const registryFailedStreams = registryHealthRows.filter(row => row.state === "failed").map(row => ({ stream: row.stream, error: row.error || "registry collector failed" }));
+  const failedStreams = [...sourceHealth.failedStreams, ...registryFailedStreams]
+    .filter((row, index, rows) => rows.findIndex(candidate => candidate.stream === row.stream) === index);
+  const failedByStream = new Map(failedStreams.map(row => [row.stream, row]));
   const quietByStream = new Map(sourceHealth.quietStreams.map(row => [row.stream, row]));
   const attemptedStreams = new Set([
+    ...registryHealthRows.map(row => row.stream),
     ...sourceHealth.successfulStreams,
     ...unresolvedEmptyStreams,
     ...failedByStream.keys(),
@@ -511,7 +552,10 @@ async function main() {
     ...fallbackRecoveries.map(row => row.stream),
   ]);
   const checkedAt = new Date().toISOString();
+  const registryHealthByStream = new Map(registryHealthRows.map(row => [row.stream, row]));
   const streamHealth = [...attemptedStreams].sort().map(stream => {
+    const registryHealth = registryHealthByStream.get(stream);
+    if (registryHealth) return { ...registryHealth, registryCollector: true };
     const prior = priorStreamHealth.get(stream) || {};
     const recovery = fallbackRecoveries.find(row => row.stream === stream);
     const failed = failedByStream.get(stream);
@@ -519,13 +563,16 @@ async function main() {
     const quiet = quietByStream.get(stream);
     const state = recovery ? "recovered-by-official-fallback" : failed ? "failed" : empty ? "empty" : quiet ? "reachable-quiet" : "healthy";
     const consecutiveEmptyRuns = state === "empty" ? Number(prior.consecutiveEmptyRuns || 0) + 1 : 0;
+    const consecutiveFailureRuns = state === "failed" ? Number(prior.consecutiveFailureRuns || 0) + 1 : 0;
     return {
       stream,
       state,
       lastAttemptAt: checkedAt,
       lastSuccessAt: ["healthy", "recovered-by-official-fallback"].includes(state) ? checkedAt : prior.lastSuccessAt || null,
       emptySince: state === "empty" ? prior.emptySince || checkedAt : null,
+      failureSince: state === "failed" ? prior.failureSince || checkedAt : null,
       consecutiveEmptyRuns,
+      consecutiveFailureRuns,
       ...(recovery ? { fallback: recovery } : {}),
       ...(quiet ? { reason: quiet.reason } : {}),
       ...(failed ? { error: failed.error } : {}),
@@ -534,11 +581,16 @@ async function main() {
   const healthPolicy = officialSourceRegistry.healthPolicy || {};
   const emptyRunLimit = Number(healthPolicy.watchdogAfterConsecutiveEmptyRuns || 3);
   const emptyDayLimit = Number(healthPolicy.watchdogAfterEmptyDays || 3);
+  const failureRunLimit = Number(healthPolicy.watchdogAfterConsecutiveFailureRuns || emptyRunLimit);
+  const failureDayLimit = Number(healthPolicy.watchdogAfterFailureDays || emptyDayLimit);
   const watchdogBreaches = streamHealth.filter(row => row.state === "empty" && (
     row.consecutiveEmptyRuns >= emptyRunLimit
     || (Date.now() - Date.parse(row.emptySince || checkedAt)) / 86_400_000 >= emptyDayLimit
+  ) || row.state === "failed" && (
+    Number(row.consecutiveFailureRuns || 0) >= failureRunLimit
+    || (Date.now() - Date.parse(row.failureSince || checkedAt)) / 86_400_000 >= failureDayLimit
   ));
-  const connectorStatus = OFFICIAL_API_CONNECTORS.map(connector => {
+  const fallbackConnectorStatus = OFFICIAL_API_CONNECTORS.map(connector => {
     const missingEnv = (connector.requiredEnv || []).filter(name => !process.env[name]);
     return {
       id: connector.id,
@@ -550,11 +602,14 @@ async function main() {
       missingEnv,
     };
   });
+  const connectorStatus = registryCollectionFresh && (sourceRegistryReport.connectorStatus || []).length
+    ? sourceRegistryReport.connectorStatus
+    : fallbackConnectorStatus;
 
   // 삭제 블록리스트(비밀번호 삭제) — 해당 URL은 다시 크롤하지 않음
   // de-dupe this run by URL
   const seen = new Set();
-  const raw = [...companyItems, ...topicItems, ...priorityItems, ...regionalItems, ...primaryItems, ...directItems, ...officialItems]
+  const raw = [...companyItems, ...topicItems, ...priorityItems, ...regionalItems, ...primaryItems, ...registryItems, ...directItems, ...officialItems]
     .filter(a => a.url && !seen.has(a.url) && seen.add(a.url))
     .filter(a => !isExcludedText(`${a.title} ${a.descEn || ""}`))
     .filter(a => !suppression.hasUrl(a.url) && !suppression.hasCompany(a.co));
@@ -604,6 +659,8 @@ async function main() {
   const tkey = a => String(a.titleEn || a.title || "").toLowerCase().replace(/[^a-z0-9가-힣]/g, "").slice(0, 48);
   const tseen = new Set();
   const final = dedupeLatestBriefings([...processed, ...prev.filter(a => !curUrls.has(a.rssUrl || a.url))])
+    .filter(a => a.sourceType !== "official-sitemap" || !isPlaceholderRegistryEntry(a))
+    .filter(a => a.sourceType !== "official-sitemap" || !UNDATED_REGISTRY_URLS.has(a.url || a.rssUrl))
     .filter(a => !isExcludedText(JSON.stringify(a)))
     .filter(a => a.url && !dseen.has(a.url) && dseen.add(a.url))
     .filter(a => { const k = tkey(a); if (!k || tseen.has(k)) return !k; tseen.add(k); return true; })  // 제목 근사 중복 제거
@@ -629,17 +686,25 @@ async function main() {
       officialFeeds: OFFICIAL_FEEDS.length,
       officialSitemaps: OFFICIAL_SITEMAPS.length,
       officialApiConnectors: OFFICIAL_API_CONNECTORS.length,
+      registrySnapshotArticles: registryItems.length,
     },
     acceptedCandidates: raw.length,
-    failedStreams: sourceHealth.failedStreams,
+    failedStreams,
     emptyStreams: unresolvedEmptyStreams,
     recoveredStreams: fallbackRecoveries,
     quietStreams: sourceHealth.quietStreams,
     streamHealth,
     connectorStatus,
-    watchdogPolicy: { emptyRunLimit, emptyDayLimit },
+    registryCollector: registryCollectionFresh ? {
+      generatedAt: sourceRegistryReport.generatedAt,
+      status: sourceRegistryReport.status,
+      summary: sourceRegistryReport.summary,
+      categoryCoverage: sourceRegistryReport.categoryCoverage,
+      ledger: sourceRegistryReport.ledger,
+    } : { status: "stale-or-unavailable", generatedAt: sourceRegistryReport.generatedAt || null },
+    watchdogPolicy: { emptyRunLimit, emptyDayLimit, failureRunLimit, failureDayLimit },
     watchdogBreaches,
-    status: sourceHealth.failedStreams.length || watchdogBreaches.length ? "partial" : "ok",
+    status: failedStreams.length || watchdogBreaches.length ? "partial" : "ok",
   };
   await writeFile("collection-health.json", JSON.stringify(crawlHealth, null, 2) + "\n");
 
@@ -649,7 +714,7 @@ async function main() {
   const out = final;
   const publicArticles = sanitizePublicCopy(out);
   await writeFile("news.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: publicArticles.length, articles: publicArticles }, null, 2) + "\n");
-  console.log(`Wrote news.json with ${out.length} articles (${sums.filter(isContentBacked).length} new source-page briefings; failed streams: ${sourceHealth.failedStreams.length}).`);
+  console.log(`Wrote news.json with ${out.length} articles (${sums.filter(isContentBacked).length} new source-page briefings; registry articles: ${registryItems.length}; failed streams: ${failedStreams.length}).`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

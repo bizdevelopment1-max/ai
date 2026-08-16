@@ -44,9 +44,9 @@ jobs:
             const body = [
               `Generated: ${report.generatedAt}`,
               '',
-              '| Stream | Empty runs | Empty days | Last success |',
-              '|---|---:|---:|---|',
-              ...report.breaches.map(row => `| ${row.stream} | ${row.consecutiveEmptyRuns} | ${row.emptyDays} | ${row.lastSuccessAt || 'never'} |`),
+              '| Stream | State | Empty runs | Failed runs | Affected days | Last success |',
+              '|---|---|---:|---:|---:|---|',
+              ...report.breaches.map(row => `| ${row.stream} | ${row.state} | ${row.consecutiveEmptyRuns} | ${row.consecutiveFailureRuns} | ${Math.max(row.emptyDays, row.failureDays)} | ${row.lastSuccessAt || 'never'} |`),
               '',
               'The source registry fallback did not recover these streams. Check the official feed/sitemap endpoint or add a licensed API connector.',
             ].join('\n');
@@ -57,4 +57,3 @@ jobs:
             } else {
               await github.rest.issues.create({ owner, repo, title, body, labels: [label] });
             }
-

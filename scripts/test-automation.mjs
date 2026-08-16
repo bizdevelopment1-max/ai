@@ -1974,7 +1974,7 @@ try {
 }
 
 try {
-  const [database, boardsSource, componentsSource, workflowSource, recoverySource, builderSource, verifySource, version, metricGovernance, volatileMetrics, metricAudit, weeklyMetricWorkflow, officialSources, qualityThresholds, monetization, monetizationReviewQueue] = await Promise.all([
+  const [database, boardsSource, componentsSource, workflowSource, recoverySource, builderSource, verifySource, version, metricGovernance, volatileMetrics, metricAudit, weeklyMetricWorkflow, officialSources, qualityThresholds, monetization, monetizationReviewQueue, sourceCollector, sourceReport, sourceSnapshot, sourceManifest, jekyllConfig] = await Promise.all([
     readFile("mobile-ai-business-view.json", "utf8").then(JSON.parse),
     readFile("boards.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
@@ -1991,6 +1991,11 @@ try {
     readFile("config/quality-thresholds.json", "utf8").then(JSON.parse),
     readFile("monetization.json", "utf8").then(JSON.parse),
     readFile("monetization-review-queue.json", "utf8").then(JSON.parse),
+    readFile("scripts/collect-source-registry.mjs", "utf8"),
+    readFile("source-collection-report.json", "utf8").then(JSON.parse),
+    readFile("source-snapshot.json", "utf8").then(JSON.parse),
+    readFile("source-ledger/manifest.json", "utf8").then(JSON.parse),
+    readFile("_config.yml", "utf8"),
   ]);
   const ids = (database.signals || []).map(item => item.id);
   const validSignals = (database.signals || []).every(item => item.fact && item.implication && item.decision
@@ -2041,8 +2046,20 @@ try {
     || !weeklyMetricWorkflow.includes("reverify-volatile-metrics.mjs --fetch --write")
     || !weeklyMetricWorkflow.includes("No auto-merge")
     || (officialSources.sitemaps || []).length < 15
-    || (officialSources.officialFeeds || []).length < 5
-    || (officialSources.apiConnectors || []).length < 5
+    || (officialSources.officialFeeds || []).length < 12
+    || (officialSources.apiConnectors || []).length < 9
+    || (sourceReport.streamHealth || []).length < Number(qualityThresholds.minimumDirectSourceStreams || 25)
+    || (sourceReport.connectorStatus || []).filter(row => row.status === "executed").length < Number(qualityThresholds.minimumExecutablePublicConnectors || 4)
+    || (sourceReport.categoryCoverage || []).filter(row => Number(row.itemCount || 0) > 0).length < Number(qualityThresholds.minimumSourceCategories || 8)
+    || sourceSnapshot.itemCount !== (sourceSnapshot.items || []).length
+    || sourceManifest.cumulativeEvents < sourceSnapshot.itemCount
+    || !sourceCollector.includes("append-only-monthly-jsonl")
+    || !workflowSource.includes("scripts/collect-source-registry.mjs")
+    || !workflowSource.includes("automation/data-staging")
+    || !workflowSource.includes("source-ledger/")
+    || !recoverySource.includes("scripts/collect-source-registry.mjs")
+    || (version.assets || []).some(file => /source-(snapshot|collection-report)|source-ledger/.test(file))
+    || !["source-snapshot.json", "source-collection-report.json", "source-ledger"].every(file => jekyllConfig.includes(`- ${file}`))
     || qualityThresholds.maximumFailedStreamsBeforeBlock !== 3
     || !verifySource.includes("failedStreamCount > failedStreamBlockThreshold")
     || !verifySource.includes("[verify:${check.status}]")

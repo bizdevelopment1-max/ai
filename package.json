@@ -11,6 +11,7 @@
     "verify:volatile": "node scripts/reverify-volatile-metrics.mjs",
     "reverify:volatile": "node scripts/reverify-volatile-metrics.mjs --fetch --write",
     "watch:collections": "node scripts/check-collection-watchdog.mjs --write",
+    "collect:sources": "node scripts/collect-source-registry.mjs",
     "validate:mx": "node scripts/validate-mx-intelligence.mjs",
     "test:department": "node scripts/test-department-fit.mjs",
     "test:automation": "node scripts/test-automation.mjs",
