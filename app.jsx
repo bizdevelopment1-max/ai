@@ -85,7 +85,7 @@ function App() {
   const [collapsed, setCollapsed] = uS(false);
   const [navCategory, setNavCategory] = uS({ section: "", id: "" });
   const refs = {
-    overview: uR(null), strategy: uR(null), opportunity: uR(null), themes: uR(null), valuechain: uR(null),
+    overview: uR(null), strategy: uR(null), opportunity: uR(null), valuechain: uR(null),
     newbiz: uR(null), signals: uR(null), sanalysis: uR(null), evidence: uR(null), validation: uR(null),
   };
   const startupInView = useInView(refs.sanalysis);
@@ -416,7 +416,6 @@ function App() {
   // 기존 북마크와 자동 생성 카드의 세부 ID를 MECE 상위 섹션으로 연결.
   const NAV_ALIAS = {
     dynamics: "overview", bizmodel: "newbiz",
-    "agentic-commerce": "themes", "telco-bundles": "themes", "wearables-form-factors": "themes",
     native: "valuechain", bigtech: "valuechain", startup: "valuechain",
     app: "valuechain", agent: "valuechain", service: "valuechain", trust: "valuechain",
     model: "valuechain", data: "valuechain", infra: "valuechain",
@@ -640,16 +639,6 @@ function App() {
               <SectionStack bodyClassName="opportunity-stack">
                 <ExecToplines items={[]} insights={insights} onNav={navTo} />
                 <MobileAIBusinessBoard dataVersion={dataVersion} />
-              </SectionStack>
-            </LazySection>
-
-            {/* ── 4. 사업 포트폴리오: 테마 → 밸류체인 → 서비스 기회 ── */}
-            <LazySection id="themes" active={active} sectionRef={refs.themes} height={1900}>
-              <SectionStack title="핵심 사업 테마" eyebrow="BUSINESS PORTFOLIO"
-                description="서로 겹치지 않는 거래·유통·단말 확장 축으로 사업 후보를 분류">
-                <MXThemeBoard dataVersion={dataVersion} kind="agentic-commerce" />
-                <MXThemeBoard dataVersion={dataVersion} kind="telco-bundles" />
-                <MXThemeBoard dataVersion={dataVersion} kind="wearables-form-factors" />
               </SectionStack>
             </LazySection>
 

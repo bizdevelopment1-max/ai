@@ -473,7 +473,7 @@ try {
   const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
   const navIds = [...navSource.matchAll(/\{\s*id:\s*"([^"]+)"/g)].map(match => match[1]);
   const sectionIds = [...app.matchAll(/(?:<LazySection\s+id=|data-section=)"([^"]+)"/g)].map(match => match[1]);
-  const expectedOrder = ["overview", "strategy", "opportunity", "themes", "valuechain", "newbiz", "signals", "sanalysis", "evidence", "validation"];
+  const expectedOrder = ["overview", "strategy", "opportunity", "valuechain", "newbiz", "signals", "sanalysis", "evidence", "validation"];
   const missingOnRight = navIds.filter(id => !sectionIds.includes(id));
   const missingOnLeft = sectionIds.filter(id => !navIds.includes(id));
   const sameMeceOrder = JSON.stringify(navIds) === JSON.stringify(expectedOrder)
@@ -510,6 +510,29 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  실패  navigation mapping: ${error.message}`);
+}
+
+try {
+  const [app, components, boards, styles] = await Promise.all([
+    readFile("app.jsx", "utf8"),
+    readFile("components.jsx", "utf8"),
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+  ]);
+  const removedThemeArtifacts = [
+    'id: "themes"',
+    'id="themes"',
+    "MXThemeBoard",
+    "Priority Business Themes",
+    "BUSINESS PORTFOLIO",
+    ".mxt",
+  ];
+  const remaining = removedThemeArtifacts.filter(token => `${app}\n${components}\n${boards}\n${styles}`.includes(token));
+  if (remaining.length) throw new Error(`removed theme artifacts remain: ${remaining.join(", ")}`);
+  console.log("  OK  핵심 사업 테마 navigation, section, renderer, and styles are fully removed");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  business theme removal: ${error.message}`);
 }
 
 try {
