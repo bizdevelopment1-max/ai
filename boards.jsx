@@ -415,7 +415,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
     const top = [...rows].sort((a, b) => Number(b.live?.mentions30 || 0) - Number(a.live?.mentions30 || 0))[0];
     return { ...layer, rows, primary, mentions, top };
   });
-  const controlZones = strategy.operatingModel || [];
   const decisionOutputs = strategy.decisionOutputs || [];
   const priorityFramework = strategy.priorityFramework || { items: [], criteria: [], eligibilityGate: {} };
   const priorityItems = priorityFramework.items || [];
@@ -520,28 +519,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>01</em><h3>사용자 신호에서 90일 실험까지</h3></div>
-        </div>
-        <div className="msf-control-logic" aria-label="모바일 AI 신사업 기회 전환 과정">
-          {controlZones.map((zone, index) => (
-            <React.Fragment key={zone.no}>
-              <div style={{ "--zone-step": index }}>
-                <em>{zone.no} · {zone.en}</em>
-                <b>{zone.title}</b>
-                <span>{zone.scope}</span>
-                <p>{zone.question}</p>
-                <dl>
-                  <div><dt>OUTPUT</dt><dd>{zone.output}</dd></div>
-                  <div><dt>GATE</dt><dd>{zone.gate}</dd></div>
-                </dl>
-              </div>
-              {index < controlZones.length - 1 && <i className="msf-flow-arrow" aria-hidden="true" />}
-            </React.Fragment>
-          ))}
-        </div>
-
-        <div className="msf-section-head">
-          <div><em>02</em><h3>User Moment → Experience Stack → Revenue</h3></div>
+          <div><em>01</em><h3>User Moment → Experience Stack → Revenue</h3></div>
         </div>
         <div className="msf-workload-map">
           <div className="msf-workload-head"><span>USER MOMENT / SHIFT</span><span>EXPERIENCE PAIN</span><span>PLATFORM REQUIREMENT</span><span>BUSINESS OPPORTUNITY</span><span>PROOF</span></div>
@@ -557,7 +535,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>03</em><h3>Mobile AI New Business Portfolio</h3></div>
+          <div><em>02</em><h3>Mobile AI New Business Portfolio</h3></div>
         </div>
         <div className="msf-opportunity-grid">
           {opportunityPortfolio.map((item, index) => (

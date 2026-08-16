@@ -141,7 +141,6 @@ export function buildStrategyView({ generatedAt, framework, articles, opportunit
     northStar: priorityItems.length
       ? `검증 적격 ${generatedOpportunities.length}개 후보 중 상위 ${priorityItems.length}개 · 평균 ${averageScore}점 · 근거 ${evidenceTotal}건`
       : "검증된 근거가 확보될 때까지 전략 후보 공개 보류",
-    operatingModel: framework?.operatingModel || [],
     decisionOutputs: framework?.decisionOutputs || [],
     capabilities: framework?.capabilities || [],
     priorityFramework: {
