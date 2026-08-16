@@ -324,19 +324,14 @@ try {
 }
 
 // Strategy copy is a generated materialized view. The browser owns only the
-// visual framework; companies, opportunities, proof counts and priorities are
+// visual framework; opportunities, proof counts and priorities are
 // rebuilt from the newest verified ledgers on every publication run.
 try {
   const dash = loadDash();
-  const [companyLedger, opportunityDb] = await Promise.all([
-    readJson("companies.json"),
-    readJson("mobile-ai-business-view.json"),
-  ]);
+  const opportunityDb = await readJson("mobile-ai-business-view.json");
   const strategyView = buildStrategyView({
     generatedAt,
     framework: dash.DECISION_FRAMEWORK || {},
-    registry: dash.COMPANIES || [],
-    companies: companyLedger.companies || {},
     articles: visibleArticles,
     opportunityDb,
   });

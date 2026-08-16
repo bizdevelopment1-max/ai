@@ -619,135 +619,13 @@ a[href]:hover .rainbow-on-hover,
   .site-cli-command-grid button:hover, .site-cli-results button:hover { transform: none; }
 }
 
-/* Mobile AI new-business strategy: account-to-workload consulting system */
-.msf-account-scope {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin: -2px 0 10px;
-  padding: 9px 12px;
-  border: 1px solid color-mix(in srgb, var(--consult-blue) 20%, var(--line));
-  border-radius: 8px;
-  color: var(--ink-2);
-  background: linear-gradient(110deg, color-mix(in srgb, var(--consult-blue) 7%, var(--panel)), var(--panel));
-  font-size: 9px;
-  font-weight: 720;
-  line-height: 1.45;
-}
-.msf-account-scope svg { flex: 0 0 auto; color: var(--consult-blue); }
-.msf-account-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-.msf-account {
-  --account-color: var(--consult-navy);
-  position: relative;
-  overflow: hidden;
-  min-width: 0;
-  padding: 14px;
-  border: 1px solid color-mix(in srgb, var(--account-color) 34%, var(--line));
-  border-radius: 9px;
-  outline: none;
-  background:
-    radial-gradient(circle at 94% 8%, color-mix(in srgb, var(--account-color) 10%, transparent) 0 18%, transparent 19%),
-    linear-gradient(145deg, color-mix(in srgb, var(--account-color) 5%, var(--panel)), var(--panel) 58%);
-  box-shadow: 0 5px 14px color-mix(in srgb, var(--consult-navy) 8%, transparent);
-  transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
-  animation: msfConsultCardIn .45s ease both;
-  animation-delay: calc(var(--account-order, 0) * 55ms);
-}
-.msf-account:hover,
-.msf-account:focus-visible {
-  z-index: 2;
-  border-color: color-mix(in srgb, var(--account-color) 62%, var(--line));
-  box-shadow: 0 12px 26px color-mix(in srgb, var(--account-color) 17%, transparent);
-  transform: translateY(-3px);
-}
-.msf-account.tone-blue { --account-color: #2867b2; }
-.msf-account.tone-teal { --account-color: #0f8c83; }
-.msf-account.tone-indigo { --account-color: #5c57a8; }
-.msf-account.tone-slate { --account-color: #526579; }
-.msf-account-head,
-.msf-account-tier,
-.msf-account-foot {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-}
-.msf-account-head > span { display: flex; gap: 8px; align-items: center; min-width: 0; }
-.msf-account-head em {
-  display: grid;
-  width: 25px;
-  height: 25px;
-  flex: 0 0 25px;
-  place-items: center;
-  border-radius: 6px;
-  color: #fff;
-  background: var(--account-color);
-  font: 900 8px/1 var(--mono);
-}
-.msf-account-head b { color: var(--ink); font-size: 15px; letter-spacing: -.025em; }
-.msf-account-head > i,
-.msf-account-tier > b {
-  border: 1px solid color-mix(in srgb, var(--account-color) 25%, var(--line));
-  border-radius: 999px;
-  color: var(--account-color);
-  background: color-mix(in srgb, var(--account-color) 7%, var(--panel));
-  font: 850 7.5px/1 var(--mono);
-  font-style: normal;
-  letter-spacing: .045em;
-  padding: 5px 7px;
-  white-space: nowrap;
-}
-.msf-account-tier { justify-content: flex-start; margin-top: 8px; }
-.msf-account-tier > span { color: var(--ink-2); font-size: 9px; font-weight: 760; }
-.msf-account-demand { margin: 9px 0 0; color: var(--ink); font-size: 10px; font-weight: 840; }
-.msf-account-signal {
-  display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
-  gap: 9px;
-  margin-top: 10px;
-  padding: 9px 10px;
-  border-left: 3px solid var(--account-color);
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--account-color) 6%, var(--panel-2, #f7f9fc));
-}
-.msf-account-signal em,
-.msf-account-logic em,
-.msf-account-gate em {
-  color: var(--account-color);
-  font: 900 7.5px/1.25 var(--mono);
-  font-style: normal;
-  letter-spacing: .05em;
-}
-.msf-account-signal p,
-.msf-account-logic p { margin: 0; color: var(--ink-2); font-size: 9px; font-weight: 690; line-height: 1.48; }
-.msf-account-logic {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
-  gap: 8px;
-  align-items: stretch;
-  margin-top: 9px;
-}
-.msf-account-logic > div {
-  display: grid;
-  gap: 5px;
-  align-content: start;
-  padding: 9px;
-  border: 1px solid color-mix(in srgb, var(--account-color) 15%, var(--line));
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--account-color) 3%, var(--panel));
-}
-.msf-account-logic > .msf-flow-arrow,
+/* Mobile AI new-business strategy: workload consulting system */
 .msf-workload-row > .msf-flow-arrow {
   position: relative;
   align-self: center;
   height: 2px;
   background: linear-gradient(90deg, color-mix(in srgb, var(--consult-gold) 25%, transparent), var(--consult-gold));
 }
-.msf-account-logic > .msf-flow-arrow::before,
 .msf-workload-row > .msf-flow-arrow::before {
   position: absolute;
   top: 50%;
@@ -760,7 +638,6 @@ a[href]:hover .rainbow-on-hover,
   transform: translateY(-50%);
   animation: msfSignalTravel 1.85s ease-in-out infinite;
 }
-.msf-account-logic > .msf-flow-arrow::after,
 .msf-workload-row > .msf-flow-arrow::after {
   position: absolute;
   top: 50%;
@@ -772,22 +649,6 @@ a[href]:hover .rainbow-on-hover,
   content: "";
   transform: translateY(-50%) rotate(45deg);
 }
-.msf-account-gate {
-  display: grid;
-  grid-template-columns: 76px minmax(0, 1fr);
-  gap: 8px;
-  align-items: center;
-  margin-top: 9px;
-  padding: 8px 9px;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--consult-gold) 8%, var(--panel));
-}
-.msf-account-gate b { color: var(--ink); font-size: 8.5px; line-height: 1.4; }
-.msf-account-foot { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line); }
-.msf-account-foot span { color: var(--ink-2); font: 800 7.5px/1 var(--mono); }
-.msf-account-foot a { display: inline-flex; gap: 4px; align-items: center; color: var(--account-color); font-size: 8px; font-weight: 850; text-decoration: none; }
-.msf-account-foot a:hover { text-decoration: underline; }
-
 .msf-workload-map {
   overflow-x: auto;
   overflow-y: hidden;
@@ -891,27 +752,19 @@ a[href]:hover .rainbow-on-hover,
   to { opacity: 1; transform: translateY(0); }
 }
 @media (max-width: 1180px) {
-  .msf-account-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .msf-opportunity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .msf-expert-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .msf-workload-head,
   .msf-workload-row { min-width: 1360px; }
 }
 @media (max-width: 760px) {
-  .msf-account-grid,
   .msf-opportunity-grid,
   .msf-expert-grid { grid-template-columns: minmax(0, 1fr); }
-  .msf-account-logic { grid-template-columns: minmax(0, 1fr); }
-  .msf-account-logic > .msf-flow-arrow { width: 2px; height: 18px; justify-self: center; background: linear-gradient(180deg, color-mix(in srgb, var(--consult-gold) 25%, transparent), var(--consult-gold)); }
-  .msf-account-logic > .msf-flow-arrow::before { display: none; }
-  .msf-account-logic > .msf-flow-arrow::after { top: auto; right: auto; bottom: 0; left: 50%; transform: translateX(-50%) rotate(135deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .msf-account,
   .msf-workload-row,
   .msf-opportunity,
   .msf-expert { animation: none !important; transition-duration: .01ms !important; }
-  .msf-account:hover,
   .msf-workload-row:hover,
   .msf-opportunity:hover,
   .msf-expert:hover { transform: none !important; }
@@ -1111,7 +964,7 @@ a[href]:hover .rainbow-on-hover,
 .sp-card-intel span { color: var(--muted); font-size: 9px; font-weight: 850; line-height: 1.45; text-transform: uppercase; }
 .sp-card-intel b { color: var(--ink-2); font-size: 12px; font-weight: 720; line-height: 1.52; text-wrap: pretty; }
 .sp-card-intel > div:nth-child(2) b { color: var(--accent); font-weight: 820; }
-.sp-card-foot { display: grid; grid-template-columns: auto auto 1fr; align-items: end; gap: 8px 12px; margin-top: auto; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line)); }
+.sp-card-foot { display: grid; grid-template-columns: repeat(3, auto) 1fr; align-items: end; gap: 8px 12px; margin-top: auto; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line)); }
 .sp-card-foot span { display: flex; flex-direction: column; gap: 2px; color: var(--ink-2); font-size: 9.5px; font-weight: 750; }
 .sp-card-foot span em { color: var(--muted); font-family: var(--mono); font-size: 7.5px; font-style: normal; font-weight: 900; letter-spacing: .05em; }
 .sp-card-foot > b { justify-self: end; color: var(--accent); font-size: 9.5px; font-weight: 850; }
@@ -6417,12 +6270,11 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 /* Consulting frame policy: information cards use a complete perimeter or a
    process connector. A colored edge on only one side is not a status system. */
-:is(.site-cli-command-grid button,.site-cli-examples button,.site-cli-results button,.section-stack-head,.msf-account-signal,.ct-vgroup,.cd-prof-fin,.cd-outline-implication,.cd-mission-txt,.cd-bio-card,.cd-itv-item,.cd-inv-card,.nb-example-head,.cd-vp,.nvi-detail,.pt-foot,.nbz-insight,.acb-fde,.es-digest,.source-pipeline>div,.mxc-reg-grid>article,.mxc-failure-grid article){
+:is(.site-cli-command-grid button,.site-cli-examples button,.site-cli-results button,.section-stack-head,.ct-vgroup,.cd-prof-fin,.cd-outline-implication,.cd-mission-txt,.cd-bio-card,.cd-itv-item,.cd-inv-card,.nb-example-head,.cd-vp,.nvi-detail,.pt-foot,.nbz-insight,.acb-fde,.es-digest,.source-pipeline>div,.mxc-reg-grid>article,.mxc-failure-grid article){
   border:1px solid var(--line);
   border-radius:7px;
 }
 .site-cli-command-grid button,.site-cli-examples button,.site-cli-results button{border-color:#304971;border-radius:0}
-.msf-account-signal{border-color:color-mix(in srgb,var(--account-color) 30%,var(--line))}
 .ct-vgroup{border-radius:0;border-color:var(--line-2)}
 .cd-mission-txt,.cd-vp,.nbz-insight{border-color:color-mix(in srgb,var(--accent,var(--dc)) 28%,var(--line))}
 .cd-itv-mention{border-color:var(--line)}
@@ -6549,7 +6401,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .board-titles h2, .board-titles p, .board-en,
   .section-stack-head h2, .section-stack-head p,
   .sp-card-company b, .sp-card-company em,
-  .msf-account h4, .msf-account p, .msf-account b, .msf-account span,
   .msf-workload-row span, .msf-opportunity h4, .msf-opportunity p,
   .mkt-record-title, .mkt-record-values b, .mkt-record-values em,
   .isg-lead, .isg-summary li, .maib-market-card h4,

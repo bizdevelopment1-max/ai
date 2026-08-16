@@ -405,7 +405,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), choices: [], horizons: [], accountPortfolio: [], workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
+  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), choices: [], horizons: [], workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -417,11 +417,9 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
   });
   const controlZones = strategy.operatingModel || [];
   const decisionOutputs = strategy.decisionOutputs || [];
-  const accountPortfolio = strategy.accountPortfolio || [];
   const workloadMap = strategy.workloadMap || [];
   const opportunityPortfolio = strategy.opportunityPortfolio || [];
   const expertSignals = strategy.expertSignals || [];
-  const accountCompany = name => (companies || []).find(company => company.name === name);
   const evidenceArticles = React.useMemo(() => {
     const mobileTerms = /(?:mobile|smartphone|phone|android|iphone|on[ -]?device|edge ai|agent|assistant|camera|voice|translation|wearable|wallet|consumer|모바일|스마트폰|온디바이스|에이전트|어시스턴트|카메라|음성|통역|웨어러블|결제|소비자)/i;
     const generatedDate = generatedAt ? new Date(generatedAt) : null;
@@ -532,40 +530,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>02</em><h3>Competitive Platform Portfolio</h3></div>
-          <p>공식 제품·통제점·사용자 가치·수익 구조·대응 게이트를 경쟁 플랫폼별로 분리</p>
-        </div>
-        <div className="msf-account-scope"><Icon name="target" size={14} /><span>{strategy.accountScope}</span></div>
-        <div className="msf-account-grid">
-          {accountPortfolio.map((account, index) => {
-            const company = accountCompany(account.name);
-            const evidence = Number(company?.live?.mentions30 || 0);
-            return (
-              <article className={`msf-account tone-${account.tone || "navy"}`} key={account.name} tabIndex="0" style={{ "--account-order": index }}>
-                <div className="msf-account-head">
-                  <span><em>0{index + 1}</em><b>{account.name}</b></span>
-                  <i>{account.relation}</i>
-                </div>
-                <div className="msf-account-tier"><b>{account.tier}</b><span>{account.platform}</span></div>
-                <p className="msf-account-demand">{account.demand}</p>
-                <div className="msf-account-signal"><em>SIGNAL</em><p>{account.signal}</p></div>
-                <div className="msf-account-logic">
-                  <div><em>PAIN POINT</em><p>{account.pain}</p></div>
-                  <i className="msf-flow-arrow" aria-hidden="true" />
-                  <div><em>ACTION</em><p>{account.move}</p></div>
-                </div>
-                <div className="msf-account-gate"><em>DECISION GATE</em><b>{account.gate}</b></div>
-                <div className="msf-account-foot">
-                  <span>{evidence ? `30D 연결 근거 ${evidence}건` : "공개 원문 기준"}</span>
-                  <a href={account.sourceUrl} target="_blank" rel="noopener">{account.source} · {account.sourceDate} <Icon name="ext" size={11} /></a>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-
-        <div className="msf-section-head">
-          <div><em>03</em><h3>User Moment → Experience Stack → Revenue</h3></div>
+          <div><em>02</em><h3>User Moment → Experience Stack → Revenue</h3></div>
           <p>모바일의 반복 사용 순간을 플랫폼 요구·신사업 가설·검증 KPI로 번역</p>
         </div>
         <div className="msf-workload-map">
@@ -582,7 +547,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>04</em><h3>Mobile AI New Business Portfolio</h3></div>
+          <div><em>03</em><h3>Mobile AI New Business Portfolio</h3></div>
           <p>핵심 경험·크리에이터 도구·컨텍스트 통제·서비스 유통을 서로 다른 투자 게이트로 관리</p>
         </div>
         <div className="msf-opportunity-grid">
@@ -603,7 +568,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>05</em><h3>Mobile AI Product · Platform · Business Evidence</h3></div>
+          <div><em>04</em><h3>Mobile AI Product · Platform · Business Evidence</h3></div>
           <p>공식 제품 근거를 고객 접점·플랫폼 통제·수익모델·파트너 의사결정 시사점으로 요약</p>
         </div>
         <div className="msf-expert-grid">
@@ -618,7 +583,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head msf-value-chain-head">
-          <div><em>06</em><h3>Mobile AI SW · Service Value Chain</h3></div>
+          <div><em>05</em><h3>Mobile AI SW · Service Value Chain</h3></div>
           <p>7개 계층의 통제점·경제성·최근 30일 공개 근거를 모바일 신사업 포트폴리오와 연결</p>
         </div>
         <div className="msf-chain">
@@ -640,7 +605,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>07</em><h3>Where to Play · How to Win</h3></div>
+          <div><em>06</em><h3>Where to Play · How to Win</h3></div>
           <p>개인 컨텍스트·멀티모델 에이전트·서비스 유통·버티컬 포트폴리오의 4개 우선 플레이</p>
         </div>
         <div className="msf-choices">
@@ -657,7 +622,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>08</em><h3>분석 툴킷</h3></div>
+          <div><em>07</em><h3>분석 툴킷</h3></div>
           <p>소비자 수요부터 모바일 경험·단위경제성·파트너·출시 판단까지 연결하는 필수 전문성</p>
         </div>
         <div className="msf-capabilities">
@@ -671,7 +636,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>09</em><h3>AI Stack별 사업 판단 기준</h3></div>
+          <div><em>08</em><h3>AI Stack별 사업 판단 기준</h3></div>
           <p>통제점·수익 구조·사업 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
         <div className="msf-matrix">
@@ -685,7 +650,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>10</em><h3>90-Day Execution Roadmap</h3></div>
+          <div><em>09</em><h3>90-Day Execution Roadmap</h3></div>
           <p>Discover · Design · Decide</p>
         </div>
         <div className="msf-horizons">
@@ -738,6 +703,7 @@ function StrategyPortfolioCard({
     ...(intel.strategyDirection?.evidence || []),
   ];
   const evidenceN = Number.isFinite(sourceCount) ? sourceCount : new Set(evidenceRows.map(item => item.url).filter(Boolean)).size;
+  const recentSignalCount = Number(c.live?.mentions30 || 0);
   const organization = c.live?.organization || c.organization || c.org || {};
   const leaderRows = Array.isArray(organization.executiveTeam) && organization.executiveTeam.length
     ? organization.executiveTeam : organization.leadership || [];
@@ -783,6 +749,7 @@ function StrategyPortfolioCard({
       <div className="sp-card-foot">
         {leadership && <span><em>창업·경영진</em>{leadership}</span>}
         {people && <span><em>인력</em>{people}</span>}
+        {recentSignalCount > 0 && <span><em>최근 30일 신호</em>{recentSignalCount}건</span>}
         {evidenceN > 0 && <span><em>원문 근거</em>{evidenceN}건</span>}
         <b>실적·조직·발언·원문 <i aria-hidden="true" /></b>
       </div>

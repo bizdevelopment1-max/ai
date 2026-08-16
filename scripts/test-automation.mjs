@@ -613,7 +613,9 @@ try {
     && strategyView?.capabilities?.length === 5
     && strategyView?.horizons?.length === 3
     && strategyView?.opportunityPortfolio?.length >= 9
+    && !Object.hasOwn(strategyView, "accountPortfolio")
     && boards.includes("function MobileStrategyBoard")
+    && !boards.includes("Competitive Platform Portfolio")
     && boards.includes("Strategy consulting · user need → mobile experience → revenue → execution")
     && boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")
@@ -637,6 +639,8 @@ try {
     && boards.includes('className="cd-org-tier-groups"')
     && ["현재 사업", "Biz Model", "사업 방향", "최근 실행"].every(label => boards.includes(`>${label}<`))
     && boards.includes('className="vc-portfolio-grid"')
+    && boards.includes("const recentSignalCount = Number(c.live?.mentions30 || 0)")
+    && boards.includes(">최근 30일 신호<")
     && boards.includes('className="startup-portfolio-grid"')
     && boards.includes("const rows = (companies || []).filter(c => c.layer === layerId)")
     && boards.includes("claimUniqueCompanies")
