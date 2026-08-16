@@ -95,13 +95,6 @@ export function buildStrategyView({ generatedAt, framework, articles, opportunit
       url: article.url,
     }));
 
-  const choices = opportunityPortfolio.slice(0, 4).map((item, index) => ({
-    no: `0${index + 1}`,
-    title: item.title,
-    where: item.ownAssets.join(" · ") || item.customer,
-    win: item.thesis,
-    kpi: item.nextMetrics.map(metric => `${metric.label} ${metric.value}`).join(" · "),
-  }));
   const workloadMap = opportunityPortfolio.slice(0, 7).map((item, index) => ({
     no: `0${index + 1}`,
     workload: item.title,
@@ -123,7 +116,6 @@ export function buildStrategyView({ generatedAt, framework, articles, opportunit
     operatingModel: framework?.operatingModel || [],
     decisionOutputs: framework?.decisionOutputs || [],
     capabilities: framework?.capabilities || [],
-    choices,
     workloadMap,
     opportunityPortfolio,
     expertSignals,

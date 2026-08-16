@@ -405,7 +405,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), choices: [], workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
+  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -470,15 +470,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
             <div className="msf-house-roof">
               <span>NORTH STAR</span>
               <p>{strategy.northStar}</p>
-            </div>
-            <div className="msf-house-pillars">
-              {(strategy.choices || []).slice(0, 4).map((choice, index) => (
-                <div key={choice.no}>
-                  <em>0{index + 1}</em>
-                  <b>{choice.title}</b>
-                  <span>{choice.where}</span>
-                </div>
-              ))}
             </div>
             <div className="msf-house-foundation">
               <em>FOUNDATION</em>
@@ -596,24 +587,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>06</em><h3>Where to Play · How to Win</h3></div>
-          <p>개인 컨텍스트·멀티모델 에이전트·서비스 유통·버티컬 포트폴리오의 4개 우선 플레이</p>
-        </div>
-        <div className="msf-choices">
-          {(strategy.choices || []).map(c => (
-            <div className="msf-choice" key={c.no} tabIndex="0">
-              <div className="msf-choice-top"><span>{c.no}</span><b>{c.title}</b></div>
-              <dl>
-                <div><dt>WHERE</dt><dd>{c.where}</dd></div>
-                <div><dt>WIN</dt><dd>{c.win}</dd></div>
-                <div><dt>KPI</dt><dd>{c.kpi}</dd></div>
-              </dl>
-            </div>
-          ))}
-        </div>
-
-        <div className="msf-section-head">
-          <div><em>07</em><h3>분석 툴킷</h3></div>
+          <div><em>06</em><h3>분석 툴킷</h3></div>
           <p>소비자 수요부터 모바일 경험·단위경제성·파트너·출시 판단까지 연결하는 필수 전문성</p>
         </div>
         <div className="msf-capabilities">
@@ -627,7 +601,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>08</em><h3>AI Stack별 사업 판단 기준</h3></div>
+          <div><em>07</em><h3>AI Stack별 사업 판단 기준</h3></div>
           <p>통제점·수익 구조·사업 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
         <div className="msf-matrix">
