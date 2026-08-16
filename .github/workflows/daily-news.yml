@@ -39,6 +39,14 @@ jobs:
       PIPELINE_TIMEOUT_MS: 300000
       GITHUB_MODELS_TOKEN: ${{ github.token }}
       GITHUB_MODELS_MODEL: openai/gpt-4.1
+      GITHUB_TOKEN: ${{ github.token }}
+      SEC_USER_AGENT: "bizdevelopment1-max-ai ${{ github.actor }}@users.noreply.github.com"
+      USPTO_API_KEY: ${{ secrets.USPTO_API_KEY }}
+      SENSOR_TOWER_TOKEN: ${{ secrets.SENSOR_TOWER_TOKEN }}
+      APPFIGURES_CLIENT_KEY: ${{ secrets.APPFIGURES_CLIENT_KEY }}
+      APPFIGURES_ACCESS_TOKEN: ${{ secrets.APPFIGURES_ACCESS_TOKEN }}
+      WIPO_PATENTSCOPE_USER: ${{ secrets.WIPO_PATENTSCOPE_USER }}
+      WIPO_PATENTSCOPE_PASSWORD: ${{ secrets.WIPO_PATENTSCOPE_PASSWORD }}
     steps:
       - name: Checkout main
         uses: actions/checkout@v4

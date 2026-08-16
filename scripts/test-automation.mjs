@@ -2045,19 +2045,30 @@ try {
     || (volatileMetrics.metrics || []).length < 5 || metricAudit.summary?.invalid !== 0
     || !weeklyMetricWorkflow.includes("reverify-volatile-metrics.mjs --fetch --write")
     || !weeklyMetricWorkflow.includes("No auto-merge")
+    || Number(officialSources.version || 0) < 4
     || (officialSources.sitemaps || []).length < 15
     || (officialSources.officialFeeds || []).length < 12
+    || !(officialSources.htmlIndexes || []).some(source => source.source === "MiniMax News" && source.status === "active")
     || (officialSources.apiConnectors || []).length < 9
+    || !["xiaomi-global-discovery", "coinbase-agentkit-releases", "sec-edgar-current-8k", "uspto-open-data", "sensor-tower-store-intelligence", "appfigures-app-intelligence"]
+      .every(id => (officialSources.apiConnectors || []).some(connector => connector.id === id))
     || (sourceReport.streamHealth || []).length < Number(qualityThresholds.minimumDirectSourceStreams || 25)
     || (sourceReport.connectorStatus || []).filter(row => row.status === "executed").length < Number(qualityThresholds.minimumExecutablePublicConnectors || 4)
     || (sourceReport.categoryCoverage || []).filter(row => Number(row.itemCount || 0) > 0).length < Number(qualityThresholds.minimumSourceCategories || 8)
     || sourceSnapshot.itemCount !== (sourceSnapshot.items || []).length
     || sourceManifest.cumulativeEvents < sourceSnapshot.itemCount
     || !sourceCollector.includes("append-only-monthly-jsonl")
+    || !sourceCollector.includes("collectWithFallbacks")
+    || !sourceCollector.includes("credential-gated")
+    || !sourceCollector.includes("headersFromEnv")
     || !workflowSource.includes("scripts/collect-source-registry.mjs")
     || !workflowSource.includes("automation/data-staging")
     || !workflowSource.includes("source-ledger/")
+    || !workflowSource.includes("USPTO_API_KEY")
+    || !workflowSource.includes("SENSOR_TOWER_TOKEN")
+    || !workflowSource.includes("APPFIGURES_ACCESS_TOKEN")
     || !recoverySource.includes("scripts/collect-source-registry.mjs")
+    || !recoverySource.includes("SEC_USER_AGENT")
     || (version.assets || []).some(file => /source-(snapshot|collection-report)|source-ledger/.test(file))
     || !["source-snapshot.json", "source-collection-report.json", "source-ledger"].every(file => jekyllConfig.includes(`- ${file}`))
     || qualityThresholds.maximumFailedStreamsBeforeBlock !== 3

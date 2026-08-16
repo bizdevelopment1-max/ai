@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "updatedAt": "2026-08-16",
   "purpose": "Direct first-party discovery, API readiness and deterministic fallbacks for streams that are repeatedly empty in Google News or publisher RSS.",
   "healthPolicy": {
@@ -27,7 +27,7 @@
     },
     {
       "source": "Google Blog",
-      "company": "Google DeepMind",
+      "company": "Google",
       "url": "https://blog.google/rss/",
       "category": "device-and-platform",
       "matchPattern": "AI|Gemini|Android|Pixel|AICore|commerce|subscription",
@@ -127,6 +127,17 @@
       "matchPattern": "AI|HBM|DRAM|NAND|memory|mobile|edge|data center",
       "sourceTier": "official",
       "validatedAt": "2026-08-16"
+    },
+    {
+      "source": "Kuaishou Investor News",
+      "company": "Kuaishou",
+      "aliases": ["Kling AI"],
+      "url": "https://ir.kuaishou.com/rss/news-releases.xml",
+      "category": "model-and-agent-platform",
+      "matchPattern": "Kling|AI|model|agent|revenue|technology",
+      "sourceTier": "official",
+      "maxItems": 12,
+      "validatedAt": "2026-08-16"
     }
   ],
   "sitemaps": [
@@ -157,17 +168,140 @@
     ,{ "source": "Arm Newsroom", "company": "Arm", "url": "https://newsroom.arm.com/sitemap_index.xml", "pathPattern": "/blog/|/news/|/company-news/", "category": "compute-and-edge", "status": "active", "maxSitemapChildren": 8, "validatedAt": "2026-08-16" }
     ,{ "source": "Google DeepMind", "company": "Google DeepMind", "url": "https://deepmind.google/sitemap.xml", "pathPattern": "/blog/|/research/|/discover/", "category": "model-and-research", "status": "active", "validatedAt": "2026-08-16" }
     ,{ "source": "MediaTek Corporate", "company": "MediaTek", "url": "https://corp.mediatek.com/sitemap.xml", "pathPattern": "/news-events/press-releases/|/blog/", "category": "compute-and-edge", "status": "disabled-transient-500", "validatedAt": "2026-08-16" }
+    ,{ "source": "Canalys Newsroom", "company": "Canalys", "url": "https://www.canalys.com/sitemap.xml", "pathPattern": "/newsroom/", "category": "research-release", "status": "active", "maxAgeDays": 120, "maxItems": 12, "validatedAt": "2026-08-16" }
+    ,{ "source": "IDC Research", "company": "IDC", "url": "https://www.idc.com/sitemap_index.xml", "pathPattern": "/resource/|/press-release/|/research/", "category": "research-release", "status": "active", "maxSitemapChildren": 12, "maxAgeDays": 120, "maxItems": 12, "validatedAt": "2026-08-16" }
+    ,{ "source": "T-Mobile Newsroom", "company": "T-Mobile", "url": "https://www.t-mobile.com/news/_admin/sitemap_index.xml", "pathPattern": "/news/", "category": "carrier-bundle", "status": "disabled-access-blocked", "validatedAt": "2026-08-16" }
+    ,{ "source": "MiniMax News Sitemap", "company": "MiniMax", "aliases": ["Hailuo (MiniMax)", "Hailuo AI"], "url": "https://www.minimax.io/sitemap.xml", "pathPattern": "/news/", "category": "model-and-agent-platform", "status": "disabled-replaced-by-official-html", "maxAgeDays": 120, "maxItems": 12, "validatedAt": "2026-08-16" }
+  ],
+  "htmlIndexes": [
+    {
+      "source": "MiniMax News",
+      "company": "MiniMax",
+      "aliases": ["Hailuo (MiniMax)", "Hailuo AI"],
+      "url": "https://www.minimax.io/news",
+      "linkPattern": "/news/",
+      "category": "model-and-agent-platform",
+      "status": "active",
+      "maxCandidates": 16,
+      "maxItems": 10,
+      "validatedAt": "2026-08-16"
+    },
+    {
+      "source": "Xiaomi Global Discover",
+      "company": "Xiaomi",
+      "url": "https://www.mi.com/global/discover/",
+      "linkPattern": "/global/discover/article",
+      "category": "competitor-device",
+      "status": "disabled-replaced-by-official-api",
+      "maxCandidates": 16,
+      "maxItems": 8,
+      "validatedAt": "2026-08-16"
+    },
+    {
+      "source": "Coinbase Developer Platform",
+      "company": "Coinbase",
+      "url": "https://www.coinbase.com/developer-platform/discover",
+      "linkPattern": "/developer-platform/discover/(launches|insights|case-studies|solutions)/",
+      "category": "agentic-commerce",
+      "status": "disabled-access-challenge",
+      "maxCandidates": 20,
+      "maxItems": 10,
+      "validatedAt": "2026-08-16"
+    },
+    {
+      "source": "vivo Newsroom",
+      "company": "vivo",
+      "url": "https://www.vivo.com/en/about-vivo/news",
+      "linkPattern": "/en/about-vivo/news/",
+      "category": "competitor-device",
+      "status": "disabled-access-blocked",
+      "maxCandidates": 12,
+      "maxItems": 8,
+      "validatedAt": "2026-08-16"
+    },
+    {
+      "source": "Omdia Press Releases",
+      "company": "Omdia",
+      "url": "https://omdia.tech.informa.com/pr",
+      "linkPattern": "/pr/|/press-release/",
+      "category": "research-release",
+      "status": "disabled-access-challenge",
+      "maxCandidates": 12,
+      "maxItems": 8,
+      "validatedAt": "2026-08-16"
+    }
   ],
   "apiConnectors": [
     {
-      "id": "sec-edgar-current-filings",
+      "id": "xiaomi-global-discovery",
+      "source": "Xiaomi Global Discover API",
+      "company": "Xiaomi",
+      "sourceTier": "official",
+      "category": "competitor-device",
+      "endpoint": "https://go.buy.mi.com/global/page/discovery?from=pc&page_num=1",
+      "format": "json",
+      "adapter": "xiaomi-discovery",
+      "maxItems": 20,
+      "requiredEnv": [],
+      "schedule": "six-hourly",
+      "validatedAt": "2026-08-16"
+    },
+    {
+      "id": "coinbase-agentkit-releases",
+      "source": "Coinbase AgentKit Releases",
+      "company": "Coinbase",
+      "sourceTier": "official",
+      "category": "agentic-commerce",
+      "endpoint": "https://api.github.com/repos/coinbase/agentkit/releases?per_page=20",
+      "format": "json",
+      "adapter": "github-releases",
+      "maxItems": 20,
+      "requiredEnv": [],
+      "optionalAuthEnv": "GITHUB_TOKEN",
+      "schedule": "six-hourly",
+      "validatedAt": "2026-08-16"
+    },
+    {
+      "id": "sec-edgar-current-8k",
       "source": "SEC EDGAR",
       "sourceTier": "official",
       "category": "filing",
       "endpoint": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&output=atom&type=8-k",
       "format": "atom",
+      "adapter": "sec-atom",
+      "headersFromEnv": { "User-Agent": "SEC_USER_AGENT" },
+      "matchPattern": "Alphabet|Apple|Amazon|Meta Platforms|Microsoft|NVIDIA|Qualcomm|Micron|Verizon|AT&T|Coinbase",
+      "maxItems": 20,
       "requiredEnv": ["SEC_USER_AGENT"],
       "schedule": "hourly"
+    },
+    {
+      "id": "sec-edgar-current-10q",
+      "source": "SEC EDGAR",
+      "sourceTier": "official",
+      "category": "filing",
+      "endpoint": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&output=atom&type=10-q",
+      "format": "atom",
+      "adapter": "sec-atom",
+      "headersFromEnv": { "User-Agent": "SEC_USER_AGENT" },
+      "matchPattern": "Alphabet|Apple|Amazon|Meta Platforms|Microsoft|NVIDIA|Qualcomm|Micron|Verizon|AT&T|Coinbase",
+      "maxItems": 20,
+      "requiredEnv": ["SEC_USER_AGENT"],
+      "schedule": "six-hourly"
+    },
+    {
+      "id": "sec-edgar-current-10k",
+      "source": "SEC EDGAR",
+      "sourceTier": "official",
+      "category": "filing",
+      "endpoint": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&output=atom&type=10-k",
+      "format": "atom",
+      "adapter": "sec-atom",
+      "headersFromEnv": { "User-Agent": "SEC_USER_AGENT" },
+      "matchPattern": "Alphabet|Apple|Amazon|Meta Platforms|Microsoft|NVIDIA|Qualcomm|Micron|Verizon|AT&T|Coinbase",
+      "maxItems": 20,
+      "requiredEnv": ["SEC_USER_AGENT"],
+      "schedule": "daily"
     },
     {
       "id": "uspto-open-data",
@@ -176,6 +310,10 @@
       "category": "patent",
       "endpoint": "https://api.uspto.gov/api/v1/patent/applications/search",
       "format": "json",
+      "adapter": "uspto-patent-search",
+      "apiKeyEnv": "USPTO_API_KEY",
+      "apiKeyHeader": "X-API-KEY",
+      "maxItems": 20,
       "requiredEnv": ["USPTO_API_KEY"],
       "schedule": "daily"
     },
@@ -187,6 +325,7 @@
       "endpoint": "https://patentscope.wipo.int/search/en/search.jsf",
       "format": "licensed-query",
       "requiredEnv": ["WIPO_PATENTSCOPE_USER", "WIPO_PATENTSCOPE_PASSWORD"],
+      "activationNote": "PATENTSCOPE machine access is a separately licensed SOAP/Java web service; credentials alone are not treated as an executable search API.",
       "schedule": "daily"
     },
     {
@@ -194,8 +333,10 @@
       "source": "Sensor Tower API",
       "sourceTier": "official",
       "category": "app-economics",
-      "endpoint": "https://api.sensortower.com/v1/",
+      "endpoint": "https://api.sensortower.com/v1/ios/ranking?category=6007&country=US&chart_type=topfreeapplications&date={yesterday}&limit=100&auth_token=${SENSOR_TOWER_TOKEN}",
       "format": "json",
+      "adapter": "sensor-tower-apps",
+      "maxItems": 20,
       "requiredEnv": ["SENSOR_TOWER_TOKEN"],
       "schedule": "daily"
     },
@@ -204,8 +345,13 @@
       "source": "Appfigures API",
       "sourceTier": "official",
       "category": "app-economics",
-      "endpoint": "https://api.appfigures.com/v2/",
+      "endpoint": "https://api.appfigures.com/v2/products/search/AI?storefronts=apple%3Bgoogle_play&count=50",
       "format": "json",
+      "adapter": "appfigures-products",
+      "bearerTokenEnv": "APPFIGURES_ACCESS_TOKEN",
+      "headersFromEnv": { "X-Client-Key": "APPFIGURES_CLIENT_KEY" },
+      "matchPattern": "AI|ChatGPT|Gemini|Claude|Perplexity|Poe|Character",
+      "maxItems": 20,
       "requiredEnv": ["APPFIGURES_CLIENT_KEY", "APPFIGURES_ACCESS_TOKEN"],
       "schedule": "daily"
     },
@@ -266,16 +412,10 @@
   ],
   "coverageGaps": [
     {
-      "entity": "Xiaomi",
-      "preferred": "official-newsroom",
-      "currentFallback": "official-domain Google News discovery",
-      "reason": "The probed global sitemap resolves to an HTML 404 page; do not report it as a healthy direct feed."
-    },
-    {
       "entity": "T-Mobile",
       "preferred": "official-newsroom",
       "currentFallback": "official-domain Google News discovery",
-      "reason": "The probed newsroom RSS URL returns HTTP 404."
+      "reason": "The newsroom sitemap advertised in robots.txt returns an access block to automated runners; retain source-domain discovery until direct access becomes stable."
     },
     {
       "entity": "vivo",
@@ -284,16 +424,28 @@
       "reason": "The official sitemap intermittently changed from valid XML to HTTP 404 during repeated probes; direct polling is disabled until stable."
     },
     {
-      "entity": "Coinbase",
+      "entity": "Coinbase editorial blog",
       "preferred": "official-blog",
-      "currentFallback": "official-domain Google News discovery",
-      "reason": "The probed RSS endpoint returns an access challenge."
+      "currentFallback": "Coinbase AgentKit official release API and official-domain publisher discovery",
+      "reason": "The editorial blog returns an access challenge to automated runners; product release monitoring remains direct through the company-owned repository API."
     },
     {
-      "entity": "Omdia/Canalys",
+      "entity": "Omdia",
       "preferred": "press-release feed",
-      "currentFallback": "allowlisted publisher discovery",
-      "reason": "The current press-release endpoint is access-controlled; a licensed connector is required."
+      "currentFallback": "Canalys and IDC direct sitemaps plus allowlisted publisher discovery",
+      "reason": "The current Omdia press-release endpoint is access-controlled; a licensed connector is required."
     }
-  ]
+  ],
+  "credentialSetup": {
+    "githubActionsSecrets": [
+      "USPTO_API_KEY",
+      "SENSOR_TOWER_TOKEN",
+      "APPFIGURES_CLIENT_KEY",
+      "APPFIGURES_ACCESS_TOKEN",
+      "WIPO_PATENTSCOPE_USER",
+      "WIPO_PATENTSCOPE_PASSWORD"
+    ],
+    "nonSecretRuntimeValues": ["SEC_USER_AGENT"],
+    "policy": "Missing paid or licensed credentials keep a connector in credential-gated status and never make the collection run fail. Once configured, the same workflow executes the adapter and reports success or failure separately."
+  }
 }
