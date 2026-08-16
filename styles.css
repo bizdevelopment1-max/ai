@@ -1,10 +1,10 @@
 /* ============================================================
    styles.css — AI Intelligence Dashboard
-   Fonts: Pretendard + tabular nums
+   Fonts: local system stack + tabular nums
    ============================================================ */
 
 :root {
-  --f: "Pretendard", "Noto Sans KR", -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   /* 시스템 폰트 기반 숫자 스택으로 별도 Google Fonts 요청을 제거한다. */
   --f-head: var(--f);
   --f-display: var(--f);
@@ -81,7 +81,7 @@ body {
 }
 .num, .kpi-val, .ct-val, .ticker { font-variant-numeric: tabular-nums; }
 .kpi-val, .cd-stat b, .ct-mval, .rep-figure, .biz-metric b { font-family: var(--f-display); letter-spacing: -.01em; }
-/* 제목도 본문과 동일한 Pretendard 스택(--f-head=--f) — 전체 톤 일관성 */
+/* 제목도 본문과 동일한 시스템 스택(--f-head=--f) — 전체 톤 일관성 */
 .tb-title h1, .board-titles h2, .cd-head-txt h3, .biz-name,
 .dyn-arena-head h3, .insight-title, .vp-name, .vp-cat b, .sb-logo-txt b {
   font-family: var(--f-head);

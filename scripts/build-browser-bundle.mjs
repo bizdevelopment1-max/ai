@@ -12,6 +12,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import vm from "node:vm";
+import { loadDash } from "./load-dash.mjs";
 
 export const BROWSER_SOURCES = [
   "tweaks-panel.jsx",
@@ -27,6 +28,37 @@ export const DATA_BUNDLE_FILE = "data.bundle.js";
 export const INDEX_FILE = "index.html";
 export const STYLES_FILE = "styles.css";
 const BABEL_URL = "https://unpkg.com/@babel/standalone@7.29.0/babel.min.js";
+const RUNTIME_DATA_KEYS = [
+  "BIGTECH_GROUPS", "BIZ_MODELS", "CATEGORIES", "COMPANY_LAYER", "COMPANY_ORDER",
+  "LINKEDIN_PROFILES", "MOBILE_STRATEGY", "PRICING_MODELS", "STARTUP_TAXONOMY",
+  "STARTUP_VERTICALS", "STOCK_GROUPS", "STOCK_GROUP_LAYER", "STOCK_LAYER",
+  "STOCK_VALUE_CHAIN", "TOKEN_PRICING", "VALUE_CHAIN",
+];
+
+export function buildRuntimeDash(dash = loadDash()) {
+  const runtime = Object.fromEntries(RUNTIME_DATA_KEYS
+    .filter(key => dash[key] !== undefined)
+    .map(key => [key, dash[key]]));
+  // Mutable facts live in generated JSON. The runtime registry keeps only
+  // identity/taxonomy fields needed before those views arrive.
+  runtime.COMPANIES = (dash.COMPANIES || []).map(company => ({
+    cat: company.cat,
+    name: company.name,
+    group: company.group,
+    domain: company.domain,
+    unit: company.unit,
+    url: company.url,
+  }));
+  runtime.STOCKS = (dash.STOCKS || []).map(stock => ({
+    ticker: stock.ticker,
+    name: stock.name,
+    group: stock.group,
+    domain: stock.domain,
+    cat: stock.cat,
+    exchange: stock.exchange,
+  }));
+  return runtime;
+}
 
 export const sourceStamp = sources => createHash("sha256")
   // Git checks out LF on Actions and CRLF locally on this workspace. The
@@ -80,13 +112,7 @@ export async function buildBrowserBundle() {
     compact: true,
   }).code);
   const bundle = `/* ai-dashboard-bundle:${stamp} */\n${compiled.join("\n")}\n`;
-  const compactData = Babel.transform(dataSource, {
-    filename: DATA_SOURCE_FILE,
-    babelrc: false,
-    configFile: false,
-    comments: false,
-    compact: true,
-  }).code;
+  const compactData = `window.DASH=${JSON.stringify(buildRuntimeDash())};`;
   const dataBundle = `/* ai-dashboard-data:${dataStamp} */\n${compactData}\n`;
   const versionedIndex = [
     [STYLES_FILE, styleStamp],

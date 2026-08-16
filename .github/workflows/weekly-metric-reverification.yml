@@ -40,6 +40,7 @@ jobs:
           path: |
             volatile-metrics-audit.json
             metric-history.json
+            overview-view.json
             mobile-ai-business-view.json
           retention-days: 30
       - name: Open review-only data PR
@@ -48,7 +49,7 @@ jobs:
         run: |
           git config user.name "mx-metric-bot"
           git config user.email "mx-metric-bot@users.noreply.github.com"
-          git add volatile-metrics-audit.json metric-history.json mobile-ai-business-view.json data-version.json index.html app.bundle.js data.bundle.js
+          git add volatile-metrics-audit.json metric-history.json overview-view.json mobile-ai-business-view.json data-version.json index.html app.bundle.js data.bundle.js
           if git diff --staged --quiet; then
             echo "No metric changes."
           else

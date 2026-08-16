@@ -1120,7 +1120,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
 
           // 제품별 시장 점유율 — 기업별 실측치가 아닌, 이 기업이 속한 세그먼트의
           // 출처 명시 점유율(Gartner/IDC/Grand View 등). 개별 제품 점유율로 과장 표기하지 않음.
-          const segmentShare = (D.SHARE || []).filter(s => s.cat === c.cat);
+          const segmentShare = [];
 
           // 사업 영역
           const businessRows = uniqueMECEValues(Array.isArray(c.profile?.business) ? c.profile.business : []);
@@ -2507,8 +2507,7 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
   const [autoEv, setAutoEv] = React.useState(null);
   React.useEffect(() => {
     if (!inView || autoEv || !dataVersion) return;
-    fetch(`stock-events.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
+    loadJson(`stock-events.json?v=${encodeURIComponent(dataVersion)}`)
       .then(j => { if (j && j.events) setAutoEv(j.events); })
       .catch(() => {});
   }, [inView, autoEv, dataVersion]);
@@ -3205,9 +3204,10 @@ const DYNAMICS_AXES = [
   { id: "supply", label: "공급", color: "#F59E0B", types: ["공급", "매출"] },
 ];
 
-function ESCompetitiveMap({ companies, cats, articles, active }) {
+function ESCompetitiveMap({ companies, cats, articles, active, dataVersion }) {
   const ref = React.useRef(null);
   const videoRef = React.useRef(null);
+  const [mediaReady, setMediaReady] = React.useState(false);
   const inView = useInView(ref);
   const mediaActive = inView && active;
   const prog = useProgress(inView, 1400);
@@ -3242,9 +3242,26 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
   }, [graphKey, defaultCompany]);
 
   React.useEffect(() => {
+    if (!mediaActive || mediaReady) return undefined;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return undefined;
+    let idleId = 0;
+    const timer = window.setTimeout(() => {
+      if (window.requestIdleCallback) {
+        idleId = window.requestIdleCallback(() => setMediaReady(true), { timeout: 4000 });
+      } else {
+        setMediaReady(true);
+      }
+    }, 2500);
+    return () => {
+      window.clearTimeout(timer);
+      if (idleId && window.cancelIdleCallback) window.cancelIdleCallback(idleId);
+    };
+  }, [mediaActive, mediaReady]);
+
+  React.useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
-    if (!mediaActive) { video.pause(); return undefined; }
+    if (!mediaActive || !mediaReady) { video.pause(); return undefined; }
     const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     if (reduceMotion) { video.pause(); return undefined; }
     const slowPlayback = () => {
@@ -3262,7 +3279,7 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
       video.removeEventListener("canplay", slowPlayback);
       video.removeEventListener("play", slowPlayback);
     };
-  }, [mediaActive]);
+  }, [mediaActive, mediaReady]);
 
   const selectedCompany = list.find(c => c.name === activeCompany) || list[0] || null;
   const selectedArticle = selectedCompany ? articleByCo[selectedCompany.name] : null;
@@ -3312,8 +3329,8 @@ function ESCompetitiveMap({ companies, cats, articles, active }) {
           />
         </div>
         <aside className="dyn-video-panel" aria-live="polite">
-          <video ref={videoRef} className="dyn-video" autoPlay muted loop playsInline preload="auto" aria-label="AI 업계 경쟁 다이내믹스 영상">
-            <source src="assets/competitive-dynamics.mp4" type="video/mp4" />
+          <video ref={videoRef} className="dyn-video" muted loop playsInline preload="none" aria-label="AI 업계 경쟁 다이내믹스 영상">
+            {mediaReady && <source src={`assets/competitive-dynamics.mp4?v=${encodeURIComponent(dataVersion || "")}`} type="video/mp4" />}
           </video>
           <div className="dyn-video-overlay">
             <div className="dyn-video-head">
@@ -3402,8 +3419,7 @@ function BusinessModelForecasts({ dataVersion }) {
 
   React.useEffect(() => {
     let live = true;
-    fetch(`business-model-forecasts.json?v=${encodeURIComponent(dataVersion || "")}`, { cache: "force-cache" })
-      .then(response => response.ok ? response.json() : null)
+    loadJson(`business-model-forecasts.json?v=${encodeURIComponent(dataVersion || "")}`)
       .then(value => {
         if (live && Array.isArray(value?.models) && value.models.length) setData(value);
       })
@@ -4126,8 +4142,7 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
-    fetch(`${file}?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
+    loadJson(`${file}?v=${encodeURIComponent(dataVersion)}`)
       .then(j => { if (j && j.items) setData(j); })
       .catch(() => {});
   }, [inView, loaded, dataVersion, file]);
@@ -4267,8 +4282,7 @@ function MonetizationPlaybook({ articles, dataVersion }) {
   React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
-    fetch(`monetization.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
+    loadJson(`monetization.json?v=${encodeURIComponent(dataVersion)}`)
       .then(j => { if (j && Array.isArray(j.companies)) setData(j); })
       .catch(() => {});
   }, [inView, loaded, dataVersion]);
@@ -4903,8 +4917,7 @@ function MobileAIBusinessBoard({ sectionRef, dataVersion }) {
     // to this component; data loading must therefore not depend on inView.
     if (loaded || !dataVersion) return;
     setLoaded(true);
-    fetch(`mobile-ai-business-view.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
-      .then(response => response.ok ? response.json() : null)
+    loadJson(`mobile-ai-business-view.json?v=${encodeURIComponent(dataVersion)}`)
       .then(payload => {
         if (payload?.database?.mode === "mx-decision-intelligence" && payload?.schemaVersion >= 3) {
           setData(payload);
@@ -5273,8 +5286,7 @@ function MXThemeBoard({ sectionRef, dataVersion, kind }) {
   React.useEffect(() => {
     if (loaded || !dataVersion) return;
     setLoaded(true);
-    fetch(`mobile-ai-business-view.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
-      .then(response => response.ok ? response.json() : null)
+    loadJson(`mobile-ai-business-view.json?v=${encodeURIComponent(dataVersion)}`)
       .then(payload => payload?.schemaVersion >= 4 && setData(payload))
       .catch(() => {});
   }, [loaded, dataVersion]);
@@ -5380,8 +5392,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
   React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
-    fetch(`market-view.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
+    loadJson(`market-view.json?v=${encodeURIComponent(dataVersion)}`)
       .then(j => { if (j && Array.isArray(j.records)) setData(j); })
       .catch(() => {});
   }, [inView, loaded, dataVersion]);
@@ -5577,8 +5588,8 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       .filter(h => h && /^https?:\/\//.test(String(h.url || "")));
     const D = window.DASH || {};
     // 추적 대상이 아니어도 조직도·기업개요 큐레이션이 있으면 붙여 상세를 강화(다른 기업과 동일 뷰)
-    const org = s.organization || (D.COMPANY_ORG || {})[s.name] || null;
-    const curatedProfile = (D.COMPANY_PROFILES || {})[s.name] || null;
+    const org = s.organization || null;
+    const curatedProfile = null;
     const bm = s.currentBusiness || s.businessModel || s.overview || s.description || "";
     const institutionBacked = s.provenance?.status === "source-backed";
     const fallbackProfile = {
@@ -5669,8 +5680,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
-    fetch(`startups.json?v=${encodeURIComponent(dataVersion)}`, { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
+    loadJson(`startups.json?v=${encodeURIComponent(dataVersion)}`)
       .then(j => { if (j && (j.large || j.small)) setData(j); })
       .catch(() => {});
   }, [inView, loaded, dataVersion]);

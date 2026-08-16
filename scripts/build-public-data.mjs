@@ -236,6 +236,92 @@ for (const file of ["business-model-forecasts.json", "mobile-ai-business-view.js
   } catch {}
 }
 
+// The first screen needs only the tracked-company snapshot, recent source
+// evidence and topline cards. Build one compact, versioned payload instead of
+// making every browser download the complete news and company ledgers.
+try {
+  const dash = loadDash();
+  const registry = dash.COMPANIES || [];
+  const trackedNames = registry.map(company => company.name);
+  const trackedKeys = new Set(trackedNames.map(name => name.replace(/\s*\(.*\)$/, "").toLowerCase()));
+  const companies = await readJson("companies.json");
+  const compactEvidence = evidence => (evidence || []).slice(0, 3).map(item => compact(item, [
+    "title", "titleEn", "titleKo", "date", "source", "url",
+  ]));
+  const compactSection = section => section ? {
+    summary: section.summary || "",
+    groundingStatus: section.groundingStatus || "",
+    evidence: compactEvidence(section.evidence),
+  } : null;
+  const compactIntelligence = intelligence => intelligence ? {
+    currentBusiness: compactSection(intelligence.currentBusiness),
+    revenueModel: compactSection(intelligence.revenueModel),
+    strategyDirection: compactSection(intelligence.strategyDirection),
+    investmentDirection: compactSection(intelligence.investmentDirection),
+    publication: intelligence.publication || null,
+  } : null;
+  const overviewCompanies = Object.fromEntries(trackedNames
+    .filter(name => companies.companies?.[name])
+    .map(name => {
+      const company = companies.companies[name];
+      return [name, {
+        mentions7: company.mentions7 || 0,
+        mentions30: company.mentions30 || 0,
+        latest: company.latest || null,
+        profile: company.profile || null,
+        intelligence: compactIntelligence(company.intelligence),
+        cap: company.cap || "",
+        capAsof: company.capAsof || "",
+        ticker: company.ticker || "",
+        updatedAt: company.updatedAt || "",
+      }];
+    }));
+
+  const byNewest = [...visibleArticles]
+    .sort((left, right) => String(right.date || "").localeCompare(String(left.date || "")));
+  const articleIdentity = article => `${article.url || ""}|${article.titleEn || article.title || ""}`;
+  const selected = new Map();
+  const add = article => selected.set(articleIdentity(article), article);
+  byNewest.slice(0, 48).forEach(add);
+  for (const name of trackedNames) {
+    const key = name.replace(/\s*\(.*\)$/, "").toLowerCase();
+    byNewest.filter(article => {
+      const articleKey = String(article.co || "").replace(/\s*\(.*\)$/, "").toLowerCase();
+      return articleKey === key || (articleKey && trackedKeys.has(articleKey) && (articleKey.includes(key) || key.includes(articleKey)));
+    }).slice(0, 2).forEach(add);
+  }
+  const relationWords = /\b(?:partner|partnership|collaborat|integrat|invest|acquir|supply|license|deal|alliance|compete|versus|vs\.?|rival)\b|파트너|협력|통합|투자|인수|공급|라이선스|계약|경쟁/i;
+  byNewest.filter(article => relationWords.test(`${article.titleEn || ""} ${article.title || ""}`))
+    .slice(0, 36).forEach(add);
+  const overviewArticleKeys = [
+    "date", "co", "cat", "source", "title", "titleEn", "titleKo", "url", "tag",
+    "summary", "summaryLinesKo", "summaryMode", "displayEligible",
+    "provenance", "sourceRegion", "sourceLanguage",
+  ];
+  const insights = await readJson("insights.json");
+  const overview = {
+    generatedAt,
+    schemaVersion: 1,
+    sourceMode: "generated-source-backed",
+    companyCount: Object.keys(overviewCompanies).length,
+    articleCount: selected.size,
+    companies: overviewCompanies,
+    articles: [...selected.values()].map(article => compact(article, overviewArticleKeys)),
+    insights: {
+      engine: insights.engine || "rules",
+      cards: (insights.cards || []).filter(card => card.provenance?.status === "evidence-linked"),
+    },
+  };
+  let previous = null;
+  try { previous = await readJson("overview-view.json"); } catch {}
+  if (previous && JSON.stringify({ ...previous, generatedAt: "" }) === JSON.stringify({ ...overview, generatedAt: "" })) {
+    overview.generatedAt = previous.generatedAt || generatedAt;
+  }
+  await writeJson("overview-view.json", overview);
+} catch (error) {
+  throw new Error(`Could not build overview-view.json: ${error.message}`);
+}
+
 try {
   const dash = loadDash();
   const allowedTickers = new Set((dash.STOCKS || []).map(item => item.ticker));
@@ -252,10 +338,11 @@ try {
 
 const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
-  ...await Promise.all(["insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  createHash("sha256").update(await readFile(resolve(root, "assets/competitive-dynamics.mp4"))).digest("hex"),
+  ...await Promise.all(["overview-view.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
-await writeJson("data-version.json", { version, generatedAt, assets: [...Object.keys(views), "company-news.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"] });
+await writeJson("data-version.json", { version, generatedAt, assets: ["overview-view.json", ...Object.keys(views), "company-news.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"] });
 
 console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} current market insights · ${consolidatedDuplicateCount} duplicate records consolidated · ${replacedRecordCount} prior topic values replaced · version ${version}`);

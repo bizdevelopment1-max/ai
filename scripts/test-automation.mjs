@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { access, readFile } from "node:fs/promises";
-import { BUNDLE_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
+import { BUNDLE_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, buildRuntimeDash, readBrowserSources, sourceStamp } from "./build-browser-bundle.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, directCompanyNewsMatch } from "./company-sources.mjs";
 import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
@@ -48,6 +48,7 @@ const required = [
   "scripts/audit-agent.mjs",
   "news.json",
   "company-news.json",
+  "overview-view.json",
   "news-view.json",
   "research-view.json",
   "market-view.json",
@@ -134,7 +135,7 @@ try {
       && new Set(rows.map(article => String(article.titleEn || article.title || "").toLowerCase().replace(/[^a-z0-9가-힣]+/g, ""))).size === rows.length;
   });
   const uiStatusCopy = /수집\s*중|자료\s*없음|정보\s*없음|데이터\s*없음|갱신을 기다|자동 갱신을 기다|관련 기사가 없습니다/i;
-  const strictUi = app.includes('fetch(dataUrl("company-news.json")')
+  const strictUi = app.includes('loadJson(dataUrl("company-news.json")')
     && app.includes("companyNews={companyNews}")
     && boards.includes("Array.isArray(companyNews?.[c.name])")
     && boards.includes("기업 직접 연관 뉴스")
@@ -175,6 +176,11 @@ try {
   const publicRuntimeCopy = [...sources.map(({ source }) => source), bundle, dataSource, dataBundle, index].join("\n");
   if (!bundle.startsWith(expected)) throw new Error("bundle is stale; run npm run build:browser before publishing");
   if (!dataBundle.startsWith(expectedData)) throw new Error("data bundle is stale; run npm run build:browser before publishing");
+  const runtimeDash = buildRuntimeDash();
+  if (dataBundle.length > 100_000 || (runtimeDash.COMPANIES || []).some(company =>
+    ["note", "vp", "direction", "valuation", "funding", "metric", "value"].some(key => Object.hasOwn(company, key)))) {
+    throw new Error("runtime data bundle must contain taxonomy only; mutable company facts belong in generated JSON");
+  }
   if (publicRuntimeCopy.includes(forbiddenHandsetWord)) throw new Error("deprecated handset wording must not appear in public runtime copy");
   if (/babel\.min\.js|text\/babel/.test(index)
     || !/defer src="app\.bundle\.js/.test(index)
@@ -783,7 +789,8 @@ try {
   const brokenText = /\uFFFD|(?:Ã.|Â.|â[€™“”¦])|(?:ðŸ)|(?:\?[가-힣]){2,}/.test(visibleSource);
   const utf8Ready = /<meta charset="UTF-8"/.test(index)
     && /charset=UTF-8/.test(index)
-    && /pretendard\.min\.css/.test(index)
+    && !/pretendard\.min\.css/.test(index)
+    && styles.includes("--f: system-ui")
     && boards.includes("function safeDisplayString")
     && sourceContent.includes("malformed-source-encoding");
   const professionalSystem = boards.includes('className="mplay-framework"')
@@ -1275,7 +1282,7 @@ try {
     readFile("styles.css", "utf8"),
     readFile("app.jsx", "utf8"),
   ]);
-  const videoPanel = boards.includes('src="assets/competitive-dynamics.mp4"')
+  const videoPanel = boards.includes('assets/competitive-dynamics.mp4?v=')
     && boards.includes("const DYNAMICS_AXES")
     && boards.includes("deriveCompanyRelationshipEdges")
     && boards.includes('article?.provenance?.status === "source-backed"')
@@ -1286,11 +1293,15 @@ try {
     && boards.includes("relationshipGroups.length > 0")
     && !boards.includes("false && relationshipGroups.length > 0")
     && boards.includes("video.playbackRate = 0.38")
-    && boards.includes('className="dyn-video" autoPlay muted loop playsInline preload="auto"')
+    && boards.includes('className="dyn-video" muted loop playsInline preload="none"')
+    && boards.includes("mediaReady && <source")
+    && boards.includes("requestIdleCallback")
     && boards.includes('prefers-reduced-motion: reduce')
     && boards.includes("const fittedHeight = container.offsetHeight")
     && boards.includes("compact")
-    && app.includes('companyInView || active === "overview"');
+    && app.includes('loadJson("overview-view.json", { cache: "no-store" })')
+    && app.includes("needsFullCompanyData")
+    && !app.includes('active === "overview" || !!selected');
   const interactiveLayout = styles.includes(".es-dynamics-grid")
     && styles.includes(".dyn-video-panel")
     && styles.includes(".dyn-relationship")
@@ -1466,7 +1477,7 @@ try {
     && charts.includes('className={"hbar-chart" + (compact ? " hbar-compact" : "")}')
     && styles.includes(".hbar-chart.hbar-compact")
     && styles.includes("content-visibility: auto")
-    && app.includes("useInView(sectionRef, 3000)")
+    && app.includes("useInView(sectionRef, 120)")
     && app.includes("board-gate-placeholder")
     && styles.includes(".board-gate.is-pending");
   const hasFundingReadout = boards.includes("function FundingTrendInsight")
@@ -1923,9 +1934,10 @@ try {
 }
 
 try {
-  const [appSource, boardsSource, animSource, workflowSource, version, publicNews, publicResearch, publicMarket] = await Promise.all([
+  const [appSource, boardsSource, animSource, workflowSource, version, overview, publicNews, publicResearch, publicMarket] = await Promise.all([
     readFile("app.jsx", "utf8"), readFile("boards.jsx", "utf8"), readFile("anim.jsx", "utf8"),
     readFile(".github/workflows/daily-news.yml", "utf8"), readFile("data-version.json", "utf8").then(JSON.parse),
+    readFile("overview-view.json", "utf8").then(JSON.parse),
     readFile("news-view.json", "utf8").then(JSON.parse), readFile("research-view.json", "utf8").then(JSON.parse),
     readFile("market-view.json", "utf8").then(JSON.parse),
   ]);
@@ -1940,11 +1952,13 @@ try {
     && Array.isArray(record.consolidatedInsights) && record.consolidatedInsights.length >= 1
     && record.consolidatedInsights.length <= 3);
   if (!version.version || !/data-version\.json/.test(appSource)
-    || !/news-view\.json/.test(appSource) || !/research-view\.json/.test(appSource)
+    || !/overview-view\.json/.test(appSource) || !/news-view\.json/.test(appSource) || !/research-view\.json/.test(appSource)
     || !/market-view\.json/.test(boardsSource) || /Math\.floor\(Date\.now\s*\/\s*60000\)/.test(`${appSource}\n${boardsSource}`)
     || /setInterval\(_queueScan,\s*600\)/.test(animSource)
     || !/build-public-data\.mjs/.test(workflowSource)
-    || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(marketRecords)
+    || overview.sourceMode !== "generated-source-backed" || overview.companyCount !== Object.keys(overview.companies || {}).length
+    || !safe(overview.articles || []) || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(marketRecords)
+    || !(version.assets || []).includes("overview-view.json")
     || remainingMarketDuplicates || !mergedMarketRecordsValid
     || publicMarket.database?.mode !== "latest-verified-snapshot"
     || publicMarket.database?.publicRetention !== "current-only"
@@ -2356,7 +2370,7 @@ try {
   // records never reach a "-view.json" or a directly-fetched file, which are
   // the only surfaces a user can actually see.
   const jsonFiles = [
-    "audit.json", "collection-health.json", "companies.json", "company-news.json", "insights.json",
+    "audit.json", "collection-health.json", "companies.json", "company-news.json", "insights.json", "overview-view.json",
     "llm-health.json", "monetization.json", "monetization-review-queue.json", "mobile-ai-business-view.json", "news-view.json", "nvidia-investments.json", "quality.json",
     "research-view.json", "startups.json", "stocks.json", "business-model-forecasts.json",
     "market-view.json", "stock-events.json",

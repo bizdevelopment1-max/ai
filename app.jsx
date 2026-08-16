@@ -31,11 +31,16 @@ const COLOR_PRESETS = [
 // immediate without paying the full DOM cost during first paint.
 function LazySection({ id, active, sectionRef, height = 420, children }) {
   const innerRef = uR(null);
-  const nearViewport = useInView(sectionRef, 3000);
+  const nearViewport = useInView(sectionRef, 120);
   const [ready, setReady] = uS(active === id);
   uE(() => {
-    if (nearViewport || active === id) setReady(true);
-  }, [nearViewport, active, id]);
+    if (active === id) { setReady(true); return undefined; }
+    if (!nearViewport || ready) return undefined;
+    // Let the first screen paint before a below-fold consulting board expands
+    // the DOM. Direct navigation still mounts the requested board immediately.
+    const timer = window.setTimeout(() => setReady(true), 1200);
+    return () => window.clearTimeout(timer);
+  }, [nearViewport, active, id, ready]);
   return (
     <div ref={sectionRef} className={"board-gate" + (ready ? " is-ready" : " is-pending")}
       style={{ "--gate-height": `${height}px` }} data-section={id} data-active={active === id ? "true" : "false"}>
@@ -83,12 +88,8 @@ function App() {
     overview: uR(null), strategy: uR(null), opportunity: uR(null), themes: uR(null), valuechain: uR(null),
     newbiz: uR(null), signals: uR(null), sanalysis: uR(null), evidence: uR(null), validation: uR(null),
   };
-  const strategyInView = useInView(refs.strategy);
-  const valueChainInView = useInView(refs.valuechain);
   const startupInView = useInView(refs.sanalysis);
-  const companySectionActive = ["strategy", "valuechain", "sanalysis"].includes(active);
-  const companyInView = strategyInView || valueChainInView || startupInView || companySectionActive;
-  const needsCompanyData = companyInView || active === "overview" || !!selected;
+  const needsFullCompanyData = startupInView || active === "sanalysis" || !!selected;
   const articlesInView = useInView(refs.evidence);
   const signalsInView = useInView(refs.signals);
   const newbizInView = useInView(refs.newbiz);
@@ -99,15 +100,14 @@ function App() {
   const [dataVersion, setDataVersion] = uS("");
   const [dataGeneratedAt, setDataGeneratedAt] = uS("");
   const dataUrl = file => `${file}?v=${encodeURIComponent(dataVersion || "bootstrap")}`;
-  const needsNews = articlesInView || companyInView || signalsInView || newbizInView
-    || ["overview", "evidence", "signals", "newbiz"].includes(active);
+  const needsFullNews = articlesInView || signalsInView || newbizInView
+    || ["evidence", "signals", "newbiz"].includes(active);
 
   // A tiny version manifest is the only uncacheable request. Every sizeable
   // data file is immutable for that version and can therefore be CDN-cached.
   uE(() => {
     let alive = true;
-    fetch("data-version.json", { cache: "no-store" })
-      .then(r => (r.ok ? r.json() : null))
+    loadJson("data-version.json", { cache: "no-store" })
       .then(j => { if (alive) { setDataVersion(j?.version || j?.generatedAt || "bootstrap"); setDataGeneratedAt(j?.generatedAt || ""); } })
       .catch(() => { if (alive) setDataVersion("bootstrap"); });
     return () => { alive = false; };
@@ -117,15 +117,39 @@ function App() {
   // if provenance cannot be loaded, the feed stays empty rather than showing unverified claims.
   // 캐시버스터: GitHub Pages CDN(edge)은 URL 기준 캐시 → 분 단위 쿼리스트링으로 항상 최신 파일을 받게 함
   const [crawled, setCrawled] = uS([]);
+  const [coOverview, setCoOverview] = uS(null);
+  const [insights, setInsights] = uS({ cards: [], engine: "rules" });
   uE(() => {
-    if (!dataVersion || !needsNews) return;
     let alive = true;
-    fetch(dataUrl("news-view.json"), { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
-      .then(j => { if (alive) setCrawled(j && Array.isArray(j.articles) ? j.articles : []); })
-      .catch(() => { if (alive) setCrawled([]); });
+    // Start the first-screen payload in parallel with data-version.json. It is
+    // deliberately revalidated by URL, removing one network round trip from
+    // the critical path while still showing the newest published snapshot.
+    loadJson("overview-view.json", { cache: "no-store" })
+      .then(j => {
+        if (!alive || !j) return;
+        setCrawled(Array.isArray(j.articles) ? j.articles : []);
+        setCoOverview(j.companies || {});
+        setInsights(j.insights || { cards: [], engine: "rules" });
+      })
+      .catch(() => {
+        if (!alive) return;
+        setCrawled([]);
+        setCoOverview({});
+        setInsights({ cards: [], engine: "rules" });
+      });
     return () => { alive = false; };
-  }, [dataVersion, needsNews]);
+  }, []);
+
+  // The complete evidence ledger is needed only by evidence-heavy views. The
+  // overview and strategy screen stay on the generated compact snapshot.
+  uE(() => {
+    if (!dataVersion || !needsFullNews) return;
+    let alive = true;
+    loadJson(dataUrl("news-view.json"))
+      .then(j => { if (alive) setCrawled(Array.isArray(j?.articles) ? j.articles : []); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [dataVersion, needsFullNews]);
   // device-topic articles (co "AI 노트북"/"AI 폰")을 제목 기준으로 실제 업체에 재분류, 매칭 없으면 co 제거
   const DEVICE_CO_MAP = [
     [/iphone|ipad|siri|apple intelligence|\bapple\b|macbook|\bm[0-9] |vision pro/i, "Apple"],
@@ -147,21 +171,6 @@ function App() {
         && a.summaryMode === "source-content-extractive" && a.provenance?.status === "source-backed");
   }, [crawled]);
 
-  // 매일 갱신되는 '오늘의 톱라인' 인사이트. 근거 데이터가 없으면 빈 상태를 유지한다.
-  const [insights, setInsights] = uS({ cards: [], engine: "rules" });
-  uE(() => {
-    if (!dataVersion) return;
-    let alive = true;
-    fetch(dataUrl("insights.json"), { cache: "force-cache" })
-      .then(r => (r.ok ? r.json() : null))
-      .then(j => {
-        const cards = (j && j.cards || []).filter(card => card.provenance?.status === "evidence-linked");
-        if (alive) setInsights({ ...(j || {}), cards });
-      })
-      .catch(() => { if (alive) setInsights({ cards: [], engine: "rules" }); });
-    return () => { alive = false; };
-  }, [dataVersion]);
-
   // 증권사 리서치(research.json)·기업 라이브(companies.json)
   const [research, setResearch] = uS(null);
   const [coLive, setCoLive] = uS(null);
@@ -170,25 +179,25 @@ function App() {
   const [startupCatalog, setStartupCatalog] = uS([]);
   const [monet, setMonet] = uS(null);
   uE(() => {
-    if (!dataVersion) return;
+    if (!dataVersion || !(articlesInView || active === "evidence")) return;
     let alive = true;
-    fetch(dataUrl("research-view.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
+    loadJson(dataUrl("research-view.json"))
       .then(j => {
         const feed = (j && j.feed || []).filter(item => item.displayEligible !== false && item.provenance?.status === "source-backed");
         if (alive && feed.length) setResearch({ ...j, onepager: null, feed });
       }).catch(() => {});
     return () => { alive = false; };
-  }, [dataVersion]);
+  }, [dataVersion, articlesInView, active]);
 
   // Lower sections do not compete with the first viewport. The largest live
   // files are requested only when their respective section is near the reader.
   uE(() => {
-    if (!needsCompanyData || !dataVersion) return;
+    if (!needsFullCompanyData || !dataVersion) return;
     let alive = true;
-    fetch(dataUrl("companies.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
+    loadJson(dataUrl("companies.json"))
       .then(j => { if (alive && j && j.companies) setCoLive(j.companies); }).catch(() => {});
     return () => { alive = false; };
-  }, [needsCompanyData, dataVersion]);
+  }, [needsFullCompanyData, dataVersion]);
 
   // Company articles and startup monetization are detail payloads. They are
   // warmed only for the startup view or an opened company, rather than
@@ -197,11 +206,11 @@ function App() {
   uE(() => {
     if (!needsCompanyExtras || !dataVersion) return;
     let alive = true;
-    fetch(dataUrl("company-news.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
+    loadJson(dataUrl("company-news.json"))
       .then(j => { if (alive && j && j.companies) setCompanyNews(j.companies); }).catch(() => {});
-    fetch(dataUrl("monetization.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null))
+    loadJson(dataUrl("monetization.json"))
       .then(j => { if (alive && j && Array.isArray(j.companies)) setMonet(j); }).catch(() => {});
-    fetch(dataUrl("startups.json"), { cache: "force-cache" }).then(r => { if (r.ok) return r.json(); return null; })
+    loadJson(dataUrl("startups.json"))
       .then(j => { if (alive && j && (j.large || j.small)) {
         const m = {};
         (j.large || []).filter(x => x.provenance?.status === "source-backed").forEach(x => { m[x.name] = { overview: x.businessModel, insight: x.partnership, label: x.label, tier: "large" }; });
@@ -220,7 +229,8 @@ function App() {
   // 확인된 사업 내용만 화면에 합성한다. 고정된 중국 전략·인물·수치 서술은
   // 라이브 근거가 없으면 렌더링하지 않는다.
   const companiesLive = useMemo(() => (D.COMPANIES || []).map(c => {
-    const lv = coLive && coLive[c.name];
+    const companyData = coLive || coOverview || {};
+    const lv = companyData[c.name];
     const strat = startupsX && (startupsX[c.name] || startupsX[c.name.replace(/\s*\(.*\)/, "")]);
     const sourceGated = new Set(["DeepSeek", "Kling AI", "Hailuo (MiniMax)"]).has(c.name);
     const sections = lv?.intelligence
@@ -233,8 +243,26 @@ function App() {
     if (sourceGated && !hasSourceEvidence) return null;
     // Legacy hand-entered valuation, funding and KPI values stay in the
     // append-only ledger but do not reach the public company map.
-    const merged = { ...c, valuation: "—", valAsof: "", metric: "원문 기사", value: "—", metricAsof: "", funding: "—" };
-    merged.profile = sourceGated ? (lv?.profile || null) : ((lv && lv.profile) || (D.COMPANY_PROFILES || {})[c.name] || null); // 정규화 개요: 라이브 변동값 우선
+    const merged = {
+      name: c.name,
+      cat: c.cat,
+      group: c.group,
+      domain: c.domain,
+      unit: c.unit,
+      url: c.url,
+      valuation: "—",
+      valAsof: "",
+      metric: "원문 기사",
+      value: "—",
+      metricAsof: "",
+      funding: "—",
+      trend: 0,
+      note: "",
+      vp: "",
+      direction: "",
+      sources: [],
+    };
+    merged.profile = lv?.profile || null;
     const ly = (D.COMPANY_LAYER || {})[c.name];                    // AI 밸류체인 계층·버티컬
     merged.layer = ly ? ly.layer : null;
     merged.vchainVertical = ly ? ly.vertical : "";
@@ -250,9 +278,9 @@ function App() {
       );
       merged.org = organization ? { mission: "", leadership: [], officers: verifiedPeople, executiveTeam: verifiedPeople, officialPages, sourceMode: "official-only" } : null;
     } else {
-      merged.org = (lv && lv.organization) || (D.COMPANY_ORG || {})[c.name] || null; // 정규화 조직: live officers + 큐레이션 배경
+      merged.org = lv?.organization || null;
     }
-    merged.invest = (D.COMPANY_INVEST || {})[c.name] || null;      // AI SW·서비스 투자 포트폴리오·전략 맵
+    merged.invest = null;
     // 메인 카드도 상세 팝업과 같은 최신 원문 합성 결과를 우선한다.
     // 정적 레지스트리는 회사명·분류·도메인만 담당하고, 사업/수익/방향은
     // daily pipeline의 source-grounded intelligence가 매 실행마다 교체한다.
@@ -260,9 +288,9 @@ function App() {
     if (intel) {
       merged.intelligence = intel;
       const groundedSummary = section => section?.groundingStatus === "source-grounded" ? (section.summary || "") : "";
-      merged.note = groundedSummary(intel.currentBusiness) || (sourceGated ? "" : merged.note);
-      merged.vp = groundedSummary(intel.revenueModel) || (sourceGated ? "" : merged.vp);
-      merged.direction = groundedSummary(intel.strategyDirection) || (sourceGated ? "" : merged.direction);
+      merged.note = groundedSummary(intel.currentBusiness);
+      merged.vp = groundedSummary(intel.revenueModel);
+      merged.direction = groundedSummary(intel.strategyDirection);
     }
     // 원문 기반 수익모델·사업 방향(monetization.json) — 원문 링크 신호 + 밸류체인 legend
     merged.monetize = monet
@@ -271,7 +299,15 @@ function App() {
     if (lv) { merged.live = lv; if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); } }
     if (strat) merged.strategy = strat;
     return merged;
-  }).filter(Boolean), [coLive, startupsX, monet]);
+  }).filter(Boolean), [coLive, coOverview, startupsX, monet]);
+
+  // The site CLI searches the same generated records currently rendered by
+  // the dashboard, so its answers advance with the crawler instead of a
+  // separately maintained static index.
+  uE(() => {
+    window.__DASH_LIVE_DOCS = { companies: companiesLive, articles, insights, research };
+    return () => { delete window.__DASH_LIVE_DOCS; };
+  }, [companiesLive, articles, insights, research]);
 
   // 좌측 내비게이션과 본문이 동일한 분류 원장을 사용한다. 밸류체인은
   // 7개 계층, 파트너 후보는 공개 근거가 있는 분류 전체를 노출한다.
@@ -318,8 +354,8 @@ function App() {
     let alive = true;
     Promise.all([
       // 주가 파일은 최신 거래일이 핵심이므로 서비스워커·브라우저의 오래된 응답을 재사용하지 않는다.
-      fetch(dataUrl("stocks.json"), { cache: "no-store" }).then(r => (r.ok ? r.json() : null)),
-      fetch(dataUrl("nvidia-investments.json"), { cache: "force-cache" }).then(r => (r.ok ? r.json() : null)),
+      loadJson(dataUrl("stocks.json"), { cache: "no-store" }),
+      loadJson(dataUrl("nvidia-investments.json")),
     ])
       .then(([stocksPayload, investmentPayload]) => {
         if (!alive) return;
@@ -518,7 +554,7 @@ function App() {
       } else {
         const live = (coLive && coLive[company.name]) || {};
         const profile = live.profile || company.profile || {};
-        const organization = live.organization || company.organization || (D.COMPANY_ORG || {})[company.name] || null;
+        const organization = live.organization || company.organization || null;
         const evidence = [company.latest, ...(company.history || []), ...(company.sourceLinks || [])]
           .filter(item => item && /^https?:\/\//.test(String(item.url || "")))
           .slice(0, 10);
@@ -577,7 +613,7 @@ function App() {
           <div className="main-inner">
             {/* ── 1. 첫 화면: 관계 지도 + 영상 브리핑 ── */}
             <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="Mobile AI Video Brief">
-              <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} />
+              <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} dataVersion={dataVersion} />
             </section>
 
             {/* ── 2. 전략 컨설팅: 영상 다음에 바로 노출 ── */}
@@ -588,7 +624,7 @@ function App() {
             {/* ── 3. 기회 DB: 브리프 → 정량 기회 ── */}
             <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={1080}>
               <SectionStack bodyClassName="opportunity-stack">
-                <ExecToplines items={D.TOPLINE} insights={insights} onNav={navTo} />
+                <ExecToplines items={[]} insights={insights} onNav={navTo} />
                 <MobileAIBusinessBoard dataVersion={dataVersion} />
               </SectionStack>
             </LazySection>

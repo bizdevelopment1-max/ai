@@ -13,6 +13,28 @@ const AnimCtx = createCtxA(false); // legacy fallback context
 // 데이터 지연 로딩에 쓰이는 useInView는 모션 설정과 분리해 실제 위치를 계속 측정한다.
 const REDUCED = true;
 
+// Versioned public JSON is immutable for the lifetime of a deployment. Keep
+// one in-flight/resolved promise per URL so independently mounted boards do
+// not download and parse the same payload more than once.
+const _jsonRequests = new Map();
+function loadJson(url, options = {}) {
+  const cacheMode = options.cache || "force-cache";
+  const bypass = cacheMode === "no-store" || options.refresh === true;
+  const request = () => fetch(url, { ...options, cache: cacheMode })
+    .then(response => {
+      if (!response.ok) throw new Error(`JSON ${response.status}: ${url}`);
+      return response.json();
+    });
+  if (bypass) return request();
+  if (!_jsonRequests.has(url)) {
+    _jsonRequests.set(url, request().catch(error => {
+      _jsonRequests.delete(url);
+      throw error;
+    }));
+  }
+  return _jsonRequests.get(url);
+}
+
 /* ============================================================
    Eye-level trigger engine (scroll-position based, NOT
    IntersectionObserver). The dashboard scrolls inside `.main`,
@@ -106,24 +128,24 @@ function useInView(ref, lead = 1400) {
   useEffectA(() => {
     const el = ref && ref.current;
     if (!el) return;
-    let confirmTimer = 0;
-    const update = visible => {
-      clearTimeout(confirmTimer);
-      if (!visible) { setInView(false); return; }
-      // Async first-view data can expand the boards above this element. Confirm
-      // the position after that short layout window so lower payloads are not
-      // fetched because of a transient, pre-data offset.
-      confirmTimer = setTimeout(() => {
-        const r = el.getBoundingClientRect();
-        const vh = window.innerHeight || document.documentElement.clientHeight || 800;
-        const sectionId = el.closest?.("[data-section]")?.dataset?.section;
-        const navTarget = window.__DASH_NAV_TARGET;
-        const belongsToTarget = !navTarget || !sectionId || sectionId === navTarget;
-        setInView(belongsToTarget && r.top < vh * EYE_BOTTOM + lead && r.bottom > vh * EYE_TOP - lead);
-      }, 60);
-    };
-    const unregister = _register(el, update, lead);
-    return () => { clearTimeout(confirmTimer); unregister(); };
+    const root = el.closest?.(".main") || null;
+    if (!("IntersectionObserver" in window)) {
+      setInView(true);
+      return undefined;
+    }
+    const observer = new IntersectionObserver(entries => {
+      const entry = entries[0];
+      const sectionId = el.closest?.("[data-section]")?.dataset?.section;
+      const navTarget = window.__DASH_NAV_TARGET;
+      const belongsToTarget = !navTarget || !sectionId || sectionId === navTarget;
+      setInView(Boolean(entry?.isIntersecting && belongsToTarget));
+    }, {
+      root,
+      rootMargin: `${Math.max(0, Number(lead) || 0)}px 0px`,
+      threshold: 0,
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
   }, [lead]);
   return inView;
 }

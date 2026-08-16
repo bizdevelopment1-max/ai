@@ -65,7 +65,8 @@ for (const removed of removedSections) {
   assert(!uiText.includes(removed), `삭제된 섹션이 다시 노출됩니다: ${removed}`);
 }
 
-assert(/useInView\(sectionRef, 3000\)/.test(app), "하단 보드 사전 로딩 범위가 적용되지 않았습니다");
+assert(/useInView\(sectionRef, 120\)/.test(app), "하단 보드 사전 로딩 범위가 적용되지 않았습니다");
+assert(/loadJson\("overview-view\.json", \{ cache: "no-store" \}\)/.test(app), "초기 화면 전용 생성 데이터가 적용되지 않았습니다");
 assert(/needsCompanyExtras/.test(app), "초기 화면과 상세 데이터 요청이 분리되지 않았습니다");
 assert(/fmtNum\(p\.num, p\)/.test(anim), "숫자 첫 화면의 0 플래시 방지가 적용되지 않았습니다");
 assert(/Math\.min\(dur \|\| 420, 620\)/.test(anim), "숫자 애니메이션 시간 상한이 적용되지 않았습니다");

@@ -580,40 +580,30 @@ function siteCliText(value, limit = 2600) {
 }
 
 function buildSiteCliIndex() {
-  const D = window.DASH || {};
+  const live = window.__DASH_LIVE_DOCS || {};
   const docs = [];
   const add = (kind, title, text, nav, url, source) => {
     const body = siteCliText(text).replace(/\s+/g, " ").trim();
     if (!title || !body) return;
     docs.push({ id: `${kind}-${docs.length}`, kind, title: String(title), text: body, nav, url, source });
   };
-  (D.COMPANIES || []).forEach(company => add(
+  (live.companies || []).forEach(company => add(
     "기업",
     company.name,
-    [company.unit, company.note, company.vp, company.direction, company.metric, company.value,
-      company.funding, company.valuation, siteCliText(D.COMPANY_PROFILES?.[company.name])].filter(Boolean).join(" · "),
+    [company.unit, company.note, company.vp, company.direction, siteCliText(company.profile),
+      siteCliText(company.live?.latest)].filter(Boolean).join(" · "),
     company.cat,
     company.url,
     company.domain,
   ));
-  (D.INSIGHTS || []).forEach(item => add("전략", item.title, item.desc, "overview", item.url, item.src));
-  (D.ARTICLES || []).forEach(item => add(
+  (live.insights?.cards || []).forEach(item => add("전략", item.axisLabel || item.headline, item, "overview", item.evidence?.[0]?.url, item.evidence?.[0]?.source));
+  (live.articles || []).forEach(item => add(
     "기사", item.title, [item.co, item.summary, item.tag, item.date].filter(Boolean).join(" · "),
     "articles", item.url, item.source,
   ));
-  (D.QA_PAIRS || []).forEach(item => add("분석", item.q, item.a, item.nav || "overview", "", "사이트 분석"));
-  [
-    ["시장", D.MARKET_GROWTH, "market"],
-    ["시장", D.MARKET_VERTICAL, "market"],
-    ["비즈니스 모델", D.BIZ_MODELS, "newbiz"],
-    ["비즈니스 모델", D.PRICING_MODELS, "newbiz"],
-    ["소비자 조사", D.USERS, "survey"],
-    ["소비자 조사", D.SHARE, "survey"],
-    ["리서치", D.REPORTS, "ib"],
-  ].forEach(([kind, rows, nav]) => (rows || []).forEach((row, index) => {
-    const title = row.title || row.name || row.label || row.market || `${kind} ${index + 1}`;
-    add(kind, title, row, nav, row.url || row.sourceUrl, row.source || row.src);
-  }));
+  (live.research?.feed || []).forEach(item => add(
+    "리서치", item.titleKo || item.title, item.summary || item.desc, "ib", item.url, item.source || item.house,
+  ));
   return docs;
 }
 
@@ -1162,6 +1152,7 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
             if (event.key === "Enter") { event.preventDefault(); launcher.trim() ? execute(launcher) : setVisible(true); }
           }}
           placeholder="/cloud 요청 · /search · /status"
+          name="site-cli-command"
           aria-label="사이트 CLI 명령어"
           data-preserve-copy="true"
         />
@@ -1270,6 +1261,7 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
                 onChange={event => setInput(event.target.value)}
                 onKeyDown={onTerminalKey}
                 placeholder="/cloud 요청으로 시작 · Tab 자동완성 · ↑/↓ 명령 기록"
+                name="site-cli-terminal-command"
                 rows="1"
                 disabled={busy}
                 data-preserve-copy="true"
