@@ -4,6 +4,18 @@ GitHub Pages dashboard: <https://bizdevelopment1-max.github.io/ai/>
 
 Data contracts, retention, lineage, SLOs, and external storage activation: [`DATA_PLATFORM.md`](DATA_PLATFORM.md)
 
+## Continuous content updates
+
+The site has one automated content contract in
+[`config/site-content-registry.json`](config/site-content-registry.json).
+Business facts are collected into cumulative ledgers, verified, then exposed
+only through generated public views. Run `npm run update:site` for the full
+pipeline, `npm run update:site:recovery` for source recovery, or
+`npm run update:site:publish` to rebuild and validate the site from existing
+data. Every run produces `automation-status.json`; the public
+`site-content-manifest.json` records freshness, counts and checksums for each
+visible section.
+
 ## ChatGPT Pro · GitHub Codex Cloud
 
 GitHub Pages의 Site CLI는 `/ask`와 `/edit` 요청을 GitHub Issue로 기록하고 ChatGPT Pro 계정의 Codex Cloud 실행문을 생성한다. 최초 1회 `https://chatgpt.com/codex`에서 Pro 계정으로 로그인하고 `bizdevelopment1-max/ai` 저장소 환경을 연결한 뒤, 복사된 실행문을 Codex Cloud에 붙여넣어 작업한다.

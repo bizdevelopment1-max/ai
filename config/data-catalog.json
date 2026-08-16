@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "updatedAt": "2026-08-16",
   "defaultOwner": "Data Platform",
   "defaultSteward": "Intelligence Operations",
@@ -101,6 +101,28 @@
       "retention": "latest-view-with-ledger-lineage",
       "upstream": ["company-intelligence", "news-ledger", "decision-intelligence", "dashboard-taxonomy"],
       "downstream": ["static-site"]
+    },
+    {
+      "id": "site-content-manifest",
+      "path": "site-content-manifest.json",
+      "recordPath": "datasets",
+      "role": "public-content-observability",
+      "sensitivity": "public",
+      "publication": "public",
+      "retention": "latest-run-with-pipeline-ledger",
+      "upstream": ["site-content-registry", "materialized-public-views"],
+      "downstream": ["publication-gates", "static-site"]
+    },
+    {
+      "id": "automation-status",
+      "path": "automation-status.json",
+      "recordPath": "stages",
+      "role": "pipeline-run-status",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "retention": "latest-plus-monthly-jsonl-ledger",
+      "upstream": ["unified-site-updater"],
+      "downstream": ["pipeline-audit", "operations"]
     }
   ],
   "sensitiveFieldPolicy": {

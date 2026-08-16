@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-16",
+  "refreshCadenceHours": 6,
+  "publicationPolicy": {
+    "publicSource": "materialized-views-only",
+    "missingData": "hide-section",
+    "allowMutableUiFallbacks": false,
+    "retainRawHistory": true,
+    "approvalRequired": true
+  },
+  "datasets": [
+    { "id": "overview", "path": "overview-view.json", "section": "overview", "recordPath": "articles", "countMode": "array", "required": true, "maxAgeHours": 7, "collector": "build-public-data" },
+    { "id": "strategy", "path": "strategy-view.json", "section": "strategy", "recordPath": "opportunityPortfolio", "countMode": "array", "required": true, "maxAgeHours": 7, "collector": "build-public-data" },
+    { "id": "news", "path": "news-view.json", "section": "evidence", "recordPath": "articles", "countMode": "array", "required": true, "maxAgeHours": 7, "collector": "crawl-news" },
+    { "id": "research", "path": "research-view.json", "section": "evidence", "recordPath": "feed", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-research" },
+    { "id": "companies", "path": "companies.json", "section": "valuechain", "recordPath": "companies", "countMode": "object", "required": true, "maxAgeHours": 25, "collector": "crawl-companies" },
+    { "id": "company-news", "path": "company-news.json", "section": "valuechain", "recordPath": "companies", "countMode": "object", "required": true, "maxAgeHours": 7, "collector": "build-company-news" },
+    { "id": "startups", "path": "startups.json", "section": "sanalysis", "recordPath": "large", "countMode": "array", "required": true, "maxAgeHours": 169, "collector": "crawl-startups" },
+    { "id": "monetization", "path": "monetization.json", "section": "newbiz", "recordPath": "companies", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-monetization" },
+    { "id": "business-model-forecasts", "path": "business-model-forecasts.json", "section": "newbiz", "recordPath": "models", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-company-intelligence" },
+    { "id": "business-model-signals", "path": "bizmodel-view.json", "section": "newbiz", "recordPath": "items", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-bizmodel" },
+    { "id": "technology-signals", "path": "infra-view.json", "section": "signals", "recordPath": "items", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-infra" },
+    { "id": "market", "path": "market-view.json", "section": "validation", "recordPath": "records", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-markets" },
+    { "id": "stocks", "path": "stocks.json", "section": "validation", "recordPath": "stocks", "countMode": "object", "required": true, "maxAgeHours": 49, "collector": "crawl-stocks" },
+    { "id": "investments", "path": "nvidia-investments.json", "section": "validation", "recordPath": "portfolio", "countMode": "array", "required": false, "maxAgeHours": 169, "collector": "build-nvidia-investments" },
+    { "id": "decision-intelligence", "path": "mobile-ai-business-view.json", "section": "strategy", "recordPath": "signals", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-mobile-ai-business-db" },
+    { "id": "insights", "path": "insights.json", "section": "opportunity", "recordPath": "cards", "countMode": "array", "required": true, "maxAgeHours": 7, "collector": "build-insights" }
+  ]
+}

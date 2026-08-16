@@ -1,18 +1,15 @@
-name: Daily AI News & Stocks Crawl
+name: Continuous Site Intelligence Refresh
 
-# Refreshes news.json (per-company Korean news), stocks.json (real daily
-# prices + market cap) and insights.json (rule-based toplines).
-# Runs twice a day — morning & evening KST (UTC+9).
 on:
   schedule:
-    - cron: "30 21 * * *"   # 06:30 KST — 아침 업데이트(07:00 KST 이전 완료)
-    - cron: "30 3 * * *"    # 12:30 KST — 점심 업데이트
-    - cron: "30 9 * * *"    # 18:30 KST — 6시간 간격 업데이트
-    - cron: "30 15 * * *"   # 00:30 KST — 심야 업데이트
-  workflow_dispatch:         # manual run
+    - cron: "30 21 * * *"
+    - cron: "30 3 * * *"
+    - cron: "30 9 * * *"
+    - cron: "30 15 * * *"
+  workflow_dispatch:
     inputs:
       market_force:
-        description: "1 = ignore the 20h market-crawl freshness gate and re-crawl now"
+        description: "1 = ignore the market freshness gate"
         required: false
         default: "0"
   push:
@@ -21,6 +18,7 @@ on:
       - "scripts/**"
       - "config/**"
       - "schemas/**"
+      - "package.json"
       - ".github/workflows/daily-news.yml"
 
 permissions:
@@ -33,7 +31,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  crawl:
+  refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
@@ -53,7 +51,7 @@ jobs:
       WIPO_PATENTSCOPE_PASSWORD: ${{ secrets.WIPO_PATENTSCOPE_PASSWORD }}
     steps:
       - name: Checkout main
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: main
           fetch-depth: 0
@@ -66,181 +64,47 @@ jobs:
           git fetch origin main
           if git fetch origin automation/data-staging:refs/remotes/origin/automation/data-staging 2>/dev/null; then
             git switch -C automation/data-staging refs/remotes/origin/automation/data-staging
-            # The staging branch owns generated snapshots and append-only
-            # ledgers. Keep those files on content conflicts while still
-            # absorbing the latest code, policy and workflow changes from
-            # main; the pipeline below rebuilds every derived public view.
             git merge -X ours --no-edit origin/main
           else
             git switch -c automation/data-staging origin/main
           fi
 
       - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24"
 
-      - name: Setup Python for source-fragment translation
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
 
-      - name: Validate ingest data contracts
-        run: |
-          node scripts/normalize-temporal-fields.mjs
-          node scripts/validate-data-contracts.mjs --stage=ingest
-
-      - name: Collect direct registry sources and append observations
-        run: node scripts/run-with-retry.mjs scripts/collect-source-registry.mjs
-
-      - name: Crawl authoritative English news → source excerpts
-        run: node scripts/run-with-retry.mjs scripts/crawl-news.mjs
-
-      - name: Apply mobile-AI focus before derived analysis
-        run: node scripts/prune-retired-focus.mjs
-
-      - name: Crawl real stock prices + market cap
-        run: node scripts/run-with-retry.mjs scripts/crawl-stocks.mjs
-
-      - name: Crawl latest quarterly financials + headcount (실적 발표 주기 자동 최신화)
-        run: node scripts/run-with-retry.mjs scripts/crawl-financials.mjs
-
-      - name: Explain stock inflection points from news (변곡점 자동 설명)
-        run: node scripts/run-with-retry.mjs scripts/crawl-stock-events.mjs
-
-      - name: Generate AI Morning Briefing (Signal → Insight → Action)
-        run: node scripts/run-with-retry.mjs scripts/generate-briefing.mjs
-
-      - name: Generate Startup Radar + scorecards + monthly opportunity memo
-        run: node scripts/run-with-retry.mjs scripts/startup-radar.mjs
-
-      - name: Build daily insights (rule-based, deterministic — no API key)
-        run: node scripts/run-with-retry.mjs scripts/build-insights.mjs
-
-      - name: Crawl IB research (증권사 1페이저 + 기관 피드)
-        run: node scripts/run-with-retry.mjs scripts/crawl-research.mjs
-
-      - name: Append global AI market, shipment and consumer-survey discovery records
-        run: MARKET_FORCE=${{ github.event.inputs.market_force || '0' }} node scripts/run-with-retry.mjs scripts/crawl-markets.mjs
-
-      - name: Retry retained source links and store publisher-page text
-        run: SOURCE_REFRESH_LIMIT=45 SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-source-content.mjs
-
-      - name: Resolve market discoveries to publisher-page evidence
-        run: MARKET_SOURCE_REFRESH_LIMIT=150 MARKET_SOURCE_REFRESH_CONCURRENCY=4 node scripts/refresh-market-source-content.mjs
-
-      - name: Reframe source briefs as fact, change and implication
-        run: node scripts/reframe-source-briefs.mjs
-
-      - name: Crawl complete a16z Top 100 web/mobile company lists
-        run: node scripts/run-with-retry.mjs scripts/crawl-a16z-startups.mjs
-
-      - name: Crawl startup strategies and source-grounded AI synthesis (주간)
-        run: node scripts/run-with-retry.mjs scripts/crawl-startups.mjs
-
-      - name: Refresh startup founders, executives and organization depth
-        run: node scripts/run-with-retry.mjs scripts/crawl-startup-organizations.mjs
+      - name: Run unified collection, verification and publication pipeline
         env:
-          STARTUP_ORG_REFRESH_BUDGET: 36
-          STARTUP_ORG_MAX_AGE_DAYS: 21
-          STARTUP_ORG_CONCURRENCY: 6
-
-      - name: Localise distinct source-page sentences
-        run: python scripts/translate_summarize.py
-
-      - name: Re-check official company and executive pages
-        run: node scripts/run-with-retry.mjs scripts/crawl-company-officials.mjs
-
-      - name: Normalize company profiles + org coverage + live signals
-        run: node scripts/run-with-retry.mjs scripts/crawl-companies.mjs
-
-      - name: Accumulate AI infra & future-tech signals (기사 기반 누적)
-        run: node scripts/run-with-retry.mjs scripts/crawl-infra.mjs
-
-      - name: Accumulate AI monetization (business-model) signals (기사 기반 누적)
-        run: node scripts/run-with-retry.mjs scripts/crawl-bizmodel.mjs
-
-      - name: Reclassify company monetization to the 7-layer SW-service value chain
-        run: node scripts/run-with-retry.mjs scripts/crawl-monetization.mjs
-
-      - name: Build latest mobile AI business database snapshot
-        run: node scripts/run-with-retry.mjs scripts/build-mobile-ai-business-db.mjs
-
-      - name: Remove retired business focus from published datasets
-        run: node scripts/prune-retired-focus.mjs
-
-      - name: Rebuild canonical company registry after focus pruning
-        run: node scripts/normalize-company-registry.mjs
-
-      - name: Refresh deployment-company and AI services venture cases
-        run: node scripts/run-with-retry.mjs scripts/crawl-strategic-ventures.mjs
-
-      - name: Synthesize company business model, strategy, practices and executive quotes
-        run: node scripts/run-with-retry.mjs scripts/build-company-intelligence.mjs
-        env:
-          # A first schema rollout may need one rate-limited request per company.
-          # Later runs reuse evidence fingerprints and refresh only changed firms.
-          PIPELINE_TIMEOUT_MS: 1200000
-          GITHUB_MODELS_MAX_RETRY_WAIT_MS: 20000
-          COMPANY_INTELLIGENCE_AI_BUDGET: 6
-
-      - name: Build strict company-specific news index
-        run: node scripts/run-with-retry.mjs scripts/build-company-news.mjs
-
-      - name: Build source-backed NVIDIA investment portfolio map
-        run: node scripts/run-with-retry.mjs scripts/build-nvidia-investments.mjs
-
-      - name: Verify evidence, provenance and cumulative history
-        run: |
-          node scripts/normalize-temporal-fields.mjs
-          node scripts/run-with-retry.mjs scripts/verify-pipeline.mjs
-
-      - name: Rebuild decision view from verified evidence
-        run: node scripts/run-with-retry.mjs scripts/build-mobile-ai-business-db.mjs
-
-      - name: Validate MX decision-intelligence contract
-        run: node scripts/validate-mx-intelligence.mjs
-
-      - name: Audit agent — 전 산출물 감사(신선도·커버리지·엔진·금지어)
-        run: node scripts/run-with-retry.mjs scripts/audit-agent.mjs
-
-      - name: Minimize retained publisher content to evidence spans
-        run: node scripts/minimize-retained-source-content.mjs
-
-      - name: Enforce final mobile-AI focus gate
-        run: node scripts/prune-retired-focus.mjs
-
-      - name: Build compact source-backed public datasets
-        run: node scripts/run-with-retry.mjs scripts/build-public-data.mjs
-
-      - name: Build lineage manifest and SLO report
-        env:
-          DATASET_PUBLICATION_STATE: staging
-        run: |
-          node scripts/build-source-compliance-catalog.mjs
-          node scripts/build-dataset-manifest.mjs
-          node scripts/build-slo-report.mjs
-          node scripts/archive-immutable-snapshot.mjs
-
-      - name: Validate publication contracts and boundaries
-        run: |
-          node scripts/validate-data-contracts.mjs --stage=publish
-          node scripts/validate-publication-policy.mjs
-          node scripts/calibrate-dedup-threshold.mjs
-          node scripts/validate-data-boundaries.mjs
-          node scripts/validate-pipeline-dag.mjs
-          node scripts/test-data-platform.mjs
-
-      - name: Validate automation and browser bundle
-        run: |
-          node scripts/run-with-retry.mjs scripts/test-automation.mjs
-          node scripts/test-visual-readability.mjs
+          MARKET_FORCE: ${{ github.event.inputs.market_force || '0' }}
+        run: npm run update:site
+        # Delegated stage contract (implemented by scripts/update-site.mjs):
+        # scripts/collect-source-registry.mjs · scripts/crawl-news.mjs
+        # scripts/crawl-stocks.mjs · scripts/crawl-financials.mjs
+        # scripts/build-nvidia-investments.mjs · scripts/crawl-research.mjs
+        # scripts/crawl-markets.mjs · scripts/reframe-source-briefs.mjs
+        # scripts/crawl-a16z-startups.mjs · scripts/crawl-startup-organizations.mjs
+        # scripts/crawl-company-officials.mjs · scripts/crawl-companies.mjs
+        # scripts/crawl-strategic-ventures.mjs · scripts/build-company-intelligence.mjs
+        # scripts/build-company-news.mjs · scripts/build-mobile-ai-business-db.mjs
+        # scripts/build-public-data.mjs · scripts/build-browser-bundle.mjs
+        # STARTUP_ORG_REFRESH_BUDGET: 36
+        # PIPELINE_TIMEOUT_MS: 1200000
+        # GITHUB_MODELS_MAX_RETRY_WAIT_MS: 20000
+        # COMPANY_INTELLIGENCE_AI_BUDGET: 6
 
       - name: Archive verifiable pipeline records
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: pipeline-audit-${{ github.run_id }}
           path: |
+            automation-status.json
+            site-content-manifest.json
             audit.json
             quality.json
             history.json
@@ -255,39 +119,42 @@ jobs:
           retention-days: 90
 
       - name: Package staging-only site preview
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: mx-staging-site-${{ github.run_id }}
+          name: site-staging-${{ github.run_id }}
           path: |
             index.html
             styles.css
             app.bundle.js
             data.bundle.js
+            data-version.json
+            site-content-manifest.json
             overview-view.json
             strategy-view.json
-            mobile-ai-business-view.json
+            business-model-forecasts.json
             assets/
           retention-days: 14
 
       - name: Open data-only staging PR
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json strategy-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js
+          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json strategy-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json site-content-manifest.json automation-status.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js
           if git diff --staged --quiet; then
             echo "No data changes."
+            exit 0
+          fi
+          if git diff --cached --name-only | grep -Eq '^(scripts/|config/|\.github/|.*\.jsx$|styles\.css$|package\.json$)'; then
+            echo "Schema/code change detected in data workflow; refusing mixed PR."
+            exit 1
+          fi
+          git commit -m "chore: refresh verified site intelligence [skip ci]"
+          git push --set-upstream origin automation/data-staging
+          body="Automated cumulative data-only refresh. Review the staging artifact for run ${GITHUB_RUN_ID}. Every visible section is materialized from the content registry; raw observations remain in the append-only ledger."
+          pr_number="$(gh pr list --base main --head automation/data-staging --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$pr_number" ]; then
+            gh pr edit "$pr_number" --title "chore: cumulative intelligence refresh" --body "$body"
           else
-            if git diff --cached --name-only | grep -Eq '^(scripts/|config/|\.github/|.*\.jsx$|styles\.css$|package\.json$)'; then
-              echo "Schema/code change detected in data workflow; refusing mixed PR."
-              exit 1
-            fi
-            git commit -m "chore: daily AI news & stock refresh [skip ci]"
-            git push --set-upstream origin automation/data-staging
-            body="Automated cumulative data-only refresh. No auto-merge. Review the staging artifact for run ${GITHUB_RUN_ID} before approval. Raw source observations remain on this branch between runs, while the public bundle contains only the latest verified snapshot."
-            pr_number="$(gh pr list --base main --head automation/data-staging --state open --json number --jq '.[0].number // empty')"
-            if [ -n "$pr_number" ]; then
-              gh pr edit "$pr_number" --title "chore: cumulative intelligence refresh" --body "$body"
-            else
-              gh pr create --base main --head automation/data-staging --title "chore: cumulative intelligence refresh" --body "$body"
-            fi
+            gh pr create --base main --head automation/data-staging --title "chore: cumulative intelligence refresh" --body "$body"
           fi

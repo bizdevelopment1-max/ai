@@ -163,23 +163,10 @@ function App() {
       .catch(() => {});
     return () => { alive = false; };
   }, [dataVersion, needsFullNews]);
-  // device-topic articles (co "AI 노트북"/"AI 폰")을 제목 기준으로 실제 업체에 재분류, 매칭 없으면 co 제거
-  const DEVICE_CO_MAP = [
-    [/iphone|ipad|siri|apple intelligence|\bapple\b|macbook|\bm[0-9] |vision pro/i, "Apple"],
-    [/copilot\+|surface|windows|\bmicrosoft\b|\bms\b/i, "Microsoft"],
-    [/nvidia|geforce|\brtx\b|n1x|\bgb10\b|project digits|jetson/i, "NVIDIA"],
-    [/pixel|gemini|\bgoogle\b|android|tensor/i, "Google DeepMind"],
-    [/\bmeta\b|llama|ray-ban|quest/i, "Meta AI"],
-  ];
-  const reclassCo = (a) => {
-    if (a.co !== "AI 노트북" && a.co !== "AI 폰") return a;
-    const hit = DEVICE_CO_MAP.find(([re]) => re.test(a.title || ""));
-    return { ...a, co: hit ? hit[1] : "" };   // 매칭되는 업체로, 없으면 업체 미지정(드롭다운 미노출)
-  };
   // 검증된 원문 페이지 발췌만 표시한다. news.json은 최신분과 과거분을
   // 누적 보존하므로, 화면은 같은 원문 기반 형식을 모두 표시한다.
   const articles = useMemo(() => {
-    return crawled.map(reclassCo)
+    return crawled
       .filter(a => a && a.title && a.summary && a.displayEligible !== false
         && a.summaryMode === "source-content-extractive" && a.provenance?.status === "source-backed");
   }, [crawled]);
