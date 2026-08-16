@@ -17,7 +17,7 @@ const [dash, strategy, boards, components, app, anim, index] = await Promise.all
 ]);
 
 assert(strategy.sourceMode === "generated-from-verified-ledgers", "전략 화면이 생성 데이터가 아닙니다");
-assert(strategy.choices?.length === 4, "핵심 플레이는 4개 축으로 구성해야 합니다");
+assert(!Object.hasOwn(strategy, "choices"), "삭제된 우선 플레이 데이터가 전략 뷰에 남아 있습니다");
 assert(strategy.capabilities?.length === 5, "분석 툴킷은 5개 축이 필요합니다");
 assert(strategy.operatingModel?.length === 4, "사용자 신호부터 실행까지 4단계 운영 모델이 필요합니다");
 assert(strategy.decisionOutputs?.length === 4, "경영진 의사결정 산출물은 4개 축이 필요합니다");
@@ -30,6 +30,7 @@ for (const id of ["on-device-trust-security", "clinical-health-ai", "companion-d
 }
 assert(strategy.expertSignals?.length >= 5, "제품·플랫폼 원문 근거가 5건 이상이어야 합니다");
 assert(!/Competitive Platform Portfolio/.test(boards) && /User Moment → Experience Stack → Revenue/.test(boards), "경쟁 기업 포트폴리오는 삭제하고 사용자 순간 컨설팅 화면은 유지해야 합니다");
+assert(!/Where to Play · How to Win/.test(boards) && !/msf-choices|msf-choice|msf-house-pillars/.test(boards), "삭제된 우선 플레이 UI가 남아 있습니다");
 assert(/const recentSignalCount = Number\(c\.live\?\.mentions30 \|\| 0\)/.test(boards) && />최근 30일 신호</.test(boards), "기업 최근 신호는 AI 밸류체인 카드에만 유지해야 합니다");
 assert(/Mobile AI New Business Portfolio/.test(boards) && /Mobile AI Product · Platform · Business Evidence/.test(boards), "신사업과 공식 근거 화면이 필요합니다");
 

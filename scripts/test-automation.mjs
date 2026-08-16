@@ -609,7 +609,7 @@ try {
     && !boards.includes("linkedin.com/search/results/people")
     && !boards.includes("linkedin.com/search/results/companies");
   const strategyReady = strategyView?.sourceMode === "generated-from-verified-ledgers"
-    && strategyView?.choices?.length === 4
+    && !Object.hasOwn(strategyView, "choices")
     && strategyView?.capabilities?.length === 5
     && !Object.hasOwn(strategyView, "horizons")
     && strategyView?.opportunityPortfolio?.length >= 9
@@ -642,7 +642,10 @@ try {
       "Evidence-led",
       "상대 중요도 기준",
       "단말 · OS · 통신사 · NPU · 파트너 · 규제",
+      "Where to Play · How to Win",
+      "개인 컨텍스트·멀티모델 에이전트·서비스 유통·버티컬 포트폴리오의 4개 우선 플레이",
     ].some(copy => boards.includes(copy))
+    && !/msf-choices|msf-choice|msf-house-pillars/.test(boards)
     && boards.includes("Strategy consulting · user need → mobile experience → revenue → execution")
     && boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")
