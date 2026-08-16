@@ -405,7 +405,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
+  const strategy = strategyData || { ...(window.DASH.DECISION_FRAMEWORK || {}), priorityFramework: { items: [], criteria: [], eligibilityGate: {} }, workloadMap: [], opportunityPortfolio: [], expertSignals: [] };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -417,6 +417,15 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
   });
   const controlZones = strategy.operatingModel || [];
   const decisionOutputs = strategy.decisionOutputs || [];
+  const priorityFramework = strategy.priorityFramework || { items: [], criteria: [], eligibilityGate: {} };
+  const priorityItems = priorityFramework.items || [];
+  const priorityGate = priorityFramework.eligibilityGate || {};
+  const priorityBasis = [
+    `${(priorityFramework.criteria || []).length}개 평가축 · 100점`,
+    priorityGate.minimumEvidenceUnits ? `근거 ${priorityGate.minimumEvidenceUnits}건 이상` : "",
+    priorityGate.minimumIndependentSources ? `독립 출처 ${priorityGate.minimumIndependentSources}개 이상` : "",
+    priorityGate.minimumOpportunityScore ? `기회 점수 ${priorityGate.minimumOpportunityScore}점 이상` : "",
+  ].filter(Boolean).join(" · ");
   const workloadMap = strategy.workloadMap || [];
   const opportunityPortfolio = strategy.opportunityPortfolio || [];
   const expertSignals = strategy.expertSignals || [];
@@ -471,9 +480,26 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
               <span>NORTH STAR</span>
               <p>{strategy.northStar}</p>
             </div>
+            <div className="msf-priority-grid" aria-label="최신 사이트 근거 기반 상위 사업 후보">
+              {priorityItems.map(item => (
+                <article className="msf-priority-card" key={item.sourceOpportunityId} tabIndex="0">
+                  <div className="msf-priority-rank">
+                    <em>{String(item.rank).padStart(2, "0")}</em>
+                    <span>{Number(item.score).toFixed(1)}</span>
+                  </div>
+                  <b>{item.title}</b>
+                  <p>{(item.drivers || []).map(driver => `${driver.label} ${driver.points}`).join(" · ")}</p>
+                  <small>
+                    <span>독립 출처 {item.independentSources}개</span>
+                    <span>근거 {item.evidenceCount}건</span>
+                    <em>{item.confidence === "high" ? "HIGH CONF." : item.confidence === "medium" ? "MEDIUM CONF." : "REVIEW"}</em>
+                  </small>
+                </article>
+              ))}
+            </div>
             <div className="msf-house-foundation">
-              <em>FOUNDATION</em>
-              <b>소비자 조사 · 앱 행동 · 공개 원문 · 단말 UX · 수익성 검증</b>
+              <em>{priorityFramework.label || "PRIORITY MODEL"}</em>
+              <b>{priorityBasis}</b>
             </div>
           </div>
 

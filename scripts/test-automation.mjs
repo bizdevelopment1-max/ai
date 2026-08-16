@@ -583,13 +583,14 @@ try {
 }
 
 try {
-  const [app, boards, components, styles, companies, strategyView, monetizationCrawler] = await Promise.all([
+  const [app, boards, components, styles, companies, strategyView, strategyBuilder, monetizationCrawler] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("boards.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
     readFile("styles.css", "utf8"),
     readFile("companies.json", "utf8").then(JSON.parse),
     readFile("strategy-view.json", "utf8").then(JSON.parse),
+    readFile("scripts/strategy-view.mjs", "utf8"),
     readFile("scripts/crawl-monetization.mjs", "utf8"),
   ]);
   const dash = loadDash();
@@ -611,11 +612,15 @@ try {
   const strategyReady = strategyView?.sourceMode === "generated-from-verified-ledgers"
     && !Object.hasOwn(strategyView, "choices")
     && strategyView?.capabilities?.length === 5
+    && strategyView?.priorityFramework?.items?.length === 4
+    && strategyView?.priorityFramework?.criteria?.length === 8
+    && strategyView.priorityFramework.items.every(item => item.sourceOpportunityId && Number.isFinite(item.score) && item.drivers?.length)
     && !Object.hasOwn(strategyView, "horizons")
     && strategyView?.opportunityPortfolio?.length >= 9
     && !Object.hasOwn(strategyView, "accountPortfolio")
     && boards.includes("function MobileStrategyBoard")
     && !boards.includes("Competitive Platform Portfolio")
+    && !strategyBuilder.includes("PORTFOLIO_COVERAGE")
     && ![
       "OS·앱·계정·결제·개인 컨텍스트를 연결해 새로운 AI 서비스 매출 설계",
       "공개 원문 근거로 우선순위 갱신",
@@ -646,6 +651,8 @@ try {
       "개인 컨텍스트·멀티모델 에이전트·서비스 유통·버티컬 포트폴리오의 4개 우선 플레이",
     ].some(copy => boards.includes(copy))
     && !/msf-choices|msf-choice|msf-house-pillars/.test(boards)
+    && boards.includes('className="msf-priority-grid"')
+    && styles.includes(".msf-priority-card:is(:hover, :focus-visible)")
     && boards.includes("Strategy consulting · user need → mobile experience → revenue → execution")
     && boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")

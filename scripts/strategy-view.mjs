@@ -7,17 +7,43 @@ const firstSentence = value => {
   return stop > 40 ? normalized.slice(0, stop + 1) : normalized;
 };
 const evidenceUrl = item => /^https?:\/\//i.test(String(item?.url || ""));
-const scoreOf = item => Number(item?.opportunityScore || item?.signalScore || 0);
+const scoreOf = item => Number(item?.scoreValue ?? item?.opportunityScore ?? item?.signalScore ?? 0);
+const confidenceRank = value => ({ high: 3, medium: 2, low: 1 }[String(value || "").toLowerCase()] || 0);
+const comparePriority = (left, right) =>
+  scoreOf(right) - scoreOf(left)
+  || confidenceRank(right.evidenceConfidence) - confidenceRank(left.evidenceConfidence)
+  || Number(right.signalScore || 0) - Number(left.signalScore || 0)
+  || Number(right.independentSources || 0) - Number(left.independentSources || 0)
+  || Number(right.evidenceCount || 0) - Number(left.evidenceCount || 0)
+  || text(left.title).localeCompare(text(right.title));
 
 const compactOpportunity = (item, index) => {
   const evidence = (item.evidence || []).filter(evidenceUrl);
   const independentSources = Number(item.independentSources || 0);
   const evidenceCount = Number(item.evidenceCount || evidence.length);
   const nextDecision = String(item.experimentPlan?.nextDecisionAt || "").slice(0, 10);
+  const scorecard = (item.scorecard || [])
+    .filter(row => row?.label && Number.isFinite(Number(row.weightedPoints)))
+    .map(row => ({
+      dimension: row.dimension,
+      label: text(row.label),
+      weight: Number(row.weight || 0),
+      rating: Number(row.rating || 0),
+      weightedPoints: Number(row.weightedPoints || 0),
+    }));
   return {
     id: item.id || `generated-opportunity-${index + 1}`,
     sourceOpportunityId: item.id || `generated-opportunity-${index + 1}`,
     title: text(item.title),
+    scoreValue: scoreOf(item),
+    signalScore: Number(item.signalScore || 0),
+    scoreDelta: item.scoreDelta !== null && item.scoreDelta !== undefined && Number.isFinite(Number(item.scoreDelta))
+      ? Number(item.scoreDelta)
+      : null,
+    trend: text(item.trend || "flat"),
+    evidenceConfidence: text(item.evidenceConfidence || "low"),
+    evidenceCount,
+    independentSources,
     horizon: scoreOf(item) >= 85 ? "H1 · NOW" : scoreOf(item) >= 72 ? "H2 · NEXT" : "H3 · WATCH",
     score: `${scoreOf(item)}/100`,
     customer: text(item.experimentPlan?.targetUsers || item.ownerOrg || "검증 대상 사용자군"),
@@ -34,47 +60,46 @@ const compactOpportunity = (item, index) => {
       { label: "EVIDENCE", value: `${evidenceCount}건`, status: evidenceCount >= 5 ? "verified" : "review" },
       { label: "INDEPENDENT", value: `${independentSources}개`, status: independentSources >= 2 ? "verified" : "review" },
     ],
+    scorecard,
+    priorityDrivers: [...scorecard]
+      .sort((left, right) => right.weightedPoints - left.weightedPoints || right.weight - left.weight)
+      .slice(0, 3)
+      .map(row => ({ label: row.label, points: row.weightedPoints, weight: row.weight })),
     evidence: evidence.slice(0, 6),
     generatedAt: item.generatedAt || "",
   };
 };
 
-// These are decision-portfolio buckets, not business facts. Each bucket is
-// populated only when the cumulative opportunity ledger contains a published,
-// source-backed candidate. This keeps strategically distinct lower-scoring
-// themes visible without pinning any claim, score or company to the UI.
-const PORTFOLIO_COVERAGE = [
-  { id: "on-device-trust-security", sourceIds: ["financial-trust-api", "secure-enterprise-agent"] },
-  { id: "clinical-health-ai", sourceIds: ["health-intelligence"] },
-  { id: "companion-distribution", sourceIds: ["companion-distribution"] },
-];
-
-const selectOpportunityPortfolio = (opportunities, limit = 12) => {
-  const selected = [];
-  const usedSourceIds = new Set();
-  PORTFOLIO_COVERAGE.forEach(bucket => {
-    const match = bucket.sourceIds
-      .map(id => opportunities.find(item => item.sourceOpportunityId === id))
-      .find(Boolean);
-    if (!match) return;
-    selected.push({ ...match, id: bucket.id, portfolioBucket: bucket.id });
-    usedSourceIds.add(match.sourceOpportunityId);
-  });
-  opportunities.forEach(item => {
-    if (selected.length >= limit || usedSourceIds.has(item.sourceOpportunityId)) return;
-    selected.push(item);
-    usedSourceIds.add(item.sourceOpportunityId);
-  });
-  return selected.slice(0, limit);
-};
+// Rank every decision-eligible candidate with the same deterministic rule.
+// No business theme or company receives a reserved slot in the public view.
+const selectOpportunityPortfolio = (opportunities, limit = 12) =>
+  [...opportunities].sort(comparePriority).slice(0, limit);
 
 export function buildStrategyView({ generatedAt, framework, articles, opportunityDb }) {
   const generatedOpportunities = (opportunityDb?.generatedOpportunities || [])
     .filter(item => item?.decisionEligible !== false && ["verified", "reviewed", "published"].includes(item?.workflow?.stage || item?.status) && item?.evidenceConfidence !== "low")
     .filter(item => (item.evidence || []).some(evidenceUrl))
-    .sort((left, right) => scoreOf(right) - scoreOf(left))
+    .sort(comparePriority)
     .map(compactOpportunity);
   const opportunityPortfolio = selectOpportunityPortfolio(generatedOpportunities, 12);
+  const generationPolicy = opportunityDb?.opportunityGeneration || {};
+  const publicationGate = generationPolicy.publicationGate || {};
+  const scoreCriteria = (opportunityPortfolio[0]?.scorecard || [])
+    .map(row => ({ dimension: row.dimension, label: row.label, weight: row.weight }));
+  const priorityItems = opportunityPortfolio.slice(0, 4).map((item, index) => ({
+    rank: index + 1,
+    sourceOpportunityId: item.sourceOpportunityId,
+    title: item.title,
+    score: item.scoreValue,
+    signalScore: item.signalScore,
+    scoreDelta: item.scoreDelta,
+    trend: item.trend,
+    confidence: item.evidenceConfidence,
+    evidenceCount: item.evidenceCount,
+    independentSources: item.independentSources,
+    action: item.offer,
+    drivers: item.priorityDrivers,
+  }));
 
   const sourceSeen = new Set();
   const expertSignals = [...(articles || [])]
@@ -104,23 +129,42 @@ export function buildStrategyView({ generatedAt, framework, articles, opportunit
     opportunity: item.offer,
     proof: item.gate,
   }));
-  const evidenceTotal = opportunityPortfolio.reduce((sum, item) => sum + Number(item.nextMetrics[1]?.value?.replace(/\D/g, "") || 0), 0);
+  const evidenceTotal = priorityItems.reduce((sum, item) => sum + item.evidenceCount, 0);
+  const averageScore = priorityItems.length
+    ? (priorityItems.reduce((sum, item) => sum + item.score, 0) / priorityItems.length).toFixed(1)
+    : "0.0";
 
   return {
     generatedAt,
-    schemaVersion: 1,
+    schemaVersion: 2,
     sourceMode: "generated-from-verified-ledgers",
-    northStar: opportunityPortfolio.length
-      ? `${opportunityPortfolio.slice(0, 3).map(item => item.title).join(" · ")} — ${evidenceTotal}건 근거로 우선순위 자동 갱신`
+    northStar: priorityItems.length
+      ? `검증 적격 ${generatedOpportunities.length}개 후보 중 상위 ${priorityItems.length}개 · 평균 ${averageScore}점 · 근거 ${evidenceTotal}건`
       : "검증된 근거가 확보될 때까지 전략 후보 공개 보류",
     operatingModel: framework?.operatingModel || [],
     decisionOutputs: framework?.decisionOutputs || [],
     capabilities: framework?.capabilities || [],
+    priorityFramework: {
+      label: "EVIDENCE-WEIGHTED PRIORITY",
+      method: generationPolicy.scorer || "deterministic-evidence-weighted",
+      rubricVersion: generationPolicy.rubricVersion || "",
+      rankingOrder: ["opportunityScore", "evidenceConfidence", "signalScore", "independentSources", "evidenceCount"],
+      eligibilityGate: {
+        minimumEvidenceUnits: Number(publicationGate.minimumEvidenceUnits || 0),
+        minimumIndependentSources: Number(publicationGate.minimumIndependentSources || 0),
+        minimumOpportunityScore: Number(publicationGate.minimumOpportunityScore || 0),
+      },
+      criteria: scoreCriteria,
+      candidateCount: generatedOpportunities.length,
+      items: priorityItems,
+      refreshedAt: generatedAt,
+    },
     workloadMap,
     opportunityPortfolio,
     expertSignals,
     lineage: {
       opportunities: opportunityPortfolio.length,
+      eligibleOpportunities: generatedOpportunities.length,
       articles: expertSignals.length,
       generatedFrom: ["news.json", "mobile-ai-business-view.json", "config/dashboard-taxonomy.json"],
     },
