@@ -1,14 +1,14 @@
 {
   "schemaVersion": 2,
-  "datasetVersion": "972b5d808fcc8113f398004e",
-  "createdAt": "2026-08-16T15:03:16.884Z",
-  "pipelineRunId": "local-2026-08-16T15:03:16.884Z",
-  "codeGitSha": "1450290329b2a10c4aacfe6d46d467fe737529e5",
+  "datasetVersion": "9880591e2df267976081546a",
+  "createdAt": "2026-08-17T01:38:13.332Z",
+  "pipelineRunId": "31985497279",
+  "codeGitSha": "53b6050c0d4a41f98f4c10076cece74e30c3a36c",
   "catalogVersion": 3,
   "schemaRegistryVersion": 2,
   "sourcePolicyVersion": 4,
   "qualityPolicyVersion": 1,
-  "policyHash": "8c91c4dfccac277639a3ffd4b53023c42206e64bc61e396159954d4090d3c28c",
+  "policyHash": "a1cb01cbea346450a6a19ee556f6784201e9e24db98052d8984199587a387a1d",
   "policyFiles": [
     "config/intelligence-pipeline.json",
     "config/news-policy.json",
@@ -19,14 +19,14 @@
     "config/dedup-calibration.json"
   ],
   "catalogHash": "824f7adc60cd58d276349ef922d170167bafb36287ed80d2cf8456e05837796f",
-  "publicationState": "working",
+  "publicationState": "staging",
   "approvedBy": null,
   "approval": {
     "status": "pending",
     "minimumApprovals": 1,
     "reviewerId": null
   },
-  "previousVersion": "52cccb8e20f40799c0cf6cc3",
+  "previousVersion": "972b5d808fcc8113f398004e",
   "datasets": [
     {
       "id": "news-ledger",
@@ -71,9 +71,9 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": null,
-      "bytes": 737282,
-      "sha256": "ec96e0531092490063803ba416514fd03a083ce6501be07421ef72df2e855d6d",
-      "files": 3,
+      "bytes": 739169,
+      "sha256": "b387d8170284cbc14981b251d81ee62e65151719c11ccbcf70897eb3a937d60c",
+      "files": 4,
       "migrationTriggerExceeded": false
     },
     {
@@ -84,7 +84,7 @@
       "publication": "never",
       "recordCount": 61,
       "bytes": 48989,
-      "sha256": "77df838f8ce0528033514f1d395dd3963957151d3ea88804ba2df239e5963406",
+      "sha256": "5269e00567f4370623cb6cd936906f46203e2a5c7b6eb161e2444cfbf4f48f5e",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -95,8 +95,8 @@
       "sensitivity": "public-verified-candidate-view",
       "publication": "public",
       "recordCount": 13,
-      "bytes": 1276399,
-      "sha256": "c924bfcea65118ee223ec27cae94fbe5e1be2e0f1a29b700d5fb5c54e0b59271",
+      "bytes": 1276385,
+      "sha256": "b40b2ff35fcae246220db844f0cd8806d56470a5445953ebed8ed590c501a836",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -132,7 +132,7 @@
       "publication": "public",
       "recordCount": 12,
       "bytes": 110653,
-      "sha256": "72099c4841d34f4016a73786ea900c8ac3759ec46a67bc2e7b2620f1bbf1f12a",
+      "sha256": "e6a736e5e8ca08a70cccf868bd2010d6e23076e9535f11e517816f13eddc7459",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -143,8 +143,8 @@
       "sensitivity": "public",
       "publication": "public",
       "recordCount": 16,
-      "bytes": 4495,
-      "sha256": "bf0cc37de49f1dcdd32c6cc4b5e38d7d1210330ab8c844382af97b3c310185f3",
+      "bytes": 4513,
+      "sha256": "2ffacadc8e27fcc72aa26fb41ad2e07db747748cf7704cb96abae0ae83a86064",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -154,9 +154,9 @@
       "role": "pipeline-run-status",
       "sensitivity": "internal-operational",
       "publication": "never",
-      "recordCount": 9,
-      "bytes": 1242,
-      "sha256": "1e9d644555149431fc39edbf9104eaf33affe896f56db4cb521bd3b92edec058",
+      "recordCount": 22,
+      "bytes": 2843,
+      "sha256": "37edba7c16e3ba58fdbc203a92ea2dba266d3a666b8ffa59164a4c7270eb6d4e",
       "files": 1,
       "migrationTriggerExceeded": false
     }
