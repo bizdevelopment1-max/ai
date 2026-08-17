@@ -7,7 +7,7 @@
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { appendRecords, ensureMarketDatabase, hasConsumerSurveyEvidence } from "./market-db.mjs";
-import { googleNewsUrl, rotatingLocales } from "./global-sources.mjs";
+import { globalSourcePolicy, googleNewsUrl, rotatingLocales } from "./global-sources.mjs";
 import { isExcludedText } from "./news-policy.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
@@ -115,7 +115,22 @@ const collectionTrackOf = config => config.track
   || (SURVEY_QUERY_HINT.test(config.query) ? "consumer-survey" : "ai-market");
 const QUERIES = [...EXPANSION_QUERIES, ...BASE_QUERIES]
   .map(config => ({ ...config, track: collectionTrackOf(config) }));
-const QUERY_SET_VERSION = 5;
+const QUERY_SET_VERSION = 6;
+const MARKET_FETCH_TIMEOUT_MS = Math.max(1_500, Number(process.env.MARKET_FETCH_TIMEOUT_MS) || 6_500);
+const MARKET_FAILURE_LIMIT = Math.max(3, Number(process.env.MARKET_FAILURE_LIMIT) || 8);
+const MARKET_WALL_CLOCK_MS = Math.max(30_000, Number(process.env.MARKET_WALL_CLOCK_MS) || 180_000);
+
+// A daily run samples a deterministic slice of the full query registry. The
+// append-only database accumulates those slices over time without issuing
+// hundreds of Google News requests in a single workflow run.
+const rotatingQueries = (date = new Date()) => {
+  const configured = Number(process.env.MARKET_QUERY_BUDGET || globalSourcePolicy.marketQueriesPerRun);
+  const count = Math.max(1, Math.min(QUERIES.length, Number.isFinite(configured) ? Math.floor(configured) : 24));
+  if (count >= QUERIES.length) return QUERIES;
+  const day = Math.floor(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86_400_000);
+  const start = (day * count) % QUERIES.length;
+  return Array.from({ length: count }, (_, index) => QUERIES[(start + index) % QUERIES.length]);
+};
 
 const candidateBudgetFor = (p0Count, policy) => {
   const configured = Number(process.env.MARKET_NEW_RECORD_BUDGET);
@@ -142,7 +157,10 @@ const kindOf = (record, track) => track === "consumer-survey" && hasConsumerSurv
 
 async function rss(query, locale) {
   const url = googleNewsUrl(query, locale, 14);
-  const response = await fetch(url, { headers: { "User-Agent": UA } });
+  const response = await fetch(url, {
+    headers: { "User-Agent": UA },
+    signal: AbortSignal.timeout(MARKET_FETCH_TIMEOUT_MS),
+  });
   if (!response.ok) throw new Error(`Google News RSS ${response.status} for ${query} (${locale.id})`);
   const xml = await response.text();
   return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].slice(0, 8).map(match => {
@@ -170,6 +188,7 @@ async function main() {
   }
 
   const startedAt = now();
+  const startedMs = Date.now();
   const migration = ensureMarketDatabase(data, startedAt);
   const suppression = await loadSuppressionRegistry();
   const [queueDocument, sloPolicy] = await Promise.all([
@@ -191,13 +210,28 @@ async function main() {
 
   let fetched = 0;
   let failures = 0;
+  let successfulStreams = 0;
+  let consecutiveFailures = 0;
+  let attemptedStreams = 0;
+  let circuitOpen = false;
+  let stopReason = null;
   const candidates = [];
   const latestByVertical = new Map();
   const locales = rotatingLocales();
-  for (const config of QUERIES) {
+  const selectedQueries = rotatingQueries(new Date(startedAt));
+  marketStreams: for (const config of selectedQueries) {
     for (const locale of locales) {
+      if (Date.now() - startedMs >= MARKET_WALL_CLOCK_MS) {
+        circuitOpen = true;
+        stopReason = "wall-clock-budget";
+        console.warn(`[market-db] ${MARKET_WALL_CLOCK_MS}ms wall-clock budget reached; preserving partial results`);
+        break marketStreams;
+      }
+      attemptedStreams++;
       try {
         const rows = await rss(config.query, locale);
+        successfulStreams++;
+        consecutiveFailures = 0;
         fetched += rows.length;
         for (const row of rows) {
           const combined = `${row.title} ${row.evidence}`;
@@ -249,14 +283,40 @@ async function main() {
         }
       } catch (error) {
         failures++;
+        consecutiveFailures++;
         console.error(`[market-db] ${config.id}/${locale.id}: ${error.message}`);
+        if (consecutiveFailures >= MARKET_FAILURE_LIMIT) {
+          circuitOpen = true;
+          stopReason = "consecutive-source-failures";
+          console.warn(`[market-db] circuit open after ${consecutiveFailures} consecutive failures; preserving the cumulative ledger`);
+          break marketStreams;
+        }
       }
       // 쿼리 확대(8→26)에 따른 요청 페이싱 — Google News RSS 레이트리밋 회피(직렬 ~4req/s 이하)
       await new Promise(resolve => setTimeout(resolve, Number(process.env.MARKET_PACE_MS) || 250));
     }
   }
 
-  if (!fetched && failures === QUERIES.length * locales.length) throw new Error("All global market-data sources failed; refusing to mark the database refreshed");
+  if (!successfulStreams) {
+    data.database = {
+      ...(data.database || {}),
+      lastAttemptAt: startedAt,
+      lastCrawl: {
+        status: "degraded-preserved",
+        queriesPlanned: selectedQueries.length,
+        localesPlanned: locales.length,
+        attemptedStreams,
+        successfulStreams,
+        failures,
+        circuitOpen,
+        stopReason,
+        retainedRecordCount: (data.records || []).length,
+      },
+    };
+    await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
+    console.warn(`[market-db] no discovery stream succeeded; preserved ${(data.records || []).length} append-only records for the next retry`);
+    return;
+  }
   const existingIds = new Set((data.records || []).map(record => record.id));
   // When direct-evidence P0 work is high, cap new discovery debt. Existing
   // ledgers remain untouched and the next run can reconsider skipped rows.
@@ -264,7 +324,7 @@ async function main() {
   const added = appendRecords(data, budgetedCandidates, startedAt);
   const appendedRecords = (data.records || []).filter(record => !existingIds.has(record.id));
   const streamSummary = Object.fromEntries(["consumer-survey", "ai-market"].map(track => {
-    const configs = QUERIES.filter(config => config.track === track);
+    const configs = selectedQueries.filter(config => config.track === track);
     return [track, {
       queries: configs.length,
       discovered: candidates.filter(record => record.collectionTrack === track).length,
@@ -283,8 +343,13 @@ async function main() {
     querySetVersion: QUERY_SET_VERSION,
     lastCrawledAt: startedAt,
     lastCrawl: {
-      queries: QUERIES.length,
+      status: failures ? "completed-with-source-errors" : "completed",
+      queries: selectedQueries.length,
       locales: locales.map(locale => ({ id: locale.id, region: locale.region, language: locale.language })),
+      attemptedStreams,
+      successfulStreams,
+      circuitOpen,
+      stopReason,
       rssRows: fetched,
       candidatesDiscovered: candidates.length,
       candidatesConsidered: budgetedCandidates.length,
@@ -298,7 +363,7 @@ async function main() {
   data.freshAt = startedAt;
   data.generatedAt = startedAt;
   await writeFile("market.json", JSON.stringify(data, null, 2) + "\n");
-  console.log(`[market-db] appended ${added}/${budgetedCandidates.length} budgeted discovery records; P0 backlog ${p0ReverificationBacklog}; retained ${data.records.length}; RSS rows ${fetched}/${QUERIES.length * locales.length} global query streams`);
+  console.log(`[market-db] appended ${added}/${budgetedCandidates.length} budgeted discovery records; P0 backlog ${p0ReverificationBacklog}; retained ${data.records.length}; RSS rows ${fetched} from ${successfulStreams}/${attemptedStreams} attempted streams`);
 }
 
 main().catch(error => { console.error(error); process.exit(1); });

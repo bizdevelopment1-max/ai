@@ -1696,6 +1696,14 @@ try {
     && /track: "consumer-survey"/.test(marketCrawler)
     && /track: "ai-market"/.test(marketCrawler)
     && /querySetVersion: QUERY_SET_VERSION/.test(marketCrawler);
+  const resilientDailyMarketCollection = /const rotatingQueries =/.test(marketCrawler)
+    && /AbortSignal\.timeout\(MARKET_FETCH_TIMEOUT_MS\)/.test(marketCrawler)
+    && /MARKET_FAILURE_LIMIT/.test(marketCrawler)
+    && /MARKET_WALL_CLOCK_MS/.test(marketCrawler)
+    && /stopReason = "wall-clock-budget"/.test(marketCrawler)
+    && /status: "degraded-preserved"/.test(marketCrawler)
+    && /preserved .*append-only records for the next retry/.test(marketCrawler)
+    && !/throw new Error\("All global market-data sources failed/.test(marketCrawler);
   const suppressionPreservesLedger = /const records = Array\.isArray\(data\.records\) \? data\.records : \[\];/.test(marketRefresh)
     && /if \(suppression\.matches\(record, "market"\)\) return record;/.test(marketRefresh)
     && /userSuppressedPreserved: suppressedRecords\.length/.test(marketRefresh);
@@ -1710,6 +1718,7 @@ try {
     boardContract,
     forecastDisplay: noForecastPlaceholder,
     separateCollectionTracks,
+    resilientDailyMarketCollection,
     suppressionPreservesLedger,
   };
   const failedMarketChecks = Object.entries(marketChecks).filter(([, value]) => !value).map(([key]) => key);
