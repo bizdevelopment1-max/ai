@@ -2476,7 +2476,8 @@ a[href]:hover .rainbow-on-hover,
 }
 .dyn-video-overlay {
   position: relative; z-index: 2; min-height: 432px; height: 100%; padding: 22px;
-  display: flex; flex-direction: column; justify-content: space-between; color: #F8FBFF;
+  display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; color: #F8FBFF;
+  scrollbar-color: rgba(170,187,224,.55) transparent; scrollbar-width: thin;
 }
 .dyn-video-head { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
 .dyn-video-head > span {
@@ -2500,9 +2501,43 @@ a[href]:hover .rainbow-on-hover,
   color: #BBD0FF; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 5px;
   background: rgba(255,255,255,.13); letter-spacing: .15px;
 }
-.dyn-selected-meta strong { font-size: 19px; line-height: 1.1; letter-spacing: -.35px; }
+.dyn-company-open {
+  display: inline-flex; min-width: 0; align-items: center; gap: 7px; margin: -4px 0; padding: 4px 6px;
+  border: 1px solid transparent; border-radius: 6px; background: transparent; color: #FFF; cursor: pointer;
+  font: inherit; text-align: left; transition: background .18s, border-color .18s, transform .18s;
+}
+.dyn-company-open strong { font-size: 19px; line-height: 1.1; letter-spacing: -.35px; }
+.dyn-company-open small {
+  display: inline-flex; align-items: center; gap: 3px; color: #BBD0FF; font-size: 9px; font-weight: 850;
+  white-space: nowrap;
+}
+.dyn-company-open:hover, .dyn-company-open:focus-visible {
+  border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.1); outline: none; transform: translateY(-1px);
+}
+.dyn-company-open:hover small, .dyn-company-open:focus-visible small { color: #FFF; }
 .dyn-selected-meta em { margin-left: auto; font-size: 12px; font-style: normal; font-weight: 900; color: #F8CA5E; }
 .dyn-selected > p { margin: 9px 0 0; color: #EDF4FF; font-size: 12px; line-height: 1.55; text-wrap: pretty; }
+.dyn-company-facts {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-top: 10px;
+}
+.dyn-company-facts > div {
+  min-width: 0; padding: 7px 8px; border: 1px solid rgba(255,255,255,.15); border-radius: 6px;
+  background: rgba(255,255,255,.055);
+}
+.dyn-company-facts em {
+  display: block; margin-bottom: 3px; color: #8FB5FF; font-size: 8.5px; font-style: normal; font-weight: 900;
+  letter-spacing: .04em;
+}
+.dyn-company-facts p {
+  display: -webkit-box; margin: 0; overflow: hidden; color: #EDF4FF; font-size: 10.5px; font-weight: 680;
+  line-height: 1.42; text-wrap: pretty; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+}
+.dyn-proof-strip {
+  display: flex; align-items: stretch; gap: 6px; margin-top: 7px; padding: 6px 0 0;
+}
+.dyn-proof-strip span { display: flex; min-width: 0; flex: 1 1 0; flex-direction: column; gap: 1px; }
+.dyn-proof-strip em { color: #91A6CF; font-size: 7.5px; font-style: normal; font-weight: 900; letter-spacing: .05em; }
+.dyn-proof-strip b { overflow: hidden; color: #FFF; font-size: 10px; font-weight: 850; text-overflow: ellipsis; white-space: nowrap; }
 .dyn-relationships { margin-top: 11px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
 .dyn-relationship {
   min-width: 0; display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 7px; align-items: start;
@@ -2510,16 +2545,20 @@ a[href]:hover .rainbow-on-hover,
 }
 .dyn-relationship > b { color: var(--axis); font-size: 10px; font-weight: 900; }
 .dyn-relationship > div { min-width: 0; display: grid; gap: 3px; }
-.dyn-relationship > div > a, .dyn-relationship > div > span {
-  min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 5px;
-  color: #DCE8FF; font-size: 10px; line-height: 1.35; overflow-wrap: anywhere; text-decoration: none;
-  padding: 3px 4px; border-radius: 4px; transition: background .18s, transform .18s;
+.dyn-related-row {
+  position: relative; min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 2px 5px;
+  padding: 4px; border-radius: 4px; color: #DCE8FF; font-size: 10px; line-height: 1.35;
+  overflow-wrap: anywhere; transition: background .18s;
 }
-.dyn-relationship > div > a:hover, .dyn-relationship > div > a:focus-visible {
-  color: #FFF; background: rgba(255,255,255,.12); transform: translateX(2px); outline: none;
+.dyn-related-row:hover, .dyn-related-row:focus-within { background: rgba(255,255,255,.1); }
+.dyn-related-row > button {
+  border: 0; padding: 0; background: transparent; color: #FFF; cursor: pointer; font: inherit; font-weight: 900;
+  text-align: left; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 2px;
 }
-.dyn-relationship strong { color: #FFF; font-weight: 900; }
-.dyn-relationship a > span {
+.dyn-related-row > button:hover, .dyn-related-row > button:focus-visible {
+  color: #AFCBFF; outline: none; text-decoration-color: currentColor;
+}
+.dyn-related-row > span {
   min-width: 0;
   color: #DCE8FF;
   overflow: visible;
@@ -2528,19 +2567,28 @@ a[href]:hover .rainbow-on-hover,
   overflow-wrap: anywhere;
   text-wrap: pretty;
 }
-.dyn-relationship em { grid-column: 2; color: #AABBE0; font-size: 8.5px; font-style: normal; font-weight: 700; }
+.dyn-related-row > em { grid-column: 2; color: #AABBE0; font-size: 8.5px; font-style: normal; font-weight: 700; }
+.dyn-related-row > a {
+  grid-column: 3; grid-row: 1 / span 2; align-self: center; color: #BBD0FF; font-size: 8px; font-weight: 850;
+  text-decoration: none; white-space: nowrap;
+}
+.dyn-related-row > a:hover, .dyn-related-row > a:focus-visible { color: #FFF; outline: none; text-decoration: underline; }
 .es-cm-live {
   display: inline-flex; align-items: center; margin-left: 2px; padding: 3px 7px;
   border: 1px solid #8EDBCF; border-radius: 4px; background: #E9F8F5;
   color: #087F6D; font-size: 9px; font-weight: 900; letter-spacing: .45px;
 }
-.dyn-source {
-  margin-top: 11px; width: fit-content; display: inline-flex; gap: 7px; align-items: center; color: #FFFFFF;
+.dyn-selected-actions { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
+.dyn-source, .dyn-detail-action {
+  width: fit-content; display: inline-flex; gap: 7px; align-items: center; color: #FFFFFF;
   text-decoration: none; font-size: 10.5px; font-weight: 800; padding: 5px 8px; border-radius: 6px;
   background: rgba(255,255,255,.11); border: 1px solid rgba(255,255,255,.24); transition: background .18s, transform .18s;
 }
-.dyn-source:hover, .dyn-source:focus-visible { background: rgba(255,255,255,.24); transform: translateY(-1px); color: #fff; }
-.dyn-source b { color: #8AB5FF; font-size: 13px; }
+.dyn-detail-action { cursor: pointer; font-family: inherit; }
+.dyn-detail-action:hover, .dyn-detail-action:focus-visible, .dyn-source:hover, .dyn-source:focus-visible {
+  background: rgba(255,255,255,.24); transform: translateY(-1px); color: #fff; outline: none;
+}
+.dyn-detail-action b, .dyn-source b { color: #8AB5FF; font-size: 13px; }
 @media (max-width: 980px) {
   .es-dynamics-grid { grid-template-columns: 1fr; }
   .dyn-video-panel, .dyn-video-overlay { min-height: 390px; }
@@ -2552,6 +2600,7 @@ a[href]:hover .rainbow-on-hover,
   .dyn-video-overlay { padding: 16px; }
   .dyn-video-head > b { font-size: 19px; }
   .dyn-axis-list { margin-left: 0; justify-content: flex-start; width: 100%; }
+  .dyn-company-facts { grid-template-columns: 1fr; }
   .dyn-relationships { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {

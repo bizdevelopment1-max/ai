@@ -3101,7 +3101,7 @@ const DYNAMICS_AXES = [
   { id: "supply", label: "공급", color: "#F59E0B", types: ["공급", "매출"] },
 ];
 
-function ESCompetitiveMap({ companies, cats, articles, active, dataVersion }) {
+function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSelectCompany }) {
   const ref = React.useRef(null);
   const videoRef = React.useRef(null);
   const [mediaReady, setMediaReady] = React.useState(false);
@@ -3180,6 +3180,29 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion }) {
 
   const selectedCompany = list.find(c => c.name === activeCompany) || list[0] || null;
   const selectedArticle = selectedCompany ? articleByCo[selectedCompany.name] : null;
+  const selectedLive = selectedCompany?.live || {};
+  const selectedIntel = selectedCompany?.intelligence || selectedLive.intelligence || {};
+  const selectedProfile = selectedCompany?.profile || selectedLive.profile || {};
+  const publication = selectedIntel.publication || {};
+  const evidenceCount = [...new Set([
+    ...(selectedIntel.currentBusiness?.evidence || []),
+    ...(selectedIntel.revenueModel?.evidence || []),
+    ...(selectedIntel.strategyDirection?.evidence || []),
+    ...(selectedIntel.investmentDirection?.evidence || []),
+  ].map(item => item?.url).filter(Boolean))].length;
+  const companyFacts = selectedCompany ? [
+    { label: "사업 현황", value: selectedIntel.currentBusiness?.summary || selectedCompany.note },
+    { label: "핵심 제공", value: Array.isArray(selectedProfile.business) && selectedProfile.business.length
+      ? selectedProfile.business.slice(0, 4).join(" · ") : selectedCompany.unit },
+    { label: "수익 구조", value: selectedIntel.revenueModel?.summary || selectedCompany.vp },
+    { label: "최근 신호", value: selectedLive.latest?.title || selectedArticle?.title },
+  ].filter(item => item.value && item.value !== "—") : [];
+  const openCompany = companyOrName => {
+    const target = typeof companyOrName === "string"
+      ? list.find(company => company.name === companyOrName)
+      : companyOrName;
+    if (target && onSelectCompany) onSelectCompany(target);
+  };
   const relationshipGroups = selectedCompany ? DYNAMICS_AXES.map(axis => ({
     ...axis,
     items: dynamicEdges.filter(edge => axis.types.includes(edge.type) && (edge.from === selectedCompany.name || edge.to === selectedCompany.name))
@@ -3241,35 +3264,56 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion }) {
               <div className="dyn-selected">
                 <div className="dyn-selected-meta">
                   <span>{catMap[selectedCompany.cat] ? catMap[selectedCompany.cat].ko : selectedCompany.cat}</span>
-                  <strong>{selectedCompany.name}</strong>
+                  <button className="dyn-company-open" type="button" onClick={() => openCompany(selectedCompany)}
+                    aria-label={`${selectedCompany.name} 상세 개요 열기`}>
+                    <strong>{selectedCompany.name}</strong>
+                    <small><Icon name="report" size={11} sw={2} />상세 개요</small>
+                  </button>
                   <em>{selectedCompany.valuation}</em>
                 </div>
-                <p>{hlKey(selectedCompany.note)}</p>
+                {companyFacts.length > 0 && (
+                  <div className="dyn-company-facts">
+                    {companyFacts.map(item => (
+                      <div key={item.label}>
+                        <em>{item.label}</em>
+                        <p>{hlKey(item.value)}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="dyn-proof-strip" aria-label="업체 정보 근거 현황">
+                  {Number.isFinite(Number(selectedLive.mentions30)) && <span><em>30D SIGNAL</em><b>{selectedLive.mentions30}건</b></span>}
+                  <span><em>EVIDENCE</em><b>{evidenceCount}건</b></span>
+                  {publication.lastVerifiedAt && <span><em>VERIFIED</em><b>{String(publication.lastVerifiedAt).slice(0, 10)}</b></span>}
+                </div>
                 {relationshipGroups.length > 0 && (
                   <div className="dyn-relationships">
                     {relationshipGroups.map(axis => (
                       <div key={axis.id} className="dyn-relationship" style={{ "--axis": axis.color }}>
                         <b>{axis.label}</b>
-                        <div>{axis.items.map(item => item.url ? (
-                          <a key={`${item.company}-${item.label}`} href={item.url} target="_blank" rel="noopener">
-                            <strong>{item.company}</strong>
-                            <span>{item.headline}</span>
-                            <em>{item.date ? `${item.date.slice(2)} · ` : ""}{item.source}</em>
-                          </a>
-                        ) : (
-                          <span key={`${item.company}-${item.label}`}>
-                            <strong>{item.company}</strong>{item.label}<em>시장 구조</em>
-                          </span>
+                        <div>{axis.items.map(item => (
+                          <div className="dyn-related-row" key={`${item.company}-${item.label}`}>
+                            <button type="button" onClick={() => openCompany(item.company)}
+                              aria-label={`${item.company} 상세 개요 열기`}>{item.company}</button>
+                            <span>{item.headline || item.label}</span>
+                            <em>{item.date ? `${item.date.slice(2)} · ` : ""}{item.source || "시장 구조"}</em>
+                            {item.url && <a href={item.url} target="_blank" rel="noopener" aria-label={`${item.company} 관계 근거 원문`}>원문 ↗</a>}
+                          </div>
                         ))}</div>
                       </div>
                     ))}
                   </div>
                 )}
-                {selectedArticle && (
-                  <a className="dyn-source" href={selectedArticle.url} target="_blank" rel="noopener">
-                    <span>연결 기사 원문</span><b aria-hidden="true" />
-                  </a>
-                )}
+                <div className="dyn-selected-actions">
+                  <button type="button" className="dyn-detail-action" onClick={() => openCompany(selectedCompany)}>
+                    <Icon name="report" size={12} sw={2} /><span>기업 상세 개요</span><b aria-hidden="true" />
+                  </button>
+                  {selectedArticle && (
+                    <a className="dyn-source" href={selectedArticle.url} target="_blank" rel="noopener">
+                      <span>최신 기사 원문</span><b aria-hidden="true" />
+                    </a>
+                  )}
+                </div>
               </div>
             )}
           </div>

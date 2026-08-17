@@ -622,7 +622,8 @@ function App() {
   const renderSection = id => {
     if (id === "overview") return (
       <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-nav-anchor="relationship-map" data-screen-label="AI Industry Brief">
-        <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} dataVersion={dataVersion} />
+        <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"}
+          dataVersion={dataVersion} onSelectCompany={setSelected} />
       </section>
     );
     if (id === "strategy") return (
