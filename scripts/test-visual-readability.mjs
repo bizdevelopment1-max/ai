@@ -56,6 +56,8 @@ assert(styles.includes(".kg-hint-compact") && styles.includes(".msf-mname > b"),
 assert(boards.includes('split(/\\n+|\\s+·\\s+/)') && boards.includes("핵심만 최대 3줄"), "feed summaries are not normalized into concise bullet lines");
 assert(boards.includes('<b>원문 <i aria-hidden="true" /></b>')
   && !boards.includes("실적·조직·발언·원문"), "value-chain company card source actions are not consistently labelled 원문");
+assert(boards.includes('institutional: "a16z"')
+  && !boards.includes("a16z 전용"), "a16z labels still expose the retired 전용 qualifier");
 
 assert(taxonomy.publicFacts === "none-generated-views-only", "registry still declares public mutable facts");
 assert(!Object.hasOwn(taxonomy, "MOBILE_STRATEGY"), "legacy strategy facts remain in runtime taxonomy");
