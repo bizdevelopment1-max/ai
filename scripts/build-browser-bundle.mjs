@@ -114,7 +114,13 @@ export function minifyCss(source) {
   let quote = "";
   let escaped = false;
   let pendingSpace = false;
-  const tight = new Set(["{", "}", ":", ";", ",", ">", "+", "~"]);
+  // A space before a pseudo-class can be a descendant combinator
+  // (`.card:hover :is(span)`). Treating every colon as punctuation used to
+  // collapse that selector into `.card:hover:is(span)`, so the production
+  // bundle silently stopped applying foreground colours to card children.
+  // Keep colons out of the whitespace-tight set; declarations remain valid
+  // with their optional post-colon space and selector semantics stay intact.
+  const tight = new Set(["{", "}", ";", ",", ">", "+", "~"]);
   for (let index = 0; index < source.length; index += 1) {
     const char = source[index];
     const next = source[index + 1];
