@@ -38,6 +38,7 @@ const commonPublish = [
   nodeStep("validate-content-registry", "scripts/validate-site-content.mjs"),
   nodeStep("test-data-platform", "scripts/test-data-platform.mjs"),
   nodeStep("build-browser-bundles", "scripts/build-browser-bundle.mjs"),
+  nodeStep("validate-delivery-performance", "scripts/validate-delivery-performance.mjs"),
   retryStep("test-automation", "scripts/test-automation.mjs"),
   nodeStep("test-readability", "scripts/test-visual-readability.mjs"),
 ];

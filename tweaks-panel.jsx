@@ -533,9 +533,3 @@ function TweakButton({ label, onClick, secondary = false }) {
             onClick={onClick}>{label}</button>
   );
 }
-
-Object.assign(window, {
-  useTweaks, TweaksPanel, TweakSection, TweakRow,
-  TweakSlider, TweakToggle, TweakRadio, TweakSelect,
-  TweakText, TweakNumber, TweakColor, TweakButton,
-});

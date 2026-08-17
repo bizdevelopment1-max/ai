@@ -124,7 +124,7 @@ jobs:
           name: site-staging-${{ github.run_id }}
           path: |
             index.html
-            styles.css
+            styles.bundle.css
             app.bundle.js
             data.bundle.js
             data-version.json
@@ -140,12 +140,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json strategy-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json site-content-manifest.json automation-status.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js
+          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json strategy-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json site-content-manifest.json automation-status.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js styles.bundle.css
           if git diff --staged --quiet; then
             echo "No data changes."
             exit 0
           fi
-          if git diff --cached --name-only | grep -Eq '^(scripts/|config/|\.github/|.*\.jsx$|styles\.css$|package\.json$)'; then
+          if git diff --cached --name-only | grep -Eq '^(scripts/|config/|\.github/|.*\.jsx$|styles\.css$|styles\.bundle\.css$|package\.json$)'; then
             echo "Schema/code change detected in data workflow; refusing mixed PR."
             exit 1
           fi

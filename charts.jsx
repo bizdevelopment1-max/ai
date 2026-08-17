@@ -312,7 +312,6 @@ function DonutChart({ data, colorOf, ink, muted, centerLabel, centerSub }) {
     </div>
   );
 }
-
 const SHORT_NAMES = { "Google DeepMind": "DeepMind", "Anthropic Claude": "Anthropic", "Stability AI": "Stability", "Mistral AI": "Mistral" };
 function shortName(n) { return SHORT_NAMES[n] || n.split(" ")[0]; }
 
@@ -670,5 +669,3 @@ function GroupTrendChart({ groups, stocks, stockData, years, theme }) {
     </div>
   );
 }
-
-Object.assign(window, { MarketGrowthChart, HBarChart, DonutChart, MonthlyLineChart, StockChart, GroupTrendChart });

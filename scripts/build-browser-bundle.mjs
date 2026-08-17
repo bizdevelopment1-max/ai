@@ -27,7 +27,9 @@ export const DATA_SOURCE_FILE = "config/dashboard-taxonomy.json";
 export const DATA_BUNDLE_FILE = "data.bundle.js";
 export const INDEX_FILE = "index.html";
 export const STYLES_FILE = "styles.css";
+export const STYLE_BUNDLE_FILE = "styles.bundle.css";
 const BABEL_URL = "https://unpkg.com/@babel/standalone@7.29.0/babel.min.js";
+const TERSER_URL = "https://unpkg.com/terser@5.43.1/dist/bundle.min.js";
 const RUNTIME_DATA_KEYS = [
   "BIGTECH_GROUPS", "CATEGORIES", "COMPANY_LAYER", "COMPANY_ORDER",
   "DECISION_FRAMEWORK", "STARTUP_TAXONOMY", "STARTUP_VERTICALS", "STOCK_GROUPS",
@@ -93,6 +95,67 @@ async function loadBabel() {
   return context.Babel;
 }
 
+async function loadTerser() {
+  const response = await fetch(TERSER_URL);
+  if (!response.ok) throw new Error(`Could not download browser minifier (${response.status})`);
+  const context = {};
+  vm.createContext(context);
+  vm.runInContext(await response.text(), context, { filename: "terser.js" });
+  if (!context.Terser) throw new Error("Browser minifier did not initialize");
+  return context.Terser;
+}
+
+// Keep the authoring stylesheet readable while emitting a compact production
+// asset. This scanner removes comments and redundant whitespace only outside
+// quoted strings, so content labels, data URLs and escaped characters remain
+// byte-for-byte safe.
+export function minifyCss(source) {
+  let output = "";
+  let quote = "";
+  let escaped = false;
+  let pendingSpace = false;
+  const tight = new Set(["{", "}", ":", ";", ",", ">", "+", "~"]);
+  for (let index = 0; index < source.length; index += 1) {
+    const char = source[index];
+    const next = source[index + 1];
+    if (quote) {
+      output += char;
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === quote) quote = "";
+      continue;
+    }
+    if (char === "\"" || char === "'") {
+      if (pendingSpace && output && !tight.has(output.at(-1))) output += " ";
+      pendingSpace = false;
+      quote = char;
+      output += char;
+      continue;
+    }
+    if (char === "/" && next === "*") {
+      index += 2;
+      while (index < source.length && !(source[index] === "*" && source[index + 1] === "/")) index += 1;
+      index += 1;
+      pendingSpace = true;
+      continue;
+    }
+    if (/\s/.test(char)) {
+      pendingSpace = true;
+      continue;
+    }
+    if (tight.has(char)) {
+      output = output.replace(/\s+$/, "");
+      output += char;
+      pendingSpace = false;
+      continue;
+    }
+    if (pendingSpace && output && !tight.has(output.at(-1))) output += " ";
+    pendingSpace = false;
+    output += char;
+  }
+  return output.trim().replace(/;}/g, "}");
+}
+
 export async function buildBrowserBundle() {
   const [sources, taxonomySource, stylesSource, indexSource] = await Promise.all([
     readBrowserSources(),
@@ -110,7 +173,7 @@ export async function buildBrowserBundle() {
     { file: "runtime-data.js", source: compactData },
   ]);
   const styleStamp = assetVersion(STYLES_FILE, stylesSource);
-  const Babel = await loadBabel();
+  const [Babel, Terser] = await Promise.all([loadBabel(), loadTerser()]);
   const compiled = sources.map(({ file, source }) => Babel.transform(source, {
     filename: file,
     presets: [["react", { runtime: "classic" }]],
@@ -119,20 +182,29 @@ export async function buildBrowserBundle() {
     comments: false,
     compact: true,
   }).code);
-  const bundle = `/* ai-dashboard-bundle:${stamp} */\n${compiled.join("\n")}\n`;
+  const minified = await Terser.minify(compiled.join("\n"), {
+    compress: { dead_code: true, drop_debugger: true, passes: 2, toplevel: true },
+    mangle: { toplevel: true },
+    format: { comments: false, semicolons: true },
+  });
+  if (!minified.code) throw new Error("Browser minifier emitted an empty bundle");
+  const bundle = `/* ai-dashboard-bundle:${stamp} */\n${minified.code}\n`;
   const dataBundle = `/* ai-dashboard-data:${dataStamp} */\n${compactData}\n`;
+  const styleBundle = minifyCss(stylesSource);
   const versionedIndex = [
-    [STYLES_FILE, styleStamp],
+    [STYLE_BUNDLE_FILE, styleStamp],
     [DATA_BUNDLE_FILE, dataStamp.slice(0, 16)],
     [BUNDLE_FILE, stamp.slice(0, 16)],
   ].reduce((html, [assetName, version]) => versionAsset(html, assetName, version), indexSource);
   await Promise.all([
     writeFile(BUNDLE_FILE, bundle),
     writeFile(DATA_BUNDLE_FILE, dataBundle),
+    writeFile(STYLE_BUNDLE_FILE, `${styleBundle}\n`),
     writeFile(INDEX_FILE, versionedIndex),
   ]);
   console.log(`[bundle] wrote ${BUNDLE_FILE} from ${sources.length} source files (${Math.round(bundle.length / 1024)} KB)`);
   console.log(`[bundle] wrote ${DATA_BUNDLE_FILE} (${Math.round(dataBundle.length / 1024)} KB)`);
+  console.log(`[bundle] wrote ${STYLE_BUNDLE_FILE} (${Math.round(styleBundle.length / 1024)} KB from ${Math.round(stylesSource.length / 1024)} KB)`);
   console.log(`[bundle] versioned browser assets in ${INDEX_FILE}`);
 }
 
