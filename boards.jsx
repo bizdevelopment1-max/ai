@@ -692,7 +692,7 @@ function StrategyPortfolioCard({
         {people && <span><em>인력</em>{people}</span>}
         {recentSignalCount > 0 && <span><em>최근 30일 신호</em>{recentSignalCount}건</span>}
         {evidenceN > 0 && <span><em>원문 근거</em>{evidenceN}건</span>}
-        <b>실적·조직·발언·원문 <i aria-hidden="true" /></b>
+        <b>원문 <i aria-hidden="true" /></b>
       </div>
     </div>
   );
