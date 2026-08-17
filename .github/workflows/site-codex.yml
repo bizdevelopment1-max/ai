@@ -112,6 +112,9 @@ jobs:
       - name: Enforce delivery budgets and generated-content boundary
         run: npm run validate:delivery
 
+      - name: Validate cumulative intelligence tracks
+        run: npm run validate:tracks
+
       - name: Verify dashboard automation contract
         run: npm run test:automation
 

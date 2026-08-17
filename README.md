@@ -16,6 +16,15 @@ data. Every run produces `automation-status.json`; the public
 `site-content-manifest.json` records freshness, counts and checksums for each
 visible section.
 
+Company intelligence, AI market observations, consumer surveys, and the AI
+value chain are materialized as four independently governed tracks by
+`scripts/build-intelligence-tracks.mjs`. `intelligence-tracks.json` keeps the
+newest record per stable key, source coverage, freshness and a prioritized
+reverification queue. Content-hash changes append a revision to monthly JSONL
+partitions under `intelligence-ledger/`; unchanged observations only refresh
+`lastSeenAt` and are not duplicated. Full, recovery, and weekly metric runs
+validate these tracks before the public views are versioned.
+
 ## ChatGPT Pro · GitHub Codex Cloud
 
 GitHub Pages의 Site CLI는 `/ask`와 `/edit` 요청을 GitHub Issue로 기록하고 ChatGPT Pro 계정의 Codex Cloud 실행문을 생성한다. 최초 1회 `https://chatgpt.com/codex`에서 Pro 계정으로 로그인하고 `bizdevelopment1-max/ai` 저장소 환경을 연결한 뒤, 복사된 실행문을 Codex Cloud에 붙여넣어 작업한다.

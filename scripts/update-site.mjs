@@ -20,6 +20,8 @@ const commonPublish = [
   nodeStep("normalize-final", "scripts/normalize-temporal-fields.mjs"),
   retryStep("verify-evidence", "scripts/verify-pipeline.mjs"),
   retryStep("rebuild-decisions", "scripts/build-mobile-ai-business-db.mjs"),
+  nodeStep("build-intelligence-tracks", "scripts/build-intelligence-tracks.mjs"),
+  nodeStep("validate-intelligence-tracks", "scripts/validate-intelligence-tracks.mjs"),
   nodeStep("validate-decisions", "scripts/validate-mx-intelligence.mjs"),
   retryStep("audit", "scripts/audit-agent.mjs"),
   nodeStep("minimize-source-content", "scripts/minimize-retained-source-content.mjs"),

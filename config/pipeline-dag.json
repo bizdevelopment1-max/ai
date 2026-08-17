@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "updatedAt": "2026-08-16",
+  "version": 4,
+  "updatedAt": "2026-08-17",
   "nodes": [
     { "id": "collect-sources", "dependsOn": [], "outputs": ["source-snapshot.json", "source-ledger"] },
     { "id": "collect-news", "dependsOn": ["collect-sources"], "outputs": ["news.json"] },
@@ -9,8 +9,9 @@
     { "id": "verify-evidence", "dependsOn": ["normalize-temporal"], "outputs": ["quality.json", "history.json", "market-reverification-queue.json"] },
     { "id": "build-claim-evidence-graph", "dependsOn": ["verify-evidence"], "outputs": ["claim-evidence-graph"] },
     { "id": "build-decisions", "dependsOn": ["build-claim-evidence-graph"], "outputs": ["mobile-ai-business-view.json"] },
-    { "id": "minimize-retention", "dependsOn": ["verify-evidence", "build-decisions"], "outputs": ["news.json", "market.json", "history.json", "research.json"] },
-    { "id": "materialize-public", "dependsOn": ["minimize-retention"], "outputs": ["overview-view.json", "strategy-view.json", "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json", "site-content-manifest.json", "data.bundle.js"] },
+    { "id": "build-intelligence-tracks", "dependsOn": ["verify-evidence", "build-decisions"], "outputs": ["intelligence-tracks.json", "intelligence-ledger"] },
+    { "id": "minimize-retention", "dependsOn": ["verify-evidence", "build-decisions", "build-intelligence-tracks"], "outputs": ["news.json", "market.json", "history.json", "research.json"] },
+    { "id": "materialize-public", "dependsOn": ["minimize-retention"], "outputs": ["overview-view.json", "strategy-view.json", "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json", "intelligence-tracks.json", "site-content-manifest.json", "data.bundle.js"] },
     { "id": "build-lineage", "dependsOn": ["materialize-public"], "outputs": ["dataset-manifest.json", "slo-report.json"] },
     { "id": "content-registry-gate", "dependsOn": ["build-lineage"], "outputs": ["site-content-manifest.json", "automation-status.json"] },
     { "id": "publication-gates", "dependsOn": ["content-registry-gate"], "outputs": ["staging-artifact", "publication-invariant-report"] }

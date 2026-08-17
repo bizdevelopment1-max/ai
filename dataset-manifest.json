@@ -78,6 +78,30 @@
       "migrationTriggerExceeded": true
     },
     {
+      "id": "intelligence-observation-ledger",
+      "path": "intelligence-ledger",
+      "role": "normalized-partitioned-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "recordCount": null,
+      "bytes": 878825,
+      "sha256": "8cef2008c4da9282961f9d08c49fdb6b6ae7f011b135e7ec0849daacabe7dc5f",
+      "files": 4,
+      "migrationTriggerExceeded": false
+    },
+    {
+      "id": "intelligence-track-snapshot",
+      "path": "intelligence-tracks.json",
+      "role": "latest-versioned-track-view",
+      "sensitivity": "public",
+      "publication": "public",
+      "recordCount": null,
+      "bytes": 1132902,
+      "sha256": "09fb43e83953326a0a76e487d5c4ef6eda54849f4005f0bf1fa21d5eed102d43",
+      "files": 1,
+      "migrationTriggerExceeded": true
+    },
+    {
       "id": "source-compliance-catalog",
       "path": "source-compliance-report.json",
       "role": "source-governance-control",

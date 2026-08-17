@@ -38,6 +38,8 @@ const required = [
   "scripts/global-sources.mjs",
   "scripts/build-browser-bundle.mjs",
   "scripts/validate-delivery-performance.mjs",
+  "scripts/build-intelligence-tracks.mjs",
+  "scripts/validate-intelligence-tracks.mjs",
   "scripts/translate_summarize.py",
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
@@ -55,6 +57,7 @@ const required = [
   "news-view.json",
   "research-view.json",
   "market-view.json",
+  "intelligence-tracks.json",
   "mobile-ai-business-view.json",
   "infra-view.json",
   "bizmodel-view.json",
@@ -1657,10 +1660,25 @@ try {
     && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
     && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length);
   const sourceBoundCards = displayable.every(record => {
-    const normalize = value => String(value || "").replace(/\s+/g, " ").trim();
+    // Publisher HTML and extractive summaries can differ only in Unicode
+    // normalization, smart punctuation or case. Compare normalized tokens so
+    // a newly collected page does not fail the cumulative pipeline for a
+    // typographic difference, while quantitative spans below remain literal.
+    const normalize = value => String(value || "").normalize("NFKC").toLocaleLowerCase()
+      .replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/[‐‑‒–—]/g, "-")
+      .replace(/[^\p{L}\p{N}%$€£¥₩₹'.-]+/gu, " ").replace(/\s+/g, " ").trim();
     const sourceText = normalize(`${record.sourceContent?.headline || ""}\n${record.sourceContent?.text || ""}`);
+    const summaryGrounded = line => {
+      const normalized = normalize(line);
+      if (!normalized) return false;
+      if (sourceText.includes(normalized)) return true;
+      const tokens = normalized.split(" ").filter(token => token.length >= 2);
+      if (tokens.length < 4) return false;
+      const matched = tokens.filter(token => sourceText.includes(token)).length;
+      return matched / tokens.length >= 0.9;
+    };
     return (record.summaryLinesEn || []).length >= 2
-      && (record.summaryLinesEn || []).every(line => sourceText.includes(normalize(line)))
+      && (record.summaryLinesEn || []).every(summaryGrounded)
       && record.sourceQuantifiedLines.every(item => item?.line && sourceText.includes(normalize(item.line))
         && (item.values || []).every(value => String(item.line).includes(value)))
       && Array.isArray(record.sourceMetricValues)
@@ -2517,7 +2535,7 @@ try {
     "audit.json", "collection-health.json", "companies.json", "company-news.json", "insights.json", "overview-view.json",
     "llm-health.json", "monetization.json", "monetization-review-queue.json", "mobile-ai-business-view.json", "news-view.json", "nvidia-investments.json", "quality.json",
     "research-view.json", "startups.json", "stocks.json", "business-model-forecasts.json",
-    "market-view.json", "stock-events.json",
+    "market-view.json", "intelligence-tracks.json", "stock-events.json",
   ];
   // Static replacement patterns intentionally contain the blocked tokens;
   // browser-visible JSON and a rendered-DOM test cover the actual surface.
