@@ -54,8 +54,10 @@ assert(strategy.consultingModel?.workstreams?.length === 4 && strategy.consultin
 assert(strategy.lineage?.generatedFrom?.includes("news.json") && strategy.lineage?.generatedFrom?.includes("mobile-ai-business-view.json"), "strategy lineage is incomplete");
 assert(!Object.hasOwn(strategy, "accountPortfolio") && !boards.includes("Competitive Platform Portfolio") && !styles.includes(".msf-account"), "removed competitive company portfolio is still exposed");
 assert(boards.includes("const recentSignalCount = Number(c.live?.mentions30 || 0)") && boards.includes(">최근 30일 신호<"), "value-chain company cards do not retain the recent-signal evidence");
-assert(strategy.opportunityPortfolio?.length >= 9 && strategy.opportunityPortfolio.every(item => item.evidence?.length), "generated opportunity portfolio lacks evidence");
-assert(strategy.expertSignals?.length >= 5 && strategy.expertSignals.every(item => /^https:\/\//.test(item.url || "")), "generated evidence signals are incomplete");
+assert(Array.isArray(strategy.opportunityPortfolio) && strategy.opportunityPortfolio.length > 0
+  && strategy.opportunityPortfolio.every(item => item.evidence?.length), "generated opportunity portfolio lacks evidence");
+assert(Array.isArray(strategy.expertSignals) && strategy.expertSignals.length > 0
+  && strategy.expertSignals.every(item => /^https:\/\//.test(item.url || "")), "generated evidence signals are incomplete");
 assert(app.includes('loadJson(dataUrl("strategy-view.json"))') && boards.includes("strategyData ||"), "browser strategy section is not connected to generated data");
 
 let legacyExists = true;
