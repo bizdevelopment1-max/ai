@@ -692,7 +692,7 @@ function StrategyPortfolioCard({
         {people && <span><em>인력</em>{people}</span>}
         {recentSignalCount > 0 && <span><em>최근 30일 신호</em>{recentSignalCount}건</span>}
         {evidenceN > 0 && <span><em>원문 근거</em>{evidenceN}건</span>}
-        <b>실적·조직·발언·원문 <i aria-hidden="true" /></b>
+        <b>원문 <i aria-hidden="true" /></b>
       </div>
     </div>
   );
@@ -5298,7 +5298,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
     const labels = {
       large: `대형 · ${(meta && meta.ko) || s.vertical || "AI 스타트업"}`,
       small: `초기 · ${(meta && meta.ko) || s.vertical || "AI 스타트업"}`,
-      institutional: `a16z 전용 · ${(meta && meta.ko) || s.vertical || "소비자 AI"}`,
+      institutional: "a16z",
     };
     return <StrategyPortfolioCard key={`${a16zView ? "a16z" : portfolioClass}-${s.canonicalId || s.name}`}
       company={company}
@@ -5393,7 +5393,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
         {tier === "all" && institutional.length > 0 && (
         <div className="mkt-group">
           <div className="mkt-group-head">
-            <b>a16z 전용 운영사 — 다른 포트폴리오와 중복 제거</b>
+            <b>a16z 운영사 — 다른 포트폴리오와 중복 제거</b>
             <em>대형·초기·밸류체인에 이미 배치된 업체는 제외 · Web·Mobile 제품은 대표 운영사 한 곳에 통합</em>
             {data.institutionalSource?.url && <a href={data.institutionalSource.url} target="_blank" rel="noopener">a16z 원문</a>}
           </div>
