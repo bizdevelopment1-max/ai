@@ -12,6 +12,10 @@ const requiredSectionIds = [
   "overview", "strategy", "opportunity", "newbiz", "valuechain",
   "signals", "sanalysis", "evidence", "validation",
 ];
+const removedSidebarChildren = new Set([
+  "executive-brief", "execution-plan", "build-buy-partner",
+  "execution-hypothesis", "action-implication",
+]);
 
 const workstreams = (architecture.workstreams || [])
   .slice()
@@ -38,6 +42,9 @@ for (const section of sections) {
   expect(section.label && section.labelEn && section.icon, `${section.id}: labels and icon are required`);
   expect(section.question && section.output, `${section.id}: question and output are required`);
   expect(Array.isArray(section.children), `${section.id}: children must be an array`);
+  for (const child of section.children || []) {
+    expect(!removedSidebarChildren.has(child.key), `${section.id}: removed sidebar child returned: ${child.key}`);
+  }
 }
 
 const registrySections = new Set((registry.datasets || []).map(dataset => dataset.section));

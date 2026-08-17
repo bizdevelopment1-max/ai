@@ -199,7 +199,7 @@ function Trend({ v, small, animate }) {
 // ---- Sidebar ------------------------------
 const NAV = [
   { id: "overview", ko: "산업·경쟁 브리핑", en: "Industry & Competition Brief", icon: "grid", group: "01 · 방향 설정", children: [
-    { key: "relationship-map", ko: "산업 관계 지도" }, { key: "executive-brief", ko: "핵심 브리핑" },
+    { key: "relationship-map", ko: "산업 관계 지도" },
   ] },
   { id: "strategy", ko: "전략 우선순위", en: "Strategic Priorities", icon: "target", group: "01 · 방향 설정", children: [
     { key: "priority-model", ko: "우선순위 모델" }, { key: "opportunity-portfolio", ko: "후보 포트폴리오" },
@@ -207,16 +207,14 @@ const NAV = [
   ] },
   { id: "opportunity", ko: "신사업 기회 DB", en: "Opportunity Database", icon: "report", group: "02 · 기회 설계", children: [
     { key: "decision-radar", ko: "의사결정 레이더" }, { key: "opportunity-candidates", ko: "기회 후보" },
-    { key: "monetization-roi", ko: "수익화·ROI" }, { key: "build-buy-partner", ko: "Build·Buy·Partner" },
+    { key: "monetization-roi", ko: "수익화·ROI" },
   ] },
   { id: "newbiz", ko: "서비스·수익 모델", en: "Service & Revenue Models", icon: "spark", group: "02 · 기회 설계", children: [
     { key: "service-opportunity", ko: "서비스 기회" }, { key: "revenue-model", ko: "수익 모델" },
-    { key: "execution-hypothesis", ko: "실행 가설" },
   ] },
   { id: "valuechain", ko: "AI 밸류체인", en: "AI Value Chain", icon: "ai", group: "03 · 생태계 선택", children: [] },
   { id: "signals", ko: "기술 변화 신호", en: "Technology Signals", icon: "pulse", group: "03 · 생태계 선택", children: [
     { key: "technology-shift", ko: "기술 변화" }, { key: "market-shift", ko: "시장 변화" },
-    { key: "action-implication", ko: "실행 시사점" },
   ] },
   { id: "sanalysis", ko: "파트너·M&A 후보", en: "Partner & M&A Candidates", icon: "target", group: "03 · 생태계 선택", children: [] },
   { id: "evidence", ko: "시장·고객 근거", en: "Market & Customer Evidence", icon: "news", group: "04 · 근거 검증", children: [
@@ -227,6 +225,11 @@ const NAV = [
   ] },
 ];
 const NAV_SECTION_IDS = NAV.map(item => item.id);
+const HIDDEN_SIDEBAR_CHILD_KEYS = new Set([
+  "executive-brief", "execution-plan", "build-buy-partner",
+  "execution-hypothesis", "action-implication",
+]);
+const HIDDEN_SIDEBAR_CHILD_LABELS = /^(?:영상[·\s]*핵심 브리핑|핵심 브리핑|실행 계획|Build[·\s-]*Buy[·\s-]*Partner|실행 가설|실행 시사점)$/i;
 
 // gradient background for the sidebar, derived from a single brand color
 function sbBg(hex) {
@@ -247,7 +250,12 @@ function Sidebar({ active, activeCategory, onNav, onCategory, brand, onLogo, onB
   const stop = fn => (e) => { e.stopPropagation(); fn && fn(e); };
   const categoriesFor = item => {
     const dynamic = sectionCategories && sectionCategories[item.id];
-    return Array.isArray(dynamic) && dynamic.length ? dynamic : (item.children || []);
+    const categories = Array.isArray(dynamic) && dynamic.length ? dynamic : (item.children || []);
+    return categories.filter(category => {
+      const id = category.id || category.key;
+      const label = String(category.ko || category.label || "").trim();
+      return !HIDDEN_SIDEBAR_CHILD_KEYS.has(id) && !HIDDEN_SIDEBAR_CHILD_LABELS.test(label);
+    });
   };
   useEffect(() => {
     const item = navRef.current?.querySelector(`[data-nav-id="${active}"]`);

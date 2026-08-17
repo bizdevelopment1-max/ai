@@ -416,15 +416,24 @@ function App() {
     insights: "evidence", reports: "evidence", ib: "evidence", articles: "evidence",
     survey: "validation", market: "validation", stocks: "validation",
   };
-  const navTo = rawId => {
+  const navTarget = (sectionId, childId = "") => {
+    const section = refs[sectionId]?.current;
+    if (!section || !childId) return section;
+    const escaped = window.CSS?.escape ? window.CSS.escape(childId) : childId.replace(/[^a-zA-Z0-9_-]/g, "\\$&");
+    return (section.matches?.(`[data-nav-anchor="${escaped}"]`) ? section : null)
+      || section.querySelector?.(`[data-nav-anchor="${escaped}"]`)
+      || section;
+  };
+  const navTo = (rawId, childId = "") => {
     const id = NAV_ALIAS[rawId] || rawId;
     if (!NAV_SECTION_IDS.includes(id)) return;
     setActive(id);
-    const el = refs[id] && refs[id].current;
+    const el = navTarget(id, childId);
     const sc = scrollRef.current;
     if (!el || !sc) return;
     navIntentRef.current = id;
     window.__DASH_NAV_TARGET = id;
+    window.__DASH_NAV_ANCHOR = childId;
     navSettleTimersRef.current.forEach(timer => window.clearTimeout(timer));
     navSettleTimersRef.current = [];
     const destination = Math.max(0, sectionTop(sc, el) - NAV_SCROLL_OFFSET);
@@ -433,10 +442,14 @@ function App() {
     // download its payload. Jump long distances; retain smooth motion locally.
     sc.scrollTo({ top: destination, behavior: isDistant ? "auto" : "smooth" });
     const realign = () => {
-      const target = refs[id]?.current;
+      const target = navTarget(id, childId);
       if (target && scrollRef.current) {
         const container = scrollRef.current;
         container.scrollTo({ top: Math.max(0, sectionTop(container, target) - NAV_SCROLL_OFFSET), behavior: "auto" });
+        if (childId && target.dataset?.navAnchor === childId) {
+          target.setAttribute("tabindex", "-1");
+          target.focus?.({ preventScroll: true });
+        }
       }
     };
     const settleDelays = isDistant ? [0, 140, 360, 760, 1400, 2400, 3600] : [520, 1100];
@@ -445,6 +458,7 @@ function App() {
       if (index === settleDelays.length - 1) {
         navIntentRef.current = null;
         if (window.__DASH_NAV_TARGET === id) window.__DASH_NAV_TARGET = "";
+        if (window.__DASH_NAV_ANCHOR === childId) window.__DASH_NAV_ANCHOR = "";
       }
     }, delay));
   };
@@ -481,6 +495,7 @@ function App() {
       cancelAnimationFrame(frame);
       navSettleTimersRef.current.forEach(timer => window.clearTimeout(timer));
       window.__DASH_NAV_TARGET = "";
+      window.__DASH_NAV_ANCHOR = "";
     };
   }, []);
 
@@ -550,7 +565,8 @@ function App() {
   };
   const handleCategoryNav = (section, categoryId) => {
     setNavCategory({ section, id: categoryId });
-    navTo(section);
+    navTo(section, categoryId);
+    if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) setSidebarOpen(false);
   };
   const handleSidebarCompany = (company, context = {}) => {
     if (context.section === "sanalysis") {
@@ -605,7 +621,7 @@ function App() {
   const navigation = consultingNavigation.length ? consultingNavigation : NAV;
   const renderSection = id => {
     if (id === "overview") return (
-      <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="AI Industry Brief">
+      <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-nav-anchor="relationship-map" data-screen-label="AI Industry Brief">
         <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} dataVersion={dataVersion} />
       </section>
     );
@@ -654,8 +670,8 @@ function App() {
       <LazySection id="evidence" active={active} sectionRef={refs.evidence} height={1800}>
         <SectionStack title="시장·고객 근거" eyebrow="EVIDENCE"
           description="기관 리서치와 산업·고객 원문 신호를 한 근거 축으로 통합">
-          <IBInsightBoard research={research} reports={[]} />
-          <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
+          <div className="nav-subsection" data-nav-anchor="institutional-research"><IBInsightBoard research={research} reports={[]} /></div>
+          <div className="nav-subsection" data-nav-anchor="industry-customer-source"><ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} /></div>
         </SectionStack>
       </LazySection>
     );
@@ -663,10 +679,10 @@ function App() {
       <LazySection id="validation" active={active} sectionRef={refs.validation} height={2400}>
         <SectionStack title="수요·시장·재무 검증" eyebrow="VALIDATION"
           description="수요 조사·시장 규모·상장사 지표를 분리해 사업성을 단계적으로 확인">
-          <MarketBoard dataVersion={dataVersion} mode="survey" />
-          <MarketBoard dataVersion={dataVersion} mode="market" />
-          <StockBoard stocks={D.STOCKS} stockData={stockData} nvidiaInvestments={nvidiaInvestments}
-            cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} />
+          <div className="nav-subsection" data-nav-anchor="survey"><MarketBoard dataVersion={dataVersion} mode="survey" /></div>
+          <div className="nav-subsection" data-nav-anchor="market"><MarketBoard dataVersion={dataVersion} mode="market" /></div>
+          <div className="nav-subsection" data-nav-anchor="stocks"><StockBoard stocks={D.STOCKS} stockData={stockData} nvidiaInvestments={nvidiaInvestments}
+            cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} /></div>
         </SectionStack>
       </LazySection>
     );

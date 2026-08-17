@@ -469,10 +469,13 @@ try {
 }
 
 try {
-  const [app, components, anim] = await Promise.all([
+  const [app, components, anim, boards, styles, consultingArchitecture] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
     readFile("anim.jsx", "utf8"),
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+    readFile("config/consulting-architecture.json", "utf8").then(JSON.parse),
   ]);
   const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
   const navIds = [...navSource.matchAll(/\{\s*id:\s*"([^"]+)"/g)].map(match => match[1]);
@@ -499,6 +502,24 @@ try {
     && !navSource.includes('id: "audit"')
     && !navSource.includes("데이터 신뢰센터")
     && sidebarBrandSource.includes("<b>AI</b>");
+  const removedSidebarKeys = new Set([
+    "executive-brief", "execution-plan", "build-buy-partner",
+    "execution-hypothesis", "action-implication",
+  ]);
+  const architectureChildren = (consultingArchitecture.workstreams || [])
+    .flatMap(workstream => workstream.sections || [])
+    .flatMap(section => section.children || []);
+  const removedSidebarCopy = architectureChildren.some(child => removedSidebarKeys.has(child.key))
+    || [...removedSidebarKeys].some(key => navSource.includes(`key: "${key}"`));
+  const subsectionScrollReady = app.includes('const navTarget = (sectionId, childId = "")')
+    && app.includes("navTo(section, categoryId)")
+    && app.includes('window.__DASH_NAV_ANCHOR = childId')
+    && components.includes("HIDDEN_SIDEBAR_CHILD_KEYS")
+    && components.includes("HIDDEN_SIDEBAR_CHILD_LABELS")
+    && boards.includes('data-nav-anchor="decision-criteria"')
+    && boards.includes("data-nav-anchor={layerId}")
+    && styles.includes("[data-nav-anchor]")
+    && styles.includes("scroll-margin-top: 14px");
   if (missingOnRight.length || missingOnLeft.length
     || !sameMeceOrder
     || !overviewHeaderRemoved
@@ -507,7 +528,9 @@ try {
     || !/for \(const id of NAV_SECTION_IDS\)/.test(app)
     || /if \(REDUCED\) \{ setInView\(true\)/.test(anim)
     || !hierarchyReady
-    || !sidebarCopyClean) {
+    || !sidebarCopyClean
+    || removedSidebarCopy
+    || !subsectionScrollReady) {
     throw new Error(`navigation mismatch left-only=${missingOnRight.join(",")} right-only=${missingOnLeft.join(",")}`);
   }
   console.log(`  정상  MECE navigation maps 1:1 in order to ${navIds.length} right-side sections · 첫 화면 중복 제목 제거`);

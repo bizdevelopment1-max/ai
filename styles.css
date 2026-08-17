@@ -790,7 +790,14 @@ a[href]:hover .rainbow-on-hover,
 
 /* Stable navigation wrapper. Heavy boards mount 1.8 viewports early and keep
    their reserved height until ready, avoiding both first-paint cost and jumps. */
-.board-gate, .nav-section-anchor { min-width: 0; scroll-margin-top: 14px; }
+.board-gate, .nav-section-anchor, [data-nav-anchor] { min-width: 0; scroll-margin-top: 14px; }
+.nav-subsection { min-width: 0; }
+.nav-sub-anchor { display: block; width: 100%; height: 1px; pointer-events: none; }
+[data-nav-anchor]:focus { outline: none; }
+[data-nav-anchor]:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 62%, transparent);
+  outline-offset: 4px;
+}
 .board-gate.is-pending { min-height: var(--gate-height, 760px); contain: layout style paint; }
 .board-gate-placeholder { min-height: var(--gate-height, 760px); border-radius: var(--radius); background: transparent; }
 .section-stack { display: grid; gap: 18px; min-width: 0; }

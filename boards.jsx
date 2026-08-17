@@ -473,7 +473,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
           {consultingModel.statement && <p className="msf-consulting-statement">{consultingModel.statement}</p>}
         </div>
 
-        <div className="msf-exec-architecture">
+        <div className="msf-exec-architecture" data-nav-anchor="priority-model">
           <div className="msf-mece-model" aria-label="MECE 전략 판단 구조">
             {(consultingModel.workstreams || []).map((workstream, index) => (
               <article className={`msf-mece-stage ${workstream.status || "review"}`} key={workstream.id} tabIndex="0">
@@ -527,7 +527,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
           </div>
         </div>
 
-        <div className="msf-section-head">
+        <div className="msf-section-head" data-nav-anchor="opportunity-portfolio">
           <div><em>01</em><h3>Evidence-weighted Opportunity Portfolio</h3></div>
         </div>
         <div className="msf-opportunity-grid">
@@ -547,7 +547,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
           ))}
         </div>
 
-        <div className="msf-section-head">
+        <div className="msf-section-head" data-nav-anchor="evidence-signals">
           <div><em>02</em><h3>Product · Platform · Business Evidence</h3></div>
         </div>
         <div className="msf-expert-grid">
@@ -583,7 +583,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
           ))}
         </div>
 
-        <div className="msf-section-head">
+        <div className="msf-section-head" data-nav-anchor="decision-criteria">
           <div><em>04</em><h3>AI Stack별 사업 판단 기준</h3></div>
           <p>통제점·수익 구조·사업 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
@@ -712,7 +712,7 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
   const primaryCount = rows.filter(c => c.layer === layerId).length;
   const adjacentCount = (companies || []).filter(c => c.layer !== layerId && (c.adjacentLayers || []).includes(layerId)).length;
   return (
-    <section className="board" ref={sectionRef} data-screen-label={layer.en}>
+    <section className="board" ref={sectionRef} data-nav-anchor={layerId} data-screen-label={layer.en}>
       <AnimCtx.Provider value={inView}>
         <div className="board-head" style={{ "--accent": layer.accent }}>
           <span className="board-tab" style={{ background: layer.accent }} />
@@ -4344,15 +4344,17 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
   return (
     <section className="board signal-source-board" ref={sectionRef} data-screen-label="AI stack change signals">
       <AnimCtx.Provider value={inView}>
-        <div className="board-head">
+        <div className="board-head" data-nav-anchor="technology-shift">
           <span className="board-tab" style={{ background: "#315C4A" }} />
           <div className="board-titles">
             <h2>Mobile AI 기술 변화 <span className="board-en">Experience · Agent · Model · OS · Runtime</span></h2>
             <p>사용자 경험과 AI Application·Agent·Model·OS 변화를 함께 읽고 <b>사용성·지연·원가·프라이버시·차별화</b> 요구로 변환 · 공개 원문으로 확인된 신호만 누적</p>
           </div>
         </div>
-        <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
-          dataVersion={dataVersion} title="Mobile AI 변화 신호" sub="Experience · Agent · Model · Context · Developer Tool · Edge Runtime — 모바일 사업 관련 원문 카드만 표시" />
+        <div className="nav-subsection" data-nav-anchor="market-shift">
+          <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
+            dataVersion={dataVersion} title="Mobile AI 변화 신호" sub="Experience · Agent · Model · Context · Developer Tool · Edge Runtime — 모바일 사업 관련 원문 카드만 표시" />
+        </div>
       </AnimCtx.Provider>
     </section>
   );
@@ -4373,10 +4375,14 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
         </div>
 
         {/* 1) AI 비즈니스 모델 전체 — 기업별 수익모델·활동 + 7개 수익화 유형(모두 원문 기반) */}
-        <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
-        <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
-          dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·거래·성과기반 — 모바일 고객 접점과 연결되는 원문 확인 카드만 누적 표시" />
-        <BusinessModelForecasts dataVersion={dataVersion} />
+        <div className="nav-subsection" data-nav-anchor="service-opportunity">
+          <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
+        </div>
+        <div className="nav-subsection" data-nav-anchor="revenue-model">
+          <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
+            dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·거래·성과기반 — 모바일 고객 접점과 연결되는 원문 확인 카드만 누적 표시" />
+          <BusinessModelForecasts dataVersion={dataVersion} />
+        </div>
 
       </AnimCtx.Provider>
     </section>
@@ -4688,14 +4694,14 @@ function ExecToplines({ items, insights, onNav }) {
     return `${meta.label} = ${meta.meaning} (${meta.range}점)\n점수 = 최신성 × 출처 신뢰도 × 주제 적합도\n당일 최고 카드 = 100으로 정규화한 상대 중요도\n${basis || ""}`.trim();
   };
   return (
-    <section className="es-info" aria-label="전략 의사결정 브리프">
+    <section className="es-info" data-nav-anchor="decision-radar" aria-label="전략 의사결정 브리프">
       <header className="es-brief-head">
         <div>
           <span className="es-brief-kicker">STRATEGIC DECISION BRIEF</span>
           <h3>핵심 신호를 의사결정으로 연결</h3>
         </div>
       </header>
-      <div className="es-framework-key" aria-label="전략 브리프 읽는 순서">
+      <div className="es-framework-key" data-nav-anchor="opportunity-candidates" aria-label="전략 브리프 읽는 순서">
         <span><b>01</b> FACT <em>원문 근거</em></span>
         <i className="es-key-arr" aria-hidden="true" />
         <span><b>02</b> IMPLICATION <em>사업 의미</em></span>
@@ -4708,6 +4714,7 @@ function ExecToplines({ items, insights, onNav }) {
         <span className="es-col-h">02 Implication <em>사업 의미</em></span>
         <span className="es-col-h">03 Decision <em>권고 실행</em></span>
       </div>
+      <span className="nav-sub-anchor" data-nav-anchor="monetization-roi" aria-hidden="true" />
       {cards.map((t, i) => {
         const tone = TONE[t.tone] || "#2D6BFF";
         const score = typeof t.score === "number" ? t.score : 0;
@@ -5271,7 +5278,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   };
 
   return (
-    <section className="board" ref={sectionRef} data-screen-label="Startup Analysis">
+    <section className="board" ref={sectionRef} data-nav-anchor={activeCategory || undefined} data-screen-label="Startup Analysis">
      <AnimCtx.Provider value={inView}>
       <div className="board-head" style={{ "--accent": "#0E8F6E" }}>
         <span className="board-tab" style={{ background: "#0E8F6E" }} />
