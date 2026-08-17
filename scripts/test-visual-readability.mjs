@@ -29,6 +29,9 @@ assert(styles.includes(".msf-layer-evidence em, .msf-layer-evidence b") && style
 assert(styles.includes(".main svg text") && styles.includes("font-size: 10.5px !important"), "diagram label readability guard is missing");
 assert(styles.includes("central decision marker replace one-sided card accents") && styles.includes("inset 0 -2px var(--consult-teal)"), "balanced consulting frame is missing");
 assert(styles.includes(".sp-card::before { display: none !important; }"), "value-chain cards still use a one-sided accent stripe");
+assert(styles.includes(".sp-card-foot { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); align-items: start; }")
+  && styles.includes("grid-column: 1 / -1;")
+  && styles.includes("white-space: nowrap;\n  overflow-wrap: normal;\n  word-break: keep-all;"), "value-chain card detail action can collapse into a vertical text column");
 assert(styles.includes('[data-theme="dark"] .msf-layer { color: var(--ink); }'), "dark strategy layers can inherit the browser button foreground");
 assert(styles.includes(".msf-opportunity-metrics") && styles.includes("grid-template-columns: repeat(auto-fit, minmax(105px, 1fr))"), "opportunity KPI evidence is not structured as a readable matrix");
 assert(styles.lastIndexOf("Final interaction contract: never invert an information card") > styles.lastIndexOf("color: #FFFFFF;\n    background:"), "non-inverting hover contract is not the final cascade policy");
