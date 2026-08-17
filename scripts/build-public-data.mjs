@@ -74,7 +74,7 @@ const researchKeys = [
   "localization", "sourceScope", "sourceRegion", "sourceLanguage", "sourceLocale",
 ];
 const recordKeys = [
-  "id", "stableKey", "type", "group", "verticalId", "collectionTrack", "discoveryQueryId", "topic",
+  "id", "stableKey", "isLatestForTopic", "type", "group", "verticalId", "collectionTrack", "discoveryQueryId", "topic",
   "title", "titleEn", "metricLabel", "values",
   "sourceName", "sourceUrl", "publishedAt", "collectedAt", "evidence", "origin",
   "provenance", "displayEligible", "sourceQuantifiedLines", "sourceQuantities", "sourceMetricValues", "localization",
@@ -82,6 +82,10 @@ const recordKeys = [
   "relatedSources", "mergedRecordIds", "mergedRecordCount", "duplicateRecordCount", "consolidation",
 ];
 const signalKeys = ["id", "group", "title", "signal", "quant", "source", "date", "url", "sourceSummaryMode", "provenance"];
+const marketItemKeys = [
+  "id", "group", "name", "def", "size", "forecast", "cagr", "source", "date", "url",
+  "extra", "latest", "provenance",
+];
 
 const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notRetiredFocus).filter(notDeleted("article"))
   .map(item => normalizeLocalizedRecord(compact(item, articleKeys)));
@@ -119,14 +123,31 @@ for (const record of consolidatedMarketRecords) {
     latestRecordByKey.set(stableKey, { ...record, stableKey });
   }
 }
-const replacedRecordCount = Math.max(0, consolidatedMarketRecords.length - latestRecordByKey.size);
-const visibleRecords = [...latestRecordByKey.values()]
+// The public view mirrors the append-only audit ledger: independent dated
+// observations remain visible. Only reports of the same event are merged by
+// consolidateMarketRecords(). A topic's newest row is marked for orientation,
+// never used to delete its earlier verified history.
+const visibleRecords = consolidatedMarketRecords
   .sort((left, right) => marketDateValue(right) - marketDateValue(left))
-  .map(item => normalizeLocalizedRecord(compact(item, recordKeys)));
+  .map(item => {
+    const stableKey = marketStableKey(item);
+    const latest = latestRecordByKey.get(stableKey);
+    return normalizeLocalizedRecord(compact({
+      ...item,
+      stableKey,
+      isLatestForTopic: latest?.id === item.id,
+    }, recordKeys));
+  });
+const latestTopicCount = latestRecordByKey.size;
+const historicalRecordCount = Math.max(0, visibleRecords.length - latestTopicCount);
 const visibleSignals = (data, scope) => (data.items || [])
   .filter(item => item?.provenance?.status === "evidence-linked" && item?.sourceSummaryMode === "source-content-extractive")
   .filter(notBanned).filter(notRetiredFocus).filter(notDeleted(scope))
   .map(item => normalizeLocalizedRecord(compact(item, signalKeys)));
+const visibleMarketItems = (market.items || [])
+  .filter(item => item?.provenance?.status === "source-linked" && /^https?:\/\//.test(String(item?.url || "")))
+  .filter(notBanned).filter(notRetiredFocus).filter(notDeleted("market"))
+  .map(item => normalizeLocalizedRecord(compact(item, marketItemKeys)));
 
 const generatedAt = new Date().toISOString();
 const newestTimestamp = values => values
@@ -159,14 +180,16 @@ const views = {
     sourceRecordCount: visibleRecordSources.length,
     insightCount: visibleRecords.length,
     consolidatedDuplicateCount,
-    replacedRecordCount,
+    latestTopicCount,
+    historicalRecordCount,
     database: {
-      mode: "latest-verified-snapshot",
-      replacementPolicy: "collection-track + discovery-topic + newest verified source",
-      publicRetention: "current-only",
-      rawLedger: "audit-only",
+      mode: "append-only-verified-view",
+      replacementPolicy: "exact and semantic duplicate reports consolidated; dated topic records retained",
+      publicRetention: "all-verified-history",
+      rawLedger: "append-only-audit-ledger",
     },
     records: visibleRecords,
+    items: visibleMarketItems,
   },
   "infra-view.json": { generatedAt, count: visibleSignals(infra, "infra-signal").length, groups: (infra.groups || []).filter(notRetiredFocus), items: visibleSignals(infra, "infra-signal") },
   "bizmodel-view.json": { generatedAt, count: visibleSignals(bizmodel, "bizmodel-signal").length, groups: bizmodel.groups || [], items: visibleSignals(bizmodel, "bizmodel-signal") },
@@ -524,4 +547,4 @@ await writeJson("data-version.json", {
   assets: ["site-content-manifest.json", ...new Set((contentRegistry.datasets || []).map(dataset => dataset.path)), "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"],
 });
 
-console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} current market insights · ${consolidatedDuplicateCount} duplicate records consolidated · ${replacedRecordCount} prior topic values replaced · version ${version}`);
+console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} cumulative market insights · ${historicalRecordCount} historical topic rows retained · ${consolidatedDuplicateCount} duplicate reports consolidated · version ${version}`);

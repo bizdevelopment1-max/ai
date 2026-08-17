@@ -4825,10 +4825,13 @@ function ExecToplines({ items, insights, onNav }) {
 
 // ---- AI 신사업 시장 보드: lazy-load(inView 시에만 fetch), MECE 그룹, 플레인 텍스트, 삭제/숨김 ----
 function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
-  const inView = useInView(sectionRef);
+  const localSectionRef = React.useRef(null);
+  const boardRef = sectionRef || localSectionRef;
+  const inView = useInView(boardRef);
   const isSurvey = mode === "survey";
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState(false);
   const MARKET_LS = "aiDashDeletedMarketRecords";
   const [deleted, setDeleted] = React.useState(() => {
     try { return JSON.parse(localStorage.getItem(MARKET_LS) || "{}"); } catch { return {}; }
@@ -4919,43 +4922,55 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
     (record.relatedSources?.length ? record.relatedSources.map(source => source.sourceUrl) : [record.sourceUrl])
   ).filter(Boolean)).size;
   const quantityCount = scoped.reduce((count, record) => count + (record.sourceMetricValues || record.values || []).length, 0);
-  const replacementCount = Number(data?.replacedRecordCount || 0);
+  const historicalRecordCount = scoped.filter(record => record.isLatestForTopic === false).length;
   const shownRecords = scoped.slice()
     .sort((a, b) => String(b.publishedAt || b.collectedAt || "").localeCompare(String(a.publishedAt || a.collectedAt || "")));
   const TYPE_LABEL = { "consumer-survey": "소비자 조사", "market-estimate": "시장 기준선", shipment: "출하량", "market-observation": "정량 관측" };
+  const typeOrder = isSurvey ? ["consumer-survey"] : ["market-estimate", "shipment", "market-observation"];
+  const recordGroups = typeOrder
+    .map(type => ({ type, label: TYPE_LABEL[type], records: shownRecords.filter(record => record.type === type) }))
+    .filter(group => group.records.length);
 
   return (
-    <section className="board" ref={sectionRef} data-screen-label="AI New Business Markets">
+    <section className="board market-board" ref={boardRef} data-screen-label="AI New Business Markets">
      <AnimCtx.Provider value={inView}>
       <div className="board-head">
         <span className="board-tab" style={{ background: isSurvey ? "#DB2777" : "#0891B2" }} />
         <div className="board-titles">
           <h2>{isSurvey ? "AI 관련 소비자 조사 결과" : "AI 관련 시장"} <span className="board-en">{isSurvey ? "AI Consumer Surveys" : "AI Market Map"} · 모바일 사업 관점</span></h2>
           <p>{isSurvey
-            ? "지불의사·수용도·인식 등 소비자 조사 전용 트랙 · 동일 주제 최신 검증값 자동 교체"
-            : "시장 규모·예측·출하 등 정량 시장 전용 트랙 · 동일 주제 최신 검증값 자동 교체"}</p>
+            ? "지불의사·수용도·인식 등 소비자 조사 전용 트랙 · 검증 이력을 날짜별로 계속 누적"
+            : "시장 규모·예측·출하 등 정량 시장 전용 트랙 · 검증 이력을 날짜별로 계속 누적"}</p>
         </div>
+        <button className="mkt-board-toggle" type="button" aria-expanded={!collapsed}
+          onClick={() => setCollapsed(value => !value)}>
+          {collapsed ? `전체 DB 펼치기 · ${scoped.length}건` : "전체 DB 접기"}
+          <Icon name="chevron" size={13} />
+        </button>
       </div>
 
       {!data ? (
         <SourcePipeline kind="market" />
       ) : (
-        <React.Fragment>
+        <div className="mkt-board-body" hidden={collapsed}>
           <div className="mkt-db-summary">
-            <div><em>통합 인사이트</em><b>{scoped.length}</b><span>동일 기사·재배포를 하나의 분석으로 통합</span></div>
+            <div><em>누적 인사이트</em><b>{scoped.length}</b><span>검증된 날짜별 관측을 삭제하지 않고 보존</span></div>
             <div><em>검증 출처</em><b>{sourceCount}</b><span>통합 카드 안에서 관련 원문 개별 확인</span></div>
             <div><em>정량 지표</em><b>{quantityCount}</b><span>항목별 의미와 발행사 근거 문장 표시</span></div>
-            <div><em>이전값 교체</em><b>{replacementCount}</b><span>같은 주제의 과거 공개값 자동 제거</span></div>
+            <div><em>과거 이력</em><b>{historicalRecordCount}</b><span>같은 주제의 이전 검증값도 비교 가능</span></div>
           </div>
 
           <div className="mkt-db-head">
             <div>
               <h3>{isSurvey ? "AI 소비자 조사 데이터베이스" : "AI 시장 정량 데이터베이스"}</h3>
-              <p>동일 사건은 하나의 3줄 인사이트로 통합 · 같은 주제는 최신 검증값만 공개 · X로 숨긴 항목은 이후 수집에서도 영구 제외</p>
+              <p>동일 사건의 재배포만 하나로 통합 · 날짜가 다른 검증값은 모두 누적 · 분류별로 접고 펼쳐 전체 이력 탐색</p>
             </div>
           </div>
-          <div className="mkt-record-grid">
-            {shownRecords.map(record => {
+          <div className="mkt-record-sections">
+            {recordGroups.map(group => <details className="mkt-record-section" key={group.type} open>
+              <summary><span>{group.label}</span><b>{group.records.length}건</b><em>접기·펼치기</em></summary>
+              <div className="mkt-record-grid">
+            {group.records.map(record => {
               const localized = record.localization?.status === "accepted" || record.localization?.status === "fallback-english"
                 ? record.localization : null;
               const title = record.consolidatedTitle || localized?.title || record.titleEn || record.title;
@@ -4972,6 +4987,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                   {record.mergedRecordCount > 1 && <span className="mkt-record-merged">
                     {relatedSources.length > 1 ? `${relatedSources.length}개 출처 통합` : `${record.mergedRecordCount}개 중복 통합`}
                   </span>}
+                  {record.isLatestForTopic && <span className="mkt-record-latest">주제 최신</span>}
                   {record.sourceRegion && <span className="mkt-record-locale">{record.sourceRegion} · {record.sourceLanguage}</span>}
                   {deleteControl(record)}
                 </div>
@@ -5000,18 +5016,20 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
               </article>
               );
             })}
+              </div>
+            </details>)}
             {!shownRecords.length && <SourcePipeline kind="market" />}
           </div>
 
-          {!isSurvey && <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>검증된 최신 시장규모·예측·CAGR만 공개</em></div>}
+          {!isSurvey && <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>원문 링크가 검증된 기준선 전체 누적</em></div>}
           {!isSurvey && (data.groups || []).map(g => {
             const rows = (data.items || []).filter(it => it.group === g.id
               && it.provenance?.status !== "reference-only"
               && !deleted[deleteKey(it)]);
             if (!rows.length) return null;
             return (
-              <div className="mkt-group" key={g.id}>
-                <div className="mkt-group-head"><b>{g.ko}</b><em>{g.desc}</em></div>
+              <details className="mkt-group" key={g.id} open>
+                <summary className="mkt-group-head"><b>{g.ko}</b><em>{g.desc}</em><span>{rows.length}건</span></summary>
                 <div className="mkt-grid">
                   {rows.map(it => {
                     // Never show a placeholder as a future market forecast.
@@ -5041,10 +5059,10 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                     );
                   })}
                 </div>
-              </div>
+              </details>
             );
           })}
-        </React.Fragment>
+        </div>
       )}
       <p className="mkt-foot">누적 DB는 기존 레코드를 삭제·덮어쓰지 않습니다. 시장조사기관별 정의·표본·기준연도 차이로 수치가 다를 수 있으므로, 비교·의사결정 전 반드시 각 원문을 확인하세요.</p>
      </AnimCtx.Provider>

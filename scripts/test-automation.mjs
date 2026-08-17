@@ -1685,8 +1685,10 @@ try {
     && !/원문 수치|원문 정량 근거/.test(boards)
     && /aiDashDeletedMarketRecords/.test(boards)
     && /rememberSuppression\(\{[\s\S]{0,180}scope: "market"/.test(boards)
-    && /같은 주제는 최신 검증값만 공개/.test(boards)
-    && /X로 숨긴 항목은 이후 수집에서도 영구 제외/.test(boards);
+    && /const boardRef = sectionRef \|\| localSectionRef/.test(boards)
+    && /날짜가 다른 검증값은 모두 누적/.test(boards)
+    && /className="mkt-record-section"/.test(boards)
+    && /className="mkt-board-toggle"/.test(boards);
   const noForecastPlaceholder = /const hasForecast = numericValue\(it\.forecast\)/.test(boards)
     && /hasCurrent && hasForecast && <span className="mkt-arr" aria-hidden="true" \/>/.test(boards)
     && /hasForecast && <span className="mkt-num fut">/.test(boards);
@@ -1714,7 +1716,7 @@ try {
   if (failedMarketChecks.length) {
     throw new Error(`audit ledger requires publisher-page-backed records and retained source links: ${failedMarketChecks.join(", ")}`);
   }
-  console.log(`  정상  market.json 비공개 감사 원장 ${records.length}건 · 공개 뷰 최신값 교체`);
+  console.log(`  정상  market.json 비공개 감사 원장 ${records.length}건 · 공개 뷰 검증 이력 누적`);
 } catch (error) {
   failed = true;
   console.error(`  실패  market.json 비공개 감사 원장: ${error.message}`);
@@ -2038,6 +2040,14 @@ try {
     && Array.isArray(record.relatedSources) && record.relatedSources.length >= 1
     && Array.isArray(record.consolidatedInsights) && record.consolidatedInsights.length >= 1
     && record.consolidatedInsights.length <= 3);
+  const latestPerTopic = new Map();
+  marketRecords.forEach(record => {
+    if (record.isLatestForTopic) latestPerTopic.set(record.stableKey, Number(latestPerTopic.get(record.stableKey) || 0) + 1);
+  });
+  const cumulativeMarketValid = marketRecords.every(record => record.stableKey && typeof record.isLatestForTopic === "boolean")
+    && [...latestPerTopic.values()].every(count => count === 1)
+    && latestPerTopic.size === Number(publicMarket.latestTopicCount || 0)
+    && Number(publicMarket.historicalRecordCount || 0) === marketRecords.length - latestPerTopic.size;
   if (!version.version || !/data-version\.json/.test(appSource)
     || !/overview-view\.json/.test(appSource) || !/news-view\.json/.test(appSource) || !/research-view\.json/.test(appSource)
     || !/market-view\.json/.test(boardsSource) || /Math\.floor\(Date\.now\s*\/\s*60000\)/.test(`${appSource}\n${boardsSource}`)
@@ -2047,11 +2057,12 @@ try {
     || !safe(overview.articles || []) || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(marketRecords)
     || !(version.assets || []).includes("overview-view.json")
     || remainingMarketDuplicates || !mergedMarketRecordsValid
-    || publicMarket.database?.mode !== "latest-verified-snapshot"
-    || publicMarket.database?.publicRetention !== "current-only"
-    || marketRecords.map(record => record.stableKey).some((key, index, keys) => !key || keys.indexOf(key) !== index)
+    || publicMarket.database?.mode !== "append-only-verified-view"
+    || publicMarket.database?.publicRetention !== "all-verified-history"
+    || !cumulativeMarketValid
+    || !Array.isArray(publicMarket.items)
     || Number(publicMarket.sourceRecordCount || 0) - marketRecords.length
-      !== Number(publicMarket.consolidatedDuplicateCount || 0) + Number(publicMarket.replacedRecordCount || 0)) {
+      !== Number(publicMarket.consolidatedDuplicateCount || 0)) {
     throw new Error("public views must be versioned, source-backed, and free of minute cache busting");
   }
   console.log(`  OK  versioned source-only public views ${publicNews.count}/${publicResearch.count}/${marketRecords.length} · 시장 중복 ${publicMarket.consolidatedDuplicateCount || 0}건 통합`);
