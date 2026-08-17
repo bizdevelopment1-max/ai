@@ -6,7 +6,10 @@ const firstSentence = value => {
   const stop = normalized.search(/[.!?。]\s/);
   return stop > 40 ? normalized.slice(0, stop + 1) : normalized;
 };
-const evidenceUrl = item => /^https?:\/\//i.test(String(item?.url || ""));
+// Public evidence cards accept only transport-secured source links. Records
+// with an unresolved or HTTP-only URL remain in their upstream ledger but do
+// not enter the materialized strategy view.
+const evidenceUrl = item => /^https:\/\//i.test(String(item?.url || ""));
 const scoreOf = item => Number(item?.scoreValue ?? item?.opportunityScore ?? item?.signalScore ?? 0);
 const confidenceRank = value => ({ high: 3, medium: 2, low: 1 }[String(value || "").toLowerCase()] || 0);
 const comparePriority = (left, right) =>
