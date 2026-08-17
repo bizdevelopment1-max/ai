@@ -249,7 +249,6 @@ function TrendBar({ v, max }) {
     </span>
   );
 }
-
 /* ---- AnimatedNumber: each digit group counts from 0, replays ---- */
 function AnimatedNumber({ value, active, className, dur }) {
   const [ref, eyeActive] = useEyeLevel();
@@ -269,5 +268,3 @@ function MiniBar({ frac, color, height, active }) {
     </span>
   );
 }
-
-Object.assign(window, { AnimCtx, useEyeLevel, useInView, useProgress, staggerP, parseNum, fmtNum, CountUp, TrendBar, AnimatedNumber, MiniBar });

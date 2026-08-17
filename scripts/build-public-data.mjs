@@ -62,16 +62,14 @@ const suppression = await loadSuppressionRegistry(root);
 const notDeleted = scope => item => !suppression.matches(item, scope);
 
 const articleKeys = [
-  "id", "date", "co", "cat", "source", "title", "titleEn", "titleKo", "url", "tag",
-  "summary", "summaryLinesEn", "summaryLinesKo", "summaryVersion", "summaryMode",
-  "summaryEngine", "displayEligible", "provenance", "summaryRoles", "insightSelection",
-  "localization", "sourceScope", "sourceRegion", "sourceLanguage", "sourceLocale",
+  "id", "date", "co", "cat", "source", "title", "titleKo", "url", "tag",
+  "summaryLinesEn", "summaryMode", "displayEligible", "summaryRoles", "insightSelection",
+  "sourceScope", "sourceRegion", "sourceLanguage", "sourceLocale",
 ];
 const researchKeys = [
-  "id", "house", "type", "title", "titleEn", "titleKo", "source", "url", "date", "desc",
-  "descEn", "summary", "summaryLinesEn", "summaryLinesKo", "summaryVersion", "summaryMode",
-  "summaryEngine", "displayEligible", "provenance", "summaryRoles", "insightSelection",
-  "localization", "sourceScope", "sourceRegion", "sourceLanguage", "sourceLocale",
+  "id", "house", "type", "title", "titleKo", "source", "url", "date", "desc",
+  "summaryLinesEn", "summaryMode", "displayEligible", "summaryRoles", "insightSelection",
+  "sourceScope", "sourceRegion", "sourceLanguage", "sourceLocale",
 ];
 const recordKeys = [
   "id", "stableKey", "isLatestForTopic", "type", "group", "verticalId", "collectionTrack", "discoveryQueryId", "topic",
@@ -87,10 +85,29 @@ const marketItemKeys = [
   "extra", "latest", "provenance",
 ];
 
+const compactLocalizedRecord = (item, keys) => {
+  const normalized = normalizeLocalizedRecord(item);
+  const localization = normalized.localization || {};
+  return {
+    ...compact(normalized, keys),
+    provenance: {
+      status: normalized.provenance?.status || "",
+      verificationTier: normalized.provenance?.verificationTier || "",
+      checkedAt: normalized.provenance?.checkedAt || "",
+    },
+    localization: {
+      status: localization.status || "",
+      displayLanguage: localization.displayLanguage || "",
+      title: localization.title || normalized.titleKo || "",
+      summaryLines: Array.isArray(localization.summaryLines) ? localization.summaryLines : (normalized.summaryLinesKo || []),
+      summaryRoles: Array.isArray(localization.summaryRoles) ? localization.summaryRoles : (normalized.summaryRoles || []),
+    },
+  };
+};
 const visibleArticles = (news.articles || []).filter(sourceBacked).filter(notBanned).filter(notRetiredFocus).filter(notDeleted("article"))
-  .map(item => normalizeLocalizedRecord(compact(item, articleKeys)));
+  .map(item => compactLocalizedRecord(item, articleKeys));
 const visibleResearch = (research.feed || []).filter(sourceBacked).filter(notBanned).filter(notRetiredFocus).filter(notDeleted("research"))
-  .map(item => normalizeLocalizedRecord(compact(item, researchKeys)));
+  .map(item => compactLocalizedRecord(item, researchKeys));
 const visibleRecordSources = (market.records || []).filter(record => sourceBacked(record)
   && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
   && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length)
@@ -305,6 +322,13 @@ try {
     investmentDirection: compactSection(intelligence.investmentDirection),
     publication: intelligence.publication || null,
   } : null;
+  const compactProfile = profile => profile ? {
+    business: Array.isArray(profile.business) ? profile.business.slice(0, 4) : [],
+    officialWebsite: profile.officialWebsite || "",
+  } : null;
+  const compactLatest = latest => latest ? compact(latest, [
+    "title", "titleEn", "titleKo", "date", "source", "url",
+  ]) : null;
   const overviewCompanies = Object.fromEntries(trackedNames
     .filter(name => companies.companies?.[name])
     .map(name => {
@@ -312,8 +336,8 @@ try {
       return [name, {
         mentions7: company.mentions7 || 0,
         mentions30: company.mentions30 || 0,
-        latest: company.latest || null,
-        profile: company.profile || null,
+        latest: compactLatest(company.latest),
+        profile: compactProfile(company.profile),
         intelligence: compactIntelligence(company.intelligence),
         cap: company.cap || "",
         capAsof: company.capAsof || "",
@@ -327,23 +351,31 @@ try {
   const articleIdentity = article => `${article.url || ""}|${article.titleEn || article.title || ""}`;
   const selected = new Map();
   const add = article => selected.set(articleIdentity(article), article);
-  byNewest.slice(0, 48).forEach(add);
+  // The first screen needs relationship headlines and one recent reference
+  // per tracked company, not the complete evidence ledger. Full history is
+  // fetched only when the reader opens an evidence-heavy section.
+  byNewest.slice(0, 12).forEach(add);
   for (const name of trackedNames) {
     const key = name.replace(/\s*\(.*\)$/, "").toLowerCase();
     byNewest.filter(article => {
       const articleKey = String(article.co || "").replace(/\s*\(.*\)$/, "").toLowerCase();
       return articleKey === key || (articleKey && trackedKeys.has(articleKey) && (articleKey.includes(key) || key.includes(articleKey)));
-    }).slice(0, 2).forEach(add);
+    }).slice(0, 1).forEach(add);
   }
   const relationWords = /\b(?:partner|partnership|collaborat|integrat|invest|acquir|supply|license|deal|alliance|compete|versus|vs\.?|rival)\b|파트너|협력|통합|투자|인수|공급|라이선스|계약|경쟁/i;
   byNewest.filter(article => relationWords.test(`${article.titleEn || ""} ${article.title || ""}`))
-    .slice(0, 36).forEach(add);
+    .slice(0, 24).forEach(add);
   const overviewArticleKeys = [
     "date", "co", "cat", "source", "title", "titleEn", "titleKo", "url", "tag",
-    "summary", "summaryLinesKo", "summaryMode", "displayEligible",
-    "provenance", "sourceRegion", "sourceLanguage",
+    "displayEligible", "provenance", "sourceRegion", "sourceLanguage",
   ];
   const insights = await readJson("insights.json");
+  const sourceSummary = Object.entries([...selected.values()].reduce((counts, article) => {
+    const source = String(article.source || "").trim();
+    if (source) counts[source] = (counts[source] || 0) + 1;
+    return counts;
+  }, {})).sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .slice(0, 8).map(([name, count]) => ({ name, count }));
   const overview = {
     generatedAt,
     schemaVersion: 1,
@@ -351,8 +383,13 @@ try {
     consultingNavigation: buildConsultingNavigation(consultingArchitecture),
     companyCount: Object.keys(overviewCompanies).length,
     articleCount: selected.size,
+    sourceSummary,
     companies: overviewCompanies,
-    articles: [...selected.values()].map(article => compact(article, overviewArticleKeys)),
+    articles: [...selected.values()].map(article => ({
+      ...compact(article, overviewArticleKeys.filter(key => key !== "provenance")),
+      provenance: { status: article.provenance?.status || "" },
+      payloadMode: "relationship-headline",
+    })),
     insights: {
       engine: insights.engine || "rules",
       cards: (insights.cards || []).filter(card => card.provenance?.status === "evidence-linked"),

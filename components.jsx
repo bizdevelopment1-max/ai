@@ -1280,5 +1280,3 @@ function AIChatbot({ onNav, guideSignal = 0 }) {
     </div>
   );
 }
-
-Object.assign(window, { Icon, Trend, Sidebar, TopBar, KpiStrip, NAV, BRANDS, sbBg, AIChatbot, consultingBulletText });

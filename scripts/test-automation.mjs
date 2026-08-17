@@ -37,6 +37,7 @@ const required = [
   "scripts/refresh-market-source-content.mjs",
   "scripts/global-sources.mjs",
   "scripts/build-browser-bundle.mjs",
+  "scripts/validate-delivery-performance.mjs",
   "scripts/translate_summarize.py",
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
@@ -84,6 +85,7 @@ const required = [
   "index.html",
   "app.bundle.js",
   "data.bundle.js",
+  "styles.bundle.css",
   "og-mobile-strategy.png",
   "assets/quant-insight-capital.webp",
   "assets/quant-insight-device.webp",
@@ -191,7 +193,8 @@ try {
   if (publicRuntimeCopy.includes(forbiddenHandsetWord)) throw new Error("deprecated handset wording must not appear in public runtime copy");
   if (/babel\.min\.js|text\/babel/.test(index)
     || !/defer src="app\.bundle\.js/.test(index)
-    || !/defer src="data\.bundle\.js/.test(index)) {
+    || !/defer src="data\.bundle\.js/.test(index)
+    || !/styles\.bundle\.css\?v=/.test(index)) {
     throw new Error("index must serve the compact browser and data bundles without a runtime compiler");
   }
   console.log("  정상  browser and data bundles are current · deprecated handset wording removed");
@@ -2393,7 +2396,7 @@ try {
     && components.includes("React.createElement =")
     && components.includes("CONSULTING_COPY_CACHE")
     && components.includes("nominalizeStatementEnding")
-    && boards.includes("window.consultingBulletText");
+    && boards.includes("return consultingBulletText(value)");
   const generationGate = companyBuilder.includes("명사형 개조식")
     && companyBuilder.includes("bulletizeKorean")
     && startupCrawler.includes("명사형 개조식")

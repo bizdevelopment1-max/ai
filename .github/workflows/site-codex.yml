@@ -109,6 +109,9 @@ jobs:
       - name: Rebuild static browser bundle
         run: npm run build:browser
 
+      - name: Enforce delivery budgets and generated-content boundary
+        run: npm run validate:delivery
+
       - name: Verify dashboard automation contract
         run: npm run test:automation
 

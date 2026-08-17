@@ -88,21 +88,17 @@ function App() {
     overview: uR(null), strategy: uR(null), opportunity: uR(null), valuechain: uR(null),
     newbiz: uR(null), signals: uR(null), sanalysis: uR(null), evidence: uR(null), validation: uR(null),
   };
-  const startupInView = useInView(refs.sanalysis);
-  const strategyInView = useInView(refs.strategy);
-  const needsFullCompanyData = startupInView || active === "sanalysis" || !!selected;
-  const articlesInView = useInView(refs.evidence);
-  const signalsInView = useInView(refs.signals);
-  const newbizInView = useInView(refs.newbiz);
-  const stocksInView = useInView(refs.validation);
+  const needsFullCompanyData = active === "sanalysis" || !!selected;
 
   const D = window.DASH;
   const dark = t.dark;
   const [dataVersion, setDataVersion] = uS("");
   const [dataGeneratedAt, setDataGeneratedAt] = uS("");
   const dataUrl = file => `${file}?v=${encodeURIComponent(dataVersion || "bootstrap")}`;
-  const needsFullNews = articlesInView || signalsInView || newbizInView
-    || ["evidence", "signals", "newbiz"].includes(active);
+  // Manual scrolling updates `active` before a board requests its ledger.
+  // Do not prefetch multi-megabyte evidence files merely because a distant
+  // placeholder falls inside a generous observer margin.
+  const needsFullNews = ["evidence", "signals", "newbiz"].includes(active);
 
   // A tiny version manifest is the only uncacheable request. Every sizeable
   // data file is immutable for that version and can therefore be CDN-cached.
@@ -122,6 +118,7 @@ function App() {
   const [insights, setInsights] = uS({ cards: [], engine: "rules" });
   const [strategyView, setStrategyView] = uS(null);
   const [consultingNavigation, setConsultingNavigation] = uS([]);
+  const [overviewSources, setOverviewSources] = uS([]);
   uE(() => {
     let alive = true;
     // Start the first-screen payload in parallel with data-version.json. It is
@@ -134,6 +131,8 @@ function App() {
         setCoOverview(j.companies || {});
         setInsights(j.insights || { cards: [], engine: "rules" });
         setConsultingNavigation(Array.isArray(j.consultingNavigation) ? j.consultingNavigation : []);
+        setOverviewSources(Array.isArray(j.sourceSummary) ? j.sourceSummary : []);
+        setDataGeneratedAt(current => current || j.generatedAt || "");
       })
       .catch(() => {
         if (!alive) return;
@@ -141,6 +140,7 @@ function App() {
         setCoOverview({});
         setInsights({ cards: [], engine: "rules" });
         setConsultingNavigation([]);
+        setOverviewSources([]);
       });
     return () => { alive = false; };
   }, []);
@@ -148,7 +148,7 @@ function App() {
   // Strategy facts are a generated view, not component copy. Load it only
   // when the section approaches the viewport or is directly requested.
   uE(() => {
-    if (!dataVersion || !(strategyInView || active === "strategy")) return;
+    if (!dataVersion || active !== "strategy") return;
     let alive = true;
     loadJson(dataUrl("strategy-view.json"))
       .then(value => {
@@ -158,7 +158,7 @@ function App() {
       })
       .catch(() => { if (alive) setStrategyView(null); });
     return () => { alive = false; };
-  }, [dataVersion, strategyInView, active]);
+  }, [dataVersion, active]);
 
   // The complete evidence ledger is needed only by evidence-heavy views. The
   // overview and strategy screen stay on the generated compact snapshot.
@@ -174,8 +174,9 @@ function App() {
   // 누적 보존하므로, 화면은 같은 원문 기반 형식을 모두 표시한다.
   const articles = useMemo(() => {
     return crawled
-      .filter(a => a && a.title && a.summary && a.displayEligible !== false
-        && a.summaryMode === "source-content-extractive" && a.provenance?.status === "source-backed");
+      .filter(a => a && a.title && a.displayEligible !== false && a.provenance?.status === "source-backed"
+        && (((a.summary || (Array.isArray(a.summaryLinesEn) && a.summaryLinesEn.length))
+          && a.summaryMode === "source-content-extractive") || a.payloadMode === "relationship-headline"));
   }, [crawled]);
 
   // 증권사 리서치(research.json)·기업 라이브(companies.json)
@@ -186,7 +187,7 @@ function App() {
   const [startupCatalog, setStartupCatalog] = uS([]);
   const [monet, setMonet] = uS(null);
   uE(() => {
-    if (!dataVersion || !(articlesInView || active === "evidence")) return;
+    if (!dataVersion || active !== "evidence") return;
     let alive = true;
     loadJson(dataUrl("research-view.json"))
       .then(j => {
@@ -194,7 +195,7 @@ function App() {
         if (alive && feed.length) setResearch({ ...j, onepager: null, feed });
       }).catch(() => {});
     return () => { alive = false; };
-  }, [dataVersion, articlesInView, active]);
+  }, [dataVersion, active]);
 
   // Lower sections do not compete with the first viewport. The largest live
   // files are requested only when their respective section is near the reader.
@@ -209,7 +210,7 @@ function App() {
   // Company articles and startup monetization are detail payloads. They are
   // warmed only for the startup view or an opened company, rather than
   // competing with the executive first screen.
-  const needsCompanyExtras = startupInView || active === "sanalysis" || !!selected;
+  const needsCompanyExtras = active === "sanalysis" || !!selected;
   uE(() => {
     if (!needsCompanyExtras || !dataVersion) return;
     let alive = true;
@@ -357,7 +358,7 @@ function App() {
   const [stockData, setStockData] = uS(null);
   const [nvidiaInvestments, setNvidiaInvestments] = uS(null);
   uE(() => {
-    if (!(stocksInView || active === "validation") || !dataVersion) return;
+    if (active !== "validation" || !dataVersion) return;
     let alive = true;
     Promise.all([
       // 주가 파일은 최신 거래일이 핵심이므로 서비스워커·브라우저의 오래된 응답을 재사용하지 않는다.
@@ -371,7 +372,7 @@ function App() {
       })
       .catch(() => {});
     return () => { alive = false; };
-  }, [stocksInView, active, dataVersion]);
+  }, [active, dataVersion]);
 
   // category objects with tweakable accents
   const cats = useMemo(() => D.CATEGORIES.map(c => ({
@@ -558,6 +559,9 @@ function App() {
       timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit",
     })
     : "확인 중";
+  const footerSources = overviewSources.length
+    ? overviewSources.map(source => `${source.name} ${source.count}건`).join(" · ")
+    : "검증된 공개 원문 집계 중";
 
   const handleSectionNav = id => {
     setNavCategory({ section: id, id: "" });
@@ -714,7 +718,7 @@ function App() {
             <footer className="foot">
               <span>Mobile AI Business Intelligence</span>
               <span className="foot-update">데이터 생성 시각: {verifiedUpdateTime}</span>
-              <span>원출처: Bloomberg · TechCrunch · The Information · Pitchbook · Crunchbase · 각 기업 공식 발표</span>
+              <span>현재 첫 화면 근거: {footerSources}</span>
             </footer>
           </div>
         </main>

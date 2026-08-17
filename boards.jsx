@@ -407,7 +407,6 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
     </section>
   );
 }
-
 // ---- 모바일 AI 신사업 발굴 프레임 — User → Experience → Business → Decision ----
 function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
@@ -1658,9 +1657,7 @@ const NUMBER_TOKEN = /^(?:\$[\d,.]+(?:[BMKT]|억|만|조)?|\d[\d,.]*(?:\.\d+)?(?
 // Display copy uses concise, non-sentence Korean. Source text and hashes stay
 // untouched in the data set, so this is a visual writing rule only.
 function bulletText(value) {
-  return window.consultingBulletText
-    ? window.consultingBulletText(value)
-    : String(value || "").replace(/[。.!?"”']+$/, "");
+  return consultingBulletText(value);
 }
 function hlBrief(text, keyBase) {
   BRIEF_KEYWORDS.lastIndex = 0;
@@ -2607,32 +2604,6 @@ function OverviewCharts({ data, cats, theme }) {
 
 // ---- Dynamics Board (competitive landscape visualization) ------
 // ---- Knowledge Graph (interactive force-directed) ----
-// 경쟁 다이내믹스의 변하지 않는 시장 구조만 보조선으로 유지한다.
-// 투자액·계약·제품 통합처럼 시점에 따라 달라지는 관계는 아래
-// deriveCompanyRelationshipEdges()가 source-backed 최신 기사에서 생성한다.
-const STRUCTURAL_COMPETE_EDGES = [
-  { from: "OpenAI", to: "Anthropic", type: "경쟁", label: "LLM 플랫폼 경쟁" },
-  { from: "OpenAI", to: "Google DeepMind", type: "경쟁", label: "AGI·검색 경쟁" },
-  { from: "OpenAI", to: "Meta AI", type: "경쟁", label: "오픈소스 vs 클로즈드" },
-  { from: "Anthropic", to: "Google DeepMind", type: "경쟁", label: "프런티어 모델 경쟁" },
-  { from: "Perplexity", to: "Google DeepMind", type: "경쟁", label: "AI 검색 경쟁" },
-  { from: "Microsoft", to: "Amazon", type: "경쟁", label: "AI 클라우드 경쟁" },
-  { from: "Microsoft", to: "Google DeepMind", type: "경쟁", label: "Copilot vs Gemini" },
-  { from: "Cohere", to: "OpenAI", type: "경쟁", label: "엔터프라이즈 LLM 경쟁" },
-  { from: "Mistral AI", to: "Meta AI", type: "경쟁", label: "오픈 가중치 모델 경쟁" },
-  { from: "Runway", to: "OpenAI", type: "경쟁", label: "영상 생성(Sora) 경쟁" },
-  { from: "Glean", to: "Microsoft", type: "경쟁", label: "엔터프라이즈 검색 vs Copilot" },
-  { from: "ElevenLabs", to: "OpenAI", type: "경쟁", label: "음성 AI 경쟁" },
-  { from: "Harvey", to: "Microsoft", type: "경쟁", label: "법률 AI vs Copilot" },
-  // SpaceX(xAI·Grok·Cursor) 연관
-  { from: "SpaceX (xAI, Cursor)", to: "OpenAI", type: "경쟁", label: "Grok·Cursor vs GPT·Codex" },
-  { from: "SpaceX (xAI, Cursor)", to: "Anthropic", type: "경쟁", label: "Cursor vs Claude Code" },
-  { from: "SpaceX (xAI, Cursor)", to: "Google DeepMind", type: "경쟁", label: "Grok vs Gemini" },
-  // NVIDIA — 칩 경쟁(자체 실리콘)
-  { from: "NVIDIA", to: "Google DeepMind", type: "경쟁", label: "GPU vs 자체 TPU" },
-  { from: "NVIDIA", to: "Amazon", type: "경쟁", label: "GPU vs Trainium" },
-];
-
 const COMPANY_RELATION_ALIASES = {
   "OpenAI": ["OpenAI", "ChatGPT"],
   "Anthropic": ["Anthropic", "Claude"],
@@ -2739,7 +2710,6 @@ function inferExplicitRelation(text, leftName, rightName) {
 }
 
 function deriveCompanyRelationshipEdges(articles, companies) {
-  const available = new Set((companies || []).map(company => company.name));
   const evidenceEdges = [];
   const seen = new Set();
   const companyEvidence = (companies || []).flatMap(company => {
@@ -2796,18 +2766,7 @@ function deriveCompanyRelationshipEdges(articles, companies) {
     });
   });
 
-  // 구조적 경쟁선은 최신 원문 관계와 같은 쌍·유형이 없을 때만 보조한다.
-  // 시점성 수치나 계약 주장은 포함하지 않는다.
-  const structural = STRUCTURAL_COMPETE_EDGES
-    .filter(edge => available.has(edge.from) && available.has(edge.to))
-    .filter(edge => {
-      const key = `${[edge.from, edge.to].sort().join("|")}|${edge.type}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .map(edge => ({ ...edge, basis: "market-structure" }));
-  return [...evidenceEdges.slice(0, 24), ...structural];
+  return evidenceEdges.slice(0, 24);
 }
 
 // 비즈니스 모델 전용 — 실제 '돈의 흐름'(투자·인수·매출·파트너십). 경쟁 관계는 제외
@@ -2884,7 +2843,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
           cat: catMap[c.cat], fixed: false,
         };
       });
-      const EDGE_SET = sourceOnly ? [] : (relationEdges || (mode === "dynamics" ? STRUCTURAL_COMPETE_EDGES : MONEY_EDGES));
+      const EDGE_SET = sourceOnly ? [] : (relationEdges || []);
       edgesRef.current = EDGE_SET.filter(e =>
         nodesRef.current.some(n => n.id === e.from) && nodesRef.current.some(n => n.id === e.to)
       );
@@ -3051,7 +3010,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
   }, [companies, cats, hovered, selected, selectNode, sourceOnly, active, relationEdges, compact]);
 
   const selCo = selected ? companies.find(c => c.name === selected) : null;
-  const selectedEdgeSet = relationEdges || (mode === "dynamics" ? STRUCTURAL_COMPETE_EDGES : MONEY_EDGES);
+  const selectedEdgeSet = relationEdges || [];
   const selEdges = sourceOnly ? [] : (selected ? selectedEdgeSet.filter(e => e.from === selected || e.to === selected) : []);
 
   return (
@@ -3154,14 +3113,16 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
   React.useEffect(() => {
     if (!mediaActive || mediaReady) return undefined;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return undefined;
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (connection?.saveData || /(?:^|-)2g|3g/i.test(String(connection?.effectiveType || ""))) return undefined;
     let idleId = 0;
     const timer = window.setTimeout(() => {
       if (window.requestIdleCallback) {
-        idleId = window.requestIdleCallback(() => setMediaReady(true), { timeout: 4000 });
+        idleId = window.requestIdleCallback(() => setMediaReady(true), { timeout: 12000 });
       } else {
         setMediaReady(true);
       }
-    }, 2500);
+    }, 6500);
     return () => {
       window.clearTimeout(timer);
       if (idleId && window.cancelIdleCallback) window.cancelIdleCallback(idleId);
@@ -3261,7 +3222,8 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
             active={inView}
           />
         </div>
-        <aside className="dyn-video-panel" aria-live="polite">
+        <aside className="dyn-video-panel" aria-live="polite"
+          onPointerEnter={() => setMediaReady(true)} onFocusCapture={() => setMediaReady(true)}>
           <video ref={videoRef} className="dyn-video" muted loop playsInline preload="none" aria-label="AI 업계 경쟁 다이내믹스 영상">
             {mediaReady && <source src={`assets/competitive-dynamics.mp4?v=${encodeURIComponent(dataVersion || "")}`} type="video/mp4" />}
           </video>
@@ -3859,7 +3821,7 @@ function BizModelBoard({ companies, cats, sectionRef, theme, articles }) {
           <i style={{ background: "#2D6BFF" }} />파트너십
         </span>
       </div>
-      <KnowledgeGraph companies={moneyCos} cats={cats} catMap={catMap} progress={bizProg} mode="bizmodel" />
+      <KnowledgeGraph companies={moneyCos} cats={cats} catMap={catMap} progress={bizProg} mode="bizmodel" relationEdges={MONEY_EDGES} />
       <div className="biz-grid">
         {models.map((m, i) => {
           const local = staggerP(bizProg, i, models.length);
@@ -5468,5 +5430,3 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
     </section>
   );
 }
-
-Object.assign(window, { BoldSummary, MarketBoard, StartupScopeBoard, CoLogo, CompanyBoard, MobileStrategyBoard, ValueChainBoard, CompanyDetail, ArticleFeed, InsightsBoard, ChartsBoard, VPBoard, ReportsBoard, ESCompetitiveMap, OverviewCharts, BizModelBoard, MonthlyTrendsBoard, SignalBoard, NewBizBoard, ExecToplines, BriefingBoard, RadarBoard, IBInsightBoard });
