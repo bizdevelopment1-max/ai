@@ -477,7 +477,7 @@ try {
   const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
   const navIds = [...navSource.matchAll(/\{\s*id:\s*"([^"]+)"/g)].map(match => match[1]);
   const sectionIds = [...app.matchAll(/(?:<LazySection\s+id=|data-section=)"([^"]+)"/g)].map(match => match[1]);
-  const expectedOrder = ["overview", "strategy", "opportunity", "valuechain", "newbiz", "signals", "sanalysis", "evidence", "validation"];
+  const expectedOrder = ["overview", "strategy", "opportunity", "newbiz", "valuechain", "signals", "sanalysis", "evidence", "validation"];
   const missingOnRight = navIds.filter(id => !sectionIds.includes(id));
   const missingOnLeft = sectionIds.filter(id => !navIds.includes(id));
   const sameMeceOrder = JSON.stringify(navIds) === JSON.stringify(expectedOrder)
@@ -494,7 +494,7 @@ try {
     && app.includes('activeCategory={navCategory.section === "sanalysis" ? navCategory.id : ""}')
     && app.includes('.filter(layer => navCategory.section !== "valuechain" || !navCategory.id || layer.id === navCategory.id)');
   const sidebarCopyClean = !/(?:mobile|모바일)/i.test(`${navSource}\n${sidebarBrandSource}`)
-    && navSource.includes('ko: "AI 신사업 브리핑"')
+    && navSource.includes('ko: "산업·경쟁 브리핑"')
     && navSource.includes('ko: "신사업 기회 DB"')
     && !navSource.includes('id: "audit"')
     && !navSource.includes("데이터 신뢰센터")
@@ -587,7 +587,7 @@ try {
 }
 
 try {
-  const [app, boards, components, styles, companies, strategyView, strategyBuilder, monetizationCrawler] = await Promise.all([
+  const [app, boards, components, styles, companies, strategyView, strategyBuilder, consultingArchitecture, monetizationCrawler] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("boards.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
@@ -595,6 +595,7 @@ try {
     readFile("companies.json", "utf8").then(JSON.parse),
     readFile("strategy-view.json", "utf8").then(JSON.parse),
     readFile("scripts/strategy-view.mjs", "utf8"),
+    readFile("config/consulting-architecture.json", "utf8").then(JSON.parse),
     readFile("scripts/crawl-monetization.mjs", "utf8"),
   ]);
   const dash = loadDash();
@@ -615,7 +616,13 @@ try {
     && !boards.includes("linkedin.com/search/results/companies");
   const strategyReady = strategyView?.sourceMode === "generated-from-verified-ledgers"
     && !Object.hasOwn(strategyView, "choices")
-    && strategyView?.capabilities?.length === 5
+    && !Object.hasOwn(strategyView, "capabilities")
+    && !Object.hasOwn(strategyView, "decisionOutputs")
+    && !Object.hasOwn(strategyView, "workloadMap")
+    && consultingArchitecture?.workstreams?.length === 4
+    && strategyView?.consultingModel?.workstreams?.length === 4
+    && strategyView?.consultingModel?.coverage?.sections === 9
+    && new Set(strategyView.consultingModel.navigation.map(item => item.id)).size === 9
     && strategyView?.priorityFramework?.items?.length === 4
     && strategyView?.priorityFramework?.criteria?.length === 8
     && strategyView.priorityFramework.items.every(item => item.sourceOpportunityId && Number.isFinite(item.score) && item.drivers?.length)
@@ -657,17 +664,17 @@ try {
     && !/msf-choices|msf-choice|msf-house-pillars/.test(boards)
     && boards.includes('className="msf-priority-grid"')
     && styles.includes(".msf-priority-card:is(:hover, :focus-visible)")
-    && boards.includes("Strategy consulting · user need → mobile experience → revenue → execution")
-    && boards.includes("분석 툴킷")
+    && boards.includes("consultingModel.methodology")
+    && boards.includes('className="msf-mece-model"')
+    && !boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")
     && boards.includes("function ConsultingDecisionRail")
-    && boards.includes("User Need → Experience → Revenue → Business Case")
+    && boards.includes("Need → Offer → Economics → Evidence")
     && boards.includes("Strategy &amp;")
     && boards.includes('className="msf-strategy-house"')
     && !boards.includes('className="msf-control-logic"')
-    && boards.includes('className="msf-workload-name"')
-    && styles.includes("grid-template-columns: minmax(280px, 1.35fr) minmax(220px, 1fr) 34px minmax(260px, 1.1fr) 34px minmax(240px, 1fr) minmax(210px, .9fr)")
-    && styles.includes(".msf-workload-row { min-width: 1360px; }")
+    && !boards.includes('className="msf-workload-name"')
+    && styles.includes(".msf-mece-stage")
     && styles.includes("word-break: keep-all; overflow-wrap: break-word; text-wrap: pretty;")
     && boards.includes('className="msf-layer-evidence"')
     && !boards.includes("msf-layer-meter")
@@ -691,6 +698,8 @@ try {
     && !boards.includes("<h4>밸류 프로포지션")
     && !boards.includes("<h4>방향성 · 추구 가치")
     && app.includes('id="strategy"')
+    && app.includes("navigation={navigation}")
+    && app.includes("navigation.map(item =>")
     && components.includes('id: "valuechain"')
     && (expectedLayers.every(id => app.includes(`layerId="${id}"`))
       || (app.includes("(D.VALUE_CHAIN || [])") && app.includes("layerId={layer.id}")))

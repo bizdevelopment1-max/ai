@@ -34,6 +34,9 @@ assert(styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { 
 assert(!/\.isg-card:hover::after\s*\{\s*opacity:\s*1/.test(styles), "signal-card hover restores a dark pseudo-element overlay");
 assert(!/\.art-sel\s*\{[^}]*background:\s*linear-gradient\([^}]*#000/s.test(styles), "article selected state still uses a dark inverse gradient");
 assert(styles.includes('[data-theme="dark"] .num-hl { color: #8BD2E8;'), "dark-mode numeric highlights lack a readable foreground");
+assert(styles.includes("MECE consulting operating model") && styles.includes(".msf-mece-model"), "MECE consulting frame is missing");
+assert(styles.includes(".msf-consulting-intro::before { display: none; }"), "strategy header still uses a one-sided accent stripe");
+assert(styles.includes('[data-theme="dark"] .msf-mece-stage-metrics b'), "MECE metrics lack an explicit dark-mode contrast rule");
 
 assert(taxonomy.publicFacts === "none-generated-views-only", "registry still declares public mutable facts");
 assert(!Object.hasOwn(taxonomy, "MOBILE_STRATEGY"), "legacy strategy facts remain in runtime taxonomy");
@@ -41,6 +44,7 @@ assert((taxonomy.COMPANIES || []).every(company => !["valuation", "funding", "no
 assert((taxonomy.STOCKS || []).every(stock => !["price", "marketCap", "reason", "events"].some(key => Object.hasOwn(stock, key))), "stock registry contains mutable market facts");
 
 assert(strategy.sourceMode === "generated-from-verified-ledgers", "strategy view is not generated from verified ledgers");
+assert(strategy.consultingModel?.workstreams?.length === 4 && strategy.consultingModel?.coverage?.sections === 9, "generated MECE architecture is incomplete");
 assert(strategy.lineage?.generatedFrom?.includes("news.json") && strategy.lineage?.generatedFrom?.includes("mobile-ai-business-view.json"), "strategy lineage is incomplete");
 assert(!Object.hasOwn(strategy, "accountPortfolio") && !boards.includes("Competitive Platform Portfolio") && !styles.includes(".msf-account"), "removed competitive company portfolio is still exposed");
 assert(boards.includes("const recentSignalCount = Number(c.live?.mentions30 || 0)") && boards.includes(">최근 30일 신호<"), "value-chain company cards do not retain the recent-signal evidence");

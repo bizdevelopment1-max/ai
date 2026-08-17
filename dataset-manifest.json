@@ -1,14 +1,14 @@
 {
   "schemaVersion": 2,
-  "datasetVersion": "972b5d808fcc8113f398004e",
-  "createdAt": "2026-08-16T15:03:16.884Z",
-  "pipelineRunId": "local-2026-08-16T15:03:16.884Z",
-  "codeGitSha": "1450290329b2a10c4aacfe6d46d467fe737529e5",
+  "datasetVersion": "cfde55a5c20e271f58581c39",
+  "createdAt": "2026-08-17T02:30:08.487Z",
+  "pipelineRunId": "local-2026-08-17T02:30:08.487Z",
+  "codeGitSha": "53b6050c0d4a41f98f4c10076cece74e30c3a36c",
   "catalogVersion": 3,
   "schemaRegistryVersion": 2,
   "sourcePolicyVersion": 4,
   "qualityPolicyVersion": 1,
-  "policyHash": "8c91c4dfccac277639a3ffd4b53023c42206e64bc61e396159954d4090d3c28c",
+  "policyHash": "f3191785dc49c272fb55844ee638245dfe48c49c38e70e01a808bd0459d692ea",
   "policyFiles": [
     "config/intelligence-pipeline.json",
     "config/news-policy.json",
@@ -16,7 +16,8 @@
     "config/source-independence.json",
     "config/slo-policy.json",
     "config/decision-governance.json",
-    "config/dedup-calibration.json"
+    "config/dedup-calibration.json",
+    "config/consulting-architecture.json"
   ],
   "catalogHash": "824f7adc60cd58d276349ef922d170167bafb36287ed80d2cf8456e05837796f",
   "publicationState": "working",
@@ -26,7 +27,7 @@
     "minimumApprovals": 1,
     "reviewerId": null
   },
-  "previousVersion": "52cccb8e20f40799c0cf6cc3",
+  "previousVersion": "972b5d808fcc8113f398004e",
   "datasets": [
     {
       "id": "news-ledger",
@@ -36,7 +37,7 @@
       "publication": "never",
       "recordCount": 499,
       "bytes": 3482251,
-      "sha256": "37b8cd1fd3c694a01dec41bf059c115b7042811fe2bcdf0d1d09dca9cd8549ad",
+      "sha256": "82d7b687b6e454f475f548a9d15e36dc580f42d6e55d952ceda9835612bccd2f",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -48,7 +49,7 @@
       "publication": "never",
       "recordCount": 474,
       "bytes": 4738882,
-      "sha256": "bddcd2655d23f976228c35c0e145e6aeed9c6abb444a4802826c2673ca88c9f3",
+      "sha256": "7e8e171f5f6dce041d1b47a0e1731c12321a09d6c15a233f6df41a30c1ae7fb1",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -59,8 +60,8 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": 841,
-      "bytes": 5502431,
-      "sha256": "e35351a19b9fc3ce4fbf0986d42925bd85bbc51282fd7753aef6fa6163ded3b3",
+      "bytes": 5502708,
+      "sha256": "673d5587f30b3ad64e3fc99b48df2e763a7ad938f34c4ff362cdf74f2fe33358",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -71,9 +72,9 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": null,
-      "bytes": 737282,
-      "sha256": "ec96e0531092490063803ba416514fd03a083ce6501be07421ef72df2e855d6d",
-      "files": 3,
+      "bytes": 739169,
+      "sha256": "b387d8170284cbc14981b251d81ee62e65151719c11ccbcf70897eb3a937d60c",
+      "files": 4,
       "migrationTriggerExceeded": false
     },
     {
@@ -84,7 +85,7 @@
       "publication": "never",
       "recordCount": 61,
       "bytes": 48989,
-      "sha256": "77df838f8ce0528033514f1d395dd3963957151d3ea88804ba2df239e5963406",
+      "sha256": "7774bb0b1a39c3f07e85d13f796fe3cbeed74160f7661fcf42367c039c970959",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -96,7 +97,7 @@
       "publication": "public",
       "recordCount": 13,
       "bytes": 1276399,
-      "sha256": "c924bfcea65118ee223ec27cae94fbe5e1be2e0f1a29b700d5fb5c54e0b59271",
+      "sha256": "86ecd81f12e4254d2936eec3838d61c53a41a592d3bc7508f5a8b92a05efc611",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -108,7 +109,7 @@
       "publication": "public",
       "recordCount": 482,
       "bytes": 2015768,
-      "sha256": "036376cbc862d5d5418debe751353d4b6f219b21a5e42865af83dd492baff842",
+      "sha256": "a749657b5e875f679372c1a2e59c7a9133f21c3dd07529bc8d535e749b4b94f9",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -120,7 +121,7 @@
       "publication": "public",
       "recordCount": 56,
       "bytes": 801418,
-      "sha256": "35eb9c0b1ed4ce58c481966ea0c6f86289e35f3e32463d0d6b655bcefdeb8776",
+      "sha256": "954b68a9cddce5d804eab998b17db0e0c967c5d7ecfafdab9f6e86b04bbf74d6",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -131,8 +132,8 @@
       "sensitivity": "public",
       "publication": "public",
       "recordCount": 12,
-      "bytes": 110653,
-      "sha256": "72099c4841d34f4016a73786ea900c8ac3759ec46a67bc2e7b2620f1bbf1f12a",
+      "bytes": 113988,
+      "sha256": "4b6f55817ef15348106a80d973178d23f8c6b34aa3cc493005602619135d0857",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -143,8 +144,8 @@
       "sensitivity": "public",
       "publication": "public",
       "recordCount": 16,
-      "bytes": 4495,
-      "sha256": "bf0cc37de49f1dcdd32c6cc4b5e38d7d1210330ab8c844382af97b3c310185f3",
+      "bytes": 8745,
+      "sha256": "55c300d6017ce02b882f222d76c92cc0a80389d39e6f1bbff2dd6749bf900bc1",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -156,7 +157,7 @@
       "publication": "never",
       "recordCount": 9,
       "bytes": 1242,
-      "sha256": "1e9d644555149431fc39edbf9104eaf33affe896f56db4cb521bd3b92edec058",
+      "sha256": "9c6882f0ae8ee3893ce17f080d85ee310241f8086cc3ac24676121c1c7199c56",
       "files": 1,
       "migrationTriggerExceeded": false
     }

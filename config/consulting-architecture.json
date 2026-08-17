@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "methodology": "MECE decision architecture",
+  "statement": "외부 변화에서 투자 판단까지 네 개의 독립된 질문으로 연결",
+  "workstreams": [
+    {
+      "id": "direction",
+      "order": 1,
+      "label": "방향 설정",
+      "labelEn": "WHERE TO PLAY",
+      "question": "외부 변화 중 어떤 성장 공간을 선택할 것인가",
+      "output": "시장 관점과 우선순위 가설",
+      "gate": "문제 크기 · 긴급성 · 차별화 근거",
+      "sections": [
+        {
+          "id": "overview",
+          "label": "산업·경쟁 브리핑",
+          "labelEn": "Industry & Competition Brief",
+          "icon": "grid",
+          "question": "시장 구조와 경쟁 관계가 어떻게 바뀌는가",
+          "output": "산업 관계 · 핵심 신호",
+          "children": [
+            { "key": "relationship-map", "label": "산업 관계 지도" },
+            { "key": "executive-brief", "label": "핵심 브리핑" }
+          ]
+        },
+        {
+          "id": "strategy",
+          "label": "전략 우선순위",
+          "labelEn": "Strategic Priorities",
+          "icon": "target",
+          "question": "가장 먼저 자원을 배분할 후보는 무엇인가",
+          "output": "근거 가중 우선순위",
+          "children": [
+            { "key": "priority-model", "label": "우선순위 모델" },
+            { "key": "opportunity-portfolio", "label": "후보 포트폴리오" },
+            { "key": "evidence-signals", "label": "근거 신호" },
+            { "key": "decision-criteria", "label": "평가 기준" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "opportunity-design",
+      "order": 2,
+      "label": "기회 설계",
+      "labelEn": "HOW TO WIN",
+      "question": "어떤 고객 가치와 반복수익 구조로 이길 것인가",
+      "output": "기회 포트폴리오와 수익모델",
+      "gate": "지불 의향 · 단위경제성 · 실행 가능성",
+      "sections": [
+        {
+          "id": "opportunity",
+          "label": "신사업 기회 DB",
+          "labelEn": "Opportunity Database",
+          "icon": "report",
+          "question": "검증 가능한 신사업 후보는 무엇인가",
+          "output": "후보 · 점수 · 근거",
+          "children": [
+            { "key": "decision-radar", "label": "의사결정 레이더" },
+            { "key": "opportunity-candidates", "label": "기회 후보" },
+            { "key": "monetization-roi", "label": "수익화 · ROI" },
+            { "key": "build-buy-partner", "label": "Build · Buy · Partner" }
+          ]
+        },
+        {
+          "id": "newbiz",
+          "label": "서비스·수익 모델",
+          "labelEn": "Service & Revenue Models",
+          "icon": "spark",
+          "question": "어떤 과금과 유통 모델이 반복매출을 만드는가",
+          "output": "서비스 · 수익모델",
+          "children": [
+            { "key": "service-opportunity", "label": "서비스 기회" },
+            { "key": "revenue-model", "label": "수익 모델" },
+            { "key": "execution-hypothesis", "label": "실행 가설" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ecosystem",
+      "order": 3,
+      "label": "생태계 선택",
+      "labelEn": "CAPABILITY & PARTNER",
+      "question": "어떤 통제점과 파트너 조합으로 실행할 것인가",
+      "output": "역량 맵과 파트너 옵션",
+      "gate": "보유 역량 · 통합 난이도 · 의존 리스크",
+      "sections": [
+        {
+          "id": "valuechain",
+          "label": "AI 밸류체인",
+          "labelEn": "AI Value Chain",
+          "icon": "ai",
+          "question": "어떤 계층이 통제점과 마진을 만드는가",
+          "output": "통제점 · 기업 맵",
+          "children": []
+        },
+        {
+          "id": "signals",
+          "label": "기술 변화 신호",
+          "labelEn": "Technology Signals",
+          "icon": "pulse",
+          "question": "기술 변화가 비용·경험·진입장벽을 어떻게 바꾸는가",
+          "output": "기술 신호 · 시사점",
+          "children": [
+            { "key": "technology-shift", "label": "기술 변화" },
+            { "key": "market-shift", "label": "시장 변화" },
+            { "key": "action-implication", "label": "실행 시사점" }
+          ]
+        },
+        {
+          "id": "sanalysis",
+          "label": "파트너·M&A 후보",
+          "labelEn": "Partner & M&A Candidates",
+          "icon": "target",
+          "question": "제휴·투자·인수 중 어떤 옵션이 적합한가",
+          "output": "후보 스코어 · 근거",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "validation",
+      "order": 4,
+      "label": "근거 검증",
+      "labelEn": "EVIDENCE & ECONOMICS",
+      "question": "어떤 근거가 투자 결정을 통과시키는가",
+      "output": "원문 근거와 검증 스코어",
+      "gate": "복수 출처 · 최신성 · 수치 일관성",
+      "sections": [
+        {
+          "id": "evidence",
+          "label": "시장·고객 근거",
+          "labelEn": "Market & Customer Evidence",
+          "icon": "news",
+          "question": "가설을 지지하거나 반박하는 원문은 무엇인가",
+          "output": "기관 · 산업 · 고객 근거",
+          "children": [
+            { "key": "institutional-research", "label": "기관 리서치" },
+            { "key": "industry-customer-source", "label": "산업·고객 원문" }
+          ]
+        },
+        {
+          "id": "validation",
+          "label": "수요·시장·재무 검증",
+          "labelEn": "Demand, Market & Financial Validation",
+          "icon": "chart",
+          "question": "수요·시장 크기·재무성이 함께 성립하는가",
+          "output": "수요 · 시장 · 재무 검증",
+          "children": [
+            { "key": "survey", "label": "수요 조사" },
+            { "key": "market", "label": "시장 규모" },
+            { "key": "stocks", "label": "상장사 · 투자" }
+          ]
+        }
+      ]
+    }
+  ]
+}

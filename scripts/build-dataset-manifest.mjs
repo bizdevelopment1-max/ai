@@ -80,6 +80,7 @@ const policyFiles = [
   "config/slo-policy.json",
   "config/decision-governance.json",
   "config/dedup-calibration.json",
+  "config/consulting-architecture.json",
 ];
 const policyHash = sha256((await Promise.all(policyFiles.map(async file => `${file}\0${sha256(await readFile(file))}`))).join("\n"));
 const catalogHash = sha256(await readFile("config/data-catalog.json", "utf8"));

@@ -6347,3 +6347,187 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   grid-template-columns: minmax(82px, auto) minmax(0, 1fr);
   column-gap: 8px;
 }
+
+/* ============================================================
+   MECE consulting operating model
+   ============================================================ */
+.msf-consulting-intro {
+  border: 1px solid color-mix(in srgb, var(--consult-navy) 18%, var(--line));
+  border-radius: 10px 10px 0 0;
+}
+.msf-consulting-intro::before { display: none; }
+.msf-consulting-statement {
+  display: block !important;
+  max-width: 860px;
+  margin: 0 !important;
+  color: var(--ink-2) !important;
+  font-size: 14px !important;
+  font-weight: 720 !important;
+  line-height: 1.65 !important;
+}
+.msf-mece-model {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #B9C5CE;
+  border-radius: 8px;
+  background: var(--panel);
+}
+.msf-mece-stage {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 330px;
+  padding: 18px;
+  flex-direction: column;
+  border-top: 4px solid var(--consult-navy);
+  border-right: 1px solid #C9D2D8;
+  background: var(--panel);
+  color: var(--ink);
+  outline: none;
+}
+.msf-mece-stage:last-child { border-right: 0; }
+.msf-mece-stage:nth-child(2) { border-top-color: #315F78; }
+.msf-mece-stage:nth-child(3) { border-top-color: var(--consult-teal); }
+.msf-mece-stage:nth-child(4) { border-top-color: var(--consult-gold); }
+.msf-mece-stage:focus-visible {
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--consult-teal) 36%, transparent);
+}
+.msf-mece-stage-head {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 10px;
+}
+.msf-mece-stage-head > span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  color: #FFF;
+  background: var(--consult-navy);
+  font-size: 11px;
+  font-weight: 900;
+}
+.msf-mece-stage:nth-child(2) .msf-mece-stage-head > span { background: #315F78; }
+.msf-mece-stage:nth-child(3) .msf-mece-stage-head > span { background: var(--consult-teal); }
+.msf-mece-stage:nth-child(4) .msf-mece-stage-head > span { background: #9A6B22; }
+.msf-mece-stage-head div { display: grid; gap: 2px; min-width: 0; }
+.msf-mece-stage-head em {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 850;
+  letter-spacing: .08em;
+  line-height: 1.3;
+}
+.msf-mece-stage-head b { color: var(--ink); font-size: 15px; font-weight: 900; line-height: 1.3; }
+.msf-mece-stage-head i {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 1px;
+  background: #8FA1AE;
+}
+.msf-mece-stage-head i::after {
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 7px;
+  height: 7px;
+  border-top: 1px solid #8FA1AE;
+  border-right: 1px solid #8FA1AE;
+  transform: rotate(45deg);
+  content: "";
+}
+.msf-mece-stage:last-child .msf-mece-stage-head i { visibility: hidden; }
+.msf-mece-stage h3 {
+  min-height: 66px;
+  margin: 18px 0 12px;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 880;
+  letter-spacing: -.025em;
+  line-height: 1.45;
+}
+.msf-mece-stage dl { display: grid; gap: 9px; margin: 0 0 14px; }
+.msf-mece-stage dl div { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; align-items: start; }
+.msf-mece-stage dt {
+  color: var(--consult-teal);
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+.msf-mece-stage dd { margin: 0; color: var(--ink-2); font-size: 12px; font-weight: 700; line-height: 1.48; }
+.msf-mece-stage-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-top: auto;
+  overflow: hidden;
+  border: 1px solid #CBD4DB;
+  border-radius: 5px;
+  background: #CBD4DB;
+}
+.msf-mece-stage-metrics > span { display: grid; gap: 4px; padding: 9px 10px; background: var(--panel); }
+.msf-mece-stage-metrics em { color: var(--muted); font-size: 11.5px; font-style: normal; font-weight: 850; letter-spacing: .04em; }
+.msf-mece-stage-metrics b { color: var(--consult-navy); font-size: 15px; font-weight: 950; }
+.msf-mece-stage ul {
+  display: grid;
+  gap: 0;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.msf-mece-stage li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 7px 0;
+  border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.msf-mece-stage li b { color: var(--consult-teal); font-size: 12px; font-weight: 900; }
+.msf-strategy-house { border: 1px solid #B9C5CE; border-radius: 8px; overflow: hidden; }
+.msf-house-roof { background: #173F5F; }
+
+[data-theme="dark"] .msf-mece-model,
+[data-theme="dark"] .msf-mece-stage,
+[data-theme="dark"] .msf-mece-stage-metrics > span { background: var(--panel); }
+[data-theme="dark"] .msf-mece-model,
+[data-theme="dark"] .msf-mece-stage,
+[data-theme="dark"] .msf-mece-stage-metrics,
+[data-theme="dark"] .msf-strategy-house { border-color: var(--line); }
+[data-theme="dark"] .msf-mece-stage-metrics b { color: #9ED7D2; }
+[data-theme="dark"] .msf-consulting-kicker,
+[data-theme="dark"] .msf-mece-stage dt,
+[data-theme="dark"] .msf-mece-stage li b { color: #79D8CB; }
+[data-theme="dark"] .msf-mece-stage-head em,
+[data-theme="dark"] .msf-mece-stage-metrics em { color: #AEB9C8; }
+[data-theme="dark"] .msf-consulting-evidence {
+  color: var(--ink-2);
+  border-color: #526174;
+  background: #172130;
+}
+[data-theme="dark"] .msf-consulting-evidence b { color: #79D8CB; }
+
+@media (max-width: 1180px) {
+  .msf-mece-model { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .msf-mece-stage:nth-child(2) { border-right: 0; }
+  .msf-mece-stage:nth-child(-n+2) { border-bottom: 1px solid #C9D2D8; }
+  .msf-mece-stage:nth-child(2) .msf-mece-stage-head i,
+  .msf-mece-stage:last-child .msf-mece-stage-head i { visibility: hidden; }
+}
+@media (max-width: 680px) {
+  .msf-mece-model { grid-template-columns: 1fr; }
+  .msf-mece-stage { min-height: 0; border-right: 0; border-bottom: 1px solid #C9D2D8; }
+  .msf-mece-stage:last-child { border-bottom: 0; }
+  .msf-mece-stage .msf-mece-stage-head i { visibility: hidden; }
+  .msf-mece-stage h3 { min-height: 0; }
+}

@@ -405,7 +405,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = strategyData || { priorityFramework: { items: [], criteria: [], eligibilityGate: {} }, workloadMap: [], opportunityPortfolio: [], expertSignals: [], decisionOutputs: [] };
+  const strategy = strategyData || { priorityFramework: { items: [], criteria: [], eligibilityGate: {} }, opportunityPortfolio: [], expertSignals: [], consultingModel: { workstreams: [], coverage: {} } };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -415,7 +415,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
     const top = [...rows].sort((a, b) => Number(b.live?.mentions30 || 0) - Number(a.live?.mentions30 || 0))[0];
     return { ...layer, rows, primary, mentions, top };
   });
-  const decisionOutputs = strategy.decisionOutputs || [];
+  const consultingModel = strategy.consultingModel || { workstreams: [], coverage: {} };
   const priorityFramework = strategy.priorityFramework || { items: [], criteria: [], eligibilityGate: {} };
   const priorityItems = priorityFramework.items || [];
   const priorityGate = priorityFramework.eligibilityGate || {};
@@ -425,7 +425,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
     priorityGate.minimumIndependentSources ? `독립 출처 ${priorityGate.minimumIndependentSources}개 이상` : "",
     priorityGate.minimumOpportunityScore ? `기회 점수 ${priorityGate.minimumOpportunityScore}점 이상` : "",
   ].filter(Boolean).join(" · ");
-  const workloadMap = strategy.workloadMap || [];
   const opportunityPortfolio = strategy.opportunityPortfolio || [];
   const expertSignals = strategy.expertSignals || [];
   const evidenceArticles = React.useMemo(() => {
@@ -466,14 +465,39 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
     <section className="board msf" ref={sectionRef} data-screen-label="Mobile AI Business Strategy Framework">
       <AnimCtx.Provider value={inView}>
         <div className="msf-consulting-intro">
-          <div className="msf-consulting-kicker">Strategy consulting · user need → mobile experience → revenue → execution</div>
+          <div className="msf-consulting-kicker">{consultingModel.methodology || "MECE decision architecture"}</div>
           <div className="msf-consulting-title-row">
-            <h2>AI 신사업 발굴 포트폴리오</h2>
+            <h2>AI 신사업 전략 포트폴리오</h2>
             <span className="msf-consulting-evidence">최신 공개 근거 <b>{evidenceArticles.length}</b>건 · {evidenceDate} 기준</span>
           </div>
+          {consultingModel.statement && <p className="msf-consulting-statement">{consultingModel.statement}</p>}
         </div>
 
         <div className="msf-exec-architecture">
+          <div className="msf-mece-model" aria-label="MECE 전략 판단 구조">
+            {(consultingModel.workstreams || []).map((workstream, index) => (
+              <article className={`msf-mece-stage ${workstream.status || "review"}`} key={workstream.id} tabIndex="0">
+                <div className="msf-mece-stage-head">
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div><em>{workstream.labelEn}</em><b>{workstream.label}</b></div>
+                  <i aria-hidden="true" />
+                </div>
+                <h3>{workstream.question}</h3>
+                <dl>
+                  <div><dt>OUTPUT</dt><dd>{workstream.output}</dd></div>
+                  <div><dt>GATE</dt><dd>{workstream.gate}</dd></div>
+                </dl>
+                <div className="msf-mece-stage-metrics">
+                  <span><em>LIVE RECORDS</em><b>{Number(workstream.totalRecords || 0).toLocaleString("ko-KR")}</b></span>
+                  <span><em>CURRENT</em><b>{workstream.currentSections}/{workstream.sectionCount}</b></span>
+                </div>
+                <ul>{(workstream.sections || []).map(section => (
+                  <li key={section.id}><span>{section.label}</span><b>{section.recordCount.toLocaleString("ko-KR")}</b></li>
+                ))}</ul>
+              </article>
+            ))}
+          </div>
+
           <div className="msf-strategy-house">
             <div className="msf-house-roof">
               <span>NORTH STAR</span>
@@ -501,41 +525,10 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
               <b>{priorityBasis}</b>
             </div>
           </div>
-
-          <div className="msf-exec-synthesis">
-            <div className="msf-synthesis-head">
-              <span>EXECUTIVE DECISION PACK</span>
-              <b>신사업 판단을 반복 가능한 네 가지 산출물로 운영</b>
-            </div>
-            <div className="msf-synthesis-flow">
-              {decisionOutputs.map((item, index) => (
-                <React.Fragment key={item.cadence}>
-                  <div><em>0{index + 1} · {item.cadence}</em><b>{item.title}</b><span>{item.detail}</span></div>
-                  {index < decisionOutputs.length - 1 && <i className="msf-flow-arrow" aria-hidden="true" />}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
         </div>
 
         <div className="msf-section-head">
-          <div><em>01</em><h3>User Moment → Experience Stack → Revenue</h3></div>
-        </div>
-        <div className="msf-workload-map">
-          <div className="msf-workload-head"><span>USER MOMENT / SHIFT</span><span>EXPERIENCE PAIN</span><span>PLATFORM REQUIREMENT</span><span>BUSINESS OPPORTUNITY</span><span>PROOF</span></div>
-          {workloadMap.map((row, index) => (
-            <div className="msf-workload-row" key={row.no} tabIndex="0" style={{ "--workload-order": index }}>
-              <span className="msf-workload-name"><em>{row.no}</em><b>{row.workload}</b><small>{row.shift}</small></span>
-              <span>{row.bottleneck}</span><i className="msf-flow-arrow" aria-hidden="true" />
-              <span>{row.platform}</span><i className="msf-flow-arrow" aria-hidden="true" />
-              <span className="msf-workload-opportunity">{row.opportunity}</span>
-              <span className="msf-workload-proof">{row.proof}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="msf-section-head">
-          <div><em>02</em><h3>Mobile AI New Business Portfolio</h3></div>
+          <div><em>01</em><h3>Evidence-weighted Opportunity Portfolio</h3></div>
         </div>
         <div className="msf-opportunity-grid">
           {opportunityPortfolio.map((item, index) => (
@@ -555,7 +548,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>04</em><h3>Mobile AI Product · Platform · Business Evidence</h3></div>
+          <div><em>02</em><h3>Product · Platform · Business Evidence</h3></div>
         </div>
         <div className="msf-expert-grid">
           {expertSignals.map((signal, index) => (
@@ -569,8 +562,8 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head msf-value-chain-head">
-          <div><em>05</em><h3>Mobile AI SW · Service Value Chain</h3></div>
-          <p>7개 계층의 통제점·경제성·최근 30일 공개 근거를 모바일 신사업 포트폴리오와 연결</p>
+          <div><em>03</em><h3>AI SW · Service Value Chain</h3></div>
+          <p>7개 계층의 통제점·경제성·최근 30일 공개 근거를 신사업 포트폴리오와 연결</p>
         </div>
         <div className="msf-chain">
           {layerStats.map((l, i) => (
@@ -591,21 +584,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head">
-          <div><em>06</em><h3>분석 툴킷</h3></div>
-          <p>소비자 수요부터 모바일 경험·단위경제성·파트너·출시 판단까지 연결하는 필수 전문성</p>
-        </div>
-        <div className="msf-capabilities">
-          {(strategy.capabilities || []).map((capability, index) => (
-            <div className="msf-capability" key={capability.no} tabIndex="0" style={{ "--cap-order": index }}>
-              <span>{capability.no}</span>
-              <div><b>{capability.title}</b><p>{capability.detail}</p></div>
-              <em>{capability.output}</em>
-            </div>
-          ))}
-        </div>
-
-        <div className="msf-section-head">
-          <div><em>07</em><h3>AI Stack별 사업 판단 기준</h3></div>
+          <div><em>04</em><h3>AI Stack별 사업 판단 기준</h3></div>
           <p>통제점·수익 구조·사업 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
         <div className="msf-matrix">
@@ -4388,8 +4367,8 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
         <div className="board-head" style={{ "--accent": "#16A34A" }}>
           <span className="board-tab" style={{ background: "#16A34A" }} />
           <div className="board-titles">
-            <h2>AI 서비스 신사업 기회 <span className="board-en">User Need → Experience → Revenue → Business Case</span></h2>
-            <p>사용자 과업과 지불 의향을 모바일 경험·수익모델 가설로 전환 · 업체별 공개 활동과 사업모델을 근거로 <b>자체 개발·제휴·투자 기회</b>를 검토</p>
+            <h2>서비스·수익 모델 <span className="board-en">Need → Offer → Economics → Evidence</span></h2>
+            <p>사용자 과업과 지불 의향을 서비스·과금 가설로 전환 · 업체별 공개 활동과 사업모델을 근거로 <b>자체 개발·제휴·투자 기회</b>를 검토</p>
           </div>
         </div>
 

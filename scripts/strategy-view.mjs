@@ -75,7 +75,77 @@ const compactOpportunity = (item, index) => {
 const selectOpportunityPortfolio = (opportunities, limit = 12) =>
   [...opportunities].sort(comparePriority).slice(0, limit);
 
-export function buildStrategyView({ generatedAt, framework, articles, opportunityDb }) {
+export const buildConsultingNavigation = architecture => (architecture?.workstreams || [])
+  .slice()
+  .sort((left, right) => Number(left.order || 0) - Number(right.order || 0))
+  .flatMap(workstream => (workstream.sections || []).map(section => ({
+    id: section.id,
+    ko: text(section.label),
+    en: text(section.labelEn),
+    icon: text(section.icon || "grid"),
+    group: `${String(workstream.order || "").padStart(2, "0")} · ${text(workstream.label)}`,
+    groupId: workstream.id,
+    question: text(section.question),
+    output: text(section.output),
+    children: (section.children || []).map(child => ({ key: child.key, ko: text(child.label) })),
+  })));
+
+const buildConsultingModel = ({ architecture, sourceStats, priorityItems, generatedAt }) => {
+  const stats = sourceStats || {};
+  const workstreams = (architecture?.workstreams || [])
+    .slice()
+    .sort((left, right) => Number(left.order || 0) - Number(right.order || 0))
+    .map(workstream => {
+      const sections = (workstream.sections || []).map(section => {
+        const metric = stats[section.id] || {};
+        return {
+          id: section.id,
+          label: text(section.label),
+          labelEn: text(section.labelEn),
+          question: text(section.question),
+          output: text(section.output),
+          recordCount: Number(metric.recordCount || 0),
+          currentCount: Number(metric.currentCount ?? metric.recordCount ?? 0),
+          sourceTimestamp: text(metric.sourceTimestamp),
+          ageHours: Number.isFinite(Number(metric.ageHours)) ? Number(metric.ageHours) : null,
+          status: text(metric.status || (Number(metric.recordCount || 0) ? "current" : "empty")),
+        };
+      });
+      const totalRecords = sections.reduce((sum, section) => sum + section.recordCount, 0);
+      const currentSections = sections.filter(section => section.status === "current").length;
+      return {
+        id: workstream.id,
+        order: Number(workstream.order || 0),
+        label: text(workstream.label),
+        labelEn: text(workstream.labelEn),
+        question: text(workstream.question),
+        output: text(workstream.output),
+        gate: text(workstream.gate),
+        sections,
+        totalRecords,
+        currentSections,
+        sectionCount: sections.length,
+        status: totalRecords === 0 ? "empty" : currentSections === sections.length ? "current" : "review",
+      };
+    });
+  const sections = workstreams.flatMap(workstream => workstream.sections);
+  return {
+    methodology: text(architecture?.methodology || "MECE decision architecture"),
+    statement: text(architecture?.statement),
+    workstreams,
+    navigation: buildConsultingNavigation(architecture),
+    coverage: {
+      workstreams: workstreams.length,
+      sections: sections.length,
+      currentSections: sections.filter(section => section.status === "current").length,
+      records: sections.reduce((sum, section) => sum + section.recordCount, 0),
+      priorityCandidates: priorityItems.length,
+    },
+    refreshedAt: generatedAt,
+  };
+};
+
+export function buildStrategyView({ generatedAt, architecture, sourceStats, articles, opportunityDb }) {
   const generatedOpportunities = (opportunityDb?.generatedOpportunities || [])
     .filter(item => item?.decisionEligible !== false && ["verified", "reviewed", "published"].includes(item?.workflow?.stage || item?.status) && item?.evidenceConfidence !== "low")
     .filter(item => (item.evidence || []).some(evidenceUrl))
@@ -120,29 +190,19 @@ export function buildStrategyView({ generatedAt, framework, articles, opportunit
       url: article.url,
     }));
 
-  const workloadMap = opportunityPortfolio.slice(0, 7).map((item, index) => ({
-    no: `0${index + 1}`,
-    workload: item.title,
-    shift: item.customer,
-    bottleneck: item.thesis,
-    platform: item.ownAssets.join(" · "),
-    opportunity: item.offer,
-    proof: item.gate,
-  }));
   const evidenceTotal = priorityItems.reduce((sum, item) => sum + item.evidenceCount, 0);
   const averageScore = priorityItems.length
     ? (priorityItems.reduce((sum, item) => sum + item.score, 0) / priorityItems.length).toFixed(1)
     : "0.0";
+  const consultingModel = buildConsultingModel({ architecture, sourceStats, priorityItems, generatedAt });
 
   return {
     generatedAt,
-    schemaVersion: 2,
+    schemaVersion: 3,
     sourceMode: "generated-from-verified-ledgers",
     northStar: priorityItems.length
       ? `검증 적격 ${generatedOpportunities.length}개 후보 중 상위 ${priorityItems.length}개 · 평균 ${averageScore}점 · 근거 ${evidenceTotal}건`
       : "검증된 근거가 확보될 때까지 전략 후보 공개 보류",
-    decisionOutputs: framework?.decisionOutputs || [],
-    capabilities: framework?.capabilities || [],
     priorityFramework: {
       label: "EVIDENCE-WEIGHTED PRIORITY",
       method: generationPolicy.scorer || "deterministic-evidence-weighted",
@@ -158,7 +218,7 @@ export function buildStrategyView({ generatedAt, framework, articles, opportunit
       items: priorityItems,
       refreshedAt: generatedAt,
     },
-    workloadMap,
+    consultingModel,
     opportunityPortfolio,
     expertSignals,
     lineage: {
@@ -166,6 +226,7 @@ export function buildStrategyView({ generatedAt, framework, articles, opportunit
       eligibleOpportunities: generatedOpportunities.length,
       articles: expertSignals.length,
       generatedFrom: ["news.json", "mobile-ai-business-view.json", "config/dashboard-taxonomy.json"],
+      architecture: "config/consulting-architecture.json",
     },
   };
 }

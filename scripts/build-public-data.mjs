@@ -15,7 +15,7 @@ import { consolidateMarketRecords } from "./market-consolidation.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { sanitizePublicCopy } from "./public-copy.mjs";
-import { buildStrategyView } from "./strategy-view.mjs";
+import { buildConsultingNavigation, buildStrategyView } from "./strategy-view.mjs";
 
 const root = process.cwd();
 const readJson = async file => JSON.parse(await readFile(resolve(root, file), "utf8"));
@@ -55,6 +55,7 @@ const [news, research, market, infra, bizmodel] = await Promise.all([
   readJson("news.json"), readJson("research.json"), readJson("market.json"),
   readJson("infra.json"), readJson("bizmodel.json"),
 ]);
+const consultingArchitecture = await readJson("config/consulting-architecture.json");
 
 // 삭제 블록리스트(비밀번호 삭제 항목) — 뷰에서 영구 제외해 '다음 업데이트 시 안 보이게'.
 const suppression = await loadSuppressionRegistry(root);
@@ -128,6 +129,26 @@ const visibleSignals = (data, scope) => (data.items || [])
   .map(item => normalizeLocalizedRecord(compact(item, signalKeys)));
 
 const generatedAt = new Date().toISOString();
+const newestTimestamp = values => values
+  .map(value => Date.parse(String(value || "")))
+  .filter(Number.isFinite)
+  .sort((left, right) => right - left)
+  .map(value => new Date(value).toISOString())[0] || "";
+const sectionMetric = (recordCount, sourceTimestamp, maxAgeHours) => {
+  const timestamp = Date.parse(String(sourceTimestamp || ""));
+  const reference = Date.parse(generatedAt);
+  const ageHours = Number.isFinite(timestamp) && Number.isFinite(reference)
+    ? Math.max(0, (reference - timestamp) / 3600000)
+    : null;
+  return {
+    recordCount: Number(recordCount || 0),
+    currentCount: Number(recordCount || 0),
+    sourceTimestamp: sourceTimestamp || "",
+    maxAgeHours,
+    ageHours: ageHours == null ? null : Number(ageHours.toFixed(2)),
+    status: Number(recordCount || 0) === 0 ? "empty" : ageHours != null && ageHours > maxAgeHours ? "stale" : "current",
+  };
+};
 const views = {
   "news-view.json": { generatedAt, count: visibleArticles.length, articles: visibleArticles },
   "research-view.json": { generatedAt, count: visibleResearch.length, feed: visibleResearch },
@@ -304,6 +325,7 @@ try {
     generatedAt,
     schemaVersion: 1,
     sourceMode: "generated-source-backed",
+    consultingNavigation: buildConsultingNavigation(consultingArchitecture),
     companyCount: Object.keys(overviewCompanies).length,
     articleCount: selected.size,
     companies: overviewCompanies,
@@ -327,11 +349,39 @@ try {
 // visual framework; opportunities, proof counts and priorities are
 // rebuilt from the newest verified ledgers on every publication run.
 try {
-  const dash = loadDash();
   const opportunityDb = await readJson("mobile-ai-business-view.json");
+  const [companies, startups, monetization, stocks] = await Promise.all([
+    readJson("companies.json"),
+    readJson("startups.json"),
+    readJson("monetization.json"),
+    readJson("stocks.json"),
+  ]);
+  const opportunityCount = (opportunityDb.generatedOpportunities || []).length;
+  const startupCount = ["large", "small", "institutional"]
+    .reduce((sum, key) => sum + (Array.isArray(startups[key]) ? startups[key].length : 0), 0);
+  const newestArticle = newestTimestamp(visibleArticles.map(article => article.date));
+  const newestResearch = newestTimestamp(visibleResearch.map(item => item.date));
+  const newestMarket = newestTimestamp(visibleRecords.map(item => item.publishedAt || item.collectedAt));
+  const sourceStats = {
+    overview: sectionMetric(visibleArticles.length, newestArticle, 168),
+    strategy: sectionMetric(opportunityCount, opportunityDb.generatedAt || opportunityDb.asOf || generatedAt, 25),
+    opportunity: sectionMetric(opportunityCount, opportunityDb.generatedAt || opportunityDb.asOf || generatedAt, 25),
+    newbiz: sectionMetric((views["bizmodel-view.json"].items || []).length + (monetization.companies || []).length,
+      newestTimestamp([bizmodel.generatedAt, monetization.generatedAt, monetization.updatedAt]) || generatedAt, 25),
+    valuechain: sectionMetric(Object.keys(companies.companies || {}).length,
+      companies.generatedAt || companies.updatedAt || generatedAt, 25),
+    signals: sectionMetric((views["infra-view.json"].items || []).length,
+      infra.generatedAt || infra.updatedAt || generatedAt, 25),
+    sanalysis: sectionMetric(startupCount, startups.generatedAt || startups.updatedAt || generatedAt, 169),
+    evidence: sectionMetric(visibleArticles.length + visibleResearch.length,
+      newestTimestamp([newestArticle, newestResearch]), 168),
+    validation: sectionMetric(visibleRecords.length + Object.keys(stocks.stocks || {}).length,
+      newestTimestamp([newestMarket, stocks.generatedAt, stocks.updatedAt]) || generatedAt, 49),
+  };
   const strategyView = buildStrategyView({
     generatedAt,
-    framework: dash.DECISION_FRAMEWORK || {},
+    architecture: consultingArchitecture,
+    sourceStats,
     articles: visibleArticles,
     opportunityDb,
   });
@@ -363,6 +413,13 @@ try {
 // Components can therefore rely only on generated views, while operators can
 // see missing, empty and stale sections before approving publication.
 const contentRegistry = await readJson("config/site-content-registry.json");
+const consultingSectionIndex = new Map((consultingArchitecture.workstreams || []).flatMap(workstream =>
+  (workstream.sections || []).map(section => [section.id, {
+    workstreamId: workstream.id,
+    workstreamLabel: workstream.label,
+    question: section.question,
+    output: section.output,
+  }])));
 const valueAtPath = (value, path) => String(path || "").split(".").filter(Boolean)
   .reduce((current, key) => current == null ? undefined : current[key], value);
 const contentDatasets = [];
@@ -387,6 +444,7 @@ for (const definition of contentRegistry.datasets || []) {
       id: definition.id,
       path: definition.path,
       section: definition.section,
+      ...consultingSectionIndex.get(definition.section),
       collector: definition.collector,
       required: definition.required !== false,
       recordCount,
@@ -401,6 +459,7 @@ for (const definition of contentRegistry.datasets || []) {
       id: definition.id,
       path: definition.path,
       section: definition.section,
+      ...consultingSectionIndex.get(definition.section),
       collector: definition.collector,
       required: definition.required !== false,
       recordCount: 0,
@@ -416,12 +475,36 @@ const contentSummary = contentDatasets.reduce((summary, dataset) => {
   summary[dataset.status] = (summary[dataset.status] || 0) + 1;
   return summary;
 }, { current: 0, stale: 0, empty: 0, missing: 0 });
+const workstreamSummary = (consultingArchitecture.workstreams || []).map(workstream => {
+  const sectionIds = new Set((workstream.sections || []).map(section => section.id));
+  const datasets = contentDatasets.filter(dataset => sectionIds.has(dataset.section));
+  const recordCount = datasets.reduce((sum, dataset) => sum + Number(dataset.recordCount || 0), 0);
+  const currentDatasets = datasets.filter(dataset => dataset.status === "current").length;
+  return {
+    id: workstream.id,
+    order: workstream.order,
+    label: workstream.label,
+    question: workstream.question,
+    output: workstream.output,
+    gate: workstream.gate,
+    datasetCount: datasets.length,
+    currentDatasets,
+    recordCount,
+    status: recordCount === 0 ? "empty" : currentDatasets === datasets.length ? "current" : "review",
+  };
+});
 const siteContentManifest = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   generatedAt,
   refreshCadenceHours: contentRegistry.refreshCadenceHours,
   publicationPolicy: contentRegistry.publicationPolicy,
   summary: contentSummary,
+  consultingArchitecture: {
+    schemaVersion: consultingArchitecture.schemaVersion,
+    methodology: consultingArchitecture.methodology,
+    statement: consultingArchitecture.statement,
+    workstreams: workstreamSummary,
+  },
   datasets: contentDatasets,
 };
 await writeJson("site-content-manifest.json", siteContentManifest);
