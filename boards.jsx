@@ -131,7 +131,14 @@ function CoLogo({ name, domain, accent }) {
 }
 
 function CompanyNote({ text }) {
-  const lines = bulletText(text).split(/\s+·\s+/).map(line => line.trim()).filter(Boolean);
+  const seen = new Set();
+  const lines = bulletText(text).split(/\n+|\s+·\s+/)
+    .map(line => line.trim()).filter(line => {
+      const key = meceTextKey(line);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, 3);
   return lines.map((line, i) => (
     <span className="ct-note-line" key={i}>{hlBrief(line, "co-note-" + i)}</span>
   ));
@@ -1675,8 +1682,14 @@ function BoldSummary({ text, roles = [] }) {
     String(text).replace(/<[^>]+>/g, "") // strip stray HTML (e.g. <font color>)
       .replace(/2026[.\-](\d{1,2})[.\-](\d{1,2})/g, (_, m, d) => `${+m}/${+d}`)
   );
-  const lines = clean.split(/\n+/).map(l => l.trim()).filter(Boolean).slice(0, 3);   // 최대 3줄
-  if (lines.length <= 1) return <span className="art-sum-line">{roles[0] && <i className="art-insight-role">{INSIGHT_ROLE_LABEL[roles[0]] || INSIGHT_ROLE_LABEL.evidence}</i>}{hlBrief(clean, "s")}</span>;
+  const seen = new Set();
+  const lines = clean.split(/\n+|\s+·\s+/).map(line => line.trim()).filter(line => {
+    const key = meceTextKey(line);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 3);   // 핵심만 최대 3줄
+  if (lines.length <= 1) return <span className="art-sum-line">{roles[0] && <i className="art-insight-role">{INSIGHT_ROLE_LABEL[roles[0]] || INSIGHT_ROLE_LABEL.evidence}</i>}{hlBrief(lines[0] || clean, "s")}</span>;
   return lines.map((line, i) => (
     <span className="art-sum-line" key={i}>
       {roles[i] && <i className="art-insight-role">{INSIGHT_ROLE_LABEL[roles[i]] || INSIGHT_ROLE_LABEL.evidence}</i>}

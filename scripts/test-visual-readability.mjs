@@ -13,6 +13,7 @@ const assert = (condition, message) => { if (!condition) throw new Error(message
 
 assert(styles.includes("Readability contract · safe in light/dark and hover/focus modes"), "readability contract is missing");
 assert(styles.includes("TYPOGRAPHY + CONSULTING VISUAL CONTRACT V2"), "typography and consulting visual contract is missing");
+assert(styles.includes("TYPOGRAPHY + CONTRAST CONTRACT V3"), "competitive-panel contrast contract is missing");
 assert(styles.includes("--text-xs: 11.5px") && styles.includes("--text-body: 14px"), "readable type scale is missing");
 assert(styles.includes("--mono: var(--f)") && styles.includes("--f-code:"), "semantic font policy is missing");
 assert(styles.includes("--muted: #98A7BA") && styles.includes("--ink-2: #C3CDDB"), "dark-mode secondary text contrast is too low");
@@ -37,6 +38,11 @@ assert(styles.includes('[data-theme="dark"] .num-hl { color: #8BD2E8;'), "dark-m
 assert(styles.includes("MECE consulting operating model") && styles.includes(".msf-mece-model"), "MECE consulting frame is missing");
 assert(styles.includes(".msf-consulting-intro::before { display: none; }"), "strategy header still uses a one-sided accent stripe");
 assert(styles.includes('[data-theme="dark"] .msf-mece-stage-metrics b'), "MECE metrics lack an explicit dark-mode contrast rule");
+assert(styles.includes(".dyn-company-facts p::before") && styles.includes("font-size: var(--text-xs) !important"), "dark competitive-panel labels can become too small or lose their bullet cue");
+assert(styles.includes('.dyn-related-row:is(:hover, :focus-within)') && styles.includes("color: #FFFFFF !important"), "dark relationship hover lacks an explicit readable foreground");
+assert(styles.includes(".dyn-video-panel .tl-kw-key") && styles.includes("color: #E9D5FF !important"), "dark media-panel keyword highlight can inherit a low-contrast light-theme color");
+assert(styles.includes(".kg-hint-compact") && styles.includes(".msf-mname > b"), "remaining dashboard labels lack the 11.5px readability floor");
+assert(boards.includes('split(/\\n+|\\s+·\\s+/)') && boards.includes("핵심만 최대 3줄"), "feed summaries are not normalized into concise bullet lines");
 
 assert(taxonomy.publicFacts === "none-generated-views-only", "registry still declares public mutable facts");
 assert(!Object.hasOwn(taxonomy, "MOBILE_STRATEGY"), "legacy strategy facts remain in runtime taxonomy");

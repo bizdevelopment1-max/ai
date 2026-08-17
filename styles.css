@@ -6609,3 +6609,88 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .msf-mece-stage .msf-mece-stage-head i { visibility: hidden; }
   .msf-mece-stage h3 { min-height: 0; }
 }
+
+/* ============================================================
+   TYPOGRAPHY + CONTRAST CONTRACT V3
+   Dark media panels keep a permanent light foreground, while
+   data summaries use a readable type floor and short bullet cues.
+   ============================================================ */
+.main :is(
+  .dyn-company-open small,
+  .dyn-company-facts em,
+  .dyn-company-facts p,
+  .dyn-proof-strip em,
+  .dyn-proof-strip b,
+  .dyn-relationship > b,
+  .dyn-related-row,
+  .dyn-related-row > button,
+  .dyn-related-row > span,
+  .dyn-related-row > em,
+  .dyn-related-row > a
+) {
+  min-width: 0;
+  font-size: var(--text-xs) !important;
+  line-height: 1.48 !important;
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: none !important;
+}
+.main :is(.dyn-company-facts em, .dyn-proof-strip em, .dyn-related-row > em) {
+  color: #B8CCF2 !important;
+}
+.main :is(.dyn-company-facts p, .dyn-proof-strip b, .dyn-related-row, .dyn-related-row > span) {
+  color: #F1F6FF !important;
+}
+.main :is(.dyn-related-row > button, .dyn-related-row > a, .dyn-company-open small) {
+  color: #CFE0FF !important;
+}
+.main .dyn-relationship > b { color: var(--axis) !important; }
+.main .dyn-company-facts p {
+  position: relative;
+  padding-left: 11px;
+  -webkit-line-clamp: 3;
+}
+.main .dyn-company-facts p::before {
+  position: absolute;
+  top: .55em;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #72C7BE;
+  content: "";
+}
+.main .dyn-related-row:is(:hover, :focus-within) {
+  background: rgba(255, 255, 255, .14) !important;
+  color: #FFFFFF !important;
+}
+.main .dyn-related-row:is(:hover, :focus-within) :is(button, a, span, em) {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+.main .dyn-video-panel :is(.tl-hl, .tl-kw) {
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: none !important;
+}
+.main .dyn-video-panel .tl-kw-pos { color: #9FF3BD !important; background: rgba(22, 163, 74, .24); }
+.main .dyn-video-panel .tl-kw-neg { color: #FFE58A !important; background: rgba(245, 200, 20, .22); }
+.main .dyn-video-panel .tl-kw-key { color: #E9D5FF !important; background: rgba(124, 56, 214, .30); }
+.main .dyn-video-panel .tl-hl { color: #CFE0FF !important; }
+.main :is(.art-sum-line, .ct-note-line) {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  line-height: 1.62;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+[data-theme="dark"] .main :is(.art-sum-line, .ct-note-line) { color: var(--ink-2); }
+.main :is(
+  .kg-hint-compact,
+  .dyn-detail-action span,
+  .msf-mece-stage-head > span,
+  .msf-house-foundation > b,
+  .msf-mname > b
+) {
+  font-size: var(--text-xs) !important;
+  line-height: 1.48 !important;
+  -webkit-text-fill-color: currentColor !important;
+}
