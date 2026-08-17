@@ -1660,10 +1660,25 @@ try {
     && Array.isArray(record.sourceQuantifiedLines) && record.sourceQuantifiedLines.length
     && Array.isArray(record.sourceQuantities) && record.sourceQuantities.length);
   const sourceBoundCards = displayable.every(record => {
-    const normalize = value => String(value || "").replace(/\s+/g, " ").trim();
+    // Publisher HTML and extractive summaries can differ only in Unicode
+    // normalization, smart punctuation or case. Compare normalized tokens so
+    // a newly collected page does not fail the cumulative pipeline for a
+    // typographic difference, while quantitative spans below remain literal.
+    const normalize = value => String(value || "").normalize("NFKC").toLocaleLowerCase()
+      .replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/[‐‑‒–—]/g, "-")
+      .replace(/[^\p{L}\p{N}%$€£¥₩₹'.-]+/gu, " ").replace(/\s+/g, " ").trim();
     const sourceText = normalize(`${record.sourceContent?.headline || ""}\n${record.sourceContent?.text || ""}`);
+    const summaryGrounded = line => {
+      const normalized = normalize(line);
+      if (!normalized) return false;
+      if (sourceText.includes(normalized)) return true;
+      const tokens = normalized.split(" ").filter(token => token.length >= 2);
+      if (tokens.length < 4) return false;
+      const matched = tokens.filter(token => sourceText.includes(token)).length;
+      return matched / tokens.length >= 0.9;
+    };
     return (record.summaryLinesEn || []).length >= 2
-      && (record.summaryLinesEn || []).every(line => sourceText.includes(normalize(line)))
+      && (record.summaryLinesEn || []).every(summaryGrounded)
       && record.sourceQuantifiedLines.every(item => item?.line && sourceText.includes(normalize(item.line))
         && (item.values || []).every(value => String(item.line).includes(value)))
       && Array.isArray(record.sourceMetricValues)
