@@ -469,15 +469,18 @@ try {
 }
 
 try {
-  const [app, components, anim] = await Promise.all([
+  const [app, components, anim, boards, styles, consultingArchitecture] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
     readFile("anim.jsx", "utf8"),
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+    readFile("config/consulting-architecture.json", "utf8").then(JSON.parse),
   ]);
   const navSource = components.slice(components.indexOf("const NAV = ["), components.indexOf("const NAV_SECTION_IDS"));
   const navIds = [...navSource.matchAll(/\{\s*id:\s*"([^"]+)"/g)].map(match => match[1]);
   const sectionIds = [...app.matchAll(/(?:<LazySection\s+id=|data-section=)"([^"]+)"/g)].map(match => match[1]);
-  const expectedOrder = ["overview", "strategy", "opportunity", "valuechain", "newbiz", "signals", "sanalysis", "evidence", "validation"];
+  const expectedOrder = ["overview", "strategy", "opportunity", "newbiz", "valuechain", "signals", "sanalysis", "evidence", "validation"];
   const missingOnRight = navIds.filter(id => !sectionIds.includes(id));
   const missingOnLeft = sectionIds.filter(id => !navIds.includes(id));
   const sameMeceOrder = JSON.stringify(navIds) === JSON.stringify(expectedOrder)
@@ -494,11 +497,29 @@ try {
     && app.includes('activeCategory={navCategory.section === "sanalysis" ? navCategory.id : ""}')
     && app.includes('.filter(layer => navCategory.section !== "valuechain" || !navCategory.id || layer.id === navCategory.id)');
   const sidebarCopyClean = !/(?:mobile|모바일)/i.test(`${navSource}\n${sidebarBrandSource}`)
-    && navSource.includes('ko: "AI 신사업 브리핑"')
+    && navSource.includes('ko: "산업·경쟁 브리핑"')
     && navSource.includes('ko: "신사업 기회 DB"')
     && !navSource.includes('id: "audit"')
     && !navSource.includes("데이터 신뢰센터")
     && sidebarBrandSource.includes("<b>AI</b>");
+  const removedSidebarKeys = new Set([
+    "executive-brief", "execution-plan", "build-buy-partner",
+    "execution-hypothesis", "action-implication",
+  ]);
+  const architectureChildren = (consultingArchitecture.workstreams || [])
+    .flatMap(workstream => workstream.sections || [])
+    .flatMap(section => section.children || []);
+  const removedSidebarCopy = architectureChildren.some(child => removedSidebarKeys.has(child.key))
+    || [...removedSidebarKeys].some(key => navSource.includes(`key: "${key}"`));
+  const subsectionScrollReady = app.includes('const navTarget = (sectionId, childId = "")')
+    && app.includes("navTo(section, categoryId)")
+    && app.includes('window.__DASH_NAV_ANCHOR = childId')
+    && components.includes("HIDDEN_SIDEBAR_CHILD_KEYS")
+    && components.includes("HIDDEN_SIDEBAR_CHILD_LABELS")
+    && boards.includes('data-nav-anchor="decision-criteria"')
+    && boards.includes("data-nav-anchor={layerId}")
+    && styles.includes("[data-nav-anchor]")
+    && styles.includes("scroll-margin-top: 14px");
   if (missingOnRight.length || missingOnLeft.length
     || !sameMeceOrder
     || !overviewHeaderRemoved
@@ -507,7 +528,9 @@ try {
     || !/for \(const id of NAV_SECTION_IDS\)/.test(app)
     || /if \(REDUCED\) \{ setInView\(true\)/.test(anim)
     || !hierarchyReady
-    || !sidebarCopyClean) {
+    || !sidebarCopyClean
+    || removedSidebarCopy
+    || !subsectionScrollReady) {
     throw new Error(`navigation mismatch left-only=${missingOnRight.join(",")} right-only=${missingOnLeft.join(",")}`);
   }
   console.log(`  정상  MECE navigation maps 1:1 in order to ${navIds.length} right-side sections · 첫 화면 중복 제목 제거`);
@@ -587,7 +610,7 @@ try {
 }
 
 try {
-  const [app, boards, components, styles, companies, strategyView, strategyBuilder, monetizationCrawler] = await Promise.all([
+  const [app, boards, components, styles, companies, strategyView, strategyBuilder, consultingArchitecture, monetizationCrawler] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("boards.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
@@ -595,6 +618,7 @@ try {
     readFile("companies.json", "utf8").then(JSON.parse),
     readFile("strategy-view.json", "utf8").then(JSON.parse),
     readFile("scripts/strategy-view.mjs", "utf8"),
+    readFile("config/consulting-architecture.json", "utf8").then(JSON.parse),
     readFile("scripts/crawl-monetization.mjs", "utf8"),
   ]);
   const dash = loadDash();
@@ -615,7 +639,13 @@ try {
     && !boards.includes("linkedin.com/search/results/companies");
   const strategyReady = strategyView?.sourceMode === "generated-from-verified-ledgers"
     && !Object.hasOwn(strategyView, "choices")
-    && strategyView?.capabilities?.length === 5
+    && !Object.hasOwn(strategyView, "capabilities")
+    && !Object.hasOwn(strategyView, "decisionOutputs")
+    && !Object.hasOwn(strategyView, "workloadMap")
+    && consultingArchitecture?.workstreams?.length === 4
+    && strategyView?.consultingModel?.workstreams?.length === 4
+    && strategyView?.consultingModel?.coverage?.sections === 9
+    && new Set(strategyView.consultingModel.navigation.map(item => item.id)).size === 9
     && strategyView?.priorityFramework?.items?.length === 4
     && strategyView?.priorityFramework?.criteria?.length === 8
     && strategyView.priorityFramework.items.every(item => item.sourceOpportunityId && Number.isFinite(item.score) && item.drivers?.length)
@@ -657,17 +687,17 @@ try {
     && !/msf-choices|msf-choice|msf-house-pillars/.test(boards)
     && boards.includes('className="msf-priority-grid"')
     && styles.includes(".msf-priority-card:is(:hover, :focus-visible)")
-    && boards.includes("Strategy consulting · user need → mobile experience → revenue → execution")
-    && boards.includes("분석 툴킷")
+    && boards.includes("consultingModel.methodology")
+    && boards.includes('className="msf-mece-model"')
+    && !boards.includes("분석 툴킷")
     && boards.includes("function StrategyPortfolioCard")
     && boards.includes("function ConsultingDecisionRail")
-    && boards.includes("User Need → Experience → Revenue → Business Case")
+    && boards.includes("Need → Offer → Economics → Evidence")
     && boards.includes("Strategy &amp;")
     && boards.includes('className="msf-strategy-house"')
     && !boards.includes('className="msf-control-logic"')
-    && boards.includes('className="msf-workload-name"')
-    && styles.includes("grid-template-columns: minmax(280px, 1.35fr) minmax(220px, 1fr) 34px minmax(260px, 1.1fr) 34px minmax(240px, 1fr) minmax(210px, .9fr)")
-    && styles.includes(".msf-workload-row { min-width: 1360px; }")
+    && !boards.includes('className="msf-workload-name"')
+    && styles.includes(".msf-mece-stage")
     && styles.includes("word-break: keep-all; overflow-wrap: break-word; text-wrap: pretty;")
     && boards.includes('className="msf-layer-evidence"')
     && !boards.includes("msf-layer-meter")
@@ -691,6 +721,8 @@ try {
     && !boards.includes("<h4>밸류 프로포지션")
     && !boards.includes("<h4>방향성 · 추구 가치")
     && app.includes('id="strategy"')
+    && app.includes("navigation={navigation}")
+    && app.includes("navigation.map(item =>")
     && components.includes('id: "valuechain"')
     && (expectedLayers.every(id => app.includes(`layerId="${id}"`))
       || (app.includes("(D.VALUE_CHAIN || [])") && app.includes("layerId={layer.id}")))
@@ -1334,6 +1366,12 @@ try {
     && boards.includes("SOURCE-BACKED · DAILY")
     && !boards.includes("const COMPETE_EDGES")
     && boards.includes("onNodeSelect={setActiveCompany}")
+    && app.includes("onSelectCompany={setSelected}")
+    && boards.includes('aria-label={`${selectedCompany.name} 상세 개요 열기`}')
+    && boards.includes('className="dyn-company-facts"')
+    && boards.includes('className="dyn-proof-strip"')
+    && boards.includes('className="dyn-related-row"')
+    && boards.includes("openCompany(item.company)")
     && boards.includes("relationshipGroups.length > 0")
     && !boards.includes("false && relationshipGroups.length > 0")
     && boards.includes("video.playbackRate = 0.38")
@@ -1349,7 +1387,11 @@ try {
   const interactiveLayout = styles.includes(".es-dynamics-grid")
     && styles.includes(".dyn-video-panel")
     && styles.includes(".dyn-relationship")
-    && styles.includes(".dyn-relationship > div > a")
+    && styles.includes(".dyn-company-open")
+    && styles.includes(".dyn-company-facts")
+    && styles.includes(".dyn-proof-strip")
+    && styles.includes(".dyn-related-row")
+    && styles.includes(".dyn-detail-action")
     && styles.includes("grid-template-columns: minmax(460px, 1.25fr) minmax(340px, .85fr)")
     && styles.includes("brightness(.7)")
     && styles.includes("height: calc(100% - 10px)")
@@ -1643,8 +1685,10 @@ try {
     && !/원문 수치|원문 정량 근거/.test(boards)
     && /aiDashDeletedMarketRecords/.test(boards)
     && /rememberSuppression\(\{[\s\S]{0,180}scope: "market"/.test(boards)
-    && /같은 주제는 최신 검증값만 공개/.test(boards)
-    && /X로 숨긴 항목은 이후 수집에서도 영구 제외/.test(boards);
+    && /const boardRef = sectionRef \|\| localSectionRef/.test(boards)
+    && /날짜가 다른 검증값은 모두 누적/.test(boards)
+    && /className="mkt-record-section"/.test(boards)
+    && /className="mkt-board-toggle"/.test(boards);
   const noForecastPlaceholder = /const hasForecast = numericValue\(it\.forecast\)/.test(boards)
     && /hasCurrent && hasForecast && <span className="mkt-arr" aria-hidden="true" \/>/.test(boards)
     && /hasForecast && <span className="mkt-num fut">/.test(boards);
@@ -1652,6 +1696,14 @@ try {
     && /track: "consumer-survey"/.test(marketCrawler)
     && /track: "ai-market"/.test(marketCrawler)
     && /querySetVersion: QUERY_SET_VERSION/.test(marketCrawler);
+  const resilientDailyMarketCollection = /const rotatingQueries =/.test(marketCrawler)
+    && /AbortSignal\.timeout\(MARKET_FETCH_TIMEOUT_MS\)/.test(marketCrawler)
+    && /MARKET_FAILURE_LIMIT/.test(marketCrawler)
+    && /MARKET_WALL_CLOCK_MS/.test(marketCrawler)
+    && /stopReason = "wall-clock-budget"/.test(marketCrawler)
+    && /status: "degraded-preserved"/.test(marketCrawler)
+    && /preserved .*append-only records for the next retry/.test(marketCrawler)
+    && !/throw new Error\("All global market-data sources failed/.test(marketCrawler);
   const suppressionPreservesLedger = /const records = Array\.isArray\(data\.records\) \? data\.records : \[\];/.test(marketRefresh)
     && /if \(suppression\.matches\(record, "market"\)\) return record;/.test(marketRefresh)
     && /userSuppressedPreserved: suppressedRecords\.length/.test(marketRefresh);
@@ -1666,13 +1718,14 @@ try {
     boardContract,
     forecastDisplay: noForecastPlaceholder,
     separateCollectionTracks,
+    resilientDailyMarketCollection,
     suppressionPreservesLedger,
   };
   const failedMarketChecks = Object.entries(marketChecks).filter(([, value]) => !value).map(([key]) => key);
   if (failedMarketChecks.length) {
     throw new Error(`audit ledger requires publisher-page-backed records and retained source links: ${failedMarketChecks.join(", ")}`);
   }
-  console.log(`  정상  market.json 비공개 감사 원장 ${records.length}건 · 공개 뷰 최신값 교체`);
+  console.log(`  정상  market.json 비공개 감사 원장 ${records.length}건 · 공개 뷰 검증 이력 누적`);
 } catch (error) {
   failed = true;
   console.error(`  실패  market.json 비공개 감사 원장: ${error.message}`);
@@ -1996,6 +2049,14 @@ try {
     && Array.isArray(record.relatedSources) && record.relatedSources.length >= 1
     && Array.isArray(record.consolidatedInsights) && record.consolidatedInsights.length >= 1
     && record.consolidatedInsights.length <= 3);
+  const latestPerTopic = new Map();
+  marketRecords.forEach(record => {
+    if (record.isLatestForTopic) latestPerTopic.set(record.stableKey, Number(latestPerTopic.get(record.stableKey) || 0) + 1);
+  });
+  const cumulativeMarketValid = marketRecords.every(record => record.stableKey && typeof record.isLatestForTopic === "boolean")
+    && [...latestPerTopic.values()].every(count => count === 1)
+    && latestPerTopic.size === Number(publicMarket.latestTopicCount || 0)
+    && Number(publicMarket.historicalRecordCount || 0) === marketRecords.length - latestPerTopic.size;
   if (!version.version || !/data-version\.json/.test(appSource)
     || !/overview-view\.json/.test(appSource) || !/news-view\.json/.test(appSource) || !/research-view\.json/.test(appSource)
     || !/market-view\.json/.test(boardsSource) || /Math\.floor\(Date\.now\s*\/\s*60000\)/.test(`${appSource}\n${boardsSource}`)
@@ -2005,11 +2066,12 @@ try {
     || !safe(overview.articles || []) || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(marketRecords)
     || !(version.assets || []).includes("overview-view.json")
     || remainingMarketDuplicates || !mergedMarketRecordsValid
-    || publicMarket.database?.mode !== "latest-verified-snapshot"
-    || publicMarket.database?.publicRetention !== "current-only"
-    || marketRecords.map(record => record.stableKey).some((key, index, keys) => !key || keys.indexOf(key) !== index)
+    || publicMarket.database?.mode !== "append-only-verified-view"
+    || publicMarket.database?.publicRetention !== "all-verified-history"
+    || !cumulativeMarketValid
+    || !Array.isArray(publicMarket.items)
     || Number(publicMarket.sourceRecordCount || 0) - marketRecords.length
-      !== Number(publicMarket.consolidatedDuplicateCount || 0) + Number(publicMarket.replacedRecordCount || 0)) {
+      !== Number(publicMarket.consolidatedDuplicateCount || 0)) {
     throw new Error("public views must be versioned, source-backed, and free of minute cache busting");
   }
   console.log(`  OK  versioned source-only public views ${publicNews.count}/${publicResearch.count}/${marketRecords.length} · 시장 중복 ${publicMarket.consolidatedDuplicateCount || 0}건 통합`);

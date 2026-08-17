@@ -131,7 +131,14 @@ function CoLogo({ name, domain, accent }) {
 }
 
 function CompanyNote({ text }) {
-  const lines = bulletText(text).split(/\s+·\s+/).map(line => line.trim()).filter(Boolean);
+  const seen = new Set();
+  const lines = bulletText(text).split(/\n+|\s+·\s+/)
+    .map(line => line.trim()).filter(line => {
+      const key = meceTextKey(line);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, 3);
   return lines.map((line, i) => (
     <span className="ct-note-line" key={i}>{hlBrief(line, "co-note-" + i)}</span>
   ));
@@ -405,7 +412,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
 function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, onNav, sectionRef }) {
   const inView = useInView(sectionRef);
   const layers = window.DASH.VALUE_CHAIN || [];
-  const strategy = strategyData || { priorityFramework: { items: [], criteria: [], eligibilityGate: {} }, workloadMap: [], opportunityPortfolio: [], expertSignals: [], decisionOutputs: [] };
+  const strategy = strategyData || { priorityFramework: { items: [], criteria: [], eligibilityGate: {} }, opportunityPortfolio: [], expertSignals: [], consultingModel: { workstreams: [], coverage: {} } };
   const participates = (c, id) => c.layer === id || (c.adjacentLayers || []).includes(id);
   const layerRows = id => (companies || []).filter(c => participates(c, id));
   const layerStats = layers.map(layer => {
@@ -415,7 +422,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
     const top = [...rows].sort((a, b) => Number(b.live?.mentions30 || 0) - Number(a.live?.mentions30 || 0))[0];
     return { ...layer, rows, primary, mentions, top };
   });
-  const decisionOutputs = strategy.decisionOutputs || [];
+  const consultingModel = strategy.consultingModel || { workstreams: [], coverage: {} };
   const priorityFramework = strategy.priorityFramework || { items: [], criteria: [], eligibilityGate: {} };
   const priorityItems = priorityFramework.items || [];
   const priorityGate = priorityFramework.eligibilityGate || {};
@@ -425,7 +432,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
     priorityGate.minimumIndependentSources ? `독립 출처 ${priorityGate.minimumIndependentSources}개 이상` : "",
     priorityGate.minimumOpportunityScore ? `기회 점수 ${priorityGate.minimumOpportunityScore}점 이상` : "",
   ].filter(Boolean).join(" · ");
-  const workloadMap = strategy.workloadMap || [];
   const opportunityPortfolio = strategy.opportunityPortfolio || [];
   const expertSignals = strategy.expertSignals || [];
   const evidenceArticles = React.useMemo(() => {
@@ -466,14 +472,39 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
     <section className="board msf" ref={sectionRef} data-screen-label="Mobile AI Business Strategy Framework">
       <AnimCtx.Provider value={inView}>
         <div className="msf-consulting-intro">
-          <div className="msf-consulting-kicker">Strategy consulting · user need → mobile experience → revenue → execution</div>
+          <div className="msf-consulting-kicker">{consultingModel.methodology || "MECE decision architecture"}</div>
           <div className="msf-consulting-title-row">
-            <h2>AI 신사업 발굴 포트폴리오</h2>
+            <h2>AI 신사업 전략 포트폴리오</h2>
             <span className="msf-consulting-evidence">최신 공개 근거 <b>{evidenceArticles.length}</b>건 · {evidenceDate} 기준</span>
           </div>
+          {consultingModel.statement && <p className="msf-consulting-statement">{consultingModel.statement}</p>}
         </div>
 
-        <div className="msf-exec-architecture">
+        <div className="msf-exec-architecture" data-nav-anchor="priority-model">
+          <div className="msf-mece-model" aria-label="MECE 전략 판단 구조">
+            {(consultingModel.workstreams || []).map((workstream, index) => (
+              <article className={`msf-mece-stage ${workstream.status || "review"}`} key={workstream.id} tabIndex="0">
+                <div className="msf-mece-stage-head">
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div><em>{workstream.labelEn}</em><b>{workstream.label}</b></div>
+                  <i aria-hidden="true" />
+                </div>
+                <h3>{workstream.question}</h3>
+                <dl>
+                  <div><dt>OUTPUT</dt><dd>{workstream.output}</dd></div>
+                  <div><dt>GATE</dt><dd>{workstream.gate}</dd></div>
+                </dl>
+                <div className="msf-mece-stage-metrics">
+                  <span><em>LIVE RECORDS</em><b>{Number(workstream.totalRecords || 0).toLocaleString("ko-KR")}</b></span>
+                  <span><em>CURRENT</em><b>{workstream.currentSections}/{workstream.sectionCount}</b></span>
+                </div>
+                <ul>{(workstream.sections || []).map(section => (
+                  <li key={section.id}><span>{section.label}</span><b>{section.recordCount.toLocaleString("ko-KR")}</b></li>
+                ))}</ul>
+              </article>
+            ))}
+          </div>
+
           <div className="msf-strategy-house">
             <div className="msf-house-roof">
               <span>NORTH STAR</span>
@@ -501,41 +532,10 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
               <b>{priorityBasis}</b>
             </div>
           </div>
-
-          <div className="msf-exec-synthesis">
-            <div className="msf-synthesis-head">
-              <span>EXECUTIVE DECISION PACK</span>
-              <b>신사업 판단을 반복 가능한 네 가지 산출물로 운영</b>
-            </div>
-            <div className="msf-synthesis-flow">
-              {decisionOutputs.map((item, index) => (
-                <React.Fragment key={item.cadence}>
-                  <div><em>0{index + 1} · {item.cadence}</em><b>{item.title}</b><span>{item.detail}</span></div>
-                  {index < decisionOutputs.length - 1 && <i className="msf-flow-arrow" aria-hidden="true" />}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
         </div>
 
-        <div className="msf-section-head">
-          <div><em>01</em><h3>User Moment → Experience Stack → Revenue</h3></div>
-        </div>
-        <div className="msf-workload-map">
-          <div className="msf-workload-head"><span>USER MOMENT / SHIFT</span><span>EXPERIENCE PAIN</span><span>PLATFORM REQUIREMENT</span><span>BUSINESS OPPORTUNITY</span><span>PROOF</span></div>
-          {workloadMap.map((row, index) => (
-            <div className="msf-workload-row" key={row.no} tabIndex="0" style={{ "--workload-order": index }}>
-              <span className="msf-workload-name"><em>{row.no}</em><b>{row.workload}</b><small>{row.shift}</small></span>
-              <span>{row.bottleneck}</span><i className="msf-flow-arrow" aria-hidden="true" />
-              <span>{row.platform}</span><i className="msf-flow-arrow" aria-hidden="true" />
-              <span className="msf-workload-opportunity">{row.opportunity}</span>
-              <span className="msf-workload-proof">{row.proof}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="msf-section-head">
-          <div><em>02</em><h3>Mobile AI New Business Portfolio</h3></div>
+        <div className="msf-section-head" data-nav-anchor="opportunity-portfolio">
+          <div><em>01</em><h3>Evidence-weighted Opportunity Portfolio</h3></div>
         </div>
         <div className="msf-opportunity-grid">
           {opportunityPortfolio.map((item, index) => (
@@ -554,8 +554,8 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
           ))}
         </div>
 
-        <div className="msf-section-head">
-          <div><em>04</em><h3>Mobile AI Product · Platform · Business Evidence</h3></div>
+        <div className="msf-section-head" data-nav-anchor="evidence-signals">
+          <div><em>02</em><h3>Product · Platform · Business Evidence</h3></div>
         </div>
         <div className="msf-expert-grid">
           {expertSignals.map((signal, index) => (
@@ -569,8 +569,8 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head msf-value-chain-head">
-          <div><em>05</em><h3>Mobile AI SW · Service Value Chain</h3></div>
-          <p>7개 계층의 통제점·경제성·최근 30일 공개 근거를 모바일 신사업 포트폴리오와 연결</p>
+          <div><em>03</em><h3>AI SW · Service Value Chain</h3></div>
+          <p>7개 계층의 통제점·경제성·최근 30일 공개 근거를 신사업 포트폴리오와 연결</p>
         </div>
         <div className="msf-chain">
           {layerStats.map((l, i) => (
@@ -590,22 +590,8 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
           ))}
         </div>
 
-        <div className="msf-section-head">
-          <div><em>06</em><h3>분석 툴킷</h3></div>
-          <p>소비자 수요부터 모바일 경험·단위경제성·파트너·출시 판단까지 연결하는 필수 전문성</p>
-        </div>
-        <div className="msf-capabilities">
-          {(strategy.capabilities || []).map((capability, index) => (
-            <div className="msf-capability" key={capability.no} tabIndex="0" style={{ "--cap-order": index }}>
-              <span>{capability.no}</span>
-              <div><b>{capability.title}</b><p>{capability.detail}</p></div>
-              <em>{capability.output}</em>
-            </div>
-          ))}
-        </div>
-
-        <div className="msf-section-head">
-          <div><em>07</em><h3>AI Stack별 사업 판단 기준</h3></div>
+        <div className="msf-section-head" data-nav-anchor="decision-criteria">
+          <div><em>04</em><h3>AI Stack별 사업 판단 기준</h3></div>
           <p>통제점·수익 구조·사업 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
         <div className="msf-matrix">
@@ -733,7 +719,7 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
   const primaryCount = rows.filter(c => c.layer === layerId).length;
   const adjacentCount = (companies || []).filter(c => c.layer !== layerId && (c.adjacentLayers || []).includes(layerId)).length;
   return (
-    <section className="board" ref={sectionRef} data-screen-label={layer.en}>
+    <section className="board" ref={sectionRef} data-nav-anchor={layerId} data-screen-label={layer.en}>
       <AnimCtx.Provider value={inView}>
         <div className="board-head" style={{ "--accent": layer.accent }}>
           <span className="board-tab" style={{ background: layer.accent }} />
@@ -1696,8 +1682,14 @@ function BoldSummary({ text, roles = [] }) {
     String(text).replace(/<[^>]+>/g, "") // strip stray HTML (e.g. <font color>)
       .replace(/2026[.\-](\d{1,2})[.\-](\d{1,2})/g, (_, m, d) => `${+m}/${+d}`)
   );
-  const lines = clean.split(/\n+/).map(l => l.trim()).filter(Boolean).slice(0, 3);   // 최대 3줄
-  if (lines.length <= 1) return <span className="art-sum-line">{roles[0] && <i className="art-insight-role">{INSIGHT_ROLE_LABEL[roles[0]] || INSIGHT_ROLE_LABEL.evidence}</i>}{hlBrief(clean, "s")}</span>;
+  const seen = new Set();
+  const lines = clean.split(/\n+|\s+·\s+/).map(line => line.trim()).filter(line => {
+    const key = meceTextKey(line);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 3);   // 핵심만 최대 3줄
+  if (lines.length <= 1) return <span className="art-sum-line">{roles[0] && <i className="art-insight-role">{INSIGHT_ROLE_LABEL[roles[0]] || INSIGHT_ROLE_LABEL.evidence}</i>}{hlBrief(lines[0] || clean, "s")}</span>;
   return lines.map((line, i) => (
     <span className="art-sum-line" key={i}>
       {roles[i] && <i className="art-insight-role">{INSIGHT_ROLE_LABEL[roles[i]] || INSIGHT_ROLE_LABEL.evidence}</i>}
@@ -3122,7 +3114,7 @@ const DYNAMICS_AXES = [
   { id: "supply", label: "공급", color: "#F59E0B", types: ["공급", "매출"] },
 ];
 
-function ESCompetitiveMap({ companies, cats, articles, active, dataVersion }) {
+function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSelectCompany }) {
   const ref = React.useRef(null);
   const videoRef = React.useRef(null);
   const [mediaReady, setMediaReady] = React.useState(false);
@@ -3201,6 +3193,29 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion }) {
 
   const selectedCompany = list.find(c => c.name === activeCompany) || list[0] || null;
   const selectedArticle = selectedCompany ? articleByCo[selectedCompany.name] : null;
+  const selectedLive = selectedCompany?.live || {};
+  const selectedIntel = selectedCompany?.intelligence || selectedLive.intelligence || {};
+  const selectedProfile = selectedCompany?.profile || selectedLive.profile || {};
+  const publication = selectedIntel.publication || {};
+  const evidenceCount = [...new Set([
+    ...(selectedIntel.currentBusiness?.evidence || []),
+    ...(selectedIntel.revenueModel?.evidence || []),
+    ...(selectedIntel.strategyDirection?.evidence || []),
+    ...(selectedIntel.investmentDirection?.evidence || []),
+  ].map(item => item?.url).filter(Boolean))].length;
+  const companyFacts = selectedCompany ? [
+    { label: "사업 현황", value: selectedIntel.currentBusiness?.summary || selectedCompany.note },
+    { label: "핵심 제공", value: Array.isArray(selectedProfile.business) && selectedProfile.business.length
+      ? selectedProfile.business.slice(0, 4).join(" · ") : selectedCompany.unit },
+    { label: "수익 구조", value: selectedIntel.revenueModel?.summary || selectedCompany.vp },
+    { label: "최근 신호", value: selectedLive.latest?.title || selectedArticle?.title },
+  ].filter(item => item.value && item.value !== "—") : [];
+  const openCompany = companyOrName => {
+    const target = typeof companyOrName === "string"
+      ? list.find(company => company.name === companyOrName)
+      : companyOrName;
+    if (target && onSelectCompany) onSelectCompany(target);
+  };
   const relationshipGroups = selectedCompany ? DYNAMICS_AXES.map(axis => ({
     ...axis,
     items: dynamicEdges.filter(edge => axis.types.includes(edge.type) && (edge.from === selectedCompany.name || edge.to === selectedCompany.name))
@@ -3262,35 +3277,56 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion }) {
               <div className="dyn-selected">
                 <div className="dyn-selected-meta">
                   <span>{catMap[selectedCompany.cat] ? catMap[selectedCompany.cat].ko : selectedCompany.cat}</span>
-                  <strong>{selectedCompany.name}</strong>
+                  <button className="dyn-company-open" type="button" onClick={() => openCompany(selectedCompany)}
+                    aria-label={`${selectedCompany.name} 상세 개요 열기`}>
+                    <strong>{selectedCompany.name}</strong>
+                    <small><Icon name="report" size={11} sw={2} />상세 개요</small>
+                  </button>
                   <em>{selectedCompany.valuation}</em>
                 </div>
-                <p>{hlKey(selectedCompany.note)}</p>
+                {companyFacts.length > 0 && (
+                  <div className="dyn-company-facts">
+                    {companyFacts.map(item => (
+                      <div key={item.label}>
+                        <em>{item.label}</em>
+                        <p>{hlKey(item.value)}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="dyn-proof-strip" aria-label="업체 정보 근거 현황">
+                  {Number.isFinite(Number(selectedLive.mentions30)) && <span><em>30D SIGNAL</em><b>{selectedLive.mentions30}건</b></span>}
+                  <span><em>EVIDENCE</em><b>{evidenceCount}건</b></span>
+                  {publication.lastVerifiedAt && <span><em>VERIFIED</em><b>{String(publication.lastVerifiedAt).slice(0, 10)}</b></span>}
+                </div>
                 {relationshipGroups.length > 0 && (
                   <div className="dyn-relationships">
                     {relationshipGroups.map(axis => (
                       <div key={axis.id} className="dyn-relationship" style={{ "--axis": axis.color }}>
                         <b>{axis.label}</b>
-                        <div>{axis.items.map(item => item.url ? (
-                          <a key={`${item.company}-${item.label}`} href={item.url} target="_blank" rel="noopener">
-                            <strong>{item.company}</strong>
-                            <span>{item.headline}</span>
-                            <em>{item.date ? `${item.date.slice(2)} · ` : ""}{item.source}</em>
-                          </a>
-                        ) : (
-                          <span key={`${item.company}-${item.label}`}>
-                            <strong>{item.company}</strong>{item.label}<em>시장 구조</em>
-                          </span>
+                        <div>{axis.items.map(item => (
+                          <div className="dyn-related-row" key={`${item.company}-${item.label}`}>
+                            <button type="button" onClick={() => openCompany(item.company)}
+                              aria-label={`${item.company} 상세 개요 열기`}>{item.company}</button>
+                            <span>{item.headline || item.label}</span>
+                            <em>{item.date ? `${item.date.slice(2)} · ` : ""}{item.source || "시장 구조"}</em>
+                            {item.url && <a href={item.url} target="_blank" rel="noopener" aria-label={`${item.company} 관계 근거 원문`}>원문 ↗</a>}
+                          </div>
                         ))}</div>
                       </div>
                     ))}
                   </div>
                 )}
-                {selectedArticle && (
-                  <a className="dyn-source" href={selectedArticle.url} target="_blank" rel="noopener">
-                    <span>연결 기사 원문</span><b aria-hidden="true" />
-                  </a>
-                )}
+                <div className="dyn-selected-actions">
+                  <button type="button" className="dyn-detail-action" onClick={() => openCompany(selectedCompany)}>
+                    <Icon name="report" size={12} sw={2} /><span>기업 상세 개요</span><b aria-hidden="true" />
+                  </button>
+                  {selectedArticle && (
+                    <a className="dyn-source" href={selectedArticle.url} target="_blank" rel="noopener">
+                      <span>최신 기사 원문</span><b aria-hidden="true" />
+                    </a>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -4365,15 +4401,17 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
   return (
     <section className="board signal-source-board" ref={sectionRef} data-screen-label="AI stack change signals">
       <AnimCtx.Provider value={inView}>
-        <div className="board-head">
+        <div className="board-head" data-nav-anchor="technology-shift">
           <span className="board-tab" style={{ background: "#315C4A" }} />
           <div className="board-titles">
             <h2>Mobile AI 기술 변화 <span className="board-en">Experience · Agent · Model · OS · Runtime</span></h2>
             <p>사용자 경험과 AI Application·Agent·Model·OS 변화를 함께 읽고 <b>사용성·지연·원가·프라이버시·차별화</b> 요구로 변환 · 공개 원문으로 확인된 신호만 누적</p>
           </div>
         </div>
-        <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
-          dataVersion={dataVersion} title="Mobile AI 변화 신호" sub="Experience · Agent · Model · Context · Developer Tool · Edge Runtime — 모바일 사업 관련 원문 카드만 표시" />
+        <div className="nav-subsection" data-nav-anchor="market-shift">
+          <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
+            dataVersion={dataVersion} title="Mobile AI 변화 신호" sub="Experience · Agent · Model · Context · Developer Tool · Edge Runtime — 모바일 사업 관련 원문 카드만 표시" />
+        </div>
       </AnimCtx.Provider>
     </section>
   );
@@ -4388,16 +4426,20 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
         <div className="board-head" style={{ "--accent": "#16A34A" }}>
           <span className="board-tab" style={{ background: "#16A34A" }} />
           <div className="board-titles">
-            <h2>AI 서비스 신사업 기회 <span className="board-en">User Need → Experience → Revenue → Business Case</span></h2>
-            <p>사용자 과업과 지불 의향을 모바일 경험·수익모델 가설로 전환 · 업체별 공개 활동과 사업모델을 근거로 <b>자체 개발·제휴·투자 기회</b>를 검토</p>
+            <h2>서비스·수익 모델 <span className="board-en">Need → Offer → Economics → Evidence</span></h2>
+            <p>사용자 과업과 지불 의향을 서비스·과금 가설로 전환 · 업체별 공개 활동과 사업모델을 근거로 <b>자체 개발·제휴·투자 기회</b>를 검토</p>
           </div>
         </div>
 
         {/* 1) AI 비즈니스 모델 전체 — 기업별 수익모델·활동 + 7개 수익화 유형(모두 원문 기반) */}
-        <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
-        <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
-          dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·거래·성과기반 — 모바일 고객 접점과 연결되는 원문 확인 카드만 누적 표시" />
-        <BusinessModelForecasts dataVersion={dataVersion} />
+        <div className="nav-subsection" data-nav-anchor="service-opportunity">
+          <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
+        </div>
+        <div className="nav-subsection" data-nav-anchor="revenue-model">
+          <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
+            dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·거래·성과기반 — 모바일 고객 접점과 연결되는 원문 확인 카드만 누적 표시" />
+          <BusinessModelForecasts dataVersion={dataVersion} />
+        </div>
 
       </AnimCtx.Provider>
     </section>
@@ -4709,14 +4751,14 @@ function ExecToplines({ items, insights, onNav }) {
     return `${meta.label} = ${meta.meaning} (${meta.range}점)\n점수 = 최신성 × 출처 신뢰도 × 주제 적합도\n당일 최고 카드 = 100으로 정규화한 상대 중요도\n${basis || ""}`.trim();
   };
   return (
-    <section className="es-info" aria-label="전략 의사결정 브리프">
+    <section className="es-info" data-nav-anchor="decision-radar" aria-label="전략 의사결정 브리프">
       <header className="es-brief-head">
         <div>
           <span className="es-brief-kicker">STRATEGIC DECISION BRIEF</span>
           <h3>핵심 신호를 의사결정으로 연결</h3>
         </div>
       </header>
-      <div className="es-framework-key" aria-label="전략 브리프 읽는 순서">
+      <div className="es-framework-key" data-nav-anchor="opportunity-candidates" aria-label="전략 브리프 읽는 순서">
         <span><b>01</b> FACT <em>원문 근거</em></span>
         <i className="es-key-arr" aria-hidden="true" />
         <span><b>02</b> IMPLICATION <em>사업 의미</em></span>
@@ -4729,6 +4771,7 @@ function ExecToplines({ items, insights, onNav }) {
         <span className="es-col-h">02 Implication <em>사업 의미</em></span>
         <span className="es-col-h">03 Decision <em>권고 실행</em></span>
       </div>
+      <span className="nav-sub-anchor" data-nav-anchor="monetization-roi" aria-hidden="true" />
       {cards.map((t, i) => {
         const tone = TONE[t.tone] || "#2D6BFF";
         const score = typeof t.score === "number" ? t.score : 0;
@@ -4795,10 +4838,13 @@ function ExecToplines({ items, insights, onNav }) {
 
 // ---- AI 신사업 시장 보드: lazy-load(inView 시에만 fetch), MECE 그룹, 플레인 텍스트, 삭제/숨김 ----
 function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
-  const inView = useInView(sectionRef);
+  const localSectionRef = React.useRef(null);
+  const boardRef = sectionRef || localSectionRef;
+  const inView = useInView(boardRef);
   const isSurvey = mode === "survey";
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState(false);
   const MARKET_LS = "aiDashDeletedMarketRecords";
   const [deleted, setDeleted] = React.useState(() => {
     try { return JSON.parse(localStorage.getItem(MARKET_LS) || "{}"); } catch { return {}; }
@@ -4889,43 +4935,55 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
     (record.relatedSources?.length ? record.relatedSources.map(source => source.sourceUrl) : [record.sourceUrl])
   ).filter(Boolean)).size;
   const quantityCount = scoped.reduce((count, record) => count + (record.sourceMetricValues || record.values || []).length, 0);
-  const replacementCount = Number(data?.replacedRecordCount || 0);
+  const historicalRecordCount = scoped.filter(record => record.isLatestForTopic === false).length;
   const shownRecords = scoped.slice()
     .sort((a, b) => String(b.publishedAt || b.collectedAt || "").localeCompare(String(a.publishedAt || a.collectedAt || "")));
   const TYPE_LABEL = { "consumer-survey": "소비자 조사", "market-estimate": "시장 기준선", shipment: "출하량", "market-observation": "정량 관측" };
+  const typeOrder = isSurvey ? ["consumer-survey"] : ["market-estimate", "shipment", "market-observation"];
+  const recordGroups = typeOrder
+    .map(type => ({ type, label: TYPE_LABEL[type], records: shownRecords.filter(record => record.type === type) }))
+    .filter(group => group.records.length);
 
   return (
-    <section className="board" ref={sectionRef} data-screen-label="AI New Business Markets">
+    <section className="board market-board" ref={boardRef} data-screen-label="AI New Business Markets">
      <AnimCtx.Provider value={inView}>
       <div className="board-head">
         <span className="board-tab" style={{ background: isSurvey ? "#DB2777" : "#0891B2" }} />
         <div className="board-titles">
           <h2>{isSurvey ? "AI 관련 소비자 조사 결과" : "AI 관련 시장"} <span className="board-en">{isSurvey ? "AI Consumer Surveys" : "AI Market Map"} · 모바일 사업 관점</span></h2>
           <p>{isSurvey
-            ? "지불의사·수용도·인식 등 소비자 조사 전용 트랙 · 동일 주제 최신 검증값 자동 교체"
-            : "시장 규모·예측·출하 등 정량 시장 전용 트랙 · 동일 주제 최신 검증값 자동 교체"}</p>
+            ? "지불의사·수용도·인식 등 소비자 조사 전용 트랙 · 검증 이력을 날짜별로 계속 누적"
+            : "시장 규모·예측·출하 등 정량 시장 전용 트랙 · 검증 이력을 날짜별로 계속 누적"}</p>
         </div>
+        <button className="mkt-board-toggle" type="button" aria-expanded={!collapsed}
+          onClick={() => setCollapsed(value => !value)}>
+          {collapsed ? `전체 DB 펼치기 · ${scoped.length}건` : "전체 DB 접기"}
+          <Icon name="chevron" size={13} />
+        </button>
       </div>
 
       {!data ? (
         <SourcePipeline kind="market" />
       ) : (
-        <React.Fragment>
+        <div className="mkt-board-body" hidden={collapsed}>
           <div className="mkt-db-summary">
-            <div><em>통합 인사이트</em><b>{scoped.length}</b><span>동일 기사·재배포를 하나의 분석으로 통합</span></div>
+            <div><em>누적 인사이트</em><b>{scoped.length}</b><span>검증된 날짜별 관측을 삭제하지 않고 보존</span></div>
             <div><em>검증 출처</em><b>{sourceCount}</b><span>통합 카드 안에서 관련 원문 개별 확인</span></div>
             <div><em>정량 지표</em><b>{quantityCount}</b><span>항목별 의미와 발행사 근거 문장 표시</span></div>
-            <div><em>이전값 교체</em><b>{replacementCount}</b><span>같은 주제의 과거 공개값 자동 제거</span></div>
+            <div><em>과거 이력</em><b>{historicalRecordCount}</b><span>같은 주제의 이전 검증값도 비교 가능</span></div>
           </div>
 
           <div className="mkt-db-head">
             <div>
               <h3>{isSurvey ? "AI 소비자 조사 데이터베이스" : "AI 시장 정량 데이터베이스"}</h3>
-              <p>동일 사건은 하나의 3줄 인사이트로 통합 · 같은 주제는 최신 검증값만 공개 · X로 숨긴 항목은 이후 수집에서도 영구 제외</p>
+              <p>동일 사건의 재배포만 하나로 통합 · 날짜가 다른 검증값은 모두 누적 · 분류별로 접고 펼쳐 전체 이력 탐색</p>
             </div>
           </div>
-          <div className="mkt-record-grid">
-            {shownRecords.map(record => {
+          <div className="mkt-record-sections">
+            {recordGroups.map(group => <details className="mkt-record-section" key={group.type} open>
+              <summary><span>{group.label}</span><b>{group.records.length}건</b><em>접기·펼치기</em></summary>
+              <div className="mkt-record-grid">
+            {group.records.map(record => {
               const localized = record.localization?.status === "accepted" || record.localization?.status === "fallback-english"
                 ? record.localization : null;
               const title = record.consolidatedTitle || localized?.title || record.titleEn || record.title;
@@ -4942,6 +5000,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                   {record.mergedRecordCount > 1 && <span className="mkt-record-merged">
                     {relatedSources.length > 1 ? `${relatedSources.length}개 출처 통합` : `${record.mergedRecordCount}개 중복 통합`}
                   </span>}
+                  {record.isLatestForTopic && <span className="mkt-record-latest">주제 최신</span>}
                   {record.sourceRegion && <span className="mkt-record-locale">{record.sourceRegion} · {record.sourceLanguage}</span>}
                   {deleteControl(record)}
                 </div>
@@ -4970,18 +5029,20 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
               </article>
               );
             })}
+              </div>
+            </details>)}
             {!shownRecords.length && <SourcePipeline kind="market" />}
           </div>
 
-          {!isSurvey && <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>검증된 최신 시장규모·예측·CAGR만 공개</em></div>}
+          {!isSurvey && <div className="mkt-baseline-head"><b>6개 MECE 버티컬 기준선</b><em>원문 링크가 검증된 기준선 전체 누적</em></div>}
           {!isSurvey && (data.groups || []).map(g => {
             const rows = (data.items || []).filter(it => it.group === g.id
               && it.provenance?.status !== "reference-only"
               && !deleted[deleteKey(it)]);
             if (!rows.length) return null;
             return (
-              <div className="mkt-group" key={g.id}>
-                <div className="mkt-group-head"><b>{g.ko}</b><em>{g.desc}</em></div>
+              <details className="mkt-group" key={g.id} open>
+                <summary className="mkt-group-head"><b>{g.ko}</b><em>{g.desc}</em><span>{rows.length}건</span></summary>
                 <div className="mkt-grid">
                   {rows.map(it => {
                     // Never show a placeholder as a future market forecast.
@@ -5011,10 +5072,10 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                     );
                   })}
                 </div>
-              </div>
+              </details>
             );
           })}
-        </React.Fragment>
+        </div>
       )}
       <p className="mkt-foot">누적 DB는 기존 레코드를 삭제·덮어쓰지 않습니다. 시장조사기관별 정의·표본·기준연도 차이로 수치가 다를 수 있으므로, 비교·의사결정 전 반드시 각 원문을 확인하세요.</p>
      </AnimCtx.Provider>
@@ -5292,7 +5353,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   };
 
   return (
-    <section className="board" ref={sectionRef} data-screen-label="Startup Analysis">
+    <section className="board" ref={sectionRef} data-nav-anchor={activeCategory || undefined} data-screen-label="Startup Analysis">
      <AnimCtx.Provider value={inView}>
       <div className="board-head" style={{ "--accent": "#0E8F6E" }}>
         <span className="board-tab" style={{ background: "#0E8F6E" }} />

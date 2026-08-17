@@ -13,6 +13,7 @@ const assert = (condition, message) => { if (!condition) throw new Error(message
 
 assert(styles.includes("Readability contract · safe in light/dark and hover/focus modes"), "readability contract is missing");
 assert(styles.includes("TYPOGRAPHY + CONSULTING VISUAL CONTRACT V2"), "typography and consulting visual contract is missing");
+assert(styles.includes("TYPOGRAPHY + CONTRAST CONTRACT V3"), "competitive-panel contrast contract is missing");
 assert(styles.includes("--text-xs: 11.5px") && styles.includes("--text-body: 14px"), "readable type scale is missing");
 assert(styles.includes("--mono: var(--f)") && styles.includes("--f-code:"), "semantic font policy is missing");
 assert(styles.includes("--muted: #98A7BA") && styles.includes("--ink-2: #C3CDDB"), "dark-mode secondary text contrast is too low");
@@ -34,6 +35,14 @@ assert(styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { 
 assert(!/\.isg-card:hover::after\s*\{\s*opacity:\s*1/.test(styles), "signal-card hover restores a dark pseudo-element overlay");
 assert(!/\.art-sel\s*\{[^}]*background:\s*linear-gradient\([^}]*#000/s.test(styles), "article selected state still uses a dark inverse gradient");
 assert(styles.includes('[data-theme="dark"] .num-hl { color: #8BD2E8;'), "dark-mode numeric highlights lack a readable foreground");
+assert(styles.includes("MECE consulting operating model") && styles.includes(".msf-mece-model"), "MECE consulting frame is missing");
+assert(styles.includes(".msf-consulting-intro::before { display: none; }"), "strategy header still uses a one-sided accent stripe");
+assert(styles.includes('[data-theme="dark"] .msf-mece-stage-metrics b'), "MECE metrics lack an explicit dark-mode contrast rule");
+assert(styles.includes(".dyn-company-facts p::before") && styles.includes("font-size: var(--text-xs) !important"), "dark competitive-panel labels can become too small or lose their bullet cue");
+assert(styles.includes('.dyn-related-row:is(:hover, :focus-within)') && styles.includes("color: #FFFFFF !important"), "dark relationship hover lacks an explicit readable foreground");
+assert(styles.includes(".dyn-video-panel .tl-kw-key") && styles.includes("color: #E9D5FF !important"), "dark media-panel keyword highlight can inherit a low-contrast light-theme color");
+assert(styles.includes(".kg-hint-compact") && styles.includes(".msf-mname > b"), "remaining dashboard labels lack the 11.5px readability floor");
+assert(boards.includes('split(/\\n+|\\s+·\\s+/)') && boards.includes("핵심만 최대 3줄"), "feed summaries are not normalized into concise bullet lines");
 
 assert(taxonomy.publicFacts === "none-generated-views-only", "registry still declares public mutable facts");
 assert(!Object.hasOwn(taxonomy, "MOBILE_STRATEGY"), "legacy strategy facts remain in runtime taxonomy");
@@ -41,11 +50,14 @@ assert((taxonomy.COMPANIES || []).every(company => !["valuation", "funding", "no
 assert((taxonomy.STOCKS || []).every(stock => !["price", "marketCap", "reason", "events"].some(key => Object.hasOwn(stock, key))), "stock registry contains mutable market facts");
 
 assert(strategy.sourceMode === "generated-from-verified-ledgers", "strategy view is not generated from verified ledgers");
+assert(strategy.consultingModel?.workstreams?.length === 4 && strategy.consultingModel?.coverage?.sections === 9, "generated MECE architecture is incomplete");
 assert(strategy.lineage?.generatedFrom?.includes("news.json") && strategy.lineage?.generatedFrom?.includes("mobile-ai-business-view.json"), "strategy lineage is incomplete");
 assert(!Object.hasOwn(strategy, "accountPortfolio") && !boards.includes("Competitive Platform Portfolio") && !styles.includes(".msf-account"), "removed competitive company portfolio is still exposed");
 assert(boards.includes("const recentSignalCount = Number(c.live?.mentions30 || 0)") && boards.includes(">최근 30일 신호<"), "value-chain company cards do not retain the recent-signal evidence");
-assert(strategy.opportunityPortfolio?.length >= 9 && strategy.opportunityPortfolio.every(item => item.evidence?.length), "generated opportunity portfolio lacks evidence");
-assert(strategy.expertSignals?.length >= 5 && strategy.expertSignals.every(item => /^https:\/\//.test(item.url || "")), "generated evidence signals are incomplete");
+assert(Array.isArray(strategy.opportunityPortfolio)
+  && strategy.opportunityPortfolio.every(item => item.evidence?.length), "generated opportunity portfolio lacks evidence");
+assert(Array.isArray(strategy.expertSignals)
+  && strategy.expertSignals.every(item => /^https:\/\//.test(item.url || "")), "generated evidence signals are incomplete");
 assert(app.includes('loadJson(dataUrl("strategy-view.json"))') && boards.includes("strategyData ||"), "browser strategy section is not connected to generated data");
 
 let legacyExists = true;

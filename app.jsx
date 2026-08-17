@@ -121,6 +121,7 @@ function App() {
   const [coOverview, setCoOverview] = uS(null);
   const [insights, setInsights] = uS({ cards: [], engine: "rules" });
   const [strategyView, setStrategyView] = uS(null);
+  const [consultingNavigation, setConsultingNavigation] = uS([]);
   uE(() => {
     let alive = true;
     // Start the first-screen payload in parallel with data-version.json. It is
@@ -132,12 +133,14 @@ function App() {
         setCrawled(Array.isArray(j.articles) ? j.articles : []);
         setCoOverview(j.companies || {});
         setInsights(j.insights || { cards: [], engine: "rules" });
+        setConsultingNavigation(Array.isArray(j.consultingNavigation) ? j.consultingNavigation : []);
       })
       .catch(() => {
         if (!alive) return;
         setCrawled([]);
         setCoOverview({});
         setInsights({ cards: [], engine: "rules" });
+        setConsultingNavigation([]);
       });
     return () => { alive = false; };
   }, []);
@@ -148,7 +151,11 @@ function App() {
     if (!dataVersion || !(strategyInView || active === "strategy")) return;
     let alive = true;
     loadJson(dataUrl("strategy-view.json"))
-      .then(value => { if (alive && value?.sourceMode === "generated-from-verified-ledgers") setStrategyView(value); })
+      .then(value => {
+        if (!alive || value?.sourceMode !== "generated-from-verified-ledgers") return;
+        setStrategyView(value);
+        if (Array.isArray(value.consultingModel?.navigation)) setConsultingNavigation(value.consultingModel.navigation);
+      })
       .catch(() => { if (alive) setStrategyView(null); });
     return () => { alive = false; };
   }, [dataVersion, strategyInView, active]);
@@ -409,15 +416,24 @@ function App() {
     insights: "evidence", reports: "evidence", ib: "evidence", articles: "evidence",
     survey: "validation", market: "validation", stocks: "validation",
   };
-  const navTo = rawId => {
+  const navTarget = (sectionId, childId = "") => {
+    const section = refs[sectionId]?.current;
+    if (!section || !childId) return section;
+    const escaped = window.CSS?.escape ? window.CSS.escape(childId) : childId.replace(/[^a-zA-Z0-9_-]/g, "\\$&");
+    return (section.matches?.(`[data-nav-anchor="${escaped}"]`) ? section : null)
+      || section.querySelector?.(`[data-nav-anchor="${escaped}"]`)
+      || section;
+  };
+  const navTo = (rawId, childId = "") => {
     const id = NAV_ALIAS[rawId] || rawId;
     if (!NAV_SECTION_IDS.includes(id)) return;
     setActive(id);
-    const el = refs[id] && refs[id].current;
+    const el = navTarget(id, childId);
     const sc = scrollRef.current;
     if (!el || !sc) return;
     navIntentRef.current = id;
     window.__DASH_NAV_TARGET = id;
+    window.__DASH_NAV_ANCHOR = childId;
     navSettleTimersRef.current.forEach(timer => window.clearTimeout(timer));
     navSettleTimersRef.current = [];
     const destination = Math.max(0, sectionTop(sc, el) - NAV_SCROLL_OFFSET);
@@ -426,10 +442,14 @@ function App() {
     // download its payload. Jump long distances; retain smooth motion locally.
     sc.scrollTo({ top: destination, behavior: isDistant ? "auto" : "smooth" });
     const realign = () => {
-      const target = refs[id]?.current;
+      const target = navTarget(id, childId);
       if (target && scrollRef.current) {
         const container = scrollRef.current;
         container.scrollTo({ top: Math.max(0, sectionTop(container, target) - NAV_SCROLL_OFFSET), behavior: "auto" });
+        if (childId && target.dataset?.navAnchor === childId) {
+          target.setAttribute("tabindex", "-1");
+          target.focus?.({ preventScroll: true });
+        }
       }
     };
     const settleDelays = isDistant ? [0, 140, 360, 760, 1400, 2400, 3600] : [520, 1100];
@@ -438,6 +458,7 @@ function App() {
       if (index === settleDelays.length - 1) {
         navIntentRef.current = null;
         if (window.__DASH_NAV_TARGET === id) window.__DASH_NAV_TARGET = "";
+        if (window.__DASH_NAV_ANCHOR === childId) window.__DASH_NAV_ANCHOR = "";
       }
     }, delay));
   };
@@ -474,6 +495,7 @@ function App() {
       cancelAnimationFrame(frame);
       navSettleTimersRef.current.forEach(timer => window.clearTimeout(timer));
       window.__DASH_NAV_TARGET = "";
+      window.__DASH_NAV_ANCHOR = "";
     };
   }, []);
 
@@ -543,7 +565,8 @@ function App() {
   };
   const handleCategoryNav = (section, categoryId) => {
     setNavCategory({ section, id: categoryId });
-    navTo(section);
+    navTo(section, categoryId);
+    if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) setSidebarOpen(false);
   };
   const handleSidebarCompany = (company, context = {}) => {
     if (context.section === "sanalysis") {
@@ -592,6 +615,81 @@ function App() {
     if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) setSidebarOpen(false);
   };
 
+  // The generated consulting architecture is the single ordering contract for
+  // both navigation and content. The compact fallback contains the same IDs so
+  // the page remains usable if the versioned snapshot cannot be fetched.
+  const navigation = consultingNavigation.length ? consultingNavigation : NAV;
+  const renderSection = id => {
+    if (id === "overview") return (
+      <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-nav-anchor="relationship-map" data-screen-label="AI Industry Brief">
+        <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"}
+          dataVersion={dataVersion} onSelectCompany={setSelected} />
+      </section>
+    );
+    if (id === "strategy") return (
+      <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={1320}>
+        <MobileStrategyBoard companies={companiesLive} articles={articles} strategyData={strategyView}
+          generatedAt={dataGeneratedAt} onNav={navTo} />
+      </LazySection>
+    );
+    if (id === "opportunity") return (
+      <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={1080}>
+        <SectionStack bodyClassName="opportunity-stack">
+          <ExecToplines items={[]} insights={insights} onNav={navTo} />
+        </SectionStack>
+      </LazySection>
+    );
+    if (id === "newbiz") return (
+      <LazySection id="newbiz" active={active} sectionRef={refs.newbiz} height={900}>
+        <NewBizBoard articles={articles} dataVersion={dataVersion} />
+      </LazySection>
+    );
+    if (id === "valuechain") return (
+      <LazySection id="valuechain" active={active} sectionRef={refs.valuechain} height={4500}>
+        <SectionStack title="AI 밸류체인" eyebrow="CONTROL POINTS"
+          description="고객 경험에서 모델·런타임까지 7개 계층을 중복 없이 연결">
+          {(D.VALUE_CHAIN || [])
+            .filter(layer => navCategory.section !== "valuechain" || !navCategory.id || layer.id === navCategory.id)
+            .map(layer => <ValueChainBoard key={layer.id} layerId={layer.id} companies={companiesLive} onSelect={setSelected} />)}
+        </SectionStack>
+      </LazySection>
+    );
+    if (id === "signals") return (
+      <LazySection id="signals" active={active} sectionRef={refs.signals} height={900}>
+        <SignalBoard articles={articles} dataVersion={dataVersion} />
+      </LazySection>
+    );
+    if (id === "sanalysis") return (
+      <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
+        <StartupScopeBoard dataVersion={dataVersion} companies={companiesLive} coLive={coLive} monet={monet}
+          activeCategory={navCategory.section === "sanalysis" ? navCategory.id : ""}
+          onCategoryChange={categoryId => setNavCategory({ section: "sanalysis", id: categoryId })}
+          onSelect={setSelected} />
+      </LazySection>
+    );
+    if (id === "evidence") return (
+      <LazySection id="evidence" active={active} sectionRef={refs.evidence} height={1800}>
+        <SectionStack title="시장·고객 근거" eyebrow="EVIDENCE"
+          description="기관 리서치와 산업·고객 원문 신호를 한 근거 축으로 통합">
+          <div className="nav-subsection" data-nav-anchor="institutional-research"><IBInsightBoard research={research} reports={[]} /></div>
+          <div className="nav-subsection" data-nav-anchor="industry-customer-source"><ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} /></div>
+        </SectionStack>
+      </LazySection>
+    );
+    if (id === "validation") return (
+      <LazySection id="validation" active={active} sectionRef={refs.validation} height={2400}>
+        <SectionStack title="수요·시장·재무 검증" eyebrow="VALIDATION"
+          description="수요 조사·시장 규모·상장사 지표를 분리해 사업성을 단계적으로 확인">
+          <div className="nav-subsection" data-nav-anchor="survey"><MarketBoard dataVersion={dataVersion} mode="survey" /></div>
+          <div className="nav-subsection" data-nav-anchor="market"><MarketBoard dataVersion={dataVersion} mode="market" /></div>
+          <div className="nav-subsection" data-nav-anchor="stocks"><StockBoard stocks={D.STOCKS} stockData={stockData} nvidiaInvestments={nvidiaInvestments}
+            cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} /></div>
+        </SectionStack>
+      </LazySection>
+    );
+    return null;
+  };
+
   return (
     <div className={"app d-" + t.density}>
       <Sidebar
@@ -600,6 +698,7 @@ function App() {
         onNav={handleSectionNav} onCategory={handleCategoryNav} brand={brand}
         onLogo={() => handleSectionNav("overview")} onBgClick={onSidebarBg} collapsed={collapsed}
         articleCount={articleCount} companies={companiesLive} sectionCategories={sectionCategories}
+        navigation={navigation}
         onSelectCompany={handleSidebarCompany}
         open={sidebarOpen} onToggle={() => setSidebarOpen(o => !o)}
       />
@@ -610,67 +709,7 @@ function App() {
 
         <main className="main" ref={scrollRef}>
           <div className="main-inner">
-            {/* ── 1. 첫 화면: 관계 지도 + 영상 브리핑 ── */}
-            <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-screen-label="Mobile AI Video Brief">
-              <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"} dataVersion={dataVersion} />
-            </section>
-
-            {/* ── 2. 전략 컨설팅: 영상 다음에 바로 노출 ── */}
-            <LazySection id="strategy" active={active} sectionRef={refs.strategy} height={1320}>
-              <MobileStrategyBoard companies={companiesLive} articles={articles} strategyData={strategyView}
-                generatedAt={dataGeneratedAt} onNav={navTo} />
-            </LazySection>
-
-            {/* ── 3. 기회 DB: 브리프 → 정량 기회 ── */}
-            <LazySection id="opportunity" active={active} sectionRef={refs.opportunity} height={1080}>
-              <SectionStack bodyClassName="opportunity-stack">
-                <ExecToplines items={[]} insights={insights} onNav={navTo} />
-              </SectionStack>
-            </LazySection>
-
-            <LazySection id="valuechain" active={active} sectionRef={refs.valuechain} height={4500}>
-              <SectionStack title="AI 밸류체인" eyebrow="CONTROL POINTS"
-                description="고객 경험에서 모델·런타임까지 7개 계층을 중복 없이 연결">
-                {(D.VALUE_CHAIN || [])
-                  .filter(layer => navCategory.section !== "valuechain" || !navCategory.id || layer.id === navCategory.id)
-                  .map(layer => <ValueChainBoard key={layer.id} layerId={layer.id} companies={companiesLive} onSelect={setSelected} />)}
-              </SectionStack>
-            </LazySection>
-
-            <LazySection id="newbiz" active={active} sectionRef={refs.newbiz} height={900}>
-              <NewBizBoard articles={articles} dataVersion={dataVersion} />
-            </LazySection>
-
-            {/* ── 5. 생태계·기술: 변화 신호 → 실행 후보 ── */}
-            <LazySection id="signals" active={active} sectionRef={refs.signals} height={900}>
-              <SignalBoard articles={articles} dataVersion={dataVersion} />
-            </LazySection>
-
-            <LazySection id="sanalysis" active={active} sectionRef={refs.sanalysis} height={620}>
-              <StartupScopeBoard dataVersion={dataVersion} companies={companiesLive} coLive={coLive} monet={monet}
-                activeCategory={navCategory.section === "sanalysis" ? navCategory.id : ""}
-                onCategoryChange={categoryId => setNavCategory({ section: "sanalysis", id: categoryId })}
-                onSelect={setSelected} />
-            </LazySection>
-
-            {/* ── 6. 시장 검증: 관찰 근거 → 사업성 검증 ── */}
-            <LazySection id="evidence" active={active} sectionRef={refs.evidence} height={1800}>
-              <SectionStack title="시장·고객 근거" eyebrow="EVIDENCE"
-                description="기관 리서치와 산업·고객 원문 신호를 한 근거 축으로 통합">
-                <IBInsightBoard research={research} reports={[]} />
-                <ArticleFeed articles={articles} cats={cats} filter={feedFilter} onFilter={setFeedFilter} query={query} />
-              </SectionStack>
-            </LazySection>
-
-            <LazySection id="validation" active={active} sectionRef={refs.validation} height={2400}>
-              <SectionStack title="수요·시장·재무 검증" eyebrow="VALIDATION"
-                description="수요 조사·시장 규모·상장사 지표를 분리해 사업성을 단계적으로 확인">
-                <MarketBoard dataVersion={dataVersion} mode="survey" />
-                <MarketBoard dataVersion={dataVersion} mode="market" />
-                <StockBoard stocks={D.STOCKS} stockData={stockData} nvidiaInvestments={nvidiaInvestments}
-                  cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} />
-              </SectionStack>
-            </LazySection>
+            {navigation.map(item => <React.Fragment key={item.id}>{renderSection(item.id)}</React.Fragment>)}
 
             <footer className="foot">
               <span>Mobile AI Business Intelligence</span>
