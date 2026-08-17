@@ -989,6 +989,21 @@ a[href]:hover .rainbow-on-hover,
 .sp-card-foot span { display: flex; flex-direction: column; gap: 2px; color: var(--ink-2); font-size: 9.5px; font-weight: 750; }
 .sp-card-foot span em { color: var(--muted); font-family: var(--mono); font-size: 7.5px; font-style: normal; font-weight: 900; letter-spacing: .05em; }
 .sp-card-foot > b { justify-self: end; color: var(--accent); font-size: 9.5px; font-weight: 850; }
+
+/* Footer facts can vary from one to four items. Give the detail action its
+   own row so it never receives only the narrow remainder of the facts row
+   and collapses Korean text into a tall, character-by-character column. */
+.sp-card-foot { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); align-items: start; }
+.sp-card-foot span { min-width: 0; }
+.sp-card-foot > b {
+  grid-column: 1 / -1;
+  justify-self: start;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  line-height: 1.45;
+}
 .sp-card .ct-del { position: static; flex: none; opacity: 0; }
 .sp-card:hover .ct-del, .sp-card:focus-within .ct-del { opacity: 1; }
 @media (max-width: 700px) {
