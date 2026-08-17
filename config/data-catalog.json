@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "updatedAt": "2026-08-16",
+  "version": 4,
+  "updatedAt": "2026-08-17",
   "defaultOwner": "Data Platform",
   "defaultSteward": "Intelligence Operations",
   "datasets": [
@@ -48,6 +48,27 @@
       "retention": "monthly-jsonl-until-external-migration",
       "upstream": ["source-adapters"],
       "downstream": ["source-snapshot"]
+    },
+    {
+      "id": "intelligence-observation-ledger",
+      "path": "intelligence-ledger",
+      "role": "normalized-partitioned-ledger",
+      "sensitivity": "internal-operational",
+      "publication": "never",
+      "retention": "append-only-monthly-jsonl-until-external-migration",
+      "upstream": ["company-intelligence", "market-ledger", "source-observation-ledger"],
+      "downstream": ["intelligence-track-snapshot", "external-immutable-store"]
+    },
+    {
+      "id": "intelligence-track-snapshot",
+      "path": "intelligence-tracks.json",
+      "role": "latest-versioned-track-view",
+      "sensitivity": "public",
+      "publication": "public",
+      "retention": "latest-per-stable-key-with-ledger-lineage",
+      "schema": "schemas/intelligence-tracks.schema.json",
+      "upstream": ["intelligence-observation-ledger"],
+      "downstream": ["site-content-manifest", "static-site"]
     },
     {
       "id": "source-compliance-catalog",

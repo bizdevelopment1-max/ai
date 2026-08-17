@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-17",
+  "snapshotPath": "intelligence-tracks.json",
+  "ledgerDirectory": "intelligence-ledger",
+  "partitionPattern": "{track}-{yyyy-mm}.jsonl",
+  "revisionPolicy": "append-only-on-content-change",
+  "latestSelection": "newest-source-backed-observation-per-stable-key",
+  "tracks": [
+    {
+      "id": "company",
+      "label": "기업 정보",
+      "sourceDatasets": ["companies.json", "source-snapshot.json"],
+      "maxAgeHours": 25,
+      "minimumRecords": 100,
+      "minimumSourceBackedRatio": 0.5
+    },
+    {
+      "id": "market",
+      "label": "AI 시장",
+      "sourceDatasets": ["market.json"],
+      "maxAgeHours": 25,
+      "minimumRecords": 100,
+      "minimumSourceBackedRatio": 0.3,
+      "excludedRecordTypes": ["consumer-survey"]
+    },
+    {
+      "id": "consumer-survey",
+      "label": "AI 소비자 조사",
+      "sourceDatasets": ["market.json", "source-snapshot.json"],
+      "maxAgeHours": 169,
+      "minimumRecords": 2,
+      "minimumSourceBackedRatio": 0.5,
+      "recordTypes": ["consumer-survey"],
+      "sourceCategories": ["consumer-survey"]
+    },
+    {
+      "id": "value-chain",
+      "label": "AI 밸류체인",
+      "sourceDatasets": ["companies.json", "source-snapshot.json"],
+      "maxAgeHours": 25,
+      "minimumRecords": 25,
+      "minimumSourceBackedRatio": 0.5,
+      "sourceCategories": [
+        "compute-and-edge",
+        "model-and-research",
+        "model-provider",
+        "model-and-agent-platform",
+        "agentic-commerce",
+        "carrier-bundle",
+        "competitor-device",
+        "app-economics",
+        "company"
+      ]
+    }
+  ]
+}

@@ -113,6 +113,8 @@ jobs:
             source-collection-report.json
             source-snapshot.json
             source-ledger/
+            intelligence-tracks.json
+            intelligence-ledger/
             source-compliance-report.json
             dataset-manifest.json
             slo-report.json
@@ -131,6 +133,7 @@ jobs:
             site-content-manifest.json
             overview-view.json
             strategy-view.json
+            intelligence-tracks.json
             business-model-forecasts.json
             assets/
           retention-days: 14
@@ -140,7 +143,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json strategy-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json site-content-manifest.json automation-status.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js styles.bundle.css
+          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ intelligence-tracks.json intelligence-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json strategy-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json site-content-manifest.json automation-status.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js styles.bundle.css
           if git diff --staged --quiet; then
             echo "No data changes."
             exit 0

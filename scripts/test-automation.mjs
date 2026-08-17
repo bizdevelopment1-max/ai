@@ -38,6 +38,8 @@ const required = [
   "scripts/global-sources.mjs",
   "scripts/build-browser-bundle.mjs",
   "scripts/validate-delivery-performance.mjs",
+  "scripts/build-intelligence-tracks.mjs",
+  "scripts/validate-intelligence-tracks.mjs",
   "scripts/translate_summarize.py",
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
@@ -55,6 +57,7 @@ const required = [
   "news-view.json",
   "research-view.json",
   "market-view.json",
+  "intelligence-tracks.json",
   "mobile-ai-business-view.json",
   "infra-view.json",
   "bizmodel-view.json",
@@ -2517,7 +2520,7 @@ try {
     "audit.json", "collection-health.json", "companies.json", "company-news.json", "insights.json", "overview-view.json",
     "llm-health.json", "monetization.json", "monetization-review-queue.json", "mobile-ai-business-view.json", "news-view.json", "nvidia-investments.json", "quality.json",
     "research-view.json", "startups.json", "stocks.json", "business-model-forecasts.json",
-    "market-view.json", "stock-events.json",
+    "market-view.json", "intelligence-tracks.json", "stock-events.json",
   ];
   // Static replacement patterns intentionally contain the blocked tokens;
   // browser-visible JSON and a rendered-DOM test cover the actual surface.

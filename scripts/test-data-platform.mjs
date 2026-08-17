@@ -55,7 +55,7 @@ expect(marketCrawler.includes("candidateBudgetFor") && marketCrawler.includes("p
 const tier0 = (slo.serviceClasses || []).find(item => item.tier === "Tier 0");
 expect(tier0?.targetMinutes === 30 && tier0?.guaranteed === false, "Tier 0 must disclose the 30-minute target without claiming a scheduler guarantee");
 
-for (const script of ["build:manifest", "build:slo", "build:source-compliance", "archive:immutable", "minimize:source-content", "normalize:temporal", "validate:contracts", "validate:publication", "calibrate:dedup", "validate:boundaries", "validate:dag"]) {
+for (const script of ["build:manifest", "build:slo", "build:source-compliance", "build:tracks", "archive:immutable", "minimize:source-content", "normalize:temporal", "validate:contracts", "validate:publication", "validate:tracks", "calibrate:dedup", "validate:boundaries", "validate:dag"]) {
   expect(Boolean(packageJson.scripts?.[script]), `package script missing: ${script}`);
 }
 

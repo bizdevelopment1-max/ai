@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "updatedAt": "2026-08-16",
+  "version": 2,
+  "updatedAt": "2026-08-17",
   "refreshCadenceHours": 6,
   "publicationPolicy": {
     "publicSource": "materialized-views-only",
@@ -26,5 +26,9 @@
     { "id": "investments", "path": "nvidia-investments.json", "section": "validation", "recordPath": "portfolio", "countMode": "array", "required": false, "maxAgeHours": 169, "collector": "build-nvidia-investments" },
     { "id": "decision-intelligence", "path": "mobile-ai-business-view.json", "section": "strategy", "recordPath": "signals", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-mobile-ai-business-db" },
     { "id": "insights", "path": "insights.json", "section": "opportunity", "recordPath": "cards", "countMode": "array", "required": true, "maxAgeHours": 7, "collector": "build-insights" }
+    ,{ "id": "company-track", "path": "intelligence-tracks.json", "section": "valuechain", "recordPath": "tracks.company.records", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-intelligence-tracks" }
+    ,{ "id": "market-track", "path": "intelligence-tracks.json", "section": "validation", "recordPath": "tracks.market.records", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-intelligence-tracks" }
+    ,{ "id": "consumer-survey-track", "path": "intelligence-tracks.json", "section": "validation", "recordPath": "tracks.consumer-survey.records", "countMode": "array", "required": true, "maxAgeHours": 169, "collector": "build-intelligence-tracks" }
+    ,{ "id": "value-chain-track", "path": "intelligence-tracks.json", "section": "valuechain", "recordPath": "tracks.value-chain.records", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-intelligence-tracks" }
   ]
 }

@@ -370,6 +370,7 @@ try {
     "displayEligible", "provenance", "sourceRegion", "sourceLanguage",
   ];
   const insights = await readJson("insights.json");
+  const intelligenceTracks = await readJson("intelligence-tracks.json");
   const sourceSummary = Object.entries([...selected.values()].reduce((counts, article) => {
     const source = String(article.source || "").trim();
     if (source) counts[source] = (counts[source] || 0) + 1;
@@ -384,6 +385,14 @@ try {
     companyCount: Object.keys(overviewCompanies).length,
     articleCount: selected.size,
     sourceSummary,
+    intelligenceTracks: Object.fromEntries(Object.entries(intelligenceTracks.tracks || {}).map(([id, track]) => [id, {
+      label: track.label,
+      recordCount: track.recordCount,
+      sourceBackedCount: track.sourceBackedCount,
+      sourceBackedRatio: track.sourceBackedRatio,
+      newestPublishedAt: track.newestPublishedAt,
+      status: track.status,
+    }])),
     companies: overviewCompanies,
     articles: [...selected.values()].map(article => ({
       ...compact(article, overviewArticleKeys.filter(key => key !== "provenance")),
@@ -573,7 +582,7 @@ const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
   JSON.stringify(siteContentManifest),
   createHash("sha256").update(await readFile(resolve(root, "assets/competitive-dynamics.mp4"))).digest("hex"),
-  ...await Promise.all(["overview-view.json", "strategy-view.json", "site-content-manifest.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  ...await Promise.all(["overview-view.json", "strategy-view.json", "site-content-manifest.json", "intelligence-tracks.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);
