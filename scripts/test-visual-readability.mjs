@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import { access, readFile } from "node:fs/promises";
+import { minifyCss } from "./build-browser-bundle.mjs";
 
-const [styles, app, boards, taxonomy, strategy] = await Promise.all([
+const [styles, styleBundle, app, boards, taxonomy, strategy] = await Promise.all([
   readFile("styles.css", "utf8"),
+  readFile("styles.bundle.css", "utf8"),
   readFile("app.jsx", "utf8"),
   readFile("boards.jsx", "utf8"),
   readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
@@ -10,6 +12,12 @@ const [styles, app, boards, taxonomy, strategy] = await Promise.all([
 ]);
 
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
+const minifiedDescendantFixture = minifyCss(".card:hover :is(span, em) { color: var(--ink); }");
+
+assert(minifiedDescendantFixture.includes(".card:hover :is(span,em)"), "CSS minification removed a descendant combinator before :is()");
+assert(!minifiedDescendantFixture.includes(".card:hover:is(span,em)"), "CSS minification merged child and parent hover selectors");
+assert(styleBundle.includes(":focus-within) :is(h2,h3,h4,b,strong,a)"), "production CSS is missing readable descendant headings in interactive cards");
+assert(styleBundle.includes(":focus-within) :is(p,span,em,small,dt,dd,li,time)"), "production CSS is missing readable descendant body text in interactive cards");
 
 assert(styles.includes("Readability contract · safe in light/dark and hover/focus modes"), "readability contract is missing");
 assert(styles.includes("TYPOGRAPHY + CONSULTING VISUAL CONTRACT V2"), "typography and consulting visual contract is missing");
