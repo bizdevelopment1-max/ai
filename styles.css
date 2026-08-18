@@ -2476,6 +2476,7 @@ a[href]:hover .rainbow-on-hover,
 }
 .dyn-layer-copy > small { height: 2px; border-radius: 9px; background: var(--line); }
 .dyn-layer-copy > small > i { display: block; height: 100%; background: var(--layer); }
+.dyn-layer-stats { color: var(--muted); font-size: 9px; }
 .dyn-layer-tabs button > em {
   min-width: 26px; padding: 3px 6px; border: 1px solid color-mix(in srgb, var(--layer) 22%, var(--line)); border-radius: 4px;
   background: color-mix(in srgb, var(--layer) 6%, var(--panel)); color: var(--layer);
@@ -2485,7 +2486,6 @@ a[href]:hover .rainbow-on-hover,
   border-color: color-mix(in srgb, var(--layer) 42%, var(--line));
   background: color-mix(in srgb, var(--layer) 7%, var(--panel)); color: var(--ink); outline: none;
 }
-.dyn-layer-tabs button:is(:hover, :focus-visible) { transform: translateX(2px); }
 .dyn-layer-tabs button.on { box-shadow: inset 3px 0 var(--layer); }
 .dyn-layer-tabs button.on .dyn-layer-index { background: var(--layer); color: #FFF; border-color: var(--layer); }
 .dyn-layer-tabs button:disabled { opacity: .42; cursor: default; transform: none; }
@@ -2512,7 +2512,7 @@ a[href]:hover .rainbow-on-hover,
 }
 .es-dynamics-map {
   min-width: 0; flex: 1 1 auto; display: flex; padding: 0 12px 8px; border: 1px solid var(--border); border-radius: 16px;
-  background: color-mix(in srgb, var(--card) 92%, var(--accent) 8%);
+  overflow-x: auto; background: color-mix(in srgb, var(--card) 92%, var(--accent) 8%);
 }
 .es-dynamics-map .kg-wrap {
   display: flex; flex: 1 1 auto; flex-direction: column; min-height: 0;

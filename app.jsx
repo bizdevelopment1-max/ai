@@ -115,6 +115,7 @@ function App() {
   // 캐시버스터: GitHub Pages CDN(edge)은 URL 기준 캐시 → 분 단위 쿼리스트링으로 항상 최신 파일을 받게 함
   const [crawled, setCrawled] = uS([]);
   const [coOverview, setCoOverview] = uS(null);
+  const [relationshipLandscape, setRelationshipLandscape] = uS([]);
   const [insights, setInsights] = uS({ cards: [], engine: "rules" });
   const [strategyView, setStrategyView] = uS(null);
   const [consultingNavigation, setConsultingNavigation] = uS([]);
@@ -129,6 +130,7 @@ function App() {
         if (!alive || !j) return;
         setCrawled(Array.isArray(j.articles) ? j.articles : []);
         setCoOverview(j.companies || {});
+        setRelationshipLandscape(Array.isArray(j.relationshipLandscape?.companies) ? j.relationshipLandscape.companies : []);
         setInsights(j.insights || { cards: [], engine: "rules" });
         setConsultingNavigation(Array.isArray(j.consultingNavigation) ? j.consultingNavigation : []);
         setOverviewSources(Array.isArray(j.sourceSummary) ? j.sourceSummary : []);
@@ -138,6 +140,7 @@ function App() {
         if (!alive) return;
         setCrawled([]);
         setCoOverview({});
+        setRelationshipLandscape([]);
         setInsights({ cards: [], engine: "rules" });
         setConsultingNavigation([]);
         setOverviewSources([]);
@@ -236,9 +239,20 @@ function App() {
   // 지역 기업은 이름·분류만 정적 레지스트리에 두고, 공개 원문/공식 페이지로
   // 확인된 사업 내용만 화면에 합성한다. 고정된 중국 전략·인물·수치 서술은
   // 라이브 근거가 없으면 렌더링하지 않는다.
-  const companiesLive = useMemo(() => (D.COMPANIES || []).map(c => {
+  const landscapeRegistry = useMemo(() => {
+    const byName = new Map((D.COMPANIES || []).map(company => [company.name, company]));
+    const landscapeOrder = new Map();
+    relationshipLandscape.forEach(company => {
+      if (!company?.name) return;
+      landscapeOrder.set(company.name, landscapeOrder.size);
+      byName.set(company.name, { ...(byName.get(company.name) || {}), ...company });
+    });
+    return [...byName.values()].sort((left, right) => (landscapeOrder.get(left.name) ?? Number.MAX_SAFE_INTEGER)
+      - (landscapeOrder.get(right.name) ?? Number.MAX_SAFE_INTEGER));
+  }, [relationshipLandscape]);
+  const companiesLive = useMemo(() => landscapeRegistry.map(c => {
     const companyData = coLive || coOverview || {};
-    const lv = companyData[c.name];
+    const lv = companyData[c.name] || c;
     const strat = startupsX && (startupsX[c.name] || startupsX[c.name.replace(/\s*\(.*\)/, "")]);
     const sourceGated = new Set(["DeepSeek", "Kling AI", "Hailuo (MiniMax)"]).has(c.name);
     const sections = lv?.intelligence
@@ -254,9 +268,9 @@ function App() {
     const merged = {
       name: c.name,
       cat: c.cat,
-      group: c.group,
-      domain: c.domain,
-      unit: c.unit,
+      group: c.group || c.layer,
+      domain: c.domain || String(c.url || "").replace(/^https?:\/\/(?:www\.)?/, "").split("/")[0],
+      unit: c.unit || c.vchainVertical || "AI 소프트웨어·서비스",
       url: c.url,
       valuation: "—",
       valAsof: "",
@@ -270,12 +284,12 @@ function App() {
       direction: "",
       sources: [],
     };
-    merged.profile = lv?.profile || null;
+    merged.profile = lv?.profile || c.profile || null;
     const ly = (D.COMPANY_LAYER || {})[c.name];                    // AI 밸류체인 계층·버티컬
-    merged.layer = ly ? ly.layer : null;
-    merged.vchainVertical = ly ? ly.vertical : "";
-    merged.adjacentLayers = ly && Array.isArray(ly.adjacent) ? ly.adjacent : [];
-    merged.mobileFit = ly ? ly.fit || "medium" : "medium";
+    merged.layer = ly ? ly.layer : c.layer || null;
+    merged.vchainVertical = ly ? ly.vertical : c.vchainVertical || "";
+    merged.adjacentLayers = ly && Array.isArray(ly.adjacent) ? ly.adjacent : (c.adjacentLayers || []);
+    merged.mobileFit = ly ? ly.fit || "medium" : c.mobileFit || "medium";
     if (sourceGated) {
       const organization = lv?.organization;
       const verifiedPeople = (organization?.executiveTeam || []).filter(person =>
@@ -307,7 +321,7 @@ function App() {
     if (lv) { merged.live = lv; if (lv.cap && lv.capAsof) { merged.valuation = lv.cap.replace(/ \(시나리오\)/, ""); merged.valAsof = lv.capAsof.slice(2, 7).replace("-", "."); } }
     if (strat) merged.strategy = strat;
     return merged;
-  }).filter(Boolean), [coLive, coOverview, startupsX, monet]);
+  }).filter(Boolean), [coLive, coOverview, landscapeRegistry, startupsX, monet]);
 
   // The site CLI searches the same generated records currently rendered by
   // the dashboard, so its answers advance with the crawler instead of a

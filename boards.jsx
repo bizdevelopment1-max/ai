@@ -2767,7 +2767,33 @@ function deriveTaxonomyOverlapEdges(companies, evidenceEdges) {
       basis: "taxonomy-inferred",
     });
   });
-  return fallbackEdges;
+
+  const structureEdges = [];
+  const structurePairs = new Set(seenPairs);
+  rows.forEach(company => {
+    const adjacent = new Set(company.adjacentLayers || []);
+    if (!adjacent.size) return;
+    const peer = rows
+      .filter(candidate => candidate.name !== company.name
+        && adjacent.has(candidate.layer)
+        && !structurePairs.has(pairKey(company.name, candidate.name)))
+      .map(candidate => ({ candidate, score: scoreCandidate(company, candidate) }))
+      .sort((left, right) => right.score - left.score || left.candidate.name.localeCompare(right.candidate.name))[0]?.candidate;
+    if (!peer) return;
+    structurePairs.add(pairKey(company.name, peer.name));
+    structureEdges.push({
+      from: company.name,
+      to: peer.name,
+      type: "생태계",
+      label: "분류 기반 계층 연계",
+      headline: `${company.vchainVertical || company.unit || company.layer} ↔ ${peer.vchainVertical || peer.unit || peer.layer}`,
+      source: "밸류체인 구조 분류",
+      date: "",
+      url: "",
+      basis: "taxonomy-inferred",
+    });
+  });
+  return [...fallbackEdges, ...structureEdges];
 }
 
 function deriveCompanyRelationshipEdges(articles, companies) {
@@ -2827,7 +2853,7 @@ function deriveCompanyRelationshipEdges(articles, companies) {
     });
   });
 
-  const sourceBackedEdges = evidenceEdges.slice(0, 24);
+  const sourceBackedEdges = evidenceEdges.slice(0, 40);
   return [...sourceBackedEdges, ...deriveTaxonomyOverlapEdges(companies, sourceBackedEdges)];
 }
 
@@ -2888,6 +2914,10 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
     canvas.style.width = W + "px"; canvas.style.height = H + "px";
     const ctx = canvas.getContext("2d");
     ctx.scale(2, 2);
+    const graphLayerOrder = ["app", "agent", "service", "trust", "model", "data", "infra"];
+    const graphLayerLabels = { app: "경험", agent: "에이전트", service: "플랫폼", trust: "신뢰", model: "모델", data: "툴링", infra: "런타임" };
+    const presentLayers = graphLayerOrder.filter(layer => companies.some(company => company.layer === layer));
+    const layerGroups = Object.fromEntries(presentLayers.map(layer => [layer, companies.filter(company => company.layer === layer)]));
 
     const valScale = (c) => {
       const v = parseFloat(String(c.valuation).replace(/[^0-9.]/g, "")) || 1;
@@ -2895,12 +2925,15 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
     };
 
     if (nodesRef.current.length === 0) {
-      const cx = W / 2, cy = H / 2;
       nodesRef.current = companies.map((c, i) => {
-        const angle = (i / companies.length) * Math.PI * 2;
-        const radius = 120 + Math.random() * 60;
+        const layerIndex = Math.max(0, presentLayers.indexOf(c.layer));
+        const group = layerGroups[c.layer] || companies;
+        const groupIndex = Math.max(0, group.findIndex(company => company.name === c.name));
+        const homeX = presentLayers.length > 1 ? ((layerIndex + .5) / presentLayers.length) * W : W / 2;
+        const homeY = ((groupIndex + 1) / (group.length + 1)) * (H - 70) + 30;
         return {
-          id: c.name, x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius,
+          id: c.name, x: homeX + Math.sin(i * 1.7) * 16, y: homeY,
+          homeX, homeY,
           vx: 0, vy: 0, r: valScale(c), co: c,
           cat: catMap[c.cat], fixed: false,
         };
@@ -2937,9 +2970,9 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
           fx += (dx / dist) * attract;
           fy += (dy / dist) * attract;
         }
-        let dx = W / 2 - n.x, dy = H / 2 - n.y;
-        fx += dx * 0.0008;
-        fy += dy * 0.0008;
+        let dx = n.homeX - n.x, dy = n.homeY - n.y;
+        fx += dx * 0.0018;
+        fy += dy * 0.0018;
         n.vx = (n.vx + fx) * damp;
         n.vy = (n.vy + fy) * damp;
         const labelHalf = Math.min(76, Math.max(n.r + 4, n.id.length * 2.8));
@@ -2958,6 +2991,16 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
       ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
       for (let x = 40; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.strokeStyle = gridC; ctx.lineWidth = 0.5; ctx.stroke(); }
       for (let y = 40; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      presentLayers.forEach((layer, index) => {
+        const laneX = ((index + .5) / presentLayers.length) * W;
+        if (index) {
+          ctx.beginPath(); ctx.moveTo((index / presentLayers.length) * W, 0); ctx.lineTo((index / presentLayers.length) * W, H);
+          ctx.strokeStyle = dark ? "rgba(255,255,255,.08)" : "rgba(23,63,95,.10)"; ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]);
+        }
+        ctx.font = "900 9px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "top";
+        ctx.fillStyle = dark ? "#C7D5E8" : "#35516B";
+        ctx.fillText(`${String(graphLayerOrder.indexOf(layer) + 1).padStart(2, "0")} ${graphLayerLabels[layer] || layer}`, laneX, 8);
+      });
 
       for (const e of edges) {
         const a = nodes.find(n => n.id === e.from), b = nodes.find(n => n.id === e.to);
@@ -3124,7 +3167,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
   const selEdges = sourceOnly ? [] : (selected ? selectedEdgeSet.filter(e => e.from === selected || e.to === selected) : []);
 
   return (
-    <div className="kg-wrap" style={{ opacity: Math.min(1, progress * 2) }}>
+    <div className="kg-wrap" style={{ opacity: Math.min(1, progress * 2), minWidth: compact ? `${Math.max(620, companies.length * 17)}px` : undefined }}>
       <div className="kg-container" ref={containerRef}>
         <canvas ref={canvasRef} className="kg-canvas" />
         {tooltip && (
@@ -3170,7 +3213,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
           )}
         </div>
       )}
-      <div className={`kg-hint${compact ? " kg-hint-compact" : ""}`}>{compact ? "왼쪽 원을 선택하면 오른쪽 영상 위에 업체 관계가 표시됩니다" : "노드를 드래그하여 이동 · 클릭하여 상세 관계 보기 · 범례: 원 크기 = 밸류에이션"}</div>
+      <div className={`kg-hint${compact ? " kg-hint-compact" : ""}`}>{compact ? "지도를 좌우로 이동해 7개 계층 탐색 · 원 선택 시 상세 관계 표시" : "노드를 드래그하여 이동 · 클릭하여 상세 관계 보기 · 범례: 원 크기 = 밸류에이션"}</div>
     </div>
   );
 }
@@ -3181,6 +3224,7 @@ const DYNAMICS_AXES = [
   { id: "partnership", label: "파트너십", color: "#2D6BFF", types: ["파트너십"] },
   { id: "investment", label: "투자", color: "#00C2A8", types: ["투자", "인수"] },
   { id: "supply", label: "공급", color: "#F59E0B", types: ["공급", "매출"] },
+  { id: "structure", label: "계층 연계", color: "#94A3B8", types: ["생태계"] },
 ];
 
 function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSelectCompany }) {
@@ -3215,6 +3259,10 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
     layer.id,
     companies.filter(company => company.layer === layer.id).length,
   ])), [companies, valueChainLayers]);
+  const layerRelationshipCounts = React.useMemo(() => Object.fromEntries(valueChainLayers.map(layer => {
+    const names = new Set(companies.filter(company => company.layer === layer.id).map(company => company.name));
+    return [layer.id, dynamicEdges.filter(edge => names.has(edge.from) || names.has(edge.to)).length];
+  })), [companies, dynamicEdges, valueChainLayers]);
   const relationshipCoverageCount = React.useMemo(() => new Set(dynamicEdges.flatMap(edge => [edge.from, edge.to])).size, [dynamicEdges]);
   const sourceBackedEdgeCount = dynamicEdges.filter(edge => edge.basis === "source-backed").length;
   const taxonomyEdgeCount = dynamicEdges.filter(edge => edge.basis === "taxonomy-inferred").length;
@@ -3308,13 +3356,18 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
   const selectedIntel = selectedCompany?.intelligence || selectedLive.intelligence || {};
   const selectedProfile = selectedCompany?.profile || selectedLive.profile || {};
   const publication = selectedIntel.publication || {};
-  const evidenceCount = [...new Set([
+  const embeddedEvidenceCount = [...new Set([
     ...(selectedIntel.currentBusiness?.evidence || []),
     ...(selectedIntel.revenueModel?.evidence || []),
     ...(selectedIntel.strategyDirection?.evidence || []),
     ...(selectedIntel.investmentDirection?.evidence || []),
   ].map(item => item?.url).filter(Boolean))].length;
+  const evidenceCount = Number.isFinite(Number(selectedLive.sourceEvidenceCount))
+    ? Number(selectedLive.sourceEvidenceCount) : embeddedEvidenceCount;
+  const lastVerifiedAt = publication.lastVerifiedAt || selectedLive.lastVerifiedAt || "";
+  const selectedLayerMeta = valueChainLayers.find(layer => layer.id === selectedCompany?.layer) || null;
   const companyFacts = selectedCompany ? [
+    { label: "밸류체인 위치", value: selectedLayerMeta ? `${selectedLayerMeta.ko} · ${selectedCompany.vchainVertical || selectedCompany.unit}` : "" },
     { label: "사업 현황", value: selectedIntel.currentBusiness?.summary || selectedCompany.note },
     { label: "핵심 제공", value: Array.isArray(selectedProfile.business) && selectedProfile.business.length
       ? selectedProfile.business.slice(0, 4).join(" · ") : selectedCompany.unit },
@@ -3353,6 +3406,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
           <i style={{ background: "#2D6BFF" }} />파트너십
           <i style={{ background: "#00C2A8" }} />투자
           <i style={{ background: "#F59E0B" }} />공급
+          <i style={{ background: "#94A3B8" }} />계층 연계
         </span>
       </div>
       <div className="es-dynamics-grid">
@@ -3368,7 +3422,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
               className={activeLayer === "all" ? "on" : ""}
               style={{ "--layer": "#173F5F" }} onClick={() => setActiveLayer("all")}>
               <span className="dyn-layer-index">ALL</span>
-              <span className="dyn-layer-copy"><b>전체 밸류체인</b><small><i style={{ width: "100%" }} /></small></span>
+              <span className="dyn-layer-copy"><b>전체 밸류체인</b><span className="dyn-layer-stats">업체 {companies.length} · 관계 {dynamicEdges.length}</span><small><i style={{ width: "100%" }} /></small></span>
               <em>{companies.length}</em>
             </button>
             {valueChainLayers.map((layer, index) => (
@@ -3376,7 +3430,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
                 disabled={!layerCounts[layer.id]} className={activeLayer === layer.id ? "on" : ""}
                 style={{ "--layer": layer.accent }} onClick={() => setActiveLayer(layer.id)}>
                 <span className="dyn-layer-index">{String(index + 1).padStart(2, "0")}</span>
-                <span className="dyn-layer-copy"><b>{layer.ko}</b><small><i style={{ width: `${Math.round((layerCounts[layer.id] || 0) / Math.max(1, companies.length) * 100)}%` }} /></small></span>
+                <span className="dyn-layer-copy"><b>{layer.ko}</b><span className="dyn-layer-stats">업체 {layerCounts[layer.id] || 0} · 관계 {layerRelationshipCounts[layer.id] || 0}</span><small><i style={{ width: `${Math.round((layerCounts[layer.id] || 0) / Math.max(1, companies.length) * 100)}%` }} /></small></span>
                 <em>{layerCounts[layer.id] || 0}</em>
               </button>
             ))}
@@ -3436,7 +3490,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
               <span style={{ "--layer": activeLayerMeta?.accent || "#173F5F" }}><i />{activeLayerMeta?.ko || "전체 밸류체인"}</span>
               <b>{activeAxisMeta?.label || "전체 관계"}</b>
               <em>{pickerCompanies.length}개사 · 관계 {visibleEdges.length}건</em>
-              <small>{visibleCompanies.length > pickerCompanies.length ? `외부 계층 ${visibleCompanies.length - pickerCompanies.length}개 맥락 노드 · ` : ""}실선 원문 · 점선 분류 기반</small>
+              <small>지도 좌우 이동 · {visibleCompanies.length > pickerCompanies.length ? `외부 계층 ${visibleCompanies.length - pickerCompanies.length}개 맥락 노드 · ` : ""}실선 원문 · 점선 분류 기반</small>
             </div>
             {selectedCompany && (
               <div className="dyn-selected">
@@ -3462,7 +3516,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
                 <div className="dyn-proof-strip" aria-label="업체 정보 근거 현황">
                   {Number.isFinite(Number(selectedLive.mentions30)) && <span><em>30D SIGNAL</em><b>{selectedLive.mentions30}건</b></span>}
                   <span><em>EVIDENCE</em><b>{evidenceCount}건</b></span>
-                  {publication.lastVerifiedAt && <span><em>VERIFIED</em><b>{String(publication.lastVerifiedAt).slice(0, 10)}</b></span>}
+                  {lastVerifiedAt && <span><em>VERIFIED</em><b>{String(lastVerifiedAt).slice(0, 10)}</b></span>}
                 </div>
                 <div className="dyn-relationships" aria-label={`${selectedCompany.name} 관계 유형별 원문 근거`}>
                   {relationshipGroups.map(axis => (
