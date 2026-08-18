@@ -3069,7 +3069,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
 const DYNAMICS_AXES = [
   { id: "competition", label: "경쟁", color: "#FF4D4D", types: ["경쟁"] },
   { id: "partnership", label: "파트너십", color: "#2D6BFF", types: ["파트너십"] },
-  { id: "investment", label: "투자·인수", color: "#00C2A8", types: ["투자", "인수"] },
+  { id: "investment", label: "투자", color: "#00C2A8", types: ["투자", "인수"] },
   { id: "supply", label: "공급", color: "#F59E0B", types: ["공급", "매출"] },
 ];
 
@@ -3081,6 +3081,9 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
   const mediaActive = inView && active;
   const prog = useProgress(inView, 1400);
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
+  const valueChainLayers = window.DASH.VALUE_CHAIN || [];
+  const [activeLayer, setActiveLayer] = React.useState("all");
+  const [activeAxis, setActiveAxis] = React.useState("all");
 
   // 최신 source-backed 기사에서 명시적으로 확인된 관계를 먼저 만들고,
   // 시점성 주장이 없는 시장 중첩선만 보조선으로 합친다.
@@ -3089,7 +3092,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
     const connected = new Set();
     dynamicEdges.forEach(e => { connected.add(e.from); connected.add(e.to); });
     const list = companies.filter(c => connected.has(c.name));
-    const names = list.map(c => c.name);
+    const names = companies.map(c => c.name);
     const matchName = (co) => names.find(n => n === co || co.startsWith(n.split(" (")[0]) || n.startsWith(co.split(" (")[0]));
     const byName = {};
     (articles || []).forEach(a => {
@@ -3101,13 +3104,51 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
     return { list, articleByCo: byName, dynamicEdges };
   }, [companies, articles]);
 
-  const edgeSignature = dynamicEdges.map(edge => `${edge.from}>${edge.to}:${edge.type}:${edge.date || ""}`).join("|");
-  const graphKey = `${list.map(c => c.name).join("|")}::${edgeSignature}`;   // 업체·관계가 바뀌면 그래프 재구성
-  const defaultCompany = list.some(c => c.name === "OpenAI") ? "OpenAI" : (list[0] ? list[0].name : null);
+  const layerCounts = React.useMemo(() => Object.fromEntries(valueChainLayers.map(layer => [
+    layer.id,
+    companies.filter(company => company.layer === layer.id).length,
+  ])), [companies, valueChainLayers]);
+  const activeLayerMeta = valueChainLayers.find(layer => layer.id === activeLayer) || null;
+  const activeAxisMeta = DYNAMICS_AXES.find(axis => axis.id === activeAxis) || null;
+  const { visibleCompanies, visibleEdges, pickerCompanies } = React.useMemo(() => {
+    const layerCompanies = activeLayer === "all"
+      ? []
+      : companies.filter(company => company.layer === activeLayer);
+    const layerNames = new Set(layerCompanies.map(company => company.name));
+    const layerEdges = activeLayer === "all"
+      ? dynamicEdges
+      : dynamicEdges.filter(edge => layerNames.has(edge.from) || layerNames.has(edge.to));
+    const axisEdges = activeAxis === "all"
+      ? layerEdges
+      : layerEdges.filter(edge => activeAxisMeta?.types.includes(edge.type));
+    const visibleNames = new Set(layerCompanies.map(company => company.name));
+    if (activeLayer === "all" && activeAxis === "all") list.forEach(company => visibleNames.add(company.name));
+    axisEdges.forEach(edge => { visibleNames.add(edge.from); visibleNames.add(edge.to); });
+    const pickerNames = activeLayer !== "all"
+      ? layerNames
+      : new Set((activeAxis === "all" ? list : companies.filter(company => visibleNames.has(company.name))).map(company => company.name));
+    return {
+      visibleCompanies: companies.filter(company => visibleNames.has(company.name)),
+      visibleEdges: axisEdges,
+      pickerCompanies: companies.filter(company => pickerNames.has(company.name)),
+    };
+  }, [activeAxis, activeAxisMeta, activeLayer, companies, dynamicEdges, list]);
+  const edgeSignature = visibleEdges.map(edge => `${edge.from}>${edge.to}:${edge.type}:${edge.date || ""}`).join("|");
+  const graphKey = `${activeLayer}:${activeAxis}:${visibleCompanies.map(c => c.name).join("|")}::${edgeSignature}`;
+  const firstRelationshipCompany = visibleEdges[0]
+    ? [visibleEdges[0].from, visibleEdges[0].to].find(name => activeLayer === "all"
+      || companies.find(company => company.name === name)?.layer === activeLayer) || visibleEdges[0].from
+    : null;
+  const defaultCompany = firstRelationshipCompany
+    || (visibleCompanies.some(c => c.name === "OpenAI") ? "OpenAI" : (visibleCompanies[0] ? visibleCompanies[0].name : null));
   const [activeCompany, setActiveCompany] = React.useState(defaultCompany);
 
   React.useEffect(() => {
-    setActiveCompany(current => list.some(c => c.name === current) ? current : defaultCompany);
+    setActiveCompany(current => {
+      const isVisible = visibleCompanies.some(company => company.name === current);
+      const hasVisibleRelationship = visibleEdges.some(edge => edge.from === current || edge.to === current);
+      return isVisible && (!visibleEdges.length || hasVisibleRelationship) ? current : defaultCompany;
+    });
   }, [graphKey, defaultCompany]);
 
   React.useEffect(() => {
@@ -3152,7 +3193,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
     };
   }, [mediaActive, mediaReady]);
 
-  const selectedCompany = list.find(c => c.name === activeCompany) || list[0] || null;
+  const selectedCompany = visibleCompanies.find(c => c.name === activeCompany) || visibleCompanies[0] || null;
   const selectedArticle = selectedCompany ? articleByCo[selectedCompany.name] : null;
   const selectedLive = selectedCompany?.live || {};
   const selectedIntel = selectedCompany?.intelligence || selectedLive.intelligence || {};
@@ -3173,13 +3214,13 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
   ].filter(item => item.value && item.value !== "—") : [];
   const openCompany = companyOrName => {
     const target = typeof companyOrName === "string"
-      ? list.find(company => company.name === companyOrName)
+      ? companies.find(company => company.name === companyOrName)
       : companyOrName;
     if (target && onSelectCompany) onSelectCompany(target);
   };
   const relationshipGroups = selectedCompany ? DYNAMICS_AXES.map(axis => ({
     ...axis,
-    items: dynamicEdges.filter(edge => axis.types.includes(edge.type) && (edge.from === selectedCompany.name || edge.to === selectedCompany.name))
+    items: visibleEdges.filter(edge => axis.types.includes(edge.type) && (edge.from === selectedCompany.name || edge.to === selectedCompany.name))
       .map(edge => ({
         company: edge.from === selectedCompany.name ? edge.to : edge.from,
         label: edge.label,
@@ -3206,21 +3247,50 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
         </span>
       </div>
       <div className="es-dynamics-grid">
-        <div className="es-dynamics-map">
-          <KnowledgeGraph
-            key={graphKey}
-            companies={list}
-            cats={cats}
-            catMap={catMap}
-            progress={prog}
-            mode="dynamics"
-            relationEdges={dynamicEdges}
-            articleByCo={articleByCo}
-            initialSelected={activeCompany}
-            onNodeSelect={setActiveCompany}
-            compact
-            active={inView}
-          />
+        <div className="dyn-map-column">
+          <nav className="dyn-layer-tabs" aria-label="AI 밸류체인별 업체" role="tablist" aria-orientation="vertical">
+            <button type="button" role="tab" aria-selected={activeLayer === "all"}
+              className={activeLayer === "all" ? "on" : ""}
+              style={{ "--layer": "#173F5F" }} onClick={() => setActiveLayer("all")}>
+              <i /><span>전체 밸류체인</span><em>{companies.length}</em>
+            </button>
+            {valueChainLayers.map(layer => (
+              <button type="button" role="tab" key={layer.id} aria-selected={activeLayer === layer.id}
+                disabled={!layerCounts[layer.id]} className={activeLayer === layer.id ? "on" : ""}
+                style={{ "--layer": layer.accent }} onClick={() => setActiveLayer(layer.id)}>
+                <i /><span>{layer.ko}</span><em>{layerCounts[layer.id] || 0}</em>
+              </button>
+            ))}
+          </nav>
+          <div className="dyn-graph-stage">
+            <div className="dyn-company-picker" aria-label="업체 선택">
+              <span>업체</span>
+              <div>
+                {pickerCompanies.map(company => (
+                  <button type="button" key={company.name} className={activeCompany === company.name ? "on" : ""}
+                    aria-pressed={activeCompany === company.name} onClick={() => setActiveCompany(company.name)}>
+                    {company.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="es-dynamics-map">
+              <KnowledgeGraph
+                key={graphKey}
+                companies={visibleCompanies}
+                cats={cats}
+                catMap={catMap}
+                progress={prog}
+                mode="dynamics"
+                relationEdges={visibleEdges}
+                articleByCo={articleByCo}
+                initialSelected={activeCompany}
+                onNodeSelect={setActiveCompany}
+                compact
+                active={inView}
+              />
+            </div>
+          </div>
         </div>
         <aside className="dyn-video-panel" aria-live="polite"
           onPointerEnter={() => setMediaReady(true)} onFocusCapture={() => setMediaReady(true)}>
@@ -3231,9 +3301,20 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
             <div className="dyn-video-head">
               <span>AI INDUSTRY</span>
               <b>Competitive Dynamics</b>
-              <div className="dyn-axis-list" aria-label="관계 축">
-                {DYNAMICS_AXES.map(axis => <span key={axis.id} style={{ "--axis": axis.color }}><i />{axis.label}</span>)}
+              <div className="dyn-axis-list" aria-label="관계 축 필터">
+                <button type="button" aria-pressed={activeAxis === "all"} className={activeAxis === "all" ? "on" : ""}
+                  style={{ "--axis": "#AABBE0" }} onClick={() => setActiveAxis("all")}><i />전체</button>
+                {DYNAMICS_AXES.map(axis => (
+                  <button type="button" key={axis.id} aria-pressed={activeAxis === axis.id}
+                    className={activeAxis === axis.id ? "on" : ""} style={{ "--axis": axis.color }}
+                    onClick={() => setActiveAxis(axis.id)}><i />{axis.label}</button>
+                ))}
               </div>
+            </div>
+            <div className="dyn-filter-context" aria-live="polite">
+              <span style={{ "--layer": activeLayerMeta?.accent || "#173F5F" }}><i />{activeLayerMeta?.ko || "전체 밸류체인"}</span>
+              <b>{activeAxisMeta?.label || "전체 관계"}</b>
+              <em>{visibleCompanies.length}개사 · 관계 {visibleEdges.length}건</em>
             </div>
             {selectedCompany && (
               <div className="dyn-selected">
@@ -3278,6 +3359,9 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
                       </div>
                     ))}
                   </div>
+                )}
+                {relationshipGroups.length === 0 && (
+                  <div className="dyn-relationship-empty">선택 조건에서 확인된 관계 없음 · 다른 관계 축을 선택</div>
                 )}
                 <div className="dyn-selected-actions">
                   <button type="button" className="dyn-detail-action" onClick={() => openCompany(selectedCompany)}>
