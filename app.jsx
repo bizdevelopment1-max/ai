@@ -659,7 +659,7 @@ function App() {
     );
     if (id === "newbiz") return (
       <LazySection id="newbiz" active={active} sectionRef={refs.newbiz} height={900}>
-        <NewBizBoard articles={articles} dataVersion={dataVersion} />
+        <NewBizBoard dataVersion={dataVersion} />
       </LazySection>
     );
     if (id === "valuechain") return (

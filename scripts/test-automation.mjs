@@ -1402,9 +1402,9 @@ try {
     && boards.includes("const isInActiveLayer = pickerCompanies.some")
     && boards.includes("hasVisibleRelationship")
     && boards.includes('className="dyn-filter-context"')
-    && boards.includes('className="dyn-axis-empty"')
+    && boards.includes(".filter(axis => axis.items.length > 0)")
     && boards.includes("items: scopedEdges.filter")
-    && boards.includes("확인된 원문 관계 없음")
+    && !boards.includes("확인된 원문 관계 없음")
     && boards.includes("const wrapNodeLabel")
     && boards.includes("const graphLayerLabels")
     && boards.includes("companies.length * 17")
@@ -1430,7 +1430,7 @@ try {
     && styles.includes(".dyn-company-picker")
     && styles.includes(".dyn-axis-list button")
     && styles.includes(".dyn-filter-context")
-    && styles.includes(".dyn-axis-empty")
+    && !styles.includes(".dyn-axis-empty")
     && styles.includes(".dyn-video-panel")
     && styles.includes(".dyn-relationship")
     && styles.includes(".dyn-company-open")
@@ -1565,13 +1565,17 @@ try {
 }
 
 try {
-  const [app, components] = await Promise.all([
+  const [app, components, boards] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("components.jsx", "utf8"),
+    readFile("boards.jsx", "utf8"),
   ]);
   if (/\{\s*id:\s*["']bizmodel["']/.test(components)
     || /<LazySection\s+id=["']bizmodel["']/.test(app)
-    || /bizmodel:\s*uR\(null\)/.test(app)) {
+    || /bizmodel:\s*uR\(null\)/.test(app)
+    || components.includes('{ key: "service-opportunity"')
+    || boards.includes("<MonetizationPlaybook articles=")
+    || boards.includes('title="사업모델별 수요 신호"')) {
     throw new Error("the removed AI business-model menu or board is still rendered");
   }
   const aliasMatch = app.match(/bizmodel:\s*["'](\w+)["']/);
@@ -1582,7 +1586,7 @@ try {
   if (!targetAvailable) {
     throw new Error("legacy business-model links must redirect to an available section");
   }
-  console.log(`  OK  removed AI business-model board; legacy links redirect to '${aliasTarget}'`);
+  console.log(`  OK  removed AI business-model board and source-demand panels; legacy links redirect to '${aliasTarget}'`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  AI business-model removal: ${error.message}`);
