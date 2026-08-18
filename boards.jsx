@@ -3393,7 +3393,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
         basis: edge.basis,
       }))
       .slice(0, 3),
-  })) : [];
+  })).filter(axis => axis.items.length > 0) : [];
 
   return (
     <div className="es-compmap" ref={ref}>
@@ -3518,11 +3518,11 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
                   <span><em>EVIDENCE</em><b>{evidenceCount}건</b></span>
                   {lastVerifiedAt && <span><em>VERIFIED</em><b>{String(lastVerifiedAt).slice(0, 10)}</b></span>}
                 </div>
-                <div className="dyn-relationships" aria-label={`${selectedCompany.name} 관계 유형별 원문 근거`}>
+                {relationshipGroups.length > 0 && <div className="dyn-relationships" aria-label={`${selectedCompany.name} 관계 유형별 원문 근거`}>
                   {relationshipGroups.map(axis => (
                     <div key={axis.id} className="dyn-relationship" style={{ "--axis": axis.color }}>
                       <b>{axis.label} · {axis.items.length}</b>
-                      <div>{axis.items.length > 0 ? axis.items.map(item => (
+                      <div>{axis.items.map(item => (
                         <div className="dyn-related-row" key={`${item.company}-${item.label}`}>
                           <button type="button" onClick={() => openCompany(item.company)}
                             aria-label={`${item.company} 상세 개요 열기`}>{item.company}</button>
@@ -3530,10 +3530,10 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
                           <em>{item.date ? `${item.date.slice(2)} · ` : ""}{item.source || "시장 구조"}</em>
                           {item.url && <a href={item.url} target="_blank" rel="noopener" aria-label={`${item.company} 관계 근거 원문`}>원문 ↗</a>}
                         </div>
-                      )) : <span className="dyn-axis-empty">확인된 원문 관계 없음</span>}</div>
+                      ))}</div>
                     </div>
                   ))}
-                </div>
+                </div>}
                 <div className="dyn-selected-actions">
                   <button type="button" className="dyn-detail-action" onClick={() => openCompany(selectedCompany)}>
                     <Icon name="report" size={12} sw={2} /><span>기업 상세 개요</span><b aria-hidden="true" />
