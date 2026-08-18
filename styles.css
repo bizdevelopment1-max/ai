@@ -2568,6 +2568,7 @@ a[href]:hover .rainbow-on-hover,
   background: color-mix(in srgb, var(--axis) 28%, rgba(5,12,30,.72)); outline: none; transform: translateY(-1px);
 }
 .dyn-axis-list i { width: 7px; height: 7px; border-radius: 50%; background: var(--axis); }
+.dyn-axis-list button > em { color: #FFF; font-size: 8px; font-style: normal; font-weight: 900; }
 .dyn-filter-context {
   display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin: 10px 0;
   padding: 7px 9px; border: 1px solid rgba(255,255,255,.16); border-radius: 7px;
@@ -2661,10 +2662,7 @@ a[href]:hover .rainbow-on-hover,
   text-decoration: none; white-space: nowrap;
 }
 .dyn-related-row > a:hover, .dyn-related-row > a:focus-visible { color: #FFF; outline: none; text-decoration: underline; }
-.dyn-relationship-empty {
-  margin-top: 10px; padding: 9px 10px; border: 1px dashed rgba(255,255,255,.24); border-radius: 6px;
-  color: #C6D3EC; font-size: 10px; font-weight: 700;
-}
+.dyn-axis-empty { color: #C6D3EC; font-size: 8.5px; }
 .es-cm-live {
   display: inline-flex; align-items: center; margin-left: 2px; padding: 3px 7px;
   border: 1px solid #8EDBCF; border-radius: 4px; background: #E9F8F5;

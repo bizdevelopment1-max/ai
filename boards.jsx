@@ -2851,12 +2851,6 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
     const nodes = nodesRef.current;
     const edges = edgesRef.current;
 
-    const dark = document.documentElement.dataset.theme === "dark";
-    const bg = dark ? "#0E1525" : "#FAFBFE";
-    const gridC = dark ? "#1E2636" : "#EAEDF3";
-    const textC = dark ? "#E8ECF4" : "#0E1525";
-    const mutedC = dark ? "#6F7B90" : "#8A93A4";
-
     function tick() {
       const damp = 0.88;
       for (const n of nodes) {
@@ -2886,12 +2880,18 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
         fy += dy * 0.0008;
         n.vx = (n.vx + fx) * damp;
         n.vy = (n.vy + fy) * damp;
-        n.x = Math.max(n.r + 4, Math.min(W - n.r - 4, n.x + n.vx));
-        n.y = Math.max(n.r + 4, Math.min(H - n.r - 4, n.y + n.vy));
+        const labelHalf = Math.min(76, Math.max(n.r + 4, n.id.length * 2.8));
+        const labelFoot = n.r + (n.id.length > 17 ? 34 : 25);
+        n.x = Math.max(labelHalf + 5, Math.min(W - labelHalf - 5, n.x + n.vx));
+        n.y = Math.max(n.r + 6, Math.min(H - labelFoot - 5, n.y + n.vy));
       }
     }
 
     function draw() {
+      const dark = document.documentElement.dataset.theme === "dark";
+      const bg = dark ? "#0E1525" : "#FAFBFE";
+      const gridC = dark ? "#1E2636" : "#EAEDF3";
+      const mutedC = dark ? "#93A2BB" : "#68758A";
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
       for (let x = 40; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.strokeStyle = gridC; ctx.lineWidth = 0.5; ctx.stroke(); }
@@ -2922,7 +2922,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
         const faded = (hovered || selected) && !isH && !isS && !edges.some(e =>
           (e.from === (hovered || selected) && e.to === n.id) || (e.to === (hovered || selected) && e.from === n.id)
         );
-        ctx.globalAlpha = faded ? 0.2 : 1;
+        ctx.globalAlpha = faded ? 0.48 : 1;
         if (isH || isS) {
           ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 6, 0, Math.PI * 2);
           ctx.fillStyle = accent + "18"; ctx.fill();
@@ -2933,12 +2933,59 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
         g.addColorStop(0, accent + "DD"); g.addColorStop(1, accent);
         ctx.fillStyle = g; ctx.fill();
         ctx.strokeStyle = isH || isS ? "#fff" : accent + "60"; ctx.lineWidth = isH || isS ? 2.5 : 1; ctx.stroke();
-        ctx.font = `bold ${Math.max(9, n.r * 0.42)}px sans-serif`;
+        ctx.font = `bold ${Math.max(9, n.r * 0.34)}px sans-serif`;
         ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        const label = n.id.length > 10 ? n.id.slice(0, 9) + "…" : n.id;
-        ctx.fillText(label, n.x, n.y);
+        const initials = n.id.split(/\s+/).slice(0, 2).map(part => part[0]).join("").toUpperCase();
+        ctx.fillText(initials, n.x, n.y);
         ctx.globalAlpha = 1;
       }
+
+      // 업체명은 원 내부에서 자르지 않고 별도 라벨로 완전 표기한다.
+      // 두 줄까지 자동 줄바꿈하고 캔버스 가장자리 안으로 라벨 상자를
+      // 이동해 긴 이름도 원 밖에서 잘리지 않게 유지한다.
+      const wrapNodeLabel = (label, maxWidth) => {
+        const words = String(label || "").split(/\s+/).filter(Boolean);
+        const lines = [];
+        let current = "";
+        words.forEach(word => {
+          const next = current ? `${current} ${word}` : word;
+          if (current && ctx.measureText(next).width > maxWidth && lines.length === 0) {
+            lines.push(current);
+            current = word;
+          } else {
+            current = next;
+          }
+        });
+        if (current) lines.push(current);
+        return lines.slice(0, 2);
+      };
+      nodes.forEach(n => {
+        const isH = n.id === hovered;
+        const isS = n.id === selected;
+        const faded = (hovered || selected) && !isH && !isS && !edges.some(e =>
+          (e.from === (hovered || selected) && e.to === n.id) || (e.to === (hovered || selected) && e.from === n.id)
+        );
+        const accent = n.cat ? n.cat.accent : "#888";
+        ctx.globalAlpha = faded ? 0.62 : 1;
+        ctx.font = `800 ${isH || isS ? 10 : 9}px sans-serif`;
+        const lines = wrapNodeLabel(n.id, 122);
+        const textWidth = Math.max(...lines.map(line => ctx.measureText(line).width), 28);
+        const boxW = Math.min(142, textWidth + 12);
+        const boxH = lines.length * 11 + 7;
+        const boxCenterX = Math.max(boxW / 2 + 4, Math.min(W - boxW / 2 - 4, n.x));
+        let boxY = n.y + n.r + 5;
+        if (boxY + boxH > H - 4) boxY = n.y - n.r - boxH - 5;
+        ctx.fillStyle = dark ? "rgba(8,17,39,.92)" : "rgba(255,255,255,.95)";
+        ctx.strokeStyle = isH || isS ? accent : accent + "88";
+        ctx.lineWidth = isH || isS ? 1.5 : 1;
+        ctx.beginPath();
+        ctx.roundRect(boxCenterX - boxW / 2, boxY, boxW, boxH, 4);
+        ctx.fill(); ctx.stroke();
+        ctx.fillStyle = dark ? "#F7FAFF" : "#12243A";
+        ctx.textAlign = "center"; ctx.textBaseline = "top";
+        lines.forEach((line, index) => ctx.fillText(line, boxCenterX, boxY + 4 + index * 11));
+        ctx.globalAlpha = 1;
+      });
 
       const legendItems = sourceOnly ? [] : Object.entries(edgeColors).filter(([type]) => edges.some(edge => edge.type === type));
       ctx.font = "bold 10px sans-serif"; ctx.textBaseline = "top";
@@ -3087,11 +3134,8 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
 
   // 최신 source-backed 기사에서 명시적으로 확인된 관계를 먼저 만들고,
   // 시점성 주장이 없는 시장 중첩선만 보조선으로 합친다.
-  const { list, articleByCo, dynamicEdges } = React.useMemo(() => {
+  const { articleByCo, dynamicEdges } = React.useMemo(() => {
     const dynamicEdges = deriveCompanyRelationshipEdges(articles, companies);
-    const connected = new Set();
-    dynamicEdges.forEach(e => { connected.add(e.from); connected.add(e.to); });
-    const list = companies.filter(c => connected.has(c.name));
     const names = companies.map(c => c.name);
     const matchName = (co) => names.find(n => n === co || co.startsWith(n.split(" (")[0]) || n.startsWith(co.split(" (")[0]));
     const byName = {};
@@ -3101,7 +3145,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
       if (!m) return;
       if (!byName[m] || a.date > byName[m].date) byName[m] = { title: a.title, url: a.url, date: a.date };
     });
-    return { list, articleByCo: byName, dynamicEdges };
+    return { articleByCo: byName, dynamicEdges };
   }, [companies, articles]);
 
   const layerCounts = React.useMemo(() => Object.fromEntries(valueChainLayers.map(layer => [
@@ -3110,29 +3154,28 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
   ])), [companies, valueChainLayers]);
   const activeLayerMeta = valueChainLayers.find(layer => layer.id === activeLayer) || null;
   const activeAxisMeta = DYNAMICS_AXES.find(axis => axis.id === activeAxis) || null;
-  const { visibleCompanies, visibleEdges, pickerCompanies } = React.useMemo(() => {
-    const layerCompanies = activeLayer === "all"
-      ? []
+  const { visibleCompanies, visibleEdges, pickerCompanies, scopedEdges } = React.useMemo(() => {
+    const scopeCompanies = activeLayer === "all"
+      ? companies
       : companies.filter(company => company.layer === activeLayer);
-    const layerNames = new Set(layerCompanies.map(company => company.name));
+    const scopeNames = new Set(scopeCompanies.map(company => company.name));
     const layerEdges = activeLayer === "all"
       ? dynamicEdges
-      : dynamicEdges.filter(edge => layerNames.has(edge.from) || layerNames.has(edge.to));
+      : dynamicEdges.filter(edge => scopeNames.has(edge.from) || scopeNames.has(edge.to));
     const axisEdges = activeAxis === "all"
       ? layerEdges
       : layerEdges.filter(edge => activeAxisMeta?.types.includes(edge.type));
-    const visibleNames = new Set(layerCompanies.map(company => company.name));
-    if (activeLayer === "all" && activeAxis === "all") list.forEach(company => visibleNames.add(company.name));
+    // 선택 범위의 업체는 관계 근거 유무와 무관하게 항상 남긴다. 관계가
+    // 확인된 외부 계층 상대방만 맥락 노드로 추가한다.
+    const visibleNames = new Set(scopeNames);
     axisEdges.forEach(edge => { visibleNames.add(edge.from); visibleNames.add(edge.to); });
-    const pickerNames = activeLayer !== "all"
-      ? layerNames
-      : new Set((activeAxis === "all" ? list : companies.filter(company => visibleNames.has(company.name))).map(company => company.name));
     return {
       visibleCompanies: companies.filter(company => visibleNames.has(company.name)),
       visibleEdges: axisEdges,
-      pickerCompanies: companies.filter(company => pickerNames.has(company.name)),
+      pickerCompanies: scopeCompanies,
+      scopedEdges: layerEdges,
     };
-  }, [activeAxis, activeAxisMeta, activeLayer, companies, dynamicEdges, list]);
+  }, [activeAxis, activeAxisMeta, activeLayer, companies, dynamicEdges]);
   const edgeSignature = visibleEdges.map(edge => `${edge.from}>${edge.to}:${edge.type}:${edge.date || ""}`).join("|");
   const graphKey = `${activeLayer}:${activeAxis}:${visibleCompanies.map(c => c.name).join("|")}::${edgeSignature}`;
   const firstRelationshipCompany = visibleEdges[0]
@@ -3220,7 +3263,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
   };
   const relationshipGroups = selectedCompany ? DYNAMICS_AXES.map(axis => ({
     ...axis,
-    items: visibleEdges.filter(edge => axis.types.includes(edge.type) && (edge.from === selectedCompany.name || edge.to === selectedCompany.name))
+    items: scopedEdges.filter(edge => axis.types.includes(edge.type) && (edge.from === selectedCompany.name || edge.to === selectedCompany.name))
       .map(edge => ({
         company: edge.from === selectedCompany.name ? edge.to : edge.from,
         label: edge.label,
@@ -3231,7 +3274,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
         basis: edge.basis,
       }))
       .slice(0, 3),
-  })).filter(axis => axis.items.length > 0) : [];
+  })) : [];
 
   return (
     <div className="es-compmap" ref={ref}>
@@ -3307,7 +3350,9 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
                 {DYNAMICS_AXES.map(axis => (
                   <button type="button" key={axis.id} aria-pressed={activeAxis === axis.id}
                     className={activeAxis === axis.id ? "on" : ""} style={{ "--axis": axis.color }}
-                    onClick={() => setActiveAxis(axis.id)}><i />{axis.label}</button>
+                    aria-label={`${axis.label} 관계 ${scopedEdges.filter(edge => axis.types.includes(edge.type)).length}건`}
+                    onClick={() => setActiveAxis(axis.id)}><i /><span>{axis.label}</span>
+                    <em>{scopedEdges.filter(edge => axis.types.includes(edge.type)).length}</em></button>
                 ))}
               </div>
             </div>
@@ -3342,27 +3387,22 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
                   <span><em>EVIDENCE</em><b>{evidenceCount}건</b></span>
                   {publication.lastVerifiedAt && <span><em>VERIFIED</em><b>{String(publication.lastVerifiedAt).slice(0, 10)}</b></span>}
                 </div>
-                {relationshipGroups.length > 0 && (
-                  <div className="dyn-relationships">
-                    {relationshipGroups.map(axis => (
-                      <div key={axis.id} className="dyn-relationship" style={{ "--axis": axis.color }}>
-                        <b>{axis.label}</b>
-                        <div>{axis.items.map(item => (
-                          <div className="dyn-related-row" key={`${item.company}-${item.label}`}>
-                            <button type="button" onClick={() => openCompany(item.company)}
-                              aria-label={`${item.company} 상세 개요 열기`}>{item.company}</button>
-                            <span>{item.headline || item.label}</span>
-                            <em>{item.date ? `${item.date.slice(2)} · ` : ""}{item.source || "시장 구조"}</em>
-                            {item.url && <a href={item.url} target="_blank" rel="noopener" aria-label={`${item.company} 관계 근거 원문`}>원문 ↗</a>}
-                          </div>
-                        ))}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {relationshipGroups.length === 0 && (
-                  <div className="dyn-relationship-empty">선택 조건에서 확인된 관계 없음 · 다른 관계 축을 선택</div>
-                )}
+                <div className="dyn-relationships" aria-label={`${selectedCompany.name} 관계 유형별 원문 근거`}>
+                  {relationshipGroups.map(axis => (
+                    <div key={axis.id} className="dyn-relationship" style={{ "--axis": axis.color }}>
+                      <b>{axis.label} · {axis.items.length}</b>
+                      <div>{axis.items.length > 0 ? axis.items.map(item => (
+                        <div className="dyn-related-row" key={`${item.company}-${item.label}`}>
+                          <button type="button" onClick={() => openCompany(item.company)}
+                            aria-label={`${item.company} 상세 개요 열기`}>{item.company}</button>
+                          <span>{item.headline || item.label}</span>
+                          <em>{item.date ? `${item.date.slice(2)} · ` : ""}{item.source || "시장 구조"}</em>
+                          {item.url && <a href={item.url} target="_blank" rel="noopener" aria-label={`${item.company} 관계 근거 원문`}>원문 ↗</a>}
+                        </div>
+                      )) : <span className="dyn-axis-empty">확인된 원문 관계 없음</span>}</div>
+                    </div>
+                  ))}
+                </div>
                 <div className="dyn-selected-actions">
                   <button type="button" className="dyn-detail-action" onClick={() => openCompany(selectedCompany)}>
                     <Icon name="report" size={12} sw={2} /><span>기업 상세 개요</span><b aria-hidden="true" />
