@@ -210,7 +210,7 @@ const NAV = [
     { key: "monetization-roi", ko: "수익화·ROI" },
   ] },
   { id: "newbiz", ko: "서비스·수익 모델", en: "Service & Revenue Models", icon: "spark", group: "02 · 기회 설계", children: [
-    { key: "service-opportunity", ko: "서비스 기회" }, { key: "revenue-model", ko: "수익 모델" },
+    { key: "revenue-model", ko: "수익 모델" },
   ] },
   { id: "valuechain", ko: "AI 밸류체인", en: "AI Value Chain", icon: "ai", group: "03 · 생태계 선택", children: [] },
   { id: "signals", ko: "기술 변화 신호", en: "Technology Signals", icon: "pulse", group: "03 · 생태계 선택", children: [

@@ -4635,7 +4635,7 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
 }
 
 // 모바일 AI 신사업 발굴 — 사용자 Pain point와 AI Stack 변화를 경험·수익모델로 연결.
-function NewBizBoard({ sectionRef, articles, dataVersion }) {
+function NewBizBoard({ sectionRef, dataVersion }) {
   const inView = useInView(sectionRef);
   return (
     <section className="board signal-source-board" ref={sectionRef} data-screen-label="Mobile AI Business Opportunities">
@@ -4648,13 +4648,7 @@ function NewBizBoard({ sectionRef, articles, dataVersion }) {
           </div>
         </div>
 
-        {/* 1) AI 비즈니스 모델 전체 — 기업별 수익모델·활동 + 7개 수익화 유형(모두 원문 기반) */}
-        <div className="nav-subsection" data-nav-anchor="service-opportunity">
-          <MonetizationPlaybook articles={articles} dataVersion={dataVersion} />
-        </div>
         <div className="nav-subsection" data-nav-anchor="revenue-model">
-          <SignalInfographic file="bizmodel-view.json" delKey="aiDashDeletedBiz" articles={articles}
-            dataVersion={dataVersion} title="사업모델별 수요 신호" sub="구독·사용량·엔터프라이즈·하드웨어·거래·성과기반 — 모바일 고객 접점과 연결되는 원문 확인 카드만 누적 표시" />
           <BusinessModelForecasts dataVersion={dataVersion} />
         </div>
 
