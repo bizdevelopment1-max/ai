@@ -16,6 +16,7 @@ import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { sanitizePublicCopy } from "./public-copy.mjs";
 import { buildConsultingNavigation, buildStrategyView } from "./strategy-view.mjs";
+import { buildRelationshipLandscape } from "./relationship-landscape.mjs";
 
 const root = process.cwd();
 const readJson = async file => JSON.parse(await readFile(resolve(root, file), "utf8"));
@@ -307,6 +308,7 @@ try {
   const trackedNames = registry.map(company => company.name);
   const trackedKeys = new Set(trackedNames.map(name => name.replace(/\s*\(.*\)$/, "").toLowerCase()));
   const companies = await readJson("companies.json");
+  const relationshipLandscape = buildRelationshipLandscape({ dash, companyLedger: companies });
   const compactEvidence = evidence => (evidence || []).slice(0, 3).map(item => compact(item, [
     "title", "titleEn", "titleKo", "date", "source", "url",
   ]));
@@ -345,6 +347,25 @@ try {
         updatedAt: company.updatedAt || "",
       }];
     }));
+  const relationshipCompanies = relationshipLandscape.companies.map(identity => {
+    const record = companies.companies?.[identity.name] || {};
+    const {
+      sourceScore: _sourceScore, registered, group: _group, domain: _domain,
+      unit: _unit, mobileFit: _mobileFit, ...publicIdentity
+    } = identity;
+    const snapshot = identity.registered ? {} : {
+      mentions30: record.mentions30 || 0,
+      latest: compactLatest(record.latest),
+      sourceEvidenceCount: new Set([
+        record.intelligence?.currentBusiness,
+        record.intelligence?.revenueModel,
+        record.intelligence?.strategyDirection,
+        record.intelligence?.investmentDirection,
+      ].flatMap(section => section?.evidence || []).map(item => item?.url).filter(Boolean)).size,
+      lastVerifiedAt: record.intelligence?.publication?.lastVerifiedAt || "",
+    };
+    return { ...publicIdentity, ...snapshot };
+  });
 
   const byNewest = [...visibleArticles]
     .sort((left, right) => String(right.date || "").localeCompare(String(left.date || "")));
@@ -364,7 +385,7 @@ try {
   }
   const relationWords = /\b(?:partner|partnership|collaborat|integrat|invest|acquir|supply|license|deal|alliance|compete|versus|vs\.?|rival)\b|파트너|협력|통합|투자|인수|공급|라이선스|계약|경쟁/i;
   byNewest.filter(article => relationWords.test(`${article.titleEn || ""} ${article.title || ""}`))
-    .slice(0, 24).forEach(add);
+    .slice(0, 48).forEach(add);
   const overviewArticleKeys = [
     "date", "co", "cat", "source", "title", "titleEn", "titleKo", "url", "tag",
     "displayEligible", "provenance", "sourceRegion", "sourceLanguage",
@@ -383,6 +404,10 @@ try {
     sourceMode: "generated-source-backed",
     consultingNavigation: buildConsultingNavigation(consultingArchitecture),
     companyCount: Object.keys(overviewCompanies).length,
+    relationshipLandscape: {
+      ...relationshipLandscape,
+      companies: relationshipCompanies,
+    },
     articleCount: selected.size,
     sourceSummary,
     intelligenceTracks: Object.fromEntries(Object.entries(intelligenceTracks.tracks || {}).map(([id, track]) => [id, {

@@ -25,6 +25,13 @@ const [overview, index, appSource, boardSource, appBundle] = await Promise.all([
 ]);
 
 if (overview.sourceMode !== "generated-source-backed") failures.push("overview is not generated from source-backed ledgers");
+const landscape = overview.relationshipLandscape || {};
+if (landscape.sourceMode !== "source-grounded-balanced-layer-selection"
+  || Number(landscape.companyCount || 0) !== (landscape.companies || []).length
+  || Object.values(landscape.layerCounts || {}).some(count => Number(count) < 5)) {
+  failures.push("relationship landscape is not balanced across all seven source-grounded layers");
+}
+if ((landscape.companies || []).length > 64) failures.push(`relationship landscape carries ${landscape.companies.length} companies; maximum is 64`);
 if (!Array.isArray(overview.sourceSummary) || !overview.sourceSummary.length) failures.push("overview source summary is missing");
 if ((overview.articles || []).length > 64) failures.push(`overview carries ${(overview.articles || []).length} articles; maximum is 64`);
 if ((overview.articles || []).some(article => Object.hasOwn(article, "summary") || Object.hasOwn(article, "summaryLinesKo"))) {
@@ -50,4 +57,4 @@ if (failures.length) {
 
 console.log(`[delivery] initial first-party assets ${Math.round(initialBytes / 1024)} KB`);
 Object.entries(sizes).forEach(([file, size]) => console.log(`[delivery] ${file} ${Math.round(size / 1024)} KB`));
-console.log(`[delivery] overview ${overview.articleCount} relationship headlines · ${overview.companyCount} companies · generated source mix`);
+console.log(`[delivery] overview ${overview.articleCount} relationship headlines · ${overview.companyCount} detailed companies · ${landscape.companyCount || 0} landscape companies`);

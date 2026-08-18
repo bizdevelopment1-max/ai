@@ -44,6 +44,7 @@ const required = [
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
   "scripts/build-public-data.mjs",
+  "scripts/relationship-landscape.mjs",
   "scripts/update-site.mjs",
   "scripts/validate-site-content.mjs",
   "scripts/build-mobile-ai-business-db.mjs",
@@ -1371,6 +1372,8 @@ try {
     && boards.includes("deriveTaxonomyOverlapEdges")
     && boards.includes('basis: "taxonomy-inferred"')
     && boards.includes('source: "밸류체인 분류"')
+    && boards.includes('label: "분류 기반 계층 연계"')
+    && boards.includes('{ id: "structure", label: "계층 연계"')
     && boards.includes('article?.provenance?.status === "source-backed"')
     && boards.includes("relationEdges={visibleEdges}")
     && boards.includes("SOURCE + TAXONOMY · DAILY")
@@ -1403,6 +1406,8 @@ try {
     && boards.includes("items: scopedEdges.filter")
     && boards.includes("확인된 원문 관계 없음")
     && boards.includes("const wrapNodeLabel")
+    && boards.includes("const graphLayerLabels")
+    && boards.includes("companies.length * 17")
     && boards.includes("ctx.roundRect(boxCenterX")
     && !boards.includes('n.id.slice(0, 9) + "…"')
     && boards.includes("relationshipGroups.map(axis =>")
@@ -2113,12 +2118,20 @@ try {
     && [...latestPerTopic.values()].every(count => count === 1)
     && latestPerTopic.size === Number(publicMarket.latestTopicCount || 0)
     && Number(publicMarket.historicalRecordCount || 0) === marketRecords.length - latestPerTopic.size;
+  const landscape = overview.relationshipLandscape || {};
+  const landscapeLayers = Object.values(landscape.layerCounts || {});
+  const landscapeValid = landscape.sourceMode === "source-grounded-balanced-layer-selection"
+    && Number(landscape.companyCount || 0) === (landscape.companies || []).length
+    && Number(landscape.companyCount || 0) > Number(overview.companyCount || 0)
+    && landscapeLayers.length === 7 && landscapeLayers.every(count => Number(count) >= 5)
+    && (landscape.companies || []).every(company => company.name && company.layer && /^https?:\/\//.test(company.url || ""));
   if (!version.version || !/data-version\.json/.test(appSource)
     || !/overview-view\.json/.test(appSource) || !/news-view\.json/.test(appSource) || !/research-view\.json/.test(appSource)
     || !/market-view\.json/.test(boardsSource) || /Math\.floor\(Date\.now\s*\/\s*60000\)/.test(`${appSource}\n${boardsSource}`)
     || /setInterval\(_queueScan,\s*600\)/.test(animSource)
     || !/build-public-data\.mjs/.test(workflowSource)
     || overview.sourceMode !== "generated-source-backed" || overview.companyCount !== Object.keys(overview.companies || {}).length
+    || !landscapeValid || !/relationshipLandscape/.test(appSource)
     || !safe(overview.articles || []) || !safe(publicNews.articles || []) || !safe(publicResearch.feed || []) || !safe(marketRecords)
     || !(version.assets || []).includes("overview-view.json")
     || remainingMarketDuplicates || !mergedMarketRecordsValid

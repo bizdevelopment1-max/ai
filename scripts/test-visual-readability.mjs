@@ -2,13 +2,14 @@
 import { access, readFile } from "node:fs/promises";
 import { minifyCss } from "./build-browser-bundle.mjs";
 
-const [styles, styleBundle, app, boards, taxonomy, strategy] = await Promise.all([
+const [styles, styleBundle, app, boards, taxonomy, strategy, overview] = await Promise.all([
   readFile("styles.css", "utf8"),
   readFile("styles.bundle.css", "utf8"),
   readFile("app.jsx", "utf8"),
   readFile("boards.jsx", "utf8"),
   readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
   readFile("strategy-view.json", "utf8").then(JSON.parse),
+  readFile("overview-view.json", "utf8").then(JSON.parse),
 ]);
 
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
@@ -57,6 +58,7 @@ assert(styles.includes(".dyn-layer-tabs button:is(:hover, :focus-visible, .on)")
   && styles.includes(".dyn-company-picker button:is(:hover, :focus-visible, .on)")
   && styles.includes(".dyn-axis-list button:is(:hover, :focus-visible, .on)"), "competitive dynamics filters lack readable hover and selected states");
 assert(boards.includes("const wrapNodeLabel") && boards.includes("ctx.roundRect(boxCenterX")
+  && boards.includes("const graphLayerLabels") && boards.includes("companies.length * 17")
   && boards.includes('ctx.fillStyle = dark ? "#F7FAFF" : "#12243A"')
   && boards.includes('function draw() {\n      const dark = document.documentElement.dataset.theme === "dark";'), "competitive dynamics node labels are clipped or lack live theme-safe contrast");
 assert(styles.includes(".kg-hint-compact") && styles.includes(".msf-mname > b"), "remaining dashboard labels lack the 11.5px readability floor");
@@ -86,4 +88,4 @@ let legacyExists = true;
 try { await access("data.js"); } catch { legacyExists = false; }
 assert(!legacyExists, "legacy hardcoded data.js still exists");
 
-console.log(`visual-readability: ok · ${taxonomy.COMPANIES.length} value-chain companies · ${strategy.opportunityPortfolio.length} opportunities · ${strategy.expertSignals.length} evidence signals`);
+console.log(`visual-readability: ok · ${overview.relationshipLandscape?.companyCount || taxonomy.COMPANIES.length} landscape companies · ${strategy.opportunityPortfolio.length} opportunities · ${strategy.expertSignals.length} evidence signals`);
