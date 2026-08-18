@@ -354,30 +354,8 @@ const BRANDS = [
   { name: "Navy", bg: "#0B1F4D" },
 ];
 
-// 상대 시간(방금 전·n분 전·n시간 전·n일 전) — 30초마다 갱신해 '살아있는 사이트'임을
-// 시각적으로 드러냄. 소스는 data-version.json의 generatedAt(매일 자동 갱신).
-function relTime(iso) {
-  const t = Date.parse(iso || "");
-  if (isNaN(t)) return "";
-  const m = Math.max(0, (Date.now() - t) / 60000);
-  if (m < 1) return "방금 전";
-  if (m < 60) return `${Math.floor(m)}분 전`;
-  const h = m / 60;
-  if (h < 24) return `${Math.floor(h)}시간 전`;
-  return `${Math.floor(h / 24)}일 전`;
-}
-function useRelativeTime(iso) {
-  const [, tick] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => tick(x => x + 1), 30000);
-    return () => clearInterval(id);
-  }, []);
-  return relTime(iso);
-}
-
 // ---- Top bar ----------------------------------------------------
-function TopBar({ dark, onTheme, onMenuToggle, onColorCycle, onNav, generatedAt }) {
-  const rel = useRelativeTime(generatedAt);
+function TopBar({ dark, onTheme, onMenuToggle, onColorCycle, onNav }) {
   const [cliGuideSignal, setCliGuideSignal] = useState(0);
   return (
     <header className="topbar">
@@ -386,13 +364,6 @@ function TopBar({ dark, onTheme, onMenuToggle, onColorCycle, onNav, generatedAt 
       </button>
       <div className="tb-title">
         <h1>AI Intelligence</h1>
-        <div className="tb-title-meta">
-          {rel && (
-            <span className="tb-live" title={`데이터 파이프라인 마지막 갱신: ${generatedAt}`}>
-              <i className="tb-live-dot" />LIVE <em>{rel} 갱신</em>
-            </span>
-          )}
-        </div>
       </div>
       <nav className="tb-resource-actions" aria-label="작성 및 CLI 도움말">
         <a

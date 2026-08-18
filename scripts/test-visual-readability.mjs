@@ -53,6 +53,7 @@ assert(styles.includes(".dyn-company-facts p::before") && styles.includes("font-
 assert(styles.includes('.dyn-related-row:is(:hover, :focus-within)') && styles.includes("color: #FFFFFF !important"), "dark relationship hover lacks an explicit readable foreground");
 assert(styles.includes(".dyn-video-panel .tl-kw-key") && styles.includes("color: #E9D5FF !important"), "dark media-panel keyword highlight can inherit a low-contrast light-theme color");
 assert(styles.includes(".dyn-layer-tabs button:is(:hover, :focus-visible, .on)")
+  && styles.includes(".dyn-layer-tabs button.on .dyn-layer-index")
   && styles.includes(".dyn-company-picker button:is(:hover, :focus-visible, .on)")
   && styles.includes(".dyn-axis-list button:is(:hover, :focus-visible, .on)"), "competitive dynamics filters lack readable hover and selected states");
 assert(boards.includes("const wrapNodeLabel") && boards.includes("ctx.roundRect(boxCenterX")

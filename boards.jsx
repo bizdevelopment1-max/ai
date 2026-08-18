@@ -2709,6 +2709,67 @@ function inferExplicitRelation(text, leftName, rightName) {
   return "";
 }
 
+const TAXONOMY_STOP_WORDS = new Set([
+  "ai", "및", "기반", "서비스", "플랫폼", "도구", "기업", "생성", "개발", "솔루션", "모델",
+]);
+
+function relationTaxonomyTokens(value) {
+  return new Set(String(value || "")
+    .toLowerCase()
+    .split(/[\s·+/,()&]+/)
+    .map(token => token.replace(/[^a-z0-9가-힣-]/g, ""))
+    .filter(token => token.length > 1 && !TAXONOMY_STOP_WORDS.has(token)));
+}
+
+function deriveTaxonomyOverlapEdges(companies, evidenceEdges) {
+  const rows = companies || [];
+  if (rows.length < 2) return [];
+  const pairKey = (left, right) => [left, right].sort().join("|");
+  const seenPairs = new Set((evidenceEdges || []).map(edge => pairKey(edge.from, edge.to)));
+  const connected = new Set((evidenceEdges || []).flatMap(edge => [edge.from, edge.to]));
+  const fallbackEdges = [];
+
+  const scoreCandidate = (company, candidate) => {
+    const companyTokens = relationTaxonomyTokens(company.vchainVertical || company.unit);
+    const candidateTokens = relationTaxonomyTokens(candidate.vchainVertical || candidate.unit);
+    const sharedTokens = [...companyTokens].filter(token => candidateTokens.has(token)).length;
+    const companyAdjacent = company.adjacentLayers || [];
+    const candidateAdjacent = candidate.adjacentLayers || [];
+    return (company.layer && company.layer === candidate.layer ? 80 : 0)
+      + sharedTokens * 20
+      + (companyAdjacent.includes(candidate.layer) ? 14 : 0)
+      + (candidateAdjacent.includes(company.layer) ? 10 : 0)
+      + (company.cat === candidate.cat ? 4 : 0)
+      + (!connected.has(candidate.name) ? 3 : 0);
+  };
+
+  rows.forEach(company => {
+    if (connected.has(company.name)) return;
+    const candidates = rows
+      .filter(candidate => candidate.name !== company.name && !seenPairs.has(pairKey(company.name, candidate.name)))
+      .map(candidate => ({ candidate, score: scoreCandidate(company, candidate) }))
+      .sort((left, right) => right.score - left.score || left.candidate.name.localeCompare(right.candidate.name));
+    const peer = candidates[0]?.candidate;
+    if (!peer) return;
+    const pair = pairKey(company.name, peer.name);
+    seenPairs.add(pair);
+    connected.add(company.name);
+    connected.add(peer.name);
+    fallbackEdges.push({
+      from: company.name,
+      to: peer.name,
+      type: "경쟁",
+      label: "분류 기반 시장 중첩",
+      headline: `${company.vchainVertical || company.unit || "사업 영역"} ↔ ${peer.vchainVertical || peer.unit || "사업 영역"}`,
+      source: "밸류체인 분류",
+      date: "",
+      url: "",
+      basis: "taxonomy-inferred",
+    });
+  });
+  return fallbackEdges;
+}
+
 function deriveCompanyRelationshipEdges(articles, companies) {
   const evidenceEdges = [];
   const seen = new Set();
@@ -2766,7 +2827,8 @@ function deriveCompanyRelationshipEdges(articles, companies) {
     });
   });
 
-  return evidenceEdges.slice(0, 24);
+  const sourceBackedEdges = evidenceEdges.slice(0, 24);
+  return [...sourceBackedEdges, ...deriveTaxonomyOverlapEdges(companies, sourceBackedEdges)];
 }
 
 // 비즈니스 모델 전용 — 실제 '돈의 흐름'(투자·인수·매출·파트너십). 경쟁 관계는 제외
@@ -2905,7 +2967,8 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
         ctx.strokeStyle = (isHl || isSel) ? edgeColors[e.type] || "#888" : (dark ? "rgba(255,255,255,.08)" : "rgba(0,0,0,.06)");
         ctx.lineWidth = (isHl || isSel) ? 2.5 : 1;
-        ctx.setLineDash((isHl || isSel) ? (edgeDash[e.type] || []) : []);
+        const inferredDash = e.basis === "taxonomy-inferred" ? [2, 4] : null;
+        ctx.setLineDash(inferredDash || ((isHl || isSel) ? (edgeDash[e.type] || []) : []));
         ctx.stroke(); ctx.setLineDash([]);
         if (isHl || isSel) {
           const midpointX = (a.x + b.x) / 2, midpointY = (a.y + b.y) / 2;
@@ -3112,7 +3175,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
   );
 }
 
-// ---- Executive Summary 내 '경쟁 구도' — 관계(엣지)가 있는 업체만, 노드→최신 기사 ----
+// ---- Executive Summary 내 '경쟁 구도' — 전체 업체와 근거 유형별 관계 ----
 const DYNAMICS_AXES = [
   { id: "competition", label: "경쟁", color: "#FF4D4D", types: ["경쟁"] },
   { id: "partnership", label: "파트너십", color: "#2D6BFF", types: ["파트너십"] },
@@ -3152,6 +3215,9 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
     layer.id,
     companies.filter(company => company.layer === layer.id).length,
   ])), [companies, valueChainLayers]);
+  const relationshipCoverageCount = React.useMemo(() => new Set(dynamicEdges.flatMap(edge => [edge.from, edge.to])).size, [dynamicEdges]);
+  const sourceBackedEdgeCount = dynamicEdges.filter(edge => edge.basis === "source-backed").length;
+  const taxonomyEdgeCount = dynamicEdges.filter(edge => edge.basis === "taxonomy-inferred").length;
   const activeLayerMeta = valueChainLayers.find(layer => layer.id === activeLayer) || null;
   const activeAxisMeta = DYNAMICS_AXES.find(axis => axis.id === activeAxis) || null;
   const { visibleCompanies, visibleEdges, pickerCompanies, scopedEdges } = React.useMemo(() => {
@@ -3188,11 +3254,11 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
 
   React.useEffect(() => {
     setActiveCompany(current => {
-      const isVisible = visibleCompanies.some(company => company.name === current);
+      const isInActiveLayer = pickerCompanies.some(company => company.name === current);
       const hasVisibleRelationship = visibleEdges.some(edge => edge.from === current || edge.to === current);
-      return isVisible && (!visibleEdges.length || hasVisibleRelationship) ? current : defaultCompany;
+      return isInActiveLayer && (!visibleEdges.length || hasVisibleRelationship) ? current : defaultCompany;
     });
-  }, [graphKey, defaultCompany]);
+  }, [graphKey, defaultCompany, pickerCompanies, visibleEdges]);
 
   React.useEffect(() => {
     if (!mediaActive || mediaReady) return undefined;
@@ -3281,7 +3347,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
      <AnimCtx.Provider value={inView}>
       <div className="es-cm-head">
         <span className="es-cm-kicker"><em>Competitive Dynamics</em></span>
-        <span className="es-cm-live">SOURCE-BACKED · DAILY</span>
+        <span className="es-cm-live">SOURCE + TAXONOMY · DAILY</span>
         <span className="es-cm-legend">
           <i style={{ background: "#FF4D4D" }} />경쟁
           <i style={{ background: "#2D6BFF" }} />파트너십
@@ -3292,16 +3358,26 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
       <div className="es-dynamics-grid">
         <div className="dyn-map-column">
           <nav className="dyn-layer-tabs" aria-label="AI 밸류체인별 업체" role="tablist" aria-orientation="vertical">
+            <header className="dyn-layer-head" role="presentation">
+              <span>AI VALUE CHAIN</span>
+              <b>업체 관계 탐색</b>
+              <strong>연결 {relationshipCoverageCount}/{companies.length}</strong>
+              <small>원문 {sourceBackedEdgeCount} · 분류 보완 {taxonomyEdgeCount}</small>
+            </header>
             <button type="button" role="tab" aria-selected={activeLayer === "all"}
               className={activeLayer === "all" ? "on" : ""}
               style={{ "--layer": "#173F5F" }} onClick={() => setActiveLayer("all")}>
-              <i /><span>전체 밸류체인</span><em>{companies.length}</em>
+              <span className="dyn-layer-index">ALL</span>
+              <span className="dyn-layer-copy"><b>전체 밸류체인</b><small><i style={{ width: "100%" }} /></small></span>
+              <em>{companies.length}</em>
             </button>
-            {valueChainLayers.map(layer => (
+            {valueChainLayers.map((layer, index) => (
               <button type="button" role="tab" key={layer.id} aria-selected={activeLayer === layer.id}
                 disabled={!layerCounts[layer.id]} className={activeLayer === layer.id ? "on" : ""}
                 style={{ "--layer": layer.accent }} onClick={() => setActiveLayer(layer.id)}>
-                <i /><span>{layer.ko}</span><em>{layerCounts[layer.id] || 0}</em>
+                <span className="dyn-layer-index">{String(index + 1).padStart(2, "0")}</span>
+                <span className="dyn-layer-copy"><b>{layer.ko}</b><small><i style={{ width: `${Math.round((layerCounts[layer.id] || 0) / Math.max(1, companies.length) * 100)}%` }} /></small></span>
+                <em>{layerCounts[layer.id] || 0}</em>
               </button>
             ))}
           </nav>
@@ -3359,7 +3435,8 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
             <div className="dyn-filter-context" aria-live="polite">
               <span style={{ "--layer": activeLayerMeta?.accent || "#173F5F" }}><i />{activeLayerMeta?.ko || "전체 밸류체인"}</span>
               <b>{activeAxisMeta?.label || "전체 관계"}</b>
-              <em>{visibleCompanies.length}개사 · 관계 {visibleEdges.length}건</em>
+              <em>{pickerCompanies.length}개사 · 관계 {visibleEdges.length}건</em>
+              <small>{visibleCompanies.length > pickerCompanies.length ? `외부 계층 ${visibleCompanies.length - pickerCompanies.length}개 맥락 노드 · ` : ""}실선 원문 · 점선 분류 기반</small>
             </div>
             {selectedCompany && (
               <div className="dyn-selected">
