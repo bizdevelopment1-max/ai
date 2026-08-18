@@ -52,6 +52,9 @@ assert(styles.includes('[data-theme="dark"] .msf-mece-stage-metrics b'), "MECE m
 assert(styles.includes(".dyn-company-facts p::before") && styles.includes("font-size: var(--text-xs) !important"), "dark competitive-panel labels can become too small or lose their bullet cue");
 assert(styles.includes('.dyn-related-row:is(:hover, :focus-within)') && styles.includes("color: #FFFFFF !important"), "dark relationship hover lacks an explicit readable foreground");
 assert(styles.includes(".dyn-video-panel .tl-kw-key") && styles.includes("color: #E9D5FF !important"), "dark media-panel keyword highlight can inherit a low-contrast light-theme color");
+assert(styles.includes(".dyn-layer-tabs button:is(:hover, :focus-visible, .on)")
+  && styles.includes(".dyn-company-picker button:is(:hover, :focus-visible, .on)")
+  && styles.includes(".dyn-axis-list button:is(:hover, :focus-visible, .on)"), "competitive dynamics filters lack readable hover and selected states");
 assert(styles.includes(".kg-hint-compact") && styles.includes(".msf-mname > b"), "remaining dashboard labels lack the 11.5px readability floor");
 assert(boards.includes('split(/\\n+|\\s+·\\s+/)') && boards.includes("핵심만 최대 3줄"), "feed summaries are not normalized into concise bullet lines");
 assert(boards.includes('<b>원문 <i aria-hidden="true" /></b>')

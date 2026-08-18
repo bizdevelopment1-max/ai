@@ -1368,7 +1368,7 @@ try {
     && boards.includes("const DYNAMICS_AXES")
     && boards.includes("deriveCompanyRelationshipEdges")
     && boards.includes('article?.provenance?.status === "source-backed"')
-    && boards.includes("relationEdges={dynamicEdges}")
+    && boards.includes("relationEdges={visibleEdges}")
     && boards.includes("SOURCE-BACKED · DAILY")
     && !boards.includes("const COMPETE_EDGES")
     && boards.includes("onNodeSelect={setActiveCompany}")
@@ -1378,6 +1378,18 @@ try {
     && boards.includes('className="dyn-proof-strip"')
     && boards.includes('className="dyn-related-row"')
     && boards.includes("openCompany(item.company)")
+    && boards.includes('className="dyn-layer-tabs"')
+    && boards.includes('aria-label="AI 밸류체인별 업체"')
+    && boards.includes('activeLayer === layer.id')
+    && boards.includes('className="dyn-company-picker"')
+    && boards.includes('aria-label="업체 선택"')
+    && boards.includes('onClick={() => setActiveCompany(company.name)}')
+    && boards.includes('aria-label="관계 축 필터"')
+    && boards.includes('activeAxis === axis.id')
+    && boards.includes("const firstRelationshipCompany = visibleEdges[0]")
+    && boards.includes("hasVisibleRelationship")
+    && boards.includes('className="dyn-filter-context"')
+    && boards.includes('className="dyn-relationship-empty"')
     && boards.includes("relationshipGroups.length > 0")
     && !boards.includes("false && relationshipGroups.length > 0")
     && boards.includes("video.playbackRate = 0.38")
@@ -1391,6 +1403,12 @@ try {
     && app.includes("needsFullCompanyData")
     && !app.includes('active === "overview" || !!selected');
   const interactiveLayout = styles.includes(".es-dynamics-grid")
+    && styles.includes(".dyn-map-column")
+    && styles.includes(".dyn-layer-tabs")
+    && styles.includes(".dyn-company-picker")
+    && styles.includes(".dyn-axis-list button")
+    && styles.includes(".dyn-filter-context")
+    && styles.includes(".dyn-relationship-empty")
     && styles.includes(".dyn-video-panel")
     && styles.includes(".dyn-relationship")
     && styles.includes(".dyn-company-open")
@@ -1404,9 +1422,9 @@ try {
     && styles.includes("animation: dynVideoDrift 34s")
     && styles.includes(".first-video-screen .es-dynamics-map,");
   if (!videoPanel || !interactiveLayout) {
-    throw new Error("competitive dynamics needs a left interactive circle map and a right combined-video insight panel");
+    throw new Error("competitive dynamics needs value-chain tabs, relation filters, an interactive map and a linked explanation panel");
   }
-  console.log("  OK  competitive dynamics links each selected circle to the right-side video insight panel");
+  console.log("  OK  competitive dynamics filters value-chain companies and links relation axes to the explanation panel");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  competitive dynamics video panel: ${error.message}`);
