@@ -282,11 +282,7 @@ a[href]:hover .rainbow-on-hover,
   padding: 1px 2px 2px 0; overflow: visible;
   color: var(--ink); background: none; -webkit-text-fill-color: currentColor;
 }
-.tb-title-meta { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .tb-sub { font-size: 11.5px; font-weight: 500; color: var(--muted); letter-spacing: 0; white-space: nowrap; }
-.tb-live { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; color: #0E8A50; white-space: nowrap; }
-.tb-live em { font-style: normal; font-weight: 600; color: var(--muted); letter-spacing: 0; }
-.tb-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #0E8A50; box-shadow: 0 0 0 rgba(14,138,80,.6); animation: tbLivePulse 2s ease-out infinite; }
 .tb-resource-actions { flex: none; display: flex; align-items: center; gap: 7px; }
 .tb-how-link, .tb-cli-guide {
   min-width: 0; height: 36px; padding: 0 10px 0 7px; display: inline-flex; align-items: center; gap: 6px;
@@ -304,18 +300,11 @@ a[href]:hover .rainbow-on-hover,
 }
 .tb-how-link:hover .tb-resource-icon, .tb-how-link:focus-visible .tb-resource-icon,
 .tb-cli-guide:hover .tb-resource-icon, .tb-cli-guide:focus-visible .tb-resource-icon { color: #fff; filter: brightness(1.08); }
-@keyframes tbLivePulse {
-  0% { box-shadow: 0 0 0 0 rgba(14,138,80,.55); }
-  70% { box-shadow: 0 0 0 6px rgba(14,138,80,0); }
-  100% { box-shadow: 0 0 0 0 rgba(14,138,80,0); }
-}
-@media (max-width: 720px) { .tb-live em { display: none; } }
 @media (max-width: 980px) {
   .topbar { gap: 10px; padding-inline: 14px; }
   .tb-how-link, .tb-cli-guide { width: 36px; padding: 0; justify-content: center; }
   .tb-how-link > span, .tb-cli-guide > span, .tb-how-link > svg { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { .tb-live-dot { animation: none; } }
 .tb-tools { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 .tb-search {
   display: flex; align-items: center; gap: 8px; background: var(--panel);
@@ -6119,8 +6108,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 @media (max-width: 620px) {
   .tb-title { min-width: 118px; }
-  .tb-title-meta { align-items: flex-start; flex-direction: column; gap: 2px; }
-  .tb-live { white-space: normal; }
   .board-en { width: 100%; }
 }
 
@@ -6144,7 +6131,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 /* Global semantic labels never fall below the readable metadata floor. */
 .main :where(dt, small, time, figcaption),
 .sidebar :where(.sb-group, .sb-sub-val, .sb-logo-txt span),
-.topbar :where(.tb-live, .tb-how-link, .tb-cli-guide),
+.topbar :where(.tb-how-link, .tb-cli-guide),
 .site-cli-panel :where(small, em, span, button) {
   font-size: var(--text-xs) !important;
   line-height: 1.45;

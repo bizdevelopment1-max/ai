@@ -303,7 +303,8 @@ try {
     && components.includes("guideSignal={cliGuideSignal}")
     && components.includes('target="_blank"')
     && components.includes('rel="noreferrer"')
-    && styles.includes(".tb-title-meta")
+    && !components.includes('className="tb-live"')
+    && !styles.includes(".tb-live")
     && styles.includes(".tb-resource-actions")
     && styles.includes(".tb-how-link:hover, .tb-how-link:focus-visible, .tb-cli-guide:hover, .tb-cli-guide:focus-visible");
   if (!howLinkReady) throw new Error("top bar must expose the published How guide as an accessible external link");
