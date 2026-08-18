@@ -2446,40 +2446,48 @@ a[href]:hover .rainbow-on-hover,
   display: grid; grid-template-columns: minmax(460px, 1.25fr) minmax(340px, .85fr); gap: 14px; align-items: stretch;
 }
 .dyn-map-column {
-  min-width: 0; display: grid; grid-template-columns: minmax(164px, .38fr) minmax(286px, 1fr);
+  min-width: 0; display: grid; grid-template-columns: minmax(184px, .42fr) minmax(276px, 1fr);
   gap: 10px; align-items: stretch;
 }
 .dyn-layer-tabs {
-  min-width: 0; display: flex; flex-direction: column; gap: 5px; padding: 10px;
-  border: 1px solid var(--border); border-radius: 14px;
-  background: linear-gradient(155deg, color-mix(in srgb, #173F5F 8%, var(--panel)), var(--panel));
-  box-shadow: 0 8px 20px rgba(18, 48, 71, .07);
+  min-width: 0; align-self: start; display: flex; flex-direction: column; gap: 2px; padding: 0 8px 8px;
+  overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: var(--panel);
 }
+.dyn-layer-head {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; margin: 0 -8px 5px;
+  padding: 12px 13px 11px; background: #173F5F; color: #F6FAFF;
+}
+.dyn-layer-head > span { grid-column: 1 / -1; color: #9FD6DF; font-size: 8.5px; }
+.dyn-layer-head > b { color: #FFF; font-size: 13px; line-height: 1.25; }
+.dyn-layer-head > strong { color: #F8CA5E; font: 900 10px/1.3 var(--mono); }
+.dyn-layer-head > small { grid-column: 1 / -1; color: #C9D6E4; font-size: 9px; }
 .dyn-layer-tabs button {
-  width: 100%; min-width: 0; display: grid; grid-template-columns: 10px minmax(0, 1fr) auto;
-  align-items: center; gap: 8px; padding: 9px 8px; border: 1px solid transparent; border-radius: 7px;
+  position: relative; width: 100%; min-width: 0; display: grid; grid-template-columns: 27px minmax(0, 1fr) auto;
+  align-items: center; gap: 8px; min-height: 48px; padding: 6px 7px; border: 1px solid transparent; border-radius: 7px;
   background: transparent; color: var(--ink-2); cursor: pointer; font: inherit; text-align: left;
-  transition: color .18s, background .18s, border-color .18s, transform .18s;
 }
-.dyn-layer-tabs button > i {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--layer);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--layer) 15%, transparent);
+.dyn-layer-index {
+  display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid color-mix(in srgb, var(--layer) 40%, var(--line));
+  border-radius: 50%; color: var(--layer); font: 900 8px/1 var(--mono); background: color-mix(in srgb, var(--layer) 6%, var(--panel));
 }
-.dyn-layer-tabs button > span {
-  min-width: 0; color: inherit; font-size: 11px; font-weight: 780; line-height: 1.35;
-  word-break: keep-all; text-wrap: pretty;
+.dyn-layer-copy { min-width: 0; display: grid; gap: 6px; }
+.dyn-layer-copy > b {
+  color: inherit; font-size: 11px; font-weight: 800; line-height: 1.3; word-break: keep-all;
 }
+.dyn-layer-copy > small { height: 2px; border-radius: 9px; background: var(--line); }
+.dyn-layer-copy > small > i { display: block; height: 100%; background: var(--layer); }
 .dyn-layer-tabs button > em {
-  min-width: 25px; padding: 2px 6px; border-radius: 999px;
-  background: color-mix(in srgb, var(--layer) 10%, var(--panel)); color: var(--layer);
-  font-family: var(--mono); font-size: 9.5px; font-style: normal; font-weight: 900; text-align: center;
+  min-width: 26px; padding: 3px 6px; border: 1px solid color-mix(in srgb, var(--layer) 22%, var(--line)); border-radius: 4px;
+  background: color-mix(in srgb, var(--layer) 6%, var(--panel)); color: var(--layer);
+  font: 900 9.5px/1.2 var(--mono); font-style: normal; text-align: center;
 }
 .dyn-layer-tabs button:is(:hover, :focus-visible, .on) {
-  border-color: color-mix(in srgb, var(--layer) 50%, var(--line));
-  background: color-mix(in srgb, var(--layer) 9%, var(--panel)); color: var(--ink);
-  outline: none; transform: translateX(2px);
+  border-color: color-mix(in srgb, var(--layer) 42%, var(--line));
+  background: color-mix(in srgb, var(--layer) 7%, var(--panel)); color: var(--ink); outline: none;
 }
-.dyn-layer-tabs button.on { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--layer) 22%, transparent); }
+.dyn-layer-tabs button:is(:hover, :focus-visible) { transform: translateX(2px); }
+.dyn-layer-tabs button.on { box-shadow: inset 3px 0 var(--layer); }
+.dyn-layer-tabs button.on .dyn-layer-index { background: var(--layer); color: #FFF; border-color: var(--layer); }
 .dyn-layer-tabs button:disabled { opacity: .42; cursor: default; transform: none; }
 .dyn-graph-stage { min-width: 0; display: flex; flex-direction: column; gap: 7px; }
 .dyn-company-picker {
@@ -2569,6 +2577,7 @@ a[href]:hover .rainbow-on-hover,
 .dyn-filter-context > span i { width: 7px; height: 7px; border-radius: 50%; background: var(--layer); }
 .dyn-filter-context > b { color: #F8CA5E; font-size: 10px; font-weight: 900; }
 .dyn-filter-context > em { margin-left: auto; color: #AABBE0; font-size: 9px; font-style: normal; font-weight: 750; }
+.dyn-filter-context > small { width: 100%; color: #C6D3EC; font-size: 8.5px; }
 .dyn-selected {
   max-width: min(100%, 560px); padding: 15px 16px; border-radius: 14px;
   background: linear-gradient(135deg, rgba(8,17,39,.9), rgba(8,17,39,.64));
@@ -2678,6 +2687,7 @@ a[href]:hover .rainbow-on-hover,
     display: grid; grid-auto-flow: column; grid-auto-columns: minmax(174px, 1fr);
     overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: inline mandatory;
   }
+  .dyn-layer-head { display: none; }
   .dyn-layer-tabs button { scroll-snap-align: start; }
 }
 @media (max-width: 580px) {
