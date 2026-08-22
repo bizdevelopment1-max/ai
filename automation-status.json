@@ -1,147 +1,357 @@
 {
   "schemaVersion": 1,
-  "mode": "publish",
+  "mode": "full",
   "dryRun": false,
-  "startedAt": "2026-08-17T02:37:46.648Z",
-  "completedAt": "2026-08-17T02:37:53.145Z",
+  "startedAt": "2026-08-22T15:48:42.176Z",
+  "completedAt": "2026-08-22T15:58:07.151Z",
   "status": "completed",
   "stages": [
     {
-      "id": "normalize-final",
+      "id": "normalize-ingest",
       "status": "completed",
-      "durationMs": 128,
+      "durationMs": 180,
       "exitCode": 0
     },
     {
-      "id": "verify-evidence",
-      "status": "completed",
-      "durationMs": 356,
-      "exitCode": 0
-    },
-    {
-      "id": "rebuild-decisions",
-      "status": "completed",
-      "durationMs": 220,
-      "exitCode": 0
-    },
-    {
-      "id": "validate-decisions",
-      "status": "completed",
-      "durationMs": 69,
-      "exitCode": 0
-    },
-    {
-      "id": "audit",
-      "status": "completed",
-      "durationMs": 170,
-      "exitCode": 0
-    },
-    {
-      "id": "minimize-source-content",
-      "status": "completed",
-      "durationMs": 255,
-      "exitCode": 0
-    },
-    {
-      "id": "focus-gate",
-      "status": "completed",
-      "durationMs": 397,
-      "exitCode": 0
-    },
-    {
-      "id": "materialize-public-views",
-      "status": "completed",
-      "durationMs": 1800,
-      "exitCode": 0
-    },
-    {
-      "id": "source-compliance",
-      "status": "completed",
-      "durationMs": 47,
-      "exitCode": 0
-    },
-    {
-      "id": "dataset-lineage",
-      "status": "completed",
-      "durationMs": 170,
-      "exitCode": 0
-    },
-    {
-      "id": "service-level-report",
-      "status": "completed",
-      "durationMs": 46,
-      "exitCode": 0
-    },
-    {
-      "id": "immutable-archive",
-      "status": "completed",
-      "durationMs": 49,
-      "exitCode": 0
-    },
-    {
-      "id": "validate-publish-contracts",
-      "status": "completed",
-      "durationMs": 95,
-      "exitCode": 0
-    },
-    {
-      "id": "validate-publication-policy",
-      "status": "completed",
-      "durationMs": 51,
-      "exitCode": 0
-    },
-    {
-      "id": "calibrate-dedup",
-      "status": "completed",
-      "durationMs": 43,
-      "exitCode": 0
-    },
-    {
-      "id": "validate-boundaries",
+      "id": "validate-ingest-contracts",
       "status": "completed",
       "durationMs": 76,
       "exitCode": 0
     },
     {
-      "id": "validate-dag",
+      "id": "collect-direct-sources",
       "status": "completed",
-      "durationMs": 42,
+      "durationMs": 30610,
       "exitCode": 0
     },
     {
-      "id": "validate-consulting-architecture",
+      "id": "crawl-news",
       "status": "completed",
-      "durationMs": 58,
+      "durationMs": 41785,
       "exitCode": 0
     },
     {
-      "id": "validate-content-registry",
+      "id": "focus-before-analysis",
+      "status": "completed",
+      "durationMs": 624,
+      "exitCode": 0
+    },
+    {
+      "id": "crawl-stocks",
+      "status": "completed",
+      "durationMs": 56748,
+      "exitCode": 0
+    },
+    {
+      "id": "crawl-financials",
+      "status": "completed",
+      "durationMs": 16342,
+      "exitCode": 0
+    },
+    {
+      "id": "stock-events",
+      "status": "completed",
+      "durationMs": 129,
+      "exitCode": 0
+    },
+    {
+      "id": "briefing",
+      "status": "completed",
+      "durationMs": 161,
+      "exitCode": 0
+    },
+    {
+      "id": "startup-radar",
+      "status": "completed",
+      "durationMs": 267,
+      "exitCode": 0
+    },
+    {
+      "id": "insights",
+      "status": "completed",
+      "durationMs": 187,
+      "exitCode": 0
+    },
+    {
+      "id": "research",
+      "status": "completed",
+      "durationMs": 2988,
+      "exitCode": 0
+    },
+    {
+      "id": "markets",
+      "status": "completed",
+      "durationMs": 59138,
+      "exitCode": 0
+    },
+    {
+      "id": "refresh-source-content",
+      "status": "completed",
+      "durationMs": 5035,
+      "exitCode": 0
+    },
+    {
+      "id": "refresh-market-content",
+      "status": "completed",
+      "durationMs": 19868,
+      "exitCode": 0
+    },
+    {
+      "id": "reframe-source-briefs",
+      "status": "completed",
+      "durationMs": 80,
+      "exitCode": 0
+    },
+    {
+      "id": "a16z-startups",
+      "status": "completed",
+      "durationMs": 67,
+      "exitCode": 0
+    },
+    {
+      "id": "startup-profiles",
+      "status": "completed",
+      "durationMs": 183608,
+      "exitCode": 0
+    },
+    {
+      "id": "startup-organizations",
+      "status": "completed",
+      "durationMs": 3724,
+      "exitCode": 0
+    },
+    {
+      "id": "localize-source-sentences",
+      "status": "completed",
+      "durationMs": 16421,
+      "exitCode": 0
+    },
+    {
+      "id": "company-officials",
+      "status": "completed",
+      "durationMs": 11065,
+      "exitCode": 0
+    },
+    {
+      "id": "company-profiles",
+      "status": "completed",
+      "durationMs": 868,
+      "exitCode": 0
+    },
+    {
+      "id": "technology-signals",
+      "status": "completed",
+      "durationMs": 169,
+      "exitCode": 0
+    },
+    {
+      "id": "business-model-signals",
+      "status": "completed",
+      "durationMs": 161,
+      "exitCode": 0
+    },
+    {
+      "id": "monetization",
+      "status": "completed",
+      "durationMs": 245,
+      "exitCode": 0
+    },
+    {
+      "id": "initial-decisions",
+      "status": "completed",
+      "durationMs": 336,
+      "exitCode": 0
+    },
+    {
+      "id": "focus-after-ingest",
+      "status": "completed",
+      "durationMs": 653,
+      "exitCode": 0
+    },
+    {
+      "id": "company-registry",
+      "status": "completed",
+      "durationMs": 470,
+      "exitCode": 0
+    },
+    {
+      "id": "strategic-ventures",
+      "status": "completed",
+      "durationMs": 1014,
+      "exitCode": 0
+    },
+    {
+      "id": "company-intelligence",
+      "status": "completed",
+      "durationMs": 80675,
+      "exitCode": 0
+    },
+    {
+      "id": "company-news-index",
+      "status": "completed",
+      "durationMs": 274,
+      "exitCode": 0
+    },
+    {
+      "id": "investment-map",
+      "status": "completed",
+      "durationMs": 199,
+      "exitCode": 0
+    },
+    {
+      "id": "normalize-final",
+      "status": "completed",
+      "durationMs": 170,
+      "exitCode": 0
+    },
+    {
+      "id": "verify-evidence",
+      "status": "completed",
+      "durationMs": 588,
+      "exitCode": 0
+    },
+    {
+      "id": "rebuild-decisions",
+      "status": "completed",
+      "durationMs": 336,
+      "exitCode": 0
+    },
+    {
+      "id": "build-intelligence-tracks",
+      "status": "completed",
+      "durationMs": 398,
+      "exitCode": 0
+    },
+    {
+      "id": "validate-intelligence-tracks",
       "status": "completed",
       "durationMs": 61,
       "exitCode": 0
     },
     {
+      "id": "validate-decisions",
+      "status": "completed",
+      "durationMs": 75,
+      "exitCode": 0
+    },
+    {
+      "id": "audit",
+      "status": "completed",
+      "durationMs": 245,
+      "exitCode": 0
+    },
+    {
+      "id": "minimize-source-content",
+      "status": "completed",
+      "durationMs": 415,
+      "exitCode": 0
+    },
+    {
+      "id": "focus-gate",
+      "status": "completed",
+      "durationMs": 688,
+      "exitCode": 0
+    },
+    {
+      "id": "materialize-public-views",
+      "status": "completed",
+      "durationMs": 3458,
+      "exitCode": 0
+    },
+    {
+      "id": "source-compliance",
+      "status": "completed",
+      "durationMs": 38,
+      "exitCode": 0
+    },
+    {
+      "id": "dataset-lineage",
+      "status": "completed",
+      "durationMs": 245,
+      "exitCode": 0
+    },
+    {
+      "id": "service-level-report",
+      "status": "completed",
+      "durationMs": 37,
+      "exitCode": 0
+    },
+    {
+      "id": "immutable-archive",
+      "status": "completed",
+      "durationMs": 35,
+      "exitCode": 0
+    },
+    {
+      "id": "validate-publish-contracts",
+      "status": "completed",
+      "durationMs": 142,
+      "exitCode": 0
+    },
+    {
+      "id": "validate-publication-policy",
+      "status": "completed",
+      "durationMs": 49,
+      "exitCode": 0
+    },
+    {
+      "id": "calibrate-dedup",
+      "status": "completed",
+      "durationMs": 32,
+      "exitCode": 0
+    },
+    {
+      "id": "validate-boundaries",
+      "status": "completed",
+      "durationMs": 131,
+      "exitCode": 0
+    },
+    {
+      "id": "validate-dag",
+      "status": "completed",
+      "durationMs": 33,
+      "exitCode": 0
+    },
+    {
+      "id": "validate-consulting-architecture",
+      "status": "completed",
+      "durationMs": 38,
+      "exitCode": 0
+    },
+    {
+      "id": "validate-content-registry",
+      "status": "completed",
+      "durationMs": 34,
+      "exitCode": 0
+    },
+    {
       "id": "test-data-platform",
       "status": "completed",
-      "durationMs": 47,
+      "durationMs": 42,
       "exitCode": 0
     },
     {
       "id": "build-browser-bundles",
       "status": "completed",
-      "durationMs": 1087,
+      "durationMs": 19839,
+      "exitCode": 0
+    },
+    {
+      "id": "validate-delivery-performance",
+      "status": "completed",
+      "durationMs": 35,
       "exitCode": 0
     },
     {
       "id": "test-automation",
       "status": "completed",
-      "durationMs": 1163,
+      "durationMs": 3561,
       "exitCode": 0
     },
     {
       "id": "test-readability",
       "status": "completed",
-      "durationMs": 49,
+      "durationMs": 50,
       "exitCode": 0
     }
   ]
