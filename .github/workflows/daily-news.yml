@@ -76,11 +76,13 @@ jobs:
               # The merge process has exited at this point. A surviving lock
               # belongs to that completed process in the ephemeral CI clone.
               rm -f .git/index.lock
+              conflicts="$(git diff --name-only --diff-filter=U)"
               while IFS= read -r path; do
+                [ -z "$path" ] && continue
                 if ! git cat-file -e "origin/main:${path}" 2>/dev/null; then
                   git rm -f -- "$path"
                 fi
-              done < <(git diff --name-only --diff-filter=U)
+              done <<< "$conflicts"
               if git diff --name-only --diff-filter=U | grep -q .; then
                 echo "Unresolved staging conflicts remain; manual review required."
                 git diff --name-only --diff-filter=U
