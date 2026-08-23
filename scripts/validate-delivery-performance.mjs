@@ -41,6 +41,12 @@ if ((overview.articles || []).some(article => article.payloadMode !== "relations
   failures.push("overview articles are not explicitly marked as relationship headlines");
 }
 if (!/styles\.bundle\.css\?v=/.test(index) || /href="styles\.css/.test(index)) failures.push("index does not use the production CSS bundle");
+if (appBundle.includes("onPointerEnter") && boardSource.includes('onPointerEnter={() => setMediaReady(true)}')) {
+  failures.push("competitive video may still enter the initial request path on pointer hover");
+}
+if ((await readFile("styles.bundle.css", "utf8")).includes("@keyframes mplayEvidenceSweep")) {
+  failures.push("retired business-model CSS is still shipped to every visitor");
+}
 if (/Bloomberg · TechCrunch · The Information/.test(appSource)) failures.push("footer contains a fixed publisher list");
 if (/STRUCTURAL_COMPETE_EDGES/.test(boardSource)) failures.push("competitive map contains hard-coded relationship edges");
 if (/AI 런레이트 \$37B|투자 \$13B|GPU·랙 판매\(\$1\.8억/.test(appBundle)) {

@@ -1,9 +1,705 @@
 {
-  "generatedAt": "2026-08-16T03:05:01.067Z",
+  "generatedAt": "2026-08-23T06:55:09.187Z",
   "schemaVersion": 1,
   "policy": "상업 필드 6개 또는 행위 주체가 모두 확인되지 않으면 공개하지 않고 검토 대기열로 이동합니다.",
-  "total": 171,
+  "total": 186,
   "rows": [
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "invest",
+      "signal": "Moreover, those making the AI chips need money themselves to build for all that demand, such as Broadcom, reportedly aiming to raise as much as $100 billion in debt financing and AI data center builder Nscale eyes a $3 billion IPO",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Moreover, those making the AI chips need money themselves to build for all that demand, such as Broadcom, reportedly aiming to raise as much as $100 billion in debt financing and AI data center builder Nscale eyes a $3 billion IPO."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-08-21",
+      "url": "https://siliconangle.com/2026/08/21/politics-hits-data-centers-openai-falls-behind-anthropic-and-now-ai-is-too-big-to-fail-quietly/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Anthropic",
+      "candidateKind": "invest",
+      "signal": "Moreover, those making the AI chips need money themselves to build for all that demand, such as Broadcom, reportedly aiming to raise as much as $100 billion in debt financing and AI data center builder Nscale eyes a $3 billion IPO",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Moreover, those making the AI chips need money themselves to build for all that demand, such as Broadcom, reportedly aiming to raise as much as $100 billion in debt financing and AI data center builder Nscale eyes a $3 billion IPO."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-08-21",
+      "url": "https://siliconangle.com/2026/08/21/politics-hits-data-centers-openai-falls-behind-anthropic-and-now-ai-is-too-big-to-fail-quietly/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Amazon",
+      "candidateModel": "ads",
+      "signal": "How AWS Marketplace is using AI agents to meet the rising demand for AI agents",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Amazon",
+          "buyer": "",
+          "offering": "AWS Marketplace is using AI agent",
+          "billingUnit": "annual",
+          "priceOrRevenue": "$1.2 billion",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer"
+        ]
+      },
+      "source": "ZDNet",
+      "date": "2026-08-21",
+      "url": "https://www.zdnet.com/article/application-marketplaces-aws-ai-agents/",
+      "reasons": [
+        "missing:buyer"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Amazon",
+      "candidateModel": "ads",
+      "signal": "AWS Marketplace, one of the most well-known application marketplaces catering to enterprises of all sizes, is seeing rapid growth of its stable of AI agents, along with a rising number of traditional application offerings",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Amazon",
+          "buyer": "",
+          "offering": "AWS Marketplace is using AI agent",
+          "billingUnit": "annual",
+          "priceOrRevenue": "$1.2 billion",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer"
+        ]
+      },
+      "source": "ZDNet",
+      "date": "2026-08-21",
+      "url": "https://www.zdnet.com/article/application-marketplaces-aws-ai-agents/",
+      "reasons": [
+        "missing:buyer"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Hugging Face",
+      "candidateModel": "subscription",
+      "signal": "This suggests that the models are responding to acoustic cues that help them identify the benchmark membership and thus produce the expected transcript even if it contradicts the audio",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Hugging Face",
+          "buyer": "",
+          "offering": "recognition\nSix of the 11 model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Hugging Face Blog",
+      "date": "2026-08-21",
+      "url": "https://huggingface.co/blog/asr-benchmark-optimization",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Microsoft",
+      "candidateModel": "usage",
+      "signal": "Start instantly with Skales IQ, a free built-in trial that needs no API key, bring your own from 15+ AI providers, or run fully offline with Ollama",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Microsoft",
+          "buyer": "",
+          "offering": "Personal AI desktop agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue"
+        ]
+      },
+      "source": "GitHub",
+      "date": "2026-08-21",
+      "url": "https://github.com/skalesapp/skales",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Scale AI",
+      "candidateModel": "usage",
+      "signal": "It fits with the theme of using large inflows and US$177b of dry powder to back capital intensive projects and supports the idea of expanded fee streams from credit and infrastructure aligned strategies",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Scale AI",
+          "buyer": "",
+          "offering": "Large Scale AI Infrastructure Financing Platform",
+          "billingUnit": "",
+          "priceOrRevenue": "$180.5",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-21",
+      "url": "https://finance.yahoo.com/technology/ai/articles/blackstone-bx-targets-large-scale-120943547.html",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Scale AI",
+      "candidateKind": "expand",
+      "signal": "It fits with the theme of using large inflows and US$177b of dry powder to back capital intensive projects and supports the idea of expanded fee streams from credit and infrastructure aligned strategies",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "It fits with the theme of using large inflows and US$177b of dry powder to back capital intensive projects and supports the idea of expanded fee streams from credit and infrastructure aligned strategies."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-21",
+      "url": "https://finance.yahoo.com/technology/ai/articles/blackstone-bx-targets-large-scale-120943547.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Scale AI",
+      "candidateModel": "usage",
+      "signal": "It allocates capital across private equity, real estate, credit and multi asset strategies, which positions the firm to act as a large scale funding partner for capital intensive AI infrastructure projects",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Scale AI",
+          "buyer": "",
+          "offering": "Large Scale AI Infrastructure Financing Platform",
+          "billingUnit": "",
+          "priceOrRevenue": "$180.5",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-21",
+      "url": "https://finance.yahoo.com/technology/ai/articles/blackstone-bx-targets-large-scale-120943547.html",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Scale AI",
+      "candidateKind": "invest",
+      "signal": "It allocates capital across private equity, real estate, credit and multi asset strategies, which positions the firm to act as a large scale funding partner for capital intensive AI infrastructure projects",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "It allocates capital across private equity, real estate, credit and multi asset strategies, which positions the firm to act as a large scale funding partner for capital intensive AI infrastructure projects."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-21",
+      "url": "https://finance.yahoo.com/technology/ai/articles/blackstone-bx-targets-large-scale-120943547.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Hugging Face",
+      "candidateModel": "usage",
+      "signal": "Up to 3.2x Faster Inference with LFM2.5-DSpark",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Hugging Face",
+          "buyer": "",
+          "offering": "we release DSpark draft model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Hugging Face Blog",
+      "date": "2026-08-20",
+      "url": "https://huggingface.co/blog/LiquidAI/lfm25-dspark",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Hugging Face",
+      "candidateModel": "usage",
+      "signal": "How does DSpark work Training and Architecture Quality parity Inference Speed Up on CPU and GPU How to use LFM2.5-DSpark Get Started Citation Today, we release DSpark draft model checkpoints for three models from our LFM2.5 family: LFM2.5-1.2B-Instruct, LFM2.5-2.6B, and LFM2.5-8B-A1B",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Hugging Face",
+          "buyer": "",
+          "offering": "we release DSpark draft model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Hugging Face Blog",
+      "date": "2026-08-20",
+      "url": "https://huggingface.co/blog/LiquidAI/lfm25-dspark",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Hugging Face",
+      "candidateModel": "usage",
+      "signal": "Toward on-device agentic inference : cuts function-calling latency by 57% on average for LFM2.5-2.6B Day-one support for llama.cpp and SGLang : LFM-compatible DSpark integration is open-sourced upstream The decode phase in LLM inference is traditionally memory-bound",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Hugging Face",
+          "buyer": "",
+          "offering": "we release DSpark draft model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Hugging Face Blog",
+      "date": "2026-08-20",
+      "url": "https://huggingface.co/blog/LiquidAI/lfm25-dspark",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Hugging Face",
+      "candidateModel": "usage",
+      "signal": "These add a speculative decoding path that trades a minimal memory increase for a large decoding speedup without changing output quality: Faster inference : up to 3.18 throughput improvement on a GPU and up to 2.87x on-device",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Hugging Face",
+          "buyer": "",
+          "offering": "we release DSpark draft model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Hugging Face Blog",
+      "date": "2026-08-20",
+      "url": "https://huggingface.co/blog/LiquidAI/lfm25-dspark",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "According to Gartner, “Market Shapers are ushering in a new era of industrialized, autonomous revenue engines, combining enterprise-grade governance, compliance and data security with frontier AI innovation, empowering marketing teams to move beyond pilots to scalable, autonomous agent orchestration as the new standard for modern GTM execution.”",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "",
+          "offering": "for AI Agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-08-19",
+      "url": "https://writer.com/blog/writer-gartner-market-shaper/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "WRITER believes it is at the forefront of this shift, combining powerful agent capabilities with an enterprise-grade platform that turns an organization’s expertise into shared infrastructure the whole team can use, connects go-to-market work, and keeps outputs on-brand, compliant, and supervised as agentic AI scales",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "",
+          "offering": "for AI Agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-08-19",
+      "url": "https://writer.com/blog/writer-gartner-market-shaper/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Cognition",
+      "candidateKind": "ma",
+      "signal": "SpaceX recently completed a $60 billion acquisition of Cursor, a fast-growing startup and central player in tech's \"vibe coding\" era",
+      "kind": "ma",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "SpaceX recently completed a $60 billion acquisition of Cursor, a fast-growing startup and central player in tech's \"vibe coding\" era."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-19",
+      "url": "https://finance.yahoo.com/technology/ai/articles/spacex-attempted-acquire-ai-coding-190705186.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Hugging Face",
+      "candidateModel": "usage",
+      "signal": "PyLate comes up throughout this post, so briefly: Sentence Transformers handled dense and sparse models but not late interaction, so LightOn built PyLate on top of it to close that gap, adding the training, inference, and retrieval pieces these models need",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Hugging Face",
+          "buyer": "",
+          "offering": "Embedding Model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Hugging Face Blog",
+      "date": "2026-08-18",
+      "url": "https://huggingface.co/blog/multi-vector-encoder",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Abridge",
+      "candidateModel": "enterprise",
+      "signal": "Today, we are announcing that Abridge’s context-aware decision support will soon be available to every clinician at our partner health systems, regardless of how that clinician documents visits: 300+ enterprise health systems representing 250 million patients More than half of Abridge users already leveraging decision support “Adoption of decision support has outpaced anything we've shipped before because it feels like a natural extension of Abridge",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Abridge",
+          "buyer": "users",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "250 million",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "offering",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Abridge",
+      "date": "2026-08-18",
+      "url": "https://www.abridge.com/blog/context-aware-clinical-intelligence-for-every-clinician-partner-systems",
+      "reasons": [
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "ads",
+      "signal": "Synchrony and OpenAI Partner to Drive Growth in Agentic Commerce",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
+          "buyer": "",
+          "offering": "Partner to Drive Growth in Agent",
+          "billingUnit": "",
+          "priceOrRevenue": "$5.07",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-18",
+      "url": "https://finance.yahoo.com/technology/ai/articles/synchrony-openai-partner-drive-growth-150800192.html",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "NVIDIA",
+      "candidateKind": "invest",
+      "signal": "They may have strong customer demand and rapidly growing revenue yet still lack the decades-long infrastructure contracts and investment-grade financing capacity needed to secure the AI factory infrastructure independently",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "They may have strong customer demand and rapidly growing revenue yet still lack the decades-long infrastructure contracts and investment-grade financing capacity needed to secure the AI factory infrastructure independently."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "NVIDIA Blog",
+      "date": "2026-08-17",
+      "url": "https://blogs.nvidia.com/blog/securing-the-infrastructure-of-intelligence/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Hugging Face",
+      "candidateKind": "expand",
+      "signal": "Thirty-three points of a fixed, already-depreciating asset, recovered by reclaiming reserved standby capacity and placing the rest in priority order",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Thirty-three points of a fixed, already-depreciating asset, recovered by reclaiming reserved standby capacity and placing the rest in priority order."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Hugging Face Blog",
+      "date": "2026-08-17",
+      "url": "https://huggingface.co/blog/Dharma-AI/gpu-management-pt2",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Rothschild upgrades Apple to Buy as foldable iPhone and AI strategy drive optimism",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "Rothschild upgrades App",
+          "billingUnit": "",
+          "priceOrRevenue": "$400",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-17",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/rothschild-upgrades-apple-buy-foldable-103534031.html",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Rothschild & Co Redburn has upgraded Apple (NASDAQ:AAPL) from Neutral to Buy and lifted its price target sharply to $400 from $260, citing the company's expected entry into foldable smartphones alongside the potential evolution of its artificial intelligence strategy",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "Rothschild upgrades App",
+          "billingUnit": "",
+          "priceOrRevenue": "$400",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-17",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/rothschild-upgrades-apple-buy-foldable-103534031.html",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
     {
       "type": "monetization",
       "company": "Anthropic",
@@ -56,6 +752,298 @@
       "url": "https://openai.com/index/virgin-atlantic/chatgpt-work",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "usage",
+      "signal": "Evolving the Responses API to architect more efficient agents The GPT‑5.6 model family makes frontier-level agent performance dramatically more affordable, while also advancing the frontier of what is possible",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
+          "buyer": "",
+          "offering": "5.6\nInstructing the model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "OpenAI",
+      "date": "2026-08-15",
+      "url": "https://openai.com/index/builders-guide-to-gpt-5-6",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "Why Meta’s Smart Glasses Privacy Problem Is Becoming A Trust Problem",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "article suggests Meta prioritized commercial app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Forbes",
+      "date": "2026-08-14",
+      "url": "https://www.forbes.com/sites/timbajarin/2026/08/14/why-metas-smart-glasses-privacy-problem-is-becoming-a-trust-problem",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "The article suggests Meta prioritized commercial appeal over robust consent mechanisms, risking a reputation as a surveillance device",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "article suggests Meta prioritized commercial app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Forbes",
+      "date": "2026-08-14",
+      "url": "https://www.forbes.com/sites/timbajarin/2026/08/14/why-metas-smart-glasses-privacy-problem-is-becoming-a-trust-problem",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "Instagram’s decision to remove Meta-glasses footage that exploits or harasses unsuspecting people amounts to a tacit admission that the risk is already real",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "article suggests Meta prioritized commercial app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Forbes",
+      "date": "2026-08-14",
+      "url": "https://www.forbes.com/sites/timbajarin/2026/08/14/why-metas-smart-glasses-privacy-problem-is-becoming-a-trust-problem",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "Meta's smart glasses, designed to look like ordinary eyewear, have successfully overcome Google Glass's aesthetic failures",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "article suggests Meta prioritized commercial app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Forbes",
+      "date": "2026-08-14",
+      "url": "https://www.forbes.com/sites/timbajarin/2026/08/14/why-metas-smart-glasses-privacy-problem-is-becoming-a-trust-problem",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "Instead, OpenAI relies on SynthID and C2PA to signal whether something is AI-generated, while Meta launched its own Content Seal standard",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Instead, OpenAI relies on SynthID and C2PA to signal whether something is AI-generated, while Meta launched its own Content Seal standard ."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-08-14",
+      "url": "https://www.theverge.com/tech/980416/google-gemini-ai-watermarks-removal",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "Google plans on rolling out its new watermark setting to Search as well, but the toggle won’t launch in countries that require visible watermarks",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Google plans on rolling out its new watermark setting to Search as well, but the toggle won’t launch in countries that require visible watermarks."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-08-14",
+      "url": "https://www.theverge.com/tech/980416/google-gemini-ai-watermarks-removal",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "expand",
+      "signal": "Anthropic launched Opus 5 at $5 per million input tokens and $25 per million output tokens—half the price of its Fable 5 model",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Anthropic launched Opus 5 at $5 per million input tokens and $25 per million output tokens—half the price of its Fable 5 model."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Ars Technica",
+      "date": "2026-08-14",
+      "url": "https://www.ft.com/content/32a70a3c-7d28-40b4-808e-36edb58c7d01?syn-25a6b1a6=1",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "enterprise",
+      "signal": "Google launched Gemini 3.7 Flash, just three weeks after releasing Gemini 3.6 Flash, a testament to how fast the AI race is moving and to the application that vendors see as most compelling to enterprises",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "Developers",
+          "offering": "Developers\nGoogle is offering the model",
+          "billingUnit": "",
+          "priceOrRevenue": "$0.75",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "AI Business",
+      "date": "2026-08-14",
+      "url": "https://aibusiness.com/generative-ai/lower-intro-price-for-gemini-3-7-flash-attract-developers",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "enterprise",
+      "signal": "The pricing battle stems from enterprises' concerns about the high cost of using AI tokens and models for their AI goals and workflows",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "Developers",
+          "offering": "Developers\nGoogle is offering the model",
+          "billingUnit": "",
+          "priceOrRevenue": "$0.75",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "AI Business",
+      "date": "2026-08-14",
+      "url": "https://aibusiness.com/generative-ai/lower-intro-price-for-gemini-3-7-flash-attract-developers",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -141,133 +1129,6 @@
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "enterprise",
-      "signal": "Google launched Gemini 3.7 Flash, just three weeks after releasing Gemini 3.6 Flash, a testament to how fast the AI race is moving and to the application that vendors see as most compelling to enterprises",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "Developers",
-          "offering": "Developers\nGoogle is offering the model",
-          "billingUnit": "",
-          "priceOrRevenue": "$0.75",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AI Business",
-      "date": "2026-08-14",
-      "url": "https://aibusiness.com/generative-ai/lower-intro-price-for-gemini-3-7-flash-attract-developers",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "enterprise",
-      "signal": "The pricing battle stems from enterprises' concerns about the high cost of using AI tokens and models for their AI goals and workflows",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "Developers",
-          "offering": "Developers\nGoogle is offering the model",
-          "billingUnit": "",
-          "priceOrRevenue": "$0.75",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AI Business",
-      "date": "2026-08-14",
-      "url": "https://aibusiness.com/generative-ai/lower-intro-price-for-gemini-3-7-flash-attract-developers",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "expand",
-      "signal": "Anthropic launched Opus 5 at $5 per million input tokens and $25 per million output tokens—half the price of its Fable 5 model",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Anthropic launched Opus 5 at $5 per million input tokens and $25 per million output tokens—half the price of its Fable 5 model."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Ars Technica",
-      "date": "2026-08-14",
-      "url": "https://www.ft.com/content/32a70a3c-7d28-40b4-808e-36edb58c7d01?syn-25a6b1a6=1",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "Instead, OpenAI relies on SynthID and C2PA to signal whether something is AI-generated, while Meta launched its own Content Seal standard",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Instead, OpenAI relies on SynthID and C2PA to signal whether something is AI-generated, while Meta launched its own Content Seal standard ."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-08-14",
-      "url": "https://www.theverge.com/tech/980416/google-gemini-ai-watermarks-removal",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "Google plans on rolling out its new watermark setting to Search as well, but the toggle won’t launch in countries that require visible watermarks",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google plans on rolling out its new watermark setting to Search as well, but the toggle won’t launch in countries that require visible watermarks."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-08-14",
-      "url": "https://www.theverge.com/tech/980416/google-gemini-ai-watermarks-removal",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -583,115 +1444,201 @@
     },
     {
       "type": "monetization",
-      "company": "Meta AI",
+      "company": "Apple",
       "candidateModel": "hardware",
-      "signal": "Why Meta’s Smart Glasses Privacy Problem Is Becoming A Trust Problem",
+      "signal": "Apple's $250 Million AI iPhone Settlement Is Coming Sooner Than Expected. Learn Who's Eligible for a Payout - CNET",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Meta AI",
+          "seller": "Apple",
           "buyer": "",
-          "offering": "article suggests Meta prioritized commercial app",
+          "offering": "a court order today in App",
           "billingUnit": "",
-          "priceOrRevenue": "",
+          "priceOrRevenue": "$250 Million",
           "recurringRevenue": ""
         },
         "missing": [
           "buyer",
           "billingUnit",
-          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Forbes",
+      "source": "CNET",
       "date": "2026-08-14",
-      "url": "https://www.forbes.com/sites/timbajarin/2026/08/14/why-metas-smart-glasses-privacy-problem-is-becoming-a-trust-problem",
+      "url": "https://www.cnet.com/tech/mobile/apples-250-million-ai-iphone-settlement-is-coming-sooner-than-expected-learn-whos-eligible-for-a-payout",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
-        "missing:priceOrRevenue",
         "missing:recurringRevenue"
       ]
     },
     {
       "type": "monetization",
-      "company": "Meta AI",
+      "company": "Apple",
       "candidateModel": "hardware",
-      "signal": "The article suggests Meta prioritized commercial appeal over robust consent mechanisms, risking a reputation as a surveillance device",
+      "signal": "The legal machinery for class-action settlements grinds slowly, but a court order today in Apple’s $250 million case over its iPhone AI features potentially speeds things up by seven months",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Meta AI",
+          "seller": "Apple",
           "buyer": "",
-          "offering": "article suggests Meta prioritized commercial app",
+          "offering": "a court order today in App",
           "billingUnit": "",
-          "priceOrRevenue": "",
+          "priceOrRevenue": "$250 Million",
           "recurringRevenue": ""
         },
         "missing": [
           "buyer",
           "billingUnit",
-          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Forbes",
+      "source": "CNET",
       "date": "2026-08-14",
-      "url": "https://www.forbes.com/sites/timbajarin/2026/08/14/why-metas-smart-glasses-privacy-problem-is-becoming-a-trust-problem",
+      "url": "https://www.cnet.com/tech/mobile/apples-250-million-ai-iphone-settlement-is-coming-sooner-than-expected-learn-whos-eligible-for-a-payout",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
-        "missing:priceOrRevenue",
         "missing:recurringRevenue"
       ]
     },
     {
       "type": "monetization",
-      "company": "Meta AI",
+      "company": "Apple",
       "candidateModel": "hardware",
-      "signal": "Instagram’s decision to remove Meta-glasses footage that exploits or harasses unsuspecting people amounts to a tacit admission that the risk is already real",
+      "signal": "People who bought one of the following devices between June 10, 2024, and March 29, 2025, are eligible to receive a settlement payment: The iPhone 15 Pro and iPhone 15 Pro Max are included because they had the processor and memory to run Apple Intelligence features",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Meta AI",
+          "seller": "Apple",
           "buyer": "",
-          "offering": "article suggests Meta prioritized commercial app",
+          "offering": "a court order today in App",
           "billingUnit": "",
-          "priceOrRevenue": "",
+          "priceOrRevenue": "$250 Million",
           "recurringRevenue": ""
         },
         "missing": [
           "buyer",
           "billingUnit",
-          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Forbes",
+      "source": "CNET",
       "date": "2026-08-14",
-      "url": "https://www.forbes.com/sites/timbajarin/2026/08/14/why-metas-smart-glasses-privacy-problem-is-becoming-a-trust-problem",
+      "url": "https://www.cnet.com/tech/mobile/apples-250-million-ai-iphone-settlement-is-coming-sooner-than-expected-learn-whos-eligible-for-a-payout",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
-        "missing:priceOrRevenue",
         "missing:recurringRevenue"
       ]
     },
     {
-      "type": "monetization",
+      "type": "direction",
       "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "Meta's smart glasses, designed to look like ordinary eyewear, have successfully overcome Google Glass's aesthetic failures",
-      "model": "hardware",
+      "candidateKind": "invest",
+      "signal": "HP (HPQ) Heads Into Earnings With AI PC Hopes And Valuation Questions",
+      "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Meta AI",
+          "entity": "",
+          "actionStatement": "HP (HPQ) Heads Into Earnings With AI PC Hopes And Valuation Questions"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-14",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/hp-hpq-heads-earnings-ai-021238598.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "invest",
+      "signal": "The recent run up in HP's share price, including a 27.08% 1 month share price return and 50.41% 3 month share price return, suggests building momentum as investors position ahead of the August 26 earnings update",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The recent run up in HP's share price, including a 27.08% 1 month share price return and 50.41% 3 month share price return, suggests building momentum as investors position ahead of the August 26 earnings update."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-14",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/hp-hpq-heads-earnings-ai-021238598.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "invest",
+      "signal": "HP (HPQ) heads into its August 26 fiscal third quarter earnings release with investors focused on whether AI PC demand and recent revenue trends can support margins in the face of higher component costs",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "HP (HPQ) heads into its August 26 fiscal third quarter earnings release with investors focused on whether AI PC demand and recent revenue trends can support margins in the face of higher component costs."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-08-14",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/hp-hpq-heads-earnings-ai-021238598.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "SpaceX (xAI, Cursor)",
+      "candidateKind": "expand",
+      "signal": "According to the video, he said AI revenue could surpass revenue from all of SpaceX’s other businesses as soon as September, and projected that 10 gigawatts of AI computing capacity could generate between $300 billion and $500 billion in annual revenue",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "According to the video, he said AI revenue could surpass revenue from all of SpaceX’s other businesses as soon as September, and projected that 10 gigawatts of AI computing capacity could generate between $300 billion and $500 billion in annual revenue."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Fortune",
+      "date": "2026-08-14",
+      "url": "https://fortune.com/2026/08/14/elon-musk-spacex-employees-grok-ai-training/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Amazon",
+      "candidateModel": "enterprise",
+      "signal": "Monitor on-premises and multi-cloud AI agents with AgentCore Observability | Amazon Web Services",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Amazon",
           "buyer": "",
-          "offering": "article suggests Meta prioritized commercial app",
+          "offering": "Monitor on-premises and multi-cloud AI agent",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
@@ -703,9 +1650,9 @@
           "recurringRevenue"
         ]
       },
-      "source": "Forbes",
-      "date": "2026-08-14",
-      "url": "https://www.forbes.com/sites/timbajarin/2026/08/14/why-metas-smart-glasses-privacy-problem-is-becoming-a-trust-problem",
+      "source": "Amazon Web Services (AWS)",
+      "date": "2026-08-13",
+      "url": "https://aws.amazon.com/blogs/machine-learning/monitor-on-premises-and-multi-cloud-ai-agents-with-agentcore-observability",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
@@ -1145,6 +2092,29 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "Databricks",
+      "candidateKind": "invest",
+      "signal": "The funding round comes six months after the private data analytics software company raised $5 billion in funding and $2 billion in new debt capacity at a $134 billion valuation",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The funding round comes six months after the private data analytics software company raised $5 billion in funding and $2 billion in new debt capacity at a $134 billion valuation."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "CNBC",
+      "date": "2026-08-13",
+      "url": "https://www.cnbc.com/2026/08/13/databricks-funding-round-190-billion-valuation.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
       "type": "monetization",
       "company": "Google DeepMind",
       "candidateModel": "hardware",
@@ -1267,36 +2237,26 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "enterprise",
-      "signal": "Monitor on-premises and multi-cloud AI agents with AgentCore Observability | Amazon Web Services",
-      "model": "enterprise",
+      "type": "direction",
+      "company": "Databricks",
+      "candidateKind": "expand",
+      "signal": "That’s why we’re launching the next major cost control in Unity AI Gateway: Smart Routing, now available in Beta",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Amazon",
-          "buyer": "",
-          "offering": "Monitor on-premises and multi-cloud AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
+          "entity": "",
+          "actionStatement": "That’s why we’re launching the next major cost control in Unity AI Gateway: Smart Routing, now available in Beta."
         },
         "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
+          "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Amazon Web Services (AWS)",
+      "source": "Databricks",
       "date": "2026-08-13",
-      "url": "https://aws.amazon.com/blogs/machine-learning/monitor-on-premises-and-multi-cloud-ai-agents-with-agentcore-observability",
+      "url": "https://www.databricks.com/blog/smart-routing-unity-ai-gateway-match-frontier-quality-30-lower-cost-task",
       "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -1322,6 +2282,60 @@
       "source": "TechCrunch",
       "date": "2026-08-12",
       "url": "https://techcrunch.com/2026/08/12/ai-coding-startup-cognition-reportedly-already-in-talks-to-raise-at-40b-valuation",
+      "reasons": [
+        "missing:buyer"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "subscription",
+      "signal": "Ads are also present at the $8 per month Go tier, but not the $20 per month Pro plan and above",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
+          "buyer": "",
+          "offering": "20 per month Pro plan",
+          "billingUnit": "per month",
+          "priceOrRevenue": "$8",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-08-12",
+      "url": "https://www.engadget.com/2234173/chatgpt-free-features-2026",
+      "reasons": [
+        "missing:buyer"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "subscription",
+      "signal": "Access to the company's other models, including GPT-5.6 Terra and Sol, requires a subscription or paying for API pricing",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
+          "buyer": "",
+          "offering": "20 per month Pro plan",
+          "billingUnit": "per month",
+          "priceOrRevenue": "$8",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-08-12",
+      "url": "https://www.engadget.com/2234173/chatgpt-free-features-2026",
       "reasons": [
         "missing:buyer"
       ]
@@ -1563,54 +2577,95 @@
       ]
     },
     {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "partner",
-      "signal": "We co-authored a joint impact report for the release of SL2T 1.0 in Gboard and Live Transcribe, transparently detailing the technology's capabilities and current limitations — a collaborative approach we plan to continue for all major sign language releases",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "We co-authored a joint impact report for the release of SL2T 1.0 in Gboard and Live Transcribe, transparently detailing the technology's capabilities and current limitations — a collaborative approach we plan to continue for all major sign language releases."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Google DeepMind",
-      "date": "2026-08-12",
-      "url": "https://deepmind.google/blog/putting-sign-language-ai-into-users-hands",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
       "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
-      "signal": "Similarly to how hearing users can use dictation to speak instead of typing, this feature enables Deaf users to sign to their phone anywhere they’d normally type",
-      "model": "hardware",
+      "company": "Apple",
+      "candidateModel": "usage",
+      "signal": "For the most up-to-date requirements and API references, see: Learn more about how you can provide age-appropriate experiences and safeguard privacy in your apps and games using robust features available across Apple platforms",
+      "model": "usage",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "users",
-          "offering": "a collaborative approach we plan",
+          "seller": "Apple",
+          "buyer": "Developer",
+          "offering": "the most up-to-date requirements and API",
           "billingUnit": "",
-          "priceOrRevenue": "70 million",
+          "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
           "billingUnit",
+          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Google DeepMind",
+      "source": "Apple Developer",
       "date": "2026-08-12",
-      "url": "https://deepmind.google/blog/putting-sign-language-ai-into-users-hands",
+      "url": "https://developer.apple.com/news",
       "reasons": [
         "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "When we introduced the Image Playground framework, we included the ImageCreator class as a way for apps to generate images programmatically using the on-device image generation model",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "Developer",
+          "offering": "the most up-to-date requirements and API",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Apple Developer",
+      "date": "2026-08-12",
+      "url": "https://developer.apple.com/news",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "ads",
+      "signal": "Due to a recent court ruling lifting an injunction on Texas law SB 2420, new Apple Accounts in Texas are now subject to the law, which introduced age assurance requirements for app marketplaces and developers",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "Developer",
+          "offering": "the most up-to-date requirements and API",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Apple Developer",
+      "date": "2026-08-12",
+      "url": "https://developer.apple.com/news",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
         "missing:recurringRevenue"
       ]
     },
@@ -1858,96 +2913,113 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "usage",
-      "signal": "For the most up-to-date requirements and API references, see: Learn more about how you can provide age-appropriate experiences and safeguard privacy in your apps and games using robust features available across Apple platforms",
-      "model": "usage",
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "partner",
+      "signal": "We co-authored a joint impact report for the release of SL2T 1.0 in Gboard and Live Transcribe, transparently detailing the technology's capabilities and current limitations — a collaborative approach we plan to continue for all major sign language releases",
+      "kind": "partner",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Apple",
-          "buyer": "Developer",
-          "offering": "the most up-to-date requirements and API",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
+          "entity": "",
+          "actionStatement": "We co-authored a joint impact report for the release of SL2T 1.0 in Gboard and Live Transcribe, transparently detailing the technology's capabilities and current limitations — a collaborative approach we plan to continue for all major sign language releases."
         },
         "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
+          "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Apple Developer",
+      "source": "Google DeepMind",
       "date": "2026-08-12",
-      "url": "https://developer.apple.com/news",
+      "url": "https://deepmind.google/blog/putting-sign-language-ai-into-users-hands",
       "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "monetization",
-      "company": "Apple",
+      "company": "Google DeepMind",
       "candidateModel": "hardware",
-      "signal": "When we introduced the Image Playground framework, we included the ImageCreator class as a way for apps to generate images programmatically using the on-device image generation model",
+      "signal": "Similarly to how hearing users can use dictation to speak instead of typing, this feature enables Deaf users to sign to their phone anywhere they’d normally type",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Apple",
-          "buyer": "Developer",
-          "offering": "the most up-to-date requirements and API",
+          "seller": "Google DeepMind",
+          "buyer": "users",
+          "offering": "a collaborative approach we plan",
+          "billingUnit": "",
+          "priceOrRevenue": "70 million",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Google DeepMind",
+      "date": "2026-08-12",
+      "url": "https://deepmind.google/blog/putting-sign-language-ai-into-users-hands",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "The Tensor G6’s TPU is another step toward shifting more AI processing from data centers onto our phones — and that could ultimately matter more than any individual AI feature launching with the Pixel 11",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
+          "buyer",
+          "offering",
           "billingUnit",
           "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Apple Developer",
+      "source": "Android Authority",
       "date": "2026-08-12",
-      "url": "https://developer.apple.com/news",
+      "url": "https://www.androidauthority.com/pixel-11-tensor-g6-tpu-upgrade-explained-3696999/",
       "reasons": [
+        "missing:buyer",
+        "missing:offering",
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
       ]
     },
     {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "ads",
-      "signal": "Due to a recent court ruling lifting an injunction on Texas law SB 2420, new Apple Accounts in Texas are now subject to the law, which introduced age assurance requirements for app marketplaces and developers",
-      "model": "ads",
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "The Tensor G6’s TPU is another step toward shifting more AI processing from data centers onto our phones — and that could ultimately matter more than any individual AI feature launching with the Pixel 11",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Apple",
-          "buyer": "Developer",
-          "offering": "the most up-to-date requirements and API",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
+          "entity": "",
+          "actionStatement": "The Tensor G6’s TPU is another step toward shifting more AI processing from data centers onto our phones — and that could ultimately matter more than any individual AI feature launching with the Pixel 11."
         },
         "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
+          "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Apple Developer",
+      "source": "Android Authority",
       "date": "2026-08-12",
-      "url": "https://developer.apple.com/news",
+      "url": "https://www.androidauthority.com/pixel-11-tensor-g6-tpu-upgrade-explained-3696999/",
       "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -2170,6 +3242,29 @@
       "type": "direction",
       "company": "Google DeepMind",
       "candidateKind": "expand",
+      "signal": "An internal study was launched to determine whether AI could serve as a brainstorming assistant, researcher or writing collaborator for professional writers",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "An internal study was launched to determine whether AI could serve as a brainstorming assistant, researcher or writing collaborator for professional writers."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-08-11",
+      "url": "https://www.engadget.com/2234838/authors-face-backlash-for-participation-in-2022-google-ai-study",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
       "signal": "You can explore our latest cyclone forecasts on Weather Lab , which we recently refreshed with a new interface and expanded to include global weather forecasts alongside cyclone tracks",
       "kind": "expand",
       "classificationGate": {
@@ -2185,6 +3280,29 @@
       "source": "Google DeepMind",
       "date": "2026-08-11",
       "url": "https://deepmind.google/blog/weathernext-ai-model-achieves-breakthrough-in-forecasting-cyclones",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Abridge",
+      "candidateKind": "expand",
+      "signal": "When we launched CDS, it incorporated the patient conversation into its responses, but did not have access to the full electronic health record",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "When we launched CDS, it incorporated the patient conversation into its responses, but did not have access to the full electronic health record."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Abridge",
+      "date": "2026-08-11",
+      "url": "https://www.abridge.com/blog/clinician-builder-cds",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -2272,6 +3390,39 @@
     },
     {
       "type": "monetization",
+      "company": "NVIDIA",
+      "candidateModel": "usage",
+      "signal": "It accepts OpenAI, Anthropic, and Responses API requests, translates them into the internal NeMo Switchyard request format, and returns the expected response format",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "NVIDIA",
+          "buyer": "",
+          "offering": "Route AI Agents Across Model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "NVIDIA Developer",
+      "date": "2026-08-11",
+      "url": "https://developer.nvidia.com/blog/route-ai-agent-workloads-across-models-with-nvidia-nemo-switchyard",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
       "company": "Microsoft",
       "candidateModel": "enterprise",
       "signal": "Enterprise Brain Replaces AI Agents As Microsoft And UnifyApps Race",
@@ -2330,6 +3481,83 @@
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "usage",
+      "signal": "If Meta's next open weights model ends up delivering similar performance using fewer weights, this may end up being more competitive from a cost per token standpoint",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "s next open weights model",
+          "billingUnit": "per token",
+          "priceOrRevenue": "30 billion",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer"
+        ]
+      },
+      "source": "The Register",
+      "date": "2026-08-10",
+      "url": "https://www.theregister.com/ai-and-ml/2026/08/10/zuck-rekindles-open-weights-llama-drama-with-muse-glimmer/5285666",
+      "reasons": [
+        "missing:buyer"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "usage",
+      "signal": "Early support has begun to hit popular local AI inference platforms like Llama.cpp, Ollama, and Unsloth, with optimized implementations expected to hit over the next few weeks",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "s next open weights model",
+          "billingUnit": "per token",
+          "priceOrRevenue": "30 billion",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer"
+        ]
+      },
+      "source": "The Register",
+      "date": "2026-08-10",
+      "url": "https://www.theregister.com/ai-and-ml/2026/08/10/zuck-rekindles-open-weights-llama-drama-with-muse-glimmer/5285666",
+      "reasons": [
+        "missing:buyer"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "Meta launches Muse Glimmer, an open-weight model that can run on a laptop",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Meta launches Muse Glimmer, an open-weight model that can run on a laptop"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Business Insider",
+      "date": "2026-08-10",
+      "url": "https://www.businessinsider.com/meta-muse-glimmer-new-open-weight-model-spark-mark-zuckerberg-2026-8",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -2519,60 +3747,6 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "usage",
-      "signal": "If Meta's next open weights model ends up delivering similar performance using fewer weights, this may end up being more competitive from a cost per token standpoint",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "s next open weights model",
-          "billingUnit": "per token",
-          "priceOrRevenue": "30 billion",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "buyer"
-        ]
-      },
-      "source": "The Register",
-      "date": "2026-08-10",
-      "url": "https://www.theregister.com/ai-and-ml/2026/08/10/zuck-rekindles-open-weights-llama-drama-with-muse-glimmer/5285666",
-      "reasons": [
-        "missing:buyer"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "usage",
-      "signal": "Early support has begun to hit popular local AI inference platforms like Llama.cpp, Ollama, and Unsloth, with optimized implementations expected to hit over the next few weeks",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "s next open weights model",
-          "billingUnit": "per token",
-          "priceOrRevenue": "30 billion",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "buyer"
-        ]
-      },
-      "source": "The Register",
-      "date": "2026-08-10",
-      "url": "https://www.theregister.com/ai-and-ml/2026/08/10/zuck-rekindles-open-weights-llama-drama-with-muse-glimmer/5285666",
-      "reasons": [
-        "missing:buyer"
-      ]
-    },
-    {
       "type": "direction",
       "company": "NVIDIA",
       "candidateKind": "expand",
@@ -2691,6 +3865,29 @@
       "source": "NVIDIA Blog",
       "date": "2026-08-08",
       "url": "https://blogs.nvidia.com/blog/firebird-ai-factory-armenia-blackwell-rubin-dsx",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Harvey",
+      "candidateKind": "expand",
+      "signal": "In May, it released a new version of the tool with a significantly expanded feature set",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "In May, it released a new version of the tool with a significantly expanded feature set."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-08-07",
+      "url": "https://siliconangle.com/2026/08/07/legal-ai-startup-harvey-reportedly-raising-500m-15-5b-valuation",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -2829,26 +4026,69 @@
       ]
     },
     {
-      "type": "direction",
-      "company": "Harvey",
-      "candidateKind": "expand",
-      "signal": "In May, it released a new version of the tool with a significantly expanded feature set",
-      "kind": "expand",
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "Google has updated its support documentation to show that downloading the models that power Chrome’s on-device AI features requires approximately 20 gigabytes of available storage space",
+      "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "entity": "",
-          "actionStatement": "In May, it released a new version of the tool with a significantly expanded feature set."
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "wants to install local AI model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
         },
         "missing": [
-          "entityMentionInEvidenceLine"
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
         ]
       },
-      "source": "SiliconANGLE",
-      "date": "2026-08-07",
-      "url": "https://siliconangle.com/2026/08/07/legal-ai-startup-harvey-reportedly-raising-500m-15-5b-valuation",
+      "source": "Android Authority",
+      "date": "2026-08-06",
+      "url": "https://www.androidauthority.com/chrome-local-ai-storage-install-3695411",
       "reasons": [
-        "missing:entityMentionInEvidenceLine"
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "For reference, with on-device AI features disabled, my Mac lists the storage used by the Chrome browser at about 1.5 GB — less than 10% of the space required to enable on-device AI, and less than half the space on-device AI models occupy",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "wants to install local AI model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Android Authority",
+      "date": "2026-08-06",
+      "url": "https://www.androidauthority.com/chrome-local-ai-storage-install-3695411",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -2951,33 +4191,162 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "Microsoft",
+      "candidateKind": "invest",
+      "signal": "\"Internally, shifting more workloads to OpenAI models helps us get greater value from our token investment,\" Parikh wrote",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "\"Internally, shifting more workloads to OpenAI models helps us get greater value from our token investment,\" Parikh wrote."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "CNBC",
+      "date": "2026-08-05",
+      "url": "https://www.cnbc.com/2026/08/05/microsoft-makes-openai-gpt-5point6-sol-default-in-github-copilot-for-staff.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
       "type": "monetization",
-      "company": "Google DeepMind",
+      "company": "Liquid AI",
       "candidateModel": "hardware",
-      "signal": "Google has updated its support documentation to show that downloading the models that power Chrome’s on-device AI features requires approximately 20 gigabytes of available storage space",
+      "signal": "MacPaw Partners With Liquid AI To Bring On-Device AI To Macs",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "wants to install local AI model",
+          "seller": "Liquid AI",
+          "buyer": "developer",
+          "offering": "which lets the assistant",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
-          "buyer",
           "billingUnit",
           "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Android Authority",
-      "date": "2026-08-06",
-      "url": "https://www.androidauthority.com/chrome-local-ai-storage-install-3695411",
+      "source": "Forbes",
+      "date": "2026-08-05",
+      "url": "https://www.forbes.com/sites/marksparrow/2026/08/05/macpaw-partners-with-liquid-ai-to-bring-on-device-ai-to-macs",
       "reasons": [
-        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Liquid AI",
+      "candidateKind": "partner",
+      "signal": "Eney, MacPaw’s AI assistant for macOS, will be the first product to benefit from this partnership; results are expected later this year",
+      "kind": "partner",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Eney, MacPaw’s AI assistant for macOS, will be the first product to benefit from this partnership; results are expected later this year."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Forbes",
+      "date": "2026-08-05",
+      "url": "https://www.forbes.com/sites/marksparrow/2026/08/05/macpaw-partners-with-liquid-ai-to-bring-on-device-ai-to-macs",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Liquid AI",
+      "candidateModel": "hardware",
+      "signal": "Ukrainian developer MacPaw and Liquid AI have partnered to co-develop a local AI stack for Mac, driven by a shared vision for private, fast, on-device intelligence",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Liquid AI",
+          "buyer": "developer",
+          "offering": "which lets the assistant",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Forbes",
+      "date": "2026-08-05",
+      "url": "https://www.forbes.com/sites/marksparrow/2026/08/05/macpaw-partners-with-liquid-ai-to-bring-on-device-ai-to-macs",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "invest",
+      "signal": "Mechanize launched last year with a mission of automating every job and a star-studded group of investors, including former GitHub CEO Nat Friedman, Stripe CEO Patrick Collison, and podcaster Dwarkesh Patel",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Mechanize launched last year with a mission of automating every job and a star-studded group of investors, including former GitHub CEO Nat Friedman, Stripe CEO Patrick Collison, and podcaster Dwarkesh Patel."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Business Insider",
+      "date": "2026-08-05",
+      "url": "https://www.businessinsider.com/google-mechanize-deal-talent-tech-ai-coding-2026-8",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "Google plans to kill Assistant on your phone on September 4",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "users",
+          "offering": "Google plans to kill Assistant",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Ars Technica",
+      "date": "2026-08-05",
+      "url": "https://arstechnica.com/ai/2026/08/google-plans-to-kill-assistant-on-your-phone-on-september-4",
+      "reasons": [
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
@@ -2987,30 +4356,59 @@
       "type": "monetization",
       "company": "Google DeepMind",
       "candidateModel": "hardware",
-      "signal": "For reference, with on-device AI features disabled, my Mac lists the storage used by the Chrome browser at about 1.5 GB — less than 10% of the space required to enable on-device AI, and less than half the space on-device AI models occupy",
+      "signal": "In an email being sent out to users, Google confirms that Assistant on Android devices will be shut down starting on September 4, forcing everyone over to Gemini",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "wants to install local AI model",
+          "buyer": "users",
+          "offering": "Google plans to kill Assistant",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
-          "buyer",
           "billingUnit",
           "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Android Authority",
-      "date": "2026-08-06",
-      "url": "https://www.androidauthority.com/chrome-local-ai-storage-install-3695411",
+      "source": "Ars Technica",
+      "date": "2026-08-05",
+      "url": "https://arstechnica.com/ai/2026/08/google-plans-to-kill-assistant-on-your-phone-on-september-4",
       "reasons": [
-        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "Most of Google’s smart home devices have already transitioned to Gemini",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "users",
+          "offering": "Google plans to kill Assistant",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Ars Technica",
+      "date": "2026-08-05",
+      "url": "https://arstechnica.com/ai/2026/08/google-plans-to-kill-assistant-on-your-phone-on-september-4",
+      "reasons": [
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
@@ -3148,225 +4546,47 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
-      "signal": "Google plans to kill Assistant on your phone on September 4",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "users",
-          "offering": "Google plans to kill Assistant",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Ars Technica",
-      "date": "2026-08-05",
-      "url": "https://arstechnica.com/ai/2026/08/google-plans-to-kill-assistant-on-your-phone-on-september-4",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
-      "signal": "In an email being sent out to users, Google confirms that Assistant on Android devices will be shut down starting on September 4, forcing everyone over to Gemini",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "users",
-          "offering": "Google plans to kill Assistant",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Ars Technica",
-      "date": "2026-08-05",
-      "url": "https://arstechnica.com/ai/2026/08/google-plans-to-kill-assistant-on-your-phone-on-september-4",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
-      "signal": "Most of Google’s smart home devices have already transitioned to Gemini",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "users",
-          "offering": "Google plans to kill Assistant",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Ars Technica",
-      "date": "2026-08-05",
-      "url": "https://arstechnica.com/ai/2026/08/google-plans-to-kill-assistant-on-your-phone-on-september-4",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
       "type": "direction",
-      "company": "Google DeepMind",
+      "company": "SpaceX (xAI, Cursor)",
       "candidateKind": "invest",
-      "signal": "Mechanize launched last year with a mission of automating every job and a star-studded group of investors, including former GitHub CEO Nat Friedman, Stripe CEO Patrick Collison, and podcaster Dwarkesh Patel",
+      "signal": "Bret Johnsen, SpaceX's CFO, suggested on the earnings call that investors should start thinking differently about capex because of how quickly it's converting into revenue",
       "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Mechanize launched last year with a mission of automating every job and a star-studded group of investors, including former GitHub CEO Nat Friedman, Stripe CEO Patrick Collison, and podcaster Dwarkesh Patel."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Business Insider",
-      "date": "2026-08-05",
-      "url": "https://www.businessinsider.com/google-mechanize-deal-talent-tech-ai-coding-2026-8",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Liquid AI",
-      "candidateModel": "hardware",
-      "signal": "MacPaw Partners With Liquid AI To Bring On-Device AI To Macs",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Liquid AI",
-          "buyer": "developer",
-          "offering": "which lets the assistant",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Forbes",
-      "date": "2026-08-05",
-      "url": "https://www.forbes.com/sites/marksparrow/2026/08/05/macpaw-partners-with-liquid-ai-to-bring-on-device-ai-to-macs",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Liquid AI",
-      "candidateKind": "partner",
-      "signal": "Eney, MacPaw’s AI assistant for macOS, will be the first product to benefit from this partnership; results are expected later this year",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Eney, MacPaw’s AI assistant for macOS, will be the first product to benefit from this partnership; results are expected later this year."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Forbes",
-      "date": "2026-08-05",
-      "url": "https://www.forbes.com/sites/marksparrow/2026/08/05/macpaw-partners-with-liquid-ai-to-bring-on-device-ai-to-macs",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Liquid AI",
-      "candidateModel": "hardware",
-      "signal": "Ukrainian developer MacPaw and Liquid AI have partnered to co-develop a local AI stack for Mac, driven by a shared vision for private, fast, on-device intelligence",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Liquid AI",
-          "buyer": "developer",
-          "offering": "which lets the assistant",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Forbes",
-      "date": "2026-08-05",
-      "url": "https://www.forbes.com/sites/marksparrow/2026/08/05/macpaw-partners-with-liquid-ai-to-bring-on-device-ai-to-macs",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Microsoft",
-      "candidateKind": "invest",
-      "signal": "\"Internally, shifting more workloads to OpenAI models helps us get greater value from our token investment,\" Parikh wrote",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "\"Internally, shifting more workloads to OpenAI models helps us get greater value from our token investment,\" Parikh wrote."
+          "actionStatement": "Bret Johnsen, SpaceX's CFO, suggested on the earnings call that investors should start thinking differently about capex because of how quickly it's converting into revenue."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
       "source": "CNBC",
-      "date": "2026-08-05",
-      "url": "https://www.cnbc.com/2026/08/05/microsoft-makes-openai-gpt-5point6-sol-default-in-github-copilot-for-staff.html",
+      "date": "2026-08-04",
+      "url": "https://www.cnbc.com/2026/08/04/spacex-ai-spending-unnerves-wall-street-despite-promising-quick-payoff.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "SpaceX (xAI, Cursor)",
+      "candidateKind": "expand",
+      "signal": "Prior to that, Anthropic announced a deal that would involve paying up to $1.25 billion a month for three years for compute capacity at SpaceX's Colossus data center in Memphis, Tennessee",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Prior to that, Anthropic announced a deal that would involve paying up to $1.25 billion a month for three years for compute capacity at SpaceX's Colossus data center in Memphis, Tennessee."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "CNBC",
+      "date": "2026-08-04",
+      "url": "https://www.cnbc.com/2026/08/04/spacex-ai-spending-unnerves-wall-street-despite-promising-quick-payoff.html",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -3496,248 +4716,81 @@
     },
     {
       "type": "direction",
-      "company": "SpaceX (xAI, Cursor)",
+      "company": "Abridge",
       "candidateKind": "invest",
-      "signal": "Bret Johnsen, SpaceX's CFO, suggested on the earnings call that investors should start thinking differently about capex because of how quickly it's converting into revenue",
+      "signal": "Inside Northwestern Medicine's Evidence-Based Evaluation of AI",
       "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Bret Johnsen, SpaceX's CFO, suggested on the earnings call that investors should start thinking differently about capex because of how quickly it's converting into revenue."
+          "actionStatement": "Inside Northwestern Medicine's Evidence-Based Evaluation of AI"
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "CNBC",
+      "source": "Abridge",
       "date": "2026-08-04",
-      "url": "https://www.cnbc.com/2026/08/04/spacex-ai-spending-unnerves-wall-street-despite-promising-quick-payoff.html",
+      "url": "https://www.abridge.com/blog/northwestern-medicine-multivendor-evaluation",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "direction",
-      "company": "SpaceX (xAI, Cursor)",
-      "candidateKind": "expand",
-      "signal": "Prior to that, Anthropic announced a deal that would involve paying up to $1.25 billion a month for three years for compute capacity at SpaceX's Colossus data center in Memphis, Tennessee",
-      "kind": "expand",
+      "company": "Abridge",
+      "candidateKind": "invest",
+      "signal": "We evaluate AI the same way we evaluate any strategic investment—we want evidence",
+      "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Prior to that, Anthropic announced a deal that would involve paying up to $1.25 billion a month for three years for compute capacity at SpaceX's Colossus data center in Memphis, Tennessee."
+          "actionStatement": "We evaluate AI the same way we evaluate any strategic investment—we want evidence."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "CNBC",
+      "source": "Abridge",
       "date": "2026-08-04",
-      "url": "https://www.cnbc.com/2026/08/04/spacex-ai-spending-unnerves-wall-street-despite-promising-quick-payoff.html",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "To that end, the company just expanded Spark access to Google AI Pro subscribers in over 160 countries",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "To that end, the company just expanded Spark access to Google AI Pro subscribers in over 160 countries."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-08-03",
-      "url": "https://www.engadget.com/2229209/gemini-spark-now-has-chrome-web-browsing-capabliities",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "invest",
-      "signal": "The model placed and animated objects on its own but made mistakes because it could only check its own video output through screenshots",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The model placed and animated objects on its own but made mistakes because it could only check its own video output through screenshots."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-08-03",
-      "url": "https://the-decoder.com/unicorn-pelican-middle-earth-openai-co-founder-karpathy-is-looking-for-the-next-ai-vibe-test",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "invest",
-      "signal": "From the changes in the AI application market trends in 2026 and the monitoring of data of small and medium-sized apps on the App Store, it can be observed that the market size of AI products is not equal to their growth rate, and top products do not have all-round monopoly",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "From the changes in the AI application market trends in 2026 and the monitoring of data of small and medium-sized apps on the App Store, it can be observed that the market size of AI products is not equal to their growth rate, and top products do not have all-round monopoly."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "36Kr",
-      "date": "2026-08-03",
-      "url": "http://eu.36kr.com/en/p/3923505344704130",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "expand",
-      "signal": "When general-purpose AI assistants occupy the top positions on the ranking list, the breakthrough direction for new entrants is shifting from replicating the general chat entry to focusing on more segmented, specific vertical scenarios with more intuitive value",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "When general-purpose AI assistants occupy the top positions on the ranking list, the breakthrough direction for new entrants is shifting from replicating the general chat entry to focusing on more segmented, specific vertical scenarios with more intuitive value."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "36Kr",
-      "date": "2026-08-03",
-      "url": "http://eu.36kr.com/en/p/3923505344704130",
+      "url": "https://www.abridge.com/blog/northwestern-medicine-multivendor-evaluation",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "hardware",
-      "signal": "According to the monitoring data from Qimai Data, at 10:00 on August 3, ChatGPT ranked 1st and Claude ranked 10th in the overall paid bestseller list for iPhone in the United States; meanwhile, among the top 5 apps on the US iPhone efficiency paid bestseller list, four AI products namely ChatGPT, Claude, Grok and Perplexity took up 4 spots",
-      "model": "hardware",
+      "company": "Abridge",
+      "candidateModel": "enterprise",
+      "signal": "As demand grew from 200 licenses to 750 and continued beyond that, we recognized that this was no longer something we needed to push; clinicians were pulling it forward",
+      "model": "enterprise",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "OpenAI",
-          "buyer": "Developers",
-          "offering": "the changes in the AI app",
+          "seller": "Abridge",
+          "buyer": "",
+          "offering": "",
           "billingUnit": "",
           "priceOrRevenue": "",
-          "recurringRevenue": ""
+          "recurringRevenue": "yes"
         },
         "missing": [
+          "buyer",
+          "offering",
           "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
+          "priceOrRevenue"
         ]
       },
-      "source": "36Kr",
-      "date": "2026-08-03",
-      "url": "http://eu.36kr.com/en/p/3923505344704130",
+      "source": "Abridge",
+      "date": "2026-08-04",
+      "url": "https://www.abridge.com/blog/deaconess-abridge-expansion",
       "reasons": [
+        "missing:buyer",
+        "missing:offering",
         "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Anthropic",
-      "candidateKind": "invest",
-      "signal": "From the changes in the AI application market trends in 2026 and the monitoring of data of small and medium-sized apps on the App Store, it can be observed that the market size of AI products is not equal to their growth rate, and top products do not have all-round monopoly",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "From the changes in the AI application market trends in 2026 and the monitoring of data of small and medium-sized apps on the App Store, it can be observed that the market size of AI products is not equal to their growth rate, and top products do not have all-round monopoly."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "36Kr",
-      "date": "2026-08-03",
-      "url": "http://eu.36kr.com/en/p/3923505344704130",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Anthropic",
-      "candidateKind": "expand",
-      "signal": "When general-purpose AI assistants occupy the top positions on the ranking list, the breakthrough direction for new entrants is shifting from replicating the general chat entry to focusing on more segmented, specific vertical scenarios with more intuitive value",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "When general-purpose AI assistants occupy the top positions on the ranking list, the breakthrough direction for new entrants is shifting from replicating the general chat entry to focusing on more segmented, specific vertical scenarios with more intuitive value."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "36Kr",
-      "date": "2026-08-03",
-      "url": "http://eu.36kr.com/en/p/3923505344704130",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "hardware",
-      "signal": "According to the monitoring data from Qimai Data, at 10:00 on August 3, ChatGPT ranked 1st and Claude ranked 10th in the overall paid bestseller list for iPhone in the United States; meanwhile, among the top 5 apps on the US iPhone efficiency paid bestseller list, four AI products namely ChatGPT, Claude, Grok and Perplexity took up 4 spots",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Anthropic",
-          "buyer": "Developers",
-          "offering": "the changes in the AI app",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "36Kr",
-      "date": "2026-08-03",
-      "url": "http://eu.36kr.com/en/p/3923505344704130",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
+        "missing:priceOrRevenue"
       ]
     },
     {
@@ -3918,861 +4971,201 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "invest",
+      "signal": "From the changes in the AI application market trends in 2026 and the monitoring of data of small and medium-sized apps on the App Store, it can be observed that the market size of AI products is not equal to their growth rate, and top products do not have all-round monopoly",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "From the changes in the AI application market trends in 2026 and the monitoring of data of small and medium-sized apps on the App Store, it can be observed that the market size of AI products is not equal to their growth rate, and top products do not have all-round monopoly."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "36Kr",
+      "date": "2026-08-03",
+      "url": "http://eu.36kr.com/en/p/3923505344704130",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "expand",
+      "signal": "When general-purpose AI assistants occupy the top positions on the ranking list, the breakthrough direction for new entrants is shifting from replicating the general chat entry to focusing on more segmented, specific vertical scenarios with more intuitive value",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "When general-purpose AI assistants occupy the top positions on the ranking list, the breakthrough direction for new entrants is shifting from replicating the general chat entry to focusing on more segmented, specific vertical scenarios with more intuitive value."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "36Kr",
+      "date": "2026-08-03",
+      "url": "http://eu.36kr.com/en/p/3923505344704130",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
       "type": "monetization",
       "company": "OpenAI",
       "candidateModel": "hardware",
-      "signal": "Phone number : After failing to secure a free one, Claude tried to \"obtain funds\" to buy one \"through different several means,\" although Anthropic hasn&apos;t revealed how",
+      "signal": "According to the monitoring data from Qimai Data, at 10:00 on August 3, ChatGPT ranked 1st and Claude ranked 10th in the overall paid bestseller list for iPhone in the United States; meanwhile, among the top 5 apps on the US iPhone efficiency paid bestseller list, four AI products namely ChatGPT, Claude, Grok and Perplexity took up 4 spots",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "OpenAI",
-          "buyer": "",
-          "offering": "s agent",
+          "buyer": "Developers",
+          "offering": "the changes in the AI app",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
-          "buyer",
           "billingUnit",
           "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "ZDNet",
-      "date": "2026-07-31",
-      "url": "https://www.zdnet.com/article/anthropic-claude-ai-hacked-organizations-during-security-tests",
+      "source": "36Kr",
+      "date": "2026-08-03",
+      "url": "http://eu.36kr.com/en/p/3923505344704130",
       "reasons": [
-        "missing:buyer",
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Anthropic",
+      "candidateKind": "invest",
+      "signal": "From the changes in the AI application market trends in 2026 and the monitoring of data of small and medium-sized apps on the App Store, it can be observed that the market size of AI products is not equal to their growth rate, and top products do not have all-round monopoly",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "From the changes in the AI application market trends in 2026 and the monitoring of data of small and medium-sized apps on the App Store, it can be observed that the market size of AI products is not equal to their growth rate, and top products do not have all-round monopoly."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "36Kr",
+      "date": "2026-08-03",
+      "url": "http://eu.36kr.com/en/p/3923505344704130",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Anthropic",
+      "candidateKind": "expand",
+      "signal": "When general-purpose AI assistants occupy the top positions on the ranking list, the breakthrough direction for new entrants is shifting from replicating the general chat entry to focusing on more segmented, specific vertical scenarios with more intuitive value",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "When general-purpose AI assistants occupy the top positions on the ranking list, the breakthrough direction for new entrants is shifting from replicating the general chat entry to focusing on more segmented, specific vertical scenarios with more intuitive value."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "36Kr",
+      "date": "2026-08-03",
+      "url": "http://eu.36kr.com/en/p/3923505344704130",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "monetization",
       "company": "Anthropic",
       "candidateModel": "hardware",
-      "signal": "Phone number : After failing to secure a free one, Claude tried to \"obtain funds\" to buy one \"through different several means,\" although Anthropic hasn&apos;t revealed how",
+      "signal": "According to the monitoring data from Qimai Data, at 10:00 on August 3, ChatGPT ranked 1st and Claude ranked 10th in the overall paid bestseller list for iPhone in the United States; meanwhile, among the top 5 apps on the US iPhone efficiency paid bestseller list, four AI products namely ChatGPT, Claude, Grok and Perplexity took up 4 spots",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Anthropic",
-          "buyer": "",
-          "offering": "s agent",
+          "buyer": "Developers",
+          "offering": "the changes in the AI app",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
-          "buyer",
           "billingUnit",
           "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "ZDNet",
-      "date": "2026-07-31",
-      "url": "https://www.zdnet.com/article/anthropic-claude-ai-hacked-organizations-during-security-tests",
+      "source": "36Kr",
+      "date": "2026-08-03",
+      "url": "http://eu.36kr.com/en/p/3923505344704130",
       "reasons": [
-        "missing:buyer",
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "To that end, the company just expanded Spark access to Google AI Pro subscribers in over 160 countries",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "To that end, the company just expanded Spark access to Google AI Pro subscribers in over 160 countries."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-08-03",
+      "url": "https://www.engadget.com/2229209/gemini-spark-now-has-chrome-web-browsing-capabliities",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "direction",
       "company": "OpenAI",
-      "candidateKind": "expand",
-      "signal": "According to the Artificial Analysis Intelligence Index , the new version scores 50 points, ten more than the previous V4 Flash that launched in April 2026",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "According to the Artificial Analysis Intelligence Index , the new version scores 50 points, ten more than the previous V4 Flash that launched in April 2026."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-07-31",
-      "url": "https://the-decoder.com/new-deepseek-flash-model-matches-openais-gpt-5-6-luna-at-roughly-60-percent-lower-cost",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "DeepSeek",
-      "candidateKind": "expand",
-      "signal": "According to the Artificial Analysis Intelligence Index , the new version scores 50 points, ten more than the previous V4 Flash that launched in April 2026",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "According to the Artificial Analysis Intelligence Index , the new version scores 50 points, ten more than the previous V4 Flash that launched in April 2026."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-07-31",
-      "url": "https://the-decoder.com/new-deepseek-flash-model-matches-openais-gpt-5-6-luna-at-roughly-60-percent-lower-cost",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "Google has shut down Google Earth feature it launched Thursday that allowed users to edit satellite images with text prompts using AI",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google has shut down Google Earth feature it launched Thursday that allowed users to edit satellite images with text prompts using AI."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-07-31",
-      "url": "https://www.theverge.com/tech/973943/google-earth-ai-image-generation-deepfake-tool",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "Google nixes its Earth AI feature one day after launch, amid criticism it would spread misinformation",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google nixes its Earth AI feature one day after launch, amid criticism it would spread misinformation"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-07-31",
-      "url": "https://techcrunch.com/2026/07/31/google-nixes-its-earth-ai-feature-one-day-after-launch-amid-criticism-it-would-spread-misinformation",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "The feature launched globally on the web version of Google Earth earlier this week, and Google’s blog post pitched it as a tool for visualizing historical sites and real estate projects",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The feature launched globally on the web version of Google Earth earlier this week, and Google’s blog post pitched it as a tool for visualizing historical sites and real estate projects."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-07-31",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/973764/google-earth-ai-satellite-images",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "enterprise",
-      "signal": "Investors didn’t follow up with company executives to ask more questions about the new apps Meta has in the works, as they were more concerned with AI spending and Meta’s growing enterprise ambitions",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "it easier to build new app",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-07-30",
-      "url": "https://techcrunch.com/2026/07/30/meta-says-ai-is-making-it-easier-to-build-new-apps-and-more-are-coming",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
       "candidateKind": "invest",
-      "signal": "Investors didn’t follow up with company executives to ask more questions about the new apps Meta has in the works, as they were more concerned with AI spending and Meta’s growing enterprise ambitions",
+      "signal": "The model placed and animated objects on its own but made mistakes because it could only check its own video output through screenshots",
       "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Investors didn’t follow up with company executives to ask more questions about the new apps Meta has in the works, as they were more concerned with AI spending and Meta’s growing enterprise ambitions."
+          "actionStatement": "The model placed and animated objects on its own but made mistakes because it could only check its own video output through screenshots."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "TechCrunch",
-      "date": "2026-07-30",
-      "url": "https://techcrunch.com/2026/07/30/meta-says-ai-is-making-it-easier-to-build-new-apps-and-more-are-coming",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "ads",
-      "signal": "We also just launched Forum, a standalone Groups app, and Seller, a standalone Marketplace app",
-      "model": "ads",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "it easier to build new app",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-07-30",
-      "url": "https://techcrunch.com/2026/07/30/meta-says-ai-is-making-it-easier-to-build-new-apps-and-more-are-coming",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "We also just launched Forum, a standalone Groups app, and Seller, a standalone Marketplace app",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "We also just launched Forum, a standalone Groups app, and Seller, a standalone Marketplace app."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-07-30",
-      "url": "https://techcrunch.com/2026/07/30/meta-says-ai-is-making-it-easier-to-build-new-apps-and-more-are-coming",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "hardware",
-      "signal": "OpenAI president says it’s ‘building a family of devices’ for its AI chatbots",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OpenAI",
-          "buyer": "",
-          "offering": "building a family of device",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-07-29",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/972709/openai-hardware-greg-brockman-interview",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "hardware",
-      "signal": "Whatever form OpenAI’s new devices take, Brockman says he thinks we’ll shift to talking to our computers rather than typing for the “vast majority of what we do.”",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OpenAI",
-          "buyer": "",
-          "offering": "building a family of device",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-07-29",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/972709/openai-hardware-greg-brockman-interview",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "hardware",
-      "signal": "When asked about whether Apple’s lawsuit against OpenAI could impact the devices it’s working on with former Apple designer Jony Ive , Brockman said, “We are focused on our own development and technology.”",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OpenAI",
-          "buyer": "",
-          "offering": "building a family of device",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-07-29",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/972709/openai-hardware-greg-brockman-interview",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "enterprise",
-      "signal": "Zuckerberg says Meta's enterprise AI opportunity extends beyond agents",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "business customer",
-          "offering": "enterprise AI opportunity extends beyond agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-07-29",
-      "url": "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "ads",
-      "signal": "He also fleshed out how Meta could expand beyond serving the small business customer that makes up much of its current advertiser base by offering Meta’s internal tools to external customers in the future",
-      "model": "ads",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "business customer",
-          "offering": "enterprise AI opportunity extends beyond agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-07-29",
-      "url": "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "He also fleshed out how Meta could expand beyond serving the small business customer that makes up much of its current advertiser base by offering Meta’s internal tools to external customers in the future",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "He also fleshed out how Meta could expand beyond serving the small business customer that makes up much of its current advertiser base by offering Meta’s internal tools to external customers in the future."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-07-29",
-      "url": "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "enterprise",
-      "signal": "This shift in focus may not come easy — Zuckerberg admitted that selling to the enterprise was a “different muscle” than the one Meta has historically flexed",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "business customer",
-          "offering": "enterprise AI opportunity extends beyond agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-07-29",
-      "url": "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "enterprise",
-      "signal": "Meanwhile, in terms of Meta selling compute to enterprise customers, Meta is focused on balancing its need for revenue and its need to execute on its own future plans",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "business customer",
-          "offering": "enterprise AI opportunity extends beyond agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-07-29",
-      "url": "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Microsoft",
-      "candidateModel": "enterprise",
-      "signal": "With enterprise demand for lower-cost generative AI services spiking sharply, Microsoft introduced a cybersecurity model and platform it said costs half that of rival systems",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Microsoft",
-          "buyer": "",
-          "offering": "Microsoft Emerges with Cheaper Cyber Model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AI Business",
-      "date": "2026-07-28",
-      "url": "https://aibusiness.com/foundation-models/microsoft-cheaper-cyber-model-to-rivals",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
-      "signal": "Your old Google Pixel smartphone could be repurposed in a data center - Engadget",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "carbon footprint left by discarded device",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-07-28",
-      "url": "https://www.engadget.com/2220912/google-pixel-old-smartphone-data-center",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
-      "signal": "Your Google Pixel is probably more powerful than you think This Pixel repurposing project has also yielded some interesting info about the power of aging phones",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "carbon footprint left by discarded device",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-07-28",
-      "url": "https://www.engadget.com/2220912/google-pixel-old-smartphone-data-center",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
-      "signal": "If you're a Google Pixel owner who's currently eyeing up that hot pink Pixel 11 leak and hoping it's real, you might take comfort in the fact your old phone could one day help students out",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "carbon footprint left by discarded device",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-07-28",
-      "url": "https://www.engadget.com/2220912/google-pixel-old-smartphone-data-center",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
-      "signal": "How Google Pixel phones are being reused to help the environment The project to reappropriate Google Pixel phones has been undertaken, in part, to reduce the carbon footprint left by discarded devices",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "carbon footprint left by discarded device",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-07-28",
-      "url": "https://www.engadget.com/2220912/google-pixel-old-smartphone-data-center",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "usage",
-      "signal": "Apple Card Monthly Installments (ACMI) is a 0 percent APR payment option that is only available if users select it at checkout in the U.S. for eligible products purchased at Apple and is subject to credit approval and credit limit",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Apple",
-          "buyer": "users",
-          "offering": "launches in the United States\nApp",
-          "billingUnit": "Monthly",
-          "priceOrRevenue": "",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "priceOrRevenue"
-        ]
-      },
-      "source": "Apple Newsroom",
-      "date": "2026-07-28",
-      "url": "https://www.apple.com/newsroom/2026/07/apple-upgrade-launches-in-the-united-states/",
-      "reasons": [
-        "missing:priceOrRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "hardware",
-      "signal": "Apple’s more than 150,000 employees are dedicated to making the best products on earth and to leaving the world better than we found it. iPhone 16, iPhone 16 Plus, Apple Watch SE, MacBook Neo, Mac mini, iPad (A16), and Studio Display are not available as part of the Apple Upgrade program",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Apple",
-          "buyer": "users",
-          "offering": "launches in the United States\nApp",
-          "billingUnit": "Monthly",
-          "priceOrRevenue": "",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "priceOrRevenue"
-        ]
-      },
-      "source": "Apple Newsroom",
-      "date": "2026-07-28",
-      "url": "https://www.apple.com/newsroom/2026/07/apple-upgrade-launches-in-the-united-states/",
-      "reasons": [
-        "missing:priceOrRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Microsoft",
-      "candidateModel": "enterprise",
-      "signal": "After deploying Microsoft 365 Copilot to 150,000 employees and realizing a 15% productivity gain, the firm is expanding the Microsoft 365 Frontier Suite across its global workforce of more than 400,000 people , embedding agentic AI capabilities across the enterprise",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Microsoft",
-          "buyer": "",
-          "offering": "expanding the Microsoft 365 Frontier Suite",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Microsoft Official Blog",
-      "date": "2026-07-28",
-      "url": "https://blogs.microsoft.com/blog/2026/07/28/looking-back-on-microsofts-fy26-from-ai-experimentation-to-frontier-transformation/",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Microsoft",
-      "candidateKind": "expand",
-      "signal": "The shift has delivered seven times greater analytical capacity, reduced manual operating effort by 70%, achieved 98% methodological accuracy and enabled continuous processing of approximately 80,000 documents per week and more than 300 cases per day",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The shift has delivered seven times greater analytical capacity, reduced manual operating effort by 70%, achieved 98% methodological accuracy and enabled continuous processing of approximately 80,000 documents per week and more than 300 cases per day ."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Microsoft Official Blog",
-      "date": "2026-07-28",
-      "url": "https://blogs.microsoft.com/blog/2026/07/28/looking-back-on-microsofts-fy26-from-ai-experimentation-to-frontier-transformation/",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "partner",
-      "signal": "Over the past 12 months, we have advanced more than 15 partnerships with government bodies, biosecurity organizations, and research groups to prevent threat actors from misusing our models, detect new outbreaks quickly and respond quickly and effectively",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Over the past 12 months, we have advanced more than 15 partnerships with government bodies, biosecurity organizations, and research groups to prevent threat actors from misusing our models, detect new outbreaks quickly and respond quickly and effectively."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Google DeepMind",
-      "date": "2026-07-23",
-      "url": "https://deepmind.google/blog/our-approach-to-bioresilience/",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "partner",
-      "signal": "Working in collaboration with governments and global health authorities to advance a diverse range of diagnostic and therapeutic strategies enables the Isomorphic Labs Drug Design Engine’s real-world impact for bioresilience",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Working in collaboration with governments and global health authorities to advance a diverse range of diagnostic and therapeutic strategies enables the Isomorphic Labs Drug Design Engine’s real-world impact for bioresilience."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Google DeepMind",
-      "date": "2026-07-23",
-      "url": "https://deepmind.google/blog/our-approach-to-bioresilience/",
+      "source": "The Decoder",
+      "date": "2026-08-03",
+      "url": "https://the-decoder.com/unicorn-pelican-middle-earth-openai-co-founder-karpathy-is-looking-for-the-next-ai-vibe-test",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]

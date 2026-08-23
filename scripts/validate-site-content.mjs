@@ -8,19 +8,24 @@ const registry = await readJson("config/site-content-registry.json");
 const manifest = await readJson("site-content-manifest.json");
 const byId = new Map((manifest.datasets || []).map(dataset => [dataset.id, dataset]));
 const errors = [];
+const lifecycleStates = new Set(registry.publicationPolicy?.lifecycleStates || []);
 
 if (registry.publicationPolicy?.allowMutableUiFallbacks !== false) {
   errors.push("Mutable UI fallbacks must remain disabled.");
 }
 for (const dataset of registry.datasets || []) {
+  const publication = dataset.publication || "public";
+  if (!lifecycleStates.has(publication)) errors.push(`${dataset.id}: unsupported publication state '${publication}'`);
+  if (publication === "retired" && dataset.required !== false) errors.push(`${dataset.id}: retired dataset must be optional`);
+  if (publication === "supporting" && !dataset.consumer) errors.push(`${dataset.id}: supporting dataset needs a deterministic consumer`);
   const actual = byId.get(dataset.id);
   if (!actual) {
     errors.push(`${dataset.id}: missing from site-content-manifest.json`);
     continue;
   }
   try { await stat(resolve(root, dataset.path)); } catch { errors.push(`${dataset.id}: ${dataset.path} does not exist`); }
-  if (dataset.required && actual.recordCount === 0) errors.push(`${dataset.id}: required dataset is empty`);
-  if (dataset.required && actual.status === "missing") errors.push(`${dataset.id}: required dataset is missing`);
+  if (publication !== "retired" && dataset.required && actual.recordCount === 0) errors.push(`${dataset.id}: required dataset is empty`);
+  if (publication !== "retired" && dataset.required && actual.status === "missing") errors.push(`${dataset.id}: required dataset is missing`);
 }
 
 const app = await readFile(resolve(root, "app.jsx"), "utf8");
@@ -39,4 +44,7 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log(`[site-content] ${registry.datasets.length} registered datasets · generated views only · OK`);
+const publicCount = (registry.datasets || []).filter(dataset => dataset.publication === "public").length;
+const supportingCount = (registry.datasets || []).filter(dataset => dataset.publication === "supporting").length;
+const retiredCount = (registry.datasets || []).filter(dataset => dataset.publication === "retired").length;
+console.log(`[site-content] public ${publicCount} · supporting ${supportingCount} · retired ${retiredCount} · generated views only · OK`);

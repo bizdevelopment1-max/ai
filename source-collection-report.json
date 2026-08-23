@@ -440,8 +440,8 @@
       "durationMs": 2730
     },
     {
-      "stream": "official-sitemap:Lovable",
-      "source": "Lovable",
+      "stream": "official-sitemap:Runway",
+      "source": "Runway",
       "category": "company",
       "state": "healthy",
       "itemCount": 8,
@@ -451,7 +451,22 @@
       "durationMs": 2941,
       "activeEndpoint": "https://lovable.dev/sitemap.xml",
       "attemptedEndpoints": [
-        "https://lovable.dev/sitemap.xml"
+        "https://runwayml.com/sitemap.xml"
+      ]
+    },
+    {
+      "stream": "official-sitemap:Arm Newsroom",
+      "source": "Arm Newsroom",
+      "category": "compute-and-edge",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-08-23T06:46:52.766Z",
+      "lastSuccessAt": "2026-08-23T06:46:52.766Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 5243,
+      "activeEndpoint": "https://newsroom.arm.com/sitemap_index.xml",
+      "attemptedEndpoints": [
+        "https://newsroom.arm.com/sitemap_index.xml"
       ]
     },
     {
@@ -554,8 +569,11 @@
       "durationMs": 3643,
       "activeEndpoint": "https://www.verizon.com/about/sitemap.xml",
       "attemptedEndpoints": [
-        "https://www.verizon.com/about/sitemap.xml"
-      ]
+        "https://www.mastercard.com/sitemap.xml",
+        "https://news.google.com/rss/search?q=site%3Amastercard.com%2Fnews%20(AI%20OR%20agentic%20commerce%20OR%20payment)&hl=en-US&gl=US&ceid=US:en"
+      ],
+      "fallbackReason": "https://www.mastercard.com/sitemap.xml: HTTP 403",
+      "fallbackSourceTier": "reported"
     },
     {
       "stream": "xiaomi-global-discovery",
@@ -567,6 +585,21 @@
       "lastSuccessAt": "2026-08-22T15:48:42.493Z",
       "consecutiveFailureRuns": 0,
       "durationMs": 3663
+    },
+    {
+      "stream": "official-sitemap:Canalys Newsroom",
+      "source": "Canalys Newsroom",
+      "category": "research-release",
+      "state": "reachable-quiet",
+      "itemCount": 0,
+      "lastAttemptAt": "2026-08-23T06:46:52.766Z",
+      "lastSuccessAt": null,
+      "consecutiveFailureRuns": 0,
+      "durationMs": 5857,
+      "activeEndpoint": "https://www.canalys.com/sitemap.xml",
+      "attemptedEndpoints": [
+        "https://www.canalys.com/sitemap.xml"
+      ]
     },
     {
       "stream": "official-html:MiniMax News",
@@ -726,7 +759,7 @@
       "durationMs": 5876,
       "activeEndpoint": "https://newsroom.arm.com/sitemap_index.xml",
       "attemptedEndpoints": [
-        "https://newsroom.arm.com/sitemap_index.xml"
+        "https://www.verizon.com/about/sitemap.xml"
       ]
     },
     {

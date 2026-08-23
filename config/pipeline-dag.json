@@ -11,9 +11,10 @@
     { "id": "build-decisions", "dependsOn": ["build-claim-evidence-graph"], "outputs": ["mobile-ai-business-view.json"] },
     { "id": "build-intelligence-tracks", "dependsOn": ["verify-evidence", "build-decisions"], "outputs": ["intelligence-tracks.json", "intelligence-ledger"] },
     { "id": "minimize-retention", "dependsOn": ["verify-evidence", "build-decisions", "build-intelligence-tracks"], "outputs": ["news.json", "market.json", "history.json", "research.json"] },
-    { "id": "materialize-public", "dependsOn": ["minimize-retention"], "outputs": ["overview-view.json", "strategy-view.json", "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json", "intelligence-tracks.json", "site-content-manifest.json", "data.bundle.js"] },
+    { "id": "materialize-public", "dependsOn": ["minimize-retention"], "outputs": ["overview-view.json", "strategy-view.json", "news-view.json", "research-view.json", "market-view.json", "infra-view.json", "intelligence-tracks.json", "site-content-manifest.json", "data.bundle.js"] },
     { "id": "build-lineage", "dependsOn": ["materialize-public"], "outputs": ["dataset-manifest.json", "slo-report.json"] },
     { "id": "content-registry-gate", "dependsOn": ["build-lineage"], "outputs": ["site-content-manifest.json", "automation-status.json"] },
-    { "id": "publication-gates", "dependsOn": ["content-registry-gate"], "outputs": ["staging-artifact", "publication-invariant-report"] }
+    { "id": "content-lifecycle-gate", "dependsOn": ["content-registry-gate"], "outputs": ["content-lifecycle-report.json"] },
+    { "id": "publication-gates", "dependsOn": ["content-lifecycle-gate"], "outputs": ["staging-artifact", "publication-invariant-report"] }
   ]
 }

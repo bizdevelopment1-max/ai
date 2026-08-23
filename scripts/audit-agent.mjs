@@ -27,7 +27,6 @@ const rules = [
   { file: "company-news.json", tab: "기업 직접 연관 뉴스", maxAge: 3, min: 10, items: d => Object.values(d.companies || {}).filter(rows => rows.length) },
   { file: "market.json", tab: "AI 신사업 정량·소비자 DB", maxAge: 2, min: 18, items: d => d.records || d.items || [], soft: true },
   { file: "infra.json", tab: "인프라·미래기술", maxAge: 5, min: 3, items: d => d.items || [] },
-  { file: "bizmodel.json", tab: "수익화 모델", maxAge: 5, min: 3, items: d => d.items || [] },
   { file: "monetization.json", tab: "AI 수익화 플레이북", maxAge: 5, min: 3, items: d => d.companies || [], soft: true },
   { file: "stocks.json", tab: "Stock 분석", maxAge: 4, min: 54, items: d => Object.values(d.stocks || {}) },
   { file: "nvidia-investments.json", tab: "NVIDIA 투자 포트폴리오", maxAge: 5, min: 8, items: d => d.portfolio || [] },

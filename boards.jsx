@@ -3316,11 +3316,11 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
     let idleId = 0;
     const timer = window.setTimeout(() => {
       if (window.requestIdleCallback) {
-        idleId = window.requestIdleCallback(() => setMediaReady(true), { timeout: 12000 });
+        idleId = window.requestIdleCallback(() => setMediaReady(true), { timeout: 20000 });
       } else {
         setMediaReady(true);
       }
-    }, 6500);
+    }, 12000);
     return () => {
       window.clearTimeout(timer);
       if (idleId && window.cancelIdleCallback) window.cancelIdleCallback(idleId);
@@ -3465,8 +3465,7 @@ function ESCompetitiveMap({ companies, cats, articles, active, dataVersion, onSe
             </div>
           </div>
         </div>
-        <aside className="dyn-video-panel" aria-live="polite"
-          onPointerEnter={() => setMediaReady(true)} onFocusCapture={() => setMediaReady(true)}>
+        <aside className="dyn-video-panel" aria-live="polite">
           <video ref={videoRef} className="dyn-video" muted loop playsInline preload="none" aria-label="AI 업계 경쟁 다이내믹스 영상">
             {mediaReady && <source src={`assets/competitive-dynamics.mp4?v=${encodeURIComponent(dataVersion || "")}`} type="video/mp4" />}
           </video>

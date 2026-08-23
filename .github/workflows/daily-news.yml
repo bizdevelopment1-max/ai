@@ -64,7 +64,32 @@ jobs:
           git fetch origin main
           if git fetch origin automation/data-staging:refs/remotes/origin/automation/data-staging 2>/dev/null; then
             git switch -C automation/data-staging refs/remotes/origin/automation/data-staging
-            git merge -X ours --no-edit origin/main
+            if ! git merge -X ours --no-edit origin/main; then
+              # A public materialized view can be retired on main while the
+              # cumulative data branch still carries an older generated copy.
+              # Resolve only those modify/delete conflicts whose path no
+              # longer exists on main; every other conflict remains fatal.
+              for attempt in 1 2 3 4 5; do
+                [ ! -e .git/index.lock ] && break
+                sleep 1
+              done
+              # The merge process has exited at this point. A surviving lock
+              # belongs to that completed process in the ephemeral CI clone.
+              rm -f .git/index.lock
+              conflicts="$(git diff --name-only --diff-filter=U)"
+              while IFS= read -r path; do
+                [ -z "$path" ] && continue
+                if ! git cat-file -e "origin/main:${path}" 2>/dev/null; then
+                  git rm -f -- "$path"
+                fi
+              done <<< "$conflicts"
+              if git diff --name-only --diff-filter=U | grep -q .; then
+                echo "Unresolved staging conflicts remain; manual review required."
+                git diff --name-only --diff-filter=U
+                exit 1
+              fi
+              git commit --no-edit
+            fi
           else
             git switch -c automation/data-staging origin/main
           fi
@@ -131,6 +156,7 @@ jobs:
             data.bundle.js
             data-version.json
             site-content-manifest.json
+            content-lifecycle-report.json
             overview-view.json
             strategy-view.json
             intelligence-tracks.json
@@ -143,7 +169,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ intelligence-tracks.json intelligence-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json strategy-view.json news-view.json research-view.json market-view.json infra-view.json bizmodel-view.json data-version.json site-content-manifest.json automation-status.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js styles.bundle.css
+          git add news.json company-news.json stocks.json financials.json stock-events.json nvidia-investments.json deleted.json insights.json briefing.json radar.json research.json companies.json company-officials.json startups.json a16z-startups.json strategic-ventures.json business-model-forecasts.json mobile-ai-business-view.json market.json infra.json bizmodel.json monetization.json audit.json quality.json history.json llm-health.json collection-health.json source-collection-report.json source-compliance-report.json source-snapshot.json source-ledger/ intelligence-tracks.json intelligence-ledger/ market-reverification-queue.json price-change-flags.json executive-news-view.json overview-view.json strategy-view.json news-view.json research-view.json market-view.json infra-view.json data-version.json site-content-manifest.json content-lifecycle-report.json automation-status.json dataset-manifest.json slo-report.json index.html app.bundle.js data.bundle.js styles.bundle.css
           if git diff --staged --quiet; then
             echo "No data changes."
             exit 0

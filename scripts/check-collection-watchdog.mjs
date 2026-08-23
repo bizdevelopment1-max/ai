@@ -11,7 +11,11 @@ const ageDays = value => {
 };
 
 const breaches = (health.streamHealth || [])
-  .filter(row => ["empty", "failed"].includes(row.state))
+  // Topic discovery queries can legitimately be quiet. They are useful for
+  // opportunistic breadth but are not a data field or a source connector, so
+  // an empty optional query must not open a false "dead stream" incident.
+  // Critical official feeds/APIs still retain the same strict watchdog.
+  .filter(row => row.criticality !== "optional-topic" && ["empty", "failed"].includes(row.state))
   .map(row => ({
     stream: row.stream,
     state: row.state,
@@ -39,6 +43,9 @@ const report = {
   status: breaches.length ? "action-required" : "healthy",
   breachCount: breaches.length,
   breaches,
+  optionalQuietStreams: (health.streamHealth || [])
+    .filter(row => row.criticality === "optional-topic" && row.state === "empty")
+    .map(row => ({ stream: row.stream, consecutiveEmptyRuns: Number(row.consecutiveEmptyRuns || 0) })),
   recoveredStreams: health.recoveredStreams || [],
   credentialGatedConnectors: (health.connectorStatus || []).filter(row => row.status === "credential-gated"),
 };

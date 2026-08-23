@@ -52,9 +52,9 @@ const compact = (item, keys) => Object.fromEntries(keys
   .filter(key => Object.hasOwn(item || {}, key))
   .map(key => [key, item[key]]));
 
-const [news, research, market, infra, bizmodel] = await Promise.all([
+const [news, research, market, infra] = await Promise.all([
   readJson("news.json"), readJson("research.json"), readJson("market.json"),
-  readJson("infra.json"), readJson("bizmodel.json"),
+  readJson("infra.json"),
 ]);
 const consultingArchitecture = await readJson("config/consulting-architecture.json");
 
@@ -210,7 +210,6 @@ const views = {
     items: visibleMarketItems,
   },
   "infra-view.json": { generatedAt, count: visibleSignals(infra, "infra-signal").length, groups: (infra.groups || []).filter(notRetiredFocus), items: visibleSignals(infra, "infra-signal") },
-  "bizmodel-view.json": { generatedAt, count: visibleSignals(bizmodel, "bizmodel-signal").length, groups: bizmodel.groups || [], items: visibleSignals(bizmodel, "bizmodel-signal") },
 };
 
 await Promise.all(Object.entries(views).map(async ([file, value]) => {
@@ -460,8 +459,8 @@ try {
     overview: sectionMetric(visibleArticles.length, newestArticle, 168),
     strategy: sectionMetric(opportunityCount, opportunityDb.generatedAt || opportunityDb.asOf || generatedAt, 25),
     opportunity: sectionMetric(opportunityCount, opportunityDb.generatedAt || opportunityDb.asOf || generatedAt, 25),
-    newbiz: sectionMetric((views["bizmodel-view.json"].items || []).length + (monetization.companies || []).length,
-      newestTimestamp([bizmodel.generatedAt, monetization.generatedAt, monetization.updatedAt]) || generatedAt, 25),
+    newbiz: sectionMetric((monetization.companies || []).length,
+      newestTimestamp([monetization.generatedAt, monetization.updatedAt]) || generatedAt, 25),
     valuechain: sectionMetric(Object.keys(companies.companies || {}).length,
       companies.generatedAt || companies.updatedAt || generatedAt, 25),
     signals: sectionMetric((views["infra-view.json"].items || []).length,
@@ -538,6 +537,8 @@ for (const definition of contentRegistry.datasets || []) {
       id: definition.id,
       path: definition.path,
       section: definition.section,
+      publication: definition.publication || "public",
+      consumer: definition.consumer || null,
       ...consultingSectionIndex.get(definition.section),
       collector: definition.collector,
       required: definition.required !== false,
@@ -553,6 +554,8 @@ for (const definition of contentRegistry.datasets || []) {
       id: definition.id,
       path: definition.path,
       section: definition.section,
+      publication: definition.publication || "public",
+      consumer: definition.consumer || null,
       ...consultingSectionIndex.get(definition.section),
       collector: definition.collector,
       required: definition.required !== false,
@@ -565,13 +568,17 @@ for (const definition of contentRegistry.datasets || []) {
     });
   }
 }
-const contentSummary = contentDatasets.reduce((summary, dataset) => {
+const activeContentDatasets = contentDatasets.filter(dataset => dataset.publication !== "retired");
+const contentSummary = activeContentDatasets.reduce((summary, dataset) => {
   summary[dataset.status] = (summary[dataset.status] || 0) + 1;
   return summary;
 }, { current: 0, stale: 0, empty: 0, missing: 0 });
+contentSummary.public = activeContentDatasets.filter(dataset => dataset.publication === "public").length;
+contentSummary.supporting = activeContentDatasets.filter(dataset => dataset.publication === "supporting").length;
+contentSummary.retired = contentDatasets.filter(dataset => dataset.publication === "retired").length;
 const workstreamSummary = (consultingArchitecture.workstreams || []).map(workstream => {
   const sectionIds = new Set((workstream.sections || []).map(section => section.id));
-  const datasets = contentDatasets.filter(dataset => sectionIds.has(dataset.section));
+  const datasets = activeContentDatasets.filter(dataset => sectionIds.has(dataset.section));
   const recordCount = datasets.reduce((sum, dataset) => sum + Number(dataset.recordCount || 0), 0);
   const currentDatasets = datasets.filter(dataset => dataset.status === "current").length;
   return {
@@ -588,7 +595,7 @@ const workstreamSummary = (consultingArchitecture.workstreams || []).map(workstr
   };
 });
 const siteContentManifest = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   generatedAt,
   refreshCadenceHours: contentRegistry.refreshCadenceHours,
   publicationPolicy: contentRegistry.publicationPolicy,
@@ -615,7 +622,9 @@ await writeJson("data-version.json", {
   version,
   generatedAt,
   contentStatus: contentSummary,
-  assets: ["site-content-manifest.json", ...new Set((contentRegistry.datasets || []).map(dataset => dataset.path)), "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"],
+  assets: ["site-content-manifest.json", ...new Set((contentRegistry.datasets || [])
+    .filter(dataset => dataset.publication !== "retired")
+    .map(dataset => dataset.path)), "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json"],
 });
 
 console.log(`[public-data] ${visibleArticles.length} articles · ${visibleResearch.length} research · ${visibleRecords.length} cumulative market insights · ${historicalRecordCount} historical topic rows retained · ${consolidatedDuplicateCount} duplicate reports consolidated · version ${version}`);

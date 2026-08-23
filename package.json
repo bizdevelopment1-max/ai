@@ -15,6 +15,7 @@
     "update:site:recovery": "node scripts/update-site.mjs --mode=recovery",
     "update:site:publish": "node scripts/update-site.mjs --mode=publish",
     "validate:content": "node scripts/validate-site-content.mjs",
+    "validate:lifecycle": "node scripts/audit-content-lifecycle.mjs",
     "archive:immutable": "node scripts/archive-immutable-snapshot.mjs",
     "minimize:source-content": "node scripts/minimize-retained-source-content.mjs",
     "normalize:temporal": "node scripts/normalize-temporal-fields.mjs",
