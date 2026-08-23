@@ -47,12 +47,13 @@ for (const section of sections) {
   }
 }
 
-const registrySections = new Set((registry.datasets || []).map(dataset => dataset.section));
+const activeDatasets = (registry.datasets || []).filter(dataset => dataset.publication !== "retired");
+const registrySections = new Set(activeDatasets.map(dataset => dataset.section));
 for (const section of registrySections) {
   expect(requiredSectionIds.includes(section), `content registry section is outside the MECE architecture: ${section}`);
 }
 for (const section of requiredSectionIds) {
-  expect((registry.datasets || []).some(dataset => dataset.section === section),
+  expect(activeDatasets.some(dataset => dataset.section === section),
     `${section}: no generated dataset is registered`);
 }
 

@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-23T06:58:38.133Z",
+  "summary": {
+    "public": 13,
+    "supporting": 6,
+    "retired": 1,
+    "dead": 0
+  },
+  "datasets": [
+    {
+      "id": "overview",
+      "path": "overview-view.json",
+      "publication": "public",
+      "collector": "build-public-data",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "strategy",
+      "path": "strategy-view.json",
+      "publication": "public",
+      "collector": "build-public-data",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "news",
+      "path": "news-view.json",
+      "publication": "public",
+      "collector": "crawl-news",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "research",
+      "path": "research-view.json",
+      "publication": "public",
+      "collector": "crawl-research",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "companies",
+      "path": "companies.json",
+      "publication": "public",
+      "collector": "crawl-companies",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "company-news",
+      "path": "company-news.json",
+      "publication": "public",
+      "collector": "build-company-news",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "startups",
+      "path": "startups.json",
+      "publication": "public",
+      "collector": "crawl-startups",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "monetization",
+      "path": "monetization.json",
+      "publication": "public",
+      "collector": "crawl-monetization",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "business-model-forecasts",
+      "path": "business-model-forecasts.json",
+      "publication": "public",
+      "collector": "build-company-intelligence",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "business-model-signals-ledger",
+      "path": "bizmodel.json",
+      "publication": "retired",
+      "collector": "retained-ledger",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "retained-ledger-not-published"
+    },
+    {
+      "id": "technology-signals",
+      "path": "infra-view.json",
+      "publication": "public",
+      "collector": "crawl-infra",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "market",
+      "path": "market-view.json",
+      "publication": "public",
+      "collector": "crawl-markets",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "stocks",
+      "path": "stocks.json",
+      "publication": "public",
+      "collector": "crawl-stocks",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "investments",
+      "path": "nvidia-investments.json",
+      "publication": "public",
+      "collector": "build-nvidia-investments",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "decision-intelligence",
+      "path": "mobile-ai-business-view.json",
+      "publication": "supporting",
+      "collector": "build-mobile-ai-business-db",
+      "consumer": "scripts/build-public-data.mjs",
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "materialized-by:scripts/build-public-data.mjs"
+    },
+    {
+      "id": "insights",
+      "path": "insights.json",
+      "publication": "supporting",
+      "collector": "build-insights",
+      "consumer": "scripts/build-public-data.mjs",
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "materialized-by:scripts/build-public-data.mjs"
+    },
+    {
+      "id": "company-track",
+      "path": "intelligence-tracks.json",
+      "publication": "supporting",
+      "collector": "build-intelligence-tracks",
+      "consumer": "scripts/build-public-data.mjs",
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "materialized-by:scripts/build-public-data.mjs"
+    },
+    {
+      "id": "market-track",
+      "path": "intelligence-tracks.json",
+      "publication": "supporting",
+      "collector": "build-intelligence-tracks",
+      "consumer": "scripts/build-public-data.mjs",
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "materialized-by:scripts/build-public-data.mjs"
+    },
+    {
+      "id": "consumer-survey-track",
+      "path": "intelligence-tracks.json",
+      "publication": "supporting",
+      "collector": "build-intelligence-tracks",
+      "consumer": "scripts/build-public-data.mjs",
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "materialized-by:scripts/build-public-data.mjs"
+    },
+    {
+      "id": "value-chain-track",
+      "path": "intelligence-tracks.json",
+      "publication": "supporting",
+      "collector": "build-intelligence-tracks",
+      "consumer": "scripts/build-public-data.mjs",
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "materialized-by:scripts/build-public-data.mjs"
+    }
+  ]
+}

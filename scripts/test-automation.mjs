@@ -47,6 +47,8 @@ const required = [
   "scripts/relationship-landscape.mjs",
   "scripts/update-site.mjs",
   "scripts/validate-site-content.mjs",
+  "scripts/audit-content-lifecycle.mjs",
+  "scripts/check-collection-watchdog.mjs",
   "scripts/build-mobile-ai-business-db.mjs",
   "scripts/public-copy.mjs",
   "scripts/suppression-registry.mjs",
@@ -61,7 +63,7 @@ const required = [
   "intelligence-tracks.json",
   "mobile-ai-business-view.json",
   "infra-view.json",
-  "bizmodel-view.json",
+  "content-lifecycle-report.json",
   "data-version.json",
   "site-content-manifest.json",
   "stocks.json",
@@ -2300,7 +2302,7 @@ console.log("  정보  보조 업데이트: 수동 복구 전용(동시 쓰기 �
 const pipelineScripts = [
   "scripts/crawl-news.mjs", "scripts/crawl-stocks.mjs", "scripts/crawl-research.mjs",
   "scripts/crawl-startups.mjs", "scripts/crawl-startup-organizations.mjs", "scripts/crawl-markets.mjs", "scripts/crawl-infra.mjs",
-  "scripts/crawl-bizmodel.mjs", "scripts/generate-briefing.mjs", "scripts/startup-radar.mjs",
+  "scripts/generate-briefing.mjs", "scripts/startup-radar.mjs",
   "scripts/build-insights.mjs", "scripts/crawl-companies.mjs", "scripts/crawl-monetization.mjs",
   "scripts/crawl-a16z-startups.mjs", "scripts/crawl-strategic-ventures.mjs",
   "scripts/build-company-intelligence.mjs",
@@ -2312,6 +2314,32 @@ for (const file of pipelineScripts) {
     failed = true;
     console.error(`  실패  ${file}: 오류를 성공으로 종료하는 코드가 남아 있음`);
   }
+}
+
+try {
+  const [registry, lifecycle, updater, translator, watchdog] = await Promise.all([
+    readFile("config/site-content-registry.json", "utf8").then(JSON.parse),
+    readFile("content-lifecycle-report.json", "utf8").then(JSON.parse),
+    readFile("scripts/update-site.mjs", "utf8"),
+    readFile("scripts/translate_summarize.py", "utf8"),
+    readFile("scripts/check-collection-watchdog.mjs", "utf8"),
+  ]);
+  const retired = (registry.datasets || []).filter(dataset => dataset.publication === "retired");
+  if (lifecycle.summary?.dead !== 0
+    || !retired.length
+    || retired.some(dataset => dataset.required !== false)
+    || updater.includes('retryStep("business-model-signals"')
+    || !updater.includes('nodeStep("audit-content-lifecycle"')
+    || !translator.includes("degraded-source-language-fallback")
+    || !translator.includes("if self.unavailable")
+    || !translator.includes("return self.cache")
+    || !watchdog.includes('row.criticality !== "optional-topic"')) {
+    throw new Error("content lifecycle gate or translation-outage circuit breaker is incomplete");
+  }
+  console.log(`  OK  공개 ${lifecycle.summary.public} · 보조 ${lifecycle.summary.supporting} · 보관 ${lifecycle.summary.retired} · 데드 0 · 번역 장애 원문 폴백`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  content lifecycle automation: ${error.message}`);
 }
 
 try {
@@ -2433,7 +2461,7 @@ try {
     readFile("scripts/build-company-intelligence.mjs", "utf8"),
     readFile("scripts/crawl-startups.mjs", "utf8"),
     readFile("scripts/translate_summarize.py", "utf8"),
-    ...["news-view.json", "research-view.json", "market-view.json", "infra-view.json", "bizmodel-view.json"]
+    ...["news-view.json", "research-view.json", "market-view.json", "infra-view.json"]
       .map(file => readFile(file, "utf8").then(JSON.parse)),
   ]);
   const cases = new Map([

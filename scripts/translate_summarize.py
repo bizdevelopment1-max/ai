@@ -252,6 +252,10 @@ class SourceTranslator:
     def __init__(self) -> None:
         self.cache: dict[tuple[str, str], str] = {}
         self.calls = 0
+        self.failures = 0
+        self.skipped = 0
+        self.unavailable = False
+        self.last_error = ""
         self._last = 0.0   # 마지막 요청 시각(모노토닉) — 요청 간 페이싱용
 
     def _throttle(self) -> None:
@@ -261,6 +265,9 @@ class SourceTranslator:
         self._last = time.monotonic()
 
     def _request(self, text: str, source_language: str) -> str:
+        if self.unavailable:
+            self.skipped += 1
+            raise RuntimeError(self.last_error or "translation-endpoint-unavailable")
         query = urlencode({"client": "gtx", "sl": source_language, "tl": "ko", "dt": "t", "q": text})
         request = Request(f"{TRANSLATE_URL}?{query}", headers={"User-Agent": "Mozilla/5.0 (compatible; AI-Feed-Localizer/1.0)", "Accept": "application/json"})
         last_error: Exception | None = None
@@ -274,23 +281,45 @@ class SourceTranslator:
             except Exception as exc:  # network errors deliberately become English fallback
                 last_error = exc
                 time.sleep(min(0.8 * (2 ** attempt), 8.0))   # 지수 백오프(레이트리밋·일시 오류 흡수)
-        raise RuntimeError(f"translation-request-failed:{type(last_error).__name__}")
+        self.failures += 1
+        self.unavailable = True
+        self.last_error = f"translation-request-failed:{type(last_error).__name__}"
+        raise RuntimeError(self.last_error)
 
     def translate_many(self, pairs: list[tuple[str, str]]) -> dict[tuple[str, str], str]:
         pending = [(clean(text), LANG_CODES.get((language or "").casefold(), "auto")) for text, language in pairs if clean(text)]
         pending = list(dict.fromkeys(pair for pair in pending if pair not in self.cache))
+        if self.unavailable:
+            self.skipped += len(pending)
+            return self.cache
         by_language: dict[str, list[str]] = {}
         for text, language in pending:
             by_language.setdefault(language, []).append(text)
         for language, texts in by_language.items():
+            if self.unavailable:
+                self.skipped += len(texts)
+                break
             chunk: list[str] = []
             for text in texts:
                 if chunk and sum(len(value) for value in chunk) + len(text) + 40 > 3600:
-                    self._translate_chunk(chunk, language)
+                    try:
+                        self._translate_chunk(chunk, language)
+                    except RuntimeError:
+                        # Translation is presentation-only. Once the endpoint
+                        # is unavailable, open a circuit for this run and let
+                        # every missing row use the source-language fallback.
+                        # A transient third-party outage must never block the
+                        # daily source collection, verification or publishing.
+                        self.skipped += len(texts)
+                        return self.cache
                     chunk = []
                 chunk.append(text)
             if chunk:
-                self._translate_chunk(chunk, language)
+                try:
+                    self._translate_chunk(chunk, language)
+                except RuntimeError:
+                    self.skipped += len(texts)
+                    return self.cache
         return self.cache
 
     def _translate_chunk(self, texts: list[str], language: str) -> None:
@@ -483,7 +512,8 @@ def main() -> None:
     write_json(RESEARCH_PATH, research)
     write_json(MARKET_PATH, market)
     write_json(STARTUPS_PATH, startups)
-    print(f"[localize] changed {changed_news + changed_research + changed_market + changed_startups}; Korean {accepted_news + accepted_research + accepted_market + accepted_startups}; English fallback {fallback_news + fallback_research + fallback_market + fallback_startups}; translation requests {translator.calls}")
+    health = "degraded-source-language-fallback" if translator.unavailable else "healthy"
+    print(f"[localize] changed {changed_news + changed_research + changed_market + changed_startups}; Korean {accepted_news + accepted_research + accepted_market + accepted_startups}; English fallback {fallback_news + fallback_research + fallback_market + fallback_startups}; translation requests {translator.calls}; health {health}; skipped {translator.skipped}")
 
 
 if __name__ == "__main__":

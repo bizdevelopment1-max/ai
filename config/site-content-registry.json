@@ -1,34 +1,35 @@
 {
-  "version": 2,
-  "updatedAt": "2026-08-17",
+  "version": 3,
+  "updatedAt": "2026-08-23",
   "refreshCadenceHours": 6,
   "publicationPolicy": {
     "publicSource": "materialized-views-only",
     "missingData": "hide-section",
     "allowMutableUiFallbacks": false,
     "retainRawHistory": true,
-    "approvalRequired": true
+    "approvalRequired": true,
+    "lifecycleStates": ["public", "supporting", "retired"]
   },
   "datasets": [
-    { "id": "overview", "path": "overview-view.json", "section": "overview", "recordPath": "articles", "countMode": "array", "required": true, "maxAgeHours": 7, "collector": "build-public-data" },
-    { "id": "strategy", "path": "strategy-view.json", "section": "strategy", "recordPath": "opportunityPortfolio", "countMode": "array", "required": true, "maxAgeHours": 7, "collector": "build-public-data" },
-    { "id": "news", "path": "news-view.json", "section": "evidence", "recordPath": "articles", "countMode": "array", "required": true, "maxAgeHours": 7, "collector": "crawl-news" },
-    { "id": "research", "path": "research-view.json", "section": "evidence", "recordPath": "feed", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-research" },
-    { "id": "companies", "path": "companies.json", "section": "valuechain", "recordPath": "companies", "countMode": "object", "required": true, "maxAgeHours": 25, "collector": "crawl-companies" },
-    { "id": "company-news", "path": "company-news.json", "section": "valuechain", "recordPath": "companies", "countMode": "object", "required": true, "maxAgeHours": 7, "collector": "build-company-news" },
-    { "id": "startups", "path": "startups.json", "section": "sanalysis", "recordPath": "large", "countMode": "array", "required": true, "maxAgeHours": 169, "collector": "crawl-startups" },
-    { "id": "monetization", "path": "monetization.json", "section": "newbiz", "recordPath": "companies", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-monetization" },
-    { "id": "business-model-forecasts", "path": "business-model-forecasts.json", "section": "newbiz", "recordPath": "models", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-company-intelligence" },
-    { "id": "business-model-signals", "path": "bizmodel-view.json", "section": "newbiz", "recordPath": "items", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-bizmodel" },
-    { "id": "technology-signals", "path": "infra-view.json", "section": "signals", "recordPath": "items", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-infra" },
-    { "id": "market", "path": "market-view.json", "section": "validation", "recordPath": "records", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "crawl-markets" },
-    { "id": "stocks", "path": "stocks.json", "section": "validation", "recordPath": "stocks", "countMode": "object", "required": true, "maxAgeHours": 49, "collector": "crawl-stocks" },
-    { "id": "investments", "path": "nvidia-investments.json", "section": "validation", "recordPath": "portfolio", "countMode": "array", "required": false, "maxAgeHours": 169, "collector": "build-nvidia-investments" },
-    { "id": "decision-intelligence", "path": "mobile-ai-business-view.json", "section": "strategy", "recordPath": "signals", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-mobile-ai-business-db" },
-    { "id": "insights", "path": "insights.json", "section": "opportunity", "recordPath": "cards", "countMode": "array", "required": true, "maxAgeHours": 7, "collector": "build-insights" }
-    ,{ "id": "company-track", "path": "intelligence-tracks.json", "section": "valuechain", "recordPath": "tracks.company.records", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-intelligence-tracks" }
-    ,{ "id": "market-track", "path": "intelligence-tracks.json", "section": "validation", "recordPath": "tracks.market.records", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-intelligence-tracks" }
-    ,{ "id": "consumer-survey-track", "path": "intelligence-tracks.json", "section": "validation", "recordPath": "tracks.consumer-survey.records", "countMode": "array", "required": true, "maxAgeHours": 169, "collector": "build-intelligence-tracks" }
-    ,{ "id": "value-chain-track", "path": "intelligence-tracks.json", "section": "valuechain", "recordPath": "tracks.value-chain.records", "countMode": "array", "required": true, "maxAgeHours": 25, "collector": "build-intelligence-tracks" }
+    { "id": "overview", "path": "overview-view.json", "section": "overview", "recordPath": "articles", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 7, "collector": "build-public-data" },
+    { "id": "strategy", "path": "strategy-view.json", "section": "strategy", "recordPath": "opportunityPortfolio", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 7, "collector": "build-public-data" },
+    { "id": "news", "path": "news-view.json", "section": "evidence", "recordPath": "articles", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 7, "collector": "crawl-news" },
+    { "id": "research", "path": "research-view.json", "section": "evidence", "recordPath": "feed", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "crawl-research" },
+    { "id": "companies", "path": "companies.json", "section": "valuechain", "recordPath": "companies", "countMode": "object", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "crawl-companies" },
+    { "id": "company-news", "path": "company-news.json", "section": "valuechain", "recordPath": "companies", "countMode": "object", "publication": "public", "required": true, "maxAgeHours": 7, "collector": "build-company-news" },
+    { "id": "startups", "path": "startups.json", "section": "sanalysis", "recordPath": "large", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 169, "collector": "crawl-startups" },
+    { "id": "monetization", "path": "monetization.json", "section": "newbiz", "recordPath": "companies", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "crawl-monetization" },
+    { "id": "business-model-forecasts", "path": "business-model-forecasts.json", "section": "newbiz", "recordPath": "models", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "build-company-intelligence" },
+    { "id": "business-model-signals-ledger", "path": "bizmodel.json", "section": "newbiz", "recordPath": "items", "countMode": "array", "publication": "retired", "required": false, "collector": "retained-ledger", "retiredAt": "2026-08-23", "retiredReason": "public-board-removed" },
+    { "id": "technology-signals", "path": "infra-view.json", "section": "signals", "recordPath": "items", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "crawl-infra" },
+    { "id": "market", "path": "market-view.json", "section": "validation", "recordPath": "records", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "crawl-markets" },
+    { "id": "stocks", "path": "stocks.json", "section": "validation", "recordPath": "stocks", "countMode": "object", "publication": "public", "required": true, "maxAgeHours": 49, "collector": "crawl-stocks" },
+    { "id": "investments", "path": "nvidia-investments.json", "section": "validation", "recordPath": "portfolio", "countMode": "array", "publication": "public", "required": false, "maxAgeHours": 169, "collector": "build-nvidia-investments" },
+    { "id": "decision-intelligence", "path": "mobile-ai-business-view.json", "section": "strategy", "recordPath": "signals", "countMode": "array", "publication": "supporting", "consumer": "scripts/build-public-data.mjs", "required": true, "maxAgeHours": 25, "collector": "build-mobile-ai-business-db" },
+    { "id": "insights", "path": "insights.json", "section": "opportunity", "recordPath": "cards", "countMode": "array", "publication": "supporting", "consumer": "scripts/build-public-data.mjs", "required": true, "maxAgeHours": 7, "collector": "build-insights" },
+    { "id": "company-track", "path": "intelligence-tracks.json", "section": "valuechain", "recordPath": "tracks.company.records", "countMode": "array", "publication": "supporting", "consumer": "scripts/build-public-data.mjs", "required": true, "maxAgeHours": 25, "collector": "build-intelligence-tracks" },
+    { "id": "market-track", "path": "intelligence-tracks.json", "section": "validation", "recordPath": "tracks.market.records", "countMode": "array", "publication": "supporting", "consumer": "scripts/build-public-data.mjs", "required": true, "maxAgeHours": 25, "collector": "build-intelligence-tracks" },
+    { "id": "consumer-survey-track", "path": "intelligence-tracks.json", "section": "validation", "recordPath": "tracks.consumer-survey.records", "countMode": "array", "publication": "supporting", "consumer": "scripts/build-public-data.mjs", "required": true, "maxAgeHours": 169, "collector": "build-intelligence-tracks" },
+    { "id": "value-chain-track", "path": "intelligence-tracks.json", "section": "valuechain", "recordPath": "tracks.value-chain.records", "countMode": "array", "publication": "supporting", "consumer": "scripts/build-public-data.mjs", "required": true, "maxAgeHours": 25, "collector": "build-intelligence-tracks" }
   ]
 }

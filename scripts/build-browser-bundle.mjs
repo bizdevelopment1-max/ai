@@ -162,6 +162,22 @@ export function minifyCss(source) {
   return output.trim().replace(/;}/g, "}");
 }
 
+// Components removed from the public navigation are retained in authoring
+// history for audit, but their isolated style blocks must not be shipped to
+// every visitor. Explicit markers keep this deterministic and avoid unsafe
+// selector guessing for dynamically composed class names.
+export function stripRetiredCssBlocks(source) {
+  const retiredBlocks = [
+    ["/* ── AI 수익화 플레이북 (MonetizationPlaybook) ── */", "/* 기업 움직임 기반 신규 AI 비즈니스 모델 */"],
+  ];
+  return retiredBlocks.reduce((output, [start, end]) => {
+    const startIndex = output.indexOf(start);
+    const endIndex = output.indexOf(end, startIndex + start.length);
+    if (startIndex < 0 || endIndex < 0) return output;
+    return `${output.slice(0, startIndex)}${output.slice(endIndex)}`;
+  }, source);
+}
+
 export async function buildBrowserBundle() {
   const [sources, taxonomySource, stylesSource, indexSource] = await Promise.all([
     readBrowserSources(),
@@ -178,7 +194,7 @@ export async function buildBrowserBundle() {
     { file: DATA_SOURCE_FILE, source: taxonomySource },
     { file: "runtime-data.js", source: compactData },
   ]);
-  const styleStamp = assetVersion(STYLES_FILE, stylesSource);
+  const productionStylesSource = stripRetiredCssBlocks(stylesSource);
   const [Babel, Terser] = await Promise.all([loadBabel(), loadTerser()]);
   const compiled = sources.map(({ file, source }) => Babel.transform(source, {
     filename: file,
@@ -196,7 +212,8 @@ export async function buildBrowserBundle() {
   if (!minified.code) throw new Error("Browser minifier emitted an empty bundle");
   const bundle = `/* ai-dashboard-bundle:${stamp} */\n${minified.code}\n`;
   const dataBundle = `/* ai-dashboard-data:${dataStamp} */\n${compactData}\n`;
-  const styleBundle = minifyCss(stylesSource);
+  const styleBundle = minifyCss(productionStylesSource);
+  const styleStamp = assetVersion(STYLE_BUNDLE_FILE, styleBundle);
   const versionedIndex = [
     [STYLE_BUNDLE_FILE, styleStamp],
     [DATA_BUNDLE_FILE, dataStamp.slice(0, 16)],
