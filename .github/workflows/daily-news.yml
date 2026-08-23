@@ -69,6 +69,13 @@ jobs:
               # cumulative data branch still carries an older generated copy.
               # Resolve only those modify/delete conflicts whose path no
               # longer exists on main; every other conflict remains fatal.
+              for attempt in 1 2 3 4 5; do
+                [ ! -e .git/index.lock ] && break
+                sleep 1
+              done
+              # The merge process has exited at this point. A surviving lock
+              # belongs to that completed process in the ephemeral CI clone.
+              rm -f .git/index.lock
               while IFS= read -r path; do
                 if ! git cat-file -e "origin/main:${path}" 2>/dev/null; then
                   git rm -f -- "$path"
