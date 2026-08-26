@@ -18,6 +18,8 @@ const TICKERS = [
   { t: "GOOGL", y: "GOOGL", s: "googl.us", shares: 12.2 },
   { t: "META", y: "META", s: "meta.us", shares: 2.53 },
   { t: "ORCL", y: "ORCL", s: "orcl.us" },
+  // ── AI 애플리케이션·자율 시스템 ──
+  { t: "TSLA", y: "TSLA", s: "tsla.us" },
   // ── AI 칩 ──
   { t: "NVDA", y: "NVDA", s: "nvda.us", shares: 24.4 },
   { t: "AMD", y: "AMD", s: "amd.us" },
@@ -47,6 +49,21 @@ const TICKERS = [
   { t: "APLD", y: "APLD", s: "apld.us" },
   { t: "VRT", y: "VRT", s: "vrt.us" },
   { t: "NBIS", y: "NBIS", s: "nbis.us" },
+  // ── Tier 1 · Strategic OEM ──
+  { t: "DELL", y: "DELL", s: "dell.us" },
+  { t: "HPE", y: "HPE", s: "hpe.us" },
+  { t: "0992.HK", y: "0992.HK", currency: "HK$", market: "HKEX" },
+  { t: "SMCI", y: "SMCI", s: "smci.us" },
+  // ── Tier 2 · AI Server ODM ──
+  { t: "2382.TW", y: "2382.TW", currency: "NT$", market: "TWSE" },
+  { t: "6669.TW", y: "6669.TW", currency: "NT$", market: "TWSE" },
+  { t: "2317.TW", y: "2317.TW", currency: "NT$", market: "TWSE" },
+  { t: "2356.TW", y: "2356.TW", currency: "NT$", market: "TWSE" },
+  // ── Tier 3 · System / AI infrastructure ──
+  { t: "2376.TW", y: "2376.TW", currency: "NT$", market: "TWSE" },
+  { t: "2357.TW", y: "2357.TW", currency: "NT$", market: "TWSE" },
+  { t: "CSCO", y: "CSCO", s: "csco.us" },
+  { t: "6702.T", y: "6702.T", currency: "¥", market: "TSE" },
   // ── AI 소프트웨어·플랫폼 ──
   { t: "PLTR", y: "PLTR", s: "pltr.us" },
   { t: "NOW", y: "NOW", s: "now.us" },

@@ -822,6 +822,30 @@
       "accent": "#7A38D6"
     },
     {
+      "id": "autonomy",
+      "ko": "자율 시스템·로보틱스",
+      "en": "Autonomous Systems & Robotics",
+      "accent": "#DC2626"
+    },
+    {
+      "id": "strategic-oem",
+      "ko": "Tier 1 · Strategic OEM",
+      "en": "Tier 1 Strategic OEM",
+      "accent": "#1D4ED8"
+    },
+    {
+      "id": "ai-server-odm",
+      "ko": "Tier 2 · AI Server ODM",
+      "en": "Tier 2 AI Server ODM",
+      "accent": "#0F766E"
+    },
+    {
+      "id": "system-infrastructure",
+      "ko": "Tier 3 · System·AI Infra",
+      "en": "Tier 3 System & AI Infrastructure",
+      "accent": "#B45309"
+    },
+    {
       "id": "china-foundry",
       "region": "china",
       "ko": "파운드리",
@@ -857,16 +881,46 @@
       "accent": "#475569"
     }
   ],
+  "STOCK_VALUE_CHAIN_FAMILIES": [
+    {
+      "id": "platform",
+      "ko": "플랫폼·서비스",
+      "en": "Platforms & Services",
+      "description": "빅테크·애플리케이션·기업 SW·파운데이션 모델"
+    },
+    {
+      "id": "infrastructure",
+      "ko": "실리콘·데이터센터",
+      "en": "Silicon & Data Centers",
+      "description": "AI 칩·파운드리·반도체 공급망·클라우드 용량"
+    },
+    {
+      "id": "server",
+      "ko": "AI 서버 공급망",
+      "en": "AI Server Supply Chain",
+      "description": "전략 OEM·서버 ODM·시스템 인프라·네트워크"
+    }
+  ],
   "STOCK_VALUE_CHAIN": [
     {
+      "id": "bigtech",
+      "family": "platform",
+      "ko": "빅테크·하이퍼스케일러",
+      "en": "Big Tech & Hyperscalers",
+      "accent": "#1428A0",
+      "accentSoft": "#E8ECFF"
+    },
+    {
       "id": "applications",
-      "ko": "애플리케이션·디바이스",
-      "en": "Applications & Devices",
+      "family": "platform",
+      "ko": "AI 앱·자율 시스템",
+      "en": "AI Applications & Autonomous Systems",
       "accent": "#E54B4B",
       "accentSoft": "#FDECEC"
     },
     {
       "id": "enterprise",
+      "family": "platform",
       "ko": "에이전트·엔터프라이즈 SW",
       "en": "Agents & Enterprise Software",
       "accent": "#C026D3",
@@ -874,68 +928,124 @@
     },
     {
       "id": "foundation",
-      "ko": "파운데이션 모델",
-      "en": "Foundation Models",
+      "family": "platform",
+      "ko": "파운데이션 모델·AI 네이티브",
+      "en": "Foundation Models & AI Native",
       "accent": "#7A38D6",
       "accentSoft": "#F1EBFC"
     },
     {
-      "id": "cloud",
-      "ko": "클라우드·데이터센터",
-      "en": "Cloud & Data Centers",
+      "id": "silicon",
+      "family": "infrastructure",
+      "ko": "AI 칩·ASIC·IP",
+      "en": "AI Chips, ASIC & IP",
+      "accent": "#C026D3",
+      "accentSoft": "#FAE8FF"
+    },
+    {
+      "id": "foundry",
+      "family": "infrastructure",
+      "ko": "파운드리·반도체 제조",
+      "en": "Foundry & Semiconductor Manufacturing",
       "accent": "#2563EB",
       "accentSoft": "#EAF0FF"
     },
     {
-      "id": "compute",
-      "ko": "모바일·AI 컴퓨트",
-      "en": "Mobile & AI Compute",
-      "accent": "#0D9488",
+      "id": "semicap",
+      "family": "infrastructure",
+      "ko": "장비·패키징·소재",
+      "en": "Equipment, Packaging & Materials",
+      "accent": "#475569",
+      "accentSoft": "#EEF2F6"
+    },
+    {
+      "id": "datacenter",
+      "family": "infrastructure",
+      "ko": "클라우드·데이터센터",
+      "en": "Cloud & Data Centers",
+      "accent": "#0891B2",
+      "accentSoft": "#E6F7FB"
+    },
+    {
+      "id": "strategic-oem",
+      "family": "server",
+      "ko": "Tier 1 · Strategic OEM",
+      "en": "Tier 1 Strategic OEM",
+      "accent": "#1D4ED8",
+      "accentSoft": "#E8F0FF"
+    },
+    {
+      "id": "ai-server-odm",
+      "family": "server",
+      "ko": "Tier 2 · AI Server ODM",
+      "en": "Tier 2 AI Server ODM",
+      "accent": "#0F766E",
       "accentSoft": "#E5F7F4"
     },
     {
-      "id": "connectivity",
-      "ko": "연결·네트워크",
-      "en": "Connectivity & Networking",
-      "accent": "#EA580C",
-      "accentSoft": "#FFF0E6"
+      "id": "system-infrastructure",
+      "family": "server",
+      "ko": "Tier 3 · System·AI Infra",
+      "en": "Tier 3 System & AI Infrastructure",
+      "accent": "#B45309",
+      "accentSoft": "#FFF4E5"
     },
     {
-      "id": "manufacturing",
-      "ko": "제조·장비·소재",
-      "en": "Manufacturing, Equipment & Materials",
-      "accent": "#475569",
-      "accentSoft": "#EEF2F6"
+      "id": "connectivity",
+      "family": "server",
+      "ko": "네트워크·광통신",
+      "en": "Networking & Optical",
+      "accent": "#EA580C",
+      "accentSoft": "#FFF0E6"
     }
   ],
   "STOCK_GROUP_LAYER": {
-    "chip": "compute",
-    "foundry": "manufacturing",
-    "equipment": "manufacturing",
-    "packaging": "manufacturing",
+    "chip": "silicon",
+    "foundry": "foundry",
+    "equipment": "semicap",
+    "packaging": "semicap",
     "network": "connectivity",
-    "hyperscaler": "cloud",
-    "datacenter": "cloud",
+    "hyperscaler": "bigtech",
+    "datacenter": "datacenter",
     "software": "enterprise",
     "device": "applications",
     "native": "foundation",
-    "china-foundry": "manufacturing",
-    "china-equipment": "manufacturing",
-    "china-packaging": "manufacturing",
-    "china-design": "compute",
-    "china-materials": "manufacturing"
+    "autonomy": "applications",
+    "strategic-oem": "strategic-oem",
+    "ai-server-odm": "ai-server-odm",
+    "system-infrastructure": "system-infrastructure",
+    "china-foundry": "foundry",
+    "china-equipment": "semicap",
+    "china-packaging": "semicap",
+    "china-design": "silicon",
+    "china-materials": "semicap"
   },
   "STOCK_LAYER": {
-    "MSFT": "enterprise",
-    "AMZN": "cloud",
-    "NVDA": "compute",
-    "GOOGL": "foundation",
-    "META": "foundation",
-    "ORCL": "enterprise",
+    "MSFT": "bigtech",
+    "AMZN": "bigtech",
+    "GOOGL": "bigtech",
+    "META": "bigtech",
+    "ORCL": "bigtech",
+    "NVDA": "silicon",
+    "AVGO": "silicon",
+    "MRVL": "silicon",
     "PLTR": "enterprise",
     "NOW": "enterprise",
     "SPCX": "foundation",
-    "AAPL": "applications"
+    "AAPL": "applications",
+    "TSLA": "applications",
+    "DELL": "strategic-oem",
+    "HPE": "strategic-oem",
+    "0992.HK": "strategic-oem",
+    "SMCI": "strategic-oem",
+    "2382.TW": "ai-server-odm",
+    "6669.TW": "ai-server-odm",
+    "2317.TW": "ai-server-odm",
+    "2356.TW": "ai-server-odm",
+    "2376.TW": "system-infrastructure",
+    "2357.TW": "system-infrastructure",
+    "CSCO": "system-infrastructure",
+    "6702.T": "system-infrastructure"
   },
   "DECISION_FRAMEWORK": {
     "decisionOutputs": [
@@ -1370,6 +1480,14 @@
       "cat": "bigtech"
     },
     {
+      "ticker": "TSLA",
+      "name": "Tesla",
+      "group": "autonomy",
+      "domain": "tesla.com",
+      "cat": "bigtech",
+      "exchange": "NASDAQ"
+    },
+    {
       "ticker": "CRWV",
       "name": "CoreWeave",
       "group": "datacenter",
@@ -1489,6 +1607,102 @@
       "domain": "amkor.com",
       "cat": "bigtech",
       "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "DELL",
+      "name": "Dell Technologies",
+      "group": "strategic-oem",
+      "domain": "dell.com",
+      "cat": "bigtech",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "HPE",
+      "name": "HPE",
+      "group": "strategic-oem",
+      "domain": "hpe.com",
+      "cat": "bigtech",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "0992.HK",
+      "name": "Lenovo",
+      "group": "strategic-oem",
+      "domain": "lenovo.com",
+      "cat": "bigtech",
+      "exchange": "HKEX"
+    },
+    {
+      "ticker": "SMCI",
+      "name": "Supermicro",
+      "group": "strategic-oem",
+      "domain": "supermicro.com",
+      "cat": "bigtech",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "2382.TW",
+      "name": "Quanta Computer (QCT)",
+      "group": "ai-server-odm",
+      "domain": "quantatw.com",
+      "cat": "bigtech",
+      "exchange": "TWSE"
+    },
+    {
+      "ticker": "6669.TW",
+      "name": "Wiwynn",
+      "group": "ai-server-odm",
+      "domain": "wiwynn.com",
+      "cat": "bigtech",
+      "exchange": "TWSE"
+    },
+    {
+      "ticker": "2317.TW",
+      "name": "Foxconn (Hon Hai)",
+      "group": "ai-server-odm",
+      "domain": "honhai.com",
+      "cat": "bigtech",
+      "exchange": "TWSE"
+    },
+    {
+      "ticker": "2356.TW",
+      "name": "Inventec",
+      "group": "ai-server-odm",
+      "domain": "inventec.com",
+      "cat": "bigtech",
+      "exchange": "TWSE"
+    },
+    {
+      "ticker": "2376.TW",
+      "name": "GIGABYTE",
+      "group": "system-infrastructure",
+      "domain": "gigabyte.com",
+      "cat": "bigtech",
+      "exchange": "TWSE"
+    },
+    {
+      "ticker": "2357.TW",
+      "name": "ASUS",
+      "group": "system-infrastructure",
+      "domain": "asus.com",
+      "cat": "bigtech",
+      "exchange": "TWSE"
+    },
+    {
+      "ticker": "CSCO",
+      "name": "Cisco",
+      "group": "system-infrastructure",
+      "domain": "cisco.com",
+      "cat": "bigtech",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "6702.T",
+      "name": "Fujitsu",
+      "group": "system-infrastructure",
+      "domain": "fujitsu.com",
+      "cat": "bigtech",
+      "exchange": "TSE"
     },
     {
       "ticker": "688981.SS",
