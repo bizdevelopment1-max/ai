@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-26T08:01:57.248Z",
+  "generatedAt": "2026-08-26T08:30:04.768Z",
   "summary": {
-    "public": 13,
+    "public": 14,
     "supporting": 6,
     "retired": 1,
     "dead": 0
@@ -79,6 +79,17 @@
       "path": "startups.json",
       "publication": "public",
       "collector": "crawl-startups",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "partner-ma-candidates",
+      "path": "partner-ma-candidates.json",
+      "publication": "public",
+      "collector": "build-partner-ma-candidates",
       "consumer": null,
       "exists": true,
       "consumed": true,
