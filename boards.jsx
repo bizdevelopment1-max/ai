@@ -2129,33 +2129,48 @@ function ReportsBoard({ reports, sectionRef, query }) {
   );
 }
 
-// ---- NVIDIA investment portfolio: source-backed radial decision map ----
-function NvidiaInvestmentMap({ data, layers, theme }) {
+// ---- NVIDIA investment portfolio: source-backed value-chain catalog ----
+function NvidiaInvestmentMap({ data, theme }) {
   const portfolio = data?.portfolio || [];
-  const [selectedId, setSelectedId] = React.useState(portfolio[0]?.id || "");
+  const chains = data?.valueChains || [];
+  const [selectedId, setSelectedId] = React.useState("");
+  const [activeLayer, setActiveLayer] = React.useState("all");
+  const [query, setQuery] = React.useState("");
+  const formatMonthDay = value => {
+    const match = String(value || "").match(/^\d{4}-(\d{2})-(\d{2})/);
+    return match ? `${Number(match[1])}/${match[2]}` : "";
+  };
   React.useEffect(() => {
-    if (portfolio.length && !portfolio.some(item => item.id === selectedId)) setSelectedId(portfolio[0].id);
-  }, [data, selectedId]);
+    if (!portfolio.length) return;
+    if (!portfolio.some(item => item.id === selectedId)) {
+      const featured = portfolio.find(item => item.id === data?.featuredId) || portfolio[0];
+      setSelectedId(featured.id);
+    }
+  }, [data, portfolio.length, selectedId]);
   if (!portfolio.length) return null;
 
-  const layerMap = Object.fromEntries((layers || []).map(layer => [layer.id, layer]));
-  const selected = portfolio.find(item => item.id === selectedId) || portfolio[0];
-  const selectedIndex = Math.max(0, portfolio.findIndex(item => item.id === selected.id));
-  const selectedLayer = layerMap[selected.layer] || {};
-  // Evenly distribute N nodes around an ellipse (12 o'clock, clockwise) so the
-  // ring stays correct as the source-backed portfolio grows or shrinks.
-  const graphNodes = portfolio.map((item, index) => {
-    const angle = (2 * Math.PI * index) / portfolio.length - Math.PI / 2;
-    return { ...item, x: 50 + 37 * Math.cos(angle), y: 50 + 38 * Math.sin(angle) };
-  });
+  const normalizedQuery = query.trim().toLowerCase();
+  const visible = portfolio.filter(item => (activeLayer === "all" || item.layer === activeLayer)
+    && (!normalizedQuery || [item.name, item.officialIndustry, item.relationType, item.transaction]
+      .some(value => String(value || "").toLowerCase().includes(normalizedQuery))));
+  const selected = portfolio.find(item => item.id === selectedId) || visible[0] || portfolio[0];
+  const selectedIndex = Math.max(0, visible.findIndex(item => item.id === selected.id));
+  const selectedLayer = chains.find(layer => layer.id === selected.layer) || {};
   const latest = selected.latestEvidence;
   const primarySource = latest || selected.source;
-  const updated = data.generatedAt ? new Date(data.generatedAt).toLocaleDateString("ko-KR") : "";
+  const updated = formatMonthDay(data.generatedAt);
+  const chooseLayer = layerId => {
+    setActiveLayer(layerId);
+    const next = layerId === "all" ? portfolio.find(item => item.id === data?.featuredId) || portfolio[0]
+      : portfolio.find(item => item.layer === layerId);
+    if (next) setSelectedId(next.id);
+  };
   const moveSelection = (event, offset) => {
+    if (!visible.length) return;
     event.preventDefault();
-    const nextIndex = (selectedIndex + offset + portfolio.length) % portfolio.length;
-    setSelectedId(portfolio[nextIndex].id);
-    requestAnimationFrame(() => document.querySelector(`[data-nvi-id="${portfolio[nextIndex].id}"]`)?.focus());
+    const nextIndex = (selectedIndex + offset + visible.length) % visible.length;
+    setSelectedId(visible[nextIndex].id);
+    requestAnimationFrame(() => document.querySelector(`[data-nvi-id="${visible[nextIndex].id}"]`)?.focus());
   };
 
   return (
@@ -2163,68 +2178,81 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
       <header className="nvi-head">
         <div>
           <span className="nvi-kicker">NVIDIA CAPITAL ECOSYSTEM · SOURCE-BACKED</span>
-          <h3>NVIDIA AI 투자 포트폴리오</h3>
-          <p>노드 호버·클릭 → 투자 근거·전략적 의미</p>
+          <h3>NVIDIA AI 투자·전략 포트폴리오</h3>
+          <p>칩·추론 → 데이터센터 → 모델 → SW → AI 애플리케이션 → HW를 동일 기준으로 비교</p>
         </div>
         <div className="nvi-head-metrics">
-          <span><b>{portfolio.length}</b>개 주요 투자</span>
-          <span><b>{new Set(portfolio.map(item => item.layer)).size}</b>개 밸류체인</span>
+          <span><b>{portfolio.length}</b>개 확인 기업</span>
+          <span><b>{chains.length}</b>개 밸류체인</span>
+          <span><b>{data.officialCatalog?.count || 0}</b>개 공식 포트폴리오</span>
           {updated && <span>갱신 <b>{updated}</b></span>}
         </div>
       </header>
 
+      <nav className="nvi-chain-nav" aria-label="NVIDIA 투자 밸류체인">
+        <button type="button" className={activeLayer === "all" ? "is-active" : ""} onClick={() => chooseLayer("all")}>
+          <span>ALL</span><b>전체 포트폴리오</b><em>{portfolio.length}</em>
+        </button>
+        {chains.map((chain, index) => (
+          <button key={chain.id} type="button" className={activeLayer === chain.id ? "is-active" : ""}
+            style={{ "--node-color": chain.accent }} onClick={() => chooseLayer(chain.id)}>
+            <span>{String(index + 1).padStart(2, "0")}</span><b>{chain.ko}</b><em>{chain.count}</em>
+          </button>
+        ))}
+      </nav>
+
       <div className="nvi-body">
-        <div className="nvi-stage" aria-label="NVIDIA 투자 포트폴리오 관계도">
-          <svg className="nvi-edges" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
-            <defs>
-              <marker id="nvi-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
-                <path d="M0,0 L9,4.5 L0,9 Z" />
-              </marker>
-            </defs>
-            {graphNodes.map(node => (
-              <line key={node.id} x1="500" y1="260" x2={node.x * 10} y2={node.y * 5.2}
-                className={node.id === selected.id ? "is-selected" : "is-muted"} markerEnd="url(#nvi-arrow)" />
-            ))}
-          </svg>
-          <div className="nvi-core">
-            <img src="https://www.google.com/s2/favicons?domain=nvidia.com&sz=64" alt="" />
-            <b>NVIDIA</b>
-            <span>CAPITAL + COMPUTE</span>
+        <div className="nvi-stage" aria-label="NVIDIA 투자 포트폴리오 기업 목록">
+          <div className="nvi-stage-head">
+            <div>
+              <b>{activeLayer === "all" ? "전체 밸류체인" : chains.find(chain => chain.id === activeLayer)?.ko}</b>
+              <span>{visible.length}개 기업 · 기업을 선택하면 오른쪽에 관계와 공식 근거 표시</span>
+            </div>
+            <label className="nvi-search">
+              <span>기업 검색</span>
+              <input value={query} onChange={event => setQuery(event.target.value)} placeholder="기업·산업·관계 유형" />
+            </label>
           </div>
-          {graphNodes.map((node, nodeIndex) => {
-            const layer = layerMap[node.layer] || {};
-            return (
-              <button key={node.id} type="button"
-                className={"nvi-node" + (node.id === selected.id ? " is-selected" : "")}
-                style={{ left: `${node.x}%`, top: `${node.y}%`, "--node-color": layer.accent || theme.accent, "--node-index": nodeIndex }}
-                data-nvi-id={node.id}
-                aria-pressed={node.id === selected.id}
-                aria-label={`${node.name} 투자 이유 보기`}
-                title={`${node.name} · 호버 또는 클릭으로 상세 보기`}
-                onPointerEnter={() => setSelectedId(node.id)}
-                onFocus={() => setSelectedId(node.id)}
-                onClick={() => setSelectedId(node.id)}
-                onKeyDown={event => {
-                  if (["ArrowRight", "ArrowDown"].includes(event.key)) moveSelection(event, 1);
-                  if (["ArrowLeft", "ArrowUp"].includes(event.key)) moveSelection(event, -1);
-                }}>
-                <img src={`https://www.google.com/s2/favicons?domain=${node.domain}&sz=64`} alt="" loading="lazy" />
-                <b>{node.shortName}</b>
-                <span>{layer.ko || node.layer}</span>
-              </button>
-            );
-          })}
+          <div className="nvi-company-grid">
+            {visible.map((node, nodeIndex) => {
+              const layer = chains.find(item => item.id === node.layer) || {};
+              return (
+                <button key={node.id} type="button"
+                  className={"nvi-node" + (node.id === selected.id ? " is-selected" : "")}
+                  style={{ "--node-color": layer.accent || theme.accent, "--node-index": nodeIndex }}
+                  data-nvi-id={node.id}
+                  aria-pressed={node.id === selected.id}
+                  aria-label={`${node.name} 투자 관계 보기`}
+                  onFocus={() => setSelectedId(node.id)}
+                  onClick={() => setSelectedId(node.id)}
+                  onKeyDown={event => {
+                    if (["ArrowRight", "ArrowDown"].includes(event.key)) moveSelection(event, 1);
+                    if (["ArrowLeft", "ArrowUp"].includes(event.key)) moveSelection(event, -1);
+                  }}>
+                  <span className="nvi-node-mark">{String(node.shortName || node.name).slice(0, 1)}</span>
+                  <span className="nvi-node-copy"><b>{node.shortName || node.name}</b><small>{node.officialIndustry || layer.ko}</small></span>
+                  <span className="nvi-node-meta"><em>{node.relationType}</em><time>{formatMonthDay(node.source?.date)}</time></span>
+                </button>
+              );
+            })}
+            {!visible.length && <p className="nvi-empty">검색 조건에 맞는 기업이 없습니다.</p>}
+          </div>
         </div>
 
         <aside key={selected.id} className="nvi-detail" style={{ "--node-color": selectedLayer.accent || theme.accent }} aria-live="polite">
           <div className="nvi-detail-top">
             <span>{selectedLayer.ko || selected.layer}</span>
-            <time>근거 {selected.source.date}</time>
+            <time>근거 {formatMonthDay(selected.source?.date)}</time>
           </div>
-          <h4>{selected.name}</h4>
+          <div className="nvi-company-title">
+            <img src={selected.logoUrl || `https://www.google.com/s2/favicons?domain=${selected.domain}&sz=64`} alt="" loading="lazy" />
+            <h4>{selected.name}</h4>
+          </div>
+          <p className="nvi-relation">{selected.relationType}</p>
           <p className="nvi-transaction">{selected.transaction}</p>
+          {selected.officialIndustry && <p className="nvi-industry">공식 산업 분류 · {selected.officialIndustry}</p>}
           <div className="nvi-answer">
-            <span>왜 투자했나</span>
+            <span>관계 근거</span>
             <strong>{selected.why}</strong>
           </div>
           <div className="nvi-answer">
@@ -2233,13 +2261,16 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
           </div>
           {latest?.summary && (
             <div className="nvi-latest">
-              <span>최신 원문 근거 · {latest.date}</span>
+              <span>최신 원문 근거 · {formatMonthDay(latest.date)}</span>
               <p>{latest.summary}</p>
             </div>
           )}
           <a className="nvi-source" href={primarySource.url} target="_blank" rel="noopener noreferrer">
             {latest ? `${latest.source} 최신 원문` : `${selected.source.label} 거래 원문`} ↗
           </a>
+          {selected.websiteUrl && (
+            <a className="nvi-company-link" href={selected.websiteUrl} target="_blank" rel="noopener noreferrer">기업 사이트 ↗</a>
+          )}
         </aside>
       </div>
       <footer className="nvi-method">{data.methodology}</footer>
