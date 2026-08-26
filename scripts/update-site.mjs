@@ -26,6 +26,8 @@ const commonPublish = [
   retryStep("audit", "scripts/audit-agent.mjs"),
   nodeStep("minimize-source-content", "scripts/minimize-retained-source-content.mjs"),
   nodeStep("focus-gate", "scripts/prune-retired-focus.mjs"),
+  nodeStep("build-partner-ma-candidates", "scripts/build-partner-ma-candidates.mjs"),
+  nodeStep("validate-partner-ma-candidates", "scripts/validate-partner-ma-candidates.mjs"),
   retryStep("materialize-public-views", "scripts/build-public-data.mjs"),
   nodeStep("source-compliance", "scripts/build-source-compliance-catalog.mjs"),
   nodeStep("dataset-lineage", "scripts/build-dataset-manifest.mjs"),

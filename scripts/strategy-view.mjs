@@ -34,6 +34,14 @@ const compactOpportunity = (item, index) => {
       rating: Number(row.rating || 0),
       weightedPoints: Number(row.weightedPoints || 0),
     }));
+  const priorityDrivers = [...scorecard]
+    .sort((left, right) => right.weightedPoints - left.weightedPoints || right.weight - left.weight)
+    .slice(0, 3)
+    .map(row => ({ label: row.label, points: row.weightedPoints, weight: row.weight }));
+  const hypothesis = text(item.experimentPlan?.hypothesis || "");
+  const conciseHypothesis = firstSentence(hypothesis
+    .replace(text(item.title), "")
+    .replace(/^이\s*/, "")) || "핵심 과업 완료율·반복 사용 검증";
   return {
     id: item.id || `generated-opportunity-${index + 1}`,
     sourceOpportunityId: item.id || `generated-opportunity-${index + 1}`,
@@ -47,27 +55,17 @@ const compactOpportunity = (item, index) => {
     evidenceConfidence: text(item.evidenceConfidence || "low"),
     evidenceCount,
     independentSources,
-    horizon: scoreOf(item) >= 85 ? "H1 · NOW" : scoreOf(item) >= 72 ? "H2 · NEXT" : "H3 · WATCH",
     score: `${scoreOf(item)}/100`,
     customer: text(item.experimentPlan?.targetUsers || item.ownerOrg || "검증 대상 사용자군"),
-    thesis: firstSentence(item.reason || item.experimentPlan?.hypothesis),
+    thesis: conciseHypothesis,
     offer: [item.actionOption, ...(item.revenueModels || [])].filter(Boolean).join(" · "),
-    gate: [
-      independentSources ? `독립 출처 ${independentSources}개` : "",
-      evidenceCount ? `근거 ${evidenceCount}건` : "",
+    decision: [
+      ...priorityDrivers.map(driver => `${driver.label} ${driver.points}`),
       nextDecision ? `다음 판단 ${nextDecision}` : "",
     ].filter(Boolean).join(" · "),
     ownAssets: (item.ownAssets || []).filter(Boolean),
-    nextMetrics: [
-      { label: "OPPORTUNITY", value: `${scoreOf(item)}/100`, status: "verified" },
-      { label: "EVIDENCE", value: `${evidenceCount}건`, status: evidenceCount >= 5 ? "verified" : "review" },
-      { label: "INDEPENDENT", value: `${independentSources}개`, status: independentSources >= 2 ? "verified" : "review" },
-    ],
     scorecard,
-    priorityDrivers: [...scorecard]
-      .sort((left, right) => right.weightedPoints - left.weightedPoints || right.weight - left.weight)
-      .slice(0, 3)
-      .map(row => ({ label: row.label, points: row.weightedPoints, weight: row.weight })),
+    priorityDrivers,
     evidence: evidence.slice(0, 6),
     generatedAt: item.generatedAt || "",
   };
@@ -193,7 +191,6 @@ export function buildStrategyView({ generatedAt, architecture, sourceStats, arti
       url: article.url,
     }));
 
-  const evidenceTotal = priorityItems.reduce((sum, item) => sum + item.evidenceCount, 0);
   const averageScore = priorityItems.length
     ? (priorityItems.reduce((sum, item) => sum + item.score, 0) / priorityItems.length).toFixed(1)
     : "0.0";
@@ -204,10 +201,10 @@ export function buildStrategyView({ generatedAt, architecture, sourceStats, arti
     schemaVersion: 3,
     sourceMode: "generated-from-verified-ledgers",
     northStar: priorityItems.length
-      ? `검증 적격 ${generatedOpportunities.length}개 후보 중 상위 ${priorityItems.length}개 · 평균 ${averageScore}점 · 근거 ${evidenceTotal}건`
-      : "검증된 근거가 확보될 때까지 전략 후보 공개 보류",
+      ? `전체 후보 ${generatedOpportunities.length}개 중 상위 ${priorityItems.length}개 · 평균 ${averageScore}점 · 동일 평가 기준으로 자동 갱신`
+      : "평가 기준을 충족한 후보가 생기면 자동 공개",
     priorityFramework: {
-      label: "EVIDENCE-WEIGHTED PRIORITY",
+      label: "PRIORITY INDEX",
       method: generationPolicy.scorer || "deterministic-evidence-weighted",
       rubricVersion: generationPolicy.rubricVersion || "",
       rankingOrder: ["opportunityScore", "evidenceConfidence", "signalScore", "independentSources", "evidenceCount"],
