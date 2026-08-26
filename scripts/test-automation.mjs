@@ -19,6 +19,7 @@ const required = [
   "scripts/reframe-source-briefs.mjs",
   "scripts/crawl-stocks.mjs",
   "scripts/build-nvidia-investments.mjs",
+  "scripts/validate-nvidia-investments.mjs",
   "scripts/crawl-financials.mjs",
   "scripts/company-sources.mjs",
   "scripts/crawl-company-officials.mjs",
@@ -87,6 +88,7 @@ const required = [
   "config/quality-thresholds.json",
   "config/global-source-policy.json",
   "config/company-source-policy.json",
+  "config/nvidia-investment-deals.json",
   "_config.yml",
   "index.html",
   "app.bundle.js",
@@ -2404,17 +2406,31 @@ try {
     && investmentData.valueChains?.length === 6
     && investmentData.valueChains.every(layer => layer.id && layer.ko && layer.count > 0)
     && investmentData.officialCatalog?.count >= 90
+    && investmentData.metrics?.detailedCount >= 15
+    && investmentData.metrics?.nvidiaAmountCount >= 5
+    && investmentData.metrics?.roundAmountCount >= 10
     && new Set(investmentData.portfolio.map(item => item.name)).size === investmentData.portfolio.length
-    && investmentData.portfolio.every(item => item.why && item.strategicFit
-      && item.relationType && /^https?:\/\//.test(item.source?.url || "") && item.source?.date && item.layer)
+    && investmentData.portfolio.every(item => item.relationship?.type && item.nvidiaInvestment?.status
+      && item.round?.status && item.rationale?.status && item.layer
+      && item.evidence?.length > 0 && item.evidence.every(source => /^https?:\/\//.test(source.url || "") && source.date))
+    && investmentData.portfolio.every(item => !item.why && !item.strategicFit && !item.latestEvidence)
+    && investmentData.portfolio.filter(item => item.origin === "nventures-catalog")
+      .every(item => item.nvidiaInvestment.status === "undisclosed" && item.rationale.status === "not-disclosed")
+    && investmentData.portfolio.some(item => item.id === "coreweave"
+      && item.nvidiaInvestment.amountUsd === 2_000_000_000 && item.round.totalAmountUsd === 2_000_000_000)
+    && investmentData.portfolio.some(item => item.id === "runway"
+      && item.nvidiaInvestment.status === "undisclosed" && item.round.totalAmountUsd === 315_000_000
+      && item.dealHistory?.length >= 2)
     && investmentData.portfolio.some(item => item.id === "groq" && item.layer === "silicon"
-      && /라이선스/.test(item.relationType) && !/지분 투자/.test(item.relationType));
-  const dynamicInvestmentPipeline = investmentBuilder.includes('readFile("news.json"')
-    && investmentBuilder.includes("fetchOfficialPortfolio")
+      && /라이선스/.test(item.relationship.type) && item.relationship.equity === false
+      && item.nvidiaInvestment.status === "not-applicable");
+  const dynamicInvestmentPipeline = investmentBuilder.includes("fetchOfficialPortfolio")
     && investmentBuilder.includes("official portfolio payload is incomplete")
-    && investmentBuilder.includes('origin === "nventures"')
-    && investmentBuilder.includes('summaryMode === "source-content-extractive"')
-    && investmentBuilder.includes('provenance?.status === "source-backed"')
+    && investmentBuilder.includes('readFile(DEAL_FILE')
+    && investmentBuilder.includes('origin: "deal-ledger"')
+    && investmentBuilder.includes('NVIDIA 개별 투자액만 표시')
+    && !investmentBuilder.includes('latestEvidence')
+    && !investmentBuilder.includes('readFile("news.json"')
     && workflowSource.includes("scripts/build-nvidia-investments.mjs")
     && appSource.includes('dataUrl("nvidia-investments.json")');
   const liveHistory = crawler.includes('const YEARS = 5')
@@ -2443,10 +2459,15 @@ try {
     && boards.includes("onKeyDown={event =>")
     && boards.includes('data-nvi-id={node.id}')
     && boards.includes('aria-live="polite"')
+    && boards.includes('NVIDIA 투자액')
+    && boards.includes('전체 라운드·프로젝트')
+    && boards.includes('왜 투자했나')
+    && boards.includes('검증 근거')
     && styles.includes("NVIDIA 투자·전략 포트폴리오 v2")
     && styles.includes("grid-template-columns: repeat(7")
     && styles.includes(".nvi-company-grid")
-    && styles.includes("@keyframes nvi-detail-in")
+    && styles.includes(".nvi-deal-facts")
+    && styles.includes(".nvi-evidence-list")
     && styles.includes(".nvi-node.is-selected :is(.nvi-node-copy small");
   const stockComparisonCopyRemoved = !boards.includes("<p>{description}</p>")
     && !boards.includes('description="63개 상장사를')

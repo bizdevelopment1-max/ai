@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 2,
+  "methodology": "기업 발표·NVIDIA 발표·공시에서 거래와 금액을 직접 확인한 경우만 상세 거래로 공개합니다. 라운드 총액은 NVIDIA 개별 투자액과 분리하며, 개별 금액이 공개되지 않았으면 추정하지 않습니다.",
+  "records": [
+    {
+      "id": "groq",
+      "name": "Groq",
+      "shortName": "Groq",
+      "domain": "groq.com",
+      "layer": "silicon",
+      "aliases": ["groq", "lpu"],
+      "relationship": { "type": "기술 라이선스", "status": "active", "role": "비독점 라이선스", "equity": false },
+      "nvidiaInvestment": { "display": "해당 없음", "amountUsd": null, "status": "not-applicable", "basis": "공식 발표는 투자 대신 비독점 라이선스로 명시" },
+      "round": { "display": "투자 라운드 아님", "totalAmountUsd": null, "status": "not-applicable", "date": "2026-02-25" },
+      "relationshipDetail": "Groq의 추론 기술을 비독점으로 라이선스한 관계이며 지분 투자로 분류하지 않습니다.",
+      "rationale": { "status": "source-stated", "summary": "글로벌 규모의 AI 추론 가속이 공식 목적입니다." },
+      "evidence": [
+        { "id": "groq-license", "claim": "비독점 라이선스", "quote": "non-exclusive licensing agreement with Groq", "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/", "date": "2026-02-25", "publisher": "NVIDIA Investor Relations", "tier": "official" }
+      ]
+    },
+    {
+      "id": "ayar-labs",
+      "name": "Ayar Labs",
+      "shortName": "Ayar Labs",
+      "domain": "ayarlabs.com",
+      "layer": "silicon",
+      "aliases": ["ayar labs"],
+      "relationship": { "type": "지분 투자", "status": "active", "role": "전략적 라운드 참여", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "NVIDIA 참여는 확인되나 개별 배정액 미공개" },
+      "round": { "display": "$155M Series D", "totalAmountUsd": 155000000, "status": "closed", "date": "2024-12-11" },
+      "relationshipDetail": "NVIDIA는 2022년 Series C와 2024년 Series D에 참여한 전략적 투자자입니다.",
+      "rationale": { "status": "source-stated", "summary": "광 I/O를 대량 생산 단계로 전환해 AI 인프라의 대역폭·전력 병목을 줄이는 목적입니다." },
+      "dealHistory": [
+        { "date": "2024-12-11", "round": "Series D", "totalDisplay": "$155M", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "참여 투자자", "useOfFunds": "광 I/O 고용량 생산 준비" },
+        { "date": "2022-04-26", "round": "Series C", "totalDisplay": "$130M", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "신규 전략 투자자", "useOfFunds": "in-package optical I/O 상용화" }
+      ],
+      "evidence": [
+        { "id": "ayar-d", "claim": "$155M Series D와 NVIDIA 참여", "quote": "$155 million ... including participation from ... NVIDIA", "url": "https://ayarlabs.com/news/ayar-labs-155m-series-d-to-address-ai-infrastructure-includes-amd-intel-capital-nvidia/", "date": "2024-12-11", "publisher": "Ayar Labs", "tier": "official" },
+        { "id": "ayar-c", "claim": "$130M Series C와 NVIDIA 참여", "quote": "secured $130 million ... NVIDIA entered this investment round", "url": "https://ayarlabs.com/news/ayar-labs-raises-130-million-in-series-c-funding/", "date": "2022-04-26", "publisher": "Ayar Labs", "tier": "official" }
+      ]
+    },
+    {
+      "id": "coreweave",
+      "name": "CoreWeave",
+      "shortName": "CoreWeave",
+      "domain": "coreweave.com",
+      "layer": "compute",
+      "aliases": ["coreweave"],
+      "relationship": { "type": "직접 지분 투자·사업 제휴", "status": "announced", "role": "Class A 보통주 투자자", "equity": true },
+      "nvidiaInvestment": { "display": "$2B", "amountUsd": 2000000000, "status": "disclosed", "basis": "Class A 보통주를 주당 $87.20에 매입" },
+      "round": { "display": "$2B 직접 투자", "totalAmountUsd": 2000000000, "status": "announced", "date": "2026-01-26", "valuationDisplay": "$87.20/share" },
+      "relationshipDetail": "NVIDIA는 보통주 투자자이자 GPU·CPU·네트워킹·스토리지 공급자이며, CoreWeave는 2030년까지 5GW 이상의 AI 팩토리 확장을 추진합니다.",
+      "rationale": { "status": "source-stated", "summary": "토지·전력·건물 조달을 앞당기고 NVIDIA 기반 AI 클라우드 용량을 확대하기 위한 투자입니다." },
+      "dealHistory": [
+        { "date": "2026-01-26", "round": "Class A common stock", "totalDisplay": "$2B", "nvidiaAmountDisplay": "$2B", "nvidiaRole": "직접 매수", "useOfFunds": "5GW+ AI 팩토리 확장" }
+      ],
+      "evidence": [
+        { "id": "coreweave-2b", "claim": "NVIDIA 직접 $2B 투자", "quote": "NVIDIA has invested $2 billion in CoreWeave Class A common stock", "url": "https://nvidianews.nvidia.com/news/nvidia-and-coreweave-strengthen-collaboration-to-accelerate-buildout-of-ai-factories", "date": "2026-01-26", "publisher": "NVIDIA Newsroom", "tier": "official" }
+      ]
+    },
+    {
+      "id": "naver",
+      "name": "NAVER",
+      "shortName": "NAVER",
+      "domain": "navercorp.com",
+      "layer": "compute",
+      "aliases": ["naver", "naver cloud"],
+      "relationship": { "type": "계획된 지분 투자·인프라 제휴", "status": "planned", "role": "전략 투자자·플랫폼 공급자", "equity": true },
+      "nvidiaInvestment": { "display": "$1B 계획", "amountUsd": 1000000000, "status": "planned", "basis": "종결 조건이 남은 계획 투자" },
+      "round": { "display": "$1B 계획 투자", "totalAmountUsd": 1000000000, "status": "planned", "date": "2026-07-27" },
+      "relationshipDetail": "NVIDIA의 계획 투자와 Brookfield의 최대 $9B 인프라 자금이 200MW AI 팩토리 확장에 연결됩니다.",
+      "rationale": { "status": "source-stated", "summary": "지역 AI 기업이 사용할 소버린 AI 인프라를 55MW에서 200MW로 확대하기 위한 계획입니다." },
+      "evidence": [
+        { "id": "naver-1b", "claim": "NVIDIA $1B 계획 투자", "quote": "NVIDIA plans to invest $1 billion into NAVER Corp.", "url": "https://www.globenewswire.com/news-release/2026/07/27/3333489/0/en/NAVER-NVIDIA-and-Brookfield-to-Expand-Korea-s-National-AI-Factory-Infrastructure-Buildout.html", "date": "2026-07-27", "publisher": "Brookfield / GlobeNewswire", "tier": "official" }
+      ]
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "shortName": "OpenAI",
+      "domain": "openai.com",
+      "layer": "model",
+      "aliases": ["openai"],
+      "relationship": { "type": "투자 의향·인프라 제휴", "status": "letter-of-intent", "role": "우선 컴퓨트·네트워킹 파트너", "equity": true },
+      "nvidiaInvestment": { "display": "최대 $100B", "amountUsd": 100000000000, "status": "planned", "basis": "각 GW 배치에 연동된 단계적 투자 의향" },
+      "round": { "display": "10GW 인프라 계획", "totalAmountUsd": null, "status": "letter-of-intent", "date": "2025-09-22" },
+      "relationshipDetail": "10GW 이상의 NVIDIA 시스템을 배치하고 각 GW 가동에 맞춰 최대 $100B를 단계적으로 투자한다는 의향서입니다.",
+      "rationale": { "status": "source-stated", "summary": "차세대 모델의 학습·추론을 위한 데이터센터와 전력 용량을 확보하는 목적입니다." },
+      "evidence": [
+        { "id": "openai-100b", "claim": "최대 $100B 단계적 투자 의향", "quote": "NVIDIA intends to invest up to $100 billion ... as each gigawatt is deployed", "url": "https://openai.com/index/openai-nvidia-systems-partnership/", "date": "2025-09-22", "publisher": "OpenAI", "tier": "official" }
+      ]
+    },
+    {
+      "id": "xai",
+      "name": "xAI",
+      "shortName": "xAI",
+      "domain": "x.ai",
+      "layer": "model",
+      "aliases": ["xai", "x.ai", "grok"],
+      "relationship": { "type": "지분 투자·인프라 고객", "status": "closed", "role": "Series C 전략 투자자", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "$6B 라운드 참여는 확인되나 개별 배정액 미공개" },
+      "round": { "display": "$6B Series C", "totalAmountUsd": 6000000000, "status": "closed", "date": "2024-12-23" },
+      "relationshipDetail": "NVIDIA는 xAI Series C에 참여했고, xAI의 Colossus는 NVIDIA 풀스택과 10만개 Hopper GPU로 구축됐습니다.",
+      "rationale": { "status": "source-stated", "summary": "대규모 AI 인프라 확장과 Grok·API 등 제품 연구개발을 가속하는 자금입니다." },
+      "evidence": [
+        { "id": "xai-6b", "claim": "$6B Series C와 NVIDIA 참여", "quote": "Series C funding round of $6 billion ... Strategic investors NVIDIA and AMD also participated", "url": "https://x.ai/news/series-c", "date": "2024-12-23", "publisher": "xAI", "tier": "official" }
+      ]
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "shortName": "Anthropic",
+      "domain": "anthropic.com",
+      "layer": "model",
+      "aliases": ["anthropic", "claude"],
+      "relationship": { "type": "투자 약정·심층 기술 제휴", "status": "committed", "role": "전략 투자자·아키텍처 공동 최적화", "equity": true },
+      "nvidiaInvestment": { "display": "최대 $10B", "amountUsd": 10000000000, "status": "committed", "basis": "NVIDIA 투자 약정 상한" },
+      "round": { "display": "NVIDIA 최대 $10B 약정", "totalAmountUsd": null, "status": "committed", "date": "2025-11-18" },
+      "relationshipDetail": "Claude를 Azure의 NVIDIA 시스템에서 확장하고 Anthropic 모델과 NVIDIA 아키텍처를 상호 최적화합니다.",
+      "rationale": { "status": "source-stated", "summary": "Claude의 성장에 필요한 최대 1GW 컴퓨트와 모델·시스템 공동 최적화를 확보하는 구조입니다." },
+      "evidence": [
+        { "id": "anthropic-10b", "claim": "NVIDIA 최대 $10B 투자 약정", "quote": "NVIDIA ... committing to invest up to $10 billion ... in Anthropic", "url": "https://blogs.nvidia.com/blog/microsoft-nvidia-anthropic-announce-partnership/", "date": "2025-11-18", "publisher": "NVIDIA Newsroom", "tier": "official" }
+      ]
+    },
+    {
+      "id": "ssi",
+      "name": "Safe Superintelligence",
+      "shortName": "SSI",
+      "domain": "ssi.inc",
+      "layer": "model",
+      "aliases": ["safe superintelligence", "ssi", "sutskever"],
+      "relationship": { "type": "직접 투자·장기 기술 제휴", "status": "announced", "role": "전략 투자자·컴퓨트 파트너", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "공식 발표는 substantial investment로만 표현" },
+      "round": { "display": "개별 투자액 미공개", "totalAmountUsd": null, "status": "undisclosed", "date": "2026-07-27" },
+      "relationshipDetail": "NVIDIA 투자와 Vera Rubin 접근을 결합해 SSI의 컴퓨트를 약 10배 늘리는 장기 파트너십입니다.",
+      "rationale": { "status": "source-stated", "summary": "비공개 연구를 검토한 뒤 SSI의 다음 성장 단계와 연구 확장을 지원한다고 발표했습니다." },
+      "evidence": [
+        { "id": "ssi-investment", "claim": "투자와 10배 컴퓨트 확대", "quote": "NVIDIA has additionally made an investment in SSI", "url": "https://investor.nvidia.com/news/press-release-details/2026/Ilya-Sutskevers-Safe-Superintelligence-Inc--and-NVIDIA-Announce-Long-Term-Strategic-Partnership/default.aspx", "date": "2026-07-27", "publisher": "NVIDIA Investor Relations", "tier": "official" }
+      ]
+    },
+    {
+      "id": "thinking-machines",
+      "name": "Thinking Machines Lab",
+      "shortName": "TML",
+      "domain": "thinkingmachines.ai",
+      "layer": "model",
+      "aliases": ["thinking machines", "thinking machines lab"],
+      "relationship": { "type": "직접 투자·기가와트 제휴", "status": "announced", "role": "전략 투자자·컴퓨트 파트너", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "공식 발표는 significant investment로만 표현" },
+      "round": { "display": "최소 1GW 시스템 제휴", "totalAmountUsd": null, "status": "announced", "date": "2026-03-10" },
+      "relationshipDetail": "최소 1GW Vera Rubin 시스템 배치와 학습·서빙 시스템 공동 설계를 포함합니다.",
+      "rationale": { "status": "source-stated", "summary": "맞춤형 프런티어 모델 연구와 장기 성장을 지원하고 대형 초기 고객을 확보하는 관계입니다." },
+      "evidence": [
+        { "id": "tml-investment", "claim": "상당한 투자와 최소 1GW 제휴", "quote": "NVIDIA has also made a significant investment in Thinking Machines Lab", "url": "https://blogs.nvidia.com/blog/nvidia-thinking-machines-lab/", "date": "2026-03-10", "publisher": "NVIDIA Blog", "tier": "official" }
+      ]
+    },
+    {
+      "id": "mistral-ai",
+      "name": "Mistral AI",
+      "shortName": "Mistral",
+      "domain": "mistral.ai",
+      "layer": "model",
+      "aliases": ["mistral", "mistral ai"],
+      "relationship": { "type": "반복 지분 투자·모델 공동개발", "status": "active", "role": "Series C 참여 투자자·Nemotron Coalition 창립 파트너", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "Series C 참여는 확인되나 NVIDIA 개별 배정액 미공개" },
+      "round": { "display": "€1.7B Series C", "totalAmount": 1700000000, "currency": "EUR", "totalAmountUsd": null, "status": "closed", "date": "2025-09-09", "valuationDisplay": "€11.7B post-money" },
+      "relationshipDetail": "NVIDIA는 Mistral AI의 기존 투자자로 Series C에 재참여했으며, 양사는 개방형 프런티어 모델·컴퓨트·합성데이터 파이프라인을 공동 개발합니다.",
+      "rationale": { "status": "source-stated", "summary": "전략 산업용 프런티어 모델 연구와 분산형 엔터프라이즈 AI 솔루션을 확장하는 자금입니다." },
+      "dealHistory": [
+        { "date": "2026-03-16", "round": "Nemotron Coalition", "totalDisplay": "금액 미공개", "nvidiaAmountDisplay": "해당 없음", "nvidiaRole": "공동개발 파트너", "useOfFunds": "개방형 프런티어 모델·합성데이터 공동개발" },
+        { "date": "2025-09-09", "round": "Series C", "totalDisplay": "€1.7B", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "기존 투자자 재참여", "useOfFunds": "연구·산업용 AI·고성능 인프라 확장" }
+      ],
+      "evidence": [
+        { "id": "mistral-c", "claim": "€1.7B Series C와 NVIDIA 재참여", "quote": "Series C funding round of 1.7B€ ... existing investors ... NVIDIA", "url": "https://mistral.ai/news/mistral-ai-raises-1-7-b-to-accelerate-technological-progress-with-ai/", "date": "2025-09-09", "publisher": "Mistral AI", "tier": "official" },
+        { "id": "mistral-nemotron", "claim": "개방형 모델 공동개발 파트너십", "quote": "plan to co-develop frontier open-source AI models", "url": "https://mistral.ai/news/mistral-ai-and-nvidia-partner-to-accelerate-open-frontier-models/", "date": "2026-03-16", "publisher": "Mistral AI", "tier": "official" }
+      ]
+    },
+    {
+      "id": "cohere",
+      "name": "Cohere",
+      "shortName": "Cohere",
+      "domain": "cohere.com",
+      "layer": "model",
+      "aliases": ["cohere"],
+      "relationship": { "type": "지분 투자", "status": "closed", "role": "Series C 참여 투자자", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "$270M 라운드 참여는 확인되나 개별 배정액 미공개" },
+      "round": { "display": "$270M Series C", "totalAmountUsd": 270000000, "status": "closed", "date": "2023-06-08", "valuationDisplay": "약 $2.2B" },
+      "relationshipDetail": "NVIDIA는 기업용 생성형 AI 모델 기업 Cohere의 Series C에 전략 투자자로 참여했습니다.",
+      "rationale": { "status": "source-stated", "summary": "기업이 데이터 프라이버시를 유지하면서 원하는 클라우드에서 AI를 쓰도록 제품·시장 확장을 지원합니다." },
+      "evidence": [
+        { "id": "cohere-c", "claim": "$270M Series C와 NVIDIA 참여", "quote": "$270M in new capital ... strategic investors, including NVIDIA", "url": "https://www.globenewswire.com/news-release/2023/06/08/2684788/0/en/cohere-announces-270m-series-c-to-bring-generative-ai-to-enterprises.html", "date": "2023-06-08", "publisher": "Cohere / GlobeNewswire", "tier": "official" }
+      ]
+    },
+    {
+      "id": "hugging-face",
+      "name": "Hugging Face",
+      "shortName": "Hugging Face",
+      "domain": "huggingface.co",
+      "layer": "software",
+      "aliases": ["hugging face", "huggingface"],
+      "relationship": { "type": "지분 투자·기술 제휴", "status": "closed", "role": "Series D 참여 투자자", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "$235M 라운드 참여는 확인되나 개별 배정액 미공개" },
+      "round": { "display": "$235M Series D", "totalAmountUsd": 235000000, "status": "closed", "date": "2023-08-24", "valuationDisplay": "$4.5B" },
+      "relationshipDetail": "NVIDIA는 Series D 참여 투자자이며, 양사는 DGX Cloud·모델 허브 통합도 추진했습니다.",
+      "rationale": { "status": "reported", "summary": "오픈 모델·데이터셋·애플리케이션 허브의 연구·엔터프라이즈·스타트업 지원 확대에 쓰이는 자금입니다." },
+      "evidence": [
+        { "id": "hf-d", "claim": "$235M Series D와 NVIDIA 참여", "quote": "raised $235 million in a Series D funding round", "url": "https://techcrunch.com/2023/08/24/hugging-face-raises-235m-from-investors-including-salesforce-and-nvidia/", "date": "2023-08-24", "publisher": "TechCrunch", "tier": "reported" }
+      ]
+    },
+    {
+      "id": "databricks",
+      "name": "Databricks",
+      "shortName": "Databricks",
+      "domain": "databricks.com",
+      "layer": "software",
+      "aliases": ["databricks"],
+      "relationship": { "type": "지분 투자·제품 협력", "status": "closed", "role": "Series I 전략 투자자", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "$500M+ 라운드 참여는 확인되나 개별 배정액 미공개" },
+      "round": { "display": "$500M+ Series I", "totalAmountUsd": 500000000, "status": "closed", "date": "2023-09-14", "valuationDisplay": "$43B" },
+      "relationshipDetail": "NVIDIA는 Series I의 신규 전략 투자자이며 데이터 처리·생성형 AI 제품을 공동 개발합니다.",
+      "rationale": { "status": "source-stated", "summary": "기업 데이터·분석·AI를 통합한 Lakehouse 도입과 생성형 AI 애플리케이션 개발을 확대하기 위한 투자입니다." },
+      "evidence": [
+        { "id": "databricks-i", "claim": "$500M+ Series I와 NVIDIA 참여", "quote": "raising over $500 million ... strategic investor NVIDIA", "url": "https://www.prnewswire.com/news-releases/databricks-raises-series-i-investment-at-43b-valuation-301927440.html", "date": "2023-09-14", "publisher": "Databricks / PR Newswire", "tier": "official" }
+      ]
+    },
+    {
+      "id": "together-ai",
+      "name": "Together AI",
+      "shortName": "Together",
+      "domain": "together.ai",
+      "layer": "compute",
+      "aliases": ["together ai", "together.xyz"],
+      "relationship": { "type": "반복 지분 투자·AI 클라우드 제휴", "status": "active", "role": "Series A·B·C 투자자·DGX Cloud 파트너", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "세 차례 라운드 참여는 확인되나 NVIDIA 개별 배정액 미공개" },
+      "round": { "display": "$800M Series C", "totalAmountUsd": 800000000, "status": "closed", "date": "2026-07-01" },
+      "relationshipDetail": "NVIDIA는 Series A·B·C에 반복 참여했고, Together AI는 NVIDIA Blackwell 클러스터와 DGX Cloud에서 오픈 모델 학습·추론을 제공합니다.",
+      "rationale": { "status": "source-stated", "summary": "오픈소스 모델의 학습·추론·가속 컴퓨트를 하나의 엔터프라이즈 플랫폼으로 확장하는 자금입니다." },
+      "dealHistory": [
+        { "date": "2026-07-01", "round": "Series C", "totalDisplay": "$800M", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "참여 투자자", "useOfFunds": "오픈소스 AI 풀스택·추론·학습 확장" },
+        { "date": "2025-02-20", "round": "Series B", "totalDisplay": "$305M", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "전략 투자자", "useOfFunds": "Blackwell 클러스터·AI Acceleration Cloud 확장" },
+        { "date": "2023-11-29", "round": "Series A", "totalDisplay": "$102.5M", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "참여 투자자", "useOfFunds": "생성형 AI 클라우드·20 exaflops 인프라 확대" }
+      ],
+      "evidence": [
+        { "id": "together-c", "claim": "$800M Series C와 NVIDIA 참여", "quote": "Series C funding of $800 million ... investors including ... NVIDIA", "url": "https://www.together.ai/blog/announcing-our-series-c", "date": "2026-07-01", "publisher": "Together AI", "tier": "official" },
+        { "id": "together-b", "claim": "$305M Series B와 NVIDIA 참여", "quote": "$305 million Series B ... strategic investors including ... NVIDIA", "url": "https://www.together.ai/blog/together-ai-announcing-305m-series-b", "date": "2025-02-20", "publisher": "Together AI", "tier": "official" },
+        { "id": "together-a", "claim": "$102.5M Series A와 NVIDIA 참여", "quote": "$102.5M in a Series A ... investors, including NVIDIA", "url": "https://www.together.ai/blog/series-a", "date": "2023-11-29", "publisher": "Together AI", "tier": "official" },
+        { "id": "together-dgx", "claim": "DGX Cloud 추론 엔진 제휴", "quote": "Together Inference Engine to NVIDIA AI Foundry customers", "url": "https://www.together.ai/blog/nvidia-ai-foundry-partnership", "date": "2024-07-23", "publisher": "Together AI", "tier": "official" }
+      ]
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "shortName": "Perplexity",
+      "domain": "perplexity.ai",
+      "layer": "applications",
+      "aliases": ["perplexity"],
+      "relationship": { "type": "반복 지분 투자·기술 제휴", "status": "closed", "role": "Series B·B1 참여 투자자", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "복수 라운드 참여는 확인되나 개별 배정액 미공개" },
+      "round": { "display": "$62.7M Series B1", "totalAmountUsd": 62700000, "status": "closed", "date": "2024-04-23", "valuationDisplay": "$1B+" },
+      "relationshipDetail": "NVIDIA는 2024년 Series B에 신규 참여했고 후속 B1에서도 기존 투자자로 재참여했습니다.",
+      "rationale": { "status": "source-stated", "summary": "AI 검색의 소비자 채택·기업 상품·글로벌 유통 확대를 지원하는 투자입니다." },
+      "dealHistory": [
+        { "date": "2024-04-23", "round": "Series B1", "totalDisplay": "$62.7M", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "후속 참여", "useOfFunds": "소비자 채택·기업 확장" },
+        { "date": "2024-01-04", "round": "Series B", "totalDisplay": "$73.6M", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "신규 참여", "useOfFunds": "AI 검색 제품·시장 확대" }
+      ],
+      "evidence": [
+        { "id": "perplexity-b", "claim": "$73.6M Series B와 NVIDIA 참여", "quote": "raised $73.6 million in Series B funding ... new investors NVIDIA", "url": "https://www.perplexity.ai/cs/hub/blog/perplexity-raises-series-b-funding-round", "date": "2024-01-04", "publisher": "Perplexity", "tier": "official" },
+        { "id": "perplexity-b1", "claim": "$62.7M 후속 조달과 NVIDIA 재참여", "quote": "raised $62.7 million ... existing investors, including ... NVIDIA", "url": "https://www.linkedin.com/posts/perplexity-ai_perplexity-ai-nvidia-activity-7188557631861452800-g_MH", "date": "2024-04-23", "publisher": "Perplexity official LinkedIn", "tier": "official-social" }
+      ]
+    },
+    {
+      "id": "runway",
+      "name": "Runway",
+      "shortName": "Runway",
+      "domain": "runwayml.com",
+      "layer": "applications",
+      "aliases": ["runway", "runwayml"],
+      "relationship": { "type": "반복 지분 투자·기술 제휴", "status": "closed", "role": "Series C extension·Series E 참여", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "두 라운드 참여는 확인되나 NVIDIA 개별 배정액 미공개" },
+      "round": { "display": "$315M Series E", "totalAmountUsd": 315000000, "status": "closed", "date": "2026-02-10" },
+      "relationshipDetail": "NVIDIA는 2023년 Series C 연장과 2026년 Series E에 참여했고, Vera Rubin 기반 영상·월드모델 최적화 파트너이기도 합니다.",
+      "rationale": { "status": "source-stated", "summary": "차세대 월드모델 사전학습과 미디어·로보틱스 등 신규 제품·산업 확장에 쓰이는 자금입니다." },
+      "dealHistory": [
+        { "date": "2026-02-10", "round": "Series E", "totalDisplay": "$315M", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "참여 투자자", "useOfFunds": "월드모델 사전학습·제품 및 산업 확장" },
+        { "date": "2023-06-29", "round": "Series C extension", "totalDisplay": "$141M", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "참여 투자자", "useOfFunds": "멀티모달 연구·크리에이티브 제품 확장" }
+      ],
+      "evidence": [
+        { "id": "runway-e", "claim": "$315M Series E와 NVIDIA 참여", "quote": "$315 million in Series E funding ... participation from NVIDIA", "url": "https://runway.com/news/runway-series-e-funding", "date": "2026-02-10", "publisher": "Runway", "tier": "official" },
+        { "id": "runway-c", "claim": "$141M Series C 연장과 NVIDIA 참여", "quote": "$141M extension to our Series C with participation from ... NVIDIA", "url": "https://runway.com/news/runway-raises-141-million-to-continue-building-the-future-of-creativity", "date": "2023-06-29", "publisher": "Runway", "tier": "official" }
+      ]
+    },
+    {
+      "id": "figure-ai",
+      "name": "Figure AI",
+      "shortName": "Figure",
+      "domain": "figure.ai",
+      "layer": "hardware",
+      "aliases": ["figure ai", "figure robotics"],
+      "relationship": { "type": "반복 지분 투자", "status": "closed", "role": "Series B·C 참여 투자자", "equity": true },
+      "nvidiaInvestment": { "display": "약 $50M 보도", "amountUsd": 50000000, "status": "reported", "basis": "Series B 개별 금액은 Bloomberg 인용 보도 기준; 기업 공식 발표는 미세부 공개" },
+      "round": { "display": "$1B+ Series C", "totalAmountUsd": 1000000000, "status": "closed", "date": "2025-09-16", "valuationDisplay": "$39B" },
+      "relationshipDetail": "NVIDIA는 2024년 Series B와 2025년 Series C에 참여한 반복 투자자입니다.",
+      "rationale": { "status": "source-stated", "summary": "Helix AI 플랫폼과 BotQ 제조를 확장해 휴머노이드 로봇의 상용 배치를 앞당기는 자금입니다." },
+      "dealHistory": [
+        { "date": "2025-09-16", "round": "Series C", "totalDisplay": "$1B+", "nvidiaAmountDisplay": "미공개", "nvidiaRole": "참여 투자자", "useOfFunds": "Helix·BotQ 제조 확장" },
+        { "date": "2024-02-29", "round": "Series B", "totalDisplay": "$675M", "nvidiaAmountDisplay": "약 $50M 보도", "nvidiaRole": "참여 투자자", "useOfFunds": "휴머노이드 상용화" }
+      ],
+      "evidence": [
+        { "id": "figure-c", "claim": "$1B+ Series C와 NVIDIA 참여", "quote": "Exceeds $1B in Series C ... significant investment from ... NVIDIA", "url": "https://www.figure.ai/news/series-c", "date": "2025-09-16", "publisher": "Figure AI", "tier": "official" },
+        { "id": "figure-b", "claim": "$675M Series B와 NVIDIA 참여", "quote": "raised $675M in Series B ... investments from ... NVIDIA", "url": "https://www.prnewswire.com/news-releases/figure-raises-675m-at-2-6b-valuation-and-signs-collaboration-agreement-with-openai-302074897.html", "date": "2024-02-29", "publisher": "Figure AI / PR Newswire", "tier": "official" },
+        { "id": "figure-nvidia-amount", "claim": "NVIDIA 약 $50M 투자 보도", "quote": "Nvidia ... committing $50 million", "url": "https://news.bloomberglaw.com/private-equity/bezos-nvidia-join-openai-in-funding-humanoid-robot-startup", "date": "2024-02-23", "publisher": "Bloomberg", "tier": "reported" }
+      ]
+    },
+    {
+      "id": "skydio",
+      "name": "Skydio",
+      "shortName": "Skydio",
+      "domain": "skydio.com",
+      "layer": "hardware",
+      "aliases": ["skydio"],
+      "relationship": { "type": "지분 투자·하드웨어 협력", "status": "closed", "role": "Series E 기존 투자자", "equity": true },
+      "nvidiaInvestment": { "display": "미공개", "amountUsd": null, "status": "undisclosed", "basis": "$230M 라운드 참여는 확인되나 개별 배정액 미공개" },
+      "round": { "display": "$230M Series E", "totalAmountUsd": 230000000, "status": "closed", "date": "2023-02-27", "valuationDisplay": "$2.2B+" },
+      "relationshipDetail": "NVIDIA는 Skydio의 기존 투자자이며, Skydio는 NVIDIA AI 칩의 초기 chip-down 설계 파트너입니다.",
+      "rationale": { "status": "source-stated", "summary": "미국 내 제조시설과 자율 드론 생산능력 확대, 공공안전·국방·인프라 시장 확장에 쓰이는 자금입니다." },
+      "evidence": [
+        { "id": "skydio-e", "claim": "$230M Series E와 NVIDIA 참여", "quote": "$230M in Series E funding ... joined by existing investors ... NVIDIA", "url": "https://www.skydio.com/blog/skydio-raises-230-million-series-e-funding-round", "date": "2023-02-27", "publisher": "Skydio", "tier": "official" }
+      ]
+    }
+  ]
+}

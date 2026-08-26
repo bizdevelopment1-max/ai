@@ -37,6 +37,7 @@ const commonPublish = [
   nodeStep("validate-boundaries", "scripts/validate-data-boundaries.mjs"),
   nodeStep("validate-dag", "scripts/validate-pipeline-dag.mjs"),
   nodeStep("validate-consulting-architecture", "scripts/validate-consulting-architecture.mjs"),
+  nodeStep("validate-nvidia-investments", "scripts/validate-nvidia-investments.mjs"),
   nodeStep("validate-content-registry", "scripts/validate-site-content.mjs"),
   nodeStep("test-data-platform", "scripts/test-data-platform.mjs"),
   nodeStep("build-browser-bundles", "scripts/build-browser-bundle.mjs"),
