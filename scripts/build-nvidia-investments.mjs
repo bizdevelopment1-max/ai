@@ -3,29 +3,24 @@
  * NVIDIA 자본·전략 생태계 공개 뷰.
  *
  * - NVentures가 공개하는 공식 포트폴리오 JSON을 매 실행마다 직접 동기화한다.
- * - 기업 공식 발표로 확인되는 전략투자·라이선스는 별도 데이터 계약으로 합친다.
+ * - 기업 공식 발표로 확인되는 전략투자·라이선스는 별도 claim ledger로 합친다.
  * - 산업 분류를 6개 MECE 밸류체인으로 결정론적으로 정규화한다.
- * - daily-news 원장에서는 회사명과 투자 행위가 함께 확인된 최신 근거만 결합한다.
+ * - NVIDIA 개별 투자액과 전체 라운드 규모를 절대 같은 숫자로 취급하지 않는다.
+ * - 개별 금액·라운드·투자 사유가 공개되지 않았으면 추정 문장을 만들지 않는다.
  * - 공식 목록 수집이 실패하면 직전 공개 스냅샷을 보존해 빈 화면을 만들지 않는다.
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const CONFIG_FILE = "config/nvidia-investment-taxonomy.json";
+const DEAL_FILE = "config/nvidia-investment-deals.json";
 const OUTPUT_FILE = "nvidia-investments.json";
 const config = JSON.parse(await readFile(CONFIG_FILE, "utf8"));
+const dealLedger = JSON.parse(await readFile(DEAL_FILE, "utf8"));
 const valueChains = config.valueChains || [];
-const chainMap = new Map(valueChains.map(chain => [chain.id, chain]));
 
 const clean = value => String(value || "").toLowerCase().replace(/[^a-z0-9가-힣]+/g, " ").trim();
 const slugify = value => clean(value).replace(/\s+/g, "-") || "company";
-const escapeRe = value => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const mentions = (text, alias) => new RegExp(`(^|[^a-z0-9])${escapeRe(clean(alias))}([^a-z0-9]|$)`, "i").test(text);
-const investmentTerms = /invest|investment|funding|financing|round|stake|equity|license|licensing|strategic partnership|투자|지분|라운드|라이선스/i;
-const sourceBacked = article => article?.displayEligible !== false
-  && article?.summaryMode === "source-content-extractive"
-  && article?.provenance?.status === "source-backed"
-  && /^https?:\/\//.test(article?.url || "");
 const isoDate = value => {
   const parsed = value ? new Date(value) : null;
   return parsed && !Number.isNaN(parsed.valueOf()) ? parsed.toISOString().slice(0, 10) : "";
@@ -56,7 +51,6 @@ async function fetchOfficialPortfolio() {
     asOf,
     items: rows.map(row => {
       const layer = layerForIndustry(row.industry);
-      const chain = chainMap.get(layer) || {};
       return {
         id: `nventures-${slugify(row.companyName)}`,
         name: row.companyName,
@@ -66,18 +60,42 @@ async function fetchOfficialPortfolio() {
         domain: domainFromUrl(row.websiteUrl),
         websiteUrl: row.websiteUrl,
         logoUrl: row.logoUrl?.startsWith("/") ? `https://www.nvidia.com${row.logoUrl}` : row.logoUrl,
-        relationType: "NVentures 포트폴리오",
-        transaction: `${row.industry} · 공식 포트폴리오 등재`,
+        relationship: {
+          type: "NVentures 공식 포트폴리오 등재",
+          status: "verified-catalog",
+          role: "투자 관계 확인",
+          equity: true,
+        },
+        nvidiaInvestment: {
+          display: "미공개",
+          amountUsd: null,
+          status: "undisclosed",
+          basis: "NVentures 목록에는 NVIDIA 개별 투자액이 없음",
+        },
+        round: {
+          display: "개별 라운드 미확인",
+          totalAmountUsd: null,
+          status: "not-disclosed",
+          date: "",
+        },
         officialIndustry: row.industry,
-        why: `NVentures 공식 포트폴리오가 ${row.companyName}을(를) ${row.industry} 분야 투자사로 공개합니다.`,
-        strategicFit: chain.strategicLogic || "NVIDIA 가속 컴퓨팅 생태계의 적용 산업과 반복 워크로드를 확대합니다.",
-        origin: "nventures",
-        source: {
-          label: config.officialPortfolio.label,
+        relationshipDetail: "NVentures 공식 JSON 등재로 투자 관계만 확인됩니다. 개별 거래 시점·라운드·금액은 이 원문에 공개되지 않았습니다.",
+        rationale: {
+          status: "not-disclosed",
+          summary: "개별 투자 사유 미공개",
+        },
+        dealHistory: [],
+        catalogEntry: true,
+        origin: "nventures-catalog",
+        evidence: [{
+          id: `catalog-${slugify(row.companyName)}`,
+          claim: "NVentures 공식 포트폴리오 등재",
+          quote: `${row.companyName} · ${row.industry}`,
           url: config.officialPortfolio.pageUrl,
           date: asOf,
-          type: "공식 포트폴리오",
-        },
+          publisher: config.officialPortfolio.label,
+          tier: "official",
+        }],
       };
     }),
   };
@@ -87,7 +105,7 @@ let official;
 try {
   official = await fetchOfficialPortfolio();
 } catch (error) {
-  const fallback = (previous?.portfolio || []).filter(item => item.origin === "nventures");
+  const fallback = (previous?.portfolio || []).filter(item => item.catalogEntry === true || item.origin === "nventures-catalog");
   official = {
     status: fallback.length ? "cached" : "unavailable",
     asOf: previous?.officialCatalog?.asOf || "",
@@ -96,66 +114,80 @@ try {
   };
 }
 
-let articles = [];
 const suppression = await loadSuppressionRegistry();
-try {
-  const news = JSON.parse(await readFile("news.json", "utf8"));
-  articles = (news.articles || []).filter(sourceBacked).filter(article => !suppression.matches(article, "article"));
-} catch {}
-
-const findLatestEvidence = company => articles
-  .filter(article => {
-    const text = clean([article.co, article.title, article.titleKo, article.summary].join(" "));
-    return /\bnvidia\b/i.test(text)
-      && (company.aliases || [company.name]).some(alias => mentions(text, alias))
-      && investmentTerms.test(text);
-  })
-  .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0];
-
-const strategic = (config.strategicRecords || []).map(item => ({ ...item, origin: "strategic" }));
 const merged = new Map();
-for (const item of [...official.items, ...strategic]) {
+for (const item of official.items) {
   const key = clean(item.name);
   if (!key || suppression.hasCompany(item.name)) continue;
   merged.set(key, item);
 }
+for (const deal of dealLedger.records || []) {
+  const key = clean(deal.name);
+  if (!key || suppression.hasCompany(deal.name)) continue;
+  const catalog = merged.get(key);
+  merged.set(key, {
+    ...catalog,
+    ...deal,
+    websiteUrl: deal.websiteUrl || catalog?.websiteUrl,
+    logoUrl: deal.logoUrl || catalog?.logoUrl,
+    officialIndustry: deal.officialIndustry || catalog?.officialIndustry,
+    catalogEntry: Boolean(catalog),
+    origin: "deal-ledger",
+  });
+}
 
 const layerOrder = new Map(valueChains.map((chain, index) => [chain.id, index]));
-const relationRank = value => /지분 투자|전략적 투자|기업형 전략 투자/.test(value || "") ? 0
-  : /라이선스/.test(value || "") ? 1 : 2;
+const hasRoundAmount = company => Number.isFinite(company.round?.totalAmountUsd)
+  || (Number.isFinite(company.round?.totalAmount) && Boolean(company.round?.currency));
+const disclosureRank = company => company.nvidiaInvestment?.status === "disclosed" ? 0
+  : company.nvidiaInvestment?.status === "reported" ? 1
+    : hasRoundAmount(company) ? 2 : 3;
 const portfolio = [...merged.values()]
   .map(company => {
-    const latest = findLatestEvidence(company);
     const { aliases, ...publicCompany } = company;
     return {
       ...publicCompany,
-      latestEvidence: latest ? {
-        title: latest.titleKo || latest.title || "",
-        date: latest.date || "",
-        source: latest.source || "",
-        url: latest.url,
-        summary: latest.summary || "",
-      } : null,
+      aliases: aliases || [company.name],
+      disclosure: company.nvidiaInvestment?.status === "disclosed" ? "nvidia-amount-disclosed"
+        : company.nvidiaInvestment?.status === "reported" ? "nvidia-amount-reported"
+          : ["planned", "committed"].includes(company.nvidiaInvestment?.status) ? "nvidia-amount-planned"
+          : hasRoundAmount(company) ? "round-total-only"
+            : "relationship-only",
     };
   })
   .sort((a, b) => (layerOrder.get(a.layer) ?? 99) - (layerOrder.get(b.layer) ?? 99)
-    || relationRank(a.relationType) - relationRank(b.relationType)
+    || disclosureRank(a) - disclosureRank(b)
     || a.name.localeCompare(b.name, "en"));
 
 const enrichedChains = valueChains.map(chain => ({
   ...chain,
   count: portfolio.filter(item => item.layer === chain.id).length,
-  strategicCount: portfolio.filter(item => item.layer === chain.id && item.origin === "strategic").length,
+  detailedCount: portfolio.filter(item => item.layer === chain.id && item.origin === "deal-ledger").length,
 }));
-const officialCount = portfolio.filter(item => item.origin === "nventures").length;
-const strategicCount = portfolio.filter(item => item.origin === "strategic").length;
+const officialCount = portfolio.filter(item => item.catalogEntry).length;
+const detailedCount = portfolio.filter(item => item.origin === "deal-ledger").length;
+const nvidiaAmountCount = portfolio.filter(item => ["disclosed", "reported", "planned", "committed"].includes(item.nvidiaInvestment?.status)).length;
+const roundAmountCount = portfolio.filter(hasRoundAmount).length;
+const relationshipOnlyCount = portfolio.filter(item => item.disclosure === "relationship-only").length;
 
 const output = {
   generatedAt: new Date().toISOString(),
   company: "NVIDIA",
-  featuredId: "groq",
-  scope: `NVentures 공식 포트폴리오 ${officialCount}개사와 별도 전략 관계 ${strategicCount}건을 6개 밸류체인으로 정규화`,
-  methodology: "NVentures 공식 JSON을 매일 동기화하고, 별도 기업 발표에서 확인된 투자·라이선스를 관계 유형별로 결합합니다. 공식 목록 수집 실패 시 직전 스냅샷을 보존하며, 투자와 라이선스는 같은 지분 관계로 표시하지 않습니다.",
+  featuredId: "runway",
+  scope: `NVentures 공식 포트폴리오 ${officialCount}개사와 거래 원문이 별도 검증된 ${detailedCount}개사를 6개 밸류체인으로 정규화`,
+  methodology: dealLedger.methodology,
+  disclosurePolicy: {
+    nvidiaAmount: "NVIDIA 개별 투자액만 표시하며 라운드 총액으로 대체하지 않음",
+    roundAmount: "해당 기업이 조달한 전체 라운드 금액으로 별도 표시",
+    unknown: "공개되지 않은 금액·지분율·사유는 추정하지 않음",
+    news: "일반 뉴스 요약은 거래 근거로 자동 승격하지 않음",
+  },
+  metrics: {
+    detailedCount,
+    nvidiaAmountCount,
+    roundAmountCount,
+    relationshipOnlyCount,
+  },
   officialCatalog: {
     status: official.status,
     asOf: official.asOf,
@@ -169,4 +201,4 @@ const output = {
 };
 
 await writeFile(OUTPUT_FILE, `${JSON.stringify(output)}\n`);
-console.log(`[nvidia-investments] ${portfolio.length} companies · ${enrichedChains.length} value chains · ${official.status} official catalog · ${portfolio.filter(item => item.latestEvidence).length} latest crawl matches`);
+console.log(`[nvidia-investments] ${portfolio.length} companies · ${enrichedChains.length} value chains · ${official.status} catalog · ${detailedCount} sourced deals · ${nvidiaAmountCount} NVIDIA amounts · ${roundAmountCount} round totals`);

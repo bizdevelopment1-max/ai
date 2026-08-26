@@ -2151,14 +2151,22 @@ function NvidiaInvestmentMap({ data, theme }) {
 
   const normalizedQuery = query.trim().toLowerCase();
   const visible = portfolio.filter(item => (activeLayer === "all" || item.layer === activeLayer)
-    && (!normalizedQuery || [item.name, item.officialIndustry, item.relationType, item.transaction]
+    && (!normalizedQuery || [item.name, item.officialIndustry, item.relationship?.type, item.relationship?.role,
+      item.nvidiaInvestment?.display, item.round?.display, item.relationshipDetail]
       .some(value => String(value || "").toLowerCase().includes(normalizedQuery))));
   const selected = portfolio.find(item => item.id === selectedId) || visible[0] || portfolio[0];
   const selectedIndex = Math.max(0, visible.findIndex(item => item.id === selected.id));
   const selectedLayer = chains.find(layer => layer.id === selected.layer) || {};
-  const latest = selected.latestEvidence;
-  const primarySource = latest || selected.source;
+  const evidence = selected.evidence || [];
+  const primarySource = evidence[0];
   const updated = formatMonthDay(data.generatedAt);
+  const disclosureLabel = item => ({
+    "nvidia-amount-disclosed": "투자액 공개",
+    "nvidia-amount-reported": "투자액 보도",
+    "nvidia-amount-planned": "투자 계획",
+    "round-total-only": "라운드만 공개",
+    "relationship-only": "관계만 확인",
+  }[item.disclosure] || "검증 중");
   const chooseLayer = layerId => {
     setActiveLayer(layerId);
     const next = layerId === "all" ? portfolio.find(item => item.id === data?.featuredId) || portfolio[0]
@@ -2184,7 +2192,9 @@ function NvidiaInvestmentMap({ data, theme }) {
         <div className="nvi-head-metrics">
           <span><b>{portfolio.length}</b>개 확인 기업</span>
           <span><b>{chains.length}</b>개 밸류체인</span>
-          <span><b>{data.officialCatalog?.count || 0}</b>개 공식 포트폴리오</span>
+          <span><b>{data.metrics?.detailedCount || 0}</b>개 거래 상세</span>
+          <span><b>{data.metrics?.nvidiaAmountCount || 0}</b>개 NVIDIA 금액</span>
+          <span><b>{data.metrics?.roundAmountCount || 0}</b>개 라운드 총액</span>
           {updated && <span>갱신 <b>{updated}</b></span>}
         </div>
       </header>
@@ -2206,7 +2216,7 @@ function NvidiaInvestmentMap({ data, theme }) {
           <div className="nvi-stage-head">
             <div>
               <b>{activeLayer === "all" ? "전체 밸류체인" : chains.find(chain => chain.id === activeLayer)?.ko}</b>
-              <span>{visible.length}개 기업 · 기업을 선택하면 오른쪽에 관계와 공식 근거 표시</span>
+              <span>{visible.length}개 기업 · NVIDIA 투자액과 전체 라운드 금액을 분리 표시</span>
             </div>
             <label className="nvi-search">
               <span>기업 검색</span>
@@ -2222,7 +2232,7 @@ function NvidiaInvestmentMap({ data, theme }) {
                   style={{ "--node-color": layer.accent || theme.accent, "--node-index": nodeIndex }}
                   data-nvi-id={node.id}
                   aria-pressed={node.id === selected.id}
-                  aria-label={`${node.name} 투자 관계 보기`}
+                  aria-label={`${node.name} 투자 거래 상세 보기`}
                   onFocus={() => setSelectedId(node.id)}
                   onClick={() => setSelectedId(node.id)}
                   onKeyDown={event => {
@@ -2231,7 +2241,7 @@ function NvidiaInvestmentMap({ data, theme }) {
                   }}>
                   <span className="nvi-node-mark">{String(node.shortName || node.name).slice(0, 1)}</span>
                   <span className="nvi-node-copy"><b>{node.shortName || node.name}</b><small>{node.officialIndustry || layer.ko}</small></span>
-                  <span className="nvi-node-meta"><em>{node.relationType}</em><time>{formatMonthDay(node.source?.date)}</time></span>
+                  <span className="nvi-node-meta"><em>{disclosureLabel(node)}</em><time>{formatMonthDay(node.round?.date || node.evidence?.[0]?.date)}</time></span>
                 </button>
               );
             })}
@@ -2242,32 +2252,68 @@ function NvidiaInvestmentMap({ data, theme }) {
         <aside key={selected.id} className="nvi-detail" style={{ "--node-color": selectedLayer.accent || theme.accent }} aria-live="polite">
           <div className="nvi-detail-top">
             <span>{selectedLayer.ko || selected.layer}</span>
-            <time>근거 {formatMonthDay(selected.source?.date)}</time>
+            <time>{formatMonthDay(selected.round?.date || primarySource?.date) || "날짜 미공개"}</time>
           </div>
           <div className="nvi-company-title">
             <img src={selected.logoUrl || `https://www.google.com/s2/favicons?domain=${selected.domain}&sz=64`} alt="" loading="lazy" />
             <h4>{selected.name}</h4>
           </div>
-          <p className="nvi-relation">{selected.relationType}</p>
-          <p className="nvi-transaction">{selected.transaction}</p>
+          <p className="nvi-relation">{selected.relationship?.type || "투자 관계 확인"}</p>
+          <p className="nvi-transaction">{selected.relationship?.role || "세부 역할 미공개"}</p>
           {selected.officialIndustry && <p className="nvi-industry">공식 산업 분류 · {selected.officialIndustry}</p>}
-          <div className="nvi-answer">
-            <span>관계 근거</span>
-            <strong>{selected.why}</strong>
+
+          <div className="nvi-deal-facts" aria-label="투자 금액과 거래 조건">
+            <div className={`is-${selected.nvidiaInvestment?.status || "unknown"}`}>
+              <span>NVIDIA 투자액</span>
+              <strong>{selected.nvidiaInvestment?.display || "미공개"}</strong>
+              <small>{selected.nvidiaInvestment?.basis || "공개 근거 없음"}</small>
+            </div>
+            <div>
+              <span>전체 라운드·프로젝트</span>
+              <strong>{selected.round?.display || "미공개"}</strong>
+              <small>{selected.round?.valuationDisplay ? `가치 ${selected.round.valuationDisplay}` : "NVIDIA 개별 금액과 별도"}</small>
+            </div>
           </div>
+
           <div className="nvi-answer">
-            <span>전략적 의미</span>
-            <strong>{selected.strategicFit}</strong>
+            <span>NVIDIA와 실제 관계</span>
+            <strong>{selected.relationshipDetail || "공식 포트폴리오 등재 외 세부 관계 미공개"}</strong>
           </div>
-          {latest?.summary && (
-            <div className="nvi-latest">
-              <span>최신 원문 근거 · {formatMonthDay(latest.date)}</span>
-              <p>{latest.summary}</p>
+
+          <div className={`nvi-answer nvi-rationale is-${selected.rationale?.status || "unknown"}`}>
+            <span>왜 투자했나</span>
+            <strong>{selected.rationale?.summary || "공식 개별 사유 미공개"}</strong>
+          </div>
+
+          {!!selected.dealHistory?.length && (
+            <div className="nvi-history">
+              <span>투자·거래 이력</span>
+              {selected.dealHistory.map((deal, index) => (
+                <div key={`${deal.date}-${deal.round}-${index}`}>
+                  <time>{formatMonthDay(deal.date)}</time>
+                  <b>{deal.round}</b>
+                  <strong>{deal.totalDisplay}</strong>
+                  <small>NVIDIA {deal.nvidiaAmountDisplay} · {deal.useOfFunds}</small>
+                </div>
+              ))}
             </div>
           )}
-          <a className="nvi-source" href={primarySource.url} target="_blank" rel="noopener noreferrer">
-            {latest ? `${latest.source} 최신 원문` : `${selected.source.label} 거래 원문`} ↗
-          </a>
+
+          <div className="nvi-evidence-list">
+            <span>검증 근거 {evidence.length}건</span>
+            {evidence.map(item => (
+              <a key={item.id || item.url} href={item.url} target="_blank" rel="noopener noreferrer">
+                <b>{item.claim}</b>
+                <small>{item.publisher} · {formatMonthDay(item.date)} · {item.tier}</small>
+                <q>{item.quote}</q>
+              </a>
+            ))}
+          </div>
+          {primarySource?.url && (
+            <a className="nvi-source" href={primarySource.url} target="_blank" rel="noopener noreferrer">
+              {primarySource.publisher || "원문"} 거래 원문 ↗
+            </a>
+          )}
           {selected.websiteUrl && (
             <a className="nvi-company-link" href={selected.websiteUrl} target="_blank" rel="noopener noreferrer">기업 사이트 ↗</a>
           )}
