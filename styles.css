@@ -1288,7 +1288,14 @@ a[href]:hover .rainbow-on-hover,
   color: color-mix(in srgb, var(--accent) 82%, var(--ink));
   background: color-mix(in srgb, var(--accent) 10%, var(--panel));
 }
-.d-compact .art-summary { display: none; }
+.art-summary-wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px; min-width: 0; }
+.art-summary-wrap .art-summary { display: block; min-width: 0; overflow: hidden; }
+.art-summary-wrap.is-collapsed .art-summary { white-space: nowrap; }
+.art-summary-wrap.is-collapsed .art-sum-line { display: none; }
+.art-summary-wrap.is-collapsed .art-sum-line:first-child {
+  display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.d-compact .art-summary-wrap { display: none; }
 .feed-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-top: 4px; }
 .feed-list .art { min-width: 0; align-items: stretch; border: 1px solid transparent; }
 .feed-list .art:hover, .feed-list .art-sel { border-color: color-mix(in srgb, var(--accent, #2A6FDB) 38%, transparent); }
@@ -3520,92 +3527,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .isg-card, .isg-card::after, .isg-card:hover .isg-quant { transition: none; transform: none; }
 }
 
-/* ============================================================
-   Mobile AI business database · Market → Money → Move
-   ============================================================ */
-.maib {
-  --maib-blue: #0F5EA8;
-  --maib-navy: #17324D;
-  --maib-teal: #0E8F6E;
-  --maib-warm: #A66B3F;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--maib-blue) 5%, var(--panel)) 0%, var(--panel) 48%, color-mix(in srgb, var(--maib-teal) 4%, var(--panel)) 100%);
-}
-.maib-live {
-  color: var(--maib-blue) !important;
-  border: 1px solid color-mix(in srgb, var(--maib-blue) 30%, var(--line));
-  background: color-mix(in srgb, var(--maib-blue) 7%, var(--panel)) !important;
-}
-.maib-policy {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 12px 20px 0;
-  padding: 11px 14px;
-  border: 1px solid color-mix(in srgb, var(--maib-blue) 30%, var(--line));
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--maib-blue) 5%, var(--panel));
-  color: var(--ink-2);
-  font-size: 11px;
-}
-.maib-policy b {
-  color: var(--maib-blue);
-  font-size: 11.5px;
-  white-space: nowrap;
-}
-.maib-policy span + span::before {
-  content: "";
-  display: inline-block;
-  width: 1px;
-  height: 10px;
-  margin-right: 14px;
-  background: var(--line);
-  vertical-align: -1px;
-}
-.maib-summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 9px;
-  margin: 14px 20px 10px;
-}
-.maib-summary > div {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 3px 10px;
-  min-height: 72px;
-  padding: 12px 13px;
-  border: 1px solid var(--line);
-  border-top: 3px solid var(--maib-blue);
-  border-radius: 5px;
-  background: var(--panel);
-  transition: transform .24s ease, box-shadow .24s ease, background .24s ease, color .24s ease;
-}
-.maib-summary > div:nth-child(2) { border-top-color: var(--maib-teal); }
-.maib-summary > div:nth-child(3) { border-top-color: var(--maib-warm); }
-.maib-summary > div:nth-child(4) { border-top-color: #66558C; }
-.maib-summary em {
-  color: var(--muted);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 750;
-  letter-spacing: .04em;
-}
-.maib-summary b {
-  grid-row: 1 / span 2;
-  grid-column: 2;
-  align-self: center;
-  color: var(--maib-navy);
-  font-size: 24px;
-  line-height: 1;
-}
-.maib-summary span { color: var(--ink-2); font-size: 10.5px; }
-.maib-summary > div:hover {
-  color: #fff;
-  background: var(--maib-navy);
-  box-shadow: 0 12px 24px rgba(15, 52, 82, .2);
-  transform: translateY(-3px) perspective(700px) rotateX(2deg);
-}
-.maib-summary > div:hover :is(em, b, span) { color: #fff; }
 .maib-flow {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr) 22px minmax(0, 1fr) 22px minmax(0, 1fr);
@@ -4333,6 +4254,17 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-record-sources nav { display: flex; flex-wrap: wrap; gap: 5px; }
 .mkt-record-sources a { display: inline-flex; align-items: center; gap: 3px; padding: 3px 6px; border: 1px solid color-mix(in srgb, #0891B2 20%, var(--line)); border-radius: 5px; font-family: var(--f); font-size: 9.5px; font-weight: 800; color: #0891B2; text-decoration: none; background: var(--panel); }
 .mkt-record-sources a:hover { border-color: #0891B2; background: color-mix(in srgb, #0891B2 9%, var(--panel)); }
+.mkt-record.is-collapsed .mkt-record-insight-block > b { display: none; }
+.mkt-record.is-collapsed .mkt-record-values {
+  max-height: 48px; flex-wrap: nowrap; overflow: hidden;
+}
+.mkt-record.is-collapsed .mkt-record-values > span { flex: 0 0 auto; }
+.mkt-record.is-collapsed .mkt-record-insights li { display: none; }
+.mkt-record.is-collapsed .mkt-record-insights li:first-child {
+  display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mkt-record.is-collapsed .mkt-record-quant-evidence,
+.mkt-record.is-collapsed .mkt-record-sources { display: none; }
 .mkt-baseline-head { display: flex; align-items: baseline; gap: 9px; margin: 0 20px 2px; padding-top: 7px; border-top: 1px solid var(--line); }
 .mkt-baseline-head b { font-family: var(--f); font-size: 13px; font-weight: 800; color: var(--ink); }
 .mkt-baseline-head em { font-family: var(--f); font-style: normal; font-size: 10.5px; font-weight: 600; color: var(--muted); word-break: keep-all; }
@@ -4358,6 +4290,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-hide { background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px; border-radius: 5px; }
 .mkt-hide:hover { color: #0891B2; background: color-mix(in srgb, #0891B2 10%, transparent); }
 .mkt-def { font-family: var(--f); font-size: 12px; font-weight: 600; color: var(--ink-2); line-height: 1.55; word-break: keep-all; margin: 6px 0 9px; }
+.mkt-card.is-collapsed .mkt-def { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mkt-nums { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
 .mkt-num { font-family: var(--f); font-size: 12.5px; font-weight: 800; color: var(--ink); }
 .mkt-num em { display: block; font-style: normal; font-size: 9px; font-weight: 800; letter-spacing: .04em; color: var(--muted); text-transform: uppercase; margin-bottom: 1px; }
@@ -4371,6 +4304,20 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mkt-extra li { font-family: var(--f); font-size: 10.5px; color: var(--muted); line-height: 1.5; word-break: keep-all; margin-bottom: 2px; }
 .mkt-extra a { color: var(--muted); text-decoration: underline; }
 .mkt-latest { display: flex; align-items: center; gap: 5px; font-family: var(--f); font-size: 10.5px; font-weight: 700; color: #0891B2; text-decoration: none; margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--line); word-break: keep-all; }
+.mkt-card.is-collapsed .mkt-extra,
+.mkt-card.is-collapsed .mkt-latest { display: none; }
+.content-fold-toggle {
+  align-self: flex-start; min-height: 26px; margin: 8px 0 0; padding: 4px 8px;
+  font-size: 11.5px; line-height: 1.2; -webkit-text-fill-color: currentColor;
+}
+.content-fold-toggle svg { flex: 0 0 auto; transform: rotate(-90deg); transition: transform .18s ease; }
+.content-fold-toggle[aria-expanded="true"] svg { transform: rotate(90deg); }
+.art-summary-wrap .content-fold-toggle { margin-top: 2px; }
+.mkt-record > .content-fold-toggle, .mkt-card > .content-fold-toggle { margin-top: 10px; }
+.sr-only {
+  position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important;
+  overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important;
+}
 .mkt-foot { font-family: var(--f); font-size: 10.5px; color: var(--muted); padding: 8px 20px 16px; line-height: 1.5; word-break: keep-all; }
 @media (max-width: 920px) { .mkt-record-grid { grid-template-columns: repeat(2, 1fr); } .mkt-db-summary { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 760px) { .mkt-grid, .mkt-record-grid { grid-template-columns: 1fr; } .mkt-db-head { align-items: flex-start; flex-direction: column; } .mkt-db-head .mkt-tools { margin-left: 0; } .market-board .board-head { align-items: flex-start; } .mkt-board-toggle { width: 100%; justify-content: center; margin-left: 0; } .mkt-record-sections, .market-board details.mkt-group { margin-left: 14px; margin-right: 14px; } }

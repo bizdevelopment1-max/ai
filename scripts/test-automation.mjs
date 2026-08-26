@@ -2782,5 +2782,28 @@ try {
   console.error(`  FAIL  generated partner/M&A decision screen: ${error.message}`);
 }
 
+try {
+  const [boards, styles] = await Promise.all([
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+  ]);
+  const foldUiReady = boards.includes("function ContentFoldToggle")
+    && boards.includes("expandedArticles")
+    && boards.includes("expandedMarketContent")
+    && boards.includes('className={"art-summary-wrap"')
+    && boards.includes('aria-expanded={expanded}')
+    && !/className="mkt-record-quant-evidence" open/.test(boards);
+  const oneLineReady = styles.includes(".art-summary-wrap.is-collapsed .art-sum-line:first-child")
+    && styles.includes(".mkt-record.is-collapsed .mkt-record-insights li:first-child")
+    && styles.includes(".mkt-card.is-collapsed .mkt-def")
+    && styles.includes('text-overflow: ellipsis; white-space: nowrap;')
+    && styles.includes('.content-fold-toggle[aria-expanded="true"]');
+  if (!foldUiReady || !oneLineReady) throw new Error("long-form cards must start as one-line summaries and expose an accessible per-card toggle");
+  console.log("  OK  기사·소비자 조사·시장 카드 1줄 기본 접힘 및 카드별 더보기/접기");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  compact long-form disclosure: ${error.message}`);
+}
+
 if (failed) process.exit(1);
 console.log("자동화 구성 정상");

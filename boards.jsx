@@ -1667,6 +1667,20 @@ function BoldSummary({ text, roles = [] }) {
   ));
 }
 
+// Long source-backed copy uses one consistent disclosure control across
+// articles, surveys and market cards. The caller owns the open state so the
+// full record stays mounted while only one compact line is shown by default.
+function ContentFoldToggle({ expanded, onToggle, label = "내용" }) {
+  return (
+    <button className="content-fold-toggle mkt-board-toggle" type="button" aria-expanded={expanded}
+      onClick={event => { event.stopPropagation(); onToggle(); }}>
+      {expanded ? "접기" : "더보기"}
+      <Icon name="chevron" size={11} />
+      <span className="sr-only">{label}</span>
+    </button>
+  );
+}
+
 // Korean is display-only localisation. The source title/excerpt remain intact
 // for evidence verification; a failed quality gate deliberately shows English.
 function displayFeedText(item, language = "localized") {
@@ -1729,6 +1743,8 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const [pwInput, setPwInput] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
   const [selKey, setSelKey] = React.useState(null);   // 클릭 선택된 기사(외곽선 박스)
+  const [expandedArticles, setExpandedArticles] = React.useState({});
+  const toggleArticleSummary = key => setExpandedArticles(current => ({ ...current, [key]: !current[key] }));
   const askDelete = (a) => { setPendingDel(keyOf(a)); setPwInput(""); setPwErr(false); };
   const cancelDelete = () => { setPendingDel(null); setPwInput(""); setPwErr(false); };
   const confirmDelete = (a) => {
@@ -1815,11 +1831,15 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
         <div className="feed-list">
           {shown.map((a, i) => {
             const c = catMap[a.cat] || {};
-            const isSel = selKey === keyOf(a);
+            const articleKey = keyOf(a);
+            const isSel = selKey === articleKey;
             const display = displayFeedText(a, displayLanguage);
+            const summaryLines = Array.isArray(display.lines) ? display.lines.filter(Boolean) : [];
+            const summaryFoldable = summaryLines.length > 1 || String(display.summary || "").length > 96;
+            const summaryExpanded = !summaryFoldable || !!expandedArticles[articleKey];
             return (
-              <div className={"art" + (isSel ? " art-sel" : "")} key={keyOf(a)}
-                onClick={() => setSelKey(isSel ? null : keyOf(a))}>
+              <div className={"art" + (isSel ? " art-sel" : "")} key={articleKey}
+                onClick={() => setSelKey(isSel ? null : articleKey)}>
                 <span className="art-cat" style={{ background: c.accent }} />
                 <div className="art-body">
                   <span className="art-meta">
@@ -1830,7 +1850,12 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     <span className="art-verify">{display.original ? "ORIGINAL" : display.translated ? "원문 번역" : display.fallback ? "원문 영어" : "원문 발췌"}</span>
                   </span>
                   <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{hlBrief(display.title, "art-title")}</a>
-                  {display.summary && <span className="art-summary"><BoldSummary text={display.summary} roles={display.roles} /></span>}
+                  {display.summary && <div className={"art-summary-wrap" + (summaryExpanded ? " is-open" : " is-collapsed")}>
+                    <span className="art-summary"><BoldSummary text={display.summary} roles={display.roles} /></span>
+                    {summaryFoldable && <ContentFoldToggle expanded={summaryExpanded}
+                      label={`${display.title} 기사 요약`}
+                      onToggle={() => toggleArticleSummary(articleKey)} />}
+                  </div>}
                 </div>
                 {pendingDel === keyOf(a) ? (
                   <div className="art-del-pw" onClick={e => e.stopPropagation()}>
@@ -5252,6 +5277,8 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(false);
+  const [expandedMarketContent, setExpandedMarketContent] = React.useState({});
+  const toggleMarketContent = key => setExpandedMarketContent(current => ({ ...current, [key]: !current[key] }));
   const MARKET_LS = "aiDashDeletedMarketRecords";
   const [deleted, setDeleted] = React.useState(() => {
     try { return JSON.parse(localStorage.getItem(MARKET_LS) || "{}"); } catch { return {}; }
@@ -5400,8 +5427,14 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
               const relatedSources = record.relatedSources?.length
                 ? record.relatedSources
                 : [{ sourceName: record.sourceName, sourceUrl: record.sourceUrl, publishedAt: record.publishedAt }];
+              const contentKey = `record:${deleteKey(record)}`;
+              const contentExpanded = !!expandedMarketContent[contentKey];
+              const contentFoldable = insights.length > 1
+                || insights.join(" ").length > 96
+                || record.sourceQuantifiedLines.length > 0
+                || relatedSources.length > 1;
               return (
-              <article className="mkt-record" key={record.id}>
+              <article className={`mkt-record ${contentExpanded || !contentFoldable ? "is-expanded" : "is-collapsed"}`} key={record.id}>
                 <div className="mkt-record-top">
                   <span className={"mkt-record-type type-" + record.type}>{TYPE_LABEL[record.type] || "정량 관측"}</span>
                   {record.mergedRecordCount > 1 && <span className="mkt-record-merged">
@@ -5421,7 +5454,7 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                   <b>{record.mergedRecordCount > 1 ? "통합 인사이트" : "핵심 인사이트"}</b>
                   <ul className="mkt-record-insights">{insights.map((line, index) => <li key={index}>{line}</li>)}</ul>
                 </div>}
-                <details className="mkt-record-quant-evidence" open>
+                <details className="mkt-record-quant-evidence">
                   <summary>지표 근거 {record.sourceQuantifiedLines.length}개</summary>
                   <ul>{record.sourceQuantifiedLines.map((item, index) => <li key={index}>{item.line}</li>)}</ul>
                 </details>
@@ -5433,6 +5466,9 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                     </a>
                   ))}</nav>
                 </div>
+                {contentFoldable && <ContentFoldToggle expanded={contentExpanded}
+                  label={`${title} 조사·시장 상세`}
+                  onToggle={() => toggleMarketContent(contentKey)} />}
               </article>
               );
             })}
@@ -5459,8 +5495,11 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                     const hasCurrent = numericValue(it.size);
                     const hasForecast = numericValue(it.forecast);
                     const hasCagr = numericValue(it.cagr);
+                    const contentKey = `baseline:${deleteKey(it)}`;
+                    const contentExpanded = !!expandedMarketContent[contentKey];
+                    const contentFoldable = String(it.def || "").length > 96 || (it.extra || []).length > 0 || !!it.latest;
                     return (
-                    <div className="mkt-card" key={it.id}>
+                    <div className={`mkt-card ${contentExpanded || !contentFoldable ? "is-expanded" : "is-collapsed"}`} key={it.id}>
                       <div className="mkt-card-head"><b className="mkt-name">{it.name}</b>{deleteControl(it)}</div>
                       <p className="mkt-def">{it.def}</p>
                       {(hasCurrent || hasForecast || hasCagr) && <div className="mkt-nums">
@@ -5475,6 +5514,9 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
                       </div>
                       {(it.extra || []).length > 0 && <ul className="mkt-extra">{it.extra.map((e, k) => <li key={k}>{e.url ? <a href={e.url} target="_blank" rel="noopener">{e.t}</a> : e.t}</li>)}</ul>}
                       {it.latest && it.latest.url && <a className="mkt-latest" href={it.latest.url} target="_blank" rel="noopener"><Icon name="news" size={10} /> 최신 {it.latest.date && it.latest.date.slice(5)} · {String(it.latest.title).slice(0, 50)}</a>}
+                      {contentFoldable && <ContentFoldToggle expanded={contentExpanded}
+                        label={`${it.name} 시장 상세`}
+                        onToggle={() => toggleMarketContent(contentKey)} />}
                     </div>
                     );
                   })}
