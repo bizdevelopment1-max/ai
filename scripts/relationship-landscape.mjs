@@ -110,6 +110,8 @@ export function buildRelationshipLandscape({ dash, companyLedger, targetPerLayer
     const layer = classifyLandscapeLayer(record, layerMeta);
     selected.push({
       ...identity,
+      domain: record?.logo?.domain || identity.domain || identity.url?.replace(/^https?:\/\/(?:www\.)?/, "").split("/")[0],
+      logoUrl: record?.logo?.url || identity.logoUrl || "",
       layer,
       vchainVertical: layerMeta.vertical || conciseVertical(record) || identity.unit,
       adjacentLayers: Array.isArray(layerMeta.adjacent) ? layerMeta.adjacent : ADJACENT_LAYERS[layer],
@@ -131,6 +133,7 @@ export function buildRelationshipLandscape({ dash, companyLedger, targetPerLayer
       cat: "startup",
       group: layer,
       domain: website.replace(/^https?:\/\/(?:www\.)?/, "").split("/")[0],
+      logoUrl: record?.logo?.url || "",
       unit: conciseVertical(record),
       url: website,
       layer,

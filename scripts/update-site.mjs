@@ -34,6 +34,7 @@ const commonPublish = [
   nodeStep("build-partner-ma-candidates", "scripts/build-partner-ma-candidates.mjs"),
   nodeStep("validate-partner-ma-candidates", "scripts/validate-partner-ma-candidates.mjs"),
   retryStep("materialize-public-views", "scripts/build-public-data.mjs"),
+  nodeStep("validate-company-logos", "scripts/validate-company-logos.mjs"),
   nodeStep("source-compliance", "scripts/build-source-compliance-catalog.mjs"),
   nodeStep("dataset-lineage", "scripts/build-dataset-manifest.mjs"),
   nodeStep("service-level-report", "scripts/build-slo-report.mjs"),

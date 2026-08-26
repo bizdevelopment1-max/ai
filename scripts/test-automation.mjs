@@ -20,6 +20,7 @@ const required = [
   "scripts/crawl-stocks.mjs",
   "scripts/build-nvidia-investments.mjs",
   "scripts/validate-nvidia-investments.mjs",
+  "scripts/validate-company-logos.mjs",
   "scripts/build-partner-ma-candidates.mjs",
   "scripts/validate-partner-ma-candidates.mjs",
   "scripts/crawl-financials.mjs",

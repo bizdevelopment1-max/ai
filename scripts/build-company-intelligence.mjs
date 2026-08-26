@@ -218,6 +218,29 @@ const isCompanyActionEvidenceFor = (name, item) => {
     || /takes? (?:aim at|on)/i.test(prefix)
     || /\b(?:uses?|used|using|customer|client)\b/i.test(prefix));
 };
+const companyLogoMetadata = rec => {
+  const candidates = [
+    rec?.profile?.officialWebsite,
+    ...(rec?.strategyProfile?.sourceUrls || []),
+    ...(rec?.organization?.officialPages || []).flatMap(page => [page?.resolvedUrl, page?.url]),
+  ].filter(value => /^https?:\/\//.test(String(value || "")));
+  const parsed = candidates.map(value => {
+    try {
+      const url = new URL(value);
+      return { sourceUrl: url.href, domain: url.hostname.replace(/^www\./, "") };
+    } catch { return null; }
+  }).filter(Boolean);
+  const preferred = parsed.find(item => !/(?:linkedin|wikipedia|crunchbase|sec\.gov|app\.apple|play\.google)/i.test(item.domain)) || parsed[0];
+  if (!preferred?.domain) return null;
+  return {
+    schemaVersion: 1,
+    domain: preferred.domain,
+    url: `https://www.google.com/s2/favicons?domain=${encodeURIComponent(preferred.domain)}&sz=128`,
+    sourceUrl: preferred.sourceUrl,
+    status: "official-domain-favicon",
+    checkedAt: new Date().toISOString(),
+  };
+};
 const officialHostsFor = name => (COMPANY_SOURCES[name]?.official || []).map(url => {
   try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return ""; }
 }).filter(Boolean);
@@ -905,6 +928,7 @@ async function main() {
     const publicSectionKeys = ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"];
     const visibleSections = rows.flatMap(company => publicSectionKeys
       .map(key => company.intelligence?.[key]).filter(section => clean(section?.summary)));
+    const logoReadyCompanies = rows.filter(company => company.logo?.domain && /^https?:\/\//.test(company.logo?.url || "")).length;
     companyData.schemaVersion = 6;
     companyData.generatedAt = new Date().toISOString();
     companyData.methodology = "normalized-profile+strategy-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis+complete-capability-and-implication-baseline+source-backed-section-publication+freshness+strict-individual-url-gate";
@@ -917,6 +941,8 @@ async function main() {
       omittedUnsupportedSections: rows.length * publicSectionKeys.length - visibleSections.length,
       allVisibleClaimsSourceBacked: visibleSections.every(section =>
         (section.evidence || []).some(ref => /^https?:\/\//.test(String(ref?.url || "")))),
+      logoReadyCompanies,
+      allCompaniesLogoResolvable: logoReadyCompanies === rows.length,
     };
     const checkpoint = "companies.json.checkpoint";
     await writeFile(checkpoint, `${JSON.stringify(companyData)}\n`);
@@ -930,6 +956,7 @@ async function main() {
 
   for (const [name, rec] of Object.entries(companyData.companies || {})) {
     rec.metricHistory = metricSeriesFor(name);
+    rec.logo = companyLogoMetadata(rec);
     if (rec.profile) {
       rec.profile.business = compactBusinessProfile(rec.profile.business, name);
     }

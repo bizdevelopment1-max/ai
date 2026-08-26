@@ -116,16 +116,24 @@ function executiveDisplayName(person, primaryOnly = false) {
 }
 const executivePersonKey = value => safeDisplayString(value).toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
 
-// ---- Company logo (real favicon, falls back to initial) ---------
-function CoLogo({ name, domain, accent }) {
-  const [failed, setFailed] = React.useState(false);
-  if (!domain || failed) {
-    return <span className="ct-logo" style={{ background: accent }}>{name[0]}</span>;
+// ---- Company logo (official asset -> official-domain favicon -> initial) ----
+const companyFaviconUrl = (domain, size = 128) => domain
+  ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(String(domain).replace(/^https?:\/\//, "").split("/")[0])}&sz=${size}`
+  : "";
+function CoLogo({ name, domain, accent, logoUrl = "", className = "" }) {
+  const candidates = [...new Set([logoUrl, companyFaviconUrl(domain)].filter(Boolean))];
+  const [sourceIndex, setSourceIndex] = React.useState(0);
+  React.useEffect(() => setSourceIndex(0), [name, domain, logoUrl]);
+  const source = candidates[sourceIndex] || "";
+  const reversed = /(?:all-white|white-logo|logo-white)/i.test(source);
+  const classes = ["ct-logo", source && "ct-logo-img", reversed && "is-reversed", className].filter(Boolean).join(" ");
+  if (!source) {
+    return <span className={classes} style={{ background: accent }} aria-label={`${name} 로고 대체 표시`}>{String(name || "?").slice(0, 1)}</span>;
   }
   return (
-    <span className="ct-logo ct-logo-img">
-      <img src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
-        alt={name} loading="lazy" onError={() => setFailed(true)} />
+    <span className={classes} style={{ "--logo-accent": accent }}>
+      <img src={source} alt={`${name} 로고`} loading="lazy" decoding="async"
+        onError={() => setSourceIndex(index => index + 1)} />
     </span>
   );
 }
@@ -309,7 +317,7 @@ function CompanyBoard({ cat, companies, density, sectionRef, query, onSelect }) 
         <span className="ct-name" role="button" tabIndex={0} title={c.name + " 상세 보기"}
           onClick={() => open(c)}
           onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(c); } }}>
-          <CoLogo name={c.name} domain={c.domain} accent={cat.accent} />
+          <CoLogo name={c.name} domain={c.domain} logoUrl={c.logoUrl} accent={cat.accent} />
           <b>{c.name}</b>
           {verifiedAgeDays !== null && <small className={`ct-age-badge ${verifiedAgeDays <= 7 ? "fresh" : verifiedAgeDays <= 30 ? "aging" : "stale"}`} title={`last verified ${c.metricTiming.lastVerifiedAt}`}>{verifiedAgeDays}d</small>}
           <Icon name="chevron" size={12} />
@@ -588,7 +596,7 @@ function StrategyPortfolioCard({
       onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); } }}
       style={{ "--accent": accent || "#2D6BFF" }} aria-label={`${c.name} 전략 상세 보기`}>
       <div className="sp-card-head">
-        <CoLogo name={c.name} domain={c.domain} accent={accent} />
+        <CoLogo name={c.name} domain={c.domain} logoUrl={c.logoUrl} accent={accent} />
         <span className="sp-card-company">
           <em>{eyebrow}</em>
           <b>{c.name}</b>
@@ -729,7 +737,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
         <button className="cd-close" onClick={onClose} aria-label="닫기"><Icon name="x" size={16} sw={2} /></button>
 
         <div className="cd-head">
-          <CoLogo name={c.name} domain={c.domain} accent={accent} />
+          <CoLogo name={c.name} domain={c.domain} logoUrl={c.logoUrl} accent={accent} />
           <div className="cd-head-txt">
             <h3>{c.name}</h3>
             <div className="cd-sub">
@@ -2056,7 +2064,7 @@ function VPBoard({ companies, cats, sectionRef, onSelect, query }) {
                   <div className="vp-card" key={c.name}
                     style={{ opacity: local, transform: `translateY(${(1 - local) * 14}px)` }}>
                     <div className="vp-head">
-                      <CoLogo name={c.name} domain={c.domain} accent={cat.accent} />
+                      <CoLogo name={c.name} domain={c.domain} logoUrl={c.logoUrl} accent={cat.accent} />
                       <b className="vp-name" role="button" tabIndex={0} title={c.name + " 상세 보기"}
                         onClick={() => onSelect && onSelect(c)}
                         onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect && onSelect(c); } }}>{c.name}</b>
@@ -2236,7 +2244,8 @@ function NvidiaInvestmentMap({ data, theme }) {
                     if (["ArrowRight", "ArrowDown"].includes(event.key)) moveSelection(event, 1);
                     if (["ArrowLeft", "ArrowUp"].includes(event.key)) moveSelection(event, -1);
                   }}>
-                  <span className="nvi-node-mark">{String(node.shortName || node.name).slice(0, 1)}</span>
+                  <CoLogo name={node.shortName || node.name} domain={node.domain} logoUrl={node.logoUrl}
+                    accent={layer.accent || theme.accent} className="nvi-node-mark" />
                   <span className="nvi-node-copy"><b>{node.shortName || node.name}</b><small>{node.officialIndustry || layer.ko}</small></span>
                   <span className="nvi-node-meta"><em>{disclosureLabel(node)}</em><time>{formatMonthDay(node.round?.date || node.evidence?.[0]?.date)}</time></span>
                 </button>
@@ -2252,7 +2261,8 @@ function NvidiaInvestmentMap({ data, theme }) {
             <time>{formatMonthDay(selected.round?.date || primarySource?.date) || "날짜 미공개"}</time>
           </div>
           <div className="nvi-company-title">
-            <img src={selected.logoUrl || `https://www.google.com/s2/favicons?domain=${selected.domain}&sz=64`} alt="" loading="lazy" />
+            <CoLogo name={selected.name} domain={selected.domain} logoUrl={selected.logoUrl}
+              accent={selectedLayer.accent || theme.accent} className="nvi-company-logo" />
             <h4>{selected.name}</h4>
           </div>
           <p className="nvi-relation">{selected.relationship?.type || "투자 관계 확인"}</p>
@@ -2416,7 +2426,7 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, the
             <button key={s.ticker} className={"stock-tab" + (on ? " on" : "")}
               style={on ? { borderColor: ac, color: ac, background: acSoft } : null}
               onClick={() => setTicker(s.ticker)}>
-              <CoLogo name={s.name} domain={s.domain} accent={ac} />
+              <CoLogo name={s.name} domain={s.domain} logoUrl={s.logoUrl} accent={ac} />
               <span className="stock-tab-copy">
                 <b>{s.ticker}</b>
                 <em>{s.marketCategory || s.exchange || s.name.replace(/\s*\(.*\)/, "")}</em>
@@ -2963,6 +2973,7 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
   const [tooltip, setTooltip] = React.useState(null);
   const nodesRef = React.useRef([]);
   const edgesRef = React.useRef([]);
+  const logoCacheRef = React.useRef(new Map());
   const dragRef = React.useRef(null);
   const frameRef = React.useRef(null);
   const mouseRef = React.useRef({ x: 0, y: 0 });
@@ -3023,6 +3034,19 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
     }
     const nodes = nodesRef.current;
     const edges = edgesRef.current;
+    nodes.forEach(node => {
+      const explicit = node.co?.logoUrl || "";
+      const fallback = companyFaviconUrl(node.co?.domain);
+      const source = explicit || fallback;
+      if (!source || logoCacheRef.current.has(node.id)) return;
+      const image = new Image();
+      image.decoding = "async";
+      image.src = source;
+      image.onerror = () => {
+        if (explicit && fallback && image.src !== fallback) image.src = fallback;
+      };
+      logoCacheRef.current.set(node.id, { image, source });
+    });
 
     function tick() {
       const damp = 0.88;
@@ -3117,10 +3141,24 @@ function KnowledgeGraph({ companies, cats, catMap, progress, mode, relationEdges
         g.addColorStop(0, accent + "DD"); g.addColorStop(1, accent);
         ctx.fillStyle = g; ctx.fill();
         ctx.strokeStyle = isH || isS ? "#fff" : accent + "60"; ctx.lineWidth = isH || isS ? 2.5 : 1; ctx.stroke();
-        ctx.font = `bold ${Math.max(9, n.r * 0.34)}px sans-serif`;
-        ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        const initials = n.id.split(/\s+/).slice(0, 2).map(part => part[0]).join("").toUpperCase();
-        ctx.fillText(initials, n.x, n.y);
+        const logo = logoCacheRef.current.get(n.id);
+        if (logo?.image?.complete && logo.image.naturalWidth > 0) {
+          const reversed = /(?:all-white|white-logo|logo-white)/i.test(logo.source || "");
+          const logoSize = n.r * 1.18;
+          ctx.save();
+          ctx.beginPath(); ctx.arc(n.x, n.y, n.r - 2, 0, Math.PI * 2); ctx.clip();
+          if (!reversed) {
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
+          }
+          ctx.drawImage(logo.image, n.x - logoSize / 2, n.y - logoSize / 2, logoSize, logoSize);
+          ctx.restore();
+        } else {
+          ctx.font = `bold ${Math.max(9, n.r * 0.34)}px sans-serif`;
+          ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          const initials = n.id.split(/\s+/).slice(0, 2).map(part => part[0]).join("").toUpperCase();
+          ctx.fillText(initials, n.x, n.y);
+        }
         ctx.globalAlpha = 1;
       }
 
@@ -4165,7 +4203,7 @@ function BizModelBoard({ companies, cats, sectionRef, theme, articles }) {
               "--biz-accent": cat ? cat.accent : "var(--accent)",
             }}>
               <div className="biz-card-head">
-                {co && <CoLogo name={co.name} domain={co.domain} accent={cat ? cat.accent : "var(--accent)"} />}
+                {co && <CoLogo name={co.name} domain={co.domain} logoUrl={co.logoUrl} accent={cat ? cat.accent : "var(--accent)"} />}
                 <div className="biz-card-titles">
                   <b className="biz-name">{m.name}</b>
                   <span className="biz-model-tag" style={{ background: cat ? cat.accent : "var(--accent)", color: "#fff" }}>{m.model}</span>
