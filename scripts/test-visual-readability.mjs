@@ -63,6 +63,12 @@ assert(boards.includes("const wrapNodeLabel") && boards.includes("ctx.roundRect(
   && boards.includes("const graphLayerLabels") && boards.includes("companies.length * 17")
   && boards.includes('ctx.fillStyle = dark ? "#F7FAFF" : "#12243A"')
   && boards.includes('function draw() {\n      const dark = document.documentElement.dataset.theme === "dark";'), "competitive dynamics node labels are clipped or lack live theme-safe contrast");
+assert(boards.includes("official asset -> official-domain favicon -> initial")
+  && boards.includes("logoCacheRef") && boards.includes("ctx.drawImage(logo.image")
+  && boards.includes('className="nvi-node-mark"')
+  && !boards.includes('<span className="nvi-node-mark">')
+  && styles.includes(".ct-logo-img.is-reversed")
+  && styles.includes(".nvi-company-title .nvi-company-logo"), "company logos are not consistently rendered in lists, details and relationship maps");
 assert(styles.includes(".kg-hint-compact") && styles.includes(".msf-mname > b"), "remaining dashboard labels lack the 11.5px readability floor");
 assert(boards.includes('split(/\\n+|\\s+·\\s+/)') && boards.includes("핵심만 최대 3줄"), "feed summaries are not normalized into concise bullet lines");
 assert(boards.includes('<b>상세 <i aria-hidden="true" /></b>')

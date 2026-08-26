@@ -340,6 +340,7 @@ try {
         latest: compactLatest(company.latest),
         profile: compactProfile(company.profile),
         intelligence: compactIntelligence(company.intelligence),
+        logo: company.logo || null,
         cap: company.cap || "",
         capAsof: company.capAsof || "",
         ticker: company.ticker || "",
@@ -349,7 +350,7 @@ try {
   const relationshipCompanies = relationshipLandscape.companies.map(identity => {
     const record = companies.companies?.[identity.name] || {};
     const {
-      sourceScore: _sourceScore, registered, group: _group, domain: _domain,
+      sourceScore: _sourceScore, registered, group: _group,
       unit: _unit, mobileFit: _mobileFit, ...publicIdentity
     } = identity;
     const snapshot = identity.registered ? {} : {
