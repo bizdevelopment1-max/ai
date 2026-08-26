@@ -409,6 +409,35 @@ function MonthlyLineChart({ series, months, colors, ink, muted, grid, unit, valu
   );
 }
 
+// Daily prices are immutable JSON, while filtering and event snapping are
+// deterministic view logic. Keep this function in the browser bundle rather
+// than a JSON taxonomy so a data-only rebuild cannot remove chart behavior.
+function attachStockEvents(rawPoints, events, years) {
+  const day = 86400000;
+  const all = (rawPoints || [])
+    .filter(point => point && point.d && typeof point.p === "number")
+    .map(point => ({ d: point.d, p: point.p, t: Date.parse(`${point.d}T00:00:00Z`) }))
+    .sort((a, b) => a.t - b.t);
+  if (all.length < 2) return { points: [], events: [], min: 0, max: 1 };
+
+  const lastT = all.at(-1).t;
+  const startT = years ? lastT - years * 365 * day : all[0].t;
+  const points = all.filter(point => point.t >= startT);
+  const visible = points.length >= 2 ? points : all;
+  const snappedEvents = [];
+  for (const event of (events || [])) {
+    const eventT = Date.parse(`${event.date}T00:00:00Z`);
+    if (!Number.isFinite(eventT) || eventT < visible[0].t || eventT > visible.at(-1).t) continue;
+    let closest = visible[0];
+    for (const point of visible) {
+      if (Math.abs(point.t - eventT) < Math.abs(closest.t - eventT)) closest = point;
+    }
+    snappedEvents.push({ ...event, p: closest.p, t: closest.t, d: closest.d });
+  }
+  const prices = visible.map(point => point.p);
+  return { points: visible, events: snappedEvents, min: Math.min(...prices), max: Math.max(...prices) };
+}
+
 // ---- Interactive daily stock chart (hover price + inflection notes) ----
 function StockChart({ stock, rawPoints, years, marketCap, asOf, currency = "$", accent, ink, muted, grid }) {
   const [ref, inView] = useEyeLevel();
@@ -418,7 +447,7 @@ function StockChart({ stock, rawPoints, years, marketCap, asOf, currency = "$", 
   const [hover, setHover] = useStateC(null);
   const svgRef = useRefC(null);
 
-  const series = window.DASH.attachStockEvents(rawPoints, stock.events, years) || { points: [], events: [] };
+  const series = attachStockEvents(rawPoints, stock.events, years);
   const pts = series.points;
   const W = 760, H = 268, padL = 54, padR = 18, padT = 20, padB = 28;
   const iw = W - padL - padR, ih = H - padT - padB;

@@ -2335,8 +2335,8 @@ function NvidiaInvestmentMap({ data, theme }) {
   );
 }
 
-// ---- Stock board: all tracked listed equities mapped to the site's 7-layer value chain ----
-function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, theme, defaultView = "group" }) {
+// ---- Stock board: all tracked listed equities mapped to the detailed AI value chain ----
+function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, families, theme, defaultView = "group" }) {
   const catMap = Object.fromEntries((cats || []).map(c => [c.id, c]));
   const groupMap = Object.fromEntries((groups || []).map(g => [g.id, g]));
   const [ticker, setTicker] = React.useState((stocks[0] || {}).ticker);
@@ -2363,6 +2363,10 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, the
   const latestDate = latestDates.at(-1) || "";
   const exchanges = [...new Set(stocks.map(stock => stock.exchange || stockData?.[stock.ticker]?.exchange).filter(Boolean))];
   const marketCategoryCount = new Set(stocks.map(stock => stock.marketGroup).filter(Boolean)).size;
+  const groupedLayers = (families || []).map(family => ({
+    ...family,
+    groups: groups.filter(group => group.family === family.id),
+  })).filter(family => family.groups.length);
 
   return (
     <article className="stock-region" style={{ "--accent": accent }}>
@@ -2392,17 +2396,32 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, the
       </div>
 
       <div className="stock-group-filters" aria-label="상장사 밸류체인 카테고리">
-        <button className={groupFilter === "all" ? "on" : ""} onClick={() => setGroupFilter("all")}>전체</button>
-        {(groups || []).map(g => (
-          <button key={g.id} className={groupFilter === g.id ? "on" : ""}
-            style={groupFilter === g.id ? { borderColor: g.accent, color: g.accent, background: g.accentSoft } : null}
-            onClick={() => {
-              setGroupFilter(g.id);
-              if (sel.group !== g.id) { const first = stocks.find(s => s.group === g.id); if (first) setTicker(first.ticker); }
-            }}>
-            {g.ko}
-          </button>
-        ))}
+        <button className={groupFilter === "all" ? "on" : ""} onClick={() => setGroupFilter("all")}>
+          전체 · {stocks.length}
+        </button>
+        <div className="stock-chain-families">
+          {(groupedLayers.length ? groupedLayers : [{ id: "all-layers", ko: "AI 밸류체인", en: "AI Value Chain", description: "", groups }]).map(family => (
+            <section className="stock-chain-family" key={family.id} style={{ minWidth: 0, paddingLeft: 8, borderLeft: "2px solid var(--line)" }}>
+              <header style={{ marginBottom: 6, color: "var(--muted)", fontSize: 9 }}><b style={{ display: "block", color: "var(--ink)", fontSize: 11 }}>{family.ko}</b><span>{family.en}</span><small> · {family.description}</small></header>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                {family.groups.map(g => {
+                  const count = stocks.filter(stock => stock.group === g.id).length;
+                  return (
+                    <button key={g.id} className={groupFilter === g.id ? "on" : ""}
+                      title={`${g.en} · ${count}개 상장사`}
+                      style={groupFilter === g.id ? { borderColor: g.accent, color: g.accent, background: g.accentSoft } : null}
+                      onClick={() => {
+                        setGroupFilter(g.id);
+                        if (sel.group !== g.id) { const first = stocks.find(s => s.group === g.id); if (first) setTicker(first.ticker); }
+                      }}>
+                      {g.ko} · {count}
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
 
       {view === "group" ? (
@@ -2495,6 +2514,7 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
   const STOCK_LAYER = window.DASH.STOCK_LAYER || {};
   const STOCK_GROUP_LAYER = window.DASH.STOCK_GROUP_LAYER || {};
   const VC = window.DASH.STOCK_VALUE_CHAIN || [];
+  const VC_FAMILIES = window.DASH.STOCK_VALUE_CHAIN_FAMILIES || [];
   const marketGroupMap = Object.fromEntries((groups || []).map(group => [group.id, group]));
   const generatedAt = stockData?.__generatedAt ? new Date(stockData.__generatedAt).toLocaleString("ko-KR") : "";
 
@@ -2507,7 +2527,7 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
       .catch(() => {});
   }, [inView, autoEv, dataVersion]);
 
-  // 수집 레지스트리의 상장사 전체를 사이트의 7계층 밸류체인으로 그룹핑
+  // 수집 레지스트리의 상장사 전체를 플랫폼·실리콘·서버 공급망의 세부 밸류체인으로 그룹핑
   // + 에디토리얼 변곡점 설명(과거)과 뉴스 기반 자동 설명(최근)을 날짜별 병합(에디토리얼 우선)
   const dashStocks = (stocks || [])
     .map(s => {
@@ -2534,7 +2554,7 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
         <span className="board-tab" style={{ background: theme.accent }} />
         <div className="board-titles">
           <h2>Stock 분석 <span className="board-en">Listed Universe · Capital Ecosystem · Price Drivers</span></h2>
-          <p>사이트가 추적하는 전체 상장사 · 7계층 SW·서비스 밸류체인과 세부 시장 업종의 이중 분류 · 투자 포트폴리오와 주가 변곡점의 원문 근거 연결</p>
+          <p>플랫폼·서비스 → 실리콘·데이터센터 → Tier 1 OEM·Tier 2 ODM·Tier 3 시스템 인프라까지 세부 분류 · 주가 변곡점 원문 근거 연결</p>
         </div>
         {generatedAt && <span className="stock-generated">마지막 수집<br /><b>{generatedAt}</b></span>}
       </div>
@@ -2549,6 +2569,7 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
           stockData={stockData}
           cats={cats}
           groups={layers}
+          families={VC_FAMILIES}
           theme={theme}
         />
       </div>

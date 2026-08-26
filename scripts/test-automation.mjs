@@ -2390,7 +2390,7 @@ try {
 }
 
 try {
-  const [boards, taxonomy, charts, crawler, styles, investmentData, investmentBuilder, appSource, workflowSource] = await Promise.all([
+  const [boards, taxonomy, charts, crawler, styles, investmentData, investmentBuilder, appSource, workflowSource, dataBundle] = await Promise.all([
     readFile("boards.jsx", "utf8"),
     readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
     readFile("charts.jsx", "utf8"),
@@ -2400,6 +2400,7 @@ try {
     readFile("scripts/build-nvidia-investments.mjs", "utf8"),
     readFile("app.jsx", "utf8"),
     readFile(".github/workflows/daily-news.yml", "utf8"),
+    readFile("data.bundle.js", "utf8"),
   ]);
   const dash = loadDash();
   const chinaGroups = [
@@ -2409,7 +2410,7 @@ try {
     "china-design",
     "china-materials",
   ];
-  // 주가 보드는 모바일 AI 신사업과 직접 연결되는 54개 상장사를 공통 7계층으로 재분류한다.
+  // 주가 보드는 플랫폼·실리콘·AI 서버 공급망 67개 상장사를 12개 세부 계층으로 재분류한다.
   const completeBoard = boards.includes("function StockRegionPanel")
     && boards.includes("function NvidiaInvestmentMap")
     && boards.includes("전체 상장사 밸류체인 분석")
@@ -2417,14 +2418,21 @@ try {
     && boards.includes("window.DASH.STOCK_GROUP_LAYER")
     && !boards.includes(".filter(s => STOCK_LAYER[s.ticker])")
     && boards.includes("밸류체인 그룹 트렌드")
-    && boards.includes("개별 종목");
+    && boards.includes("개별 종목")
+    && boards.includes("stock-chain-families")
+    && boards.includes("Tier 1 OEM·Tier 2 ODM·Tier 3 시스템 인프라");
   const taxonomyText = JSON.stringify(taxonomy);
   const completeMetadata = !taxonomyText.includes('000660.KS')
     && !taxonomyText.includes('688825.SS')
     && !(taxonomy.STOCKS || []).some(stock => ["memory", "china-memory"].includes(stock.group))
     && chinaGroups.every(group => (taxonomy.STOCK_GROUPS || []).some(item => item.id === group))
-    && dash.STOCKS.length === 54
-    && dash.STOCK_VALUE_CHAIN.length === 7
+    && dash.STOCKS.length === 67
+    && dash.STOCK_VALUE_CHAIN.length === 12
+    && dash.STOCK_VALUE_CHAIN_FAMILIES?.length === 3
+    && ["bigtech", "silicon", "strategic-oem", "ai-server-odm", "system-infrastructure"].every(id =>
+      dash.STOCK_VALUE_CHAIN.some(layer => layer.id === id))
+    && ["TSLA", "DELL", "HPE", "0992.HK", "SMCI", "2382.TW", "6669.TW", "2317.TW", "2356.TW", "2376.TW", "2357.TW", "CSCO", "6702.T"].every(ticker =>
+      dash.STOCKS.some(stock => stock.ticker === ticker) && crawler.includes(`t: "${ticker}"`))
     && dash.STOCKS.every(stock => dash.STOCK_VALUE_CHAIN.some(layer =>
       layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])))
     && dash.STOCK_VALUE_CHAIN.every(layer => dash.STOCKS.some(stock =>
@@ -2470,6 +2478,9 @@ try {
     && crawler.includes("const batchSize = 6")
     && crawler.includes("new Set(TICKERS.map(c => c.t))")
     && !crawler.includes("function scenarioSeries");
+  const browserStockSeries = charts.includes("function attachStockEvents")
+    && charts.includes("const series = attachStockEvents(rawPoints, stock.events, years)")
+    && !charts.includes("window.DASH.attachStockEvents");
   const currencyAware = charts.includes('currency = "$"')
     && charts.includes("{currency}{t}")
     && boards.includes('currency={real.currency || "$"}');
@@ -2501,15 +2512,18 @@ try {
   const stockComparisonCopyRemoved = !boards.includes("<p>{description}</p>")
     && !boards.includes('description="63개 상장사를')
     && !boards.includes("대시보드 기업 리스트에 있는 상장사를 인프라·컴퓨트 / 파운데이션 모델 / 애플리케이션 등 밸류체인 계층으로 묶어 실제 일별 시세로 비교");
-  const initialSevenCategoryView = taxonomy.STOCK_VALUE_CHAIN?.length === 7
+  const initialDetailedValueChainView = taxonomy.STOCK_VALUE_CHAIN?.length === 12
+    && taxonomy.STOCK_VALUE_CHAIN_FAMILIES?.length === 3
+    && dataBundle.includes('"STOCK_VALUE_CHAIN_FAMILIES"')
     && boards.includes("window.DASH.STOCK_VALUE_CHAIN")
+    && boards.includes("window.DASH.STOCK_VALUE_CHAIN_FAMILIES")
     && boards.includes('aria-label="상장사 밸류체인 카테고리"')
     && boards.includes("groups={visibleGroups} stocks={visibleStocks}");
   if (!completeBoard || !completeMetadata || !sourceBackedInvestments || !dynamicInvestmentPipeline
-    || !liveHistory || !currencyAware || !responsiveUi || !dataDrivenInvestmentCatalog || !stockComparisonCopyRemoved || !initialSevenCategoryView) {
+    || !liveHistory || !browserStockSeries || !currencyAware || !responsiveUi || !dataDrivenInvestmentCatalog || !stockComparisonCopyRemoved || !initialDetailedValueChainView) {
     throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
   }
-  console.log("  OK  모바일 AI 신사업 관련 54개 상장사 Stock 분석 + NVIDIA 6계층·100개 이상 원문근거 투자 카탈로그 + 5년 실데이터·변곡점 자동 설명");
+  console.log("  OK  AI 생태계 67개 상장사·12개 세부 밸류체인 Stock 분석 + NVIDIA 6계층·100개 이상 원문근거 투자 카탈로그 + 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  stock value-chain board: ${error.message}`);
