@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-26",
+  "purpose": "Stable classification rules for source-driven technology, workload, infrastructure and inference-market views. Facts and metrics must come from linked source ledgers.",
+  "technologyTracks": [
+    {
+      "id": "model-architecture",
+      "label": "모델 아키텍처",
+      "description": "Transformer·MoE·멀티모달·소형 모델 구조 변화",
+      "accent": "#5B4FD8",
+      "terms": ["transformer", "mixture of experts", "moe", "attention", "foundation model", "multimodal model", "small language model", "slm", "distillation", "quantization"]
+    },
+    {
+      "id": "prompt-tooling",
+      "label": "프롬프트·도구",
+      "description": "Prompt engineering·tool use·agent orchestration·개발 도구",
+      "accent": "#C241B8",
+      "terms": ["prompt engineering", "prompting", "tool use", "tool calling", "function calling", "agent orchestration", "computer use", "mcp", "agent-to-agent", "a2a"]
+    },
+    {
+      "id": "rag-retrieval",
+      "label": "RAG·검색",
+      "description": "검색 증강 생성·reranking·embedding·기업 지식 연결",
+      "accent": "#0F8A72",
+      "terms": ["retrieval augmented", "retrieval-augmented", "rag", "rerank", "embedding", "semantic search", "grounded generation", "enterprise search"]
+    },
+    {
+      "id": "vector-data",
+      "label": "Vector DB·데이터",
+      "description": "Vector DB·지식 그래프·데이터 파이프라인·메모리 계층",
+      "accent": "#087EA4",
+      "terms": ["vector database", "vector db", "vector store", "knowledge graph", "data pipeline", "agent memory", "context engineering", "data lakehouse", "data governance"]
+    },
+    {
+      "id": "inference-serving",
+      "label": "추론·서빙",
+      "description": "Inference economics·serving·latency·throughput·모델 최적화",
+      "accent": "#E1722D",
+      "terms": ["inference", "serving", "tokens per second", "throughput", "latency", "gpu-hour", "model optimization", "speculative decoding", "kv cache", "inference cost"]
+    },
+    {
+      "id": "accelerator-semiconductor",
+      "label": "반도체·메모리",
+      "description": "GPU·NPU·ASIC·HBM·네트워크·전력·패키징",
+      "accent": "#C28B1B",
+      "terms": ["gpu", "npu", "tpu", "asic", "accelerator", "hbm", "dram", "memory bandwidth", "advanced packaging", "interconnect", "cpo", "power architecture"]
+    },
+    {
+      "id": "data-center-system",
+      "label": "데이터센터·클라우드",
+      "description": "AI factory·hyperscale·클라우드·전력·냉각·네트워크",
+      "accent": "#3454A5",
+      "terms": ["data center", "datacenter", "hyperscale", "ai factory", "cloud infrastructure", "compute capacity", "megawatt", "gigawatt", "liquid cooling", "power grid"]
+    },
+    {
+      "id": "ai-applications",
+      "label": "AI Application",
+      "description": "업무·산업별 AI 애플리케이션과 에이전트 제품 변화",
+      "accent": "#14804A",
+      "terms": ["ai application", "ai app", "copilot", "ai agent", "agentic workflow", "enterprise ai", "vertical ai", "assistant", "automation", "ai platform"]
+    }
+  ],
+  "workloadTypes": [
+    { "id": "training", "label": "학습", "terms": ["training", "pre-training", "fine-tuning", "train model", "foundation model training"] },
+    { "id": "inference", "label": "추론", "terms": ["inference", "serving", "tokens per second", "latency", "throughput"] },
+    { "id": "retrieval-data", "label": "검색·데이터", "terms": ["rag", "retrieval", "vector", "embedding", "database", "data lake", "knowledge graph"] },
+    { "id": "agent-workflow", "label": "에이전트", "terms": ["agent", "agentic", "tool use", "computer use", "workflow automation"] },
+    { "id": "multimodal", "label": "멀티모달", "terms": ["multimodal", "video generation", "image generation", "speech", "vision model"] },
+    { "id": "simulation-robotics", "label": "시뮬레이션·로보틱스", "terms": ["simulation", "digital twin", "robot", "robotics", "autonomous system"] }
+  ],
+  "verticalWorkloads": [
+    { "id": "financial-services", "label": "금융·보험", "terms": ["bank", "financial", "fintech", "insurance", "fraud", "payment"] },
+    { "id": "healthcare", "label": "헬스케어", "terms": ["health", "clinical", "hospital", "medical", "drug discovery", "biotech"] },
+    { "id": "commerce", "label": "커머스·리테일", "terms": ["commerce", "retail", "shopping", "checkout", "recommendation", "advertising"] },
+    { "id": "enterprise-work", "label": "기업 업무", "terms": ["enterprise", "productivity", "customer service", "coding", "sales", "office"] },
+    { "id": "media-creative", "label": "미디어·콘텐츠", "terms": ["media", "creative", "video", "image", "music", "creator"] },
+    { "id": "security", "label": "보안", "terms": ["security", "cyber", "threat", "fraud", "identity", "privacy"] },
+    { "id": "industry-science", "label": "제조·과학", "terms": ["manufacturing", "industrial", "science", "research", "materials", "energy"] },
+    { "id": "mobility-robotics", "label": "모빌리티·로보틱스", "terms": ["automotive", "vehicle", "mobility", "robot", "robotics", "autonomous"] }
+  ],
+  "infrastructureEntities": [
+    { "name": "Microsoft", "type": "Hyperscaler", "aliases": ["Microsoft", "Azure"] },
+    { "name": "Amazon", "type": "Hyperscaler", "aliases": ["Amazon", "AWS", "Amazon Web Services"] },
+    { "name": "Google DeepMind", "type": "Hyperscaler", "aliases": ["Google", "Alphabet", "Google Cloud", "DeepMind"] },
+    { "name": "Meta AI", "type": "Hyperscaler", "aliases": ["Meta", "Meta AI", "Meta Platforms"] },
+    { "name": "Oracle", "type": "Cloud", "aliases": ["Oracle", "OCI", "Oracle Cloud"] },
+    { "name": "Alibaba", "type": "Cloud", "aliases": ["Alibaba", "Alibaba Cloud", "AliCloud"] },
+    { "name": "Tencent", "type": "Cloud", "aliases": ["Tencent", "Tencent Cloud"] },
+    { "name": "NVIDIA", "type": "Compute platform", "aliases": ["NVIDIA", "Nvidia"] }
+  ],
+  "metricRules": {
+    "investmentTerms": ["capex", "capital expenditure", "capital spending", "invest", "investment", "commit", "committed", "buildout", "data center", "datacenter", "compute capacity", "infrastructure"],
+    "moneyPattern": "(?:US\\$|\\$|€|£)\\s?\\d[\\d,.]*(?:\\s?(?:trillion|billion|million|T|B|M))?"
+  },
+  "publicSnapshotLimits": {
+    "signalsPerTrack": 24,
+    "signalsPerEntity": 10,
+    "signalsPerVertical": 8,
+    "partnerCandidates": 24
+  }
+}

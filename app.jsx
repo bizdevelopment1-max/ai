@@ -666,6 +666,7 @@ function App() {
       <LazySection id="valuechain" active={active} sectionRef={refs.valuechain} height={4500}>
         <SectionStack title="AI 밸류체인" eyebrow="CONTROL POINTS"
           description="고객 경험에서 모델·런타임까지 7개 계층을 중복 없이 연결">
+          <TechMarketIntelligence dataVersion={dataVersion} mode="valuechain" companies={companiesLive} onSelect={setSelected} />
           {(D.VALUE_CHAIN || [])
             .filter(layer => navCategory.section !== "valuechain" || !navCategory.id || layer.id === navCategory.id)
             .map(layer => <ValueChainBoard key={layer.id} layerId={layer.id} companies={companiesLive} onSelect={setSelected} />)}

@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "updatedAt": "2026-08-23",
+  "version": 4,
+  "updatedAt": "2026-08-26",
   "refreshCadenceHours": 6,
   "publicationPolicy": {
     "publicSource": "materialized-views-only",
@@ -23,6 +23,7 @@
     { "id": "business-model-forecasts", "path": "business-model-forecasts.json", "section": "newbiz", "recordPath": "models", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "build-company-intelligence" },
     { "id": "business-model-signals-ledger", "path": "bizmodel.json", "section": "newbiz", "recordPath": "items", "countMode": "array", "publication": "retired", "required": false, "collector": "retained-ledger", "retiredAt": "2026-08-23", "retiredReason": "public-board-removed" },
     { "id": "technology-signals", "path": "infra-view.json", "section": "signals", "recordPath": "items", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "crawl-infra" },
+    { "id": "tech-market-intelligence", "path": "tech-market-intelligence.json", "section": "signals", "recordPath": "technologyTracks", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "build-tech-market-intelligence" },
     { "id": "market", "path": "market-view.json", "section": "validation", "recordPath": "records", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "crawl-markets" },
     { "id": "stocks", "path": "stocks.json", "section": "validation", "recordPath": "stocks", "countMode": "object", "publication": "public", "required": true, "maxAgeHours": 49, "collector": "crawl-stocks" },
     { "id": "investments", "path": "nvidia-investments.json", "section": "validation", "recordPath": "portfolio", "countMode": "array", "publication": "public", "required": false, "maxAgeHours": 169, "collector": "build-nvidia-investments" },

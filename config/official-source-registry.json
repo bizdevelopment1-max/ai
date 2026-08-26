@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "updatedAt": "2026-08-16",
+  "version": 5,
+  "updatedAt": "2026-08-26",
   "purpose": "Direct first-party discovery, API readiness and deterministic fallbacks for streams that are repeatedly empty in Google News or publisher RSS.",
   "healthPolicy": {
     "watchdogAfterConsecutiveEmptyRuns": 12,
@@ -90,12 +90,40 @@
       "sourceTier": "official"
     },
     {
-      "source": "Pew Research Center AI",
-      "company": "Pew Research Center",
-      "url": "https://www.pewresearch.org/topic/internet-technology/artificial-intelligence/feed/",
-      "category": "consumer-survey",
-      "matchPattern": "AI|artificial intelligence|chatbot|consumer|survey",
-      "sourceTier": "official"
+      "source": "AWS Machine Learning Blog",
+      "company": "Amazon",
+      "url": "https://aws.amazon.com/blogs/machine-learning/feed/",
+      "category": "cloud-workload-and-inference",
+      "matchPattern": "AI|model|agent|RAG|retrieval|vector|inference|training|Bedrock|SageMaker",
+      "sourceTier": "official",
+      "validatedAt": "2026-08-26"
+    },
+    {
+      "source": "Microsoft Azure Blog",
+      "company": "Microsoft",
+      "url": "https://azure.microsoft.com/en-us/blog/feed/",
+      "category": "cloud-workload-and-inference",
+      "matchPattern": "AI|model|agent|RAG|retrieval|vector|inference|data center|Azure",
+      "sourceTier": "official",
+      "validatedAt": "2026-08-26"
+    },
+    {
+      "source": "Databricks Blog",
+      "company": "Databricks",
+      "url": "https://www.databricks.com/feed",
+      "category": "data-rag-and-vector",
+      "matchPattern": "AI|model|agent|RAG|retrieval|vector|inference|lakehouse|data",
+      "sourceTier": "official",
+      "validatedAt": "2026-08-26"
+    },
+    {
+      "source": "Weaviate Blog",
+      "company": "Weaviate",
+      "url": "https://weaviate.io/blog/rss.xml",
+      "category": "data-rag-and-vector",
+      "matchPattern": "RAG|retrieval|vector|embedding|agent|inference|database",
+      "sourceTier": "official",
+      "validatedAt": "2026-08-26"
     },
     {
       "source": "Apple Newsroom",
@@ -196,6 +224,7 @@
     { "source": "Sensor Tower", "company": "Sensor Tower", "url": "https://sensortower.com/sitemap.xml", "pathPattern": "/press/|/blog/|/report/", "category": "app-economics", "status": "active" },
     { "source": "Juniper Research", "company": "Juniper Research", "url": "https://www.juniperresearch.com/sitemap.xml", "pathPattern": "/research/|/press-release/|/whitepaper/", "category": "research-release", "status": "active" },
     { "source": "Nomura Research Institute", "company": "Nomura Research Institute", "url": "https://www.nri.com/sitemap.xml", "pathPattern": "/knowledge/report/|/knowledge/publication/", "category": "consumer-survey", "status": "active" }
+    ,{ "source": "Pew Research Center", "company": "Pew Research Center", "url": "https://www.pewresearch.org/sitemap_index.xml", "pathPattern": "/internet/|/short-reads/|/science/", "category": "consumer-survey", "status": "active", "maxSitemapChildren": 8, "maxAgeDays": 120, "maxItems": 12, "fallbackGoogleNewsQuery": "site:pewresearch.org (AI OR artificial intelligence OR chatbot)" }
     ,{ "source": "Qualcomm Newsroom", "company": "Qualcomm", "url": "https://www.qualcomm.com/sitemap.xml", "pathPattern": "/news/releases/|/news/onq/|/developer/blog/|/snapdragon/news/", "category": "compute-and-edge", "status": "active", "maxItems": 10, "validatedAt": "2026-08-16" }
     ,{ "source": "Arm Newsroom", "company": "Arm", "url": "https://newsroom.arm.com/sitemap_index.xml", "pathPattern": "/blog/|/news/|/company-news/", "category": "compute-and-edge", "status": "active", "maxSitemapChildren": 8, "validatedAt": "2026-08-16" }
     ,{ "source": "Google DeepMind", "company": "Google DeepMind", "url": "https://deepmind.google/sitemap.xml", "pathPattern": "/blog/|/research/|/discover/", "category": "model-and-research", "status": "active", "validatedAt": "2026-08-16" }
@@ -239,6 +268,17 @@
       "maxCandidates": 16,
       "maxItems": 10,
       "validatedAt": "2026-08-16"
+    },
+    {
+      "source": "Suno Blog",
+      "company": "Suno",
+      "url": "https://suno.com/blog",
+      "linkPattern": "/blog/|/release-notes/",
+      "category": "ai-application",
+      "status": "active",
+      "maxCandidates": 24,
+      "maxItems": 12,
+      "validatedAt": "2026-08-26"
     },
     {
       "source": "Xiaomi Global Discover",

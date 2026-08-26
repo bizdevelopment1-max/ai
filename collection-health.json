@@ -7,8 +7,8 @@
     "regional": 6,
     "primarySource": 7,
     "directRss": 13,
-    "officialFeeds": 14,
-    "officialSitemaps": 25,
+    "officialFeeds": 17,
+    "officialSitemaps": 26,
     "officialApiConnectors": 11,
     "registrySnapshotArticles": 508
   },
@@ -30,11 +30,67 @@
   ],
   "recoveredStreams": [
     {
-      "stream": "google-news:Lovable",
+      "stream": "google-news:Apple",
+      "via": "official-feed",
+      "source": "Apple Newsroom",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:NVIDIA",
+      "via": "official-feed",
+      "source": "NVIDIA Blog",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:Google DeepMind",
       "via": "official-sitemap",
-      "source": "Lovable",
-      "recoveredItems": 0,
-      "coverageStatus": "official-source-reachable-no-recent-items"
+      "source": "Google DeepMind",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:Anthropic",
+      "via": "official-sitemap",
+      "source": "Anthropic",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:Amazon",
+      "via": "official-feed",
+      "source": "AWS Machine Learning Blog",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:Microsoft",
+      "via": "official-feed",
+      "source": "Microsoft Azure Blog",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:OpenAI",
+      "via": "official-sitemap",
+      "source": "OpenAI",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:Sierra AI",
+      "via": "official-sitemap",
+      "source": "Sierra AI",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:Suno",
+      "via": "official-html",
+      "source": "Suno Blog",
+      "recoveredItems": 1,
+      "coverageStatus": "recent-item-recovered"
     },
     {
       "stream": "google-news:Runway",
@@ -42,6 +98,13 @@
       "source": "Runway",
       "recoveredItems": 1,
       "coverageStatus": "recent-item-recovered"
+    },
+    {
+      "stream": "google-news:Lovable",
+      "via": "official-sitemap",
+      "source": "Lovable",
+      "recoveredItems": 0,
+      "coverageStatus": "official-source-reachable-no-recent-items"
     },
     {
       "stream": "google-news:Writer",
@@ -214,7 +277,14 @@
       "failureSince": null,
       "consecutiveEmptyRuns": 0,
       "consecutiveFailureRuns": 0,
-      "criticality": "critical"
+      "criticality": "critical",
+      "fallback": {
+        "stream": "google-news:Amazon",
+        "via": "official-feed",
+        "source": "AWS Machine Learning Blog",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
+      }
     },
     {
       "stream": "google-news:Anthropic",
@@ -225,7 +295,14 @@
       "failureSince": null,
       "consecutiveEmptyRuns": 0,
       "consecutiveFailureRuns": 0,
-      "criticality": "critical"
+      "criticality": "critical",
+      "fallback": {
+        "stream": "google-news:Anthropic",
+        "via": "official-sitemap",
+        "source": "Anthropic",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
+      }
     },
     {
       "stream": "google-news:Anthropic 공식 공시",
@@ -247,7 +324,14 @@
       "failureSince": null,
       "consecutiveEmptyRuns": 0,
       "consecutiveFailureRuns": 0,
-      "criticality": "critical"
+      "criticality": "critical",
+      "fallback": {
+        "stream": "google-news:Apple",
+        "via": "official-feed",
+        "source": "Apple Newsroom",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
+      }
     },
     {
       "stream": "google-news:Cohere",
@@ -322,7 +406,7 @@
       "lastSuccessAt": "2026-08-26T08:22:38.061Z",
       "emptySince": null,
       "failureSince": null,
-      "consecutiveEmptyRuns": 0,
+      "consecutiveEmptyRuns": 1,
       "consecutiveFailureRuns": 0,
       "criticality": "critical"
     },
@@ -335,7 +419,14 @@
       "failureSince": null,
       "consecutiveEmptyRuns": 0,
       "consecutiveFailureRuns": 0,
-      "criticality": "critical"
+      "criticality": "critical",
+      "fallback": {
+        "stream": "google-news:Google DeepMind",
+        "via": "official-sitemap",
+        "source": "Google DeepMind",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
+      }
     },
     {
       "stream": "google-news:Hailuo (MiniMax)",
@@ -426,7 +517,14 @@
       "failureSince": null,
       "consecutiveEmptyRuns": 0,
       "consecutiveFailureRuns": 0,
-      "criticality": "critical"
+      "criticality": "critical",
+      "fallback": {
+        "stream": "google-news:Microsoft",
+        "via": "official-feed",
+        "source": "Microsoft Azure Blog",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
+      }
     },
     {
       "stream": "google-news:Midjourney",
@@ -446,7 +544,7 @@
       "lastSuccessAt": "2026-08-26T08:22:38.061Z",
       "emptySince": null,
       "failureSince": null,
-      "consecutiveEmptyRuns": 0,
+      "consecutiveEmptyRuns": 2,
       "consecutiveFailureRuns": 0,
       "criticality": "critical"
     },
@@ -470,7 +568,14 @@
       "failureSince": null,
       "consecutiveEmptyRuns": 0,
       "consecutiveFailureRuns": 0,
-      "criticality": "critical"
+      "criticality": "critical",
+      "fallback": {
+        "stream": "google-news:NVIDIA",
+        "via": "official-feed",
+        "source": "NVIDIA Blog",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
+      }
     },
     {
       "stream": "google-news:NVIDIA IR",
@@ -492,7 +597,14 @@
       "failureSince": null,
       "consecutiveEmptyRuns": 0,
       "consecutiveFailureRuns": 0,
-      "criticality": "critical"
+      "criticality": "critical",
+      "fallback": {
+        "stream": "google-news:OpenAI",
+        "via": "official-sitemap",
+        "source": "OpenAI",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
+      }
     },
     {
       "stream": "google-news:OpenAI 공식 공시",
@@ -576,7 +688,14 @@
       "failureSince": null,
       "consecutiveEmptyRuns": 0,
       "consecutiveFailureRuns": 0,
-      "criticality": "critical"
+      "criticality": "critical",
+      "fallback": {
+        "stream": "google-news:Sierra AI",
+        "via": "official-sitemap",
+        "source": "Sierra AI",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
+      }
     },
     {
       "stream": "google-news:SpaceX (xAI, Cursor)",
@@ -609,7 +728,14 @@
       "failureSince": null,
       "consecutiveEmptyRuns": 8,
       "consecutiveFailureRuns": 0,
-      "criticality": "critical"
+      "criticality": "critical",
+      "fallback": {
+        "stream": "google-news:Suno",
+        "via": "official-html",
+        "source": "Suno Blog",
+        "recoveredItems": 1,
+        "coverageStatus": "recent-item-recovered"
+      }
     },
     {
       "stream": "google-news:Synthesia",
@@ -1048,6 +1174,22 @@
       "registryCollector": true
     },
     {
+      "stream": "official-feed:Databricks Blog",
+      "source": "Databricks Blog",
+      "category": "data-rag-and-vector",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-08-26T09:15:53.973Z",
+      "lastSuccessAt": "2026-08-26T09:15:53.973Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 836,
+      "activeEndpoint": "https://www.databricks.com/feed",
+      "attemptedEndpoints": [
+        "https://www.databricks.com/feed"
+      ],
+      "registryCollector": true
+    },
+    {
       "stream": "official-feed:GSMA Newsroom",
       "source": "GSMA Newsroom",
       "category": "carrier-and-standards",
@@ -1104,7 +1246,7 @@
       "lastAttemptAt": "2026-08-26T08:22:02.075Z",
       "lastSuccessAt": "2026-08-26T08:22:02.075Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 355,
+      "durationMs": 460,
       "activeEndpoint": "https://huggingface.co/blog/feed.xml",
       "attemptedEndpoints": [
         "https://huggingface.co/blog/feed.xml"
@@ -1124,6 +1266,22 @@
       "activeEndpoint": "https://ir.kuaishou.com/rss/news-releases.xml",
       "attemptedEndpoints": [
         "https://ir.kuaishou.com/rss/news-releases.xml"
+      ],
+      "registryCollector": true
+    },
+    {
+      "stream": "official-feed:Microsoft Azure Blog",
+      "source": "Microsoft Azure Blog",
+      "category": "cloud-workload-and-inference",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-08-26T09:15:53.973Z",
+      "lastSuccessAt": "2026-08-26T09:15:53.973Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 703,
+      "activeEndpoint": "https://azure.microsoft.com/en-us/blog/feed/",
+      "attemptedEndpoints": [
+        "https://azure.microsoft.com/en-us/blog/feed/"
       ],
       "registryCollector": true
     },
@@ -1244,6 +1402,22 @@
       "registryCollector": true
     },
     {
+      "stream": "official-feed:Weaviate Blog",
+      "source": "Weaviate Blog",
+      "category": "data-rag-and-vector",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-08-26T09:15:53.973Z",
+      "lastSuccessAt": "2026-08-26T09:15:53.973Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 1170,
+      "activeEndpoint": "https://weaviate.io/blog/rss.xml",
+      "attemptedEndpoints": [
+        "https://weaviate.io/blog/rss.xml"
+      ],
+      "registryCollector": true
+    },
+    {
       "stream": "official-html:MiniMax News",
       "source": "MiniMax News",
       "category": "model-and-agent-platform",
@@ -1256,6 +1430,22 @@
       "activeEndpoint": "https://www.minimax.io/news",
       "attemptedEndpoints": [
         "https://www.minimax.io/news"
+      ],
+      "registryCollector": true
+    },
+    {
+      "stream": "official-html:Suno Blog",
+      "source": "Suno Blog",
+      "category": "ai-application",
+      "state": "healthy",
+      "itemCount": 12,
+      "lastAttemptAt": "2026-08-26T09:15:53.973Z",
+      "lastSuccessAt": "2026-08-26T09:15:53.973Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 4584,
+      "activeEndpoint": "https://suno.com/blog",
+      "attemptedEndpoints": [
+        "https://suno.com/blog"
       ],
       "registryCollector": true
     },
@@ -1517,6 +1707,25 @@
       "attemptedEndpoints": [
         "https://openai.com/sitemap.xml"
       ],
+      "registryCollector": true
+    },
+    {
+      "stream": "official-sitemap:Pew Research Center",
+      "source": "Pew Research Center",
+      "category": "consumer-survey",
+      "state": "healthy",
+      "itemCount": 12,
+      "lastAttemptAt": "2026-08-26T09:15:53.973Z",
+      "lastSuccessAt": "2026-08-26T09:15:53.973Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 4602,
+      "activeEndpoint": "https://news.google.com/rss/search?q=site%3Apewresearch.org%20(AI%20OR%20artificial%20intelligence%20OR%20chatbot)&hl=en-US&gl=US&ceid=US:en",
+      "attemptedEndpoints": [
+        "https://www.pewresearch.org/sitemap_index.xml",
+        "https://news.google.com/rss/search?q=site%3Apewresearch.org%20(AI%20OR%20artificial%20intelligence%20OR%20chatbot)&hl=en-US&gl=US&ceid=US:en"
+      ],
+      "fallbackReason": "https://www.pewresearch.org/sitemap_index.xml: HTTP 403",
+      "fallbackSourceTier": "reported",
       "registryCollector": true
     },
     {
@@ -1961,6 +2170,14 @@
         "itemCount": 20
       },
       {
+        "category": "consumer-survey",
+        "itemCount": 20
+      },
+      {
+        "category": "app-economics",
+        "itemCount": 20
+      },
+      {
         "category": "academic-and-open-source",
         "itemCount": 20
       },
@@ -1977,12 +2194,20 @@
         "itemCount": 18
       },
       {
-        "category": "consumer-survey",
+        "category": "cloud-workload-and-inference",
+        "itemCount": 16
+      },
+      {
+        "category": "data-rag-and-vector",
         "itemCount": 16
       },
       {
         "category": "model-provider",
         "itemCount": 16
+      },
+      {
+        "category": "ai-application",
+        "itemCount": 12
       },
       {
         "category": "carrier-and-standards",
@@ -2021,5 +2246,5 @@
     "failureDayLimit": 2
   },
   "watchdogBreaches": [],
-  "status": "partial"
+  "status": "ok"
 }

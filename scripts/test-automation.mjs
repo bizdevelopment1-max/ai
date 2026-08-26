@@ -43,6 +43,8 @@ const required = [
   "scripts/validate-delivery-performance.mjs",
   "scripts/build-intelligence-tracks.mjs",
   "scripts/validate-intelligence-tracks.mjs",
+  "scripts/build-tech-market-intelligence.mjs",
+  "scripts/validate-tech-market-intelligence.mjs",
   "scripts/translate_summarize.py",
   "scripts/run-with-retry.mjs",
   "scripts/verify-pipeline.mjs",
@@ -66,6 +68,7 @@ const required = [
   "intelligence-tracks.json",
   "mobile-ai-business-view.json",
   "infra-view.json",
+  "tech-market-intelligence.json",
   "content-lifecycle-report.json",
   "data-version.json",
   "site-content-manifest.json",
@@ -90,6 +93,7 @@ const required = [
   "config/opportunity-generation.json",
   "config/quality-thresholds.json",
   "config/global-source-policy.json",
+  "config/tech-market-taxonomy.json",
   "config/company-source-policy.json",
   "config/nvidia-investment-deals.json",
   "_config.yml",
@@ -97,6 +101,7 @@ const required = [
   "app.bundle.js",
   "data.bundle.js",
   "styles.bundle.css",
+  "tech-market.css",
   "og-mobile-strategy.png",
   "assets/quant-insight-capital.webp",
   "assets/quant-insight-device.webp",
@@ -1506,24 +1511,35 @@ try {
 }
 
 try {
-  const [boards, styles] = await Promise.all([readFile("boards.jsx", "utf8"), readFile("styles.css", "utf8")]);
+  const [boards, styles, techStyles, techMarket] = await Promise.all([
+    readFile("boards.jsx", "utf8"),
+    readFile("styles.css", "utf8"),
+    readFile("tech-market.css", "utf8"),
+    readFile("tech-market-intelligence.json", "utf8").then(JSON.parse),
+  ]);
+  const requiredTracks = new Set(["model-architecture", "prompt-tooling", "rag-retrieval", "vector-data", "inference-serving", "accelerator-semiconductor", "data-center-system", "ai-applications"]);
   const readableSignals = boards.includes("function SignalBoard")
-    && boards.includes("Mobile AI 기술 변화")
-    && boards.includes("Experience · Agent · Model · Context · Developer Tool · Edge Runtime")
+    && boards.includes("function TechMarketIntelligence")
+    && boards.includes("Tech &amp; Market Insights")
     && boards.includes('SignalInfographic file="infra-view.json"')
+    && boards.includes("tech-market-intelligence.json")
     && styles.includes(".isg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));")
     && styles.includes(".isg-card:hover, .isg-card:focus-within {")
     && styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { opacity: 0; }")
     && styles.includes("Non-inverting signal-card interaction contract")
-    && styles.includes("@media (prefers-reduced-motion: reduce)")
-    && !styles.includes(".isg-summary li { position: relative; min-width: 0; padding-left: 10px; font-size: 11px; font-weight: 600; line-height: 1.45; color: var(--muted); word-break: keep-all; display: -webkit-box;");
+    && techStyles.includes("source-driven consulting frame")
+    && techStyles.includes(".tmi-signal:is(:hover, :focus-visible)")
+    && techStyles.includes("-webkit-text-fill-color: currentColor")
+    && (techMarket.technologyTracks || []).every(track => requiredTracks.delete(track.id))
+    && requiredTracks.size === 0
+    && (techMarket.technologyTracks || []).flatMap(track => track.signals || []).every(signal => /^https?:\/\//.test(signal.url || ""));
   if (!readableSignals) {
-    throw new Error("mobile technology signals need a source-derived infographic and unclipped readable cards");
+    throw new Error("technology signals need source-derived tracks, linked facts and non-inverting readable cards");
   }
-  console.log("  OK  mobile technology signals include readable source-derived infographics");
+  console.log("  OK  technology signals include 8 source-derived tracks, linked facts and readable lazy styles");
 } catch (error) {
   failed = true;
-  console.error(`  FAIL  mobile technology signal readability: ${error.message}`);
+  console.error(`  FAIL  technology signal readability: ${error.message}`);
 }
 
 try {

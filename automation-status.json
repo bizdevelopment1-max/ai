@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "mode": "full",
+  "mode": "publish",
   "dryRun": false,
   "startedAt": "2026-08-26T08:22:01.762Z",
   "completedAt": "2026-08-26T08:30:08.405Z",
   "status": "completed",
   "stages": [
     {
-      "id": "normalize-ingest",
+      "id": "ensure-source-localization",
       "status": "completed",
       "durationMs": 186,
       "exitCode": 0
@@ -259,7 +259,7 @@
       "exitCode": 0
     },
     {
-      "id": "materialize-public-views",
+      "id": "build-partner-ma-candidates",
       "status": "completed",
       "durationMs": 3467,
       "exitCode": 0
@@ -280,6 +280,30 @@
       "id": "service-level-report",
       "status": "completed",
       "durationMs": 36,
+      "exitCode": 0
+    },
+    {
+      "id": "materialize-public-views",
+      "status": "completed",
+      "durationMs": 2195,
+      "exitCode": 0
+    },
+    {
+      "id": "source-compliance",
+      "status": "completed",
+      "durationMs": 59,
+      "exitCode": 0
+    },
+    {
+      "id": "dataset-lineage",
+      "status": "completed",
+      "durationMs": 227,
+      "exitCode": 0
+    },
+    {
+      "id": "service-level-report",
+      "status": "completed",
+      "durationMs": 63,
       "exitCode": 0
     },
     {
@@ -340,6 +364,18 @@
       "id": "test-data-platform",
       "status": "completed",
       "durationMs": 38,
+      "exitCode": 0
+    },
+    {
+      "id": "validate-content-registry",
+      "status": "completed",
+      "durationMs": 56,
+      "exitCode": 0
+    },
+    {
+      "id": "test-data-platform",
+      "status": "completed",
+      "durationMs": 61,
       "exitCode": 0
     },
     {
