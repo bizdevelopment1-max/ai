@@ -2448,7 +2448,7 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, the
   );
 }
 
-function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectionRef, theme, dataVersion }) {
+function StockBoard({ stocks, stockData, cats, groups, sectionRef, theme, dataVersion }) {
   const inView = useInView(sectionRef);
   const STOCK_LAYER = window.DASH.STOCK_LAYER || {};
   const STOCK_GROUP_LAYER = window.DASH.STOCK_GROUP_LAYER || {};
@@ -2496,8 +2496,6 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
         </div>
         {generatedAt && <span className="stock-generated">마지막 수집<br /><b>{generatedAt}</b></span>}
       </div>
-
-      <NvidiaInvestmentMap data={nvidiaInvestments} layers={VC} theme={theme} />
 
       <div className="stock-region-stack">
         <StockRegionPanel

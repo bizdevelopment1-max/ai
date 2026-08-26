@@ -372,17 +372,22 @@ function App() {
   const [stockData, setStockData] = uS(null);
   const [nvidiaInvestments, setNvidiaInvestments] = uS(null);
   uE(() => {
+    if (!dataVersion) return;
+    let alive = true;
+    loadJson(dataUrl("nvidia-investments.json"))
+      .then(investmentPayload => {
+        if (alive && Array.isArray(investmentPayload?.portfolio)) setNvidiaInvestments(investmentPayload);
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [dataVersion]);
+  uE(() => {
     if (active !== "validation" || !dataVersion) return;
     let alive = true;
-    Promise.all([
-      // 주가 파일은 최신 거래일이 핵심이므로 서비스워커·브라우저의 오래된 응답을 재사용하지 않는다.
-      loadJson(dataUrl("stocks.json"), { cache: "no-store" }),
-      loadJson(dataUrl("nvidia-investments.json")),
-    ])
-      .then(([stocksPayload, investmentPayload]) => {
-        if (!alive) return;
-        if (stocksPayload?.stocks) setStockData({ ...stocksPayload.stocks, __generatedAt: stocksPayload.generatedAt });
-        if (Array.isArray(investmentPayload?.portfolio)) setNvidiaInvestments(investmentPayload);
+    // 주가 파일은 최신 거래일이 핵심이므로 서비스워커·브라우저의 오래된 응답을 재사용하지 않는다.
+    loadJson(dataUrl("stocks.json"), { cache: "no-store" })
+      .then(stocksPayload => {
+        if (alive && stocksPayload?.stocks) setStockData({ ...stocksPayload.stocks, __generatedAt: stocksPayload.generatedAt });
       })
       .catch(() => {});
     return () => { alive = false; };
@@ -642,6 +647,14 @@ function App() {
       <section ref={refs.overview} className="nav-section-anchor first-video-screen" data-section="overview" data-nav-anchor="relationship-map" data-screen-label="AI Industry Brief">
         <ESCompetitiveMap companies={companiesLive} cats={cats} articles={articles} active={active === "overview"}
           dataVersion={dataVersion} onSelectCompany={setSelected} />
+        <div className="overview-investment-feature" data-nav-anchor="nvidia-investments">
+          <div className="overview-investment-intro">
+            <span>FEATURED CAPITAL INTELLIGENCE</span>
+            <h2>엔비디아가 설계하는 AI 생태계</h2>
+            <p>투자 기업을 고르면 자본, 컴퓨트, 서비스 수요가 어떻게 다시 NVIDIA 플랫폼으로 연결되는지 한눈에 확인할 수 있습니다.</p>
+          </div>
+          <NvidiaInvestmentMap data={nvidiaInvestments} layers={D.STOCK_VALUE_CHAIN || []} theme={chartTheme} />
+        </div>
       </section>
     );
     if (id === "strategy") return (
@@ -700,7 +713,7 @@ function App() {
           description="수요 조사·시장 규모·상장사 지표를 분리해 사업성을 단계적으로 확인">
           <div className="nav-subsection" data-nav-anchor="survey"><MarketBoard dataVersion={dataVersion} mode="survey" /></div>
           <div className="nav-subsection" data-nav-anchor="market"><MarketBoard dataVersion={dataVersion} mode="market" /></div>
-          <div className="nav-subsection" data-nav-anchor="stocks"><StockBoard stocks={D.STOCKS} stockData={stockData} nvidiaInvestments={nvidiaInvestments}
+          <div className="nav-subsection" data-nav-anchor="stocks"><StockBoard stocks={D.STOCKS} stockData={stockData}
             cats={cats} groups={stockGroups} theme={chartTheme} dataVersion={dataVersion} /></div>
         </SectionStack>
       </LazySection>
