@@ -2133,19 +2133,35 @@ function ReportsBoard({ reports, sectionRef, query }) {
 function NvidiaInvestmentMap({ data, layers, theme }) {
   const portfolio = data?.portfolio || [];
   const [selectedId, setSelectedId] = React.useState(portfolio[0]?.id || "");
+  const [layerFilter, setLayerFilter] = React.useState("all");
+  const [isPlaying, setIsPlaying] = React.useState(false);
   React.useEffect(() => {
     if (portfolio.length && !portfolio.some(item => item.id === selectedId)) setSelectedId(portfolio[0].id);
   }, [data, selectedId]);
+  const layerMap = Object.fromEntries((layers || []).map(layer => [layer.id, layer]));
+  const visiblePortfolio = layerFilter === "all" ? portfolio : portfolio.filter(item => item.layer === layerFilter);
+  React.useEffect(() => {
+    if (!isPlaying || !visiblePortfolio.length) return undefined;
+    const timer = window.setInterval(() => {
+      setSelectedId(current => {
+        const index = visiblePortfolio.findIndex(item => item.id === current);
+        return visiblePortfolio[(index + 1 + visiblePortfolio.length) % visiblePortfolio.length].id;
+      });
+    }, 3200);
+    return () => window.clearInterval(timer);
+  }, [isPlaying, layerFilter, visiblePortfolio.length]);
+  React.useEffect(() => {
+    if (portfolio.length && !visiblePortfolio.some(item => item.id === selectedId)) setSelectedId(visiblePortfolio[0]?.id || portfolio[0]?.id);
+  }, [layerFilter]);
   if (!portfolio.length) return null;
 
-  const layerMap = Object.fromEntries((layers || []).map(layer => [layer.id, layer]));
   const selected = portfolio.find(item => item.id === selectedId) || portfolio[0];
   const selectedIndex = Math.max(0, portfolio.findIndex(item => item.id === selected.id));
   const selectedLayer = layerMap[selected.layer] || {};
   // Evenly distribute N nodes around an ellipse (12 o'clock, clockwise) so the
   // ring stays correct as the source-backed portfolio grows or shrinks.
-  const graphNodes = portfolio.map((item, index) => {
-    const angle = (2 * Math.PI * index) / portfolio.length - Math.PI / 2;
+  const graphNodes = visiblePortfolio.map((item, index) => {
+    const angle = (2 * Math.PI * index) / visiblePortfolio.length - Math.PI / 2;
     return { ...item, x: 50 + 37 * Math.cos(angle), y: 50 + 38 * Math.sin(angle) };
   });
   const latest = selected.latestEvidence;
@@ -2157,6 +2173,11 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
     setSelectedId(portfolio[nextIndex].id);
     requestAnimationFrame(() => document.querySelector(`[data-nvi-id="${portfolio[nextIndex].id}"]`)?.focus());
   };
+  const dynamics = selected.signal || ({
+    foundation: "모델 확장 → 학습·추론량 증가 → 가속 컴퓨팅 수요",
+    cloud: "클라우드 용량 확대 → GPU 가동률 증가 → 플랫폼 확산",
+    applications: "사용자 접점 확대 → 추론 호출 증가 → 컴퓨트 재투자",
+  }[selected.layer] || "자본 투입 → 제품 확장 → NVIDIA 플랫폼 수요");
 
   return (
     <article className="nvi-shell" style={{ "--accent": theme.accent }}>
@@ -2164,7 +2185,7 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
         <div>
           <span className="nvi-kicker">NVIDIA CAPITAL ECOSYSTEM · SOURCE-BACKED</span>
           <h3>NVIDIA AI 투자 포트폴리오</h3>
-          <p>노드 호버·클릭 → 투자 근거·전략적 의미</p>
+          <p>투자 → 컴퓨트 → 서비스 사용량으로 이어지는 전략 순환을 탐색하세요.</p>
         </div>
         <div className="nvi-head-metrics">
           <span><b>{portfolio.length}</b>개 주요 투자</span>
@@ -2172,6 +2193,22 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
           {updated && <span>갱신 <b>{updated}</b></span>}
         </div>
       </header>
+
+      <div className="nvi-toolbar">
+        <div className="nvi-filters" aria-label="투자 밸류체인 필터">
+          <button className={layerFilter === "all" ? "is-active" : ""} onClick={() => setLayerFilter("all")}>전체 <b>{portfolio.length}</b></button>
+          {(layers || []).filter(layer => portfolio.some(item => item.layer === layer.id)).map(layer => (
+            <button key={layer.id} className={layerFilter === layer.id ? "is-active" : ""}
+              style={{ "--filter-color": layer.accent }} onClick={() => setLayerFilter(layer.id)}>
+              {layer.ko} <b>{portfolio.filter(item => item.layer === layer.id).length}</b>
+            </button>
+          ))}
+        </div>
+        <button className={"nvi-play" + (isPlaying ? " is-playing" : "")} type="button"
+          aria-pressed={isPlaying} onClick={() => setIsPlaying(value => !value)}>
+          <span>{isPlaying ? "Ⅱ" : "▶"}</span>{isPlaying ? "자동 탐색 중" : "투자 흐름 재생"}
+        </button>
+      </div>
 
       <div className="nvi-body">
         <div className="nvi-stage" aria-label="NVIDIA 투자 포트폴리오 관계도">
@@ -2191,6 +2228,8 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
             <b>NVIDIA</b>
             <span>CAPITAL + COMPUTE</span>
           </div>
+          <div className="nvi-orbit nvi-orbit-a" aria-hidden="true" />
+          <div className="nvi-orbit nvi-orbit-b" aria-hidden="true" />
           {graphNodes.map((node, nodeIndex) => {
             const layer = layerMap[node.layer] || {};
             return (
@@ -2222,7 +2261,13 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
             <time>근거 {selected.source.date}</time>
           </div>
           <h4>{selected.name}</h4>
+          <div className="nvi-position"><span>{String(selectedIndex + 1).padStart(2, "0")}</span> / {String(portfolio.length).padStart(2, "0")}</div>
           <p className="nvi-transaction">{selected.transaction}</p>
+          <div className="nvi-loop" aria-label="선택 기업의 전략 순환">
+            {dynamics.split("→").map((step, index) => <React.Fragment key={step}>
+              <span>{step.trim()}</span>{index < dynamics.split("→").length - 1 && <i>→</i>}
+            </React.Fragment>)}
+          </div>
           <div className="nvi-answer">
             <span>왜 투자했나</span>
             <strong>{selected.why}</strong>
@@ -2240,6 +2285,7 @@ function NvidiaInvestmentMap({ data, layers, theme }) {
           <a className="nvi-source" href={primarySource.url} target="_blank" rel="noopener noreferrer">
             {latest ? `${latest.source} 최신 원문` : `${selected.source.label} 거래 원문`} ↗
           </a>
+          {isPlaying && <div className="nvi-progress" aria-hidden="true"><i key={selected.id} /></div>}
         </aside>
       </div>
       <footer className="nvi-method">{data.methodology}</footer>
