@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-23T06:55:19.188Z",
-  "policyVersion": 4,
+  "generatedAt": "2026-08-26T09:24:05.986Z",
+  "policyVersion": 5,
   "defaults": {
     "licenseClass": "unreviewed-public-web",
     "robotsPolicy": "respect",
@@ -9,9 +9,9 @@
     "redistributionRule": "metadata-and-evidence-spans-only"
   },
   "summary": {
-    "total": 61,
-    "collectionAllowed": 61,
-    "termsReviewPending": 61,
+    "total": 66,
+    "collectionAllowed": 66,
+    "termsReviewPending": 66,
     "fullTextStorageAllowed": 0
   },
   "sources": [
@@ -133,9 +133,9 @@
     {
       "sourceId": "feed-6",
       "sourceKind": "feed",
-      "sourceName": "Pew Research Center AI",
-      "category": "consumer-survey",
-      "uri": "https://www.pewresearch.org/topic/internet-technology/artificial-intelligence/feed/",
+      "sourceName": "AWS Machine Learning Blog",
+      "category": "cloud-workload-and-inference",
+      "uri": "https://aws.amazon.com/blogs/machine-learning/feed/",
       "licenseClass": "unreviewed-public-web",
       "termsUrlHash": null,
       "robotsPolicy": "respect",
@@ -155,6 +155,75 @@
     },
     {
       "sourceId": "feed-7",
+      "sourceKind": "feed",
+      "sourceName": "Microsoft Azure Blog",
+      "category": "cloud-workload-and-inference",
+      "uri": "https://azure.microsoft.com/en-us/blog/feed/",
+      "licenseClass": "unreviewed-public-web",
+      "termsUrlHash": null,
+      "robotsPolicy": "respect",
+      "fullTextStorageAllowed": false,
+      "excerptAllowed": true,
+      "redistributionRule": "metadata-and-evidence-spans-only",
+      "redistributionAllowed": null,
+      "apiAllowed": false,
+      "crawlAllowed": true,
+      "commercialUseAllowed": null,
+      "retentionDays": 120,
+      "termsReviewedAt": null,
+      "termsReviewStatus": "pending",
+      "personalDataClass": "none-expected",
+      "legalOwner": "Data Steward",
+      "collectionAllowed": true
+    },
+    {
+      "sourceId": "feed-8",
+      "sourceKind": "feed",
+      "sourceName": "Databricks Blog",
+      "category": "data-rag-and-vector",
+      "uri": "https://www.databricks.com/feed",
+      "licenseClass": "unreviewed-public-web",
+      "termsUrlHash": null,
+      "robotsPolicy": "respect",
+      "fullTextStorageAllowed": false,
+      "excerptAllowed": true,
+      "redistributionRule": "metadata-and-evidence-spans-only",
+      "redistributionAllowed": null,
+      "apiAllowed": false,
+      "crawlAllowed": true,
+      "commercialUseAllowed": null,
+      "retentionDays": 120,
+      "termsReviewedAt": null,
+      "termsReviewStatus": "pending",
+      "personalDataClass": "none-expected",
+      "legalOwner": "Data Steward",
+      "collectionAllowed": true
+    },
+    {
+      "sourceId": "feed-9",
+      "sourceKind": "feed",
+      "sourceName": "Weaviate Blog",
+      "category": "data-rag-and-vector",
+      "uri": "https://weaviate.io/blog/rss.xml",
+      "licenseClass": "unreviewed-public-web",
+      "termsUrlHash": null,
+      "robotsPolicy": "respect",
+      "fullTextStorageAllowed": false,
+      "excerptAllowed": true,
+      "redistributionRule": "metadata-and-evidence-spans-only",
+      "redistributionAllowed": null,
+      "apiAllowed": false,
+      "crawlAllowed": true,
+      "commercialUseAllowed": null,
+      "retentionDays": 120,
+      "termsReviewedAt": null,
+      "termsReviewStatus": "pending",
+      "personalDataClass": "none-expected",
+      "legalOwner": "Data Steward",
+      "collectionAllowed": true
+    },
+    {
+      "sourceId": "feed-10",
       "sourceKind": "feed",
       "sourceName": "Apple Newsroom",
       "category": "device-and-platform",
@@ -177,7 +246,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "feed-8",
+      "sourceId": "feed-11",
       "sourceKind": "feed",
       "sourceName": "OpenAI News",
       "category": "model-and-agent-platform",
@@ -200,7 +269,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "feed-9",
+      "sourceId": "feed-12",
       "sourceKind": "feed",
       "sourceName": "Microsoft Official Blog",
       "category": "platform-and-enterprise",
@@ -223,7 +292,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "feed-10",
+      "sourceId": "feed-13",
       "sourceKind": "feed",
       "sourceName": "NVIDIA Blog",
       "category": "compute-and-edge",
@@ -246,7 +315,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "feed-11",
+      "sourceId": "feed-14",
       "sourceKind": "feed",
       "sourceName": "GitHub AI and ML",
       "category": "developer-ecosystem",
@@ -269,7 +338,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "feed-12",
+      "sourceId": "feed-15",
       "sourceKind": "feed",
       "sourceName": "Android Developers",
       "category": "device-and-platform",
@@ -292,7 +361,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "feed-13",
+      "sourceId": "feed-16",
       "sourceKind": "feed",
       "sourceName": "SK hynix Newsroom",
       "category": "memory-and-supply-chain",
@@ -315,7 +384,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "feed-14",
+      "sourceId": "feed-17",
       "sourceKind": "feed",
       "sourceName": "Kuaishou Investor News",
       "category": "model-and-agent-platform",
@@ -823,6 +892,29 @@
     {
       "sourceId": "sitemap-22",
       "sourceKind": "sitemap",
+      "sourceName": "Pew Research Center",
+      "category": "consumer-survey",
+      "uri": "https://www.pewresearch.org/sitemap_index.xml",
+      "licenseClass": "unreviewed-public-web",
+      "termsUrlHash": null,
+      "robotsPolicy": "respect",
+      "fullTextStorageAllowed": false,
+      "excerptAllowed": true,
+      "redistributionRule": "metadata-and-evidence-spans-only",
+      "redistributionAllowed": null,
+      "apiAllowed": false,
+      "crawlAllowed": true,
+      "commercialUseAllowed": null,
+      "retentionDays": 120,
+      "termsReviewedAt": null,
+      "termsReviewStatus": "pending",
+      "personalDataClass": "none-expected",
+      "legalOwner": "Data Steward",
+      "collectionAllowed": true
+    },
+    {
+      "sourceId": "sitemap-23",
+      "sourceKind": "sitemap",
       "sourceName": "Qualcomm Newsroom",
       "category": "compute-and-edge",
       "uri": "https://www.qualcomm.com/sitemap.xml",
@@ -844,7 +936,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "sitemap-23",
+      "sourceId": "sitemap-24",
       "sourceKind": "sitemap",
       "sourceName": "Arm Newsroom",
       "category": "compute-and-edge",
@@ -867,7 +959,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "sitemap-24",
+      "sourceId": "sitemap-25",
       "sourceKind": "sitemap",
       "sourceName": "Google DeepMind",
       "category": "model-and-research",
@@ -890,7 +982,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "sitemap-25",
+      "sourceId": "sitemap-26",
       "sourceKind": "sitemap",
       "sourceName": "MediaTek Corporate",
       "category": "compute-and-edge",
@@ -913,7 +1005,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "sitemap-26",
+      "sourceId": "sitemap-27",
       "sourceKind": "sitemap",
       "sourceName": "Canalys Newsroom",
       "category": "research-release",
@@ -936,7 +1028,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "sitemap-27",
+      "sourceId": "sitemap-28",
       "sourceKind": "sitemap",
       "sourceName": "IDC Research",
       "category": "research-release",
@@ -959,7 +1051,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "sitemap-28",
+      "sourceId": "sitemap-29",
       "sourceKind": "sitemap",
       "sourceName": "T-Mobile Newsroom",
       "category": "carrier-bundle",
@@ -982,7 +1074,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "sitemap-29",
+      "sourceId": "sitemap-30",
       "sourceKind": "sitemap",
       "sourceName": "MiniMax News Sitemap",
       "category": "model-and-agent-platform",
@@ -1076,6 +1168,29 @@
     {
       "sourceId": "html-index-4",
       "sourceKind": "html-index",
+      "sourceName": "Suno Blog",
+      "category": "ai-application",
+      "uri": "https://suno.com/blog",
+      "licenseClass": "unreviewed-public-web",
+      "termsUrlHash": null,
+      "robotsPolicy": "respect",
+      "fullTextStorageAllowed": false,
+      "excerptAllowed": true,
+      "redistributionRule": "metadata-and-evidence-spans-only",
+      "redistributionAllowed": null,
+      "apiAllowed": false,
+      "crawlAllowed": true,
+      "commercialUseAllowed": null,
+      "retentionDays": 120,
+      "termsReviewedAt": null,
+      "termsReviewStatus": "pending",
+      "personalDataClass": "none-expected",
+      "legalOwner": "Data Steward",
+      "collectionAllowed": true
+    },
+    {
+      "sourceId": "html-index-5",
+      "sourceKind": "html-index",
       "sourceName": "Xiaomi Global Discover",
       "category": "competitor-device",
       "uri": "https://www.mi.com/global/discover/",
@@ -1097,7 +1212,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "html-index-5",
+      "sourceId": "html-index-6",
       "sourceKind": "html-index",
       "sourceName": "Coinbase Developer Platform",
       "category": "agentic-commerce",
@@ -1120,7 +1235,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "html-index-6",
+      "sourceId": "html-index-7",
       "sourceKind": "html-index",
       "sourceName": "vivo Newsroom",
       "category": "competitor-device",
@@ -1143,7 +1258,7 @@
       "collectionAllowed": true
     },
     {
-      "sourceId": "html-index-7",
+      "sourceId": "html-index-8",
       "sourceKind": "html-index",
       "sourceName": "Omdia Press Releases",
       "category": "research-release",

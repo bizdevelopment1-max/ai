@@ -1,32 +1,28 @@
 #!/usr/bin/env node
 /* ============================================================
-   crawl-infra.mjs — AI SW·서비스 기술 시그널 누적 갱신(모바일 신사업 관점)
+   crawl-infra.mjs — AI Application·HW/SW 기술·시장 시그널 누적 갱신
    입력: news.json(매일 크롤된 최신 기사) — 별도 네트워크 호출 없이
-         이미 수집된 기사에서 '단말에 올릴 만한 AI SW·서비스' 시그널만 선별.
-   동작: 반도체·데이터센터 하드웨어가 아니라, 온디바이스 AI·에이전트·멀티모달
-         기능·OS/앱 통합·AI 서비스(수익화) 등 SW·서비스 관점 5개 MECE 카테고리로
-         분류하고, 한글 개조식 시그널 1줄 + 정량 수치를 추출해 infra.json 누적.
-   특징: 기존 항목은 매 실행 시 새 분류 체계로 재분류(하드웨어 전용 신호는 자연 소거),
-         url 중복 제거, 최신순, 최대 140건. 기사 기반으로 계속 쌓임.
+         이미 수집된 기사에서 모델·RAG·Vector DB·추론·반도체·데이터센터·
+         AI Application 시그널을 선별.
+   동작: config/tech-market-taxonomy.json의 8개 MECE 트랙으로 분류하고,
+         원문 발췌 1줄 + 정량 수치를 추출해 infra.json을 갱신.
+   특징: 공개 스냅샷은 트랙별 최신 항목을 균형 있게 유지하고, 새 원문은
+         intelligence-ledger/technology-YYYY-MM.jsonl에 계속 누적.
    ============================================================ */
-import { readFile, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 const TODAY = new Date().toISOString().slice(0, 10);
 
-// 5개 MECE 카테고리 — 단말(스마트폰) 관점의 AI SW·서비스 기술(위에서부터 우선)
-const GROUPS = [
-  { id: "ondevice", ko: "온디바이스·엣지 AI", desc: "기기 내 추론·경량 모델(SLM)·프라이버시 — 단말 직결", accent: "#0891B2",
-    re: /온[\- ]?디바이스|on-device|엣지 ai|edge ai|경량 모델|소형 모델|small language model|\bSLM\b|기기 내 (?:추론|구동)|로컬 추론|local inference|온디바이스 추론|nano 모델|gemini nano|apple intelligence|private cloud compute|양자화|quantization|distill|증류|프라이버시 우선/i },
-  { id: "agent", ko: "AI 에이전트·어시스턴트", desc: "자율 에이전트·컴퓨터 유즈·단말 기본 비서", accent: "#7A38D6",
-    re: /에이전트|agentic|\bagent\b|어시스턴트|assistant|ai 비서|음성 비서|siri|gemini|copilot|comet|컴퓨터 유즈|computer use|tool use|툴 호출|자율 수행|autonomous|작업 자동화|task automation/i },
-  { id: "multimodal", ko: "멀티모달·생성 기능", desc: "카메라·이미지·영상·음성 생성/이해 — 단말 기능", accent: "#EA580C",
-    re: /멀티모달|multimodal|이미지 생성|image gen|영상 생성|video gen|음성 합성|\bTTS\b|음성 인식|\bSTT\b|보이스|voice|카메라 ai|camera|비전|vision|실시간 통역|translation|생성 편집|generative edit|아바타|avatar/i },
-  { id: "os", ko: "OS·앱·플랫폼 통합", desc: "OS·브라우저·앱 통합·개인화·권한·컨텍스트", accent: "#2D6BFF",
-    re: /운영체제|\bOS\b|android|안드로이드|\biOS\b|앱 통합|app integration|ai 브라우저|browser|개인화|personaliz|권한|permission|컨텍스트|context|플랫폼|platform|\bSDK\b|앱스토어|app store|딥링크|런타임/i },
-  { id: "service", ko: "AI 서비스·수익화 신사업", desc: "구독·앱·API·수익화·에코시스템 — 신규 서비스", accent: "#16A34A",
-    re: /수익화|monetiz|구독|subscription|서비스 출시|신규 서비스|new service|신사업|new business|에코시스템|ecosystem|앱 매출|과금|pricing|\bARR\b|유료 전환|번들|bundle|마켓플레이스|marketplace/i },
-];
+const taxonomy = JSON.parse(await readFile("config/tech-market-taxonomy.json", "utf8"));
+const escapeRe = value => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const GROUPS = (taxonomy.technologyTracks || []).map(track => ({
+  id: track.id,
+  ko: track.label,
+  desc: track.description,
+  accent: track.accent,
+  re: new RegExp((track.terms || []).map(escapeRe).join("|"), "i"),
+}));
 
 // 정량 수치(플레인 텍스트) 추출 — $B/T·$억/조, %, 억, 배, GB, MW/GW, nm 등
 const QUANT = /(\$[\d,.]+\s?(?:[TBM]|억|조)?(?:\+)?|\d+\.?\d*\s?%|\d+\.?\d*\s?억\+?|\d+\.?\d*\s?조\+?|\d+\s?배|\d+\s?GB|\d+\.?\d*\s?[MG]W|\d+\s?nm|\d+\.?\d*[TP]B|[0-9]{2,}\s?M\+?)/;
@@ -61,6 +57,7 @@ async function main() {
   const byUrl = new Map(reclassified.map(it => [canonUrl(it.url), it]));
 
   let added = 0;
+  const newItems = [];
   for (const a of news) {
     if (a.displayEligible === false || a.summaryMode !== "source-content-extractive") continue;
     const hay = `${a.title || ""} ${a.tag || ""} ${a.summary || ""}`;
@@ -80,14 +77,22 @@ async function main() {
       sourceSummaryMode: a.summaryMode || "legacy-or-unknown",
     };
     const ukey = canonUrl(url);
-    if (!byUrl.has(ukey)) added++;
+    if (!byUrl.has(ukey)) { added++; newItems.push(item); }
     byUrl.set(ukey, { ...byUrl.get(ukey), ...item });      // 최신 내용으로 갱신하되 누적 보존
   }
 
-  const items = [...byUrl.values()]
+  const sorted = [...byUrl.values()]
     .filter(it => it.group && it.signal && it.url && !isExcludedText(JSON.stringify(it)))
-    .sort((x, y) => (x.date < y.date ? 1 : x.date > y.date ? -1 : 0))
-    .slice(0, 140);                                        // 누적 상한(성능)
+    .sort((x, y) => (x.date < y.date ? 1 : x.date > y.date ? -1 : 0));
+  const perTrackLimit = Number(taxonomy.publicSnapshotLimits?.signalsPerTrack || 24);
+  const items = GROUPS.flatMap(group => sorted.filter(item => item.group === group.id).slice(0, perTrackLimit));
+
+  if (newItems.length) {
+    const ledgerDir = "intelligence-ledger";
+    await mkdir(ledgerDir, { recursive: true });
+    const partition = TODAY.slice(0, 7);
+    await appendFile(`${ledgerDir}/technology-${partition}.jsonl`, `${newItems.map(item => JSON.stringify({ schemaVersion: 1, observedAt: new Date().toISOString(), ...item })).join("\n")}\n`, "utf8");
+  }
 
   const out = { generatedAt: new Date().toISOString(), count: items.length, groups: GROUPS.map(({ re, ...g }) => g), items };
   await writeFile("infra.json", JSON.stringify(out) + "\n");

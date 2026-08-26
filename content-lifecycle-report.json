@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-23T06:58:38.133Z",
+  "generatedAt": "2026-08-26T09:24:18.829Z",
   "summary": {
-    "public": 13,
+    "public": 15,
     "supporting": 6,
     "retired": 1,
     "dead": 0
@@ -86,6 +86,17 @@
       "reason": "requested-by-production-bundle"
     },
     {
+      "id": "partner-ma-candidates",
+      "path": "partner-ma-candidates.json",
+      "publication": "public",
+      "collector": "build-partner-ma-candidates",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
       "id": "monetization",
       "path": "monetization.json",
       "publication": "public",
@@ -123,6 +134,17 @@
       "path": "infra-view.json",
       "publication": "public",
       "collector": "crawl-infra",
+      "consumer": null,
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "tech-market-intelligence",
+      "path": "tech-market-intelligence.json",
+      "publication": "public",
+      "collector": "build-tech-market-intelligence",
       "consumer": null,
       "exists": true,
       "consumed": true,

@@ -17,11 +17,16 @@ const nodeStep = (id, script, args = [], options = {}) => ({ id, command: proces
 const pythonStep = (id, script) => ({ id, command: process.platform === "win32" ? "python" : "python3", args: [script] });
 
 const commonPublish = [
+  // Publish can be run after a collector-only recovery. Always repair the
+  // source-bound display contract before validating or materializing views.
+  pythonStep("ensure-source-localization", "scripts/translate_summarize.py"),
   nodeStep("normalize-final", "scripts/normalize-temporal-fields.mjs"),
   retryStep("verify-evidence", "scripts/verify-pipeline.mjs"),
   retryStep("rebuild-decisions", "scripts/build-mobile-ai-business-db.mjs"),
   nodeStep("build-intelligence-tracks", "scripts/build-intelligence-tracks.mjs"),
   nodeStep("validate-intelligence-tracks", "scripts/validate-intelligence-tracks.mjs"),
+  nodeStep("build-tech-market-intelligence", "scripts/build-tech-market-intelligence.mjs"),
+  nodeStep("validate-tech-market-intelligence", "scripts/validate-tech-market-intelligence.mjs"),
   nodeStep("validate-decisions", "scripts/validate-mx-intelligence.mjs"),
   retryStep("audit", "scripts/audit-agent.mjs"),
   nodeStep("minimize-source-content", "scripts/minimize-retained-source-content.mjs"),

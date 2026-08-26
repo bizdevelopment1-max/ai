@@ -4661,6 +4661,153 @@ function MonetizationPlaybook({ articles, dataVersion }) {
   );
 }
 
+function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", companies = [], onSelect }) {
+  const localRef = React.useRef(null);
+  const hostRef = sectionRef || localRef;
+  const inView = useInView(hostRef);
+  const [data, setData] = React.useState(null);
+  const [activeTrack, setActiveTrack] = React.useState("");
+  const [activeEntity, setActiveEntity] = React.useState("");
+  const [activeVertical, setActiveVertical] = React.useState("");
+  React.useEffect(() => {
+    const id = "tech-market-styles";
+    if (document.getElementById(id)) return;
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `tech-market.css?v=${encodeURIComponent(dataVersion || "bootstrap")}`;
+    document.head.appendChild(link);
+  }, [dataVersion]);
+  React.useEffect(() => {
+    if (!inView || !dataVersion) return;
+    let alive = true;
+    loadJson(`tech-market-intelligence.json?v=${encodeURIComponent(dataVersion)}`)
+      .then(value => {
+        if (!alive || value?.sourceMode !== "generated-from-source-linked-ledgers") return;
+        setData(value);
+        const firstTrack = (value.technologyTracks || []).find(track => track.signalCount > 0);
+        const firstEntity = value.infrastructureLandscape?.entities?.[0];
+        const firstVertical = value.infrastructureLandscape?.verticalWorkloads?.[0];
+        setActiveTrack(current => current || firstTrack?.id || "");
+        setActiveEntity(current => current || firstEntity?.name || "");
+        setActiveVertical(current => current || firstVertical?.id || "");
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [inView, dataVersion]);
+
+  if (!data) return <div ref={hostRef}><SourcePipeline kind="signal" /></div>;
+  const tracks = data.technologyTracks || [];
+  const entities = data.infrastructureLandscape?.entities || [];
+  const verticals = data.infrastructureLandscape?.verticalWorkloads || [];
+  const partners = data.inferenceMarket?.partnerCandidates || [];
+  const selectedTrack = tracks.find(track => track.id === activeTrack) || tracks[0] || {};
+  const selectedEntity = entities.find(entity => entity.name === activeEntity) || entities[0] || {};
+  const selectedVertical = verticals.find(vertical => vertical.id === activeVertical) || verticals[0] || {};
+  const openCompany = name => {
+    const company = (companies || []).find(item => item.name === name);
+    if (company && onSelect) onSelect(company);
+  };
+  const SignalLink = ({ signal, className = "" }) => (
+    <a className={`tmi-signal ${className}`} href={signal.url} target="_blank" rel="noopener">
+      <span className="tmi-signal-top"><em>{signal.sourceTier || "reported"}</em><time>{fmtMonthDay(signal.date)}</time></span>
+      <b>{signal.title}</b>
+      {signal.excerpt && <p>{signal.excerpt}</p>}
+      <small>{signal.source || "원문"} <i aria-hidden="true">↗</i></small>
+    </a>
+  );
+
+  if (mode === "technology") return (
+    <section className="tmi tmi-technology" ref={hostRef} data-nav-anchor="technology-shift">
+      <header className="tmi-head">
+        <div><span>TECH &amp; MARKET INSIGHTS</span><h3>AI Application &amp; HW/SW 기술 동향</h3><p>모델 구조에서 데이터센터까지 원문 신호를 자동 분류하고 최신순으로 누적</p></div>
+        <dl>
+          <div><dt>TRACKS</dt><dd>{data.summary?.technologyTracks || tracks.length}</dd></div>
+          <div><dt>SIGNALS</dt><dd>{data.summary?.technologySignals || 0}</dd></div>
+          <div><dt>INFERENCE</dt><dd>{data.summary?.inferenceSignals || 0}</dd></div>
+        </dl>
+      </header>
+      <nav className="tmi-track-tabs" aria-label="기술 변화 트랙">
+        {tracks.map((track, index) => <button key={track.id} className={selectedTrack.id === track.id ? "on" : ""}
+          style={{ "--track": track.accent }} onClick={() => setActiveTrack(track.id)}>
+          <em>{String(index + 1).padStart(2, "0")}</em><span><b>{track.label}</b><small>{track.description}</small></span><i>{track.signalCount}</i>
+        </button>)}
+      </nav>
+      <div className="tmi-track-summary" style={{ "--track": selectedTrack.accent || "#3454A5" }}>
+        <div><span>SELECTED TRACK</span><h4>{selectedTrack.label}</h4><p>{selectedTrack.description}</p></div>
+        <b>{selectedTrack.latestDate ? `${fmtMonthDay(selectedTrack.latestDate)} 최신` : ""}</b>
+      </div>
+      <div className="tmi-signal-grid">
+        {(selectedTrack.signals || []).slice(0, 12).map(signal => <SignalLink key={signal.id || signal.url} signal={signal} />)}
+      </div>
+    </section>
+  );
+
+  return (
+    <section className="tmi tmi-landscape" ref={hostRef} data-nav-anchor="ai-workload-landscape">
+      <header className="tmi-head">
+        <div><span>AI WORKLOAD &amp; INFRASTRUCTURE</span><h3>데이터센터 워크로드·투자·추론 생태계</h3><p>인프라 사업자 전략, 원문 투자 수치, 버티컬 워크로드와 잠재 파트너를 한 구조로 연결</p></div>
+        <dl>
+          <div><dt>ENTITIES</dt><dd>{entities.length}</dd></div>
+          <div><dt>VERTICALS</dt><dd>{verticals.length}</dd></div>
+          <div><dt>PARTNERS</dt><dd>{partners.length}</dd></div>
+        </dl>
+      </header>
+
+      <div className="tmi-entity-frame">
+        <nav className="tmi-entity-tabs" aria-label="인프라 사업자">
+          {entities.map(entity => <button key={entity.name} className={selectedEntity.name === entity.name ? "on" : ""} onClick={() => setActiveEntity(entity.name)}>
+            <span>{entity.type}</span><b>{entity.name}</b><small>{entity.investmentMetrics?.length || 0}개 투자·설비 수치</small>
+          </button>)}
+        </nav>
+        <div className="tmi-entity-detail">
+          <div className="tmi-entity-title"><span>{selectedEntity.type}</span><h4>{selectedEntity.name}</h4>{selectedEntity.latestDate && <time>{fmtMonthDay(selectedEntity.latestDate)} 최신</time>}</div>
+          {selectedEntity.currentBusiness && <p className="tmi-business">{selectedEntity.currentBusiness}{selectedEntity.businessSource?.url && <a href={selectedEntity.businessSource.url} target="_blank" rel="noopener">기업 원문 ↗</a>}</p>}
+          <div className="tmi-workload-mix">
+            <h5>워크로드 구성 신호</h5>
+            {(selectedEntity.workloadMix || []).map(workload => <div key={workload.id}><span>{workload.label}</span><i style={{ width: `${Math.min(100, 20 + workload.count * 9)}%` }} /><b>{workload.count}</b></div>)}
+          </div>
+          <div className="tmi-investment-grid">
+            {(selectedEntity.investmentMetrics || []).slice(0, 6).map(signal => <a key={signal.id || signal.url} href={signal.url} target="_blank" rel="noopener">
+              <span><em>원문 투자·설비 지표</em><time>{fmtMonthDay(signal.date)}</time></span>
+              <b>{(signal.metricValues || []).join(" · ")}</b><p>{signal.title}</p><small>{signal.source} ↗</small>
+            </a>)}
+          </div>
+          <div className="tmi-strategy-list">
+            {(selectedEntity.strategySignals || []).slice(0, 5).map(signal => <SignalLink key={signal.id || signal.url} signal={signal} className="compact" />)}
+          </div>
+        </div>
+      </div>
+
+      <div className="tmi-subhead"><span>VERTICAL WORKLOAD MAP</span><h4>산업별 AI 워크로드</h4><p>산업 신호와 학습·추론·검색·에이전트·멀티모달 수요를 자동 교차 분류</p></div>
+      <div className="tmi-vertical-layout">
+        <nav className="tmi-vertical-tabs">
+          {verticals.map(vertical => <button key={vertical.id} className={selectedVertical.id === vertical.id ? "on" : ""} onClick={() => setActiveVertical(vertical.id)}>
+            <b>{vertical.label}</b><span>{vertical.signalCount}건</span>
+          </button>)}
+        </nav>
+        <div className="tmi-vertical-detail">
+          <div className="tmi-chip-row">{(selectedVertical.workloadMix || []).map(item => <span key={item.id}><b>{item.label}</b><em>{item.count}</em></span>)}</div>
+          <div className="tmi-company-row">{(selectedVertical.companies || []).map(name => <button key={name} onClick={() => openCompany(name)}>{name}</button>)}</div>
+          <div className="tmi-signal-grid compact-grid">{(selectedVertical.signals || []).slice(0, 6).map(signal => <SignalLink key={signal.id || signal.url} signal={signal} className="compact" />)}</div>
+        </div>
+      </div>
+
+      <div className="tmi-subhead"><span>INFERENCE ECOSYSTEM</span><h4>추론 시장·잠재 파트너</h4><p>추론·RAG·Vector DB·데이터센터 원문 신호의 범위와 최신성을 기준으로 후보 자동 정렬</p></div>
+      <div className="tmi-partner-table">
+        <div className="tmi-partner-row head"><span>기업</span><span>관련 트랙</span><span>근거</span><span>검토 옵션</span><span>최근</span></div>
+        {partners.slice(0, 16).map(candidate => <button className="tmi-partner-row" key={candidate.name} onClick={() => openCompany(candidate.name)}>
+          <span><b>{candidate.name}</b><em>{candidate.category || candidate.valueChainLayer}</em></span>
+          <span>{(candidate.technologyTracks || []).map(id => tracks.find(track => track.id === id)?.label || id).join(" · ")}</span>
+          <span><b>{candidate.sourceCount}</b>개 원문</span>
+          <span>{(candidate.actions || []).join(" · ")}</span>
+          <span>{fmtMonthDay(candidate.latestDate)}</span>
+        </button>)}
+      </div>
+    </section>
+  );
+}
+
 function SignalBoard({ sectionRef, articles, dataVersion }) {
   const inView = useInView(sectionRef);
   return (
@@ -4669,13 +4816,14 @@ function SignalBoard({ sectionRef, articles, dataVersion }) {
         <div className="board-head" data-nav-anchor="technology-shift">
           <span className="board-tab" style={{ background: "#315C4A" }} />
           <div className="board-titles">
-            <h2>Mobile AI 기술 변화 <span className="board-en">Experience · Agent · Model · OS · Runtime</span></h2>
-            <p>사용자 경험과 AI Application·Agent·Model·OS 변화를 함께 읽고 <b>사용성·지연·원가·프라이버시·차별화</b> 요구로 변환 · 공개 원문으로 확인된 신호만 누적</p>
+            <h2>Tech &amp; Market Insights <span className="board-en">기술 및 시장 동향</span></h2>
+            <p>AI Application·모델 구조·RAG·Vector DB·추론·반도체·데이터센터 변화를 원문 근거로 자동 분류하고 최신순으로 누적</p>
           </div>
         </div>
+        <TechMarketIntelligence dataVersion={dataVersion} mode="technology" />
         <div className="nav-subsection" data-nav-anchor="market-shift">
           <SignalInfographic file="infra-view.json" delKey="aiDashDeletedInfra" articles={articles}
-            dataVersion={dataVersion} title="Mobile AI 변화 신호" sub="Experience · Agent · Model · Context · Developer Tool · Edge Runtime — 모바일 사업 관련 원문 카드만 표시" />
+            dataVersion={dataVersion} title="기술 변화 원문 신호" sub="모델 아키텍처 · 프롬프트·도구 · RAG · Vector DB · 추론 · 반도체 · 데이터센터 · AI Application" />
         </div>
       </AnimCtx.Provider>
     </section>
