@@ -23,6 +23,13 @@ for (const item of portfolio) {
   if (!item.nvidiaInvestment?.status) add(`${prefix}: nvidiaInvestment.status missing`);
   if (!item.round?.status) add(`${prefix}: round.status missing`);
   if (!item.rationale?.status) add(`${prefix}: rationale.status missing`);
+  if (item.rationale?.status === "not-disclosed" && String(item.rationale?.summary || "").trim()) {
+    add(`${prefix}: undisclosed rationale must stay empty and must not create a placeholder card`);
+  }
+  if (["source-stated", "reported"].includes(item.rationale?.status)
+      && (!String(item.rationale?.summary || "").trim() || !(item.evidence || []).length)) {
+    add(`${prefix}: visible rationale requires text and source evidence`);
+  }
   if (!Array.isArray(item.evidence) || !item.evidence.length) add(`${prefix}: evidence missing`);
   for (const source of item.evidence || []) {
     if (!/^https?:\/\//.test(source.url || "")) add(`${prefix}: invalid evidence URL`);

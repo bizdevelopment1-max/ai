@@ -1050,11 +1050,12 @@ try {
     const portfolioCoverage = !portfolioNames.has(name) || value.currentBusiness?.summary;
     const noOperationalCopy = sections.every(key =>
       !statusCopy.test(`${value[key]?.summary || ""} ${(value[key]?.details || []).join(" ")}`));
+    const noStoreBoilerplate = !/(?:Download\s+.+?\s+on the App Store|See screenshots, ratings and reviews|在\s*App Store\s*下载|查看截屏、评分及评论)/i
+      .test(`${value.currentBusiness?.summary || ""} ${(value.currentBusiness?.details || []).join(" ")} ${(company.profile?.business || []).join(" ")}`);
     const groundedOrBlank = sections.every(key =>
       !value[key]?.summary
-      || (value[key]?.evidence || []).some(ref => /^https?:\/\//.test(String(ref?.url || "")))
-      || value[key]?.groundingStatus === "profile-grounded");
-    return portfolioCoverage && noOperationalCopy
+      || (value[key]?.evidence || []).some(ref => /^https?:\/\//.test(String(ref?.url || ""))));
+    return portfolioCoverage && noOperationalCopy && noStoreBoilerplate
       && groundedOrBlank
       && Array.isArray(value.corePractices) && Array.isArray(value.newBusinessModels)
       && Array.isArray(value.executiveQuotes)
@@ -1069,6 +1070,10 @@ try {
       && sections.every(key => value[key]?.confidence && value[key]?.groundingStatus);
   });
   const companyRows = Object.values(companies.companies || {});
+  const databricksCapabilities = (companies.companies?.Databricks?.intelligence?.capabilityProfile?.dimensions || [])
+    .map(item => item.value).join(" ");
+  const taxonomyInferenceReady = /데이터|거버넌스|검색/.test(databricksCapabilities)
+    && !/딥페이크|위변조 탐지/.test(databricksCapabilities);
   const strategyProfilesReady = companyRows.every(company => {
     const profile = company.strategyProfile || {};
     return profile.schemaVersion === 1
@@ -1109,7 +1114,9 @@ try {
       && (!visible.has("partnerships") || practices.some(item => item.sectionId === "partnerships") || company.strategicVentures?.length)
       && (!visible.has("investment") || value.investmentDirection?.summary);
   }) && companies.schemaVersion === 6
-    && companies.methodology?.includes("source-backed-section-publication+freshness");
+    && companies.methodology?.includes("source-backed-section-publication+freshness")
+    && companies.quality?.allVisibleClaimsSourceBacked === true
+    && companies.quality?.visibleClaimSections === companies.quality?.sourceBackedClaimSections;
   const blankSectionUiRemoved = !boards.includes('className="cd-outline-empty"')
     && !boards.includes("const Empty =")
     && boards.includes("const capabilitySectionIds =")
@@ -1212,12 +1219,13 @@ try {
         const article = newsByUrl.get(ref.url);
         return !article || articleFocusedOnCompany(name, article);
       })));
-  if (!intelligenceReady || !strategyProfilesReady
+  if (!intelligenceReady || !strategyProfilesReady || !taxonomyInferenceReady
     || !startupProfilesComplete || !publicationPolicyReady || !blankSectionUiRemoved
     || !a16zReady || !ventureReady || !forecastsReady || !workflowReady || !grounded || !officialReady || !companyEvidenceFocused) {
     const causes = [
       !intelligenceReady && "intelligence",
       !strategyProfilesReady && "strategy-profiles",
+      !taxonomyInferenceReady && "capability-taxonomy",
       !startupProfilesComplete && "startup-profiles",
       !publicationPolicyReady && "publication-policy",
       !blankSectionUiRemoved && "detail-ui",
@@ -2479,7 +2487,9 @@ try {
     && boards.includes('aria-live="polite"')
     && boards.includes('NVIDIA 투자액')
     && boards.includes('전체 라운드·프로젝트')
-    && boards.includes('왜 투자했나')
+    && boards.includes('공개된 투자 목적')
+    && !boards.includes('왜 투자했나')
+    && !boards.includes('공식 개별 사유 미공개')
     && boards.includes('검증 근거')
     && styles.includes("NVIDIA 투자·전략 포트폴리오 v2")
     && styles.includes("grid-template-columns: repeat(7")

@@ -2272,15 +2272,19 @@ function NvidiaInvestmentMap({ data, theme }) {
             </div>
           </div>
 
-          <div className="nvi-answer">
-            <span>NVIDIA와 실제 관계</span>
-            <strong>{selected.relationshipDetail || "공식 포트폴리오 등재 외 세부 관계 미공개"}</strong>
-          </div>
+          {selected.relationshipDetail && (
+            <div className="nvi-answer">
+              <span>NVIDIA와 실제 관계</span>
+              <strong>{selected.relationshipDetail}</strong>
+            </div>
+          )}
 
-          <div className={`nvi-answer nvi-rationale is-${selected.rationale?.status || "unknown"}`}>
-            <span>왜 투자했나</span>
-            <strong>{selected.rationale?.summary || "공식 개별 사유 미공개"}</strong>
-          </div>
+          {selected.rationale?.summary && selected.rationale.status !== "not-disclosed" && evidence.length > 0 && (
+            <div className={`nvi-answer nvi-rationale is-${selected.rationale.status}`}>
+              <span>{selected.rationale.status === "reported" ? "보도된 투자 목적" : "공개된 투자 목적"}</span>
+              <strong>{selected.rationale.summary}</strong>
+            </div>
+          )}
 
           {!!selected.dealHistory?.length && (
             <div className="nvi-history">

@@ -39,6 +39,36 @@ const clip = (value, size = 280) => {
   const text = clean(value);
   return text.length > size ? `${text.slice(0, size - 1)}…` : text;
 };
+const decodeEntities = value => clean(value)
+  .replace(/&#x27;|&#39;|&apos;/gi, "'")
+  .replace(/&quot;|&#34;/gi, '"')
+  .replace(/&amp;/gi, "&");
+const compactBusinessLine = (value, companyName = "") => {
+  const text = decodeEntities(value);
+  if (!text) return "";
+  const englishApp = text.match(/^Download\s+(.+?)\s+by\s+.+?\s+on the App Store\b/i);
+  if (englishApp) return `${clip(englishApp[1], 120)} · iOS 앱`;
+  const chineseApp = text.match(/App Store\s*下载[“\"](?:[^”\"]+)[”\"]的[“\"]([^”\"]+)[”\"]/i)
+    || text.match(/在\s*App Store\s*下载[“\"](?:[^”\"]+)[”\"]的[“\"]([^”\"]+)[”\"]/i);
+  if (chineseApp) return `${clip(chineseApp[1], 120)} · iOS 앱`;
+  const segments = text.split(/\s+·\s+/).map(clean).filter(Boolean);
+  const localized = segments.find(segment => /[가-힣]/.test(segment)
+    && !/^(?:iOS|Android|Web)\s*앱$/i.test(segment)
+    && !/스크린샷|평점|리뷰|사용자 팁/.test(segment));
+  if (localized) return clip(localized, 180);
+  const withoutStoreBoilerplate = text
+    .replace(/\s*See screenshots, ratings and reviews[\s\S]*$/i, "")
+    .replace(/\s*查看截屏、评分及评论[\s\S]*$/i, "");
+  const firstSentence = withoutStoreBoilerplate.split(/(?<=[.!?])\s+/)[0];
+  return clip(firstSentence || companyName, 180);
+};
+const compactBusinessProfile = (values, companyName = "") => {
+  const rows = (Array.isArray(values) ? values : [values])
+    .map(value => compactBusinessLine(value, companyName)).filter(Boolean)
+    .filter((value, index, all) => all.findIndex(other => nearDuplicateClaim(other, value)) === index);
+  const localizedDescriptions = rows.filter(value => /[가-힣]/.test(value) && !/· iOS 앱$/.test(value));
+  return (localizedDescriptions.length ? localizedDescriptions : rows).slice(0, 4);
+};
 const canon = value => {
   try {
     const url = new URL(String(value || ""));
@@ -172,8 +202,8 @@ const evidenceRefs = (ids, evidence) => {
 };
 const allRefs = evidence => evidence.slice(0, 3)
   .map(item => ({ title: item.titleKo || item.titleOriginal, source: item.source, date: item.date, url: item.url }));
-const negativeAction = /jailbreak|escaped? (?:its )?training|hack(?:ed|ing)?|attack(?:ed|ing)?|incident|wayward|rogue|compromis|sabotage|backlash|ditching|drops?\b|abandons?|switches? from|replaces?|lawsuit|settlement|sued?\b|security flaw|data breach/i;
-const strategicAction = /launch|introduc|expand|partner|acquir|invest|build|deploy|release|open(?:ed|ing)?|available|enter(?:ed|ing)?|announc|develop|fund|raise|appoint|restructur|approval|approved|publish/i;
+const negativeAction = /jailbreak|escaped? (?:its )?training|hack(?:ed|ing)?|attack(?:ed|ing)?|incident|wayward|rogue|compromis|sabotage|backlash|ditching|drops?\b|abandons?|switches? from|replaces?|lawsuit|settlement|sued?\b|security flaw|data breach|privacy (?:risk|concern|question|problem)|opt[- ]?out|raises? questions?|climate polluter|copyright complaint/i;
+const strategicAction = /\b(?:launch(?:ed|es|ing)?|introduc(?:e|ed|es|ing)|expand(?:ed|s|ing)?|partner(?:ed|s|ing|ship)?|acquir(?:e|ed|es|ing)|invest(?:ed|s|ing|ment)?|build(?:s|ing)?|built|deploy(?:ed|s|ing|ment)?|releas(?:e|ed|es|ing)|open(?:ed|ing)?|enter(?:ed|s|ing)?|announc(?:e|ed|es|ing)|develop(?:ed|s|ing|ment)?|fund(?:ed|s|ing)?|rais(?:e|ed|es|ing)|appoint(?:ed|s|ing|ment)?|restructur(?:e|ed|es|ing)|publish(?:ed|es|ing)?)\b/i;
 const isCompanyActionEvidence = item => {
   const text = clean(`${item?.titleOriginal || ""} ${(item?.linesOriginal || []).join(" ")}`);
   return strategicAction.test(text) && !negativeAction.test(text);
@@ -185,7 +215,8 @@ const isCompanyActionEvidenceFor = (name, item) => {
   if (!match) return false;
   const prefix = title.slice(0, match.index);
   return !(/\b(?:without|competitor|rival|beats?|versus|vs\.?)\b/i.test(prefix)
-    || /takes? (?:aim at|on)/i.test(prefix));
+    || /takes? (?:aim at|on)/i.test(prefix)
+    || /\b(?:uses?|used|using|customer|client)\b/i.test(prefix));
 };
 const officialHostsFor = name => (COMPANY_SOURCES[name]?.official || []).map(url => {
   try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return ""; }
@@ -307,6 +338,12 @@ const CAPABILITY_ARCHETYPES = {
     implication: "추론 단가·가용성·전환 비용을 기준으로 인프라 파트너 적합성 검증",
     metrics: ["추론 단가", "가용성", "배포 전환시간"],
   },
+  data: {
+    focus: "기업 데이터·검색·거버넌스 기반",
+    delivery: "데이터 플랫폼·API·기업용 관리 계층",
+    implication: "데이터 연결성·거버넌스·검색 품질을 기준으로 기업 AI 기반 적합성 검증",
+    metrics: ["데이터 연결 범위", "검색 정확도", "거버넌스 적용률"],
+  },
   trust: {
     focus: "AI 안전·보안·위변조 탐지",
     delivery: "탐지 API·SDK·기업 보안 서비스",
@@ -344,14 +381,32 @@ const CAPABILITY_ARCHETYPES = {
     metrics: ["과업 성공률", "단위 원가", "주간 사용시간"],
   },
 };
-const capabilityArchetype = profile => CAPABILITY_ARCHETYPES[clean(profile?.classification?.category).toLowerCase()]
-  || CAPABILITY_ARCHETYPES[clean(profile?.classification?.valueChainLayer).toLowerCase()]
-  || {
+const capabilityArchetype = (profile, currentBusiness = "") => {
+  const explicit = CAPABILITY_ARCHETYPES[clean(profile?.classification?.category).toLowerCase()];
+  if (explicit) return explicit;
+  const text = clean(`${currentBusiness} ${profile?.currentBusiness || ""} ${profile?.classification?.vertical || ""}`).toLowerCase();
+  const inferred = [
+    [/딥페이크|사기|보안|안전|검증|guardrail|security|fraud|authentication/, "trust"],
+    [/lakehouse|database|vector|데이터|검색 증강|거버넌스|rag\b/, "data"],
+    [/온디바이스|로컬 추론|경량 모델|on[- ]?device|local inference|\bslm\b/, "ondevice"],
+    [/사진|이미지|카메라|photo|image|camera|editor/, "camera"],
+    [/영상|비디오|아바타|video|avatar/, "video"],
+    [/음악|오디오|music|audio/, "music"],
+    [/음성|voice|speech|stt|tts/, "voice"],
+    [/로봇|robot|physical ai|피지컬/, "robotics"],
+    [/검색|search|answer engine|리서치/, "search"],
+    [/에이전트|agent|assistant|automation|workflow|워크플로/, "agent"],
+    [/파운데이션|언어 모델|멀티모달 모델|foundation|\bllm\b/, "foundation"],
+    [/클라우드|컴퓨트|추론 인프라|cloud|compute|inference platform|serving/, "infra"],
+    [/생산성|문서|업무|enterprise|productivity|workspace/, "productivity"],
+  ].find(([pattern]) => pattern.test(text))?.[1];
+  return CAPABILITY_ARCHETYPES[inferred] || {
     focus: first(profile?.classification?.vertical, "AI 제품·서비스 차별화"),
     delivery: "제품·서비스·API 제공 계층",
     implication: "사용자 가치·차별성·반복 매출 가능성을 기준으로 포트폴리오 적합성 검증",
     metrics: ["활성 사용자", "유료 전환율", "고객 유지율"],
   };
+};
 const analystAction = value => {
   const text = clean(value);
   const actions = [
@@ -363,7 +418,7 @@ const analystAction = value => {
 };
 const capabilityBaseline = ({ rec, currentBusiness, officialEvidence }) => {
   const strategyProfile = rec.strategyProfile || {};
-  const archetype = capabilityArchetype(strategyProfile);
+  const archetype = capabilityArchetype(strategyProfile, currentBusiness);
   const dimensions = [
     { id: "business-focus", label: "제품·서비스 초점", value: first(strategyProfile.currentBusiness, currentBusiness) },
     { id: "capability-focus", label: "핵심 기술·경험", value: archetype.focus },
@@ -381,7 +436,7 @@ const capabilityBaseline = ({ rec, currentBusiness, officialEvidence }) => {
 };
 const implicationBaseline = ({ rec, currentBusiness, officialEvidence }) => {
   const strategyProfile = rec.strategyProfile || {};
-  const archetype = capabilityArchetype(strategyProfile);
+  const archetype = capabilityArchetype(strategyProfile, currentBusiness);
   const explicit = clean(strategyProfile.analystImplication);
   const assessment = explicit || archetype.implication;
   if (!assessment) return [];
@@ -479,17 +534,30 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
   const seenDetails = new Set();
   const seenClaims = [];
   const seenEvidenceUrls = new Set();
+  const evidenceByUrl = new Map(evidence.map(item => [canon(item.url), item]));
   const out = { ...value };
   for (const key of sectionKeys) {
     const fallbackSection = fallback[key] || blankSection();
     const candidate = out[key] || fallbackSection;
-    const refs = (candidate.evidence || []).filter(ref => allowedUrls.has(refKey(ref)));
+    const validSectionRef = ref => {
+      if (!allowedUrls.has(refKey(ref))) return false;
+      const source = evidenceByUrl.get(refKey(ref));
+      if (!["strategyDirection", "investmentDirection"].includes(key)) return true;
+      return Boolean(source) && isCompanyActionEvidenceFor(name, source);
+    };
+    const refs = (candidate.evidence || []).filter(validSectionRef);
     const body = `${candidate.summary || ""} ${(candidate.details || []).join(" ")}`;
     const unsupported = placeholderCopy(body)
       || !supportedNumbers(body, corpus)
       || ((key === "strategyDirection" || key === "investmentDirection") && speculative(body) && refs.length === 0)
       || (candidate.evidence || []).some(ref => !allowedUrls.has(refKey(ref)));
     let chosen = unsupported ? fallbackSection : { ...candidate, evidence: refs };
+    const chosenRefs = (chosen.evidence || []).filter(validSectionRef);
+    if (clean(`${chosen.summary || ""} ${(chosen.details || []).join(" ")}`) && chosenRefs.length === 0) {
+      chosen = blankSection();
+    } else {
+      chosen = { ...chosen, evidence: chosenRefs };
+    }
     if (seenClaims.some(previous => nearDuplicateClaim(previous, chosen.summary))) {
       const alternative = [fallbackSection.summary, ...(chosen.details || []), ...(fallbackSection.details || [])]
         .map(clean).find(text => text && !seenClaims.some(previous => nearDuplicateClaim(previous, text)));
@@ -523,7 +591,6 @@ const finaliseIntelligence = (value, { name, evidence, fallback, corpus }) => {
         : evidenceCount ? "source-grounded" : "profile-grounded",
     };
   }
-  const evidenceByUrl = new Map(evidence.map(item => [canon(item.url), item]));
   const occupied = new Set(sectionKeys.flatMap(key => [
     out[key]?.summary,
     ...(out[key]?.details || []),
@@ -655,11 +722,12 @@ const normaliseAnalysis = (analysis, evidence, fallback, corpus) => {
 
 const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directionLabels }) => {
   const profile = rec.profile || {};
+  const businessLines = compactBusinessProfile(profile.business || rec.strategyProfile?.currentBusiness, base?.name);
   const revenueSignals = monet?.monetize || [];
   const directionSignals = monet?.direction || [];
   const primaryModel = modelLabels.get(monet?.primaryModel);
-  const currentBusiness = (profile.business || []).join(" · ")
-    || rec.strategyProfile?.currentBusiness || base?.unit || localizedTitle(rec.latest);
+  const currentBusiness = businessLines.join(" · ")
+    || compactBusinessLine(base?.unit || localizedTitle(rec.latest), base?.name);
   const revenueEvidence = first(revenueSignals[0]?.signal);
   const revenueSummary = primaryModel
     ? [primaryModel, revenueEvidence].filter(Boolean).join(" 중심 · ")
@@ -709,7 +777,7 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
   const capabilities = capabilityBaseline({ rec, currentBusiness, officialEvidence });
   const strategicImplications = implicationBaseline({ rec, currentBusiness, officialEvidence });
   return {
-    currentBusiness: { summary: clip(currentBusiness, 360), details: (profile.business || []).slice(0, 4), evidence: officialEvidence },
+    currentBusiness: { summary: clip(currentBusiness, 360), details: businessLines.slice(0, 4), evidence: officialEvidence },
     revenueModel: {
       summary: clip(revenueSummary, 360),
       details: revenueSignals.slice(0, 3).map(signal => clip(signal.signal, 220)),
@@ -833,9 +901,23 @@ async function main() {
   const prepared = [];
   const engine = llmAvailable();
   const persistCompanyData = async () => {
+    const rows = Object.values(companyData.companies || {});
+    const publicSectionKeys = ["currentBusiness", "revenueModel", "strategyDirection", "investmentDirection"];
+    const visibleSections = rows.flatMap(company => publicSectionKeys
+      .map(key => company.intelligence?.[key]).filter(section => clean(section?.summary)));
     companyData.schemaVersion = 6;
     companyData.generatedAt = new Date().toISOString();
-    companyData.methodology = "normalized-profile+strategy-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis+complete-capability-and-implication-baseline+source-backed-section-publication+freshness";
+    companyData.methodology = "normalized-profile+strategy-profile+live-financials+official-executive-verification+company-focused-publisher-evidence+grounded-ai-source-synthesis+complete-capability-and-implication-baseline+source-backed-section-publication+freshness+strict-individual-url-gate";
+    companyData.quality = {
+      schemaVersion: 1,
+      companyCount: rows.length,
+      visibleClaimSections: visibleSections.length,
+      sourceBackedClaimSections: visibleSections.filter(section =>
+        (section.evidence || []).some(ref => /^https?:\/\//.test(String(ref?.url || "")))).length,
+      omittedUnsupportedSections: rows.length * publicSectionKeys.length - visibleSections.length,
+      allVisibleClaimsSourceBacked: visibleSections.every(section =>
+        (section.evidence || []).some(ref => /^https?:\/\//.test(String(ref?.url || "")))),
+    };
     const checkpoint = "companies.json.checkpoint";
     await writeFile(checkpoint, `${JSON.stringify(companyData)}\n`);
     await rename(checkpoint, "companies.json");
@@ -848,6 +930,16 @@ async function main() {
 
   for (const [name, rec] of Object.entries(companyData.companies || {})) {
     rec.metricHistory = metricSeriesFor(name);
+    if (rec.profile) {
+      rec.profile.business = compactBusinessProfile(rec.profile.business, name);
+    }
+    if (rec.strategyProfile) {
+      const normalizedBusiness = compactBusinessProfile(
+        rec.profile?.business || rec.strategyProfile.currentBusiness,
+        name,
+      ).join(" · ");
+      if (normalizedBusiness) rec.strategyProfile.currentBusiness = normalizedBusiness;
+    }
     const leaders = Array.isArray(rec.organization?.executiveTeam) && rec.organization.executiveTeam.length
       ? rec.organization.executiveTeam : rec.organization?.leadership || [];
     const evidence = mergeEvidence(officialEvidenceFor(rec), evidenceFor(name, newsData.articles || [], leaders));

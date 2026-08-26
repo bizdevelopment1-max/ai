@@ -270,7 +270,7 @@ function App() {
       cat: c.cat,
       group: c.group || c.layer,
       domain: c.domain || String(c.url || "").replace(/^https?:\/\/(?:www\.)?/, "").split("/")[0],
-      unit: c.unit || c.vchainVertical || "AI 소프트웨어·서비스",
+      unit: c.vchainVertical || c.unit || "AI 소프트웨어·서비스",
       url: c.url,
       valuation: "—",
       valAsof: "",
