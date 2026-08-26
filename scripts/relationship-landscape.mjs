@@ -76,8 +76,8 @@ export function classifyLandscapeLayer(record, registeredLayer = null) {
 }
 
 const conciseVertical = record => {
-  const raw = (record?.profile?.business || []).find(Boolean)
-    || record?.intelligence?.currentBusiness?.summary
+  const raw = record?.intelligence?.currentBusiness?.summary
+    || (record?.profile?.business || []).find(Boolean)
     || "AI 소프트웨어·서비스";
   return String(raw).replace(/&#x27;|&apos;/gi, "'").replace(/&amp;/gi, "&").replace(/<[^>]*>/g, "")
     .split(" · ")[0].split(/[.!?。]/)[0].replace(/\s*\([^)]*\)\s*$/, "").trim().slice(0, 54);

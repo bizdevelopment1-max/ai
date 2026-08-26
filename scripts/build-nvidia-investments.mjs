@@ -82,7 +82,7 @@ async function fetchOfficialPortfolio() {
         relationshipDetail: "NVentures 공식 JSON 등재로 투자 관계만 확인됩니다. 개별 거래 시점·라운드·금액은 이 원문에 공개되지 않았습니다.",
         rationale: {
           status: "not-disclosed",
-          summary: "개별 투자 사유 미공개",
+          summary: "",
         },
         dealHistory: [],
         catalogEntry: true,
