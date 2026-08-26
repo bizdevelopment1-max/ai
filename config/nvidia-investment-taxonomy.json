@@ -1,0 +1,339 @@
+{
+  "officialPortfolio": {
+    "pageUrl": "https://www.nvidia.com/en-us/startups/nventures/portfolio/",
+    "dataUrl": "https://www.nvidia.com/content/dam/en-zz/nvidiaweb/startups/nventures/portfolio/companies.json",
+    "label": "NVentures 공식 포트폴리오"
+  },
+  "valueChains": [
+    {
+      "id": "silicon",
+      "ko": "칩·추론 가속기",
+      "en": "Chips & Inference",
+      "accent": "#6D28D9",
+      "description": "GPU·LPU·광인터커넥트 등 토큰 생성과 칩 간 연결을 담당하는 실리콘 계층",
+      "strategicLogic": "추론 지연과 토큰당 원가를 낮추고 차세대 시스템의 보완 가속기를 확보",
+      "matchIndustries": []
+    },
+    {
+      "id": "compute",
+      "ko": "데이터센터·클라우드",
+      "en": "Data Center & Cloud",
+      "accent": "#2563EB",
+      "description": "AI 팩토리·뉴클라우드·네트워킹·전력 인프라를 포함하는 컴퓨트 공급 계층",
+      "strategicLogic": "가속기 판매를 장기 클라우드 용량과 반복 추론 수요로 연결",
+      "matchIndustries": ["Networking"]
+    },
+    {
+      "id": "model",
+      "ko": "모델·AI 인프라",
+      "en": "Models & AI Infrastructure",
+      "accent": "#7A38D6",
+      "description": "범용·멀티모달·엔터프라이즈 파운데이션 모델과 모델 학습 생태계",
+      "strategicLogic": "프런티어 학습과 대규모 추론 워크로드를 NVIDIA 시스템 수요로 고정",
+      "matchIndustries": [
+        "Foundation Models - General Purpose",
+        "Foundation Models - Multimodal",
+        "Foundation Models - Enterprise"
+      ]
+    },
+    {
+      "id": "software",
+      "ko": "SW·데이터 플랫폼",
+      "en": "Software & Data Platforms",
+      "accent": "#C026D3",
+      "description": "개발도구·코드 생성·데이터·미들웨어·보안·에이전트 워크플로 계층",
+      "strategicLogic": "CUDA 위 개발자 접점과 엔터프라이즈 배포 경로를 확대",
+      "matchIndustries": [
+        "Foundation Models - Code Generation",
+        "Data Platforms & Analytics",
+        "AI Middleware Software",
+        "Agentic Workflow",
+        "Security"
+      ]
+    },
+    {
+      "id": "applications",
+      "ko": "AI 애플리케이션",
+      "en": "AI Applications",
+      "accent": "#E54B4B",
+      "description": "헬스케어·검색·음성·영상·산업 버티컬 등 최종 사용자 수요 계층",
+      "strategicLogic": "실사용 애플리케이션의 반복 추론량과 산업별 레퍼런스를 확대",
+      "matchIndustries": [
+        "Healthcare & Digital Biology",
+        "Vertical Application",
+        "Voice/Audio",
+        "Video",
+        "Search"
+      ]
+    },
+    {
+      "id": "hardware",
+      "ko": "HW·피지컬 AI",
+      "en": "Hardware & Physical AI",
+      "accent": "#0F766E",
+      "description": "로보틱스·자율주행·산업장비·에너지·양자 시스템으로 확장되는 물리 계층",
+      "strategicLogic": "데이터센터 AI를 로봇·공장·차량·에너지 시스템의 엣지 수요로 확장",
+      "matchIndustries": [
+        "Robotics",
+        "Autonomous Vehicles",
+        "Industrial & Materials Discovery",
+        "Energy",
+        "Quantum"
+      ]
+    }
+  ],
+  "strategicRecords": [
+    {
+      "id": "groq",
+      "name": "Groq",
+      "shortName": "Groq",
+      "domain": "groq.com",
+      "layer": "silicon",
+      "relationType": "기술 라이선스",
+      "transaction": "비독점 라이선스 · 투자와 구분",
+      "why": "Groq의 LPU 기술을 NVIDIA 추론 시스템에 결합해 저지연 토큰 생성을 강화합니다.",
+      "strategicFit": "Rubin GPU의 대규모 병렬 처리와 LPU의 빠른 디코딩을 한 AI 팩토리 안에서 보완합니다.",
+      "aliases": ["groq", "groq 3", "lpu", "lpx"],
+      "source": {
+        "label": "NVIDIA FY2026 실적 발표",
+        "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/",
+        "date": "2026-02-25",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "ayar-labs",
+      "name": "Ayar Labs",
+      "shortName": "Ayar Labs",
+      "domain": "ayarlabs.com",
+      "layer": "silicon",
+      "relationType": "기업형 전략 투자",
+      "transaction": "광인터커넥트 기업 투자 · 금액 비공개",
+      "why": "칩 간 광연결 기술을 통해 대규모 AI 시스템의 대역폭·전력 병목을 줄이는 투자입니다.",
+      "strategicFit": "GPU 스케일업·스케일아웃 성능을 실리콘 포토닉스 생태계와 연결합니다.",
+      "aliases": ["ayar labs"],
+      "source": {
+        "label": "NVIDIA 투자 전략 공식 블로그",
+        "url": "https://blogs.nvidia.com/blog/nvidia-investments/",
+        "date": "2023-12-11",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "coreweave",
+      "name": "CoreWeave",
+      "shortName": "CoreWeave",
+      "domain": "coreweave.com",
+      "layer": "compute",
+      "relationType": "지분 투자",
+      "transaction": "$2B Class A 보통주 투자 · 5GW 확장 계획",
+      "why": "CoreWeave의 AI 팩토리 확장과 토지·전력·건물 조달을 지원해 NVIDIA 플랫폼 기반 클라우드 용량을 확대합니다.",
+      "strategicFit": "GPU 판매를 클라우드 임대·운영 소프트웨어·장기 컴퓨트 수요로 연결합니다.",
+      "aliases": ["coreweave"],
+      "source": {
+        "label": "NVIDIA Newsroom",
+        "url": "https://nvidianews.nvidia.com/news/nvidia-and-coreweave-strengthen-collaboration-to-accelerate-buildout-of-ai-factories",
+        "date": "2026-01-26",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "naver",
+      "name": "Naver",
+      "shortName": "Naver",
+      "domain": "navercorp.com",
+      "layer": "compute",
+      "relationType": "지분 투자",
+      "transaction": "$1B 신주 투자 · 공개 지분율 약 4.5%",
+      "why": "소버린 AI 데이터센터 증설에 신주 인수 방식으로 결합해 NVIDIA 플랫폼 기반 컴퓨트 확장을 지원합니다.",
+      "strategicFit": "국가 단위 AI 팩토리 프로젝트와 장기 GPU 수요를 지분 관계로 연결합니다.",
+      "aliases": ["naver", "naver cloud"],
+      "source": {
+        "label": "공식 공동 보도자료",
+        "url": "https://www.globenewswire.com/news-release/2026/07/27/3333489/0/en/NAVER-NVIDIA-and-Brookfield-to-Expand-Korea-s-National-AI-Factory-Infrastructure-Buildout.html",
+        "date": "2026-07-27",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "ssi",
+      "name": "Safe Superintelligence",
+      "shortName": "SSI",
+      "domain": "ssi.inc",
+      "layer": "model",
+      "relationType": "지분 투자",
+      "transaction": "전략적 투자 · 금액 비공개",
+      "why": "Vera Rubin 시스템 접근과 장기 컴퓨트 협력으로 프런티어 연구소의 NVIDIA 플랫폼 채택을 확대합니다.",
+      "strategicFit": "최첨단 모델 학습 수요를 차세대 GPU·네트워킹·시스템 수요로 연결합니다.",
+      "aliases": ["safe superintelligence", "sutskever", "ssi"],
+      "source": {
+        "label": "NVIDIA Investor Relations",
+        "url": "https://investor.nvidia.com/news/press-release-details/2026/Ilya-Sutskevers-Safe-Superintelligence-Inc--and-NVIDIA-Announce-Long-Term-Strategic-Partnership/default.aspx",
+        "date": "2026-07-27",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "thinking-machines",
+      "name": "Thinking Machines Lab",
+      "shortName": "TML",
+      "domain": "thinkingmachines.ai",
+      "layer": "model",
+      "relationType": "전략적 투자",
+      "transaction": "전략적 투자 · 금액 비공개",
+      "why": "Vera Rubin 시스템을 기가와트 규모로 배포하고 맞춤형 프런티어 모델을 공동 최적화합니다.",
+      "strategicFit": "차세대 시스템의 대형 초기 고객과 모델 공동개발 레퍼런스를 동시에 확보합니다.",
+      "aliases": ["thinking machines", "thinking machines lab"],
+      "source": {
+        "label": "NVIDIA Blog",
+        "url": "https://blogs.nvidia.com/blog/nvidia-thinking-machines-lab/",
+        "date": "2026-03-10",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "shortName": "Anthropic",
+      "domain": "anthropic.com",
+      "layer": "model",
+      "relationType": "지분 투자·기술 제휴",
+      "transaction": "투자 및 심층 기술 파트너십 · 금액 비공개",
+      "why": "Claude의 대규모 학습·추론을 NVIDIA 시스템 기반 클라우드와 연결합니다.",
+      "strategicFit": "대표 엔터프라이즈 모델의 컴퓨트 선택을 NVIDIA 전체 시스템 수요로 확장합니다.",
+      "aliases": ["anthropic", "claude"],
+      "source": {
+        "label": "NVIDIA FY2026 실적 발표",
+        "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/",
+        "date": "2026-02-25",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "cohere",
+      "name": "Cohere",
+      "shortName": "Cohere",
+      "domain": "cohere.com",
+      "layer": "model",
+      "relationType": "기업형 전략 투자",
+      "transaction": "기업용 모델 기업 투자 · 복수 라운드",
+      "why": "기업용 언어모델 공급사의 성장을 지원해 엔터프라이즈 AI 도입을 확대합니다.",
+      "strategicFit": "기업 AI 워크로드를 GPU 기반 학습·추론 수요와 연결합니다.",
+      "aliases": ["cohere"],
+      "source": {
+        "label": "NVIDIA 투자 전략 공식 블로그",
+        "url": "https://blogs.nvidia.com/blog/nvidia-investments/",
+        "date": "2023-12-11",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "hugging-face",
+      "name": "Hugging Face",
+      "shortName": "Hugging Face",
+      "domain": "huggingface.co",
+      "layer": "software",
+      "relationType": "기업형 전략 투자",
+      "transaction": "모델 허브·개발 플랫폼 투자 · 금액 비공개",
+      "why": "오픈 모델 허브와 개발자 배포 경로에 투자해 NVIDIA 최적화 모델의 접근성을 높입니다.",
+      "strategicFit": "모델 발견부터 배포까지 개발자 접점을 CUDA·TensorRT 생태계와 연결합니다.",
+      "aliases": ["hugging face", "huggingface"],
+      "source": {
+        "label": "NVIDIA 투자 전략 공식 블로그",
+        "url": "https://blogs.nvidia.com/blog/nvidia-investments/",
+        "date": "2023-12-11",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "databricks",
+      "name": "Databricks",
+      "shortName": "Databricks",
+      "domain": "databricks.com",
+      "layer": "software",
+      "relationType": "기업형 전략 투자",
+      "transaction": "데이터·AI 플랫폼 투자 · 금액 비공개",
+      "why": "기업 데이터와 AI 개발을 하나의 플랫폼에서 연결하는 공급자에 투자했습니다.",
+      "strategicFit": "데이터 처리·학습·추론 파이프라인을 NVIDIA 가속 컴퓨팅 수요로 연결합니다.",
+      "aliases": ["databricks"],
+      "source": {
+        "label": "NVIDIA 투자 전략 공식 블로그",
+        "url": "https://blogs.nvidia.com/blog/nvidia-investments/",
+        "date": "2023-12-11",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "shortName": "Perplexity",
+      "domain": "perplexity.ai",
+      "layer": "applications",
+      "relationType": "기업형 전략 투자",
+      "transaction": "AI 검색 기업 반복 투자",
+      "why": "소비자 AI 검색 서비스의 성장 단계에 투자해 실시간 추론 사용량이 늘어나는 수요처를 지원합니다.",
+      "strategicFit": "모델 학습뿐 아니라 대규모 최종 사용자 추론까지 수요 기반을 확장합니다.",
+      "aliases": ["perplexity"],
+      "source": {
+        "label": "NVIDIA Rubin 공식 생태계 발표",
+        "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Kicks-Off-the-Next-Generation-of-AI-With-Rubin--Six-New-Chips-One-Incredible-AI-Supercomputer/default.aspx",
+        "date": "2026-01-05",
+        "type": "공식 채택 근거·투자 보완"
+      }
+    },
+    {
+      "id": "runway",
+      "name": "Runway",
+      "shortName": "Runway",
+      "domain": "runwayml.com",
+      "layer": "applications",
+      "relationType": "기업형 전략 투자",
+      "transaction": "생성 영상 서비스 투자 · 금액 비공개",
+      "why": "생성 영상의 학습·렌더링·서비스 추론 수요를 확대하는 애플리케이션 투자입니다.",
+      "strategicFit": "크리에이티브 AI의 고성능 GPU 수요와 최종 사용자 사용량을 함께 확대합니다.",
+      "aliases": ["runway", "runwayml"],
+      "source": {
+        "label": "NVIDIA 투자 전략 공식 블로그",
+        "url": "https://blogs.nvidia.com/blog/nvidia-investments/",
+        "date": "2023-12-11",
+        "type": "기업 공식 발표"
+      }
+    },
+    {
+      "id": "figure-ai",
+      "name": "Figure AI",
+      "shortName": "Figure",
+      "domain": "figure.ai",
+      "layer": "hardware",
+      "relationType": "기업형 전략 투자",
+      "transaction": "휴머노이드 AI 투자",
+      "why": "휴머노이드 로보틱스의 개발·상용화를 추진하는 자금 조달에 참여했습니다.",
+      "strategicFit": "데이터센터 AI를 로봇 학습·시뮬레이션·현장 추론으로 확장합니다.",
+      "aliases": ["figure ai", "figure robotics"],
+      "source": {
+        "label": "투자 라운드 보도",
+        "url": "https://techcrunch.com/2026/01/02/nvidias-ai-empire-a-look-at-its-top-startup-investments/",
+        "date": "2026-01-02",
+        "type": "거래 보도"
+      }
+    },
+    {
+      "id": "skydio",
+      "name": "Skydio",
+      "shortName": "Skydio",
+      "domain": "skydio.com",
+      "layer": "hardware",
+      "relationType": "기업형 전략 투자",
+      "transaction": "자율 드론 기업 투자 · 금액 비공개",
+      "why": "자율 비행과 비전 AI를 실제 하드웨어에 배포하는 기업에 투자했습니다.",
+      "strategicFit": "피지컬 AI의 학습·시뮬레이션·엣지 추론을 NVIDIA 플랫폼과 연결합니다.",
+      "aliases": ["skydio"],
+      "source": {
+        "label": "NVIDIA 투자 전략 공식 블로그",
+        "url": "https://blogs.nvidia.com/blog/nvidia-investments/",
+        "date": "2023-12-11",
+        "type": "기업 공식 발표"
+      }
+    }
+  ]
+}
