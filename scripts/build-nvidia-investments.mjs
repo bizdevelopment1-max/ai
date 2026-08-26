@@ -11,6 +11,25 @@ import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const PORTFOLIO = [
   {
+    id: "xai",
+    name: "xAI",
+    shortName: "xAI · Grok",
+    aliases: ["xai", "x.ai", "grok"],
+    layer: "foundation",
+    domain: "x.ai",
+    transaction: "Series C 참여 · 2024-12",
+    relationship: "CAPITAL + GPU COMPUTE",
+    why: "Grok 모델과 Colossus 슈퍼컴퓨터의 초대형 학습·추론 수요를 NVIDIA 가속 컴퓨팅 생태계 안에 연결합니다.",
+    strategicFit: "소비자 AI 서비스의 사용량 증가가 GPU·네트워킹 수요로 되돌아오는 자본→컴퓨트→사용량의 순환 구조를 강화합니다.",
+    signal: "Grok 확장 → 추론량 증가 → 차세대 GPU 수요",
+    source: {
+      label: "xAI Series C 공식 발표",
+      url: "https://x.ai/news/series-c",
+      date: "2024-12-23",
+      type: "피투자사 공식 발표",
+    },
+  },
+  {
     id: "ssi",
     name: "Safe Superintelligence",
     shortName: "SSI",
@@ -209,7 +228,7 @@ const output = {
   generatedAt: new Date().toISOString(),
   company: "NVIDIA",
   scope: `직접 원문으로 확인 가능한 주요 AI SW·서비스·컴퓨트 투자 ${portfolio.length}개사`,
-  methodology: "거래 기준선은 기업 공식 발표·거래 보도에 고정하고, 최신 동향은 daily-news 원문 추출 데이터에서 투자대상명과 투자 행위가 함께 확인된 기사만 결합합니다.",
+  methodology: "거래 기준선은 기업 공식 발표·거래 보도에 고정합니다. 관계선과 전략 루프는 거래 사실을 바탕으로 한 분석이며, 최신 동향은 daily-news 원문 추출 데이터에서 투자대상명과 투자 행위가 함께 확인된 기사만 결합합니다.",
   portfolio,
 };
 

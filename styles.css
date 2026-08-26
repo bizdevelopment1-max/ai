@@ -1016,6 +1016,12 @@ a[href]:hover .rainbow-on-hover,
 .first-video-screen .es-dynamics-map,
 .first-video-screen .dyn-video-panel,
 .first-video-screen .dyn-video-overlay { min-height: clamp(500px, 63vh, 660px); }
+.overview-investment-feature { margin: 26px 0 34px; padding: 24px 0 0; border-top: 1px solid var(--line); }
+.overview-investment-intro { max-width: 780px; margin: 0 20px 4px; }
+.overview-investment-intro > span { color: #76B900; font-size: 9px; font-weight: 950; letter-spacing: .13em; }
+.overview-investment-intro h2 { margin: 7px 0 5px; color: var(--ink); font-size: clamp(22px, 2.5vw, 34px); letter-spacing: -.04em; line-height: 1.15; }
+.overview-investment-intro p { margin: 0; color: var(--ink-2); font-size: 12px; font-weight: 650; line-height: 1.65; text-wrap: pretty; }
+.overview-investment-feature .nvi-shell { margin-top: 16px; border-radius: 14px; box-shadow: 0 18px 45px rgba(15, 23, 42, .1); }
 .opportunity-stack { display: grid; min-width: 0; gap: 18px; }
 
 .msf-consulting-intro {
@@ -2870,6 +2876,15 @@ a[href]:hover .rainbow-on-hover,
   grid-template-columns: minmax(0, 1.62fr) minmax(250px, .78fr);
   min-height: 356px;
 }
+.nvi-toolbar { display: flex; align-items: center; gap: 12px; padding: 9px 14px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 55%, var(--panel)); }
+.nvi-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.nvi-filters button, .nvi-play { border: 1px solid var(--line); border-radius: 999px; color: var(--ink-2); background: var(--panel); font: 750 9px/1 var(--f); cursor: pointer; transition: transform .2s ease, border-color .2s ease, color .2s ease, background .2s ease; }
+.nvi-filters button { padding: 6px 9px; }
+.nvi-filters button b { margin-left: 3px; color: var(--muted); font-size: 8px; }
+.nvi-filters button:is(:hover, .is-active) { border-color: var(--filter-color, var(--accent)); color: var(--filter-color, var(--accent)); background: color-mix(in srgb, var(--filter-color, var(--accent)) 9%, var(--panel)); transform: translateY(-1px); }
+.nvi-play { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; padding: 7px 10px; white-space: nowrap; }
+.nvi-play span { display: grid; width: 16px; height: 16px; place-items: center; border-radius: 50%; color: #fff; background: var(--accent); font-size: 7px; }
+.nvi-play.is-playing { border-color: var(--accent); color: var(--accent); }
 .nvi-stage {
   position: relative;
   min-height: 356px;
@@ -2882,6 +2897,9 @@ a[href]:hover .rainbow-on-hover,
   background-size: 32px 32px, 32px 32px, auto;
   transition: background-position .5s ease;
 }
+.nvi-orbit { position: absolute; z-index: 0; left: 50%; top: 50%; border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%) rotate(-8deg); }
+.nvi-orbit-a { width: 62%; height: 64%; animation: nvi-orbit 18s linear infinite; }
+.nvi-orbit-b { width: 76%; height: 78%; border-style: dashed; animation: nvi-orbit 26s linear infinite reverse; }
 .nvi-stage:hover { background-position: 4px 4px, 4px 4px, 0 0; }
 .nvi-edges {
   position: absolute;
@@ -3006,7 +3024,14 @@ a[href]:hover .rainbow-on-hover,
   line-height: 1.1;
   letter-spacing: -.025em;
 }
+.nvi-position { position: absolute; top: 49px; right: 16px; color: var(--muted); font-size: 8px; font-weight: 800; letter-spacing: .08em; }
+.nvi-position span { color: var(--node-color); font-size: 15px; }
 .nvi-transaction { margin: 0 0 10px; color: var(--node-color); font-size: 9.5px; font-weight: 800; }
+.nvi-loop { display: flex; align-items: stretch; gap: 4px; margin: 10px 0 4px; }
+.nvi-loop span { display: flex; min-width: 0; flex: 1; align-items: center; justify-content: center; padding: 7px 5px; border: 1px solid color-mix(in srgb, var(--node-color) 28%, var(--line)); border-radius: 4px; color: var(--ink-2); background: color-mix(in srgb, var(--node-color) 6%, var(--panel)); font-size: 7.5px; font-weight: 800; line-height: 1.3; text-align: center; }
+.nvi-loop i { align-self: center; color: var(--node-color); font-size: 9px; font-style: normal; }
+.nvi-progress { position: absolute; right: 16px; bottom: 11px; left: 16px; height: 2px; overflow: hidden; border-radius: 2px; background: color-mix(in srgb, var(--node-color) 12%, var(--line)); }
+.nvi-progress i { display: block; width: 100%; height: 100%; background: var(--node-color); transform-origin: left; animation: nvi-progress 3.2s linear both; }
 .nvi-answer {
   margin-top: 8px;
   padding-top: 8px;
@@ -3066,6 +3091,18 @@ a[href]:hover .rainbow-on-hover,
 @keyframes nvi-detail-in {
   from { opacity: .35; transform: translateX(8px); }
   to { opacity: 1; transform: none; }
+}
+@keyframes nvi-orbit { to { transform: translate(-50%, -50%) rotate(352deg); } }
+@keyframes nvi-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .nvi-core, .nvi-node, .nvi-orbit, .nvi-edges line.is-selected, .nvi-detail, .nvi-progress i { animation: none !important; } }
+@media (max-width: 760px) {
+  .nvi-head { align-items: flex-start; flex-direction: column; }
+  .nvi-head-metrics { margin-left: 0; flex-wrap: wrap; }
+  .nvi-toolbar { align-items: flex-start; flex-direction: column; }
+  .nvi-play { margin-left: 0; }
+  .nvi-body { grid-template-columns: 1fr; }
+  .nvi-stage { min-height: 390px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .nvi-detail { min-height: 330px; }
 }
 @media (hover: hover) and (pointer: fine) {
   .nvi-node:hover,
