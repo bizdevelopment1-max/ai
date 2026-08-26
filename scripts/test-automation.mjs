@@ -20,6 +20,8 @@ const required = [
   "scripts/crawl-stocks.mjs",
   "scripts/build-nvidia-investments.mjs",
   "scripts/validate-nvidia-investments.mjs",
+  "scripts/build-partner-ma-candidates.mjs",
+  "scripts/validate-partner-ma-candidates.mjs",
   "scripts/crawl-financials.mjs",
   "scripts/company-sources.mjs",
   "scripts/crawl-company-officials.mjs",
@@ -69,6 +71,7 @@ const required = [
   "site-content-manifest.json",
   "stocks.json",
   "nvidia-investments.json",
+  "partner-ma-candidates.json",
   "financials.json",
   "companies.json",
   "startups.json",
@@ -710,7 +713,8 @@ try {
     && !boards.includes('className="msf-control-logic"')
     && !boards.includes('className="msf-workload-name"')
     && styles.includes(".msf-mece-stage")
-    && styles.includes("word-break: keep-all; overflow-wrap: break-word; text-wrap: pretty;")
+    && styles.includes("word-break: keep-all")
+    && styles.includes("text-wrap: pretty")
     && boards.includes('className="msf-layer-evidence"')
     && !boards.includes("msf-layer-meter")
     && boards.includes('className="vc-logic-map"')
@@ -722,8 +726,6 @@ try {
     && boards.includes('className="cd-org-tier-groups"')
     && ["현재 사업", "Biz Model", "사업 방향", "최근 실행"].every(label => boards.includes(`>${label}<`))
     && boards.includes('className="vc-portfolio-grid"')
-    && boards.includes("const recentSignalCount = Number(c.live?.mentions30 || 0)")
-    && boards.includes(">최근 30일 신호<")
     && boards.includes('className="startup-portfolio-grid"')
     && boards.includes("const rows = (companies || []).filter(c => c.layer === layerId)")
     && boards.includes("claimUniqueCompanies")
@@ -847,7 +849,7 @@ try {
     && styles.includes("perspective(900px)")
     && styles.includes("@keyframes msfArrowDrive")
     && styles.includes(".msf-mrow:not(.msf-mhead):is(:hover, :focus-visible)")
-    && styles.includes(".msf-workload-name small { grid-column: 2;")
+    && styles.includes(".msf-opportunity dt em")
     && styles.includes("@media (hover: hover) and (pointer: fine)")
     && styles.includes(".consult-decision-rail > i")
     && styles.includes("border-left: 11px solid var(--consult-gold)")
@@ -2646,7 +2648,7 @@ try {
   const jsonFiles = [
     "audit.json", "collection-health.json", "companies.json", "company-news.json", "insights.json", "overview-view.json",
     "llm-health.json", "monetization.json", "monetization-review-queue.json", "mobile-ai-business-view.json", "news-view.json", "nvidia-investments.json", "quality.json",
-    "research-view.json", "startups.json", "stocks.json", "business-model-forecasts.json",
+    "research-view.json", "startups.json", "partner-ma-candidates.json", "stocks.json", "business-model-forecasts.json",
     "market-view.json", "intelligence-tracks.json", "stock-events.json",
   ];
   // Static replacement patterns intentionally contain the blocked tokens;
@@ -2711,6 +2713,57 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  banned-term sweep: ${error.message}`);
+}
+
+try {
+  const [candidates, boards, strategyView, architecture, workflow] = await Promise.all([
+    readFile("partner-ma-candidates.json", "utf8").then(JSON.parse),
+    readFile("boards.jsx", "utf8"),
+    readFile("strategy-view.json", "utf8").then(JSON.parse),
+    readFile("config/consulting-architecture.json", "utf8").then(JSON.parse),
+    readFile("scripts/update-site.mjs", "utf8"),
+  ]);
+  const records = candidates.records || [];
+  const shortlist = candidates.shortlist || [];
+  const routeCounts = records.reduce((counts, item) => {
+    counts[item.recommendation] = (counts[item.recommendation] || 0) + 1;
+    return counts;
+  }, {});
+  const architectureChildren = (architecture.workstreams || [])
+    .flatMap(workstream => workstream.sections || [])
+    .flatMap(section => section.children || []);
+  const candidateReady = records.length >= 80
+    && shortlist.length >= 16
+    && Number(routeCounts["M&A 검토"] || 0) >= 8
+    && Number(routeCounts["파트너십"] || 0) >= 8
+    && records.every(item => item.companySummary && Number.isFinite(item.score)
+      && item.recommendation && Array.isArray(item.sourceUrls) && item.sourceUrls.length
+      && item.sourceUrls.every(url => /^https:\/\//.test(url || "")));
+  const opportunityCopyReady = (strategyView.opportunityPortfolio || []).every(item =>
+    !Object.hasOwn(item, "horizon")
+    && !Object.hasOwn(item, "nextMetrics")
+    && !Object.hasOwn(item, "gate")
+    && item.decision
+    && Array.isArray(item.priorityDrivers));
+  const uiReady = boards.includes('className="su-candidate-board"')
+    && boards.includes("candidateAssessment={candidateFor(s)}")
+    && boards.includes("<em>01</em>시점")
+    && boards.includes("<em>02</em>사업모델")
+    && boards.includes("<em>03</em>판단")
+    && boards.includes("<em>04</em>자산")
+    && !boards.includes("msf-opportunity-metrics")
+    && !boards.includes("item.horizon")
+    && !boards.includes('SourcePipeline kind="startup"')
+    && !architectureChildren.some(child => child.key === "evidence-signals");
+  const automationReady = workflow.includes('"scripts/build-partner-ma-candidates.mjs"')
+    && workflow.includes('"scripts/validate-partner-ma-candidates.mjs"');
+  if (!candidateReady || !opportunityCopyReady || !uiReady || !automationReady) {
+    throw new Error("concise opportunity cards or the generated partner/M&A decision dataset is incomplete");
+  }
+  console.log(`  OK  기회 카드 단계 라벨·하단 지표 제거 · 파트너/인수 후보 ${records.length}개 자동 평가 · 상위 ${shortlist.length}개`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  generated partner/M&A decision screen: ${error.message}`);
 }
 
 if (failed) process.exit(1);

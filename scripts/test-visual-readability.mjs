@@ -34,7 +34,9 @@ assert(styles.includes(".sp-card-foot { grid-template-columns: repeat(auto-fit, 
   && styles.includes("grid-column: 1 / -1;")
   && styles.includes("white-space: nowrap;\n  overflow-wrap: normal;\n  word-break: keep-all;"), "value-chain card detail action can collapse into a vertical text column");
 assert(styles.includes('[data-theme="dark"] .msf-layer { color: var(--ink); }'), "dark strategy layers can inherit the browser button foreground");
-assert(styles.includes(".msf-opportunity-metrics") && styles.includes("grid-template-columns: repeat(auto-fit, minmax(105px, 1fr))"), "opportunity KPI evidence is not structured as a readable matrix");
+assert(!styles.includes(".msf-opportunity-metrics")
+  && styles.includes(".msf-opportunity dt em")
+  && boards.includes("<em>01</em>시점"), "opportunity cards must use concise indexed labels without the retired KPI footer");
 assert(styles.lastIndexOf("Final interaction contract: never invert an information card") > styles.lastIndexOf("color: #FFFFFF;\n    background:"), "non-inverting hover contract is not the final cascade policy");
 assert(!/\.art:hover[\s\S]{0,500}-webkit-text-fill-color:\s*transparent/.test(styles), "article hover can make text transparent");
 assert(!/\.rainbow-link:hover[\s\S]{0,400}color:\s*transparent/.test(styles), "link hover can make text transparent");
@@ -63,8 +65,8 @@ assert(boards.includes("const wrapNodeLabel") && boards.includes("ctx.roundRect(
   && boards.includes('function draw() {\n      const dark = document.documentElement.dataset.theme === "dark";'), "competitive dynamics node labels are clipped or lack live theme-safe contrast");
 assert(styles.includes(".kg-hint-compact") && styles.includes(".msf-mname > b"), "remaining dashboard labels lack the 11.5px readability floor");
 assert(boards.includes('split(/\\n+|\\s+·\\s+/)') && boards.includes("핵심만 최대 3줄"), "feed summaries are not normalized into concise bullet lines");
-assert(boards.includes('<b>원문 <i aria-hidden="true" /></b>')
-  && !boards.includes("실적·조직·발언·원문"), "value-chain company card source actions are not consistently labelled 원문");
+assert(boards.includes('<b>상세 <i aria-hidden="true" /></b>')
+  && !boards.includes("실적·조직·발언·원문"), "company cards must open the detailed company assessment without operational source copy");
 assert(boards.includes('institutional: "a16z"')
   && !boards.includes("a16z 전용"), "a16z labels still expose the retired 전용 qualifier");
 
@@ -77,7 +79,8 @@ assert(strategy.sourceMode === "generated-from-verified-ledgers", "strategy view
 assert(strategy.consultingModel?.workstreams?.length === 4 && strategy.consultingModel?.coverage?.sections === 9, "generated MECE architecture is incomplete");
 assert(strategy.lineage?.generatedFrom?.includes("news.json") && strategy.lineage?.generatedFrom?.includes("mobile-ai-business-view.json"), "strategy lineage is incomplete");
 assert(!Object.hasOwn(strategy, "accountPortfolio") && !boards.includes("Competitive Platform Portfolio") && !styles.includes(".msf-account"), "removed competitive company portfolio is still exposed");
-assert(boards.includes("const recentSignalCount = Number(c.live?.mentions30 || 0)") && boards.includes(">최근 30일 신호<"), "value-chain company cards do not retain the recent-signal evidence");
+assert(!boards.includes("const recentSignalCount = Number(c.live?.mentions30 || 0)")
+  && !boards.includes(">최근 30일 신호<"), "company cards still expose retired operational evidence counters");
 assert(Array.isArray(strategy.opportunityPortfolio)
   && strategy.opportunityPortfolio.every(item => item.evidence?.length), "generated opportunity portfolio lacks evidence");
 assert(Array.isArray(strategy.expertSignals)

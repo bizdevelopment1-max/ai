@@ -417,56 +417,18 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
   const layerStats = layers.map(layer => {
     const rows = layerRows(layer.id);
     const primary = rows.filter(c => c.layer === layer.id).length;
-    const mentions = rows.reduce((sum, c) => sum + Number(c.live?.mentions30 || 0), 0);
     const top = [...rows].sort((a, b) => Number(b.live?.mentions30 || 0) - Number(a.live?.mentions30 || 0))[0];
-    return { ...layer, rows, primary, mentions, top };
+    return { ...layer, rows, primary, top };
   });
   const consultingModel = strategy.consultingModel || { workstreams: [], coverage: {} };
   const priorityFramework = strategy.priorityFramework || { items: [], criteria: [], eligibilityGate: {} };
   const priorityItems = priorityFramework.items || [];
-  const priorityGate = priorityFramework.eligibilityGate || {};
   const priorityBasis = [
     `${(priorityFramework.criteria || []).length}개 평가축 · 100점`,
-    priorityGate.minimumEvidenceUnits ? `근거 ${priorityGate.minimumEvidenceUnits}건 이상` : "",
-    priorityGate.minimumIndependentSources ? `독립 출처 ${priorityGate.minimumIndependentSources}개 이상` : "",
-    priorityGate.minimumOpportunityScore ? `기회 점수 ${priorityGate.minimumOpportunityScore}점 이상` : "",
+    priorityFramework.candidateCount ? `평가 후보 ${priorityFramework.candidateCount}개` : "",
+    "점수·실행성·사업 적합도 순",
   ].filter(Boolean).join(" · ");
   const opportunityPortfolio = strategy.opportunityPortfolio || [];
-  const expertSignals = strategy.expertSignals || [];
-  const evidenceArticles = React.useMemo(() => {
-    const mobileTerms = /(?:mobile|smartphone|phone|android|iphone|on[ -]?device|edge ai|agent|assistant|camera|voice|translation|wearable|wallet|consumer|모바일|스마트폰|온디바이스|에이전트|어시스턴트|카메라|음성|통역|웨어러블|결제|소비자)/i;
-    const generatedDate = generatedAt ? new Date(generatedAt) : null;
-    const latestArticleTime = (articles || []).reduce((latest, article) => {
-      const time = new Date(`${article.date || ""}T23:59:59Z`).getTime();
-      return Number.isFinite(time) ? Math.max(latest, time) : latest;
-    }, 0);
-    const referenceTime = generatedDate && !Number.isNaN(generatedDate.getTime())
-      ? generatedDate.getTime()
-      : latestArticleTime;
-    const cutoffTime = referenceTime - 30 * 86400000;
-    const seen = new Set();
-    return (articles || []).filter(article => {
-      const key = String(article.url || `${article.source || ""}|${article.date || ""}|${article.title || ""}`).trim().toLowerCase();
-      const articleTime = new Date(`${article.date || ""}T00:00:00Z`).getTime();
-      const text = `${article.title || ""} ${article.titleKo || ""} ${article.summary || ""} ${(article.summaryLinesKo || []).join(" ")} ${article.signal || ""}`;
-      if (!key || seen.has(key) || !article.url || !article.date || !Number.isFinite(articleTime)
-        || articleTime < cutoffTime || articleTime > referenceTime + 86400000
-        || (article.provenance?.status && article.provenance.status !== "source-backed")
-        || !mobileTerms.test(text)) return false;
-      seen.add(key);
-      return true;
-    });
-  }, [articles, generatedAt]);
-  const evidenceDate = React.useMemo(() => {
-    const parsed = generatedAt ? new Date(generatedAt) : null;
-    const sourceDate = parsed && !Number.isNaN(parsed.getTime())
-      ? parsed
-      : new Date(Math.max(0, ...evidenceArticles.map(article => new Date(article.date).getTime() || 0)));
-    const validDate = !Number.isNaN(sourceDate.getTime()) && sourceDate.getTime() > 0 ? sourceDate : new Date();
-    return new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
-    }).format(validDate);
-  }, [generatedAt, evidenceArticles]);
   return (
     <section className="board msf" ref={sectionRef} data-screen-label="Mobile AI Business Strategy Framework">
       <AnimCtx.Provider value={inView}>
@@ -474,7 +436,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
           <div className="msf-consulting-kicker">{consultingModel.methodology || "MECE decision architecture"}</div>
           <div className="msf-consulting-title-row">
             <h2>AI 신사업 전략 포트폴리오</h2>
-            <span className="msf-consulting-evidence">최신 공개 근거 <b>{evidenceArticles.length}</b>건 · {evidenceDate} 기준</span>
           </div>
           {consultingModel.statement && <p className="msf-consulting-statement">{consultingModel.statement}</p>}
         </div>
@@ -518,11 +479,6 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
                   </div>
                   <b>{item.title}</b>
                   <p>{(item.drivers || []).map(driver => `${driver.label} ${driver.points}`).join(" · ")}</p>
-                  <small>
-                    <span>독립 출처 {item.independentSources}개</span>
-                    <span>근거 {item.evidenceCount}건</span>
-                    <em>{item.confidence === "high" ? "HIGH CONF." : item.confidence === "medium" ? "MEDIUM CONF." : "REVIEW"}</em>
-                  </small>
                 </article>
               ))}
             </div>
@@ -534,42 +490,27 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head" data-nav-anchor="opportunity-portfolio">
-          <div><em>01</em><h3>Evidence-weighted Opportunity Portfolio</h3></div>
+          <div><em>01</em><h3>우선순위 사업 후보</h3></div>
         </div>
         <div className="msf-opportunity-grid">
           {opportunityPortfolio.map((item, index) => (
             <article className="msf-opportunity" key={item.title} tabIndex="0" style={{ "--opportunity-order": index }}>
-              <div><em>{item.horizon}</em><span>{item.score}</span></div>
+              <div><em>{String(index + 1).padStart(2, "0")}</em><span>{item.score}</span></div>
               <h4>{item.title}</h4>
               <p className="msf-opportunity-customer">{item.customer}</p>
               <dl>
-                <div><dt>WHY NOW</dt><dd>{item.thesis}</dd></div>
-                <div><dt>OFFER</dt><dd>{item.offer}</dd></div>
-                <div><dt>GATE</dt><dd>{item.gate}</dd></div>
-                <div><dt>OWN ASSETS</dt><dd>{(item.ownAssets || []).join(" · ") || "자사 자산 매핑 필요"}</dd></div>
+                <div><dt><em>01</em>시점</dt><dd>{item.thesis}</dd></div>
+                <div><dt><em>02</em>사업모델</dt><dd>{item.offer}</dd></div>
+                <div><dt><em>03</em>판단</dt><dd>{item.decision}</dd></div>
+                <div><dt><em>04</em>자산</dt><dd>{(item.ownAssets || []).join(" · ") || "연계 자산 검토"}</dd></div>
               </dl>
-              <div className="msf-opportunity-metrics">{(item.nextMetrics || []).map(metric => <span key={metric.label} className={metric.status}><em>{metric.label}</em><b>{metric.value}</b></span>)}</div>
             </article>
           ))}
         </div>
 
-        <div className="msf-section-head" data-nav-anchor="evidence-signals">
-          <div><em>02</em><h3>Product · Platform · Business Evidence</h3></div>
-        </div>
-        <div className="msf-expert-grid">
-          {expertSignals.map((signal, index) => (
-            <a className="msf-expert" href={signal.url} target="_blank" rel="noopener" key={`${signal.source}-${signal.title}`} style={{ "--expert-order": index }}>
-              <span><em>{signal.lens}</em><b>{signal.source}</b><small>{signal.date}</small></span>
-              <h4>{signal.title}</h4>
-              <p>{signal.implication}</p>
-              <i><Icon name="ext" size={12} /></i>
-            </a>
-          ))}
-        </div>
-
         <div className="msf-section-head msf-value-chain-head">
-          <div><em>03</em><h3>AI SW · Service Value Chain</h3></div>
-          <p>7개 계층의 통제점·경제성·최근 30일 공개 근거를 신사업 포트폴리오와 연결</p>
+          <div><em>02</em><h3>AI SW · Service Value Chain</h3></div>
+          <p>7개 계층의 통제점·경제성·대표 기업을 신사업 포트폴리오와 연결</p>
         </div>
         <div className="msf-chain">
           {layerStats.map((l, i) => (
@@ -580,9 +521,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
               <b>{l.ko}</b>
               <span className="msf-layer-control">{l.controlPoint}</span>
               <span className="msf-layer-evidence">
-                <span><em>PORTFOLIO</em><b>{l.primary}개사</b></span>
-                <i aria-hidden="true" />
-                <span><em>30D EVIDENCE</em><b>{l.mentions}건</b></span>
+                <span><em>기업</em><b>{l.primary}개사</b></span>
               </span>
               {l.top && <span className="msf-layer-lead"><em>LEAD</em><b>{l.top.name}</b><i aria-hidden="true" /></span>}
             </button>
@@ -590,7 +529,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
         </div>
 
         <div className="msf-section-head" data-nav-anchor="decision-criteria">
-          <div><em>04</em><h3>AI Stack별 사업 판단 기준</h3></div>
+          <div><em>03</em><h3>AI Stack별 사업 판단 기준</h3></div>
           <p>통제점·수익 구조·사업 Action·과대해석 리스크를 한 화면에서 비교</p>
         </div>
         <div className="msf-matrix">
@@ -613,7 +552,7 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
 // 상세 팝업은 근거·조직·실적·발언을 더 깊게 제공한다.
 function StrategyPortfolioCard({
   company, accent, eyebrow, badge, business, revenueModel, direction, execution,
-  headcount, sourceCount, institution, onSelect, accessory,
+  headcount, institution, candidateAssessment, onSelect, accessory,
 }) {
   const c = company || {};
   const intel = c.live?.intelligence || c.intelligence || {};
@@ -638,13 +577,7 @@ function StrategyPortfolioCard({
   const people = !headcount && c.live?.employeesAsof && rawPeople
     ? `${rawPeople} · '${String(c.live.employeesAsof).slice(2, 4)}`
     : rawPeople;
-  const evidenceRows = [
-    ...(intel.currentBusiness?.evidence || []),
-    ...(intel.revenueModel?.evidence || []),
-    ...(intel.strategyDirection?.evidence || []),
-  ];
-  const evidenceN = Number.isFinite(sourceCount) ? sourceCount : new Set(evidenceRows.map(item => item.url).filter(Boolean)).size;
-  const recentSignalCount = Number(c.live?.mentions30 || 0);
+  const candidate = candidateAssessment || c.candidateAssessment || null;
   const organization = c.live?.organization || c.organization || c.org || {};
   const leaderRows = Array.isArray(organization.executiveTeam) && organization.executiveTeam.length
     ? organization.executiveTeam : organization.leadership || [];
@@ -665,6 +598,12 @@ function StrategyPortfolioCard({
       </div>
       {(institution || c.live?.portfolioReference?.institution?.name) && (
         <div className="sp-card-institution">{institution || `${c.live.portfolioReference.institution.name} 선정 · 대표 카드에 통합`}</div>
+      )}
+      {candidate && (
+        <div className="sp-card-deal">
+          <em>{candidate.recommendation}</em><strong>{candidate.score}</strong>
+          <span>{candidate.transaction?.stage || "조건 미공개"}</span>
+        </div>
       )}
       <div className="sp-card-logic" aria-hidden="true">
         <span>BUSINESS</span><i /><span>ECONOMICS</span><i /><span>DIRECTION</span>
@@ -689,10 +628,10 @@ function StrategyPortfolioCard({
       </div>
       <div className="sp-card-foot">
         {leadership && <span><em>창업·경영진</em>{leadership}</span>}
+        {profile.founded && <span><em>설립</em>{profile.founded}</span>}
+        {profile.hq && <span><em>본사</em>{profile.hq}</span>}
         {people && <span><em>인력</em>{people}</span>}
-        {recentSignalCount > 0 && <span><em>최근 30일 신호</em>{recentSignalCount}건</span>}
-        {evidenceN > 0 && <span><em>원문 근거</em>{evidenceN}건</span>}
-        <b>원문 <i aria-hidden="true" /></b>
+        <b>상세 <i aria-hidden="true" /></b>
       </div>
     </div>
   );
@@ -821,6 +760,39 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
               ))}
             </div>
           ) : null;
+        })()}
+
+        {c.candidateAssessment && (() => {
+          const assessment = c.candidateAssessment;
+          const dimensionRows = [
+            ["전략 적합", assessment.dimensions?.strategicFit],
+            ["제품 준비", assessment.dimensions?.productReadiness],
+            ["수익화", assessment.dimensions?.commercialReadiness],
+            ["거래 실행", assessment.dimensions?.transactionFeasibility],
+            ["정보 완성", assessment.dimensions?.informationReadiness],
+          ].filter(row => Number.isFinite(Number(row[1])));
+          const dealFacts = [
+            ["단계", assessment.transaction?.stage],
+            ["가치", assessment.transaction?.valuation],
+            ["조달", assessment.transaction?.funding],
+            ["분야", assessment.category],
+          ].filter(row => row[1] && row[1] !== "미공개");
+          return (
+            <div className="cd-section cd-deal-assessment">
+              <header><div><em>DEAL SCREEN</em><h4>파트너·인수 판단</h4></div><span>{assessment.recommendation}</span><strong>{assessment.score}</strong></header>
+              <div className="cd-deal-score-grid">
+                {dimensionRows.map(([label, value]) => <span key={label}><em>{label}</em><b>{value}/5</b><i><u style={{ width: `${Number(value) * 20}%` }} /></i></span>)}
+              </div>
+              {dealFacts.length > 0 && <div className="cd-deal-facts">{dealFacts.map(([label, value]) => <span key={label}><em>{label}</em><b>{value}</b></span>)}</div>}
+              {assessment.businessAssessment && <div className="cd-deal-business">
+                {[["현재 사업", assessment.businessAssessment.currentBusiness], ["수익 구조", assessment.businessAssessment.revenueModel], ["사업 방향", assessment.businessAssessment.strategicDirection]]
+                  .filter(row => row[1] && row[1] !== "미공개")
+                  .map(([label, value]) => <div key={label}><em>{label}</em><p>{value}</p></div>)}
+              </div>}
+              <div className="cd-deal-logic"><div><em>회사</em><p>{assessment.companySummary}</p></div><div><em>권장 경로</em><p>{assessment.routeReason}</p></div><div><em>확인 사항</em><p>{assessment.risk}</p></div></div>
+              {assessment.latestAction?.url && <a className="cd-deal-latest" href={assessment.latestAction.url} target="_blank" rel="noopener">{assessment.latestAction.date ? `${fmtMonthDay(assessment.latestAction.date)} · ` : ""}{assessment.latestAction.title}</a>}
+            </div>
+          );
         })()}
 
         {c.profile && (() => {
@@ -5374,6 +5346,10 @@ function MarketBoard({ sectionRef, dataVersion, mode = "market" }) {
 // ---- 스타트업 분석 보드(2계층·lazy-load): 대형=파트너십 / 소형=인수·투자 ----
 function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, activeCategory = "", onCategoryChange, onSelect }) {
   const inView = useInView(sectionRef);
+  const [candidateData, setCandidateData] = React.useState(null);
+  const [candidateRoute, setCandidateRoute] = React.useState("all");
+  const candidateFor = startup => (candidateData?.records || []).find(candidate =>
+    candidate.id === startup?.canonicalId || candidate.name === startup?.name || candidate.domain === startup?.domain) || null;
   // 업체명 클릭 → 다른 기업과 동일한 상세 모달. 추적 기업이면 전체 프로필, 아니면 최신 라이브 데이터로 강화.
   // 밸류체인 기업·스타트업 모두 companies.json(핵심활동·경영진 발언)·monetization.json(수익모델·사업방향)에서
   // 같은 방식으로 채워지므로, 표시 레벨(정보 깊이)이 통일된다.
@@ -5384,6 +5360,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       const startupLive = (coLive && coLive[s.name]) || {};
       onSelect({
         ...match,
+        candidateAssessment: candidateFor(s),
         profile: s.profile || match.profile,
         org: s.organization || match.org,
         coverage: s.coverage || match.coverage,
@@ -5454,6 +5431,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
     const lv = (coLive && coLive[s.name]) || null;    // crawl-companies.mjs 라이브 데이터(멘션·핵심활동·경영진 발언)
     onSelect({
       name: s.name, domain: s.domain, cat: "startup", unit: s.vertical || "AI 스타트업",
+      candidateAssessment: candidateFor(s),
       note: sourceBoundBusiness || s.vertical || "AI 소프트웨어·서비스",
       vp: sourceBoundBusiness, direction: actionSource ? actionSource.localization?.title || actionSource.title || "" : "",
       layer: "app", vchainVertical: s.vertical || "", profile, org,
@@ -5505,8 +5483,14 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
-    loadJson(`startups.json?v=${encodeURIComponent(dataVersion)}`)
-      .then(j => { if (j && (j.large || j.small)) setData(j); })
+    Promise.all([
+      loadJson(`startups.json?v=${encodeURIComponent(dataVersion)}`),
+      loadJson(`partner-ma-candidates.json?v=${encodeURIComponent(dataVersion)}`),
+    ])
+      .then(([startupRows, candidateRows]) => {
+        if (startupRows && (startupRows.large || startupRows.small)) setData(startupRows);
+        if (candidateRows?.records?.length) setCandidateData(candidateRows);
+      })
       .catch(() => {});
   }, [inView, loaded, dataVersion]);
 
@@ -5600,6 +5584,12 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
     .filter(reference => reference.a16z)
     .map(reference => ({ ...reference, cat: reference.category, displaySection: "tracked" }))
     .filter(reference => !del[reference.name] && passCat(reference));
+  const startupByName = new Map([...largePool, ...smallPool, ...institutionalPool].map(startup => [startup.name, startup]));
+  const candidateRows = (candidateData?.shortlist || [])
+    .filter(candidate => !catFilter || candidate.categoryId === catFilter)
+    .filter(candidate => candidateRoute === "all"
+      || (candidateRoute === "ma" && candidate.recommendation === "M&A 검토")
+      || (candidateRoute === "partner" && ["파트너십", "전략 투자"].includes(candidate.recommendation)));
   const a16zLabel = s => {
     const cohorts = s.a16z?.cohorts || s.cohorts || [];
     const cohort = cohorts.includes("web") && cohorts.includes("mobile") ? "WEB + MOBILE"
@@ -5634,7 +5624,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       institution={hasA16z(s) ? a16zLabel(s) : ""}
       execution={s.latest?.localization?.title || s.latest?.title || (institutionBacked ? s.description || s.pageTitle : "")}
       headcount={s.headcount || s.profile?.headcount || ""}
-      sourceCount={new Set([...(s.history || []), ...(s.sourceLinks || [])].map(source => source?.url).filter(Boolean)).size}
+      candidateAssessment={candidateFor(s)}
       onSelect={() => openStartup(s, s.displaySection || portfolioClass)}
       accessory={<DelUI name={s.name} />} />;
   };
@@ -5685,17 +5675,48 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
         </div>
       )}
 
-      {!data ? (
-        <SourcePipeline kind="startup" />
-      ) : !(large.length || small.length || institutional.length) ? (
+      {candidateData && candidateRows.length > 0 && (
+        <section className="su-candidate-board" aria-label="파트너 및 인수 후보 우선순위">
+          <header>
+            <div><em>DEAL SCREEN</em><b>파트너·인수 우선순위</b><span>현재 기업 DB를 동일 기준으로 자동 평가</span></div>
+            <nav aria-label="거래 방식 필터">
+              <button className={candidateRoute === "all" ? "on" : ""} onClick={() => setCandidateRoute("all")}>전체</button>
+              <button className={candidateRoute === "ma" ? "on" : ""} onClick={() => setCandidateRoute("ma")}>M&A</button>
+              <button className={candidateRoute === "partner" ? "on" : ""} onClick={() => setCandidateRoute("partner")}>파트너·투자</button>
+            </nav>
+          </header>
+          <div className="su-candidate-grid">
+            {candidateRows.slice(0, 12).map((candidate, index) => {
+              const startup = startupByName.get(candidate.name);
+              return (
+                <button type="button" className="su-candidate-card" key={candidate.id}
+                  onClick={() => startup && openStartup(startup, startup.displaySection || candidate.portfolioClass)}>
+                  <div className="su-candidate-head"><em>{String(index + 1).padStart(2, "0")}</em><b>{candidate.name}</b><span>{candidate.recommendation}</span><strong>{candidate.score}</strong></div>
+                  <p>{candidate.companySummary}</p>
+                  <div className="su-candidate-facts"><span>{candidate.category}</span><span>{candidate.transaction?.stage}</span></div>
+                  <dl>
+                    <div><dt>적합</dt><dd>{candidate.dimensions.strategicFit}/5</dd></div>
+                    <div><dt>제품</dt><dd>{candidate.dimensions.productReadiness}/5</dd></div>
+                    <div><dt>수익</dt><dd>{candidate.dimensions.commercialReadiness}/5</dd></div>
+                    <div><dt>거래</dt><dd>{candidate.dimensions.transactionFeasibility}/5</dd></div>
+                  </dl>
+                  <footer>{candidate.routeReason}</footer>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {!data ? null : !(large.length || small.length || institutional.length) ? (
         catFilter ? (
           <div className="mkt-empty">
             <b>‘{catMeta(catFilter)?.ko}’ 필터</b>
-            <span>a16z·공식 제품 페이지 전체 비교로 전환</span>
+            <span>해당 조건의 기업이 없음</span>
             <button className="su-tax-clear" onClick={() => selectCategory("")}>전체 보기</button>
           </div>
         ) : (
-          <SourcePipeline kind="startup" />
+          <div className="mkt-empty"><b>표시할 기업이 없음</b></div>
         )
       ) : (
         <>
