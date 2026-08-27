@@ -91,10 +91,14 @@ const nominalizeStatementEnding = clause => {
 };
 function consultingBulletText(value) {
   const source = neutralizeDisplayText(value);
-  if (!source || !/[가-힣]/.test(source) || /^https?:\/\/\S+$/i.test(source.trim())) return source;
+  const hasDisplayDate = /\b20\d{2}\s*[.\-/]\s*\d{1,2}\s*[.\-/]\s*\d{1,2}/.test(source);
+  if (!source || (!/[가-힣]/.test(source) && !hasDisplayDate) || /^https?:\/\/\S+$/i.test(source.trim())) return source;
   if (CONSULTING_COPY_CACHE.has(source)) return CONSULTING_COPY_CACHE.get(source);
   const normalized = source
-    .replace(/\b(\d{4})\.(\d{1,2})\.(\d{1,2})\b/g, "$1-$2-$3")
+    // Dates are a display concern: retain ISO values in the ledgers, while
+    // every rendered label uses the compact M/DD convention.
+    .replace(/\b(?:20\d{2})\s*[.\-/]\s*(\d{1,2})\s*[.\-/]\s*(\d{1,2})(?:\.)?/g,
+      (_, month, day) => `${Number(month)}/${String(Number(day)).padStart(2, "0")}`)
     .replace(/\bU\.S\./gi, "US").replace(/\bU\.K\./gi, "UK").replace(/\bE\.U\./gi, "EU")
     .replace(/([가-힣])([.!?。！？]+)(["'”’]?)(?=\s|$|라고|이라며|라는)/g, "$1$3 · ")
     .replace(/([가-힣])\s*[:：]\s+/g, "$1 · ")

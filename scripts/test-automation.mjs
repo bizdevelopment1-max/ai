@@ -2784,16 +2784,19 @@ try {
     !Object.hasOwn(item, "horizon")
     && !Object.hasOwn(item, "nextMetrics")
     && !Object.hasOwn(item, "gate")
+    && !Object.hasOwn(item, "customer")
+    && !/\b20\d{2}-\d{2}-\d{2}\b/.test(item.decision || "")
     && item.decision
     && Array.isArray(item.priorityDrivers));
   const uiReady = boards.includes('className="su-candidate-board"')
     && boards.includes("candidateAssessment={candidateFor(s)}")
-    && boards.includes("<em>01</em>시점")
-    && boards.includes("<em>02</em>사업모델")
+    && boards.includes('className="is-timing"')
+    && boards.includes('className="is-business"')
     && boards.includes("<em>03</em>판단")
     && boards.includes("<em>04</em>자산")
     && !boards.includes("msf-opportunity-metrics")
     && !boards.includes("item.horizon")
+    && !boards.includes("msf-opportunity-customer")
     && !boards.includes('SourcePipeline kind="startup"')
     && !architectureChildren.some(child => child.key === "evidence-signals");
   const automationReady = workflow.includes('"scripts/build-partner-ma-candidates.mjs"')

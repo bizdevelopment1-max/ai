@@ -12,6 +12,10 @@ const firstSentence = value => {
 const evidenceUrl = item => /^https:\/\//i.test(String(item?.url || ""));
 const scoreOf = item => Number(item?.scoreValue ?? item?.opportunityScore ?? item?.signalScore ?? 0);
 const confidenceRank = value => ({ high: 3, medium: 2, low: 1 }[String(value || "").toLowerCase()] || 0);
+const monthDay = value => {
+  const match = String(value || "").match(/^\d{4}-(\d{2})-(\d{2})/);
+  return match ? `${Number(match[1])}/${match[2]}` : "";
+};
 const comparePriority = (left, right) =>
   scoreOf(right) - scoreOf(left)
   || confidenceRank(right.evidenceConfidence) - confidenceRank(left.evidenceConfidence)
@@ -24,7 +28,7 @@ const compactOpportunity = (item, index) => {
   const evidence = (item.evidence || []).filter(evidenceUrl);
   const independentSources = Number(item.independentSources || 0);
   const evidenceCount = Number(item.evidenceCount || evidence.length);
-  const nextDecision = String(item.experimentPlan?.nextDecisionAt || "").slice(0, 10);
+  const nextDecision = monthDay(item.experimentPlan?.nextDecisionAt);
   const scorecard = (item.scorecard || [])
     .filter(row => row?.label && Number.isFinite(Number(row.weightedPoints)))
     .map(row => ({
@@ -56,7 +60,6 @@ const compactOpportunity = (item, index) => {
     evidenceCount,
     independentSources,
     score: `${scoreOf(item)}/100`,
-    customer: text(item.experimentPlan?.targetUsers || item.ownerOrg || "검증 대상 사용자군"),
     thesis: conciseHypothesis,
     offer: [item.actionOption, ...(item.revenueModels || [])].filter(Boolean).join(" · "),
     decision: [
