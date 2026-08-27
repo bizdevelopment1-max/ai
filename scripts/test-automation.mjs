@@ -103,6 +103,7 @@ const required = [
   "data.bundle.js",
   "styles.bundle.css",
   "tech-market.css",
+  "signal-cards.css",
   "og-mobile-strategy.png",
   "assets/quant-insight-capital.webp",
   "assets/quant-insight-device.webp",
@@ -1537,7 +1538,14 @@ try {
     && boards.includes("tech-market-intelligence.json")
     && boards.includes('className="tmi-signal-bullets"')
     && boards.includes('className="tmi-summary-bullets"')
+    && boards.includes('className="tmi-track-framework"')
+    && boards.includes("selectedTrack.summaryBullets")
+    && boards.includes("selectedTrack.trendDimensions")
+    && boards.includes("selectedTrack.decisionMetrics")
     && boards.includes("infrastructureSegments.map")
+    && boards.includes('className="tmi-partner-levels"')
+    && boards.includes("candidate.strategicInsight")
+    && boards.includes("candidate.decisionGate")
     && styles.includes(".isg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));")
     && styles.includes(".isg-card:hover, .isg-card:focus-within {")
     && styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { opacity: 0; }")
@@ -1546,13 +1554,30 @@ try {
     && techStyles.includes(".tmi-signal:is(:hover, :focus-visible)")
     && techStyles.includes(".tmi-signal-bullets")
     && techStyles.includes(".tmi-entity-group")
+    && techStyles.includes(".tmi-partner-card")
+    && techStyles.includes(".tmi-track-framework")
+    && techStyles.includes(".tmi-track-insights")
     && techStyles.includes("-webkit-text-fill-color: currentColor")
     && techTaxonomy.futureInfrastructureSegments?.length === 8
+    && techTaxonomy.inferencePartnerLevels?.length === 5
+    && techMarket.schemaVersion === 4
+    && (techTaxonomy.technologyTracks || []).every(track => (track.trendDimensions || []).length >= 4
+      && (track.decisionMetrics || []).length >= 4)
     && Number(techMarket.summary?.trackedEntityUniverse || 0) >= 40
     && (techMarket.infrastructureLandscape?.entities || []).every(entity => (entity.summaryBullets || []).length === 3)
     && (techMarket.infrastructureLandscape?.verticalWorkloads || []).every(vertical => (vertical.summaryBullets || []).length === 3
       && (vertical.signals || []).every(signal => signal.bindingRule === "same-evidence-block"))
     && (techMarket.technologyTracks || []).flatMap(track => track.signals || []).every(signal => (signal.bullets || []).length === 3)
+    && (techMarket.technologyTracks || []).every(track => (track.summaryBullets || []).length === 3
+      && (track.trendDimensions || []).length >= 4
+      && (track.trendDimensions || []).some(dimension => Number(dimension.count || 0) > 0)
+      && (track.decisionMetrics || []).length >= 4
+      && Number(track.evidence?.sourceCount || 0) === Number(track.signalCount || 0))
+    && (techMarket.inferenceMarket?.partnerLevels || []).length === 5
+    && (techMarket.inferenceMarket?.summaryBullets || []).length === 3
+    && (techMarket.inferenceMarket?.partnerCandidates || []).every(candidate => candidate.partnerLevelId
+      && candidate.strategicInsight && candidate.decisionGate && candidate.nextAction
+      && !Array.isArray(candidate.actions))
     && crawler.includes("futureInfrastructureSegments")
     && crawler.includes("infrastructureCompanies")
     && (techMarket.technologyTracks || []).every(track => requiredTracks.delete(track.id))
@@ -1561,7 +1586,7 @@ try {
   if (!readableSignals) {
     throw new Error("technology signals need source-derived tracks, linked facts and non-inverting readable cards");
   }
-  console.log("  OK  technology signals include 8 source-derived tracks, linked facts and readable lazy styles");
+  console.log("  OK  technology signals include 8 source-derived decision briefs, 3 Korean insights and readable linked facts");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  technology signal readability: ${error.message}`);
@@ -2101,9 +2126,10 @@ try {
 }
 
 try {
-  const [appSource, boardsSource, news, infra, bizmodel] = await Promise.all([
+  const [appSource, boardsSource, signalStyles, news, infra, bizmodel] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("boards.jsx", "utf8"),
+    readFile("signal-cards.css", "utf8"),
     readFile("news.json", "utf8").then(JSON.parse),
     readFile("infra.json", "utf8").then(JSON.parse),
     readFile("bizmodel.json", "utf8").then(JSON.parse),
@@ -2133,11 +2159,18 @@ try {
   if (!/articles=\{articles\}/.test(appSource)
     || !/function SignalInfographic\(\{ file, delKey, title, sub, articles, dataVersion \}\)/.test(boardsSource)
     || !/className="isg-summary"/.test(boardsSource)
+    || !/className="isg-role"/.test(boardsSource)
+    || !/className="isg-fold"/.test(boardsSource)
+    || !/expandedCards/.test(boardsSource)
+    || !/summaryRoles: \(display\.roles \|\| \[\]\)/.test(boardsSource)
+    || !/signal-cards\.css\?v=/.test(boardsSource)
+    || !signalStyles.includes("Source signal compact reading contract")
+    || !signalStyles.includes(".isg-card:not(.expanded) .isg-summary li:not(:first-child) { display: none; }")
     || !/hlBrief\(it\.display\.title/.test(boardsSource)
     || !visibleBriefs.length || !visibleBriefs.every(canShowAsKoreanBrief)) {
     throw new Error("signal cards must use linked Korean titles and exactly three source-derived lines");
   }
-  console.log(`  OK  Korean signal-card briefs ${visibleBriefs.length}/${linked.length} source-linked rows`);
+  console.log(`  OK  Korean signal-card briefs ${visibleBriefs.length}/${linked.length} source-linked rows · one-line default · three-line disclosure`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  Korean signal cards: ${error.message}`);

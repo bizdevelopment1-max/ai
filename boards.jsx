@@ -1652,6 +1652,7 @@ function hlBrief(text, keyBase) {
 
 // Render a feed summary as up to 3 개조식 lines (제목 한글 + 3줄 요약 정책).
 const INSIGHT_ROLE_LABEL = { fact: "핵심 사실", change: "시장 변화", implication: "사업 의미", evidence: "추가 근거" };
+const SIGNAL_ROLE_LABEL = { fact: "핵심", change: "변화", implication: "시사점", evidence: "근거" };
 function BoldSummary({ text, roles = [] }) {
   if (!text) return null;
   const clean = bulletText(
@@ -4446,6 +4447,16 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   React.useEffect(() => {
+    if (!inView || !dataVersion) return;
+    const id = "signal-card-styles";
+    if (document.getElementById(id)) return;
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `signal-cards.css?v=${encodeURIComponent(dataVersion)}`;
+    document.head.appendChild(link);
+  }, [inView, dataVersion]);
+  React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
     loadJson(`${file}?v=${encodeURIComponent(dataVersion)}`)
@@ -4459,6 +4470,7 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   const [pend, setPend] = React.useState(null);
   const [pw, setPw] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
+  const [expandedCards, setExpandedCards] = React.useState({});
   const signalScope = delKey === "aiDashDeletedInfra" ? "infra-signal" : "bizmodel-signal";
   const confirmDel = (id) => { if (!canDelete(pw)) { setPwErr(true); return; } setDel(d => { const x = { ...d, [id]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); rememberSuppression({ scope: signalScope, key: id, id }); setPend(null); setPw(""); setPwErr(false); };
 
@@ -4487,7 +4499,9 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
       const display = displayFeedText(source);
       const summaryLines = String(display.summary || "").split(/\n+/)
         .map(line => bulletText(line)).filter(Boolean).slice(0, 3);
-      return display.translated && summaryLines.length === 3 ? { ...it, display, summaryLines } : null;
+      return display.translated && summaryLines.length === 3
+        ? { ...it, display, summaryLines, summaryRoles: (display.roles || []).slice(0, 3) }
+        : null;
     })
     .filter(Boolean)
     // 같은 기사가 URL 표기 차이(끝 슬래시·쿼리 등)로 중복 저장되어도 한 번만 노출 — 정규화 키로 MECE 보장
@@ -4543,16 +4557,24 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
                 </div>
                 <div className="isg-cards">
                   {rows.map(it => {
+                    const expanded = !!expandedCards[it.id];
                     return (
-                    <div className="isg-card" key={it.id} style={{ "--gc": g.accent }}>
+                    <div className={`isg-card${expanded ? " expanded" : ""}`} key={it.id} style={{ "--gc": g.accent }} aria-expanded={expanded}>
                       <div className="isg-card-top">
                         {it.quant && <span className="isg-quant" style={{ color: g.accent, borderColor: g.accent, background: "color-mix(in srgb, " + g.accent + " 9%, transparent)" }}>{it.quant}</span>}
                         <span className="isg-src"><a href={it.url} target="_blank" rel="noopener">{it.source || "출처"}</a> · {String(it.date || "").slice(5)}</span>
                       </div>
                       <a className="isg-lead" href={it.url} target="_blank" rel="noopener" title={it.display.title}>{hlBrief(it.display.title, "isg-title-" + it.id)}</a>
-                      <ul className="isg-summary">
-                        {it.summaryLines.map((line, index) => <li key={index} title={line}>{hlBrief(line, "isg-line-" + it.id + "-" + index)}</li>)}
+                      <ul className="isg-summary" id={`isg-summary-${it.id}`}>
+                        {it.summaryLines.map((line, index) => <li key={index} title={line}>
+                          <em className="isg-role">{SIGNAL_ROLE_LABEL[it.summaryRoles?.[index]] || (index === 0 ? "핵심" : "근거")}</em>
+                          <span className="isg-line">{hlBrief(line, "isg-line-" + it.id + "-" + index)}</span>
+                        </li>)}
                       </ul>
+                      <button className="isg-fold" type="button" aria-expanded={expanded} aria-controls={`isg-summary-${it.id}`}
+                        onClick={() => setExpandedCards(current => ({ ...current, [it.id]: !current[it.id] }))}>
+                        {expanded ? "접기" : "3줄 보기"}<Icon name="chevron" size={11} />
+                      </button>
                       {pend === it.id ? (
                         <div className="art-del-pw" onClick={e => e.stopPropagation()}>
                           <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
@@ -4789,9 +4811,15 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
   const infrastructureSegments = data.infrastructureLandscape?.segments || [];
   const verticals = data.infrastructureLandscape?.verticalWorkloads || [];
   const partners = data.inferenceMarket?.partnerCandidates || [];
+  const partnerLevels = data.inferenceMarket?.partnerLevels || [];
   const selectedTrack = tracks.find(track => track.id === activeTrack) || tracks[0] || {};
   const selectedEntity = entities.find(entity => entity.name === activeEntity) || entities[0] || {};
   const selectedVertical = verticals.find(vertical => vertical.id === activeVertical) || verticals[0] || {};
+  const selectedDimensions = selectedTrack.trendDimensions || [];
+  const maxDimensionCount = Math.max(1, ...selectedDimensions.map(dimension => Number(dimension.count || 0)));
+  const selectedObservers = (selectedTrack.primaryActors || []).length
+    ? selectedTrack.primaryActors
+    : (selectedTrack.primarySources || []);
   const openCompany = name => {
     const company = (companies || []).find(item => item.name === name);
     if (company && onSelect) onSelect(company);
@@ -4813,10 +4841,11 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
     <section className="tmi tmi-technology" ref={hostRef} data-nav-anchor="technology-shift">
       <header className="tmi-head">
         <div><span>TECH &amp; MARKET INSIGHTS</span><h3>AI Application &amp; HW/SW 기술 동향</h3><p>모델 구조에서 데이터센터까지 원문 신호를 자동 분류하고 최신순으로 누적</p></div>
-        <dl>
+        <dl className="tmi-tech-metrics">
           <div><dt>TRACKS</dt><dd>{data.summary?.technologyTracks || tracks.length}</dd></div>
           <div><dt>SIGNALS</dt><dd>{data.summary?.technologySignals || 0}</dd></div>
-          <div><dt>INFERENCE</dt><dd>{data.summary?.inferenceSignals || 0}</dd></div>
+          <div><dt>OFFICIAL</dt><dd>{data.summary?.technologyOfficialSignals || 0}</dd></div>
+          <div><dt>SOURCES</dt><dd>{data.summary?.technologyPublishers || 0}</dd></div>
         </dl>
       </header>
       <nav className="tmi-track-tabs" aria-label="기술 변화 트랙">
@@ -4828,6 +4857,41 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
       <div className="tmi-track-summary" style={{ "--track": selectedTrack.accent || "#3454A5" }}>
         <div><span>SELECTED TRACK</span><h4>{selectedTrack.label}</h4><p>{selectedTrack.description}</p></div>
         <b>{selectedTrack.latestDate ? `${fmtMonthDay(selectedTrack.latestDate)} 최신` : ""}</b>
+      </div>
+      <ul className="tmi-summary-bullets tmi-track-insights">
+        {(selectedTrack.summaryBullets || []).slice(0, 3).map((bullet, index) => <li key={`${bullet.label}-${index}`}>
+          <em>{bullet.label}</em><span>{bullet.text}</span>
+        </li>)}
+      </ul>
+      <div className="tmi-track-framework" style={{ "--track": selectedTrack.accent || "#3454A5" }}>
+        <article className="tmi-dimension-panel">
+          <span>01 · 변화 축</span><h5>기술 신호 분포</h5>
+          <div className="tmi-dimension-list">
+            {selectedDimensions.map(dimension => <div className="tmi-dimension-row" key={dimension.id}>
+              <b>{dimension.label}</b><i><em style={{ width: `${Math.max(4, (Number(dimension.count || 0) / maxDimensionCount) * 100)}%` }} /></i><strong>{dimension.count || 0}</strong>
+            </div>)}
+          </div>
+        </article>
+        <article>
+          <span>02 · 관측 주체</span><h5>주요 업체·발행처</h5>
+          <div className="tmi-observer-list">
+            {selectedObservers.slice(0, 5).map(observer => <div key={observer.name}><b>{observer.name}</b><span>{observer.count}건</span></div>)}
+          </div>
+        </article>
+        <article>
+          <span>03 · 근거 품질</span><h5>출처 구성</h5>
+          <dl className="tmi-evidence-metrics">
+            <div><dt>공식 원문</dt><dd>{selectedTrack.evidence?.officialCount || 0}/{selectedTrack.evidence?.sourceCount || 0}</dd></div>
+            <div><dt>독립 발행처</dt><dd>{selectedTrack.evidence?.publisherCount || 0}개</dd></div>
+            <div><dt>최근 30일</dt><dd>{selectedTrack.evidence?.recentCount || 0}건</dd></div>
+          </dl>
+        </article>
+        <article>
+          <span>04 · 판단 지표</span><h5>동일 기준 비교</h5>
+          <ul className="tmi-decision-metrics">
+            {(selectedTrack.decisionMetrics || []).map(metric => <li key={metric}>{metric}</li>)}
+          </ul>
+        </article>
       </div>
       <div className="tmi-signal-grid">
         {(selectedTrack.signals || []).slice(0, 12).map(signal => <SignalLink key={signal.id || signal.url} signal={signal} />)}
@@ -4897,16 +4961,29 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
         </div>
       </div>
 
-      <div className="tmi-subhead"><span>INFERENCE ECOSYSTEM</span><h4>추론 시장·잠재 파트너</h4><p>추론·RAG·Vector DB·데이터센터 원문 신호의 범위와 최신성을 기준으로 후보 자동 정렬</p></div>
-      <div className="tmi-partner-table">
-        <div className="tmi-partner-row head"><span>기업</span><span>관련 트랙</span><span>근거</span><span>검토 옵션</span><span>최근</span></div>
-        {partners.slice(0, 16).map(candidate => <button className="tmi-partner-row" key={candidate.name} onClick={() => openCompany(candidate.name)}>
-          <span><b>{candidate.name}</b><em>{candidate.category || candidate.valueChainLayer}</em></span>
-          <span>{(candidate.technologyTracks || []).map(id => tracks.find(track => track.id === id)?.label || id).join(" · ")}</span>
-          <span><b>{candidate.sourceCount}</b>개 원문</span>
-          <span>{(candidate.actions || []).join(" · ")}</span>
-          <span>{fmtMonthDay(candidate.latestDate)}</span>
-        </button>)}
+      <div className="tmi-subhead"><span>AI EXECUTION ECOSYSTEM</span><h4>실행 계층별 잠재 파트너</h4><p>서로 다른 공급 계층을 분리하고 역할·근거 집중도·검증 게이트로 후보를 판단</p></div>
+      <ul className="tmi-summary-bullets tmi-partner-insights">
+        {(data.inferenceMarket?.summaryBullets || []).map((bullet, index) => <li key={`${bullet.label}-${index}`}><em>{bullet.label}</em><span>{bullet.text}</span></li>)}
+      </ul>
+      <div className="tmi-partner-levels">
+        {partnerLevels.filter(level => level.candidateCount > 0).map(level => {
+          const levelCandidates = partners.filter(candidate => candidate.partnerLevelId === level.id);
+          return <section className="tmi-partner-level" key={level.id}>
+            <header>
+              <div><span>{level.label}</span><p>{level.description}</p></div>
+              <aside><b>{level.candidateCount}</b><small>근거 보유 후보</small></aside>
+            </header>
+            <div className="tmi-partner-grid">
+              {levelCandidates.map(candidate => <button className="tmi-partner-card" key={candidate.name} onClick={() => openCompany(candidate.name)}>
+                <span className="tmi-partner-identity"><b>{candidate.name}</b><em>{candidate.category || candidate.valueChainLayer}</em></span>
+                <span className="tmi-partner-role"><em>현재 역할</em><b>{candidate.role}</b><small>{candidate.focus}</small></span>
+                <span className="tmi-partner-meaning"><em>전략 의미</em><b>{candidate.strategicInsight}</b></span>
+                <span className="tmi-partner-decision"><em className={`evidence-${candidate.evidenceCode}`}>{candidate.evidenceLabel}</em><b>{candidate.nextAction}</b><small>{candidate.decisionGate}</small></span>
+                <span className="tmi-partner-evidence"><b>공식 {candidate.officialSourceCount}/{candidate.sourceCount}</b><small>발행처 {candidate.publisherCount}개 · {fmtMonthDay(candidate.latestDate)}</small></span>
+              </button>)}
+            </div>
+          </section>;
+        })}
       </div>
     </section>
   );
