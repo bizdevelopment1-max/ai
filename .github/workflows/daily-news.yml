@@ -37,6 +37,11 @@ jobs:
     env:
       RETRY_ATTEMPTS: 3
       PIPELINE_TIMEOUT_MS: 300000
+      TRANSLATE_MAX: 500
+      TRANSLATE_PACE_S: 0.4
+      TRANSLATE_RETRIES: 4
+      TRANSLATE_BACKOFF_BASE_S: 0.8
+      TRANSLATE_CHUNK_CHARS: 3600
       GITHUB_MODELS_TOKEN: ${{ github.token }}
       GITHUB_MODELS_MODEL: openai/gpt-4.1
       GITHUB_TOKEN: ${{ github.token }}

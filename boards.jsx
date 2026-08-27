@@ -1732,7 +1732,8 @@ function displayFeedText(item, language = "localized") {
 function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
   const [co, setCo] = React.useState("all");          // company filter within category
-  const [displayLanguage, setDisplayLanguage] = React.useState("original");
+  // 한국어를 기본 표시로 사용한다. 원문은 사용자가 ORIGINAL을 선택할 때만 노출한다.
+  const [displayLanguage, setDisplayLanguage] = React.useState("ko");
   const keyOf = a => a.url || ((a.co || "") + "|" + a.date + "|" + a.title);
   // deleted articles persist in localStorage so ✕'d items never come back (across reloads/crawls)
   const LS_KEY = "aiDashDeletedArticles";
@@ -1790,6 +1791,9 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
     .filter(a => filter === "all" || a.cat === filter)
     .filter(a => co === "all" || a.co === co)
     .filter(a => !deleted[keyOf(a)])
+    // 한국어 모드에서 영문 폴백 카드를 섞으면 버튼이 고장난 것처럼 보인다.
+    // 품질 게이트를 통과한 한글만 표시하고, 전체 원문은 ORIGINAL에서 유지한다.
+    .filter(a => displayLanguage !== "ko" || displayFeedText(a, "ko").translated)
     .filter(a => {
       const display = displayFeedText(a, displayLanguage);
       const haystack = `${a.title || ""} ${display.title || ""} ${a.source || ""} ${a.co || ""}`.toLowerCase();
@@ -1800,7 +1804,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const activeCat = filter !== "all" ? catMap[filter] : null;
   // 누적 기사가 늘어도 초기 렌더를 가볍게 — 30개씩 페이지네이션(필터 변경 시 리셋)
   const [visN, setVisN] = React.useState(30);
-  React.useEffect(() => { setVisN(30); }, [filter, co, query]);
+  React.useEffect(() => { setVisN(30); }, [filter, co, query, displayLanguage]);
   const shown = sorted.slice(0, visN);
 
   return (
@@ -1811,7 +1815,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
           <h2>데일리 기사 피드 <span className="board-en">Daily Articles · 업체별 외신 큐레이션</span></h2>
         </div>
         <div className="feed-filters">
-          <span className="feed-total" aria-live="polite">누적 {sorted.length}건</span>
+          <span className="feed-total" aria-live="polite">{displayLanguage === "ko" ? `한국어 ${sorted.length}건` : `누적 ${sorted.length}건`}</span>
           <span className="feed-language" role="group" aria-label="기사 표시 언어"><button className={displayLanguage === "original" ? "on" : ""} onClick={() => setDisplayLanguage("original")}>ORIGINAL</button><button className={displayLanguage === "ko" ? "on" : ""} onClick={() => setDisplayLanguage("ko")}>한국어</button></span>
           <button className={filter === "all" ? "on" : ""} onClick={() => onFilter("all")}>전체</button>
           {cats.map(c => (
@@ -1835,7 +1839,9 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
       )}
 
       <div className="feed-body">
-        {sorted.length === 0 && <SourcePipeline kind="signal" />}
+        {sorted.length === 0 && (displayLanguage === "ko"
+          ? <p className="feed-empty">선택한 조건의 한국어 요약을 준비 중입니다. 원문은 ORIGINAL에서 확인할 수 있습니다.</p>
+          : <SourcePipeline kind="signal" />)}
         <div className="feed-list">
           {shown.map((a, i) => {
             const c = catMap[a.cat] || {};
@@ -1855,7 +1861,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     {a.co && <span className="art-co" style={{ color: c.accent, borderColor: c.accent }}>{a.co}</span>}
                     <span className="art-tag" style={{ color: c.accent, background: c.accentSoft }}>{a.tag}</span>
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
-                    <span className="art-verify">{display.original ? "ORIGINAL" : display.translated ? "원문 번역" : display.fallback ? "원문 영어" : "원문 발췌"}</span>
+                    <span className="art-verify">{display.original ? "ORIGINAL" : display.translated ? "한국어 요약" : display.fallback ? "원문" : "원문 발췌"}</span>
                   </span>
                   <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{hlBrief(display.title, "art-title")}</a>
                   {display.summary && <div className={"art-summary-wrap" + (summaryExpanded ? " is-open" : " is-collapsed")}>

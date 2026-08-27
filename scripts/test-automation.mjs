@@ -2625,10 +2625,22 @@ try {
     && startupCrawler.includes("bulletizeKorean")
     && translator.includes('previous.get("version") == 14')
     && translator.includes("bullet_style_valid");
-  if (!runtimeGate || !generationGate) {
+  const freeTranslationGate = translator.includes('TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"')
+    && translator.includes('TRANSLATE_PACE_S = float(os.environ.get("TRANSLATE_PACE_S", "0.4"))')
+    && translator.includes('TRANSLATE_RETRIES = max(0, int(os.environ.get("TRANSLATE_RETRIES", "4")))')
+    && translator.includes('TRANSLATE_CHUNK_CHARS = max(800, int(os.environ.get("TRANSLATE_CHUNK_CHARS", "3600")))')
+    && translator.includes("TRANSLATE_MARKER_OVERHEAD * len(chunk)")
+    && translator.includes("range(TRANSLATE_RETRIES + 1)")
+    && translator.includes("if attempt < TRANSLATE_RETRIES")
+    && translator.includes("TRANSLATE_BACKOFF_BASE_S * (2 ** attempt)")
+    && translator.includes('previous.get("status") == "accepted"')
+    && boards.includes('React.useState("ko")')
+    && boards.includes('displayLanguage !== "ko" || displayFeedText(a, "ko").translated')
+    && boards.includes("한국어 요약");
+  if (!runtimeGate || !generationGate || !freeTranslationGate) {
     throw new Error("browser or crawler copy-style gate is incomplete");
   }
-  console.log(`  OK  한국어 표시 문구 ${publicCopy.length}개 · 마침표와 문장형 종결 없음 · 생성 단계 개조식 고정`);
+  console.log(`  OK  한국어 표시 문구 ${publicCopy.length}개 · 무료 번역 배치·캐시·품질 게이트·자가치유 재시도 · 한국어 우선 표시`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  Korean consulting-copy style: ${error.message}`);
