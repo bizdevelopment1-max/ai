@@ -2,11 +2,12 @@
 import { access, readFile } from "node:fs/promises";
 import { minifyCss } from "./build-browser-bundle.mjs";
 
-const [styles, styleBundle, app, boards, taxonomy, strategy, overview] = await Promise.all([
+const [styles, styleBundle, app, boards, components, taxonomy, strategy, overview] = await Promise.all([
   readFile("styles.css", "utf8"),
   readFile("styles.bundle.css", "utf8"),
   readFile("app.jsx", "utf8"),
   readFile("boards.jsx", "utf8"),
+  readFile("components.jsx", "utf8"),
   readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
   readFile("strategy-view.json", "utf8").then(JSON.parse),
   readFile("overview-view.json", "utf8").then(JSON.parse),
@@ -36,7 +37,12 @@ assert(styles.includes(".sp-card-foot { grid-template-columns: repeat(auto-fit, 
 assert(styles.includes('[data-theme="dark"] .msf-layer { color: var(--ink); }'), "dark strategy layers can inherit the browser button foreground");
 assert(!styles.includes(".msf-opportunity-metrics")
   && styles.includes(".msf-opportunity dt em")
-  && boards.includes("<em>01</em>시점"), "opportunity cards must use concise indexed labels without the retired KPI footer");
+  && styles.includes(".msf-opportunity .is-timing dt")
+  && styles.includes(".msf-opportunity .is-business dt")
+  && boards.includes('className="is-timing"')
+  && boards.includes('className="is-business"')
+  && !boards.includes("msf-opportunity-customer"), "opportunity cards must use two distinct rounded indices without retired copy or KPI footers");
+assert(components.includes("hasDisplayDate") && components.includes('padStart(2, "0")'), "rendered dates must use the M/DD display contract while ledgers retain ISO dates");
 assert(styles.lastIndexOf("Final interaction contract: never invert an information card") > styles.lastIndexOf("color: #FFFFFF;\n    background:"), "non-inverting hover contract is not the final cascade policy");
 assert(!/\.art:hover[\s\S]{0,500}-webkit-text-fill-color:\s*transparent/.test(styles), "article hover can make text transparent");
 assert(!/\.rainbow-link:hover[\s\S]{0,400}color:\s*transparent/.test(styles), "link hover can make text transparent");

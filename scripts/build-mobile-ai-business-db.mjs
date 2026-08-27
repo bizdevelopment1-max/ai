@@ -404,7 +404,6 @@ const generateOpportunities = ({ policy, governance, publication, signals, marke
       experimentPlan: {
         durationDays: policy.experimentTemplate?.durationDays || 90,
         hypothesis: `${archetype.title}이 핵심 과업의 완료율과 반복 사용을 동시에 높일 수 있는지 검증`,
-        targetUsers: "핵심 사용 시나리오별 초기 사용자군",
         prototype: "핵심 과업 1개를 완결하는 제한형 프로토타입",
         abVariations: policy.experimentTemplate?.abVariations || [],
         priceOptions: policy.experimentTemplate?.priceOptions || [],

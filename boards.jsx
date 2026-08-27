@@ -505,10 +505,9 @@ function MobileStrategyBoard({ companies, articles, strategyData, generatedAt, o
             <article className="msf-opportunity" key={item.title} tabIndex="0" style={{ "--opportunity-order": index }}>
               <div><em>{String(index + 1).padStart(2, "0")}</em><span>{item.score}</span></div>
               <h4>{item.title}</h4>
-              <p className="msf-opportunity-customer">{item.customer}</p>
               <dl>
-                <div><dt><em>01</em>시점</dt><dd>{item.thesis}</dd></div>
-                <div><dt><em>02</em>사업모델</dt><dd>{item.offer}</dd></div>
+                <div className="is-timing"><dt><em>01</em>시점</dt><dd>{item.thesis}</dd></div>
+                <div className="is-business"><dt><em>02</em>사업모델</dt><dd>{item.offer}</dd></div>
                 <div><dt><em>03</em>판단</dt><dd>{item.decision}</dd></div>
                 <div><dt><em>04</em>자산</dt><dd>{(item.ownAssets || []).join(" · ") || "연계 자산 검토"}</dd></div>
               </dl>

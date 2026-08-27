@@ -634,12 +634,15 @@ a[href]:hover .rainbow-on-hover,
 .msf-opportunity > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .msf-opportunity > div:first-child em { color: var(--consult-blue); font: 900 7.5px/1 var(--mono); font-style: normal; letter-spacing: .04em; }
 .msf-opportunity > div:first-child span { padding: 5px 7px; border-radius: 999px; color: var(--consult-navy); background: color-mix(in srgb, var(--consult-gold) 14%, var(--panel)); font: 850 7px/1 var(--mono); }
-.msf-opportunity h4 { margin: 11px 0 3px; color: var(--ink); font-size: 13px; letter-spacing: -.02em; }
-.msf-opportunity-customer { margin: 0 0 10px; color: var(--consult-blue); font-size: 8px; font-weight: 850; }
-.msf-opportunity dl { display: grid; gap: 7px; margin: 0; }
+.msf-opportunity h4 { margin: 11px 0 10px; color: var(--ink); font-size: 13px; letter-spacing: -.02em; }
+.msf-opportunity dl { display: grid; gap: 8px; margin: 0; }
 .msf-opportunity dl div { display: grid; grid-template-columns: 68px minmax(0, 1fr); gap: 8px; align-items: start; }
 .msf-opportunity dt { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-2); font: 850 7px/1.35 var(--mono); }
 .msf-opportunity dt em { display: inline-grid; width: 18px; height: 18px; flex: none; place-items: center; border: 1px solid color-mix(in srgb, var(--consult-blue) 35%, var(--line)); border-radius: 50%; color: var(--consult-blue); background: var(--panel); font: 900 6.5px/1 var(--mono); font-style: normal; }
+.msf-opportunity :is(.is-timing, .is-business) dt { width: max-content; padding: 3px 8px 3px 3px; border-radius: 999px; color: #FFFFFF; }
+.msf-opportunity .is-timing dt { background: var(--consult-blue); }
+.msf-opportunity .is-business dt { background: var(--consult-teal); }
+.msf-opportunity :is(.is-timing, .is-business) dt em { border: 0; color: #FFFFFF; background: rgba(255,255,255,.18); }
 .msf-opportunity dd { margin: 0; color: var(--ink-2); font-size: 8px; font-weight: 680; line-height: 1.4; }
 
 .msf-value-chain-head { margin-top: 18px; }
@@ -6181,57 +6184,6 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 @media (hover: hover) and (pointer: fine) {
   /* Consulting cards use a subtle surface tint instead of full-card colour
      reversal. This removes white-on-white nested pills in both themes. */
-  :is(
-    .sp-card,
-    .msf-layer,
-    .msf-mrow:not(.msf-mhead),
-    .msf-synthesis-flow > div,
-    .vc-logic-map > div,
-    .consult-decision-rail > div,
-    .source-pipeline > div,
-    .cd-mece-route > span,
-    .cd-sf-card,
-    .cd-org-node,
-    .cd-org-tier,
-    .mkt-card,
-    .mkt-record,
-    .btf-card,
-    .fda-step,
-    .isg-card,
-    .mplay-card,
-    .mplay-framework-flow > div
-  ):is(:hover, :focus-visible, :focus-within) {
-    color: var(--ink) !important;
-    background: color-mix(in srgb, var(--hover-tone, var(--accent, #2E6BFF)) 6%, var(--panel)) !important;
-    border-color: color-mix(in srgb, var(--hover-tone, var(--accent, #2E6BFF)) 58%, var(--line)) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 10px 24px color-mix(in srgb, var(--hover-tone, var(--accent, #2E6BFF)) 14%, transparent) !important;
-  }
-  :is(
-    .sp-card, .msf-layer, .msf-mrow:not(.msf-mhead),
-    .msf-synthesis-flow > div,
-    .vc-logic-map > div, .consult-decision-rail > div, .source-pipeline > div,
-    .cd-mece-route > span, .cd-sf-card, .cd-org-node, .cd-org-tier,
-    .mkt-card, .mkt-record, .btf-card, .fda-step, .isg-card,
-    .mplay-card, .mplay-framework-flow > div
-  ):is(:hover, :focus-visible, :focus-within) :is(h2, h3, h4, b, strong, a) {
-    color: var(--ink) !important;
-    -webkit-text-fill-color: currentColor !important;
-    text-shadow: none !important;
-  }
-  :is(
-    .sp-card, .msf-layer, .msf-mrow:not(.msf-mhead),
-    .msf-synthesis-flow > div,
-    .vc-logic-map > div, .consult-decision-rail > div, .source-pipeline > div,
-    .cd-mece-route > span, .cd-sf-card, .cd-org-node, .cd-org-tier,
-    .mkt-card, .mkt-record, .btf-card, .fda-step, .isg-card,
-    .mplay-card, .mplay-framework-flow > div
-  ):is(:hover, :focus-visible, :focus-within) :is(p, span, em, small, dt, dd, li, time) {
-    color: var(--ink-2) !important;
-    -webkit-text-fill-color: currentColor !important;
-    text-shadow: none !important;
-  }
-
   :is(.sp-card, .mkt-card, .mkt-record, .isg-card, .msf-layer, .mplay-card):is(:hover, :focus-visible, :focus-within)
   :is(.sp-card-badge, .sp-card-institution, .ct-rel, .mkt-record-type, .mkt-record-locale, .mkt-record-merged, .msf-layer-role, .mplay-model, .mplay-tag) {
     color: var(--hover-tone, var(--accent, #173F5F)) !important;
@@ -6342,7 +6294,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .msf-layer-lead em, .msf-layer-lead b,
   .msf-capability > span, .msf-capability > em,
   .msf-mrow > span, .msf-mhead > span, .msf-mname em,
-  .msf-opportunity-customer, .msf-opportunity dt,
+  .msf-opportunity dt,
   .msf-opportunity dd, .msf-opportunity em, .msf-opportunity span,
   .msf-synthesis-head span, .msf-synthesis-flow em, .msf-synthesis-flow span,
   .mplay-framework-flow span, .mplay-framework-flow small,
@@ -6538,9 +6490,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 ) { color: color-mix(in srgb, var(--lc) 58%, #FFFFFF) !important; }
 [data-theme="dark"] :is(
   .msf-opportunity > div:first-child em,
-  .msf-opportunity-customer,
   .msf-section-head em
 ) { color: #9FC4FF; }
+[data-theme="dark"] .msf-opportunity :is(.is-timing, .is-business) dt,
+[data-theme="dark"] .msf-opportunity :is(.is-timing, .is-business) dt em { color: #FFFFFF !important; }
 [data-theme="dark"] .msf-opportunity > div:first-child span {
   color: #F0D18B;
   background: color-mix(in srgb, var(--consult-gold) 15%, var(--panel));
@@ -6623,6 +6576,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .msf-chain .msf-layer:is(:hover, :focus-visible, :focus-within) .msf-layer-evidence b,
   .msf-chain .msf-layer:is(:hover, :focus-visible, :focus-within) .msf-layer-lead b {
     color: var(--ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+  .msf-opportunity:is(:hover, :focus-visible, :focus-within) :is(.is-timing, .is-business) :is(dt, em) {
+    color: #FFFFFF !important;
     -webkit-text-fill-color: currentColor !important;
   }
 }
