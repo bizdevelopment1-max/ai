@@ -4786,6 +4786,7 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
   if (!data) return <div ref={hostRef}><SourcePipeline kind="signal" /></div>;
   const tracks = data.technologyTracks || [];
   const entities = data.infrastructureLandscape?.entities || [];
+  const infrastructureSegments = data.infrastructureLandscape?.segments || [];
   const verticals = data.infrastructureLandscape?.verticalWorkloads || [];
   const partners = data.inferenceMarket?.partnerCandidates || [];
   const selectedTrack = tracks.find(track => track.id === activeTrack) || tracks[0] || {};
@@ -4799,7 +4800,11 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
     <a className={`tmi-signal ${className}`} href={signal.url} target="_blank" rel="noopener">
       <span className="tmi-signal-top"><em>{signal.sourceTier || "reported"}</em><time>{fmtMonthDay(signal.date)}</time></span>
       <b>{signal.title}</b>
-      {signal.excerpt && <p>{signal.excerpt}</p>}
+      <ul className="tmi-signal-bullets">
+        {(signal.bullets || []).slice(0, 3).map((bullet, index) => <li key={`${bullet.role || bullet.label}-${index}`}>
+          <em>{bullet.label}</em><span>{bullet.text}</span>
+        </li>)}
+      </ul>
       <small>{signal.source || "원문"} <i aria-hidden="true">↗</i></small>
     </a>
   );
@@ -4836,20 +4841,29 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
         <div><span>AI WORKLOAD &amp; INFRASTRUCTURE</span><h3>데이터센터 워크로드·투자·추론 생태계</h3><p>인프라 사업자 전략, 원문 투자 수치, 버티컬 워크로드와 잠재 파트너를 한 구조로 연결</p></div>
         <dl>
           <div><dt>ENTITIES</dt><dd>{entities.length}</dd></div>
-          <div><dt>VERTICALS</dt><dd>{verticals.length}</dd></div>
-          <div><dt>PARTNERS</dt><dd>{partners.length}</dd></div>
+          <div><dt>TRACKED</dt><dd>{data.summary?.trackedEntityUniverse || entities.length}</dd></div>
+          <div><dt>SEGMENTS</dt><dd>{infrastructureSegments.length}</dd></div>
         </dl>
       </header>
 
       <div className="tmi-entity-frame">
         <nav className="tmi-entity-tabs" aria-label="인프라 사업자">
-          {entities.map(entity => <button key={entity.name} className={selectedEntity.name === entity.name ? "on" : ""} onClick={() => setActiveEntity(entity.name)}>
-            <span>{entity.type}</span><b>{entity.name}</b><small>{entity.investmentMetrics?.length || 0}개 투자·설비 수치</small>
-          </button>)}
+          {infrastructureSegments.map(segment => {
+            const members = entities.filter(entity => entity.segmentId === segment.id);
+            return <div className="tmi-entity-group" key={segment.id}>
+              <h5><span>{segment.label}</span><b>{members.length}/{segment.trackedCount}</b></h5>
+              {members.map(entity => <button key={entity.name} className={selectedEntity.name === entity.name ? "on" : ""} onClick={() => setActiveEntity(entity.name)}>
+                <span>{entity.type}</span><b>{entity.name}</b><small>원문 {entity.sourceCount || 0}건 · 수치 {entity.investmentMetrics?.length || 0}건</small>
+              </button>)}
+            </div>;
+          })}
         </nav>
         <div className="tmi-entity-detail">
           <div className="tmi-entity-title"><span>{selectedEntity.type}</span><h4>{selectedEntity.name}</h4>{selectedEntity.latestDate && <time>{fmtMonthDay(selectedEntity.latestDate)} 최신</time>}</div>
-          {selectedEntity.currentBusiness && <p className="tmi-business">{selectedEntity.currentBusiness}{selectedEntity.businessSource?.url && <a href={selectedEntity.businessSource.url} target="_blank" rel="noopener">기업 원문 ↗</a>}</p>}
+          <ul className="tmi-summary-bullets">
+            {(selectedEntity.summaryBullets || []).map((bullet, index) => <li key={`${bullet.label}-${index}`}><em>{bullet.label}</em><span>{bullet.text}</span></li>)}
+          </ul>
+          {selectedEntity.businessSource?.url && <p className="tmi-business"><a href={selectedEntity.businessSource.url} target="_blank" rel="noopener">기업 원문 ↗</a></p>}
           <div className="tmi-workload-mix">
             <h5>워크로드 구성 신호</h5>
             {(selectedEntity.workloadMix || []).map(workload => <div key={workload.id}><span>{workload.label}</span><i style={{ width: `${Math.min(100, 20 + workload.count * 9)}%` }} /><b>{workload.count}</b></div>)}
@@ -4874,6 +4888,9 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
           </button>)}
         </nav>
         <div className="tmi-vertical-detail">
+          <ul className="tmi-summary-bullets compact-summary">
+            {(selectedVertical.summaryBullets || []).map((bullet, index) => <li key={`${bullet.label}-${index}`}><em>{bullet.label}</em><span>{bullet.text}</span></li>)}
+          </ul>
           <div className="tmi-chip-row">{(selectedVertical.workloadMix || []).map(item => <span key={item.id}><b>{item.label}</b><em>{item.count}</em></span>)}</div>
           <div className="tmi-company-row">{(selectedVertical.companies || []).map(name => <button key={name} onClick={() => openCompany(name)}>{name}</button>)}</div>
           <div className="tmi-signal-grid compact-grid">{(selectedVertical.signals || []).slice(0, 6).map(signal => <SignalLink key={signal.id || signal.url} signal={signal} className="compact" />)}</div>

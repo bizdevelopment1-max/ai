@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "updatedAt": "2026-08-26",
+  "version": 2,
+  "updatedAt": "2026-08-27",
   "purpose": "Stable classification rules for source-driven technology, workload, infrastructure and inference-market views. Facts and metrics must come from linked source ledgers.",
   "technologyTracks": [
     {
@@ -78,16 +78,41 @@
     { "id": "industry-science", "label": "제조·과학", "terms": ["manufacturing", "industrial", "science", "research", "materials", "energy"] },
     { "id": "mobility-robotics", "label": "모빌리티·로보틱스", "terms": ["automotive", "vehicle", "mobility", "robot", "robotics", "autonomous"] }
   ],
-  "infrastructureEntities": [
-    { "name": "Microsoft", "type": "Hyperscaler", "aliases": ["Microsoft", "Azure"] },
-    { "name": "Amazon", "type": "Hyperscaler", "aliases": ["Amazon", "AWS", "Amazon Web Services"] },
-    { "name": "Google DeepMind", "type": "Hyperscaler", "aliases": ["Google", "Alphabet", "Google Cloud", "DeepMind"] },
-    { "name": "Meta AI", "type": "Hyperscaler", "aliases": ["Meta", "Meta AI", "Meta Platforms"] },
-    { "name": "Oracle", "type": "Cloud", "aliases": ["Oracle", "OCI", "Oracle Cloud"] },
-    { "name": "Alibaba", "type": "Cloud", "aliases": ["Alibaba", "Alibaba Cloud", "AliCloud"] },
-    { "name": "Tencent", "type": "Cloud", "aliases": ["Tencent", "Tencent Cloud"] },
-    { "name": "NVIDIA", "type": "Compute platform", "aliases": ["NVIDIA", "Nvidia"] }
+  "futureInfrastructureSegments": [
+    { "id": "hyperscale-demand", "label": "하이퍼스케일·AI 수요", "groups": ["hyperscaler"], "futureRole": "대규모 학습·추론 수요, 자체 가속기와 데이터센터 투자를 동시에 결정하는 수요 계층" },
+    { "id": "accelerator-silicon", "label": "가속기·커스텀 실리콘", "groups": ["chip"], "futureRole": "GPU·NPU·XPU·ASIC과 메모리·인터커넥트 IP로 연산 성능과 추론 원가를 결정하는 계층" },
+    { "id": "foundry-manufacturing", "label": "파운드리·반도체 제조", "groups": ["foundry", "china-foundry"], "futureRole": "선단 공정·생산 용량·수율로 AI 칩 공급량과 출시 시점을 제약하는 제조 계층" },
+    { "id": "equipment-packaging", "label": "장비·패키징·소재", "groups": ["equipment", "packaging", "china-equipment", "china-packaging", "china-materials"], "futureRole": "노광·식각·검사·첨단 패키징·기판·소재로 HBM 결합과 칩렛 확장을 가능하게 하는 공급 계층" },
+    { "id": "cloud-neocloud", "label": "클라우드·네오클라우드", "groups": ["datacenter"], "futureRole": "GPU 용량·전력·냉각·금융조달을 묶어 학습과 추론을 서비스로 공급하는 운영 계층" },
+    { "id": "strategic-oem", "label": "Tier 1 · 전략 OEM", "groups": ["strategic-oem"], "futureRole": "기업 고객의 랙·스토리지·네트워크·지원 서비스를 통합해 AI 팩토리를 납품하는 계층" },
+    { "id": "ai-server-odm", "label": "Tier 2 · AI 서버 ODM", "groups": ["ai-server-odm"], "futureRole": "하이퍼스케일러와 칩 플랫폼의 설계를 대량 생산 가능한 서버·랙 시스템으로 전환하는 계층" },
+    { "id": "system-network", "label": "Tier 3 · 시스템·네트워크", "groups": ["system-infrastructure", "network"], "futureRole": "스위치·광통신·서버 플랫폼과 엣지 시스템으로 scale-up·scale-out 병목을 해소하는 계층" }
   ],
+  "companyAliasOverrides": {
+    "Alphabet (Google)": ["Google", "Alphabet", "Google Cloud", "DeepMind", "Google DeepMind"],
+    "Dell Technologies": ["Dell", "Dell Technologies"],
+    "Quanta Computer (QCT)": ["Quanta", "QCT", "Quanta Cloud Technology"],
+    "Foxconn (Hon Hai)": ["Foxconn", "Hon Hai"],
+    "HPE": ["HPE", "Hewlett Packard Enterprise"],
+    "Supermicro": ["Supermicro", "Super Micro Computer"],
+    "GIGABYTE": ["GIGABYTE", "Gigabyte Technology"],
+    "Arm Holdings": ["Arm", "Arm Holdings"]
+  },
+  "infrastructureEntities": [
+    { "name": "Microsoft", "registryName": "Microsoft", "segmentId": "hyperscale-demand", "type": "하이퍼스케일러", "aliases": ["Microsoft", "Azure"] },
+    { "name": "Amazon", "registryName": "Amazon", "segmentId": "hyperscale-demand", "type": "하이퍼스케일러", "aliases": ["Amazon", "AWS", "Amazon Web Services"] },
+    { "name": "Google DeepMind", "registryName": "Alphabet (Google)", "segmentId": "hyperscale-demand", "type": "하이퍼스케일러", "aliases": ["Google", "Alphabet", "Google Cloud", "DeepMind"] },
+    { "name": "Meta AI", "registryName": "Meta", "segmentId": "hyperscale-demand", "type": "하이퍼스케일러", "aliases": ["Meta", "Meta AI", "Meta Platforms"] },
+    { "name": "Oracle", "registryName": "Oracle", "segmentId": "hyperscale-demand", "type": "하이퍼스케일러", "aliases": ["Oracle", "OCI", "Oracle Cloud"] },
+    { "name": "Alibaba", "segmentId": "hyperscale-demand", "type": "하이퍼스케일러", "aliases": ["Alibaba", "Alibaba Cloud", "AliCloud"] },
+    { "name": "Tencent", "segmentId": "hyperscale-demand", "type": "하이퍼스케일러", "aliases": ["Tencent", "Tencent Cloud"] },
+    { "name": "NVIDIA", "registryName": "NVIDIA", "segmentId": "accelerator-silicon", "type": "가속 컴퓨팅", "aliases": ["NVIDIA", "Nvidia"] }
+  ],
+  "classificationBinding": {
+    "vertical": "산업 용어와 기술·워크로드 용어가 동일한 제목 또는 근거 문장에 함께 존재해야 함",
+    "entity": "업체명과 인프라·투자 용어가 동일 근거 문장에 존재하거나 제목·회사 필드에 업체가 직접 귀속되어야 함",
+    "publicSummary": "원문 번역 3줄을 우선 사용하고 번역 실패 시 분류 근거·출처·사업 시사점으로 구성한 한글 3불릿 사용"
+  },
   "metricRules": {
     "investmentTerms": ["capex", "capital expenditure", "capital spending", "invest", "investment", "commit", "committed", "buildout", "data center", "datacenter", "compute capacity", "infrastructure"],
     "moneyPattern": "(?:US\\$|\\$|€|£)\\s?\\d[\\d,.]*(?:\\s?(?:trillion|billion|million|T|B|M))?"

@@ -23,6 +23,7 @@ import { sanitizePublicCopy } from "./public-copy.mjs";
 const companySourcePolicy = JSON.parse(await readFile("config/company-source-policy.json", "utf8"));
 const mxSourcePolicy = JSON.parse(await readFile("config/mx-source-policy.json", "utf8"));
 const officialSourceRegistry = JSON.parse(await readFile("config/official-source-registry.json", "utf8"));
+const techMarketTaxonomy = JSON.parse(await readFile("config/tech-market-taxonomy.json", "utf8"));
 const sourceRegistrySnapshot = await readFile("source-snapshot.json", "utf8").then(JSON.parse).catch(() => ({ items: [] }));
 const sourceRegistryReport = await readFile("source-collection-report.json", "utf8").then(JSON.parse).catch(() => ({ streamHealth: [], connectorStatus: [] }));
 const registryReportAgeMs = Date.now() - Date.parse(sourceRegistryReport.generatedAt || 0);
@@ -134,7 +135,13 @@ const ALLOW = [...new Set([...BASE_ALLOW, ...(companySourcePolicy.publisherDomai
 // The site registry is the single source of truth.  Adding a company to the
 // dashboard automatically adds a bounded discovery stream on the next run.
 // The query may be broad; the direct-company gate below decides attribution.
-const COMPANIES = (loadDash().COMPANIES || []).map(company => ({
+const dashboardTaxonomy = loadDash();
+const futureInfrastructureGroups = new Set((techMarketTaxonomy.futureInfrastructureSegments || []).flatMap(segment => segment.groups || []));
+const infrastructureCompanies = (dashboardTaxonomy.STOCKS || [])
+  .filter(company => futureInfrastructureGroups.has(company.group));
+const COMPANIES = [...(dashboardTaxonomy.COMPANIES || []), ...infrastructureCompanies]
+  .filter((company, index, rows) => rows.findIndex(candidate => normalizedEntity(candidate.name) === normalizedEntity(company.name)) === index)
+  .map(company => ({
   co: company.name,
   cat: company.cat,
   domain: company.domain,
