@@ -4386,6 +4386,9 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .su-candidate-card dt { color: var(--muted); font-size: 8px; font-weight: 800; }
 .su-candidate-card dd { margin: 2px 0 0; color: var(--ink); font: 850 9.5px/1 var(--mono); }
 .su-candidate-card footer { color: var(--ink-2); font-size: 9px; font-weight: 650; line-height: 1.45; }
+.su-candidate-more { display: block; width: calc(100% - 24px); margin: 0 12px 12px; border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; color: var(--ink-2); background: var(--panel-2); font-size: 10px; font-weight: 800; cursor: pointer; }
+.su-candidate-more b { color: var(--accent); font-family: var(--mono); }
+.su-candidate-more:is(:hover, :focus-visible) { border-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 6%, var(--panel)); outline: none; }
 @media (max-width: 700px) {
   .su-candidate-board { margin: 0 12px 16px; }
   .su-candidate-board > header { align-items: flex-start; flex-direction: column; }

@@ -5700,6 +5700,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   const inView = useInView(sectionRef);
   const [candidateData, setCandidateData] = React.useState(null);
   const [candidateRoute, setCandidateRoute] = React.useState("all");
+  const [candidateVisible, setCandidateVisible] = React.useState(16);
   const candidateFor = startup => (candidateData?.records || []).find(candidate =>
     candidate.id === startup?.canonicalId || candidate.name === startup?.name || candidate.domain === startup?.domain) || null;
   // 업체명 클릭 → 다른 기업과 동일한 상세 모달. 추적 기업이면 전체 프로필, 아니면 최신 라이브 데이터로 강화.
@@ -5812,6 +5813,42 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       sources: hist.slice(0, 10).map(h => ({ tier: "reported", label: String(h.title || "관련 기사"), asOf: h.date || "", url: h.url })),
     });
   };
+  const openCandidate = candidate => {
+    const startup = startupByName.get(candidate.name);
+    if (startup) {
+      openStartup(startup, startup.displaySection || candidate.portfolioClass);
+      return;
+    }
+    const match = (companies || []).find(company => company.name === candidate.name
+      || company.name.replace(/\s*\(.*\)/, "") === candidate.name);
+    if (match && onSelect) {
+      onSelect({ ...match, candidateAssessment: candidate });
+      return;
+    }
+    openStartup({
+      name: candidate.name,
+      canonicalId: candidate.id,
+      domain: candidate.domain,
+      vertical: candidate.vertical,
+      cat: candidate.categoryId,
+      currentBusiness: candidate.businessAssessment?.currentBusiness || candidate.companySummary,
+      revenueModel: candidate.businessAssessment?.revenueModel || "",
+      strategyDirection: candidate.businessAssessment?.strategicDirection || "",
+      stage: candidate.transaction?.stage || "",
+      profile: {
+        founded: candidate.companyFacts?.founded || "",
+        hq: candidate.companyFacts?.headquarters || "",
+        headcount: candidate.companyFacts?.headcount || "",
+        business: candidate.companyFacts?.products || [],
+        sourceUrls: candidate.sourceUrls || [],
+      },
+      organization: { executiveTeam: candidate.companyFacts?.leadership || [] },
+      latest: candidate.latestAction || null,
+      history: candidate.latestAction ? [candidate.latestAction] : [],
+      sourceLinks: (candidate.sourceUrls || []).map((url, index) => ({ label: `기업 원문 ${index + 1}`, url })),
+      provenance: { status: "source-backed" },
+    }, candidate.portfolioClass);
+  };
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   const [tier, setTier] = React.useState("all");
@@ -5823,6 +5860,9 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   React.useEffect(() => {
     setCatFilter(activeCategory || "");
   }, [activeCategory]);
+  React.useEffect(() => {
+    setCandidateVisible(16);
+  }, [candidateRoute, catFilter]);
   // 단말 신사업 관점 분류 체계 — cat 우선, 없으면 vertical 키워드로 폴백 매핑
   const TAX = window.DASH.STARTUP_TAXONOMY || [];
   const catOf = (s) => {
@@ -5924,7 +5964,11 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
     .filter(s => s?.provenance?.status === "source-backed"), claimedCompanies);
   const visibleAll = [...largePool, ...smallPool, ...institutionalPool].filter(s => !del[s.name]);
   const catCounts = {};
-  visibleAll.forEach(s => { const cid = catOf(s); if (cid) catCounts[cid] = (catCounts[cid] || 0) + 1; });
+  const categoryCountSource = candidateData?.records?.length ? candidateData.records : visibleAll;
+  categoryCountSource.forEach(s => {
+    const cid = s.categoryId || catOf(s);
+    if (cid) catCounts[cid] = (catCounts[cid] || 0) + 1;
+  });
   const passCat = s => !catFilter || catOf(s) === catFilter;
   const large = largePool.filter(s => !del[s.name] && passCat(s));
   const small = smallPool.filter(s => !del[s.name] && passCat(s));
@@ -6030,7 +6074,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       {candidateData && candidateRows.length > 0 && (
         <section className="su-candidate-board" aria-label="파트너 및 인수 후보 우선순위">
           <header>
-            <div><em>DEAL SCREEN</em><b>파트너·인수 우선순위</b><span>현재 기업 DB를 동일 기준으로 자동 평가</span></div>
+            <div><em>DEAL SCREEN</em><b>파트너·인수 우선순위</b><span>기업·스타트업·최근 기사 DB 자동 통합 · {candidateRows.length}개 후보</span></div>
             <nav aria-label="거래 방식 필터">
               <button className={candidateRoute === "all" ? "on" : ""} onClick={() => setCandidateRoute("all")}>전체</button>
               <button className={candidateRoute === "ma" ? "on" : ""} onClick={() => setCandidateRoute("ma")}>M&A</button>
@@ -6038,14 +6082,12 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
             </nav>
           </header>
           <div className="su-candidate-grid">
-            {candidateRows.slice(0, 12).map((candidate, index) => {
-              const startup = startupByName.get(candidate.name);
-              return (
+            {candidateRows.slice(0, candidateVisible).map((candidate, index) => (
                 <button type="button" className="su-candidate-card" key={candidate.id}
-                  onClick={() => startup && openStartup(startup, startup.displaySection || candidate.portfolioClass)}>
+                  onClick={() => openCandidate(candidate)}>
                   <div className="su-candidate-head"><em>{String(index + 1).padStart(2, "0")}</em><b>{candidate.name}</b><span>{candidate.recommendation}</span><strong>{candidate.score}</strong></div>
                   <p>{candidate.companySummary}</p>
-                  <div className="su-candidate-facts"><span>{candidate.category}</span><span>{candidate.transaction?.stage}</span></div>
+                  <div className="su-candidate-facts"><span>{candidate.category}</span><span>{candidate.freshness?.latestEvidenceDate ? `최근 ${fmtMonthDay(candidate.freshness.latestEvidenceDate)}` : candidate.transaction?.stage}</span></div>
                   <dl>
                     <div><dt>적합</dt><dd>{candidate.dimensions.strategicFit}/5</dd></div>
                     <div><dt>제품</dt><dd>{candidate.dimensions.productReadiness}/5</dd></div>
@@ -6054,9 +6096,13 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                   </dl>
                   <footer>{candidate.routeReason}</footer>
                 </button>
-              );
-            })}
+            ))}
           </div>
+          {candidateVisible < candidateRows.length && (
+            <button type="button" className="su-candidate-more" onClick={() => setCandidateVisible(count => Math.min(count + 16, candidateRows.length))}>
+              후보 더 보기 <b>{candidateVisible}</b> / {candidateRows.length}
+            </button>
+          )}
         </section>
       )}
 

@@ -2834,13 +2834,18 @@ try {
   const architectureChildren = (architecture.workstreams || [])
     .flatMap(workstream => workstream.sections || [])
     .flatMap(section => section.children || []);
-  const candidateReady = records.length >= 80
-    && shortlist.length >= 16
+  const candidateReady = Number(candidates.schemaVersion || 0) >= 2
+    && records.length >= 150
+    && shortlist.length >= 32
     && Number(routeCounts["M&A 검토"] || 0) >= 8
     && Number(routeCounts["파트너십"] || 0) >= 8
+    && Number(candidates.metrics?.sourceInputs?.companyProfiles || 0) >= 150
+    && Number(candidates.metrics?.sourceInputs?.companyNewsStreams || 0) >= 20
     && records.every(item => item.companySummary && Number.isFinite(item.score)
       && item.recommendation && Array.isArray(item.sourceUrls) && item.sourceUrls.length
-      && item.sourceUrls.every(url => /^https:\/\//.test(url || "")));
+      && item.sourceUrls.every(url => /^https:\/\//.test(url || ""))
+      && item.freshness?.profileCheckedAt && item.evidenceStats?.sourceCount >= 1
+      && item.businessAssessment?.currentBusiness && item.businessAssessment?.strategicDirection);
   const opportunityCopyReady = (strategyView.opportunityPortfolio || []).every(item =>
     !Object.hasOwn(item, "horizon")
     && !Object.hasOwn(item, "nextMetrics")
@@ -2851,6 +2856,9 @@ try {
     && Array.isArray(item.priorityDrivers));
   const uiReady = boards.includes('className="su-candidate-board"')
     && boards.includes("candidateAssessment={candidateFor(s)}")
+    && boards.includes("openCandidate(candidate)")
+    && boards.includes("candidateVisible")
+    && boards.includes('className="su-candidate-more"')
     && boards.includes('className="is-timing"')
     && boards.includes('className="is-business"')
     && boards.includes("<em>03</em>판단")
