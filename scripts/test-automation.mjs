@@ -103,6 +103,7 @@ const required = [
   "data.bundle.js",
   "styles.bundle.css",
   "tech-market.css",
+  "signal-cards.css",
   "og-mobile-strategy.png",
   "assets/quant-insight-capital.webp",
   "assets/quant-insight-device.webp",
@@ -2125,9 +2126,10 @@ try {
 }
 
 try {
-  const [appSource, boardsSource, news, infra, bizmodel] = await Promise.all([
+  const [appSource, boardsSource, signalStyles, news, infra, bizmodel] = await Promise.all([
     readFile("app.jsx", "utf8"),
     readFile("boards.jsx", "utf8"),
+    readFile("signal-cards.css", "utf8"),
     readFile("news.json", "utf8").then(JSON.parse),
     readFile("infra.json", "utf8").then(JSON.parse),
     readFile("bizmodel.json", "utf8").then(JSON.parse),
@@ -2157,11 +2159,18 @@ try {
   if (!/articles=\{articles\}/.test(appSource)
     || !/function SignalInfographic\(\{ file, delKey, title, sub, articles, dataVersion \}\)/.test(boardsSource)
     || !/className="isg-summary"/.test(boardsSource)
+    || !/className="isg-role"/.test(boardsSource)
+    || !/className="isg-fold"/.test(boardsSource)
+    || !/expandedCards/.test(boardsSource)
+    || !/summaryRoles: \(display\.roles \|\| \[\]\)/.test(boardsSource)
+    || !/signal-cards\.css\?v=/.test(boardsSource)
+    || !signalStyles.includes("Source signal compact reading contract")
+    || !signalStyles.includes(".isg-card:not(.expanded) .isg-summary li:not(:first-child) { display: none; }")
     || !/hlBrief\(it\.display\.title/.test(boardsSource)
     || !visibleBriefs.length || !visibleBriefs.every(canShowAsKoreanBrief)) {
     throw new Error("signal cards must use linked Korean titles and exactly three source-derived lines");
   }
-  console.log(`  OK  Korean signal-card briefs ${visibleBriefs.length}/${linked.length} source-linked rows`);
+  console.log(`  OK  Korean signal-card briefs ${visibleBriefs.length}/${linked.length} source-linked rows · one-line default · three-line disclosure`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  Korean signal cards: ${error.message}`);

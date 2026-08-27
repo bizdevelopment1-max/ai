@@ -2,9 +2,10 @@
 import { access, readFile } from "node:fs/promises";
 import { minifyCss } from "./build-browser-bundle.mjs";
 
-const [styles, styleBundle, app, boards, components, taxonomy, strategy, overview] = await Promise.all([
+const [styles, styleBundle, signalStyles, app, boards, components, taxonomy, strategy, overview] = await Promise.all([
   readFile("styles.css", "utf8"),
   readFile("styles.bundle.css", "utf8"),
+  readFile("signal-cards.css", "utf8"),
   readFile("app.jsx", "utf8"),
   readFile("boards.jsx", "utf8"),
   readFile("components.jsx", "utf8"),
@@ -53,6 +54,10 @@ assert(styles.includes("background: color-mix(in srgb, var(--hover-tone") && sty
 assert(styles.includes("Non-inverting signal-card interaction contract"), "signal-card hover contract is missing");
 assert(styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { opacity: 0; }"), "signal-card dark hover overlay is still enabled");
 assert(!/\.isg-card:hover::after\s*\{\s*opacity:\s*1/.test(styles), "signal-card hover restores a dark pseudo-element overlay");
+assert(signalStyles.includes("Source signal compact reading contract")
+  && signalStyles.includes(".isg-card:not(.expanded) .isg-summary li:not(:first-child) { display: none; }")
+  && signalStyles.includes("-webkit-line-clamp: 1")
+  && boards.includes('className="isg-fold"'), "source signal cards do not default to a concise one-line disclosure");
 assert(!/\.art-sel\s*\{[^}]*background:\s*linear-gradient\([^}]*#000/s.test(styles), "article selected state still uses a dark inverse gradient");
 assert(styles.includes('[data-theme="dark"] .num-hl { color: #8BD2E8;'), "dark-mode numeric highlights lack a readable foreground");
 assert(styles.includes("MECE consulting operating model") && styles.includes(".msf-mece-model"), "MECE consulting frame is missing");

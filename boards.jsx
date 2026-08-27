@@ -1652,6 +1652,7 @@ function hlBrief(text, keyBase) {
 
 // Render a feed summary as up to 3 개조식 lines (제목 한글 + 3줄 요약 정책).
 const INSIGHT_ROLE_LABEL = { fact: "핵심 사실", change: "시장 변화", implication: "사업 의미", evidence: "추가 근거" };
+const SIGNAL_ROLE_LABEL = { fact: "핵심", change: "변화", implication: "시사점", evidence: "근거" };
 function BoldSummary({ text, roles = [] }) {
   if (!text) return null;
   const clean = bulletText(
@@ -4446,6 +4447,16 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   React.useEffect(() => {
+    if (!inView || !dataVersion) return;
+    const id = "signal-card-styles";
+    if (document.getElementById(id)) return;
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `signal-cards.css?v=${encodeURIComponent(dataVersion)}`;
+    document.head.appendChild(link);
+  }, [inView, dataVersion]);
+  React.useEffect(() => {
     if (!inView || loaded || !dataVersion) return;
     setLoaded(true);
     loadJson(`${file}?v=${encodeURIComponent(dataVersion)}`)
@@ -4459,6 +4470,7 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
   const [pend, setPend] = React.useState(null);
   const [pw, setPw] = React.useState("");
   const [pwErr, setPwErr] = React.useState(false);
+  const [expandedCards, setExpandedCards] = React.useState({});
   const signalScope = delKey === "aiDashDeletedInfra" ? "infra-signal" : "bizmodel-signal";
   const confirmDel = (id) => { if (!canDelete(pw)) { setPwErr(true); return; } setDel(d => { const x = { ...d, [id]: 1 }; try { localStorage.setItem(DEL_LS, JSON.stringify(x)); } catch {} return x; }); rememberSuppression({ scope: signalScope, key: id, id }); setPend(null); setPw(""); setPwErr(false); };
 
@@ -4487,7 +4499,9 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
       const display = displayFeedText(source);
       const summaryLines = String(display.summary || "").split(/\n+/)
         .map(line => bulletText(line)).filter(Boolean).slice(0, 3);
-      return display.translated && summaryLines.length === 3 ? { ...it, display, summaryLines } : null;
+      return display.translated && summaryLines.length === 3
+        ? { ...it, display, summaryLines, summaryRoles: (display.roles || []).slice(0, 3) }
+        : null;
     })
     .filter(Boolean)
     // 같은 기사가 URL 표기 차이(끝 슬래시·쿼리 등)로 중복 저장되어도 한 번만 노출 — 정규화 키로 MECE 보장
@@ -4543,16 +4557,24 @@ function SignalInfographic({ file, delKey, title, sub, articles, dataVersion }) 
                 </div>
                 <div className="isg-cards">
                   {rows.map(it => {
+                    const expanded = !!expandedCards[it.id];
                     return (
-                    <div className="isg-card" key={it.id} style={{ "--gc": g.accent }}>
+                    <div className={`isg-card${expanded ? " expanded" : ""}`} key={it.id} style={{ "--gc": g.accent }} aria-expanded={expanded}>
                       <div className="isg-card-top">
                         {it.quant && <span className="isg-quant" style={{ color: g.accent, borderColor: g.accent, background: "color-mix(in srgb, " + g.accent + " 9%, transparent)" }}>{it.quant}</span>}
                         <span className="isg-src"><a href={it.url} target="_blank" rel="noopener">{it.source || "출처"}</a> · {String(it.date || "").slice(5)}</span>
                       </div>
                       <a className="isg-lead" href={it.url} target="_blank" rel="noopener" title={it.display.title}>{hlBrief(it.display.title, "isg-title-" + it.id)}</a>
-                      <ul className="isg-summary">
-                        {it.summaryLines.map((line, index) => <li key={index} title={line}>{hlBrief(line, "isg-line-" + it.id + "-" + index)}</li>)}
+                      <ul className="isg-summary" id={`isg-summary-${it.id}`}>
+                        {it.summaryLines.map((line, index) => <li key={index} title={line}>
+                          <em className="isg-role">{SIGNAL_ROLE_LABEL[it.summaryRoles?.[index]] || (index === 0 ? "핵심" : "근거")}</em>
+                          <span className="isg-line">{hlBrief(line, "isg-line-" + it.id + "-" + index)}</span>
+                        </li>)}
                       </ul>
+                      <button className="isg-fold" type="button" aria-expanded={expanded} aria-controls={`isg-summary-${it.id}`}
+                        onClick={() => setExpandedCards(current => ({ ...current, [it.id]: !current[it.id] }))}>
+                        {expanded ? "접기" : "3줄 보기"}<Icon name="chevron" size={11} />
+                      </button>
                       {pend === it.id ? (
                         <div className="art-del-pw" onClick={e => e.stopPropagation()}>
                           <input type="password" inputMode="numeric" className={"art-pw-input" + (pwErr ? " err" : "")} placeholder="비밀번호" value={pw} autoFocus
