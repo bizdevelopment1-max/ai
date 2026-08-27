@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "updatedAt": "2026-08-27",
   "purpose": "Stable classification rules for source-driven technology, workload, infrastructure and inference-market views. Facts and metrics must come from linked source ledgers.",
   "technologyTracks": [
@@ -8,56 +8,120 @@
       "label": "모델 아키텍처",
       "description": "Transformer·MoE·멀티모달·소형 모델 구조 변화",
       "accent": "#5B4FD8",
-      "terms": ["transformer", "mixture of experts", "moe", "attention", "foundation model", "multimodal model", "small language model", "slm", "distillation", "quantization"]
+      "terms": ["transformer", "mixture of experts", "moe", "attention", "foundation model", "multimodal model", "small language model", "slm", "distillation", "quantization"],
+      "strategicMeaning": "모델 크기 경쟁에서 과업별 효율·멀티모달·경량 배포 경쟁으로 이동하는 구조 변화",
+      "decisionMetrics": ["과업 정확도", "활성 파라미터", "메모리 사용량", "지연", "라이선스"],
+      "trendDimensions": [
+        { "id": "efficiency", "label": "구조 효율화", "terms": ["quantization", "distillation", "mixture of experts", "moe", "sparse", "parameter efficient"], "interpretation": "동일 품질에서 연산·메모리 요구량을 낮추는 방향" },
+        { "id": "capability", "label": "기능 확장", "terms": ["multimodal", "reasoning", "long context", "vision", "audio", "video"], "interpretation": "텍스트 단일 과업에서 복합 입력·추론 과업으로 확장하는 방향" },
+        { "id": "edge", "label": "경량·로컬 배포", "terms": ["small language model", "slm", "on-device", "on device", "edge", "local model"], "interpretation": "클라우드 의존을 줄이고 지연·개인정보·원가를 통제하는 방향" },
+        { "id": "openness", "label": "개방 생태계", "terms": ["open weight", "open source", "license", "model hub", "hugging face"], "interpretation": "모델 교체 가능성과 개발자 생태계가 플랫폼 선택에 미치는 영향 확대" }
+      ]
     },
     {
       "id": "prompt-tooling",
       "label": "프롬프트·도구",
       "description": "Prompt engineering·tool use·agent orchestration·개발 도구",
       "accent": "#C241B8",
-      "terms": ["prompt engineering", "prompting", "tool use", "tool calling", "function calling", "agent orchestration", "computer use", "mcp", "agent-to-agent", "a2a"]
+      "terms": ["prompt engineering", "prompting", "tool use", "tool calling", "function calling", "agent orchestration", "computer use", "mcp", "agent-to-agent", "a2a"],
+      "strategicMeaning": "프롬프트 작성 기술에서 표준 프로토콜·도구 실행·다중 에이전트 운영 체계로 통제점이 이동",
+      "decisionMetrics": ["도구 실행 성공률", "권한 오류율", "다단계 완료율", "개발 시간", "표준 호환성"],
+      "trendDimensions": [
+        { "id": "protocol", "label": "상호운용 표준", "terms": ["mcp", "a2a", "agent-to-agent", "protocol", "interoperability"], "interpretation": "모델과 앱 사이 연결 규격이 새로운 생태계 통제점으로 부상" },
+        { "id": "execution", "label": "도구·화면 실행", "terms": ["tool use", "tool calling", "function calling", "computer use", "browser use"], "interpretation": "답변 생성에서 실제 시스템 행동과 과업 완결로 가치가 이동" },
+        { "id": "orchestration", "label": "에이전트 조율", "terms": ["agent orchestration", "multi-agent", "multi agent", "workflow", "handoff"], "interpretation": "단일 에이전트보다 역할 분담·상태 관리·실패 복구가 운영 품질을 결정" },
+        { "id": "developer", "label": "개발자 생산성", "terms": ["prompt engineering", "coding agent", "ide", "sdk", "developer tool"], "interpretation": "개발 도구 채택과 배포 속도가 기술 확산의 선행 신호로 작동" }
+      ]
     },
     {
       "id": "rag-retrieval",
       "label": "RAG·검색",
       "description": "검색 증강 생성·reranking·embedding·기업 지식 연결",
       "accent": "#0F8A72",
-      "terms": ["retrieval augmented", "retrieval-augmented", "rag", "rerank", "embedding", "semantic search", "grounded generation", "enterprise search"]
+      "terms": ["retrieval augmented", "retrieval-augmented", "rag", "rerank", "embedding", "semantic search", "grounded generation", "enterprise search"],
+      "strategicMeaning": "모델 자체보다 검색 품질·권한 상속·출처 검증이 기업 답변 신뢰도를 결정하는 계층",
+      "decisionMetrics": ["검색 재현율", "정답 근거율", "권한 누출률", "응답 지연", "질의당 비용"],
+      "trendDimensions": [
+        { "id": "retrieval-quality", "label": "검색 품질", "terms": ["rerank", "hybrid search", "semantic search", "embedding", "retrieval quality"], "interpretation": "단순 유사도 검색에서 재정렬·복합 검색으로 정확도 경쟁이 이동" },
+        { "id": "grounding", "label": "근거·평가", "terms": ["grounded", "citation", "provenance", "hallucination", "evaluation", "eval"], "interpretation": "답변 품질을 출처와 평가 지표로 입증하는 요구가 확대" },
+        { "id": "enterprise-control", "label": "기업 통제", "terms": ["permission", "access control", "governance", "security", "enterprise search"], "interpretation": "검색 정확도와 함께 권한·보안·감사 가능성이 도입 조건으로 부상" },
+        { "id": "agentic-retrieval", "label": "에이전트 검색", "terms": ["agentic retrieval", "agentic rag", "query planning", "multi-step retrieval"], "interpretation": "고정 파이프라인에서 에이전트가 질의와 검색 순서를 설계하는 구조로 이동" }
+      ]
     },
     {
       "id": "vector-data",
       "label": "Vector DB·데이터",
       "description": "Vector DB·지식 그래프·데이터 파이프라인·메모리 계층",
       "accent": "#087EA4",
-      "terms": ["vector database", "vector db", "vector store", "knowledge graph", "data pipeline", "agent memory", "context engineering", "data lakehouse", "data governance"]
+      "terms": ["vector database", "vector db", "vector store", "knowledge graph", "data pipeline", "agent memory", "context engineering", "data lakehouse", "data governance"],
+      "strategicMeaning": "벡터 저장소 단품에서 지식 그래프·에이전트 메모리·데이터 거버넌스를 통합하는 컨텍스트 계층으로 확장",
+      "decisionMetrics": ["검색 지연", "갱신 지연", "정합성", "권한 상속", "저장·질의 비용"],
+      "trendDimensions": [
+        { "id": "vector-ops", "label": "벡터 운영", "terms": ["vector database", "vector db", "vector store", "indexing", "vector search"], "interpretation": "색인 성능보다 운영 안정성·갱신·비용 최적화의 중요성이 확대" },
+        { "id": "knowledge-graph", "label": "지식 그래프", "terms": ["knowledge graph", "graph rag", "graph database", "ontology"], "interpretation": "비정형 유사도와 구조화 관계를 결합해 설명 가능성을 높이는 방향" },
+        { "id": "agent-memory", "label": "에이전트 메모리", "terms": ["agent memory", "long-term memory", "context engineering", "memory layer"], "interpretation": "세션 단위 답변에서 장기 개인화·업무 연속성으로 경쟁 범위가 확대" },
+        { "id": "data-operations", "label": "데이터 운영·통제", "terms": ["data pipeline", "lakehouse", "data governance", "lineage", "data quality"], "interpretation": "컨텍스트 품질과 권한·계보 관리가 모델 성능의 선행 조건으로 부상" }
+      ]
     },
     {
       "id": "inference-serving",
       "label": "추론·서빙",
       "description": "Inference economics·serving·latency·throughput·모델 최적화",
       "accent": "#E1722D",
-      "terms": ["inference", "serving", "tokens per second", "throughput", "latency", "gpu-hour", "model optimization", "speculative decoding", "kv cache", "inference cost"]
+      "terms": ["inference", "serving", "tokens per second", "throughput", "latency", "gpu-hour", "model optimization", "speculative decoding", "kv cache", "inference cost"],
+      "strategicMeaning": "모델 품질 차이가 축소될수록 지연·처리량·전력·단가를 운영 수준에서 통제하는 능력이 차별화 요소로 이동",
+      "decisionMetrics": ["첫 토큰 지연", "초당 토큰", "동시 처리량", "백만 토큰당 비용", "전력"],
+      "trendDimensions": [
+        { "id": "performance", "label": "성능·지연", "terms": ["tokens per second", "throughput", "latency", "first token", "real-time"], "interpretation": "최고 성능보다 실제 동시 사용자 환경의 응답성과 안정성이 중요" },
+        { "id": "economics", "label": "추론 경제성", "terms": ["inference cost", "gpu-hour", "price per token", "cost", "efficiency"], "interpretation": "서비스 총원가에서 추론 사용량과 공급자 가격 구조의 영향이 확대" },
+        { "id": "optimization", "label": "서빙 최적화", "terms": ["speculative decoding", "kv cache", "batching", "quantization", "model optimization"], "interpretation": "하드웨어 증설보다 캐시·배치·디코딩 최적화로 처리량을 높이는 방향" },
+        { "id": "deployment", "label": "배포 구조", "terms": ["on-device", "edge inference", "serverless inference", "cloud inference", "hybrid inference"], "interpretation": "클라우드 단일 구조에서 로컬·엣지·클라우드 혼합 배치로 이동" }
+      ]
     },
     {
       "id": "accelerator-semiconductor",
       "label": "반도체·메모리",
       "description": "GPU·NPU·ASIC·HBM·네트워크·전력·패키징",
       "accent": "#C28B1B",
-      "terms": ["gpu", "npu", "tpu", "asic", "accelerator", "hbm", "dram", "memory bandwidth", "advanced packaging", "interconnect", "cpo", "power architecture"]
+      "terms": ["gpu", "npu", "tpu", "asic", "accelerator", "hbm", "dram", "memory bandwidth", "advanced packaging", "interconnect", "cpo", "power architecture"],
+      "strategicMeaning": "GPU 단일 성능에서 메모리·인터커넥트·패키징·전력을 포함한 시스템 효율 경쟁으로 이동",
+      "decisionMetrics": ["연산 성능", "메모리 대역폭", "와트당 처리량", "랙당 비용", "공급 리드타임"],
+      "trendDimensions": [
+        { "id": "accelerator", "label": "가속기 경쟁", "terms": ["gpu", "npu", "tpu", "asic", "accelerator", "xpu"], "interpretation": "범용 GPU와 워크로드 특화 가속기의 역할 분화가 확대" },
+        { "id": "memory-power", "label": "메모리·전력", "terms": ["hbm", "dram", "memory bandwidth", "power", "watt", "energy efficiency"], "interpretation": "연산 칩보다 메모리 공급과 전력 한계가 시스템 성능의 병목으로 부상" },
+        { "id": "interconnect", "label": "인터커넥트", "terms": ["interconnect", "ethernet", "nvlink", "cpo", "optical", "scale-up", "scale-out"], "interpretation": "단일 칩 성능보다 랙·클러스터 연결 효율이 대규모 추론 성능을 좌우" },
+        { "id": "packaging", "label": "패키징·제조", "terms": ["advanced packaging", "chiplet", "cowos", "foundry", "process node", "yield"], "interpretation": "첨단 패키징과 생산 능력이 제품 출시 속도와 공급량을 제한하는 구조" }
+      ]
     },
     {
       "id": "data-center-system",
       "label": "데이터센터·클라우드",
       "description": "AI factory·hyperscale·클라우드·전력·냉각·네트워크",
       "accent": "#3454A5",
-      "terms": ["data center", "datacenter", "hyperscale", "ai factory", "cloud infrastructure", "compute capacity", "megawatt", "gigawatt", "liquid cooling", "power grid"]
+      "terms": ["data center", "datacenter", "hyperscale", "ai factory", "cloud infrastructure", "compute capacity", "megawatt", "gigawatt", "liquid cooling", "power grid"],
+      "strategicMeaning": "칩 조달 경쟁에서 전력·냉각·네트워크·자금조달을 묶은 AI 팩토리 운영 경쟁으로 이동",
+      "decisionMetrics": ["가용 전력", "GPU 용량", "랙 밀도", "냉각 효율", "지역별 가동 시점"],
+      "trendDimensions": [
+        { "id": "capacity", "label": "용량·투자", "terms": ["compute capacity", "capex", "investment", "buildout", "gigawatt", "megawatt"], "interpretation": "선제 용량 확보와 자금조달 능력이 서비스 공급 속도를 결정" },
+        { "id": "power-cooling", "label": "전력·냉각", "terms": ["power grid", "power", "liquid cooling", "cooling", "energy", "rack density"], "interpretation": "전력 인입과 열 관리가 데이터센터 확장의 실질적 상한으로 부상" },
+        { "id": "network-fabric", "label": "네트워크 패브릭", "terms": ["ethernet", "infiniband", "network fabric", "optical", "interconnect"], "interpretation": "클러스터 규모 확대에 따라 네트워크 지연과 장애 격리가 핵심 운영 변수로 이동" },
+        { "id": "cloud-platform", "label": "AI 팩토리 플랫폼", "terms": ["ai factory", "hyperscale", "cloud infrastructure", "orchestration", "sovereign cloud"], "interpretation": "시설 단품보다 하드웨어·소프트웨어·운영 서비스를 통합한 플랫폼 경쟁이 확대" }
+      ]
     },
     {
       "id": "ai-applications",
       "label": "AI Application",
       "description": "업무·산업별 AI 애플리케이션과 에이전트 제품 변화",
       "accent": "#14804A",
-      "terms": ["ai application", "ai app", "copilot", "ai agent", "agentic workflow", "enterprise ai", "vertical ai", "assistant", "automation", "ai platform"]
+      "terms": ["ai application", "ai app", "copilot", "ai agent", "agentic workflow", "enterprise ai", "vertical ai", "assistant", "automation", "ai platform"],
+      "strategicMeaning": "범용 챗봇에서 반복 과업을 완결하고 기존 업무·결제·유통 접점에 내장되는 애플리케이션 경쟁으로 이동",
+      "decisionMetrics": ["과업 완료율", "주간 반복 사용", "유료 전환", "고객 획득비용", "추론 원가율"],
+      "trendDimensions": [
+        { "id": "agent-workflow", "label": "에이전트 과업", "terms": ["ai agent", "agentic workflow", "automation", "computer use", "task completion"], "interpretation": "대화 횟수보다 실제 업무 완료율과 실패 복구가 제품 가치의 기준으로 이동" },
+        { "id": "vertical", "label": "버티컬 적용", "terms": ["vertical ai", "healthcare", "financial", "legal", "retail", "customer service", "coding"], "interpretation": "범용 기능보다 산업 데이터·규제·업무 흐름을 결합한 제품의 차별화가 확대" },
+        { "id": "distribution", "label": "배포·유통", "terms": ["app store", "bundle", "preinstall", "distribution", "carrier", "marketplace", "platform"], "interpretation": "모델 품질보다 기본 탑재·번들·마켓플레이스가 사용자 획득 속도를 좌우" },
+        { "id": "monetization", "label": "수익화", "terms": ["subscription", "usage-based", "commission", "pricing", "revenue", "paid plan"], "interpretation": "구독 단일 모델에서 사용량·성과·거래 수수료를 결합하는 구조로 확장" }
+      ]
     }
   ],
   "workloadTypes": [

@@ -4793,6 +4793,11 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
   const selectedTrack = tracks.find(track => track.id === activeTrack) || tracks[0] || {};
   const selectedEntity = entities.find(entity => entity.name === activeEntity) || entities[0] || {};
   const selectedVertical = verticals.find(vertical => vertical.id === activeVertical) || verticals[0] || {};
+  const selectedDimensions = selectedTrack.trendDimensions || [];
+  const maxDimensionCount = Math.max(1, ...selectedDimensions.map(dimension => Number(dimension.count || 0)));
+  const selectedObservers = (selectedTrack.primaryActors || []).length
+    ? selectedTrack.primaryActors
+    : (selectedTrack.primarySources || []);
   const openCompany = name => {
     const company = (companies || []).find(item => item.name === name);
     if (company && onSelect) onSelect(company);
@@ -4814,10 +4819,11 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
     <section className="tmi tmi-technology" ref={hostRef} data-nav-anchor="technology-shift">
       <header className="tmi-head">
         <div><span>TECH &amp; MARKET INSIGHTS</span><h3>AI Application &amp; HW/SW 기술 동향</h3><p>모델 구조에서 데이터센터까지 원문 신호를 자동 분류하고 최신순으로 누적</p></div>
-        <dl>
+        <dl className="tmi-tech-metrics">
           <div><dt>TRACKS</dt><dd>{data.summary?.technologyTracks || tracks.length}</dd></div>
           <div><dt>SIGNALS</dt><dd>{data.summary?.technologySignals || 0}</dd></div>
-          <div><dt>INFERENCE</dt><dd>{data.summary?.inferenceSignals || 0}</dd></div>
+          <div><dt>OFFICIAL</dt><dd>{data.summary?.technologyOfficialSignals || 0}</dd></div>
+          <div><dt>SOURCES</dt><dd>{data.summary?.technologyPublishers || 0}</dd></div>
         </dl>
       </header>
       <nav className="tmi-track-tabs" aria-label="기술 변화 트랙">
@@ -4829,6 +4835,41 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
       <div className="tmi-track-summary" style={{ "--track": selectedTrack.accent || "#3454A5" }}>
         <div><span>SELECTED TRACK</span><h4>{selectedTrack.label}</h4><p>{selectedTrack.description}</p></div>
         <b>{selectedTrack.latestDate ? `${fmtMonthDay(selectedTrack.latestDate)} 최신` : ""}</b>
+      </div>
+      <ul className="tmi-summary-bullets tmi-track-insights">
+        {(selectedTrack.summaryBullets || []).slice(0, 3).map((bullet, index) => <li key={`${bullet.label}-${index}`}>
+          <em>{bullet.label}</em><span>{bullet.text}</span>
+        </li>)}
+      </ul>
+      <div className="tmi-track-framework" style={{ "--track": selectedTrack.accent || "#3454A5" }}>
+        <article className="tmi-dimension-panel">
+          <span>01 · 변화 축</span><h5>기술 신호 분포</h5>
+          <div className="tmi-dimension-list">
+            {selectedDimensions.map(dimension => <div className="tmi-dimension-row" key={dimension.id}>
+              <b>{dimension.label}</b><i><em style={{ width: `${Math.max(4, (Number(dimension.count || 0) / maxDimensionCount) * 100)}%` }} /></i><strong>{dimension.count || 0}</strong>
+            </div>)}
+          </div>
+        </article>
+        <article>
+          <span>02 · 관측 주체</span><h5>주요 업체·발행처</h5>
+          <div className="tmi-observer-list">
+            {selectedObservers.slice(0, 5).map(observer => <div key={observer.name}><b>{observer.name}</b><span>{observer.count}건</span></div>)}
+          </div>
+        </article>
+        <article>
+          <span>03 · 근거 품질</span><h5>출처 구성</h5>
+          <dl className="tmi-evidence-metrics">
+            <div><dt>공식 원문</dt><dd>{selectedTrack.evidence?.officialCount || 0}/{selectedTrack.evidence?.sourceCount || 0}</dd></div>
+            <div><dt>독립 발행처</dt><dd>{selectedTrack.evidence?.publisherCount || 0}개</dd></div>
+            <div><dt>최근 30일</dt><dd>{selectedTrack.evidence?.recentCount || 0}건</dd></div>
+          </dl>
+        </article>
+        <article>
+          <span>04 · 판단 지표</span><h5>동일 기준 비교</h5>
+          <ul className="tmi-decision-metrics">
+            {(selectedTrack.decisionMetrics || []).map(metric => <li key={metric}>{metric}</li>)}
+          </ul>
+        </article>
       </div>
       <div className="tmi-signal-grid">
         {(selectedTrack.signals || []).slice(0, 12).map(signal => <SignalLink key={signal.id || signal.url} signal={signal} />)}

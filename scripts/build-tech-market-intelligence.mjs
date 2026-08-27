@@ -144,14 +144,62 @@ for (const article of articles) {
   }
 }
 
+const recentCutoff = Date.parse(generatedAt) - 30 * 86_400_000;
 const technologyTracks = trackDefs.map(track => {
   const signals = uniqueBy(newest(trackMatches.get(track.id) || []), signalKey)
     .slice(0, Number(limits.signalsPerTrack || 24));
+  const signalText = signal => clean([
+    signal.originalTitle,
+    signal.evidenceExcerpt,
+    ...(signal.matchTerms || []),
+  ].filter(Boolean).join(" "));
+  const trendDimensions = (track.trendDimensions || []).map(dimension => ({
+    id: dimension.id,
+    label: dimension.label,
+    interpretation: dimension.interpretation,
+    count: signals.filter(signal => termHits(signalText(signal), dimension.terms || []).length).length,
+  })).sort((left, right) => right.count - left.count || left.label.localeCompare(right.label));
+  const dominantDimension = trendDimensions[0]?.count > 0 ? trendDimensions[0] : null;
+  const sourceCount = new Set(signals.map(signal => signal.url)).size;
+  const officialCount = new Set(signals.filter(signal => signal.sourceTier === "official").map(signal => signal.url)).size;
+  const publisherCount = new Set(signals.map(signal => norm(signal.source)).filter(Boolean)).size;
+  const recentCount = signals.filter(signal => Date.parse(signal.date || "") >= recentCutoff).length;
+  const actorCounts = new Map();
+  const sourceCounts = new Map();
+  for (const signal of signals) {
+    const actor = clean(signal.company);
+    if (actor) actorCounts.set(actor, (actorCounts.get(actor) || 0) + 1);
+    const source = clean(signal.source);
+    if (source) sourceCounts.set(source, (sourceCounts.get(source) || 0) + 1);
+  }
+  const primaryActors = [...actorCounts.entries()].map(([name, count]) => ({ name, count }))
+    .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name)).slice(0, 5);
+  const primarySources = [...sourceCounts.entries()].map(([name, count]) => ({ name, count }))
+    .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name)).slice(0, 5);
+  const decisionMetrics = (track.decisionMetrics || []).map(clean).filter(Boolean).slice(0, 6);
+  const changeSummary = dominantDimension
+    ? `${dominantDimension.label} 신호 ${dominantDimension.count}/${signals.length}건으로 가장 큰 비중 · 최근 30일 ${recentCount}건 · ${signals[0]?.date || "최신일 확인 필요"}`
+    : `분류 신호 ${signals.length}건 · 최근 30일 ${recentCount}건 · 세부 변화 축 근거 보강 필요`;
+  const meaningSummary = dominantDimension
+    ? `${dominantDimension.interpretation} · ${track.strategicMeaning}`
+    : track.strategicMeaning;
+  const decisionSummary = `${decisionMetrics.join(" · ") || "비교 지표 추가 정의 필요"} 동일 기준 비교 · 공식 원문 ${officialCount}/${sourceCount}건 · 발행처 ${publisherCount}개`;
   return sanitizePublicCopy({
     id: track.id,
     label: track.label,
     description: track.description,
     accent: track.accent,
+    strategicMeaning: track.strategicMeaning,
+    decisionMetrics,
+    trendDimensions,
+    primaryActors,
+    primarySources,
+    evidence: { sourceCount, officialCount, publisherCount, recentCount },
+    summaryBullets: [
+      { label: "변화", text: changeSummary },
+      { label: "의미", text: meaningSummary },
+      { label: "판단", text: decisionSummary },
+    ],
     signalCount: signals.length,
     latestDate: signals[0]?.date || null,
     signals,
@@ -554,7 +602,7 @@ const infrastructureSegments = segmentDefs.map(segment => {
 });
 
 const snapshot = sanitizePublicCopy({
-  schemaVersion: 3,
+  schemaVersion: 4,
   generatedAt,
   sourceMode: "generated-from-source-linked-ledgers",
   methodology: {
@@ -569,6 +617,8 @@ const snapshot = sanitizePublicCopy({
   summary: {
     technologyTracks: technologyTracks.length,
     technologySignals: technologyTracks.reduce((sum, track) => sum + track.signalCount, 0),
+    technologyOfficialSignals: technologyTracks.reduce((sum, track) => sum + Number(track.evidence?.officialCount || 0), 0),
+    technologyPublishers: new Set(technologyTracks.flatMap(track => (track.signals || []).map(signal => norm(signal.source)).filter(Boolean))).size,
     infrastructureEntities: entityProfiles.length,
     trackedEntityUniverse: entityDefinitions.length,
     infrastructureSegments: infrastructureSegments.length,
@@ -603,7 +653,7 @@ const existingLedgerKeys = new Set((await readFile(ledgerPath, "utf8").catch(() 
     try { return ledgerRecordKey(JSON.parse(line)); } catch { return ""; }
   }).filter(Boolean));
 const ledgerRows = uniqueBy(technologyTracks.flatMap(track => track.signals.map(signal => ({
-  schemaVersion: 3,
+  schemaVersion: 4,
   recordType: "technology-signal",
   trackId: track.id,
   observedAt: generatedAt,

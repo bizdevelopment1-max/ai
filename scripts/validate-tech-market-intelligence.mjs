@@ -24,7 +24,7 @@ const allPublicSignals = [
   ...partners.flatMap(candidate => candidate.signals || []),
 ];
 
-if (data.schemaVersion !== 3 || data.sourceMode !== "generated-from-source-linked-ledgers") fail("invalid schema or source mode");
+if (data.schemaVersion !== 4 || data.sourceMode !== "generated-from-source-linked-ledgers") fail("invalid schema or source mode");
 if (tracks.length < 8) fail(`technology taxonomy is incomplete (${tracks.length}/8)`);
 if (segments.length !== 8 || new Set(segments.map(segment => segment.id)).size !== 8) fail(`future infrastructure taxonomy is incomplete (${segments.length}/8)`);
 if (Number(data.summary?.trackedEntityUniverse || 0) < 40) fail(`automated company universe is too narrow (${data.summary?.trackedEntityUniverse || 0})`);
@@ -35,6 +35,14 @@ if (!tracks.some(track => track.id === "inference-serving") || !tracks.some(trac
 const signals = tracks.flatMap(track => track.signals || []);
 if (!signals.length) fail("no source-backed technology signals were generated");
 if (signals.some(signal => !validUrl(signal.url) || !signal.title || !signal.date)) fail("technology signal lacks a title, date or source URL");
+if (tracks.some(track => !validKoreanBullets(track.summaryBullets)
+  || (track.trendDimensions || []).length < 4
+  || !(track.trendDimensions || []).some(dimension => Number(dimension.count || 0) > 0)
+  || (track.decisionMetrics || []).length < 4
+  || Number(track.evidence?.sourceCount || 0) !== Number(track.signalCount || 0)
+  || Number(track.evidence?.publisherCount || 0) < 1)) {
+  fail("technology track lacks a three-bullet trend brief, dimensions, decision metrics or evidence health");
+}
 if (allPublicSignals.some(signal => !validKoreanBullets(signal.bullets))) fail("a public signal lacks three distinct Korean fact/change/implication bullets");
 if (entities.some(entity => [...(entity.investmentMetrics || []), ...(entity.strategySignals || [])].some(signal => !validUrl(signal.url)))) {
   fail("infrastructure landscape contains an unlinked fact");
