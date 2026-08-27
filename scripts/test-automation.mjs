@@ -1538,6 +1538,9 @@ try {
     && boards.includes('className="tmi-signal-bullets"')
     && boards.includes('className="tmi-summary-bullets"')
     && boards.includes("infrastructureSegments.map")
+    && boards.includes('className="tmi-partner-levels"')
+    && boards.includes("candidate.strategicInsight")
+    && boards.includes("candidate.decisionGate")
     && styles.includes(".isg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));")
     && styles.includes(".isg-card:hover, .isg-card:focus-within {")
     && styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { opacity: 0; }")
@@ -1546,13 +1549,21 @@ try {
     && techStyles.includes(".tmi-signal:is(:hover, :focus-visible)")
     && techStyles.includes(".tmi-signal-bullets")
     && techStyles.includes(".tmi-entity-group")
+    && techStyles.includes(".tmi-partner-card")
     && techStyles.includes("-webkit-text-fill-color: currentColor")
     && techTaxonomy.futureInfrastructureSegments?.length === 8
+    && techTaxonomy.inferencePartnerLevels?.length === 5
+    && techMarket.schemaVersion === 3
     && Number(techMarket.summary?.trackedEntityUniverse || 0) >= 40
     && (techMarket.infrastructureLandscape?.entities || []).every(entity => (entity.summaryBullets || []).length === 3)
     && (techMarket.infrastructureLandscape?.verticalWorkloads || []).every(vertical => (vertical.summaryBullets || []).length === 3
       && (vertical.signals || []).every(signal => signal.bindingRule === "same-evidence-block"))
     && (techMarket.technologyTracks || []).flatMap(track => track.signals || []).every(signal => (signal.bullets || []).length === 3)
+    && (techMarket.inferenceMarket?.partnerLevels || []).length === 5
+    && (techMarket.inferenceMarket?.summaryBullets || []).length === 3
+    && (techMarket.inferenceMarket?.partnerCandidates || []).every(candidate => candidate.partnerLevelId
+      && candidate.strategicInsight && candidate.decisionGate && candidate.nextAction
+      && !Array.isArray(candidate.actions))
     && crawler.includes("futureInfrastructureSegments")
     && crawler.includes("infrastructureCompanies")
     && (techMarket.technologyTracks || []).every(track => requiredTracks.delete(track.id))
@@ -1561,7 +1572,7 @@ try {
   if (!readableSignals) {
     throw new Error("technology signals need source-derived tracks, linked facts and non-inverting readable cards");
   }
-  console.log("  OK  technology signals include 8 source-derived tracks, linked facts and readable lazy styles");
+  console.log("  OK  technology signals include 8 source-derived tracks, 5 decision-level partner groups and readable linked facts");
 } catch (error) {
   failed = true;
   console.error(`  FAIL  technology signal readability: ${error.message}`);

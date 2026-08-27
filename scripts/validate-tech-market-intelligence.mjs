@@ -10,6 +10,7 @@ const entities = data.infrastructureLandscape?.entities || [];
 const segments = data.infrastructureLandscape?.segments || [];
 const verticals = data.infrastructureLandscape?.verticalWorkloads || [];
 const partners = data.inferenceMarket?.partnerCandidates || [];
+const partnerLevels = data.inferenceMarket?.partnerLevels || [];
 const valuationContext = value => /\b(?:valuation|valued?\s+(?:it|the\s+company)?\s*at|market\s+cap|enterprise\s+value|worth)\b|기업\s*가치/i.test(String(value || ""));
 
 const validKoreanBullets = bullets => Array.isArray(bullets) && bullets.length === 3
@@ -23,7 +24,7 @@ const allPublicSignals = [
   ...partners.flatMap(candidate => candidate.signals || []),
 ];
 
-if (data.schemaVersion !== 2 || data.sourceMode !== "generated-from-source-linked-ledgers") fail("invalid schema or source mode");
+if (data.schemaVersion !== 3 || data.sourceMode !== "generated-from-source-linked-ledgers") fail("invalid schema or source mode");
 if (tracks.length < 8) fail(`technology taxonomy is incomplete (${tracks.length}/8)`);
 if (segments.length !== 8 || new Set(segments.map(segment => segment.id)).size !== 8) fail(`future infrastructure taxonomy is incomplete (${segments.length}/8)`);
 if (Number(data.summary?.trackedEntityUniverse || 0) < 40) fail(`automated company universe is too narrow (${data.summary?.trackedEntityUniverse || 0})`);
@@ -48,6 +49,19 @@ if (verticals.some(vertical => !validKoreanBullets(vertical.summaryBullets)
 }
 if (partners.some(candidate => !(candidate.signals || []).length || (candidate.signals || []).some(signal => !validUrl(signal.url)))) {
   fail("partner candidate lacks source-linked evidence");
+}
+if (partnerLevels.length !== 5 || new Set(partnerLevels.map(level => level.id)).size !== 5
+  || partnerLevels.some(level => !level.label || !level.strategicMeaning || !level.decisionGate)) {
+  fail("inference partner levels are incomplete");
+}
+if (!validKoreanBullets(data.inferenceMarket?.summaryBullets)) fail("inference market lacks three Korean decision insights");
+if (partners.some(candidate => !candidate.partnerLevelId || !partnerLevels.some(level => level.id === candidate.partnerLevelId)
+  || !candidate.role || !candidate.focus || !candidate.strategicInsight || !candidate.decisionGate || !candidate.nextAction
+  || !["repeated-official", "official-included", "reported-only"].includes(candidate.evidenceCode)
+  || !["공식 반복", "공식 포함", "보도 근거"].includes(candidate.evidenceLabel)
+  || Number(candidate.sourceCount || 0) < 1 || Number(candidate.publisherCount || 0) < 1
+  || Array.isArray(candidate.actions))) {
+  fail("partner candidate lacks a single level, differentiated insight or evidence gate");
 }
 const investmentSignals = entities.flatMap(entity => (entity.investmentMetrics || []).map(signal => ({ ...signal, entity: entity.name })));
 if (investmentSignals.some(signal => !(signal.metricValues || []).length

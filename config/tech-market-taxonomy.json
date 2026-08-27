@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "updatedAt": "2026-08-27",
   "purpose": "Stable classification rules for source-driven technology, workload, infrastructure and inference-market views. Facts and metrics must come from linked source ledgers.",
   "technologyTracks": [
@@ -108,10 +108,79 @@
     { "name": "Tencent", "segmentId": "hyperscale-demand", "type": "하이퍼스케일러", "aliases": ["Tencent", "Tencent Cloud"] },
     { "name": "NVIDIA", "registryName": "NVIDIA", "segmentId": "accelerator-silicon", "type": "가속 컴퓨팅", "aliases": ["NVIDIA", "Nvidia"] }
   ],
+  "inferencePartnerLevels": [
+    {
+      "id": "compute-runtime",
+      "order": 1,
+      "label": "L1 · 연산·런타임",
+      "description": "가속기·메모리·컴파일러·런타임이 추론 단가와 지연을 결정하는 공급 계층",
+      "valueChainLayers": ["infra"],
+      "profileTerms": ["가속", "accelerator", "반도체", "chip", "gpu", "npu", "lpu", "runtime", "런타임"],
+      "eligibleTracks": ["accelerator-semiconductor", "inference-serving"],
+      "role": "가속기·런타임 공급",
+      "strategicMeaning": "모델 선택보다 먼저 처리량·전력·메모리당 비용의 하한을 결정",
+      "primaryAction": "공동 최적화 검토",
+      "decisionGate": "동일 모델의 지연·처리량·전력·메모리·단가를 동일 조건으로 비교"
+    },
+    {
+      "id": "cloud-serving",
+      "order": 2,
+      "label": "L2 · 클라우드·서빙",
+      "description": "GPU 용량·오케스트레이션·관측성·지역 인프라를 묶어 추론을 운영하는 계층",
+      "valueChainLayers": ["infra"],
+      "profileTerms": ["cloud", "클라우드", "azure", "aws", "google cloud", "oci", "hyperscale", "하이퍼스케일", "data center", "데이터센터", "serving", "서빙"],
+      "eligibleTracks": ["data-center-system", "inference-serving"],
+      "role": "용량·서빙 운영",
+      "strategicMeaning": "서비스 가용성·지역 확장·멀티모델 운영비와 공급자 종속성을 좌우",
+      "primaryAction": "용량·서빙 제휴 검토",
+      "decisionGate": "지역별 용량·SLA·데이터 경계·멀티클라우드 전환비용을 검증"
+    },
+    {
+      "id": "model-toolchain",
+      "order": 3,
+      "label": "L3 · 모델·개발 플랫폼",
+      "description": "기반 모델·모델 허브·평가·도구 호출 체계가 품질과 개발 속도를 결정하는 계층",
+      "valueChainLayers": ["model"],
+      "profileTerms": ["foundation model", "기반 모델", "프론티어", "모델 허브", "model hub", "transformers", "멀티모달 모델"],
+      "eligibleTracks": ["model-architecture", "prompt-tooling", "inference-serving"],
+      "role": "기반 모델·개발 도구 공급",
+      "strategicMeaning": "모델 품질뿐 아니라 라이선스·교체 가능성·도구 생태계가 장기 통제력을 결정",
+      "primaryAction": "모델·도구 라이선스 검토",
+      "decisionGate": "과업 품질·라이선스·데이터 사용조건·모델 교체비용·로컬 실행 범위를 검증"
+    },
+    {
+      "id": "data-context-trust",
+      "order": 4,
+      "label": "L4 · 데이터·컨텍스트·신뢰",
+      "description": "RAG·Vector DB·거버넌스·평가가 응답 근거와 기업 데이터 통제력을 만드는 계층",
+      "valueChainLayers": ["data", "trust"],
+      "profileTerms": ["data", "데이터", "lakehouse", "레이크하우스", "vector", "검색", "retrieval", "governance", "거버넌스", "evaluation", "평가"],
+      "eligibleTracks": ["rag-retrieval", "vector-data"],
+      "role": "검색·컨텍스트·거버넌스 공급",
+      "strategicMeaning": "모델 성능보다 기업 데이터 연결·권한·출처 추적이 실제 도입 신뢰도를 결정",
+      "primaryAction": "데이터·검색 통합 검토",
+      "decisionGate": "검색 정확도·권한 상속·데이터 이동·감사 로그·잠금 효과를 PoC로 검증"
+    },
+    {
+      "id": "application-distribution",
+      "order": 5,
+      "label": "L5 · 애플리케이션·유통",
+      "description": "에이전트·검색·업무 앱이 사용자 과업과 결제·배포 접점을 확보하는 수요 계층",
+      "valueChainLayers": ["agent", "app", "service"],
+      "profileTerms": ["assistant", "어시스턴트", "agent", "에이전트", "application", "애플리케이션", "copilot", "검색 서비스", "업무 자동화"],
+      "eligibleTracks": ["ai-applications", "prompt-tooling", "rag-retrieval"],
+      "role": "사용자 과업·배포 접점 공급",
+      "strategicMeaning": "기술 우위보다 반복 사용 과업·기본 배포권·고객 획득비용·수익배분이 성패를 결정",
+      "primaryAction": "유통·서비스 제휴 검토",
+      "decisionGate": "과업 완료율·반복 사용·유료 전환·기본 탑재 효과·수익배분을 검증"
+    }
+  ],
   "classificationBinding": {
     "vertical": "산업 용어와 기술·워크로드 용어가 동일한 제목 또는 근거 문장에 함께 존재해야 함",
     "entity": "업체명과 인프라·투자 용어가 동일 근거 문장에 존재하거나 제목·회사 필드에 업체가 직접 귀속되어야 함",
-    "publicSummary": "원문 번역 3줄을 우선 사용하고 번역 실패 시 분류 근거·출처·사업 시사점으로 구성한 한글 3불릿 사용"
+    "publicSummary": "원문 번역 3줄을 우선 사용하고 번역 실패 시 분류 근거·출처·사업 시사점으로 구성한 한글 3불릿 사용",
+    "partnerIdentity": "업체명이 제목·근거 문장에 완전 일치하거나 공식 출처명·공식 도메인에 직접 결합된 경우에만 후보 근거로 인정",
+    "partnerLevel": "회사 프로필과 근거가 포착한 기술 트랙을 함께 점수화하되 하나의 주 역할 계층에만 배치"
   },
   "metricRules": {
     "investmentTerms": ["capex", "capital expenditure", "capital spending", "invest", "investment", "commit", "committed", "buildout", "data center", "datacenter", "compute capacity", "infrastructure"],

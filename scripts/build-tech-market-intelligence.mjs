@@ -399,29 +399,146 @@ const marketInference = (market.records || []).filter(record => /inference|추�
     });
   });
 
-const relevantPartnerTracks = new Set(["rag-retrieval", "vector-data", "inference-serving", "ai-applications", "data-center-system"]);
+const partnerLevelDefs = [...(taxonomy.inferencePartnerLevels || [])].sort((left, right) => Number(left.order || 0) - Number(right.order || 0));
+const relevantPartnerTracks = new Set(partnerLevelDefs.flatMap(level => level.eligibleTracks || []));
 const sourceSignals = technologyTracks.flatMap(track => track.signals.map(signal => ({ ...signal, trackId: track.id, trackLabel: track.label })));
+const trackById = new Map(trackDefs.map(track => [track.id, track]));
+const partnerAliases = name => {
+  const entity = entityDefinitions.find(item => [item.name, item.registryName, ...(item.aliases || [])].some(alias => norm(alias) === norm(name)));
+  return uniqueBy([
+    name,
+    ...(entity?.aliases || []),
+    ...(taxonomy.companyAliasOverrides?.[name] || []),
+  ].map(clean).filter(alias => alias.length >= 3), norm);
+};
+const officialHost = company => {
+  try { return new URL(company?.profile?.officialWebsite || "").hostname.replace(/^www\./, "").toLowerCase(); }
+  catch { return ""; }
+};
+const signalBindsPartner = (signal, name, company) => {
+  const aliases = partnerAliases(name);
+  const evidenceText = `${signal.originalTitle || ""} ${signal.evidenceExcerpt || ""}`;
+  if (aliases.some(alias => includesTerm(evidenceText, alias, true))) return true;
+  if (signal.sourceTier !== "official") return false;
+  if (aliases.some(alias => includesTerm(signal.source || "", alias, true))) return true;
+  const host = officialHost(company);
+  if (!host) return false;
+  try {
+    const signalHost = new URL(signal.url).hostname.replace(/^www\./, "").toLowerCase();
+    return signalHost === host || signalHost.endsWith(`.${host}`);
+  } catch { return false; }
+};
+const partnerProfileText = (name, company) => clean([
+  name,
+  company?.strategyProfile?.classification?.vertical,
+  company?.strategyProfile?.classification?.category,
+  company?.strategyProfile?.classification?.valueChainLayer,
+  ...(company?.profile?.business || []),
+].filter(Boolean).join(" "));
+const classifyPartnerLevel = (name, company, trackIds) => {
+  const profile = company?.strategyProfile?.classification || {};
+  const profileText = partnerProfileText(name, company);
+  return partnerLevelDefs.map(level => {
+    const layerMatch = (level.valueChainLayers || []).some(value => norm(value) === norm(profile.valueChainLayer));
+    const profileHits = termHits(profileText, level.profileTerms || []);
+    const trackHits = trackIds.filter(id => (level.eligibleTracks || []).includes(id));
+    return { level, score: (layerMatch ? 3 : 0) + profileHits.length * 4 + trackHits.length, profileHits, trackHits };
+  }).sort((left, right) => right.score - left.score || Number(left.level.order || 0) - Number(right.level.order || 0))[0];
+};
 const partnerCandidates = Object.entries(companies.companies || {}).map(([name, company]) => {
   const related = sourceSignals.filter(signal => relevantPartnerTracks.has(signal.trackId)
-    && (norm(signal.company) === norm(name) || includesTerm(`${signal.originalTitle} ${signal.evidenceExcerpt}`, name)));
+    && signalBindsPartner(signal, name, company));
   if (!related.length) return null;
   const tracks = [...new Set(related.map(signal => signal.trackId))];
-  const officialCount = related.filter(signal => signal.sourceTier === "official").length;
-  const score = Math.min(100, related.length * 8 + tracks.length * 11 + officialCount * 5);
+  const levelMatch = classifyPartnerLevel(name, company, tracks);
+  if (!levelMatch?.level || levelMatch.score <= 0) return null;
+  const levelRelated = related.filter(signal => (levelMatch.level.eligibleTracks || []).includes(signal.trackId));
+  if (!levelRelated.length) return null;
+  const levelTracks = [...new Set(levelRelated.map(signal => signal.trackId))];
+  const sourceCount = new Set(levelRelated.map(signal => signal.url)).size;
+  const officialSourceCount = new Set(levelRelated.filter(signal => signal.sourceTier === "official").map(signal => signal.url)).size;
+  const publisherCount = new Set(levelRelated.map(signal => norm(signal.source)).filter(Boolean)).size;
+  const trackMix = levelTracks.map(trackId => ({
+    id: trackId,
+    label: trackById.get(trackId)?.label || trackId,
+    count: levelRelated.filter(signal => signal.trackId === trackId).length,
+  })).sort((left, right) => right.count - left.count || left.label.localeCompare(right.label));
+  const dominant = trackMix[0];
+  const focusShare = dominant ? Math.round((dominant.count / levelRelated.length) * 100) : 0;
+  const evidenceCode = officialSourceCount >= 2 ? "repeated-official"
+    : officialSourceCount >= 1 ? "official-included" : "reported-only";
+  const evidenceLabel = evidenceCode === "repeated-official" ? "공식 반복"
+    : evidenceCode === "official-included" ? "공식 포함" : "보도 근거";
+  const nextAction = evidenceCode === "repeated-official" && sourceCount >= 3 ? levelMatch.level.primaryAction
+    : evidenceCode === "repeated-official" || evidenceCode === "official-included" ? "제한 PoC" : "공식 원문 보강";
+  const priorityScore = sourceCount * 4 + officialSourceCount * 6 + publisherCount * 5 + levelTracks.length * 3;
   const profile = company.strategyProfile?.classification || {};
   return sanitizePublicCopy({
     name,
-    score,
+    priorityScore,
     category: clean(profile.vertical || profile.category || company.profile?.industry),
     valueChainLayer: clean(profile.valueChainLayer),
-    technologyTracks: tracks,
-    sourceCount: new Set(related.map(signal => signal.url)).size,
+    partnerLevelId: levelMatch.level.id,
+    partnerLevelOrder: Number(levelMatch.level.order || 0),
+    partnerLevelLabel: levelMatch.level.label,
+    role: levelMatch.level.role,
+    focus: dominant ? `${dominant.label} ${dominant.count}/${levelRelated.length}건 · ${focusShare}%` : "기술 신호 추가 확인",
+    strategicInsight: dominant
+      ? `${dominant.label} 신호가 ${focusShare}%로 집중 · ${levelMatch.level.strategicMeaning}`
+      : levelMatch.level.strategicMeaning,
+    decisionGate: levelMatch.level.decisionGate,
+    nextAction,
+    evidenceCode,
+    evidenceLabel,
+    technologyTracks: levelTracks,
+    trackMix,
+    sourceCount,
+    officialSourceCount,
+    publisherCount,
     latestDate: newest(related)[0]?.date || null,
-    actions: tracks.some(id => ["rag-retrieval", "vector-data", "inference-serving"].includes(id)) ? ["Partner", "License", "Watch"] : ["Partner", "Watch"],
-    signals: uniqueBy(newest(related), signalKey).slice(0, 4),
+    signals: uniqueBy(newest(levelRelated), signalKey).slice(0, 4),
   });
-}).filter(Boolean).sort((left, right) => right.score - left.score || String(right.latestDate).localeCompare(String(left.latestDate)))
+}).filter(Boolean).sort((left, right) => left.partnerLevelOrder - right.partnerLevelOrder
+  || right.priorityScore - left.priorityScore || String(right.latestDate).localeCompare(String(left.latestDate)))
   .slice(0, Number(limits.partnerCandidates || 24));
+
+const partnerLevels = partnerLevelDefs.map(level => {
+  const candidates = partnerCandidates.filter(candidate => candidate.partnerLevelId === level.id);
+  return sanitizePublicCopy({
+    id: level.id,
+    order: level.order,
+    label: level.label,
+    description: level.description,
+    strategicMeaning: level.strategicMeaning,
+    decisionGate: level.decisionGate,
+    candidateCount: candidates.length,
+    officialCandidateCount: candidates.filter(candidate => candidate.officialSourceCount > 0).length,
+  });
+});
+const populatedPartnerLevels = partnerLevels.filter(level => level.candidateCount > 0);
+const densestPartnerLevel = [...populatedPartnerLevels].sort((left, right) => right.candidateCount - left.candidateCount || left.order - right.order)[0];
+const evidenceReadyCandidates = partnerCandidates.filter(candidate => candidate.evidenceCode === "repeated-official");
+const thinnestPartnerLevel = [...partnerLevels].sort((left, right) => left.candidateCount - right.candidateCount || left.order - right.order)[0];
+const partnerSummaryBullets = [
+  {
+    label: "구조",
+    text: densestPartnerLevel
+      ? `${densestPartnerLevel.label}에 근거 보유 후보 ${densestPartnerLevel.candidateCount}개 집중 · ${densestPartnerLevel.strategicMeaning}`
+      : "원문 결합 후보 추가 수집 필요",
+  },
+  {
+    label: "우선",
+    text: evidenceReadyCandidates.length
+      ? `공식 원문 2건 이상 후보 ${evidenceReadyCandidates.length}개 · ${evidenceReadyCandidates.slice(0, 4).map(candidate => candidate.name).join(" · ")}`
+      : "공식 원문 2건 이상 후보 없음 · 제휴 판단 전 근거 보강 필요",
+  },
+  {
+    label: "공백",
+    text: thinnestPartnerLevel
+      ? `${thinnestPartnerLevel.label} 근거 보유 후보 ${thinnestPartnerLevel.candidateCount}개 · 시장 공백이 아닌 수집 공백으로 관리`
+      : "계층별 수집 공백 점검 필요",
+  },
+];
 
 const infrastructureSegments = segmentDefs.map(segment => {
   const visible = entityProfiles.filter(entity => entity.segmentId === segment.id);
@@ -437,7 +554,7 @@ const infrastructureSegments = segmentDefs.map(segment => {
 });
 
 const snapshot = sanitizePublicCopy({
-  schemaVersion: 2,
+  schemaVersion: 3,
   generatedAt,
   sourceMode: "generated-from-source-linked-ledgers",
   methodology: {
@@ -468,6 +585,8 @@ const snapshot = sanitizePublicCopy({
   },
   inferenceMarket: {
     signals: uniqueBy(newest([...inferenceSignals, ...marketInference]), signalKey).slice(0, 36),
+    partnerLevels,
+    summaryBullets: partnerSummaryBullets,
     partnerCandidates,
   },
   lineage: {
@@ -484,7 +603,7 @@ const existingLedgerKeys = new Set((await readFile(ledgerPath, "utf8").catch(() 
     try { return ledgerRecordKey(JSON.parse(line)); } catch { return ""; }
   }).filter(Boolean));
 const ledgerRows = uniqueBy(technologyTracks.flatMap(track => track.signals.map(signal => ({
-  schemaVersion: 2,
+  schemaVersion: 3,
   recordType: "technology-signal",
   trackId: track.id,
   observedAt: generatedAt,

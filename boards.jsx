@@ -4789,6 +4789,7 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
   const infrastructureSegments = data.infrastructureLandscape?.segments || [];
   const verticals = data.infrastructureLandscape?.verticalWorkloads || [];
   const partners = data.inferenceMarket?.partnerCandidates || [];
+  const partnerLevels = data.inferenceMarket?.partnerLevels || [];
   const selectedTrack = tracks.find(track => track.id === activeTrack) || tracks[0] || {};
   const selectedEntity = entities.find(entity => entity.name === activeEntity) || entities[0] || {};
   const selectedVertical = verticals.find(vertical => vertical.id === activeVertical) || verticals[0] || {};
@@ -4897,16 +4898,29 @@ function TechMarketIntelligence({ sectionRef, dataVersion, mode = "technology", 
         </div>
       </div>
 
-      <div className="tmi-subhead"><span>INFERENCE ECOSYSTEM</span><h4>추론 시장·잠재 파트너</h4><p>추론·RAG·Vector DB·데이터센터 원문 신호의 범위와 최신성을 기준으로 후보 자동 정렬</p></div>
-      <div className="tmi-partner-table">
-        <div className="tmi-partner-row head"><span>기업</span><span>관련 트랙</span><span>근거</span><span>검토 옵션</span><span>최근</span></div>
-        {partners.slice(0, 16).map(candidate => <button className="tmi-partner-row" key={candidate.name} onClick={() => openCompany(candidate.name)}>
-          <span><b>{candidate.name}</b><em>{candidate.category || candidate.valueChainLayer}</em></span>
-          <span>{(candidate.technologyTracks || []).map(id => tracks.find(track => track.id === id)?.label || id).join(" · ")}</span>
-          <span><b>{candidate.sourceCount}</b>개 원문</span>
-          <span>{(candidate.actions || []).join(" · ")}</span>
-          <span>{fmtMonthDay(candidate.latestDate)}</span>
-        </button>)}
+      <div className="tmi-subhead"><span>AI EXECUTION ECOSYSTEM</span><h4>실행 계층별 잠재 파트너</h4><p>서로 다른 공급 계층을 분리하고 역할·근거 집중도·검증 게이트로 후보를 판단</p></div>
+      <ul className="tmi-summary-bullets tmi-partner-insights">
+        {(data.inferenceMarket?.summaryBullets || []).map((bullet, index) => <li key={`${bullet.label}-${index}`}><em>{bullet.label}</em><span>{bullet.text}</span></li>)}
+      </ul>
+      <div className="tmi-partner-levels">
+        {partnerLevels.filter(level => level.candidateCount > 0).map(level => {
+          const levelCandidates = partners.filter(candidate => candidate.partnerLevelId === level.id);
+          return <section className="tmi-partner-level" key={level.id}>
+            <header>
+              <div><span>{level.label}</span><p>{level.description}</p></div>
+              <aside><b>{level.candidateCount}</b><small>근거 보유 후보</small></aside>
+            </header>
+            <div className="tmi-partner-grid">
+              {levelCandidates.map(candidate => <button className="tmi-partner-card" key={candidate.name} onClick={() => openCompany(candidate.name)}>
+                <span className="tmi-partner-identity"><b>{candidate.name}</b><em>{candidate.category || candidate.valueChainLayer}</em></span>
+                <span className="tmi-partner-role"><em>현재 역할</em><b>{candidate.role}</b><small>{candidate.focus}</small></span>
+                <span className="tmi-partner-meaning"><em>전략 의미</em><b>{candidate.strategicInsight}</b></span>
+                <span className="tmi-partner-decision"><em className={`evidence-${candidate.evidenceCode}`}>{candidate.evidenceLabel}</em><b>{candidate.nextAction}</b><small>{candidate.decisionGate}</small></span>
+                <span className="tmi-partner-evidence"><b>공식 {candidate.officialSourceCount}/{candidate.sourceCount}</b><small>발행처 {candidate.publisherCount}개 · {fmtMonthDay(candidate.latestDate)}</small></span>
+              </button>)}
+            </div>
+          </section>;
+        })}
       </div>
     </section>
   );
