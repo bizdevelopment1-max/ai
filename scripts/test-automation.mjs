@@ -164,7 +164,8 @@ try {
     && boards.includes("기업 직접 연관 뉴스")
     && !boards.includes(".filter(a => a.cat === c.cat)")
     && !uiStatusCopy.test(`${app}\n${boards}\n${charts}`);
-  const automated = crawler.includes("loadDash().COMPANIES")
+  const automated = (crawler.includes("loadDash().COMPANIES") || crawler.includes("dashboardTaxonomy.COMPANIES"))
+    && crawler.includes("dashboardTaxonomy.STOCKS")
     && crawler.includes("newsQueryFor(company.name)")
     && crawler.includes("directCompanyNewsMatch")
     && (crawler.includes("pool(COMPANIES, 8") || crawler.includes("pool(activeCompanies, 8"))
@@ -1520,11 +1521,13 @@ try {
 }
 
 try {
-  const [boards, styles, techStyles, techMarket] = await Promise.all([
+  const [boards, styles, techStyles, techMarket, techTaxonomy, crawler] = await Promise.all([
     readFile("boards.jsx", "utf8"),
     readFile("styles.css", "utf8"),
     readFile("tech-market.css", "utf8"),
     readFile("tech-market-intelligence.json", "utf8").then(JSON.parse),
+    readFile("config/tech-market-taxonomy.json", "utf8").then(JSON.parse),
+    readFile("scripts/crawl-news.mjs", "utf8"),
   ]);
   const requiredTracks = new Set(["model-architecture", "prompt-tooling", "rag-retrieval", "vector-data", "inference-serving", "accelerator-semiconductor", "data-center-system", "ai-applications"]);
   const readableSignals = boards.includes("function SignalBoard")
@@ -1532,13 +1535,26 @@ try {
     && boards.includes("Tech &amp; Market Insights")
     && boards.includes('SignalInfographic file="infra-view.json"')
     && boards.includes("tech-market-intelligence.json")
+    && boards.includes('className="tmi-signal-bullets"')
+    && boards.includes('className="tmi-summary-bullets"')
+    && boards.includes("infrastructureSegments.map")
     && styles.includes(".isg-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));")
     && styles.includes(".isg-card:hover, .isg-card:focus-within {")
     && styles.includes(".isg-card:hover::after, .isg-card:focus-within::after { opacity: 0; }")
     && styles.includes("Non-inverting signal-card interaction contract")
     && techStyles.includes("source-driven consulting frame")
     && techStyles.includes(".tmi-signal:is(:hover, :focus-visible)")
+    && techStyles.includes(".tmi-signal-bullets")
+    && techStyles.includes(".tmi-entity-group")
     && techStyles.includes("-webkit-text-fill-color: currentColor")
+    && techTaxonomy.futureInfrastructureSegments?.length === 8
+    && Number(techMarket.summary?.trackedEntityUniverse || 0) >= 40
+    && (techMarket.infrastructureLandscape?.entities || []).every(entity => (entity.summaryBullets || []).length === 3)
+    && (techMarket.infrastructureLandscape?.verticalWorkloads || []).every(vertical => (vertical.summaryBullets || []).length === 3
+      && (vertical.signals || []).every(signal => signal.bindingRule === "same-evidence-block"))
+    && (techMarket.technologyTracks || []).flatMap(track => track.signals || []).every(signal => (signal.bullets || []).length === 3)
+    && crawler.includes("futureInfrastructureSegments")
+    && crawler.includes("infrastructureCompanies")
     && (techMarket.technologyTracks || []).every(track => requiredTracks.delete(track.id))
     && requiredTracks.size === 0
     && (techMarket.technologyTracks || []).flatMap(track => track.signals || []).every(signal => /^https?:\/\//.test(signal.url || ""));
