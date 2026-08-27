@@ -188,6 +188,7 @@ function App() {
   const [companyNews, setCompanyNews] = uS({});
   const [startupsX, setStartupsX] = uS(null);
   const [startupCatalog, setStartupCatalog] = uS([]);
+  const [candidateCatalog, setCandidateCatalog] = uS([]);
   const [monet, setMonet] = uS(null);
   uE(() => {
     if (!dataVersion || active !== "evidence") return;
@@ -233,6 +234,8 @@ function App() {
           ...(j.institutional || []).map(item => ({ ...item, portfolioTier: "institutional" })),
         ]);
       } }).catch(() => {});
+    loadJson(dataUrl("partner-ma-candidates.json"))
+      .then(j => { if (alive && Array.isArray(j?.records)) setCandidateCatalog(j.records); }).catch(() => {});
     return () => { alive = false; };
   }, [needsCompanyExtras, dataVersion]);
 
@@ -342,19 +345,50 @@ function App() {
         .sort((a, b) => a.name.localeCompare(b.name)),
     }));
     const taxonomy = D.STARTUP_TAXONOMY || [];
-    const trackedNames = new Set(companiesLive.map(company => company.name.replace(/\s*\(.*\)/, "")));
     const seen = new Set();
     const classify = startup => {
       if (startup.cat && taxonomy.some(category => category.id === startup.cat)) return startup.cat;
       const vertical = String(startup.vertical || "").toLowerCase();
       return taxonomy.find(category => (category.match || []).some(term => vertical.includes(String(term).toLowerCase())))?.id || "";
     };
-    const candidates = startupCatalog.filter(startup => {
-      if (!startup?.name || seen.has(startup.name)) return false;
-      if (trackedNames.has(startup.name.replace(/\s*\(.*\)/, ""))) return false;
-      const status = startup.provenance?.status;
-      if (status !== "source-backed" && status !== "source-linked") return false;
-      seen.add(startup.name);
+    const startupByName = new Map(startupCatalog.map(startup => [startup.name.replace(/\s*\(.*\)/, ""), startup]));
+    const liveByName = new Map(companiesLive.map(company => [company.name.replace(/\s*\(.*\)/, ""), company]));
+    // partner-ma-candidates.json is generated from the complete company DB.
+    // It therefore drives both counts and company drill-downs.  The startup
+    // ledger remains a safe fallback while an older cached candidate file is
+    // being replaced.
+    const candidateSource = candidateCatalog.length ? candidateCatalog : startupCatalog;
+    const candidates = candidateSource.map(candidate => {
+      const name = String(candidate?.name || "").replace(/\s*\(.*\)/, "");
+      const startup = startupByName.get(name);
+      const live = liveByName.get(name);
+      return {
+        ...(startup || {}),
+        ...(live || {}),
+        name: candidate.name,
+        domain: candidate.domain || startup?.domain || live?.domain || "",
+        vertical: candidate.vertical || startup?.vertical || live?.vchainVertical || live?.unit || "AI 소프트웨어·서비스",
+        cat: candidate.categoryId || startup?.cat || classify(startup || candidate),
+        latest: candidate.latestAction || live?.live?.latest || startup?.latest || null,
+        currentBusiness: candidate.businessAssessment?.currentBusiness || startup?.currentBusiness || live?.note || "",
+        revenueModel: candidate.businessAssessment?.revenueModel || startup?.revenueModel || live?.vp || "",
+        strategyDirection: candidate.businessAssessment?.strategicDirection || startup?.strategyDirection || live?.direction || "",
+        candidateAssessment: candidate.score ? candidate : null,
+        profile: live?.profile || startup?.profile || (candidate.companyFacts ? {
+          founded: candidate.companyFacts.founded,
+          hq: candidate.companyFacts.headquarters,
+          headcount: candidate.companyFacts.headcount,
+          business: candidate.companyFacts.products || [],
+        } : null),
+        provenance: startup?.provenance || { status: "source-backed" },
+      };
+    }).filter(candidate => {
+      if (!candidate?.name || seen.has(candidate.name)) return false;
+      const status = candidate.provenance?.status;
+      const generatedCandidate = Array.isArray(candidate.candidateAssessment?.sourceUrls)
+        && candidate.candidateAssessment.sourceUrls.length > 0;
+      if (!generatedCandidate && status !== "source-backed" && status !== "source-linked") return false;
+      seen.add(candidate.name);
       return true;
     });
     const sanalysis = taxonomy.map(category => ({
@@ -363,7 +397,7 @@ function App() {
         .sort((a, b) => a.name.localeCompare(b.name)),
     }));
     return { valuechain, sanalysis };
-  }, [companiesLive, startupCatalog]);
+  }, [candidateCatalog, companiesLive, startupCatalog]);
   uE(() => {
     if (!selected || !coLive) return;
     const hydrated = companiesLive.find(company => company.name === selected.name);
@@ -591,7 +625,7 @@ function App() {
     if (context.section === "sanalysis") {
       const tracked = companiesLive.find(item => item.name === company.name || item.name.replace(/\s*\(.*\)/, "") === company.name);
       if (tracked) {
-        setSelected(tracked);
+        setSelected({ ...tracked, candidateAssessment: company.candidateAssessment || tracked.candidateAssessment || null });
       } else {
         const live = (coLive && coLive[company.name]) || {};
         const profile = live.profile || company.profile || {};

@@ -1732,7 +1732,8 @@ function displayFeedText(item, language = "localized") {
 function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const catMap = Object.fromEntries(cats.map(c => [c.id, c]));
   const [co, setCo] = React.useState("all");          // company filter within category
-  const [displayLanguage, setDisplayLanguage] = React.useState("original");
+  // 한국어를 기본 표시로 사용한다. 원문은 사용자가 ORIGINAL을 선택할 때만 노출한다.
+  const [displayLanguage, setDisplayLanguage] = React.useState("ko");
   const keyOf = a => a.url || ((a.co || "") + "|" + a.date + "|" + a.title);
   // deleted articles persist in localStorage so ✕'d items never come back (across reloads/crawls)
   const LS_KEY = "aiDashDeletedArticles";
@@ -1790,6 +1791,9 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
     .filter(a => filter === "all" || a.cat === filter)
     .filter(a => co === "all" || a.co === co)
     .filter(a => !deleted[keyOf(a)])
+    // 한국어 모드에서 영문 폴백 카드를 섞으면 버튼이 고장난 것처럼 보인다.
+    // 품질 게이트를 통과한 한글만 표시하고, 전체 원문은 ORIGINAL에서 유지한다.
+    .filter(a => displayLanguage !== "ko" || displayFeedText(a, "ko").translated)
     .filter(a => {
       const display = displayFeedText(a, displayLanguage);
       const haystack = `${a.title || ""} ${display.title || ""} ${a.source || ""} ${a.co || ""}`.toLowerCase();
@@ -1800,7 +1804,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
   const activeCat = filter !== "all" ? catMap[filter] : null;
   // 누적 기사가 늘어도 초기 렌더를 가볍게 — 30개씩 페이지네이션(필터 변경 시 리셋)
   const [visN, setVisN] = React.useState(30);
-  React.useEffect(() => { setVisN(30); }, [filter, co, query]);
+  React.useEffect(() => { setVisN(30); }, [filter, co, query, displayLanguage]);
   const shown = sorted.slice(0, visN);
 
   return (
@@ -1811,7 +1815,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
           <h2>데일리 기사 피드 <span className="board-en">Daily Articles · 업체별 외신 큐레이션</span></h2>
         </div>
         <div className="feed-filters">
-          <span className="feed-total" aria-live="polite">누적 {sorted.length}건</span>
+          <span className="feed-total" aria-live="polite">{displayLanguage === "ko" ? `한국어 ${sorted.length}건` : `누적 ${sorted.length}건`}</span>
           <span className="feed-language" role="group" aria-label="기사 표시 언어"><button className={displayLanguage === "original" ? "on" : ""} onClick={() => setDisplayLanguage("original")}>ORIGINAL</button><button className={displayLanguage === "ko" ? "on" : ""} onClick={() => setDisplayLanguage("ko")}>한국어</button></span>
           <button className={filter === "all" ? "on" : ""} onClick={() => onFilter("all")}>전체</button>
           {cats.map(c => (
@@ -1835,7 +1839,9 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
       )}
 
       <div className="feed-body">
-        {sorted.length === 0 && <SourcePipeline kind="signal" />}
+        {sorted.length === 0 && (displayLanguage === "ko"
+          ? <p className="feed-empty">선택한 조건의 한국어 요약을 준비 중입니다. 원문은 ORIGINAL에서 확인할 수 있습니다.</p>
+          : <SourcePipeline kind="signal" />)}
         <div className="feed-list">
           {shown.map((a, i) => {
             const c = catMap[a.cat] || {};
@@ -1855,7 +1861,7 @@ function ArticleFeed({ articles, cats, sectionRef, filter, onFilter, query }) {
                     {a.co && <span className="art-co" style={{ color: c.accent, borderColor: c.accent }}>{a.co}</span>}
                     <span className="art-tag" style={{ color: c.accent, background: c.accentSoft }}>{a.tag}</span>
                     <span className="art-date">{fmtPubKo(pubOf(a))} 발표</span>
-                    <span className="art-verify">{display.original ? "ORIGINAL" : display.translated ? "원문 번역" : display.fallback ? "원문 영어" : "원문 발췌"}</span>
+                    <span className="art-verify">{display.original ? "ORIGINAL" : display.translated ? "한국어 요약" : display.fallback ? "원문" : "원문 발췌"}</span>
                   </span>
                   <a className="art-title" href={a.url} target="_blank" rel="noopener" onClick={e => e.stopPropagation()}>{hlBrief(display.title, "art-title")}</a>
                   {display.summary && <div className={"art-summary-wrap" + (summaryExpanded ? " is-open" : " is-collapsed")}>
@@ -5694,6 +5700,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   const inView = useInView(sectionRef);
   const [candidateData, setCandidateData] = React.useState(null);
   const [candidateRoute, setCandidateRoute] = React.useState("all");
+  const [candidateVisible, setCandidateVisible] = React.useState(16);
   const candidateFor = startup => (candidateData?.records || []).find(candidate =>
     candidate.id === startup?.canonicalId || candidate.name === startup?.name || candidate.domain === startup?.domain) || null;
   // 업체명 클릭 → 다른 기업과 동일한 상세 모달. 추적 기업이면 전체 프로필, 아니면 최신 라이브 데이터로 강화.
@@ -5806,6 +5813,42 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       sources: hist.slice(0, 10).map(h => ({ tier: "reported", label: String(h.title || "관련 기사"), asOf: h.date || "", url: h.url })),
     });
   };
+  const openCandidate = candidate => {
+    const startup = startupByName.get(candidate.name);
+    if (startup) {
+      openStartup(startup, startup.displaySection || candidate.portfolioClass);
+      return;
+    }
+    const match = (companies || []).find(company => company.name === candidate.name
+      || company.name.replace(/\s*\(.*\)/, "") === candidate.name);
+    if (match && onSelect) {
+      onSelect({ ...match, candidateAssessment: candidate });
+      return;
+    }
+    openStartup({
+      name: candidate.name,
+      canonicalId: candidate.id,
+      domain: candidate.domain,
+      vertical: candidate.vertical,
+      cat: candidate.categoryId,
+      currentBusiness: candidate.businessAssessment?.currentBusiness || candidate.companySummary,
+      revenueModel: candidate.businessAssessment?.revenueModel || "",
+      strategyDirection: candidate.businessAssessment?.strategicDirection || "",
+      stage: candidate.transaction?.stage || "",
+      profile: {
+        founded: candidate.companyFacts?.founded || "",
+        hq: candidate.companyFacts?.headquarters || "",
+        headcount: candidate.companyFacts?.headcount || "",
+        business: candidate.companyFacts?.products || [],
+        sourceUrls: candidate.sourceUrls || [],
+      },
+      organization: { executiveTeam: candidate.companyFacts?.leadership || [] },
+      latest: candidate.latestAction || null,
+      history: candidate.latestAction ? [candidate.latestAction] : [],
+      sourceLinks: (candidate.sourceUrls || []).map((url, index) => ({ label: `기업 원문 ${index + 1}`, url })),
+      provenance: { status: "source-backed" },
+    }, candidate.portfolioClass);
+  };
   const [data, setData] = React.useState(null);
   const [loaded, setLoaded] = React.useState(false);
   const [tier, setTier] = React.useState("all");
@@ -5817,6 +5860,9 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
   React.useEffect(() => {
     setCatFilter(activeCategory || "");
   }, [activeCategory]);
+  React.useEffect(() => {
+    setCandidateVisible(16);
+  }, [candidateRoute, catFilter]);
   // 단말 신사업 관점 분류 체계 — cat 우선, 없으면 vertical 키워드로 폴백 매핑
   const TAX = window.DASH.STARTUP_TAXONOMY || [];
   const catOf = (s) => {
@@ -5918,7 +5964,11 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
     .filter(s => s?.provenance?.status === "source-backed"), claimedCompanies);
   const visibleAll = [...largePool, ...smallPool, ...institutionalPool].filter(s => !del[s.name]);
   const catCounts = {};
-  visibleAll.forEach(s => { const cid = catOf(s); if (cid) catCounts[cid] = (catCounts[cid] || 0) + 1; });
+  const categoryCountSource = candidateData?.records?.length ? candidateData.records : visibleAll;
+  categoryCountSource.forEach(s => {
+    const cid = s.categoryId || catOf(s);
+    if (cid) catCounts[cid] = (catCounts[cid] || 0) + 1;
+  });
   const passCat = s => !catFilter || catOf(s) === catFilter;
   const large = largePool.filter(s => !del[s.name] && passCat(s));
   const small = smallPool.filter(s => !del[s.name] && passCat(s));
@@ -6024,7 +6074,7 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
       {candidateData && candidateRows.length > 0 && (
         <section className="su-candidate-board" aria-label="파트너 및 인수 후보 우선순위">
           <header>
-            <div><em>DEAL SCREEN</em><b>파트너·인수 우선순위</b><span>현재 기업 DB를 동일 기준으로 자동 평가</span></div>
+            <div><em>DEAL SCREEN</em><b>파트너·인수 우선순위</b><span>기업·스타트업·최근 기사 DB 자동 통합 · {candidateRows.length}개 후보</span></div>
             <nav aria-label="거래 방식 필터">
               <button className={candidateRoute === "all" ? "on" : ""} onClick={() => setCandidateRoute("all")}>전체</button>
               <button className={candidateRoute === "ma" ? "on" : ""} onClick={() => setCandidateRoute("ma")}>M&A</button>
@@ -6032,14 +6082,12 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
             </nav>
           </header>
           <div className="su-candidate-grid">
-            {candidateRows.slice(0, 12).map((candidate, index) => {
-              const startup = startupByName.get(candidate.name);
-              return (
+            {candidateRows.slice(0, candidateVisible).map((candidate, index) => (
                 <button type="button" className="su-candidate-card" key={candidate.id}
-                  onClick={() => startup && openStartup(startup, startup.displaySection || candidate.portfolioClass)}>
+                  onClick={() => openCandidate(candidate)}>
                   <div className="su-candidate-head"><em>{String(index + 1).padStart(2, "0")}</em><b>{candidate.name}</b><span>{candidate.recommendation}</span><strong>{candidate.score}</strong></div>
                   <p>{candidate.companySummary}</p>
-                  <div className="su-candidate-facts"><span>{candidate.category}</span><span>{candidate.transaction?.stage}</span></div>
+                  <div className="su-candidate-facts"><span>{candidate.category}</span><span>{candidate.freshness?.latestEvidenceDate ? `최근 ${fmtMonthDay(candidate.freshness.latestEvidenceDate)}` : candidate.transaction?.stage}</span></div>
                   <dl>
                     <div><dt>적합</dt><dd>{candidate.dimensions.strategicFit}/5</dd></div>
                     <div><dt>제품</dt><dd>{candidate.dimensions.productReadiness}/5</dd></div>
@@ -6048,9 +6096,13 @@ function StartupScopeBoard({ sectionRef, dataVersion, companies, coLive, monet, 
                   </dl>
                   <footer>{candidate.routeReason}</footer>
                 </button>
-              );
-            })}
+            ))}
           </div>
+          {candidateVisible < candidateRows.length && (
+            <button type="button" className="su-candidate-more" onClick={() => setCandidateVisible(count => Math.min(count + 16, candidateRows.length))}>
+              후보 더 보기 <b>{candidateVisible}</b> / {candidateRows.length}
+            </button>
+          )}
         </section>
       )}
 

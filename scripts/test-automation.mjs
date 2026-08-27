@@ -2625,10 +2625,22 @@ try {
     && startupCrawler.includes("bulletizeKorean")
     && translator.includes('previous.get("version") == 14')
     && translator.includes("bullet_style_valid");
-  if (!runtimeGate || !generationGate) {
+  const freeTranslationGate = translator.includes('TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"')
+    && translator.includes('TRANSLATE_PACE_S = float(os.environ.get("TRANSLATE_PACE_S", "0.4"))')
+    && translator.includes('TRANSLATE_RETRIES = max(0, int(os.environ.get("TRANSLATE_RETRIES", "4")))')
+    && translator.includes('TRANSLATE_CHUNK_CHARS = max(800, int(os.environ.get("TRANSLATE_CHUNK_CHARS", "3600")))')
+    && translator.includes("TRANSLATE_MARKER_OVERHEAD * len(chunk)")
+    && translator.includes("range(TRANSLATE_RETRIES + 1)")
+    && translator.includes("if attempt < TRANSLATE_RETRIES")
+    && translator.includes("TRANSLATE_BACKOFF_BASE_S * (2 ** attempt)")
+    && translator.includes('previous.get("status") == "accepted"')
+    && boards.includes('React.useState("ko")')
+    && boards.includes('displayLanguage !== "ko" || displayFeedText(a, "ko").translated')
+    && boards.includes("한국어 요약");
+  if (!runtimeGate || !generationGate || !freeTranslationGate) {
     throw new Error("browser or crawler copy-style gate is incomplete");
   }
-  console.log(`  OK  한국어 표시 문구 ${publicCopy.length}개 · 마침표와 문장형 종결 없음 · 생성 단계 개조식 고정`);
+  console.log(`  OK  한국어 표시 문구 ${publicCopy.length}개 · 무료 번역 배치·캐시·품질 게이트·자가치유 재시도 · 한국어 우선 표시`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  Korean consulting-copy style: ${error.message}`);
@@ -2822,13 +2834,18 @@ try {
   const architectureChildren = (architecture.workstreams || [])
     .flatMap(workstream => workstream.sections || [])
     .flatMap(section => section.children || []);
-  const candidateReady = records.length >= 80
-    && shortlist.length >= 16
+  const candidateReady = Number(candidates.schemaVersion || 0) >= 2
+    && records.length >= 150
+    && shortlist.length >= 32
     && Number(routeCounts["M&A 검토"] || 0) >= 8
     && Number(routeCounts["파트너십"] || 0) >= 8
+    && Number(candidates.metrics?.sourceInputs?.companyProfiles || 0) >= 150
+    && Number(candidates.metrics?.sourceInputs?.companyNewsStreams || 0) >= 20
     && records.every(item => item.companySummary && Number.isFinite(item.score)
       && item.recommendation && Array.isArray(item.sourceUrls) && item.sourceUrls.length
-      && item.sourceUrls.every(url => /^https:\/\//.test(url || "")));
+      && item.sourceUrls.every(url => /^https:\/\//.test(url || ""))
+      && item.freshness?.profileCheckedAt && item.evidenceStats?.sourceCount >= 1
+      && item.businessAssessment?.currentBusiness && item.businessAssessment?.strategicDirection);
   const opportunityCopyReady = (strategyView.opportunityPortfolio || []).every(item =>
     !Object.hasOwn(item, "horizon")
     && !Object.hasOwn(item, "nextMetrics")
@@ -2839,6 +2856,9 @@ try {
     && Array.isArray(item.priorityDrivers));
   const uiReady = boards.includes('className="su-candidate-board"')
     && boards.includes("candidateAssessment={candidateFor(s)}")
+    && boards.includes("openCandidate(candidate)")
+    && boards.includes("candidateVisible")
+    && boards.includes('className="su-candidate-more"')
     && boards.includes('className="is-timing"')
     && boards.includes('className="is-business"')
     && boards.includes("<em>03</em>판단")

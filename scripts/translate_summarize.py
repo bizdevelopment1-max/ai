@@ -36,6 +36,10 @@ MAX_ITEMS = int(os.environ.get("TRANSLATE_MAX", "500"))
 # 무료 번역 엔드포인트 IP 레이트리밋 회피 — 요청 간 최소 간격(초). 배치(마커 청크)와
 # 함께 동작해 호출 수를 줄이면서 순간 폭주를 막아 English 폴백을 최소화.
 TRANSLATE_PACE_S = float(os.environ.get("TRANSLATE_PACE_S", "0.4"))
+TRANSLATE_RETRIES = max(0, int(os.environ.get("TRANSLATE_RETRIES", "4")))
+TRANSLATE_BACKOFF_BASE_S = max(0.1, float(os.environ.get("TRANSLATE_BACKOFF_BASE_S", "0.8")))
+TRANSLATE_CHUNK_CHARS = max(800, int(os.environ.get("TRANSLATE_CHUNK_CHARS", "3600")))
+TRANSLATE_MARKER_OVERHEAD = len("\n<<<AIFB000>>>\n")
 TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
 LANG_CODES = {
     "english": "en", "en": "en", "japanese": "ja", "french": "fr",
@@ -271,7 +275,9 @@ class SourceTranslator:
         query = urlencode({"client": "gtx", "sl": source_language, "tl": "ko", "dt": "t", "q": text})
         request = Request(f"{TRANSLATE_URL}?{query}", headers={"User-Agent": "Mozilla/5.0 (compatible; AI-Feed-Localizer/1.0)", "Accept": "application/json"})
         last_error: Exception | None = None
-        for attempt in range(4):
+        # Initial request + four retries. The final 6.4-second backoff is now
+        # followed by a real fifth attempt instead of sleeping and giving up.
+        for attempt in range(TRANSLATE_RETRIES + 1):
             try:
                 self._throttle()   # 요청 간 최소 간격 보장(레이트리밋 회피)
                 with urlopen(request, timeout=20) as response:
@@ -280,7 +286,8 @@ class SourceTranslator:
                 return "".join(str(part[0] or "") for part in (payload[0] or []))
             except Exception as exc:  # network errors deliberately become English fallback
                 last_error = exc
-                time.sleep(min(0.8 * (2 ** attempt), 8.0))   # 지수 백오프(레이트리밋·일시 오류 흡수)
+                if attempt < TRANSLATE_RETRIES:
+                    time.sleep(TRANSLATE_BACKOFF_BASE_S * (2 ** attempt))
         self.failures += 1
         self.unavailable = True
         self.last_error = f"translation-request-failed:{type(last_error).__name__}"
@@ -301,7 +308,12 @@ class SourceTranslator:
                 break
             chunk: list[str] = []
             for text in texts:
-                if chunk and sum(len(value) for value in chunk) + len(text) + 40 > 3600:
+                candidate_chars = (
+                    sum(len(value) for value in chunk)
+                    + len(text)
+                    + TRANSLATE_MARKER_OVERHEAD * len(chunk)
+                )
+                if chunk and candidate_chars > TRANSLATE_CHUNK_CHARS:
                     try:
                         self._translate_chunk(chunk, language)
                     except RuntimeError:
@@ -451,7 +463,7 @@ def read_json(path: Path, fallback: dict) -> dict:
 def write_json(path: Path, value: dict) -> None:
     # verify-pipeline keeps research.json compact, so preserve that stable
     # layout instead of creating a formatting-only churn on every translation.
-    if path in {RESEARCH_PATH, MARKET_PATH, STARTUPS_PATH}:
+    if path in {NEWS_PATH, RESEARCH_PATH, MARKET_PATH, STARTUPS_PATH}:
         path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     else:
         path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
