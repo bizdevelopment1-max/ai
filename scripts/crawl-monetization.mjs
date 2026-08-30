@@ -15,7 +15,7 @@ const COMPANY_ALIASES = [
   { name: "OpenAI", layer: "model", vertical: "프런티어 모델", alias: ["OpenAI", "ChatGPT", "GPT-4", "GPT-5", "Sora"] },
   { name: "Anthropic", layer: "model", vertical: "프런티어 모델", alias: ["Anthropic", "Claude"] },
   { name: "Google DeepMind", layer: "model", vertical: "프런티어 모델", alias: ["Google DeepMind", "DeepMind", "Gemini"] },
-  { name: "Meta AI", layer: "model", vertical: "오픈 모델", alias: ["Meta AI", "Llama"] },
+  { name: "Meta AI", layer: "model", vertical: "Muse API·Llama 오픈 생태계", alias: ["Meta AI", "Muse Spark", "Llama"] },
   { name: "DeepSeek", layer: "model", vertical: "오픈·저비용 모델", alias: ["DeepSeek"] },
   { name: "Mistral AI", layer: "model", vertical: "오픈·소버린 모델", alias: ["Mistral"] },
   { name: "Cohere", layer: "model", vertical: "엔터프라이즈 모델", alias: ["Cohere"] },

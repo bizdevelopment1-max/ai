@@ -560,14 +560,26 @@ async function main() {
     }
 
     const p = { ...(base.profile || {}), ...(profileSource[name] || {}) };
+    const trackedCompany = trackedCompanies.some(company => company.name === name);
+    // The reviewed taxonomy unit is the canonical description for tracked
+    // companies. Put it first so a verified strategy change propagates into
+    // the accumulated profile instead of being hidden by an older crawl.
+    const canonicalBusiness = trackedCompany && base.unit ? [base.unit] : [];
     const o = orgSource[name] || {};
     const normalizedProfile = {
       ...p,
       ceo: rec.ceo || p.ceo || "",
       hq: rec.hq || p.hq || "",
       headcount: rec.employeesStale ? "" : (rec.employees || p.headcount || ""),
-      business: Array.isArray(p.business) && p.business.length ? p.business
-        : [base.currentBusiness, base.businessModel, base.overview, base.description, base.unit].filter(Boolean).slice(0, 5),
+      business: uniqueText([
+        ...canonicalBusiness,
+        ...(Array.isArray(p.business) ? p.business : []),
+        base.currentBusiness,
+        base.businessModel,
+        base.overview,
+        base.description,
+        base.unit,
+      ]).slice(0, 5),
     };
     const official = officialCompanies[name] || {};
     const verificationByName = new Map((official.verifiedExecutives || []).map(person => [personKey(person.name).toLowerCase(), person]));
@@ -672,7 +684,6 @@ async function main() {
       ...(normalizedOrg.officialPages || []).map(page => page.resolvedUrl || page.url),
       ...(base.sourceLinks || []).map(source => source.url),
     ]).filter(url => /^https?:\/\//i.test(url)).slice(0, 8);
-    const trackedCompany = trackedCompanies.some(company => company.name === name);
     rec.strategyProfile = {
       schemaVersion: 1,
       sourceType: trackedCompany ? "tracked-company-profile" : "startup-registry-profile",
@@ -681,6 +692,7 @@ async function main() {
         base.businessModel,
         base.overview,
         base.description,
+        trackedCompany ? base.unit : "",
         normalizedProfile.business.join(" · "),
         base.unit,
       ),

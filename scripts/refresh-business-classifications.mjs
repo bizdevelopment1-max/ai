@@ -110,12 +110,16 @@ const layerIds = new Set((taxonomy.VALUE_CHAIN || []).map(item => item.id));
 const groupIds = new Set((taxonomy.STOCK_GROUPS || []).map(item => item.id));
 const stockLayerIds = new Set((taxonomy.STOCK_VALUE_CHAIN || []).map(item => item.id));
 const stockByTicker = new Map((taxonomy.STOCKS || []).map(item => [item.ticker, item]));
+const companyByName = new Map((taxonomy.COMPANIES || []).map(item => [item.name, item]));
 const listedCompanies = new Set((taxonomy.COMPANIES || []).map(item => item.name));
 const generatedCompanies = new Set(Object.keys(companiesDb.companies || {}));
 const candidateCompanies = new Set((partnerDb.records || []).map(item => item.name));
 
 for (const [name, classification] of Object.entries(taxonomy.COMPANY_LAYER || {})) {
   if (!layerIds.has(classification.layer)) violations.push({ type: "unknown-company-layer", name, layer: classification.layer });
+}
+for (const category of taxonomy.CATEGORIES || []) {
+  if (!text(category.desc)) violations.push({ type: "missing-category-description", category: category.id });
 }
 for (const name of taxonomy.COMPANY_ORDER || []) {
   if (!taxonomy.COMPANY_LAYER?.[name] || !listedCompanies.has(name)) violations.push({ type: "company-registry-reference-mismatch", name });
@@ -139,15 +143,25 @@ for (const layer of taxonomy.VALUE_CHAIN || []) {
 const trustAllowlist = new Set((policy.companyRules || []).filter(rule => rule.expectedLayer === "trust").map(rule => rule.name));
 for (const rule of policy.companyRules || []) {
   const actual = taxonomy.COMPANY_LAYER?.[rule.name]?.layer || "";
+  const company = companyByName.get(rule.name);
   if (actual !== rule.expectedLayer) violations.push({ type: "company-primary-layer-mismatch", name: rule.name, expected: rule.expectedLayer, actual });
+  if (rule.expectedVertical && taxonomy.COMPANY_LAYER?.[rule.name]?.vertical !== rule.expectedVertical) {
+    violations.push({ type: "company-vertical-mismatch", name: rule.name, expected: rule.expectedVertical, actual: taxonomy.COMPANY_LAYER?.[rule.name]?.vertical });
+  }
+  if (rule.expectedUnit && company?.unit !== rule.expectedUnit) {
+    violations.push({ type: "company-business-description-mismatch", name: rule.name, expected: rule.expectedUnit, actual: company?.unit });
+  }
   const ageDays = (Date.now() - Date.parse(`${rule.lastVerifiedAt}T00:00:00Z`)) / 86400000;
   if (!Number.isFinite(ageDays) || ageDays > Number(policy.reviewMaxAgeDays || 90)) warnings.push({ type: "stale-company-classification", name: rule.name, lastVerifiedAt: rule.lastVerifiedAt });
   companyProfiles[rule.name] = {
     primaryLayer: rule.expectedLayer,
     primaryProduct: rule.primaryProduct,
     reason: rule.reason,
+    businessDescription: rule.expectedUnit || company?.unit || "",
+    modelAccess: rule.modelAccess || "",
     lastVerifiedAt: rule.lastVerifiedAt,
     sourceUrl: rule.sourceUrl,
+    secondarySourceUrl: rule.secondarySourceUrl || "",
   };
 }
 for (const [name, classification] of Object.entries(taxonomy.COMPANY_LAYER || {})) {

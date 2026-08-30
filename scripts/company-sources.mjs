@@ -79,8 +79,12 @@ export const COMPANY_SOURCES = {
     official: ["https://www.aboutamazon.com/about-us", "https://aws.amazon.com/executive-insights/"],
   },
   "Meta AI": {
-    aliases: ["Meta AI", "Meta Platforms", "Meta"],
-    official: ["https://about.meta.com/media-gallery/executives/"],
+    aliases: ["Meta AI", "Meta Platforms", "Meta", "Muse Spark", "Llama"],
+    official: [
+      "https://about.meta.com/media-gallery/executives/",
+      "https://ai.meta.com/blog/introducing-muse-spark-meta-model-api/",
+      "https://about.fb.com/news/2026/08/the-future-is-for-everyone/",
+    ],
   },
   "Mistral AI": {
     aliases: ["Mistral AI", "Mistral"],
@@ -252,8 +256,8 @@ export const COMPANY_NEWS_RULES = {
   "Writer": { headlineAliases: ["Writer.com", "Writer AI", "WRITER AI"], query: '("Writer.com" OR "Writer AI") enterprise' },
   "Stability AI": { headlineAliases: ["Stability AI"], query: '"Stability AI"' },
   "Meta AI": {
-    headlineAliases: ["Meta AI", "Meta", "Llama", "Facebook", "Instagram", "WhatsApp", "Zuckerberg"],
-    query: '("Meta AI" OR "Meta" OR "Llama" OR "Facebook" OR "Instagram" OR "WhatsApp") AI',
+    headlineAliases: ["Meta AI", "Meta", "Muse Spark", "Llama", "Facebook", "Instagram", "WhatsApp", "Zuckerberg"],
+    query: '("Meta AI" OR "Muse Spark" OR "Llama" OR "Facebook" OR "Instagram" OR "WhatsApp") AI',
   },
   "Midjourney": { headlineAliases: ["Midjourney"], query: '"Midjourney" AI' },
 };

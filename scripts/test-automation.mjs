@@ -2873,15 +2873,28 @@ try {
     readFile("scripts/update-site.mjs", "utf8"),
   ]);
   const arm = (taxonomy.STOCKS || []).find(stock => stock.ticker === "ARM");
+  const meta = (taxonomy.COMPANIES || []).find(company => company.name === "Meta AI");
   const trustCompanies = Object.entries(taxonomy.COMPANY_LAYER || {})
     .filter(([, item]) => item.layer === "trust")
     .map(([name]) => name);
   const armAudit = audit.stockProfiles?.ARM;
+  const metaAudit = audit.companyProfiles?.["Meta AI"];
+  const metaCompany = companies.companies?.["Meta AI"];
   const mix = armAudit?.latestRevenueMix;
   const candidateNames = new Set((candidates.records || []).map(item => item.name));
   const ready = taxonomy.COMPANY_LAYER?.Databricks?.layer === "data"
     && taxonomy.COMPANY_LAYER?.["Scale AI"]?.layer === "data"
     && taxonomy.COMPANY_LAYER?.OneTrust?.layer === "trust"
+    && (taxonomy.CATEGORIES || []).every(category => String(category.desc || "").trim())
+    && taxonomy.COMPANY_LAYER?.["Meta AI"]?.layer === "model"
+    && taxonomy.COMPANY_LAYER?.["Meta AI"]?.vertical === "Muse API·Llama 오픈 생태계"
+    && meta?.unit === "Muse 제품·API 모델 · Llama 오픈 모델 생태계"
+    && !/오픈소스 LLM/.test(meta?.unit || "")
+    && /Muse 제품·API/.test(metaCompany?.profile?.business?.join(" ") || "")
+    && /Llama 오픈/.test(metaCompany?.profile?.business?.join(" ") || "")
+    && /Muse 제품·API/.test(metaCompany?.strategyProfile?.currentBusiness || "")
+    && /Llama 오픈/.test(metaCompany?.strategyProfile?.currentBusiness || "")
+    && /Muse Spark 1\.1/.test(metaAudit?.modelAccess || "") && /Llama/.test(metaAudit?.modelAccess || "")
     && trustCompanies.length === 1 && trustCompanies[0] === "OneTrust"
     && Boolean(companies.companies?.OneTrust) && candidateNames.has("OneTrust")
     && arm?.group === "chip-ip"
@@ -2896,7 +2909,7 @@ try {
     && boards.includes("동일 비교 기준") && boards.includes("SEC 원문 ↗")
     && updateSite.includes('nodeStep("refresh-business-classifications"');
   if (!ready) throw new Error("primary-layer rules, Arm revenue-model classification, generated coverage, or UI disclosure is incomplete");
-  console.log(`  OK  STOCK_LAYER 제거 · 67개 종목 group-only 매핑 · Databricks·Scale AI=data · OneTrust=trust · Arm=chip-ip · SEC 매출 믹스 ${mix.royaltyPct}/${mix.licenseOtherPct}`);
+  console.log(`  OK  STOCK_LAYER 제거 · 67개 종목 group-only 매핑 · bigtech 설명 완결 · Meta=Muse API+Llama 오픈 생태계 · Arm=chip-ip · SEC 매출 믹스 ${mix.royaltyPct}/${mix.licenseOtherPct}`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  business classification audit: ${error.message}`);
