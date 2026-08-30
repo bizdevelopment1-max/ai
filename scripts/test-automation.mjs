@@ -2473,9 +2473,8 @@ try {
   const completeBoard = boards.includes("function StockRegionPanel")
     && boards.includes("function NvidiaInvestmentMap")
     && boards.includes("전체 상장사 밸류체인 분석")
-    && boards.includes("window.DASH.STOCK_LAYER")
+    && !boards.includes("window.DASH.STOCK_LAYER")
     && boards.includes("window.DASH.STOCK_GROUP_LAYER")
-    && !boards.includes(".filter(s => STOCK_LAYER[s.ticker])")
     && boards.includes("밸류체인 그룹 트렌드")
     && boards.includes("개별 종목")
     && boards.includes("stock-chain-families")
@@ -2493,9 +2492,9 @@ try {
     && ["TSLA", "DELL", "HPE", "0992.HK", "SMCI", "2382.TW", "6669.TW", "2317.TW", "2356.TW", "2376.TW", "2357.TW", "CSCO", "6702.T"].every(ticker =>
       dash.STOCKS.some(stock => stock.ticker === ticker) && crawler.includes(`t: "${ticker}"`))
     && dash.STOCKS.every(stock => dash.STOCK_VALUE_CHAIN.some(layer =>
-      layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])))
+      layer.id === dash.STOCK_GROUP_LAYER[stock.group]))
     && dash.STOCK_VALUE_CHAIN.every(layer => dash.STOCKS.some(stock =>
-      layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])));
+      layer.id === dash.STOCK_GROUP_LAYER[stock.group]));
   const sourceBackedInvestments = investmentData.portfolio?.length >= 100
     && investmentData.valueChains?.length === 6
     && investmentData.valueChains.every(layer => layer.id && layer.ko && layer.count > 0)
@@ -2850,7 +2849,7 @@ try {
   const candidateNames = new Set((candidates.records || []).map(item => item.name));
   const ready = spacex?.subsidiaries?.some(item => item.name === "Cursor" && item.countingPolicy === "parent-only")
     && spacex?.aiRevenueExposure?.status === "not-separately-disclosed"
-    && stockSpaceX?.group === "conglomerate" && taxonomy.STOCK_LAYER?.SPCX === "conglomerate"
+    && stockSpaceX?.group === "conglomerate" && taxonomy.STOCK_GROUP_LAYER?.[stockSpaceX.group] === "conglomerate"
     && stockOmni?.domain === "omnivision-group.com" && stockOmni?.brandDomains?.includes("ovt.com")
     && omni?.primaryDomain === "omnivision-group.com"
     && companyNames.has("SpaceX") && generatedNames.has("SpaceX")
@@ -2887,8 +2886,9 @@ try {
     && Boolean(companies.companies?.OneTrust) && candidateNames.has("OneTrust")
     && arm?.group === "chip-ip"
     && taxonomy.STOCK_GROUP_LAYER?.["chip-ip"] === "silicon"
-    && taxonomy.STOCK_LAYER?.ARM === "silicon"
-    && audit.summary?.datasetsChecked === 15 && audit.summary?.violations === 0
+    && taxonomy.STOCK_GROUP_LAYER?.[arm.group] === "silicon"
+    && !Object.hasOwn(taxonomy, "STOCK_LAYER")
+    && audit.summary?.datasetsChecked === 14 && audit.summary?.violations === 0
     && ["official-current", "cached-official-fallback"].includes(mix?.status)
     && Number(mix?.totalRevenue) === Number(mix?.royaltyRevenue) + Number(mix?.licenseOtherRevenue)
     && Math.abs(Number(mix?.royaltyPct) + Number(mix?.licenseOtherPct) - 100) <= 0.2
@@ -2896,7 +2896,7 @@ try {
     && boards.includes("동일 비교 기준") && boards.includes("SEC 원문 ↗")
     && updateSite.includes('nodeStep("refresh-business-classifications"');
   if (!ready) throw new Error("primary-layer rules, Arm revenue-model classification, generated coverage, or UI disclosure is incomplete");
-  console.log(`  OK  Databricks·Scale AI=data · OneTrust=trust · Arm=chip-ip · SEC 매출 믹스 ${mix.royaltyPct}/${mix.licenseOtherPct}`);
+  console.log(`  OK  STOCK_LAYER 제거 · 67개 종목 group-only 매핑 · Databricks·Scale AI=data · OneTrust=trust · Arm=chip-ip · SEC 매출 믹스 ${mix.royaltyPct}/${mix.licenseOtherPct}`);
 } catch (error) {
   failed = true;
   console.error(`  FAIL  business classification audit: ${error.message}`);

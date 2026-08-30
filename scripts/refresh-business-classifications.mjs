@@ -125,8 +125,9 @@ for (const company of taxonomy.COMPANIES || []) {
   if (!generatedCompanies.has(company.name)) violations.push({ type: "missing-generated-company", name: company.name });
   if (!candidateCompanies.has(company.name)) violations.push({ type: "missing-partner-candidate", name: company.name });
 }
+if (Object.hasOwn(taxonomy, "STOCK_LAYER")) violations.push({ type: "redundant-stock-layer-table", policy: "group-only" });
 for (const stock of taxonomy.STOCKS || []) {
-  const layer = taxonomy.STOCK_LAYER?.[stock.ticker] || taxonomy.STOCK_GROUP_LAYER?.[stock.group];
+  const layer = taxonomy.STOCK_GROUP_LAYER?.[stock.group];
   if (!groupIds.has(stock.group)) violations.push({ type: "unknown-stock-group", ticker: stock.ticker, group: stock.group });
   if (!stockLayerIds.has(layer)) violations.push({ type: "unknown-stock-layer", ticker: stock.ticker, layer });
 }
@@ -155,7 +156,7 @@ for (const [name, classification] of Object.entries(taxonomy.COMPANY_LAYER || {}
 
 for (const rule of policy.stockRules || []) {
   const stock = stockByTicker.get(rule.ticker);
-  const actualLayer = taxonomy.STOCK_LAYER?.[rule.ticker] || taxonomy.STOCK_GROUP_LAYER?.[stock?.group];
+  const actualLayer = taxonomy.STOCK_GROUP_LAYER?.[stock?.group];
   if (!stock) violations.push({ type: "missing-classified-stock", ticker: rule.ticker });
   if (stock?.group !== rule.expectedGroup) violations.push({ type: "stock-revenue-group-mismatch", ticker: rule.ticker, expected: rule.expectedGroup, actual: stock?.group });
   if (actualLayer !== rule.expectedLayer) violations.push({ type: "stock-value-chain-layer-mismatch", ticker: rule.ticker, expected: rule.expectedLayer, actual: actualLayer });
@@ -192,15 +193,16 @@ const output = {
   policies: {
     company: policy.companyClassificationBasis,
     stock: policy.stockClassificationBasis,
+    stockLayer: policy.stockLayerResolution,
     trust: policy.trustLayerPolicy,
   },
   coverage: [
     "CATEGORIES", "COMPANY_LAYER", "COMPANY_ORDER", "COMPANIES", "VALUE_CHAIN",
-    "STARTUP_TAXONOMY", "STARTUP_VERTICALS", "STOCK_GROUPS", "STOCKS", "STOCK_LAYER",
+    "STARTUP_TAXONOMY", "STARTUP_VERTICALS", "STOCK_GROUPS", "STOCKS",
     "STOCK_GROUP_LAYER", "STOCK_VALUE_CHAIN", "STOCK_VALUE_CHAIN_FAMILIES", "companies.json", "partner-ma-candidates.json"
   ],
   summary: {
-    datasetsChecked: 15,
+    datasetsChecked: 14,
     companyRules: (policy.companyRules || []).length,
     stockRules: (policy.stockRules || []).length,
     valueChainLayers: (taxonomy.VALUE_CHAIN || []).length,

@@ -40,8 +40,9 @@ for (const entity of registry.entities || []) {
   if (stock && entity.stockGroup && stock.group !== entity.stockGroup) {
     violations.push({ type: "stock-group-mismatch", ticker: entity.ticker, actual: stock.group, expected: entity.stockGroup });
   }
-  if (entity.ticker && entity.valueChainLayer && taxonomy.STOCK_LAYER?.[entity.ticker] !== entity.valueChainLayer) {
-    violations.push({ type: "stock-layer-mismatch", ticker: entity.ticker, actual: taxonomy.STOCK_LAYER?.[entity.ticker], expected: entity.valueChainLayer });
+  const resolvedLayer = stock ? taxonomy.STOCK_GROUP_LAYER?.[stock.group] : null;
+  if (entity.ticker && entity.valueChainLayer && resolvedLayer !== entity.valueChainLayer) {
+    violations.push({ type: "stock-layer-mismatch", ticker: entity.ticker, actual: resolvedLayer, expected: entity.valueChainLayer });
   }
   for (const subsidiary of entity.subsidiaries || []) {
     if (subsidiary.countingPolicy !== "parent-only") continue;
@@ -94,4 +95,3 @@ const output = {
 await writeFile("corporate-entity-audit.json", `${JSON.stringify(output)}\n`);
 if (violations.length) throw new Error(`Corporate entity validation failed: ${violations.length} violation(s)`);
 console.log(`[corporate-entities] ${output.summary.entities} parents · ${output.summary.subsidiaries} subsidiaries · ${output.summary.changeSignals} change signals · 0 violations`);
-

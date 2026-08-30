@@ -2563,7 +2563,6 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, fam
 
 function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectionRef, theme, dataVersion }) {
   const inView = useInView(sectionRef);
-  const STOCK_LAYER = window.DASH.STOCK_LAYER || {};
   const STOCK_GROUP_LAYER = window.DASH.STOCK_GROUP_LAYER || {};
   const VC = window.DASH.STOCK_VALUE_CHAIN || [];
   const VC_FAMILIES = window.DASH.STOCK_VALUE_CHAIN_FAMILIES || [];
@@ -2591,7 +2590,7 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
       const marketGroup = s.group;
       return {
         ...s,
-        group: STOCK_LAYER[s.ticker] || STOCK_GROUP_LAYER[marketGroup],
+        group: STOCK_GROUP_LAYER[marketGroup],
         marketGroup,
         marketCategory: marketGroupMap[marketGroup]?.ko || marketGroup,
         businessClassification: businessAudit.stockProfiles?.[s.ticker] || null,
