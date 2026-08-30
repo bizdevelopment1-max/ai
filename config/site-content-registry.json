@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "updatedAt": "2026-08-30",
   "refreshCadenceHours": 6,
   "publicationPolicy": {
@@ -18,6 +18,7 @@
     { "id": "companies", "path": "companies.json", "section": "valuechain", "recordPath": "companies", "countMode": "object", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "crawl-companies" },
     { "id": "company-news", "path": "company-news.json", "section": "valuechain", "recordPath": "companies", "countMode": "object", "publication": "public", "required": true, "maxAgeHours": 7, "collector": "build-company-news" },
     { "id": "corporate-entity-audit", "path": "corporate-entity-audit.json", "section": "valuechain", "recordPath": "summary.entities", "countMode": "scalar", "publication": "supporting", "consumer": "entity-quality-gate", "required": true, "maxAgeHours": 25, "collector": "validate-corporate-entities" },
+    { "id": "business-classification-audit", "path": "business-classification-audit.json", "section": "valuechain", "recordPath": "summary.datasetsChecked", "countMode": "scalar", "publication": "supporting", "consumer": "taxonomy-and-stock-ui", "required": true, "maxAgeHours": 25, "collector": "refresh-business-classifications" },
     { "id": "startups", "path": "startups.json", "section": "sanalysis", "recordPath": "large", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 169, "collector": "crawl-startups" },
     { "id": "partner-ma-candidates", "path": "partner-ma-candidates.json", "section": "sanalysis", "recordPath": "records", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 169, "collector": "build-partner-ma-candidates" },
     { "id": "monetization", "path": "monetization.json", "section": "newbiz", "recordPath": "companies", "countMode": "array", "publication": "public", "required": true, "maxAgeHours": 25, "collector": "crawl-monetization" },

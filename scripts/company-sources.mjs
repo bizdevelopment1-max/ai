@@ -114,6 +114,13 @@ export const COMPANY_SOURCES = {
     aliases: ["Scale AI"],
     official: ["https://scale.com/about"],
   },
+  "OneTrust": {
+    aliases: ["OneTrust"],
+    official: [
+      "https://www.onetrust.com/solutions/ai-governance/",
+      "https://www.onetrust.com/about-us/",
+    ],
+  },
   "Together AI": {
     aliases: ["Together AI", "Together Computer"],
     official: ["https://www.together.ai/about"],
@@ -228,6 +235,7 @@ export const COMPANY_NEWS_RULES = {
   "Kling AI": { headlineAliases: ["Kling AI", "Kuaishou Kling"], query: '("Kling AI" OR "Kuaishou Kling")' },
   "Sierra AI": { headlineAliases: ["Sierra AI"], query: '"Sierra AI"' },
   "Scale AI": { headlineAliases: ["Scale AI"], query: '"Scale AI"' },
+  "OneTrust": { headlineAliases: ["OneTrust"], query: '"OneTrust" (AI governance OR privacy OR compliance)' },
   "Hailuo (MiniMax)": { headlineAliases: ["Hailuo AI", "MiniMax AI", "MiniMax"], query: '("Hailuo AI" OR "MiniMax AI")' },
   "ElevenLabs": { headlineAliases: ["ElevenLabs"], query: '"ElevenLabs" AI' },
   "Harvey": { headlineAliases: ["Harvey AI", "Harvey's AI", "Harvey’s AI"], query: '"Harvey AI" legal' },

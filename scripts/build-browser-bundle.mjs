@@ -24,6 +24,7 @@ export const BROWSER_SOURCES = [
 ];
 export const BUNDLE_FILE = "app.bundle.js";
 export const DATA_SOURCE_FILE = "config/dashboard-taxonomy.json";
+export const BUSINESS_CLASSIFICATION_FILE = "business-classification-audit.json";
 export const DATA_BUNDLE_FILE = "data.bundle.js";
 export const INDEX_FILE = "index.html";
 export const STYLES_FILE = "styles.css";
@@ -62,6 +63,7 @@ export function buildRuntimeDash(dash = loadDash()) {
 }
 
 export const runtimeDataSource = (dash = loadDash()) => `window.DASH=${JSON.stringify(buildRuntimeDash(dash))};`;
+export const runtimeBusinessClassificationSource = (audit = {}) => `window.BUSINESS_CLASSIFICATION_AUDIT=${JSON.stringify(audit)};`;
 
 export const sourceStamp = sources => createHash("sha256")
   // Git checks out LF on Actions and CRLF locally on this workspace. The
@@ -179,19 +181,21 @@ export function stripRetiredCssBlocks(source) {
 }
 
 export async function buildBrowserBundle() {
-  const [sources, taxonomySource, stylesSource, indexSource] = await Promise.all([
+  const [sources, taxonomySource, classificationSource, stylesSource, indexSource] = await Promise.all([
     readBrowserSources(),
     readFile(DATA_SOURCE_FILE, "utf8"),
+    readFile(BUSINESS_CLASSIFICATION_FILE, "utf8"),
     readFile(STYLES_FILE, "utf8"),
     readFile(INDEX_FILE, "utf8"),
   ]);
   const stamp = sourceStamp(sources);
-  const compactData = runtimeDataSource();
+  const compactData = `${runtimeDataSource()}\n${runtimeBusinessClassificationSource(JSON.parse(classificationSource))}`;
   // Hash the emitted runtime payload, not only its source ledger. Changes to
   // pruning/normalization logic must produce a new URL or an old CDN response
   // can survive a deployment.
   const dataStamp = sourceStamp([
     { file: DATA_SOURCE_FILE, source: taxonomySource },
+    { file: BUSINESS_CLASSIFICATION_FILE, source: classificationSource },
     { file: "runtime-data.js", source: compactData },
   ]);
   const productionStylesSource = stripRetiredCssBlocks(stylesSource);

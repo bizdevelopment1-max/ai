@@ -73,17 +73,17 @@
     },
     {
       "id": "trust",
-      "ko": "데이터·RAG·신뢰",
-      "en": "Data, RAG & Trust",
+      "ko": "신뢰·보안·거버넌스",
+      "en": "Trust, Security & Governance",
       "accent": "#0D9488",
       "accentSoft": "#E2F5F2",
       "stance": "CONTROL",
       "stanceKo": "통제권 확보",
-      "controlPoint": "개인 컨텍스트·ID·동의·권한·평가",
-      "economics": "신뢰 프리미엄·기업 관리·데이터 서비스",
+      "controlPoint": "ID·동의·권한·정책·감사·컴플라이언스",
+      "economics": "신뢰 프리미엄·기업 관리·거버넌스 라이선스",
       "risk": "프라이버시 사고·권한 오남용·데이터 이동성 규제",
-      "operatorMove": "온디바이스 개인화 금고와 기업용 정책·평가 레이어를 공통 자산으로 구축",
-      "desc": "개인화와 기업 배포를 가능하게 하는 컨텍스트·권한·보안·거버넌스·평가 계층"
+      "operatorMove": "온디바이스 개인화 금고와 기업용 정책·동의·감사 레이어를 공통 자산으로 구축",
+      "desc": "AI 사용의 개인정보·동의·권한·보안·규제 준수를 통제하고 감사하는 독립 신뢰 계층"
     },
     {
       "id": "model",
@@ -246,19 +246,30 @@
       "fit": "medium"
     },
     "Databricks": {
-      "layer": "trust",
-      "vertical": "기업 데이터·컨텍스트",
+      "layer": "data",
+      "vertical": "데이터 레이크하우스·MLOps",
       "adjacent": [
-        "data",
-        "agent"
+        "trust",
+        "agent",
+        "infra"
       ],
       "fit": "high"
     },
     "Scale AI": {
-      "layer": "trust",
-      "vertical": "데이터·평가·안전",
+      "layer": "data",
+      "vertical": "학습 데이터·모델 평가",
       "adjacent": [
-        "data"
+        "trust",
+        "model"
+      ],
+      "fit": "high"
+    },
+    "OneTrust": {
+      "layer": "trust",
+      "vertical": "AI 거버넌스·프라이버시·컴플라이언스",
+      "adjacent": [
+        "data",
+        "service"
       ],
       "fit": "high"
     },
@@ -433,6 +444,7 @@
     "Mistral AI",
     "Sierra AI",
     "Scale AI",
+    "OneTrust",
     "ElevenLabs",
     "Harvey",
     "Replit",
@@ -712,7 +724,13 @@
         "보안",
         "안전",
         "trust",
-        "safety"
+        "safety",
+        "거버넌스",
+        "프라이버시",
+        "동의",
+        "compliance",
+        "governance",
+        "privacy"
       ]
     },
     {
@@ -758,6 +776,12 @@
       "ko": "AI 칩",
       "en": "AI Chips",
       "accent": "#C026D3"
+    },
+    {
+      "id": "chip-ip",
+      "ko": "반도체 IP 라이선싱",
+      "en": "Semiconductor IP Licensing",
+      "accent": "#7C3AED"
     },
     {
       "id": "foundry",
@@ -993,6 +1017,7 @@
   ],
   "STOCK_GROUP_LAYER": {
     "chip": "silicon",
+    "chip-ip": "silicon",
     "foundry": "foundry",
     "equipment": "semicap",
     "packaging": "semicap",
@@ -1021,6 +1046,7 @@
     "NVDA": "silicon",
     "AVGO": "silicon",
     "MRVL": "silicon",
+    "ARM": "silicon",
     "PLTR": "enterprise",
     "NOW": "enterprise",
     "SPCX": "conglomerate",
@@ -1161,7 +1187,7 @@
     {
       "cat": "startup",
       "name": "Databricks",
-      "vertical": "인프라·파운데이션",
+      "vertical": "데이터·MLOps",
       "domain": "databricks.com",
       "unit": "데이터+AI 플랫폼",
       "url": "https://databricks.com"
@@ -1193,10 +1219,18 @@
     {
       "cat": "startup",
       "name": "Scale AI",
-      "vertical": "인프라·파운데이션",
+      "vertical": "데이터·평가",
       "domain": "scale.com",
       "unit": "AI 데이터·평가·국방",
       "url": "https://scale.com"
+    },
+    {
+      "cat": "startup",
+      "name": "OneTrust",
+      "vertical": "신뢰·보안·거버넌스",
+      "domain": "onetrust.com",
+      "unit": "AI 거버넌스·프라이버시·동의·컴플라이언스",
+      "url": "https://www.onetrust.com/solutions/ai-governance/"
     },
     {
       "cat": "startup",
@@ -1390,9 +1424,12 @@
     {
       "ticker": "ARM",
       "name": "Arm Holdings",
-      "group": "chip",
+      "group": "chip-ip",
       "domain": "arm.com",
-      "cat": "bigtech"
+      "cat": "bigtech",
+      "revenueModelType": "ip-license-and-per-chip-royalty",
+      "comparisonBasis": "IP 라이선스·로열티 경제성",
+      "lastVerifiedAt": "2026-08-30"
     },
     {
       "ticker": "MRVL",

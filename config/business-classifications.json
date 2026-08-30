@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "reviewMaxAgeDays": 90,
+  "companyClassificationBasis": "primary-product-and-customer-value",
+  "stockClassificationBasis": "revenue-model-first-with-value-chain-layer-secondary",
+  "trustLayerPolicy": "Only companies whose primary product controls privacy, consent, permissions, security, policy, audit or regulatory compliance may use the trust layer",
+  "companyRules": [
+    {
+      "name": "Databricks",
+      "expectedLayer": "data",
+      "primaryProduct": "데이터 레이크하우스·데이터 엔지니어링·MLOps·모델 배포",
+      "reason": "거버넌스는 플랫폼 기능이지만 고객이 구매하는 핵심 제품은 데이터·AI 개발 및 운영 플랫폼",
+      "lastVerifiedAt": "2026-08-30",
+      "sourceUrl": "https://www.databricks.com/product/platform"
+    },
+    {
+      "name": "Scale AI",
+      "expectedLayer": "data",
+      "primaryProduct": "학습 데이터 생성·큐레이션·라벨링·모델 평가",
+      "reason": "안전·정렬은 데이터 엔진의 평가 기능이며 독립 개인정보·컴플라이언스 플랫폼이 아님",
+      "lastVerifiedAt": "2026-08-30",
+      "sourceUrl": "https://scale.com/data-engine"
+    },
+    {
+      "name": "OneTrust",
+      "expectedLayer": "trust",
+      "primaryProduct": "AI 거버넌스·프라이버시·동의·정책·컴플라이언스",
+      "reason": "AI 자산·위험·정책·감사·규제 준수를 직접 통제하는 신뢰 계층 전용 제품",
+      "lastVerifiedAt": "2026-08-30",
+      "sourceUrl": "https://www.onetrust.com/solutions/ai-governance/"
+    }
+  ],
+  "stockRules": [
+    {
+      "ticker": "ARM",
+      "name": "Arm Holdings",
+      "expectedGroup": "chip-ip",
+      "expectedLayer": "silicon",
+      "businessModel": "반도체 아키텍처·설계 IP 라이선스와 파트너 칩 출하당 로열티",
+      "comparisonBasis": "IP 라이선스·로열티 경제성 기준으로 실물 칩 판매 팹리스와 분리",
+      "transitionSignal": "Arm-designed silicon 매출이 별도 공시되고 연결 매출의 유의미한 비중을 차지하면 그룹 재검토",
+      "lastVerifiedAt": "2026-08-30",
+      "businessSourceUrl": "https://investors.arm.com/node/8281/html",
+      "officialFilingUrls": [
+        {
+          "url": "https://investors.arm.com/node/8361/html",
+          "form": "6-K",
+          "filingDate": "2026-07-29",
+          "periodEnd": "2026-06-30"
+        },
+        {
+          "url": "https://investors.arm.com/node/8281/html",
+          "form": "20-F",
+          "filingDate": "2026-05-26",
+          "periodEnd": "2026-03-31"
+        }
+      ],
+      "sec": {
+        "cik": "0001973239",
+        "forms": ["6-K", "20-F"],
+        "maxFilingsToTry": 8
+      }
+    }
+  ]
+}

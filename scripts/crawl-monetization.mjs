@@ -22,6 +22,7 @@ const COMPANY_ALIASES = [
   { name: "SpaceX", layer: "infra", vertical: "우주·연결·AI 복합 인프라", alias: ["SpaceX", "xAI", "Grok", "Cursor", "Anysphere"] },
   { name: "Databricks", layer: "data", vertical: "데이터 레이크하우스", alias: ["Databricks"] },
   { name: "Scale AI", layer: "data", vertical: "데이터 라벨링·평가", alias: ["Scale AI"] },
+  { name: "OneTrust", layer: "trust", vertical: "AI 거버넌스·프라이버시", alias: ["OneTrust"] },
   { name: "Hugging Face", layer: "data", vertical: "모델 허브·오픈소스", alias: ["Hugging Face", "HuggingFace"] },
   { name: "Together AI", layer: "data", vertical: "추론·학습 클라우드", alias: ["Together AI"] },
   { name: "Apple", layer: "app", vertical: "온디바이스·생태계", alias: ["Apple Intelligence", "Apple", "Siri"] },

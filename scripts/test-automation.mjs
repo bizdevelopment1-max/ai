@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { access, readFile } from "node:fs/promises";
-import { BUNDLE_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, buildRuntimeDash, readBrowserSources, runtimeDataSource, sourceStamp } from "./build-browser-bundle.mjs";
+import { BUNDLE_FILE, BUSINESS_CLASSIFICATION_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, buildRuntimeDash, readBrowserSources, runtimeBusinessClassificationSource, runtimeDataSource, sourceStamp } from "./build-browser-bundle.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, directCompanyNewsMatch } from "./company-sources.mjs";
 import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
@@ -25,6 +25,7 @@ const required = [
   "scripts/validate-partner-ma-candidates.mjs",
   "scripts/corporate-entities.mjs",
   "scripts/validate-corporate-entities.mjs",
+  "scripts/refresh-business-classifications.mjs",
   "scripts/crawl-financials.mjs",
   "scripts/company-sources.mjs",
   "scripts/crawl-company-officials.mjs",
@@ -79,6 +80,7 @@ const required = [
   "nvidia-investments.json",
   "partner-ma-candidates.json",
   "corporate-entity-audit.json",
+  "business-classification-audit.json",
   "financials.json",
   "companies.json",
   "startups.json",
@@ -100,6 +102,7 @@ const required = [
   "config/tech-market-taxonomy.json",
   "config/company-source-policy.json",
   "config/corporate-entities.json",
+  "config/business-classifications.json",
   "config/nvidia-investment-deals.json",
   "_config.yml",
   "index.html",
@@ -192,17 +195,20 @@ try {
 }
 
 try {
-  const [sources, bundle, dataSource, dataBundle, index] = await Promise.all([
+  const [sources, bundle, dataSource, classificationSource, dataBundle, index] = await Promise.all([
     readBrowserSources(),
     readFile(BUNDLE_FILE, "utf8"),
     readFile(DATA_SOURCE_FILE, "utf8"),
+    readFile(BUSINESS_CLASSIFICATION_FILE, "utf8"),
     readFile(DATA_BUNDLE_FILE, "utf8"),
     readFile("index.html", "utf8"),
   ]);
+  const compactRuntimeData = `${runtimeDataSource()}\n${runtimeBusinessClassificationSource(JSON.parse(classificationSource))}`;
   const expected = `/* ai-dashboard-bundle:${sourceStamp(sources)} */`;
   const expectedData = `/* ai-dashboard-data:${sourceStamp([
     { file: DATA_SOURCE_FILE, source: dataSource },
-    { file: "runtime-data.js", source: runtimeDataSource() },
+    { file: BUSINESS_CLASSIFICATION_FILE, source: classificationSource },
+    { file: "runtime-data.js", source: compactRuntimeData },
   ])} */`;
   const forbiddenHandsetWord = "\uD734\uB300\uD3F0";
   const publicRuntimeCopy = [...sources.map(({ source }) => source), bundle, dataSource, dataBundle, index].join("\n");
@@ -2856,6 +2862,44 @@ try {
 } catch (error) {
   failed = true;
   console.error(`  FAIL  corporate entity reconciliation: ${error.message}`);
+}
+
+try {
+  const [taxonomy, companies, candidates, audit, boards, updateSite] = await Promise.all([
+    readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
+    readFile("companies.json", "utf8").then(JSON.parse),
+    readFile("partner-ma-candidates.json", "utf8").then(JSON.parse),
+    readFile("business-classification-audit.json", "utf8").then(JSON.parse),
+    readFile("boards.jsx", "utf8"),
+    readFile("scripts/update-site.mjs", "utf8"),
+  ]);
+  const arm = (taxonomy.STOCKS || []).find(stock => stock.ticker === "ARM");
+  const trustCompanies = Object.entries(taxonomy.COMPANY_LAYER || {})
+    .filter(([, item]) => item.layer === "trust")
+    .map(([name]) => name);
+  const armAudit = audit.stockProfiles?.ARM;
+  const mix = armAudit?.latestRevenueMix;
+  const candidateNames = new Set((candidates.records || []).map(item => item.name));
+  const ready = taxonomy.COMPANY_LAYER?.Databricks?.layer === "data"
+    && taxonomy.COMPANY_LAYER?.["Scale AI"]?.layer === "data"
+    && taxonomy.COMPANY_LAYER?.OneTrust?.layer === "trust"
+    && trustCompanies.length === 1 && trustCompanies[0] === "OneTrust"
+    && Boolean(companies.companies?.OneTrust) && candidateNames.has("OneTrust")
+    && arm?.group === "chip-ip"
+    && taxonomy.STOCK_GROUP_LAYER?.["chip-ip"] === "silicon"
+    && taxonomy.STOCK_LAYER?.ARM === "silicon"
+    && audit.summary?.datasetsChecked === 15 && audit.summary?.violations === 0
+    && ["official-current", "cached-official-fallback"].includes(mix?.status)
+    && Number(mix?.totalRevenue) === Number(mix?.royaltyRevenue) + Number(mix?.licenseOtherRevenue)
+    && Math.abs(Number(mix?.royaltyPct) + Number(mix?.licenseOtherPct) - 100) <= 0.2
+    && boards.includes("window.BUSINESS_CLASSIFICATION_AUDIT")
+    && boards.includes("동일 비교 기준") && boards.includes("SEC 원문 ↗")
+    && updateSite.includes('nodeStep("refresh-business-classifications"');
+  if (!ready) throw new Error("primary-layer rules, Arm revenue-model classification, generated coverage, or UI disclosure is incomplete");
+  console.log(`  OK  Databricks·Scale AI=data · OneTrust=trust · Arm=chip-ip · SEC 매출 믹스 ${mix.royaltyPct}/${mix.licenseOtherPct}`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  business classification audit: ${error.message}`);
 }
 
 try {
