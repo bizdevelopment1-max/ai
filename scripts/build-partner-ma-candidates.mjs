@@ -8,6 +8,7 @@
  * stay undisclosed and every candidate retains followable evidence URLs.
  */
 import { readFile, writeFile } from "node:fs/promises";
+import { corporateRelationship, corporateStructureFor, loadCorporateEntities } from "./corporate-entities.mjs";
 
 const readJson = async (file, fallback = {}) => {
   try { return JSON.parse(await readFile(file, "utf8")); } catch { return fallback; }
@@ -33,6 +34,11 @@ const companyMap = companyDb.companies || {};
 const companyNews = companyNewsDb.companies || {};
 const generatedAt = new Date().toISOString();
 const generatedDay = generatedAt.slice(0, 10);
+const corporateRegistry = loadCorporateEntities();
+const isParentOnlySubsidiary = value => {
+  const relationship = corporateRelationship(value, "", corporateRegistry);
+  return relationship?.subsidiary?.countingPolicy === "parent-only";
+};
 
 const dated = item => item && https(item.url) && item.title ? {
   title: text(item.localization?.status === "accepted" ? item.localization.title : item.title),
@@ -119,7 +125,9 @@ const startupUniverse = [
   ...(startups.large || []).map(record => ({ record, portfolioClass: "growth" })),
   ...(startups.small || []).map(record => ({ record, portfolioClass: "early" })),
   ...(startups.institutional || []).map(record => ({ record, portfolioClass: "consumer" })),
-];
+].filter(entry => !isParentOnlySubsidiary(entry.record?.name)
+  && !isParentOnlySubsidiary(entry.record?.legalName)
+  && !isParentOnlySubsidiary(entry.record?.domain));
 const startupAliases = new Map();
 for (const entry of startupUniverse) {
   [entry.record?.canonicalId, entry.record?.domain, entry.record?.name].map(normalize).filter(Boolean)
@@ -137,6 +145,7 @@ const matchedStartup = (name, company) => [
 const universe = [];
 const companyAliases = new Set();
 for (const [name, company] of Object.entries(companyMap)) {
+  if (isParentOnlySubsidiary(name)) continue;
   const startupEntry = matchedStartup(name, company);
   universe.push({
     name,
@@ -211,6 +220,7 @@ for (const { name, company, seed, portfolioClass, isTracked } of universe) {
       : !/(?:\$|€|£|₩|series|시리즈|seed|시드)/i.test(stage) ? "가격·지분 조건 추가 확인"
         : portfolioClass === "growth" ? "거래 규모·독점 조건 우선 확인" : "제품 유지율·핵심 인재 잔류 확인";
   const checkedAt = text(company?.updatedAt || company?.coverage?.checkedAt || company?.strategyProfile?.checkedAt || startups.generatedAt);
+  const corporateStructure = corporateStructureFor(name, company?.ticker || "", corporateRegistry);
 
   records.push({
     id: company?.portfolioReference?.canonicalId || seed?.canonicalId || slug(name),
@@ -248,6 +258,7 @@ for (const { name, company, seed, portfolioClass, isTracked } of universe) {
       })),
       products: (profile.business || []).map(text).filter(Boolean).slice(0, 4),
     },
+    corporateStructure,
     latestAction: latest,
     freshness: {
       latestEvidenceDate: latest?.date || "",
@@ -296,11 +307,11 @@ const updated = records.filter(record => {
     || old.sourceUrls?.length !== record.sourceUrls.length);
 }).length;
 const output = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   generatedAt,
   methodology: "기업·스타트업·최근 기사 DB를 전략 적합성 30 · 제품 준비도 20 · 수익화 준비도 20 · 거래 실행성 20 · 정보 완성도 10으로 매 실행마다 재평가",
   disclosurePolicy: "공개되지 않은 가격·지분·거래 조건은 미공개 유지하며 기존 대형사는 인수 후보가 아닌 제휴 대상으로 분리",
-  discoveryPolicy: "startups.json + companies.json + company-news.json을 회사 식별자로 통합하고 최신 원문·공식 프로필 변경을 자동 반영",
+  discoveryPolicy: "startups.json + companies.json + company-news.json을 지배기업 식별자로 통합하고 자회사는 모기업에 합산하며 최신 원문·공식 프로필 변경을 자동 반영",
   metrics: {
     universe: records.length,
     shortlist: shortlist.length,

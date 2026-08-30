@@ -102,13 +102,9 @@ export const COMPANY_SOURCES = {
     aliases: ["Databricks"],
     official: ["https://www.databricks.com/"],
   },
-  "SpaceX (xAI, Cursor)": {
-    aliases: ["xAI", "SpaceX"],
-    official: ["https://x.ai/company", "https://www.spacex.com/"],
-  },
-  "Cursor": {
-    aliases: ["Cursor", "Anysphere"],
-    official: ["https://www.cursor.com/"],
+  "SpaceX": {
+    aliases: ["SpaceX", "xAI", "Grok", "Cursor", "Anysphere"],
+    official: ["https://www.spacex.com/", "https://x.ai/company", "https://www.cursor.com/"],
   },
   "DeepSeek": {
     aliases: ["DeepSeek"],
@@ -221,12 +217,11 @@ export const COMPANY_NEWS_RULES = {
     headlineAliases: ["OpenAI", "ChatGPT", "GPT-5", "Codex", "Sora"],
     query: '("OpenAI" OR "ChatGPT" OR "GPT-5" OR "Codex" OR "Sora")',
   },
-  "SpaceX (xAI, Cursor)": {
-    headlineAliases: ["SpaceX", "xAI", "Grok"],
-    query: '("SpaceX" OR "xAI" OR "Grok") AI',
+  "SpaceX": {
+    headlineAliases: ["SpaceX", "xAI", "Grok", "Cursor AI", "Cursor IDE", "Anysphere"],
+    query: '("SpaceX" OR "xAI" OR "Grok" OR "Cursor AI" OR "Cursor IDE" OR "Anysphere") AI',
   },
   "Databricks": { headlineAliases: ["Databricks"], query: '"Databricks" AI' },
-  "Cursor": { headlineAliases: ["Cursor AI", "Cursor IDE", "Anysphere"], query: '("Cursor AI" OR "Cursor IDE" OR "Anysphere")' },
   "DeepSeek": { headlineAliases: ["DeepSeek"], query: '"DeepSeek" AI' },
   "Perplexity": { headlineAliases: ["Perplexity AI", "Perplexity"], query: '"Perplexity AI"' },
   "Mistral AI": { headlineAliases: ["Mistral AI", "Mistral"], query: '("Mistral AI" OR "Mistral")' },

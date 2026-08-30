@@ -802,6 +802,35 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           );
         })()}
 
+        {(() => {
+          const structure = c.live?.corporateStructure || c.corporateStructure || c.candidateAssessment?.corporateStructure;
+          if (!structure) return null;
+          const exposure = structure.aiRevenueExposure;
+          const exposureLabel = exposure?.value !== null && exposure?.value !== "" && Number.isFinite(Number(exposure?.value))
+            ? `${exposure.value}%`
+            : exposure?.status === "not-separately-disclosed" ? "별도 공시 없음" : "—";
+          return (
+            <div className="cd-section cd-corporate-structure">
+              <h4>지배구조·집계 기준 <em>Corporate Structure</em><b className="cd-coverage">{structure.lastVerifiedAt ? `${fmtMonthDay(structure.lastVerifiedAt)} 검증` : "검증 원문"}</b></h4>
+              <div className="cd-corp-facts">
+                <span><em>상장·지배 법인</em><b>{structure.parentName}</b></span>
+                <span><em>사업 형태</em><b>{structure.entityType === "diversified-infrastructure" ? "복합 인프라·플랫폼" : "상장 지배 법인"}</b></span>
+                {structure.ticker && <span><em>티커</em><b>{structure.ticker}</b></span>}
+                {exposure && <span><em>AI 매출 노출도</em><b>{exposureLabel}</b></span>}
+              </div>
+              {structure.businessSegments?.length > 0 && <div className="cd-corp-segments"><em>보고 사업부</em>{structure.businessSegments.map(segment => <span key={segment}>{segment}</span>)}</div>}
+              {structure.subsidiaries?.length > 0 && <div className="cd-corp-subsidiaries">
+                {structure.subsidiaries.map(item => <article key={item.name}>
+                  <div><b>{item.name}</b><span>{item.effectiveDate ? ` · ${fmtMonthDay(item.effectiveDate)} 편입` : " · 자회사"}</span></div>
+                  <p>{`${item.relationship === "acquired-subsidiary-and-product" ? "인수 자회사·제품" : "AI 사업부 기반 플랫폼"} · 기업/섹터 총량은 ${structure.parentName}에 합산`}</p>
+                  {item.sourceUrl && <a href={item.sourceUrl} target="_blank" rel="noopener">공식 관계 원문 ↗</a>}
+                </article>)}
+              </div>}
+              {exposure?.status === "not-separately-disclosed" && <p className="cd-corp-policy">AI 매출 비중은 공식 사업부 매출과 연결 매출이 같은 기간에 함께 공시될 때만 자동 산출합니다.</p>}
+            </div>
+          );
+        })()}
+
         {c.profile && (() => {
           const p = c.profile, lv = c.live || {};
           // 변동 항목은 자동 수집 값 우선(최신·출처 기반), 없으면 정적 폴백
@@ -2736,7 +2765,7 @@ const COMPANY_RELATION_ALIASES = {
   "Glean": ["Glean"],
   "ElevenLabs": ["ElevenLabs"],
   "Harvey": ["Harvey"],
-  "SpaceX (xAI, Cursor)": ["SpaceX", "xAI", "Grok", "Cursor"],
+  "SpaceX": ["SpaceX", "xAI", "Grok", "Cursor", "Anysphere"],
 };
 
 const RELATION_TYPES = [

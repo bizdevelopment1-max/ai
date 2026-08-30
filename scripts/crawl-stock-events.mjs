@@ -14,7 +14,7 @@ import { isExcludedText } from "./news-policy.mjs";
 // 대시보드 상장사(밸류체인 기업 카드가 있는 업체) 티커 → 뉴스 co 라벨
 const TICKER_CO = {
   NVDA: "NVIDIA", MSFT: "Microsoft", AMZN: "Amazon", AAPL: "Apple",
-  GOOGL: "Google DeepMind", META: "Meta AI", SPCX: "SpaceX (xAI, Cursor)",
+  GOOGL: "Google DeepMind", META: "Meta AI", SPCX: "SpaceX",
 };
 const THRESHOLD = 0.04;      // 일간 ±4% 이상 = 변곡점(대형주는 급변동이 드물어 4%로)
 const MIN_GAP_DAYS = 4;      // 근접 변곡점은 더 큰 등락만 채택(중복 방지)

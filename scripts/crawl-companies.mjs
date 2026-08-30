@@ -21,6 +21,7 @@ import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, executiveTier } from "./company-sources.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { bulletizeKorean } from "./korean-copy.mjs";
+import { corporateRelationship, corporateStructureFor, consolidatedCompanyName, loadCorporateEntities } from "./corporate-entities.mjs";
 
 const MAX_EXECUTIVES = 12;
 const cleanText = value => String(value || "").replace(/\s+/g, " ").trim();
@@ -82,7 +83,7 @@ async function translateQuoteToKorean(quoteOriginal) {
 // 기업명 → 상장 티커(시총 연동용 매핑 — 데이터가 아니라 조인 키)
 const TICKER_OF = {
   "NVIDIA": "NVDA", "Microsoft": "MSFT", "Amazon": "AMZN", "Apple": "AAPL",
-  "Google DeepMind": "GOOGL", "Meta AI": "META", "SpaceX (xAI, Cursor)": "SPCX",
+  "Google DeepMind": "GOOGL", "Meta AI": "META", "SpaceX": "SPCX",
   "Oracle": "ORCL", "AMD": "AMD", "Broadcom": "AVGO",
   "TSMC": "TSM", "CoreWeave": "CRWV", "Applied Digital": "APLD",
 };
@@ -360,6 +361,30 @@ async function main() {
     startupRegistry = startups.companyRegistry || startupRegistry;
   } catch {}
   const dash = loadDash();
+  const corporateRegistry = loadCorporateEntities();
+  startupRows = startupRows.filter(startup =>
+    corporateRelationship(startup.name || startup.domain, "", corporateRegistry)?.subsidiary?.countingPolicy !== "parent-only");
+  const migratedPrevious = {};
+  for (const [legacyName, legacyRecord] of Object.entries(previousCompanies)) {
+    const canonicalName = consolidatedCompanyName(legacyName, corporateRegistry);
+    const relationship = corporateStructureFor(legacyName, legacyRecord?.ticker || "", corporateRegistry)?.relationship;
+    const retained = migratedPrevious[canonicalName] || {};
+    migratedPrevious[canonicalName] = relationship
+      ? {
+          ...legacyRecord,
+          ...retained,
+          mentions7: Number(retained.mentions7 || 0) + Number(legacyRecord.mentions7 || 0),
+          mentions30: Number(retained.mentions30 || 0) + Number(legacyRecord.mentions30 || 0),
+          practices: [...(retained.practices || []), ...(legacyRecord.practices || [])],
+        }
+      : { ...retained, ...legacyRecord };
+  }
+  previousCompanies = migratedPrevious;
+  officialCompanies = Object.entries(officialCompanies).reduce((output, [legacyName, record]) => {
+    const canonicalName = consolidatedCompanyName(legacyName, corporateRegistry);
+    output[canonicalName] = { ...(output[canonicalName] || {}), ...record };
+    return output;
+  }, {});
   const orgSource = Object.fromEntries(Object.entries(previousCompanies)
     .filter(([, company]) => company?.organization)
     .map(([name, company]) => [name, company.organization]));
@@ -418,7 +443,7 @@ async function main() {
 
   const byCo = {};
   for (const a of articles) {
-    const co = (a.co || "").trim();
+    const co = consolidatedCompanyName((a.co || "").trim(), corporateRegistry);
     if (!co || !articleFocusedOnCompany(co, a)) continue;
     (byCo[co] = byCo[co] || []).push(a);
   }
@@ -683,6 +708,8 @@ async function main() {
     };
     const portfolioReference = startupReferenceByName.get(name);
     if (portfolioReference) rec.portfolioReference = portfolioReference;
+    const corporateStructure = corporateStructureFor(name, rec.ticker || TICKER_OF[name], corporateRegistry);
+    if (corporateStructure) rec.corporateStructure = corporateStructure;
     rec.updatedAt = nowIso;
   }
 
@@ -706,8 +733,8 @@ async function main() {
 
   const out = {
     generatedAt: nowIso,
-    schemaVersion: 6,
-    methodology: "canonical-company-registry+normalized-profile+strategy-profile+live-financials+official-executive-verification+focused-news-evidence+company-intelligence-ready+complete-capability-and-implication-baseline+source-backed-section-publication",
+    schemaVersion: 7,
+    methodology: "canonical-parent-consolidation+subsidiary-lineage+normalized-profile+strategy-profile+live-financials+official-executive-verification+focused-news-evidence+company-intelligence-ready+source-backed-section-publication",
     companyRegistry: {
       method: startupRegistry.method || "official-domain+operator-legal-name",
       uniqueCompanies: Object.keys(companies).length,

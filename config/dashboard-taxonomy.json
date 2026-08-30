@@ -235,13 +235,13 @@
       ],
       "fit": "high"
     },
-    "SpaceX (xAI, Cursor)": {
-      "layer": "model",
-      "vertical": "프런티어 모델·플랫폼",
+    "SpaceX": {
+      "layer": "infra",
+      "vertical": "우주·연결·AI 복합 인프라",
       "adjacent": [
+        "model",
         "app",
-        "agent",
-        "infra"
+        "agent"
       ],
       "fit": "medium"
     },
@@ -331,14 +331,6 @@
       "adjacent": [
         "agent",
         "trust"
-      ],
-      "fit": "high"
-    },
-    "Cursor": {
-      "layer": "app",
-      "vertical": "코딩·개발",
-      "adjacent": [
-        "agent"
       ],
       "fit": "high"
     },
@@ -435,9 +427,8 @@
     "Amazon",
     "Anthropic",
     "OpenAI",
-    "SpaceX (xAI, Cursor)",
+    "SpaceX",
     "Databricks",
-    "Cursor",
     "Perplexity",
     "Mistral AI",
     "Sierra AI",
@@ -817,10 +808,10 @@
       "accent": "#16A34A"
     },
     {
-      "id": "native",
-      "ko": "AI 네이티브",
-      "en": "AI Native",
-      "accent": "#7A38D6"
+      "id": "conglomerate",
+      "ko": "복합 인프라·플랫폼",
+      "en": "Diversified Infrastructure & Platforms",
+      "accent": "#334155"
     },
     {
       "id": "autonomy",
@@ -928,12 +919,12 @@
       "accentSoft": "#FAE8FF"
     },
     {
-      "id": "foundation",
+      "id": "conglomerate",
       "family": "platform",
-      "ko": "파운데이션 모델·AI 네이티브",
-      "en": "Foundation Models & AI Native",
-      "accent": "#7A38D6",
-      "accentSoft": "#F1EBFC"
+      "ko": "복합 인프라·플랫폼",
+      "en": "Diversified Infrastructure & Platforms",
+      "accent": "#334155",
+      "accentSoft": "#EEF2F6"
     },
     {
       "id": "silicon",
@@ -1010,7 +1001,7 @@
     "datacenter": "datacenter",
     "software": "enterprise",
     "device": "applications",
-    "native": "foundation",
+    "conglomerate": "conglomerate",
     "autonomy": "applications",
     "strategic-oem": "strategic-oem",
     "ai-server-odm": "ai-server-odm",
@@ -1032,7 +1023,7 @@
     "MRVL": "silicon",
     "PLTR": "enterprise",
     "NOW": "enterprise",
-    "SPCX": "foundation",
+    "SPCX": "conglomerate",
     "AAPL": "applications",
     "TSLA": "applications",
     "DELL": "strategic-oem",
@@ -1160,11 +1151,12 @@
       "url": "https://openai.com"
     },
     {
-      "cat": "native",
-      "name": "SpaceX (xAI, Cursor)",
-      "domain": "x.ai",
-      "unit": "AI 생태계(xAI·Grok·Cursor)",
-      "url": "https://x.ai"
+      "cat": "bigtech",
+      "name": "SpaceX",
+      "group": "infra",
+      "domain": "spacex.com",
+      "unit": "우주·위성 연결·AI(xAI·Grok·Cursor) 복합 인프라",
+      "url": "https://www.spacex.com"
     },
     {
       "cat": "startup",
@@ -1173,14 +1165,6 @@
       "domain": "databricks.com",
       "unit": "데이터+AI 플랫폼",
       "url": "https://databricks.com"
-    },
-    {
-      "cat": "startup",
-      "name": "Cursor",
-      "vertical": "에이전틱 AI·코딩",
-      "domain": "cursor.com",
-      "unit": "AI 코딩 에이전트(IDE)",
-      "url": "https://cursor.com"
     },
     {
       "cat": "startup",
@@ -1532,10 +1516,13 @@
     },
     {
       "ticker": "SPCX",
-      "name": "SpaceX (xAI, Cursor)",
-      "group": "native",
+      "name": "SpaceX",
+      "group": "conglomerate",
       "domain": "spacex.com",
-      "cat": "native"
+      "cat": "bigtech",
+      "entityType": "diversified-infrastructure",
+      "aiRevenueExposure": null,
+      "aiRevenueExposureStatus": "not-separately-disclosed"
     },
     {
       "ticker": "UMC",
@@ -1807,7 +1794,10 @@
       "ticker": "603501.SS",
       "name": "OmniVision Group",
       "group": "china-design",
-      "domain": "ovt.com",
+      "domain": "omnivision-group.com",
+      "brandDomains": [
+        "ovt.com"
+      ],
       "exchange": "SSE"
     },
     {

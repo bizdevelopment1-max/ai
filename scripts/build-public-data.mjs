@@ -615,7 +615,7 @@ const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
   JSON.stringify(siteContentManifest),
   createHash("sha256").update(await readFile(resolve(root, "assets/competitive-dynamics.mp4"))).digest("hex"),
-  ...await Promise.all(["overview-view.json", "strategy-view.json", "site-content-manifest.json", "intelligence-tracks.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  ...await Promise.all(["overview-view.json", "strategy-view.json", "site-content-manifest.json", "intelligence-tracks.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "corporate-entity-audit.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);

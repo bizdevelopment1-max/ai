@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "reviewMaxAgeDays": 90,
+  "aggregationPolicy": "listed-parent-consolidated; subsidiaries remain searchable products but are excluded from independent-company and sector totals",
+  "entities": [
+    {
+      "canonicalId": "spacex",
+      "canonicalName": "SpaceX",
+      "legalName": "Space Exploration Technologies Corp.",
+      "aliases": [
+        "SpaceX (xAI, Cursor)",
+        "SpaceXAI"
+      ],
+      "ticker": "SPCX",
+      "primaryDomain": "spacex.com",
+      "entityType": "diversified-infrastructure",
+      "stockGroup": "conglomerate",
+      "valueChainLayer": "conglomerate",
+      "businessSegments": [
+        "Space",
+        "Connectivity",
+        "AI"
+      ],
+      "aiRevenueExposure": {
+        "value": null,
+        "unit": "% of consolidated revenue",
+        "status": "not-separately-disclosed",
+        "calculation": "Populate only when official segment revenue and consolidated revenue are both disclosed for the same period"
+      },
+      "lastVerifiedAt": "2026-08-30",
+      "sources": [
+        {
+          "type": "official-prospectus",
+          "url": "https://content.spacex.com/cms-assets/FINAL_Documents%20and%20Updates/SpaceX%20-%20EU%20Prospectus%20(Approved%20by%20Bafin)%20-%20June%205,%202026.pdf",
+          "date": "2026-06-05",
+          "supports": [
+            "three-segment-business",
+            "xai-acquisition",
+            "ai-segment"
+          ]
+        }
+      ],
+      "subsidiaries": [
+        {
+          "canonicalId": "xai",
+          "name": "xAI",
+          "aliases": [
+            "Grok"
+          ],
+          "primaryDomain": "x.ai",
+          "relationship": "wholly-owned-ai-segment-platform",
+          "effectiveDate": "2026-02-02",
+          "countingPolicy": "parent-only",
+          "sourceUrl": "https://content.spacex.com/cms-assets/FINAL_Documents%20and%20Updates/SpaceX%20-%20EU%20Prospectus%20(Approved%20by%20Bafin)%20-%20June%205,%202026.pdf"
+        },
+        {
+          "canonicalId": "cursor",
+          "name": "Cursor",
+          "legalName": "Anysphere, Inc.",
+          "aliases": [
+            "Anysphere",
+            "Cursor AI",
+            "Cursor IDE"
+          ],
+          "primaryDomain": "cursor.com",
+          "relationship": "acquired-subsidiary-and-product",
+          "effectiveDate": "2026-08-14",
+          "transactionValue": null,
+          "transactionValueStatus": "not-disclosed-in-official-announcement",
+          "countingPolicy": "parent-only",
+          "sourceUrl": "https://cursor.com/blog/joining-spacex"
+        }
+      ]
+    },
+    {
+      "canonicalId": "omnivision-group",
+      "canonicalName": "OmniVision Group",
+      "legalName": "OmniVision Integrated Circuits Group, Inc.",
+      "ticker": "603501.SS",
+      "primaryDomain": "omnivision-group.com",
+      "brandDomains": [
+        "ovt.com"
+      ],
+      "entityType": "listed-parent",
+      "lastVerifiedAt": "2026-08-30",
+      "sources": [
+        {
+          "type": "issuer-announcement",
+          "url": "https://www.omnivision-group.com/files/cms/media/Announcement%20Regarding%20Submission%20of%20Application%20for%20H%20Share%20Offering%20and%20Listing%20to%20The%20Stock%20Exchange%20of%20Hong%20Kong%20and%20Publication%20of%20Application%20Materials.pdf",
+          "date": "2025-06-28",
+          "supports": [
+            "legal-name",
+            "ticker",
+            "issuer-domain"
+          ]
+        }
+      ]
+    }
+  ]
+}

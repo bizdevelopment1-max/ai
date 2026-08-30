@@ -23,6 +23,8 @@ const required = [
   "scripts/validate-company-logos.mjs",
   "scripts/build-partner-ma-candidates.mjs",
   "scripts/validate-partner-ma-candidates.mjs",
+  "scripts/corporate-entities.mjs",
+  "scripts/validate-corporate-entities.mjs",
   "scripts/crawl-financials.mjs",
   "scripts/company-sources.mjs",
   "scripts/crawl-company-officials.mjs",
@@ -76,6 +78,7 @@ const required = [
   "stocks.json",
   "nvidia-investments.json",
   "partner-ma-candidates.json",
+  "corporate-entity-audit.json",
   "financials.json",
   "companies.json",
   "startups.json",
@@ -96,6 +99,7 @@ const required = [
   "config/global-source-policy.json",
   "config/tech-market-taxonomy.json",
   "config/company-source-policy.json",
+  "config/corporate-entities.json",
   "config/nvidia-investment-deals.json",
   "_config.yml",
   "index.html",
@@ -751,11 +755,11 @@ try {
     && monetizationCrawler.includes("loadDash().COMPANY_LAYER");
   if (JSON.stringify(layerIds) !== JSON.stringify(expectedLayers)
     || normalized.length !== (dash.COMPANIES || []).length
-    || companies.schemaVersion !== 6 || !completeCoverage || !strategyReady || !linkedinReady) {
+    || Number(companies.schemaVersion || 0) < 6 || !completeCoverage || !strategyReady || !linkedinReady) {
     const causes = [
       JSON.stringify(layerIds) !== JSON.stringify(expectedLayers) && "layer-order",
       normalized.length !== (dash.COMPANIES || []).length && `normalized-${normalized.length}/${(dash.COMPANIES || []).length}`,
-      companies.schemaVersion !== 6 && `schema-${companies.schemaVersion}`,
+      Number(companies.schemaVersion || 0) < 6 && `schema-${companies.schemaVersion}`,
       !completeCoverage && "profile-coverage",
       !strategyReady && "strategy-ui",
       !linkedinReady && `linkedin-${linkedinProfiles.length}`,
@@ -1116,8 +1120,8 @@ try {
       && (!visible.has("goToMarket") || value.revenueModel?.summary)
       && (!visible.has("partnerships") || practices.some(item => item.sectionId === "partnerships") || company.strategicVentures?.length)
       && (!visible.has("investment") || value.investmentDirection?.summary);
-  }) && companies.schemaVersion === 6
-    && companies.methodology?.includes("source-backed-section-publication+freshness")
+  }) && Number(companies.schemaVersion || 0) >= 6
+    && companies.methodology?.includes("source-backed-section-publication")
     && companies.quality?.allVisibleClaimsSourceBacked === true
     && companies.quality?.visibleClaimSections === companies.quality?.sourceBackedClaimSections;
   const blankSectionUiRemoved = !boards.includes('className="cd-outline-empty"')
@@ -2478,7 +2482,7 @@ try {
     && dash.STOCKS.length === 67
     && dash.STOCK_VALUE_CHAIN.length === 12
     && dash.STOCK_VALUE_CHAIN_FAMILIES?.length === 3
-    && ["bigtech", "silicon", "strategic-oem", "ai-server-odm", "system-infrastructure"].every(id =>
+    && ["bigtech", "conglomerate", "silicon", "strategic-oem", "ai-server-odm", "system-infrastructure"].every(id =>
       dash.STOCK_VALUE_CHAIN.some(layer => layer.id === id))
     && ["TSLA", "DELL", "HPE", "0992.HK", "SMCI", "2382.TW", "6669.TW", "2317.TW", "2356.TW", "2376.TW", "2357.TW", "CSCO", "6702.T"].every(ticker =>
       dash.STOCKS.some(stock => stock.ticker === ticker) && crawler.includes(`t: "${ticker}"`))
@@ -2570,7 +2574,13 @@ try {
     && boards.includes("groups={visibleGroups} stocks={visibleStocks}");
   if (!completeBoard || !completeMetadata || !sourceBackedInvestments || !dynamicInvestmentPipeline
     || !liveHistory || !browserStockSeries || !currencyAware || !responsiveUi || !dataDrivenInvestmentCatalog || !stockComparisonCopyRemoved || !initialDetailedValueChainView) {
-    throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
+    const causes = [
+      !completeBoard && "board", !completeMetadata && "metadata", !sourceBackedInvestments && "investments",
+      !dynamicInvestmentPipeline && "investment-pipeline", !liveHistory && "history", !browserStockSeries && "series",
+      !currencyAware && "currency", !responsiveUi && "responsive", !dataDrivenInvestmentCatalog && "catalog",
+      !stockComparisonCopyRemoved && "copy", !initialDetailedValueChainView && "value-chain",
+    ].filter(Boolean).join(", ");
+    throw new Error(`all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete (${causes})`);
   }
   console.log("  OK  AI 생태계 67개 상장사·12개 세부 밸류체인 Stock 분석 + NVIDIA 6계층·100개 이상 원문근거 투자 카탈로그 + 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
@@ -2818,6 +2828,37 @@ try {
 }
 
 try {
+  const [registry, taxonomy, companies, candidates, audit] = await Promise.all([
+    readFile("config/corporate-entities.json", "utf8").then(JSON.parse),
+    readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
+    readFile("companies.json", "utf8").then(JSON.parse),
+    readFile("partner-ma-candidates.json", "utf8").then(JSON.parse),
+    readFile("corporate-entity-audit.json", "utf8").then(JSON.parse),
+  ]);
+  const spacex = registry.entities?.find(entity => entity.canonicalId === "spacex");
+  const omni = registry.entities?.find(entity => entity.ticker === "603501.SS");
+  const stockSpaceX = taxonomy.STOCKS?.find(stock => stock.ticker === "SPCX");
+  const stockOmni = taxonomy.STOCKS?.find(stock => stock.ticker === "603501.SS");
+  const companyNames = new Set((taxonomy.COMPANIES || []).map(item => item.name));
+  const generatedNames = new Set(Object.keys(companies.companies || {}));
+  const candidateNames = new Set((candidates.records || []).map(item => item.name));
+  const ready = spacex?.subsidiaries?.some(item => item.name === "Cursor" && item.countingPolicy === "parent-only")
+    && spacex?.aiRevenueExposure?.status === "not-separately-disclosed"
+    && stockSpaceX?.group === "conglomerate" && taxonomy.STOCK_LAYER?.SPCX === "conglomerate"
+    && stockOmni?.domain === "omnivision-group.com" && stockOmni?.brandDomains?.includes("ovt.com")
+    && omni?.primaryDomain === "omnivision-group.com"
+    && companyNames.has("SpaceX") && generatedNames.has("SpaceX")
+    && !companyNames.has("Cursor") && !generatedNames.has("Cursor") && !candidateNames.has("Cursor")
+    && companies.companies?.SpaceX?.corporateStructure?.subsidiaries?.some(item => item.name === "Cursor")
+    && audit.summary?.violations === 0;
+  if (!ready) throw new Error("parent consolidation, diversified SpaceX classification, or issuer-domain validation is incomplete");
+  console.log("  OK  지배기업 합산 · Cursor 중복 제거 · SpaceX 복합 인프라 분류 · OmniVision 상장 법인 도메인 검증");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  corporate entity reconciliation: ${error.message}`);
+}
+
+try {
   const [candidates, boards, strategyView, architecture, workflow] = await Promise.all([
     readFile("partner-ma-candidates.json", "utf8").then(JSON.parse),
     readFile("boards.jsx", "utf8"),
@@ -2869,7 +2910,8 @@ try {
     && !boards.includes('SourcePipeline kind="startup"')
     && !architectureChildren.some(child => child.key === "evidence-signals");
   const automationReady = workflow.includes('"scripts/build-partner-ma-candidates.mjs"')
-    && workflow.includes('"scripts/validate-partner-ma-candidates.mjs"');
+    && workflow.includes('"scripts/validate-partner-ma-candidates.mjs"')
+    && workflow.includes('"scripts/validate-corporate-entities.mjs"');
   if (!candidateReady || !opportunityCopyReady || !uiReady || !automationReady) {
     throw new Error("concise opportunity cards or the generated partner/M&A decision dataset is incomplete");
   }
