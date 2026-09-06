@@ -45,3 +45,4 @@ Agent(subagent_type: "competition-analyst", prompt: "AI 이어버드 시장 경�
 
 ## 산출 정책
 정량 우선(근거·연도) · 개조식·명사형 종결·마침표 지양 · MECE · **사명(삼성·MX·갤럭시) 미표기**.
+근거 출처 축(industry-analyst·competition-analyst·trend-analyst): **정부 통계 포털·공시(1급) → 시장조사기관·기관 보도자료(2급) → 권위 매체 보도(3급)** 순으로 조회.
