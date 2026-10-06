@@ -80,7 +80,11 @@ const REGISTRY_ARTICLES = (sourceRegistrySnapshot.items || [])
   }));
 
 const UA = CRAWLER_USER_AGENT;
-const sourceHealth = { failedStreams: [], emptyStreams: [], quietStreams: [], reachableStreams: [], successfulStreams: [] };
+const sourceHealth = { failedStreams: [], emptyStreams: [], quietStreams: [], reachableStreams: [], successfulStreams: [], validEmptyFeeds: new Set() };
+// A Google News response is only evidence of a working collector when it is
+// an actual RSS document; a consent/block page or format change parses to zero
+// items too, and must still surface as an empty (possibly broken) stream.
+const isRssDocument = xml => /<rss[\s>]/i.test(String(xml || "")) && /<channel[\s>]/i.test(String(xml || ""));
 
 // 네트워크 복원력: 타임아웃 + 지수 백오프 재시도(소스 확대에 따른 일시적 실패 흡수)
 async function fetchText(url, opts = {}, tries = 3) {
@@ -469,8 +473,10 @@ async function pull(src, limit) {
       if (out.length >= limit) break;
     }
     const stream = src.tag || src.co || "topic";
-    if (!out.length) sourceHealth.emptyStreams.push(streamName);
-    else sourceHealth.successfulStreams.push(streamName);
+    if (!out.length) {
+      sourceHealth.emptyStreams.push(streamName);
+      if (isRssDocument(xml)) sourceHealth.validEmptyFeeds.add(streamName);
+    } else sourceHealth.successfulStreams.push(streamName);
     console.log(`[news:${stream}] ${out.length} authoritative item(s)`);
     return out;
   } catch (e) {
@@ -564,7 +570,17 @@ async function main() {
     })
     .filter(Boolean);
   const recoveredKeys = new Set(fallbackRecoveries.map(row => row.stream));
-  const unresolvedEmptyStreams = [...new Set(sourceHealth.emptyStreams.filter(stream => !recoveredKeys.has(stream)))];
+  // A company query that returned a valid RSS feed but no authoritative
+  // English article in the 14-day window is a quiet company, not a dead
+  // collector — the same outcome direct publisher feeds already record as
+  // reachable-quiet. Counting it as "empty" let a few rarely-covered listed
+  // companies block every publication through the persistent-empty gate.
+  for (const stream of new Set(sourceHealth.emptyStreams)) {
+    if (recoveredKeys.has(stream) || !sourceHealth.validEmptyFeeds.has(stream)) continue;
+    sourceHealth.quietStreams.push({ stream, reason: "reachable-no-recent-matching-items" });
+  }
+  const quietKeys = new Set(sourceHealth.quietStreams.map(row => row.stream));
+  const unresolvedEmptyStreams = [...new Set(sourceHealth.emptyStreams.filter(stream => !recoveredKeys.has(stream) && !quietKeys.has(stream)))];
   const registryHealthRows = registryCollectionFresh ? (sourceRegistryReport.streamHealth || []) : [];
   const registryFailedStreams = registryHealthRows.filter(row => row.state === "failed").map(row => ({ stream: row.stream, error: row.error || "registry collector failed" }));
   const failedStreams = [...sourceHealth.failedStreams, ...registryFailedStreams]
