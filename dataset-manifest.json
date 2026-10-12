@@ -1,14 +1,14 @@
 {
   "schemaVersion": 2,
-  "datasetVersion": "4d0ca4cdd43b33d7fa7fd343",
-  "createdAt": "2026-08-26T09:24:06.166Z",
-  "pipelineRunId": "local-2026-08-26T09:24:06.166Z",
-  "codeGitSha": "2e18942a57e3ebcffb5eb8c3da0a604ce45db256",
+  "datasetVersion": "40602348931b290b0ae29d5d",
+  "createdAt": "2026-10-12T05:17:53.556Z",
+  "pipelineRunId": "38207299779",
+  "codeGitSha": "7ee5fdb1713021250c0bc1b0453af370651be47d",
   "catalogVersion": 4,
   "schemaRegistryVersion": 3,
   "sourcePolicyVersion": 5,
   "qualityPolicyVersion": 1,
-  "policyHash": "88343d12b45d873fed8291d7e57b0d816049b21346ae40f884f411daabbb673a",
+  "policyHash": "f1eb69daf9cfa56b991d70952c1e5632ea538303e88247481ad0c47078bb771d",
   "policyFiles": [
     "config/intelligence-pipeline.json",
     "config/news-policy.json",
@@ -20,14 +20,14 @@
     "config/consulting-architecture.json"
   ],
   "catalogHash": "a5ef07606c2ffa558546148cc63751b29d09f5b1688f1a025fe1024a9c64e6df",
-  "publicationState": "working",
+  "publicationState": "staging",
   "approvedBy": null,
   "approval": {
     "status": "pending",
     "minimumApprovals": 1,
     "reviewerId": null
   },
-  "previousVersion": "e6301b6a0269e69e4dc7bcc8",
+  "previousVersion": "4d0ca4cdd43b33d7fa7fd343",
   "datasets": [
     {
       "id": "news-ledger",
@@ -72,8 +72,8 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": null,
-      "bytes": 1223511,
-      "sha256": "e1564ffea4f4faa415c06e7e8e9c87a0e92d39d0e5044c72e5c7e14518ba8790",
+      "bytes": 1226377,
+      "sha256": "f0c89ed0690964da0983adca031990cb1924697d8493bf7e1030893047a04ce9",
       "files": 4,
       "migrationTriggerExceeded": true
     },
@@ -84,9 +84,9 @@
       "sensitivity": "internal-operational",
       "publication": "never",
       "recordCount": null,
-      "bytes": 1316646,
-      "sha256": "698f90277565e2b710a6e787d42adad8806b23cd88c63aeaf4bce8cad66c9440",
-      "files": 6,
+      "bytes": 1413464,
+      "sha256": "2725f5101ad6b04c6e9ecd8f24c7d0d8d6b64d0d8d50fdd2edf6f3741fb40992",
+      "files": 8,
       "migrationTriggerExceeded": true
     },
     {
@@ -96,8 +96,8 @@
       "sensitivity": "public",
       "publication": "public",
       "recordCount": null,
-      "bytes": 1157301,
-      "sha256": "13d5093ee4f0e7dba2f34f521a3927d6aa9cc56c42d8d1ffe42652bb23ea2111",
+      "bytes": 1174355,
+      "sha256": "4312433b740104a3f278a424806d0c563c5b1d13aa34a0e539f0780369fed5c4",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -109,7 +109,7 @@
       "publication": "never",
       "recordCount": 66,
       "bytes": 52889,
-      "sha256": "d6bce106b3aebc95f2761d798c87e6025bda26856103271c4ed02cb3908d4c33",
+      "sha256": "fc9a21f4f45bf3b7893abc644a303f1a87f970201386a24b0390239d4c7face9",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -120,8 +120,8 @@
       "sensitivity": "public-verified-candidate-view",
       "publication": "public",
       "recordCount": 13,
-      "bytes": 1272818,
-      "sha256": "394dfe2f5ee7eb341c68bfb075062af6efb859bdbb555e6845f9157179c21560",
+      "bytes": 1269483,
+      "sha256": "afa5f82960fbf6910eb6e561a9011f7e977926346bc1f0de889fce0159d6ac74",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -145,7 +145,7 @@
       "publication": "public",
       "recordCount": 160,
       "bytes": 2579227,
-      "sha256": "ca005d1e8a2009276df678eb0283e38059baeb78db9d8a2d5d2455569ae2ffcf",
+      "sha256": "fb15c1cb86f9381e243861f6d1643fdec35468e1acb6ae4df8627e4096286a12",
       "files": 1,
       "migrationTriggerExceeded": true
     },
@@ -156,8 +156,8 @@
       "sensitivity": "public",
       "publication": "public",
       "recordCount": 12,
-      "bytes": 109228,
-      "sha256": "29f716a9847dd9c59e5021453b79ff4c438ab167f7714fbb384b8ce3184343f5",
+      "bytes": 108404,
+      "sha256": "deee50efbe38a78d5cb526ed69388cb2714456dda86615efa2aca01b78a21108",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -167,9 +167,9 @@
       "role": "public-content-observability",
       "sensitivity": "public",
       "publication": "public",
-      "recordCount": 22,
-      "bytes": 12631,
-      "sha256": "666a76a947762453ab0de04a5a346a43178d189cbdbb2f426362ce603057dec4",
+      "recordCount": 24,
+      "bytes": 13714,
+      "sha256": "acf25970f81ce6cce9771fdef64d53dc071aff61a970cf59d8e847f8617780a0",
       "files": 1,
       "migrationTriggerExceeded": false
     },
@@ -179,9 +179,9 @@
       "role": "pipeline-run-status",
       "sensitivity": "internal-operational",
       "publication": "never",
-      "recordCount": 16,
-      "bytes": 2161,
-      "sha256": "2a6d38239abf7c390b2e063062cc8398076601ed2da6cbd107c8446f1704525a",
+      "recordCount": 33,
+      "bytes": 4284,
+      "sha256": "0c8f8bfec1691cb9460a5fc645aeeb934c1a4fa9a81c1c24cc842e0e0cc1a56d",
       "files": 1,
       "migrationTriggerExceeded": false
     }
