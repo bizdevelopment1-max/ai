@@ -17,7 +17,7 @@
       "en": "Big Tech AI",
       "accent": "#1428A0",
       "accentSoft": "#E8ECFA",
-      "desc": ""
+      "desc": "OS·클라우드·광고·커머스·단말 유통을 보유한 대규모 AI 플랫폼 기업"
     },
     {
       "id": "startup",
@@ -73,17 +73,17 @@
     },
     {
       "id": "trust",
-      "ko": "데이터·RAG·신뢰",
-      "en": "Data, RAG & Trust",
+      "ko": "신뢰·보안·거버넌스",
+      "en": "Trust, Security & Governance",
       "accent": "#0D9488",
       "accentSoft": "#E2F5F2",
       "stance": "CONTROL",
       "stanceKo": "통제권 확보",
-      "controlPoint": "개인 컨텍스트·ID·동의·권한·평가",
-      "economics": "신뢰 프리미엄·기업 관리·데이터 서비스",
+      "controlPoint": "ID·동의·권한·정책·감사·컴플라이언스",
+      "economics": "신뢰 프리미엄·기업 관리·거버넌스 라이선스",
       "risk": "프라이버시 사고·권한 오남용·데이터 이동성 규제",
-      "operatorMove": "온디바이스 개인화 금고와 기업용 정책·평가 레이어를 공통 자산으로 구축",
-      "desc": "개인화와 기업 배포를 가능하게 하는 컨텍스트·권한·보안·거버넌스·평가 계층"
+      "operatorMove": "온디바이스 개인화 금고와 기업용 정책·동의·감사 레이어를 공통 자산으로 구축",
+      "desc": "AI 사용의 개인정보·동의·권한·보안·규제 준수를 통제하고 감사하는 독립 신뢰 계층"
     },
     {
       "id": "model",
@@ -201,7 +201,7 @@
     },
     "Meta AI": {
       "layer": "model",
-      "vertical": "오픈 모델",
+      "vertical": "Muse API·Llama 오픈 생태계",
       "adjacent": [
         "app",
         "agent",
@@ -235,30 +235,41 @@
       ],
       "fit": "high"
     },
-    "SpaceX (xAI, Cursor)": {
-      "layer": "model",
-      "vertical": "프런티어 모델·플랫폼",
+    "SpaceX": {
+      "layer": "infra",
+      "vertical": "우주·연결·AI 복합 인프라",
       "adjacent": [
+        "model",
         "app",
-        "agent",
-        "infra"
+        "agent"
       ],
       "fit": "medium"
     },
     "Databricks": {
-      "layer": "trust",
-      "vertical": "기업 데이터·컨텍스트",
+      "layer": "data",
+      "vertical": "데이터 레이크하우스·MLOps",
       "adjacent": [
-        "data",
-        "agent"
+        "trust",
+        "agent",
+        "infra"
       ],
       "fit": "high"
     },
     "Scale AI": {
-      "layer": "trust",
-      "vertical": "데이터·평가·안전",
+      "layer": "data",
+      "vertical": "학습 데이터·모델 평가",
       "adjacent": [
-        "data"
+        "trust",
+        "model"
+      ],
+      "fit": "high"
+    },
+    "OneTrust": {
+      "layer": "trust",
+      "vertical": "AI 거버넌스·프라이버시·컴플라이언스",
+      "adjacent": [
+        "data",
+        "service"
       ],
       "fit": "high"
     },
@@ -331,14 +342,6 @@
       "adjacent": [
         "agent",
         "trust"
-      ],
-      "fit": "high"
-    },
-    "Cursor": {
-      "layer": "app",
-      "vertical": "코딩·개발",
-      "adjacent": [
-        "agent"
       ],
       "fit": "high"
     },
@@ -435,13 +438,13 @@
     "Amazon",
     "Anthropic",
     "OpenAI",
-    "SpaceX (xAI, Cursor)",
+    "SpaceX",
     "Databricks",
-    "Cursor",
     "Perplexity",
     "Mistral AI",
     "Sierra AI",
     "Scale AI",
+    "OneTrust",
     "ElevenLabs",
     "Harvey",
     "Replit",
@@ -721,7 +724,13 @@
         "보안",
         "안전",
         "trust",
-        "safety"
+        "safety",
+        "거버넌스",
+        "프라이버시",
+        "동의",
+        "compliance",
+        "governance",
+        "privacy"
       ]
     },
     {
@@ -767,6 +776,12 @@
       "ko": "AI 칩",
       "en": "AI Chips",
       "accent": "#C026D3"
+    },
+    {
+      "id": "chip-ip",
+      "ko": "반도체 IP 라이선싱",
+      "en": "Semiconductor IP Licensing",
+      "accent": "#7C3AED"
     },
     {
       "id": "foundry",
@@ -817,10 +832,10 @@
       "accent": "#16A34A"
     },
     {
-      "id": "native",
-      "ko": "AI 네이티브",
-      "en": "AI Native",
-      "accent": "#7A38D6"
+      "id": "conglomerate",
+      "ko": "복합 인프라·플랫폼",
+      "en": "Diversified Infrastructure & Platforms",
+      "accent": "#334155"
     },
     {
       "id": "autonomy",
@@ -928,12 +943,12 @@
       "accentSoft": "#FAE8FF"
     },
     {
-      "id": "foundation",
+      "id": "conglomerate",
       "family": "platform",
-      "ko": "파운데이션 모델·AI 네이티브",
-      "en": "Foundation Models & AI Native",
-      "accent": "#7A38D6",
-      "accentSoft": "#F1EBFC"
+      "ko": "복합 인프라·플랫폼",
+      "en": "Diversified Infrastructure & Platforms",
+      "accent": "#334155",
+      "accentSoft": "#EEF2F6"
     },
     {
       "id": "silicon",
@@ -1002,6 +1017,7 @@
   ],
   "STOCK_GROUP_LAYER": {
     "chip": "silicon",
+    "chip-ip": "silicon",
     "foundry": "foundry",
     "equipment": "semicap",
     "packaging": "semicap",
@@ -1010,7 +1026,7 @@
     "datacenter": "datacenter",
     "software": "enterprise",
     "device": "applications",
-    "native": "foundation",
+    "conglomerate": "conglomerate",
     "autonomy": "applications",
     "strategic-oem": "strategic-oem",
     "ai-server-odm": "ai-server-odm",
@@ -1020,33 +1036,6 @@
     "china-packaging": "semicap",
     "china-design": "silicon",
     "china-materials": "semicap"
-  },
-  "STOCK_LAYER": {
-    "MSFT": "bigtech",
-    "AMZN": "bigtech",
-    "GOOGL": "bigtech",
-    "META": "bigtech",
-    "ORCL": "bigtech",
-    "NVDA": "silicon",
-    "AVGO": "silicon",
-    "MRVL": "silicon",
-    "PLTR": "enterprise",
-    "NOW": "enterprise",
-    "SPCX": "foundation",
-    "AAPL": "applications",
-    "TSLA": "applications",
-    "DELL": "strategic-oem",
-    "HPE": "strategic-oem",
-    "0992.HK": "strategic-oem",
-    "SMCI": "strategic-oem",
-    "2382.TW": "ai-server-odm",
-    "6669.TW": "ai-server-odm",
-    "2317.TW": "ai-server-odm",
-    "2356.TW": "ai-server-odm",
-    "2376.TW": "system-infrastructure",
-    "2357.TW": "system-infrastructure",
-    "CSCO": "system-infrastructure",
-    "6702.T": "system-infrastructure"
   },
   "DECISION_FRAMEWORK": {
     "decisionOutputs": [
@@ -1160,27 +1149,20 @@
       "url": "https://openai.com"
     },
     {
-      "cat": "native",
-      "name": "SpaceX (xAI, Cursor)",
-      "domain": "x.ai",
-      "unit": "AI 생태계(xAI·Grok·Cursor)",
-      "url": "https://x.ai"
+      "cat": "bigtech",
+      "name": "SpaceX",
+      "group": "infra",
+      "domain": "spacex.com",
+      "unit": "우주·위성 연결·AI(xAI·Grok·Cursor) 복합 인프라",
+      "url": "https://www.spacex.com"
     },
     {
       "cat": "startup",
       "name": "Databricks",
-      "vertical": "인프라·파운데이션",
+      "vertical": "데이터·MLOps",
       "domain": "databricks.com",
       "unit": "데이터+AI 플랫폼",
       "url": "https://databricks.com"
-    },
-    {
-      "cat": "startup",
-      "name": "Cursor",
-      "vertical": "에이전틱 AI·코딩",
-      "domain": "cursor.com",
-      "unit": "AI 코딩 에이전트(IDE)",
-      "url": "https://cursor.com"
     },
     {
       "cat": "startup",
@@ -1209,10 +1191,18 @@
     {
       "cat": "startup",
       "name": "Scale AI",
-      "vertical": "인프라·파운데이션",
+      "vertical": "데이터·평가",
       "domain": "scale.com",
       "unit": "AI 데이터·평가·국방",
       "url": "https://scale.com"
+    },
+    {
+      "cat": "startup",
+      "name": "OneTrust",
+      "vertical": "신뢰·보안·거버넌스",
+      "domain": "onetrust.com",
+      "unit": "AI 거버넌스·프라이버시·동의·컴플라이언스",
+      "url": "https://www.onetrust.com/solutions/ai-governance/"
     },
     {
       "cat": "startup",
@@ -1339,7 +1329,7 @@
       "name": "Meta AI",
       "group": "model",
       "domain": "ai.meta.com",
-      "unit": "오픈소스 LLM",
+      "unit": "Muse 제품·API 모델 · Llama 오픈 모델 생태계",
       "url": "https://ai.meta.com"
     },
     {
@@ -1406,9 +1396,12 @@
     {
       "ticker": "ARM",
       "name": "Arm Holdings",
-      "group": "chip",
+      "group": "chip-ip",
       "domain": "arm.com",
-      "cat": "bigtech"
+      "cat": "bigtech",
+      "revenueModelType": "ip-license-and-per-chip-royalty",
+      "comparisonBasis": "IP 라이선스·로열티 경제성",
+      "lastVerifiedAt": "2026-08-30"
     },
     {
       "ticker": "MRVL",
@@ -1532,10 +1525,13 @@
     },
     {
       "ticker": "SPCX",
-      "name": "SpaceX (xAI, Cursor)",
-      "group": "native",
+      "name": "SpaceX",
+      "group": "conglomerate",
       "domain": "spacex.com",
-      "cat": "native"
+      "cat": "bigtech",
+      "entityType": "diversified-infrastructure",
+      "aiRevenueExposure": null,
+      "aiRevenueExposureStatus": "not-separately-disclosed"
     },
     {
       "ticker": "UMC",
@@ -1807,7 +1803,10 @@
       "ticker": "603501.SS",
       "name": "OmniVision Group",
       "group": "china-design",
-      "domain": "ovt.com",
+      "domain": "omnivision-group.com",
+      "brandDomains": [
+        "ovt.com"
+      ],
       "exchange": "SSE"
     },
     {

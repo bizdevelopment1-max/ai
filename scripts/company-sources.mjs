@@ -79,8 +79,12 @@ export const COMPANY_SOURCES = {
     official: ["https://www.aboutamazon.com/about-us", "https://aws.amazon.com/executive-insights/"],
   },
   "Meta AI": {
-    aliases: ["Meta AI", "Meta Platforms", "Meta"],
-    official: ["https://about.meta.com/media-gallery/executives/"],
+    aliases: ["Meta AI", "Meta Platforms", "Meta", "Muse Spark", "Llama"],
+    official: [
+      "https://about.meta.com/media-gallery/executives/",
+      "https://ai.meta.com/blog/introducing-muse-spark-meta-model-api/",
+      "https://about.fb.com/news/2026/08/the-future-is-for-everyone/",
+    ],
   },
   "Mistral AI": {
     aliases: ["Mistral AI", "Mistral"],
@@ -102,13 +106,9 @@ export const COMPANY_SOURCES = {
     aliases: ["Databricks"],
     official: ["https://www.databricks.com/"],
   },
-  "SpaceX (xAI, Cursor)": {
-    aliases: ["xAI", "SpaceX"],
-    official: ["https://x.ai/company", "https://www.spacex.com/"],
-  },
-  "Cursor": {
-    aliases: ["Cursor", "Anysphere"],
-    official: ["https://www.cursor.com/"],
+  "SpaceX": {
+    aliases: ["SpaceX", "xAI", "Grok", "Cursor", "Anysphere"],
+    official: ["https://www.spacex.com/", "https://x.ai/company", "https://www.cursor.com/"],
   },
   "DeepSeek": {
     aliases: ["DeepSeek"],
@@ -117,6 +117,13 @@ export const COMPANY_SOURCES = {
   "Scale AI": {
     aliases: ["Scale AI"],
     official: ["https://scale.com/about"],
+  },
+  "OneTrust": {
+    aliases: ["OneTrust"],
+    official: [
+      "https://www.onetrust.com/solutions/ai-governance/",
+      "https://www.onetrust.com/about-us/",
+    ],
   },
   "Together AI": {
     aliases: ["Together AI", "Together Computer"],
@@ -221,18 +228,18 @@ export const COMPANY_NEWS_RULES = {
     headlineAliases: ["OpenAI", "ChatGPT", "GPT-5", "Codex", "Sora"],
     query: '("OpenAI" OR "ChatGPT" OR "GPT-5" OR "Codex" OR "Sora")',
   },
-  "SpaceX (xAI, Cursor)": {
-    headlineAliases: ["SpaceX", "xAI", "Grok"],
-    query: '("SpaceX" OR "xAI" OR "Grok") AI',
+  "SpaceX": {
+    headlineAliases: ["SpaceX", "xAI", "Grok", "Cursor AI", "Cursor IDE", "Anysphere"],
+    query: '("SpaceX" OR "xAI" OR "Grok" OR "Cursor AI" OR "Cursor IDE" OR "Anysphere") AI',
   },
   "Databricks": { headlineAliases: ["Databricks"], query: '"Databricks" AI' },
-  "Cursor": { headlineAliases: ["Cursor AI", "Cursor IDE", "Anysphere"], query: '("Cursor AI" OR "Cursor IDE" OR "Anysphere")' },
   "DeepSeek": { headlineAliases: ["DeepSeek"], query: '"DeepSeek" AI' },
   "Perplexity": { headlineAliases: ["Perplexity AI", "Perplexity"], query: '"Perplexity AI"' },
   "Mistral AI": { headlineAliases: ["Mistral AI", "Mistral"], query: '("Mistral AI" OR "Mistral")' },
   "Kling AI": { headlineAliases: ["Kling AI", "Kuaishou Kling"], query: '("Kling AI" OR "Kuaishou Kling")' },
   "Sierra AI": { headlineAliases: ["Sierra AI"], query: '"Sierra AI"' },
   "Scale AI": { headlineAliases: ["Scale AI"], query: '"Scale AI"' },
+  "OneTrust": { headlineAliases: ["OneTrust"], query: '"OneTrust" (AI governance OR privacy OR compliance)' },
   "Hailuo (MiniMax)": { headlineAliases: ["Hailuo AI", "MiniMax AI", "MiniMax"], query: '("Hailuo AI" OR "MiniMax AI")' },
   "ElevenLabs": { headlineAliases: ["ElevenLabs"], query: '"ElevenLabs" AI' },
   "Harvey": { headlineAliases: ["Harvey AI", "Harvey's AI", "Harvey’s AI"], query: '"Harvey AI" legal' },
@@ -249,8 +256,8 @@ export const COMPANY_NEWS_RULES = {
   "Writer": { headlineAliases: ["Writer.com", "Writer AI", "WRITER AI"], query: '("Writer.com" OR "Writer AI") enterprise' },
   "Stability AI": { headlineAliases: ["Stability AI"], query: '"Stability AI"' },
   "Meta AI": {
-    headlineAliases: ["Meta AI", "Meta", "Llama", "Facebook", "Instagram", "WhatsApp", "Zuckerberg"],
-    query: '("Meta AI" OR "Meta" OR "Llama" OR "Facebook" OR "Instagram" OR "WhatsApp") AI',
+    headlineAliases: ["Meta AI", "Meta", "Muse Spark", "Llama", "Facebook", "Instagram", "WhatsApp", "Zuckerberg"],
+    query: '("Meta AI" OR "Muse Spark" OR "Llama" OR "Facebook" OR "Instagram" OR "WhatsApp") AI',
   },
   "Midjourney": { headlineAliases: ["Midjourney"], query: '"Midjourney" AI' },
 };

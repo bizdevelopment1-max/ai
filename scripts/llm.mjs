@@ -16,9 +16,19 @@ const MAX_RATE_LIMIT_WAIT_MS = Math.max(
   Number(process.env.GITHUB_MODELS_MAX_RETRY_WAIT_MS || 120_000),
 );
 let lastRequestAt = 0;
+// GitHub Models was retired on 2026-07-30; the endpoint now answers with a
+// non-JSON body. Without a breaker every call paid three paced retries (~48s),
+// which pushed the startup-profiles stage past its timeout on every scheduled
+// run. Once the endpoint proves unusable, skip it for the rest of the process
+// so callers fall straight through to their extractive fallbacks.
+let endpointDisabled = "";
+const disableEndpoint = reason => {
+  if (!endpointDisabled) console.warn(`[llm] GitHub Models disabled for this run: ${reason}`);
+  endpointDisabled = reason;
+};
 
 export function llmAvailable() {
-  return TOKEN ? `github-models:${MODEL}` : "";
+  return TOKEN && !endpointDisabled ? `github-models:${MODEL}` : "";
 }
 
 const parseJson = value => {
@@ -35,7 +45,7 @@ const parseJson = value => {
 };
 
 export async function llmJSON({ system, user, maxTokens = 3000, schema } = {}) {
-  if (!TOKEN || !system || !user) return null;
+  if (!TOKEN || endpointDisabled || !system || !user) return null;
   const body = {
     model: MODEL,
     messages: [
@@ -77,11 +87,21 @@ export async function llmJSON({ system, user, maxTokens = 3000, schema } = {}) {
         await new Promise(resolve => setTimeout(resolve, retryAfter));
         continue;
       }
+      const text = await response.text();
       if (!response.ok) {
-        console.warn(`[llm] GitHub Models ${response.status}: ${String(await response.text()).slice(0, 240)}`);
+        console.warn(`[llm] GitHub Models ${response.status}: ${text.slice(0, 240)}`);
+        if ([401, 403, 404, 410].includes(response.status)) disableEndpoint(`HTTP ${response.status}`);
         return null;
       }
-      const json = await response.json();
+      let json;
+      try {
+        json = JSON.parse(text);
+      } catch {
+        // A 200 with a non-JSON body is a permanent endpoint change, not a
+        // transient fault — retrying cannot fix it.
+        disableEndpoint(`non-JSON response "${text.trim().slice(0, 40)}"`);
+        return null;
+      }
       const data = parseJson(json?.choices?.[0]?.message?.content);
       return data ? { data, engine: `github-models:${MODEL}` } : null;
     } catch (error) {
@@ -89,7 +109,7 @@ export async function llmJSON({ system, user, maxTokens = 3000, schema } = {}) {
         console.warn(`[llm] GitHub Models transient error · retry ${attempt}/3: ${error.message}`);
         continue;
       }
-      console.warn(`[llm] GitHub Models unavailable: ${error.message}`);
+      disableEndpoint(error.message);
       return null;
     }
   }

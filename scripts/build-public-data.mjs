@@ -316,13 +316,21 @@ try {
     groundingStatus: section.groundingStatus || "",
     evidence: compactEvidence(section.evidence),
   } : null;
+  // The first screen reads only the verification date and freshness of a
+  // company's intelligence and the URL of its logo. The full publication
+  // record and logo provenance stay in companies.json, which the value-chain
+  // section loads on demand, so the overview stays within its delivery budget.
+  const compactPublication = publication => publication
+    ? compact(publication, ["lastVerifiedAt", "freshness", "ageDays"])
+    : null;
   const compactIntelligence = intelligence => intelligence ? {
     currentBusiness: compactSection(intelligence.currentBusiness),
     revenueModel: compactSection(intelligence.revenueModel),
     strategyDirection: compactSection(intelligence.strategyDirection),
     investmentDirection: compactSection(intelligence.investmentDirection),
-    publication: intelligence.publication || null,
+    publication: compactPublication(intelligence.publication),
   } : null;
+  const compactLogo = logo => logo?.url ? { url: logo.url } : null;
   const compactProfile = profile => profile ? {
     business: Array.isArray(profile.business) ? profile.business.slice(0, 4) : [],
     officialWebsite: profile.officialWebsite || "",
@@ -340,7 +348,7 @@ try {
         latest: compactLatest(company.latest),
         profile: compactProfile(company.profile),
         intelligence: compactIntelligence(company.intelligence),
-        logo: company.logo || null,
+        logo: compactLogo(company.logo),
         cap: company.cap || "",
         capAsof: company.capAsof || "",
         ticker: company.ticker || "",
@@ -615,7 +623,7 @@ const versionInputs = [
   ...Object.values(views).map(value => JSON.stringify(value)),
   JSON.stringify(siteContentManifest),
   createHash("sha256").update(await readFile(resolve(root, "assets/competitive-dynamics.mp4"))).digest("hex"),
-  ...await Promise.all(["overview-view.json", "strategy-view.json", "site-content-manifest.json", "intelligence-tracks.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
+  ...await Promise.all(["overview-view.json", "strategy-view.json", "site-content-manifest.json", "intelligence-tracks.json", "insights.json", "briefing.json", "companies.json", "company-news.json", "corporate-entity-audit.json", "business-classification-audit.json", "startups.json", "a16z-startups.json", "strategic-ventures.json", "business-model-forecasts.json", "mobile-ai-business-view.json", "metric-history.json", "volatile-metrics-audit.json", "market-reverification-queue.json", "price-change-flags.json", "monetization-review-queue.json", "stocks.json", "stock-events.json", "nvidia-investments.json", "monetization.json", "audit.json", "quality.json", "collection-health.json"]
     .map(async file => { try { return await readFile(resolve(root, file), "utf8"); } catch { return ""; } })),
 ];
 const version = createHash("sha256").update(versionInputs.join("\n")).digest("hex").slice(0, 16);

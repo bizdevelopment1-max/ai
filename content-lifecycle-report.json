@@ -3,7 +3,7 @@
   "generatedAt": "2026-08-27T11:33:36.014Z",
   "summary": {
     "public": 15,
-    "supporting": 6,
+    "supporting": 8,
     "retired": 1,
     "dead": 0
   },
@@ -73,6 +73,28 @@
       "consumed": true,
       "status": "healthy",
       "reason": "requested-by-production-bundle"
+    },
+    {
+      "id": "corporate-entity-audit",
+      "path": "corporate-entity-audit.json",
+      "publication": "supporting",
+      "collector": "validate-corporate-entities",
+      "consumer": "scripts/test-automation.mjs",
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "materialized-by:scripts/test-automation.mjs"
+    },
+    {
+      "id": "business-classification-audit",
+      "path": "business-classification-audit.json",
+      "publication": "supporting",
+      "collector": "refresh-business-classifications",
+      "consumer": "scripts/build-browser-bundle.mjs",
+      "exists": true,
+      "consumed": true,
+      "status": "healthy",
+      "reason": "materialized-by:scripts/build-browser-bundle.mjs"
     },
     {
       "id": "startups",

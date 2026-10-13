@@ -80,11 +80,15 @@ const REGISTRY_ARTICLES = (sourceRegistrySnapshot.items || [])
   }));
 
 const UA = CRAWLER_USER_AGENT;
-const sourceHealth = { failedStreams: [], emptyStreams: [], quietStreams: [], reachableStreams: [], successfulStreams: [] };
+const sourceHealth = { failedStreams: [], emptyStreams: [], quietStreams: [], reachableStreams: [], successfulStreams: [], validEmptyFeeds: new Set() };
+// A Google News response is only evidence of a working collector when it is
+// an actual RSS document; a consent/block page or format change parses to zero
+// items too, and must still surface as an empty (possibly broken) stream.
+const isRssDocument = xml => /<rss[\s>]/i.test(String(xml || "")) && /<channel[\s>]/i.test(String(xml || ""));
 
 // 네트워크 복원력: 타임아웃 + 지수 백오프 재시도(소스 확대에 따른 일시적 실패 흡수)
 async function fetchText(url, opts = {}, tries = 3) {
-  const { timeoutMs = 12000, ...fetchOptions } = opts;
+  const { timeoutMs = 12000, shouldRetry = () => true, ...fetchOptions } = opts;
   for (let i = 0; i < tries; i++) {
     try {
       const ctrl = new AbortController();
@@ -94,7 +98,7 @@ async function fetchText(url, opts = {}, tries = 3) {
       if (!res.ok) throw new Error("HTTP " + res.status);
       return await res.text();
     } catch (e) {
-      if (i === tries - 1) throw e;
+      if (i === tries - 1 || !shouldRetry(e)) throw e;
       await new Promise(r => setTimeout(r, 400 * Math.pow(2, i)));   // 0.4s → 0.8s → 1.6s
     }
   }
@@ -438,9 +442,37 @@ function cleanTitle(t, source) {
   return s.trim() || String(t || "").trim();
 }
 
+// Google News circuit breaker. When news.google.com answers every query with
+// HTTP 429/503 (rate limit or outage), retrying ~150 queries with backoff
+// cannot finish inside the stage time limit, and the timeout then kills the
+// whole site refresh. After a run of consecutive throttled queries with no
+// success in between, the remaining Google News queries are skipped and
+// recorded as failed streams. First-party feeds, sitemaps and the registry
+// still refresh the site, and the watchdog still escalates a lasting outage.
+const GOOGLE_NEWS_BREAKER_THRESHOLD = Math.max(1, Number(process.env.GOOGLE_NEWS_BREAKER_THRESHOLD || 8));
+const googleNewsCircuit = { consecutiveThrottled: 0, open: false, skipped: 0 };
+const isThrottledResponse = error => /^HTTP (?:429|503)$/.test(String(error?.message || ""));
+
 async function fetchRss(query, locale = { hl: "en-US", gl: "US", ceid: "US:en" }) {
+  if (googleNewsCircuit.open) {
+    googleNewsCircuit.skipped += 1;
+    throw new Error("skipped: Google News circuit open after repeated HTTP 429/503");
+  }
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query + " when:14d")}&hl=${locale.hl}&gl=${locale.gl}&ceid=${locale.ceid}`;
-  return fetchText(url, { headers: { "User-Agent": UA } });
+  try {
+    const xml = await fetchText(url, { headers: { "User-Agent": UA }, shouldRetry: () => !googleNewsCircuit.open });
+    googleNewsCircuit.consecutiveThrottled = 0;
+    return xml;
+  } catch (error) {
+    if (isThrottledResponse(error)) {
+      googleNewsCircuit.consecutiveThrottled += 1;
+      if (!googleNewsCircuit.open && googleNewsCircuit.consecutiveThrottled >= GOOGLE_NEWS_BREAKER_THRESHOLD) {
+        googleNewsCircuit.open = true;
+        console.warn(`[news] Google News circuit opened after ${googleNewsCircuit.consecutiveThrottled} consecutive throttled queries; skipping the remaining Google News queries`);
+      }
+    }
+    throw error;
+  }
 }
 
 // pull authoritative English items for one query
@@ -469,8 +501,10 @@ async function pull(src, limit) {
       if (out.length >= limit) break;
     }
     const stream = src.tag || src.co || "topic";
-    if (!out.length) sourceHealth.emptyStreams.push(streamName);
-    else sourceHealth.successfulStreams.push(streamName);
+    if (!out.length) {
+      sourceHealth.emptyStreams.push(streamName);
+      if (isRssDocument(xml)) sourceHealth.validEmptyFeeds.add(streamName);
+    } else sourceHealth.successfulStreams.push(streamName);
     console.log(`[news:${stream}] ${out.length} authoritative item(s)`);
     return out;
   } catch (e) {
@@ -564,7 +598,17 @@ async function main() {
     })
     .filter(Boolean);
   const recoveredKeys = new Set(fallbackRecoveries.map(row => row.stream));
-  const unresolvedEmptyStreams = [...new Set(sourceHealth.emptyStreams.filter(stream => !recoveredKeys.has(stream)))];
+  // A company query that returned a valid RSS feed but no authoritative
+  // English article in the 14-day window is a quiet company, not a dead
+  // collector — the same outcome direct publisher feeds already record as
+  // reachable-quiet. Counting it as "empty" let a few rarely-covered listed
+  // companies block every publication through the persistent-empty gate.
+  for (const stream of new Set(sourceHealth.emptyStreams)) {
+    if (recoveredKeys.has(stream) || !sourceHealth.validEmptyFeeds.has(stream)) continue;
+    sourceHealth.quietStreams.push({ stream, reason: "reachable-no-recent-matching-items" });
+  }
+  const quietKeys = new Set(sourceHealth.quietStreams.map(row => row.stream));
+  const unresolvedEmptyStreams = [...new Set(sourceHealth.emptyStreams.filter(stream => !recoveredKeys.has(stream) && !quietKeys.has(stream)))];
   const registryHealthRows = registryCollectionFresh ? (sourceRegistryReport.streamHealth || []) : [];
   const registryFailedStreams = registryHealthRows.filter(row => row.state === "failed").map(row => ({ stream: row.stream, error: row.error || "registry collector failed" }));
   const failedStreams = [...sourceHealth.failedStreams, ...registryFailedStreams]

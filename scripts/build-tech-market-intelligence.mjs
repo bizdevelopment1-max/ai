@@ -140,14 +140,44 @@ for (const article of articles) {
       matchTerms: hits,
       implication: `해당 변화가 제품·원가·파트너 구조에 미치는 영향을 후속 원문으로 검증`,
     });
+    // Classify trend dimensions on the same source text that placed the
+    // article in this track (title, summary, tag), not only on the one-line
+    // title the compact signal keeps.
+    signal.dimensionIds = (track.trendDimensions || [])
+      .filter(dimension => termHits(article._text, dimension.terms || []).length)
+      .map(dimension => dimension.id);
     trackMatches.get(track.id).push(signal);
   }
 }
 
+// A specialist track (vector databases, model architecture) can go a whole
+// news window without one matching article. Rebuilding only from that window
+// would empty the track and block publication, so each track also keeps the
+// previous snapshot's source-linked signals, with their original dates. A
+// carried signal survives only while a term it was classified by is still in
+// the track taxonomy, it is not suppressed, and the current news file has not
+// since demoted its article from display.
+const demotedUrls = new Set((news.articles || [])
+  .filter(article => canonicalUrl(article?.url) && !sourceBacked(article))
+  .map(article => canonicalUrl(article.url)));
+const priorTrackSignals = new Map((prior.technologyTracks || []).map(track => [track.id, track.signals || []]));
+const carriedSignals = track => {
+  const trackTerms = new Set((track.terms || []).map(norm));
+  return (priorTrackSignals.get(track.id) || []).filter(signal => canonicalUrl(signal?.url)
+    && signal.title && signal.date
+    && !demotedUrls.has(canonicalUrl(signal.url))
+    && (signal.matchTerms || []).some(term => trackTerms.has(norm(term)))
+    && !suppression.matches(signal, "article"));
+};
+
 const recentCutoff = Date.parse(generatedAt) - 30 * 86_400_000;
 const technologyTracks = trackDefs.map(track => {
-  const signals = uniqueBy(newest(trackMatches.get(track.id) || []), signalKey)
+  const current = uniqueBy(newest(trackMatches.get(track.id) || []), signalKey);
+  const currentKeys = new Set(current.map(signalKey));
+  const carried = carriedSignals(track).filter(signal => !currentKeys.has(signalKey(signal)));
+  const signals = uniqueBy(newest([...current, ...carried]), signalKey)
     .slice(0, Number(limits.signalsPerTrack || 24));
+  const carriedForwardCount = signals.filter(signal => !currentKeys.has(signalKey(signal))).length;
   const signalText = signal => clean([
     signal.originalTitle,
     signal.evidenceExcerpt,
@@ -157,7 +187,8 @@ const technologyTracks = trackDefs.map(track => {
     id: dimension.id,
     label: dimension.label,
     interpretation: dimension.interpretation,
-    count: signals.filter(signal => termHits(signalText(signal), dimension.terms || []).length).length,
+    count: signals.filter(signal => (signal.dimensionIds || []).includes(dimension.id)
+      || termHits(signalText(signal), dimension.terms || []).length).length,
   })).sort((left, right) => right.count - left.count || left.label.localeCompare(right.label));
   const dominantDimension = trendDimensions[0]?.count > 0 ? trendDimensions[0] : null;
   const sourceCount = new Set(signals.map(signal => signal.url)).size;
@@ -194,7 +225,7 @@ const technologyTracks = trackDefs.map(track => {
     trendDimensions,
     primaryActors,
     primarySources,
-    evidence: { sourceCount, officialCount, publisherCount, recentCount },
+    evidence: { sourceCount, officialCount, publisherCount, recentCount, carriedForwardCount },
     summaryBullets: [
       { label: "변화", text: changeSummary },
       { label: "의미", text: meaningSummary },

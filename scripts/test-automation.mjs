@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { access, readFile } from "node:fs/promises";
-import { BUNDLE_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, buildRuntimeDash, readBrowserSources, runtimeDataSource, sourceStamp } from "./build-browser-bundle.mjs";
+import { BUNDLE_FILE, BUSINESS_CLASSIFICATION_FILE, DATA_BUNDLE_FILE, DATA_SOURCE_FILE, buildRuntimeDash, readBrowserSources, runtimeBusinessClassificationSource, runtimeDataSource, sourceStamp } from "./build-browser-bundle.mjs";
 import { loadDash } from "./load-dash.mjs";
 import { articleFocusedOnCompany, directCompanyNewsMatch } from "./company-sources.mjs";
 import { canonicalizeStartupSnapshot, companyRegistryHasDuplicates, sameCompany } from "./company-identity.mjs";
@@ -23,6 +23,9 @@ const required = [
   "scripts/validate-company-logos.mjs",
   "scripts/build-partner-ma-candidates.mjs",
   "scripts/validate-partner-ma-candidates.mjs",
+  "scripts/corporate-entities.mjs",
+  "scripts/validate-corporate-entities.mjs",
+  "scripts/refresh-business-classifications.mjs",
   "scripts/crawl-financials.mjs",
   "scripts/company-sources.mjs",
   "scripts/crawl-company-officials.mjs",
@@ -76,6 +79,8 @@ const required = [
   "stocks.json",
   "nvidia-investments.json",
   "partner-ma-candidates.json",
+  "corporate-entity-audit.json",
+  "business-classification-audit.json",
   "financials.json",
   "companies.json",
   "startups.json",
@@ -96,6 +101,8 @@ const required = [
   "config/global-source-policy.json",
   "config/tech-market-taxonomy.json",
   "config/company-source-policy.json",
+  "config/corporate-entities.json",
+  "config/business-classifications.json",
   "config/nvidia-investment-deals.json",
   "_config.yml",
   "index.html",
@@ -188,17 +195,20 @@ try {
 }
 
 try {
-  const [sources, bundle, dataSource, dataBundle, index] = await Promise.all([
+  const [sources, bundle, dataSource, classificationSource, dataBundle, index] = await Promise.all([
     readBrowserSources(),
     readFile(BUNDLE_FILE, "utf8"),
     readFile(DATA_SOURCE_FILE, "utf8"),
+    readFile(BUSINESS_CLASSIFICATION_FILE, "utf8"),
     readFile(DATA_BUNDLE_FILE, "utf8"),
     readFile("index.html", "utf8"),
   ]);
+  const compactRuntimeData = `${runtimeDataSource()}\n${runtimeBusinessClassificationSource(JSON.parse(classificationSource))}`;
   const expected = `/* ai-dashboard-bundle:${sourceStamp(sources)} */`;
   const expectedData = `/* ai-dashboard-data:${sourceStamp([
     { file: DATA_SOURCE_FILE, source: dataSource },
-    { file: "runtime-data.js", source: runtimeDataSource() },
+    { file: BUSINESS_CLASSIFICATION_FILE, source: classificationSource },
+    { file: "runtime-data.js", source: compactRuntimeData },
   ])} */`;
   const forbiddenHandsetWord = "\uD734\uB300\uD3F0";
   const publicRuntimeCopy = [...sources.map(({ source }) => source), bundle, dataSource, dataBundle, index].join("\n");
@@ -751,11 +761,11 @@ try {
     && monetizationCrawler.includes("loadDash().COMPANY_LAYER");
   if (JSON.stringify(layerIds) !== JSON.stringify(expectedLayers)
     || normalized.length !== (dash.COMPANIES || []).length
-    || companies.schemaVersion !== 6 || !completeCoverage || !strategyReady || !linkedinReady) {
+    || Number(companies.schemaVersion || 0) < 6 || !completeCoverage || !strategyReady || !linkedinReady) {
     const causes = [
       JSON.stringify(layerIds) !== JSON.stringify(expectedLayers) && "layer-order",
       normalized.length !== (dash.COMPANIES || []).length && `normalized-${normalized.length}/${(dash.COMPANIES || []).length}`,
-      companies.schemaVersion !== 6 && `schema-${companies.schemaVersion}`,
+      Number(companies.schemaVersion || 0) < 6 && `schema-${companies.schemaVersion}`,
       !completeCoverage && "profile-coverage",
       !strategyReady && "strategy-ui",
       !linkedinReady && `linkedin-${linkedinProfiles.length}`,
@@ -1116,8 +1126,8 @@ try {
       && (!visible.has("goToMarket") || value.revenueModel?.summary)
       && (!visible.has("partnerships") || practices.some(item => item.sectionId === "partnerships") || company.strategicVentures?.length)
       && (!visible.has("investment") || value.investmentDirection?.summary);
-  }) && companies.schemaVersion === 6
-    && companies.methodology?.includes("source-backed-section-publication+freshness")
+  }) && Number(companies.schemaVersion || 0) >= 6
+    && companies.methodology?.includes("source-backed-section-publication")
     && companies.quality?.allVisibleClaimsSourceBacked === true
     && companies.quality?.visibleClaimSections === companies.quality?.sourceBackedClaimSections;
   const blankSectionUiRemoved = !boards.includes('className="cd-outline-empty"')
@@ -2463,9 +2473,8 @@ try {
   const completeBoard = boards.includes("function StockRegionPanel")
     && boards.includes("function NvidiaInvestmentMap")
     && boards.includes("전체 상장사 밸류체인 분석")
-    && boards.includes("window.DASH.STOCK_LAYER")
+    && !boards.includes("window.DASH.STOCK_LAYER")
     && boards.includes("window.DASH.STOCK_GROUP_LAYER")
-    && !boards.includes(".filter(s => STOCK_LAYER[s.ticker])")
     && boards.includes("밸류체인 그룹 트렌드")
     && boards.includes("개별 종목")
     && boards.includes("stock-chain-families")
@@ -2478,14 +2487,14 @@ try {
     && dash.STOCKS.length === 67
     && dash.STOCK_VALUE_CHAIN.length === 12
     && dash.STOCK_VALUE_CHAIN_FAMILIES?.length === 3
-    && ["bigtech", "silicon", "strategic-oem", "ai-server-odm", "system-infrastructure"].every(id =>
+    && ["bigtech", "conglomerate", "silicon", "strategic-oem", "ai-server-odm", "system-infrastructure"].every(id =>
       dash.STOCK_VALUE_CHAIN.some(layer => layer.id === id))
     && ["TSLA", "DELL", "HPE", "0992.HK", "SMCI", "2382.TW", "6669.TW", "2317.TW", "2356.TW", "2376.TW", "2357.TW", "CSCO", "6702.T"].every(ticker =>
       dash.STOCKS.some(stock => stock.ticker === ticker) && crawler.includes(`t: "${ticker}"`))
     && dash.STOCKS.every(stock => dash.STOCK_VALUE_CHAIN.some(layer =>
-      layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])))
+      layer.id === dash.STOCK_GROUP_LAYER[stock.group]))
     && dash.STOCK_VALUE_CHAIN.every(layer => dash.STOCKS.some(stock =>
-      layer.id === (dash.STOCK_LAYER[stock.ticker] || dash.STOCK_GROUP_LAYER[stock.group])));
+      layer.id === dash.STOCK_GROUP_LAYER[stock.group]));
   const sourceBackedInvestments = investmentData.portfolio?.length >= 100
     && investmentData.valueChains?.length === 6
     && investmentData.valueChains.every(layer => layer.id && layer.ko && layer.count > 0)
@@ -2570,7 +2579,13 @@ try {
     && boards.includes("groups={visibleGroups} stocks={visibleStocks}");
   if (!completeBoard || !completeMetadata || !sourceBackedInvestments || !dynamicInvestmentPipeline
     || !liveHistory || !browserStockSeries || !currencyAware || !responsiveUi || !dataDrivenInvestmentCatalog || !stockComparisonCopyRemoved || !initialDetailedValueChainView) {
-    throw new Error("all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete");
+    const causes = [
+      !completeBoard && "board", !completeMetadata && "metadata", !sourceBackedInvestments && "investments",
+      !dynamicInvestmentPipeline && "investment-pipeline", !liveHistory && "history", !browserStockSeries && "series",
+      !currencyAware && "currency", !responsiveUi && "responsive", !dataDrivenInvestmentCatalog && "catalog",
+      !stockComparisonCopyRemoved && "copy", !initialDetailedValueChainView && "value-chain",
+    ].filter(Boolean).join(", ");
+    throw new Error(`all-company stock board, NVIDIA source pipeline, five-year adjusted-close history, currencies, or responsive UI are incomplete (${causes})`);
   }
   console.log("  OK  AI 생태계 67개 상장사·12개 세부 밸류체인 Stock 분석 + NVIDIA 6계층·100개 이상 원문근거 투자 카탈로그 + 5년 실데이터·변곡점 자동 설명");
 } catch (error) {
@@ -2818,6 +2833,89 @@ try {
 }
 
 try {
+  const [registry, taxonomy, companies, candidates, audit] = await Promise.all([
+    readFile("config/corporate-entities.json", "utf8").then(JSON.parse),
+    readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
+    readFile("companies.json", "utf8").then(JSON.parse),
+    readFile("partner-ma-candidates.json", "utf8").then(JSON.parse),
+    readFile("corporate-entity-audit.json", "utf8").then(JSON.parse),
+  ]);
+  const spacex = registry.entities?.find(entity => entity.canonicalId === "spacex");
+  const omni = registry.entities?.find(entity => entity.ticker === "603501.SS");
+  const stockSpaceX = taxonomy.STOCKS?.find(stock => stock.ticker === "SPCX");
+  const stockOmni = taxonomy.STOCKS?.find(stock => stock.ticker === "603501.SS");
+  const companyNames = new Set((taxonomy.COMPANIES || []).map(item => item.name));
+  const generatedNames = new Set(Object.keys(companies.companies || {}));
+  const candidateNames = new Set((candidates.records || []).map(item => item.name));
+  const ready = spacex?.subsidiaries?.some(item => item.name === "Cursor" && item.countingPolicy === "parent-only")
+    && spacex?.aiRevenueExposure?.status === "not-separately-disclosed"
+    && stockSpaceX?.group === "conglomerate" && taxonomy.STOCK_GROUP_LAYER?.[stockSpaceX.group] === "conglomerate"
+    && stockOmni?.domain === "omnivision-group.com" && stockOmni?.brandDomains?.includes("ovt.com")
+    && omni?.primaryDomain === "omnivision-group.com"
+    && companyNames.has("SpaceX") && generatedNames.has("SpaceX")
+    && !companyNames.has("Cursor") && !generatedNames.has("Cursor") && !candidateNames.has("Cursor")
+    && companies.companies?.SpaceX?.corporateStructure?.subsidiaries?.some(item => item.name === "Cursor")
+    && audit.summary?.violations === 0;
+  if (!ready) throw new Error("parent consolidation, diversified SpaceX classification, or issuer-domain validation is incomplete");
+  console.log("  OK  지배기업 합산 · Cursor 중복 제거 · SpaceX 복합 인프라 분류 · OmniVision 상장 법인 도메인 검증");
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  corporate entity reconciliation: ${error.message}`);
+}
+
+try {
+  const [taxonomy, companies, candidates, audit, boards, updateSite] = await Promise.all([
+    readFile("config/dashboard-taxonomy.json", "utf8").then(JSON.parse),
+    readFile("companies.json", "utf8").then(JSON.parse),
+    readFile("partner-ma-candidates.json", "utf8").then(JSON.parse),
+    readFile("business-classification-audit.json", "utf8").then(JSON.parse),
+    readFile("boards.jsx", "utf8"),
+    readFile("scripts/update-site.mjs", "utf8"),
+  ]);
+  const arm = (taxonomy.STOCKS || []).find(stock => stock.ticker === "ARM");
+  const meta = (taxonomy.COMPANIES || []).find(company => company.name === "Meta AI");
+  const trustCompanies = Object.entries(taxonomy.COMPANY_LAYER || {})
+    .filter(([, item]) => item.layer === "trust")
+    .map(([name]) => name);
+  const armAudit = audit.stockProfiles?.ARM;
+  const metaAudit = audit.companyProfiles?.["Meta AI"];
+  const metaCompany = companies.companies?.["Meta AI"];
+  const mix = armAudit?.latestRevenueMix;
+  const candidateNames = new Set((candidates.records || []).map(item => item.name));
+  const ready = taxonomy.COMPANY_LAYER?.Databricks?.layer === "data"
+    && taxonomy.COMPANY_LAYER?.["Scale AI"]?.layer === "data"
+    && taxonomy.COMPANY_LAYER?.OneTrust?.layer === "trust"
+    && (taxonomy.CATEGORIES || []).every(category => String(category.desc || "").trim())
+    && taxonomy.COMPANY_LAYER?.["Meta AI"]?.layer === "model"
+    && taxonomy.COMPANY_LAYER?.["Meta AI"]?.vertical === "Muse API·Llama 오픈 생태계"
+    && meta?.unit === "Muse 제품·API 모델 · Llama 오픈 모델 생태계"
+    && !/오픈소스 LLM/.test(meta?.unit || "")
+    && /Muse 제품·API/.test(metaCompany?.profile?.business?.join(" ") || "")
+    && /Llama 오픈/.test(metaCompany?.profile?.business?.join(" ") || "")
+    && /Muse 제품·API/.test(metaCompany?.strategyProfile?.currentBusiness || "")
+    && /Llama 오픈/.test(metaCompany?.strategyProfile?.currentBusiness || "")
+    && /Muse Spark 1\.1/.test(metaAudit?.modelAccess || "") && /Llama/.test(metaAudit?.modelAccess || "")
+    && trustCompanies.length === 1 && trustCompanies[0] === "OneTrust"
+    && Boolean(companies.companies?.OneTrust) && candidateNames.has("OneTrust")
+    && arm?.group === "chip-ip"
+    && taxonomy.STOCK_GROUP_LAYER?.["chip-ip"] === "silicon"
+    && taxonomy.STOCK_GROUP_LAYER?.[arm.group] === "silicon"
+    && !Object.hasOwn(taxonomy, "STOCK_LAYER")
+    && audit.summary?.datasetsChecked === 14 && audit.summary?.violations === 0
+    && ["official-current", "cached-official-fallback"].includes(mix?.status)
+    && Number(mix?.totalRevenue) === Number(mix?.royaltyRevenue) + Number(mix?.licenseOtherRevenue)
+    && Math.abs(Number(mix?.royaltyPct) + Number(mix?.licenseOtherPct) - 100) <= 0.2
+    && boards.includes("window.BUSINESS_CLASSIFICATION_AUDIT")
+    && boards.includes("동일 비교 기준") && boards.includes("SEC 원문 ↗")
+    && updateSite.includes('nodeStep("refresh-business-classifications"');
+  if (!ready) throw new Error("primary-layer rules, Arm revenue-model classification, generated coverage, or UI disclosure is incomplete");
+  console.log(`  OK  STOCK_LAYER 제거 · 67개 종목 group-only 매핑 · bigtech 설명 완결 · Meta=Muse API+Llama 오픈 생태계 · Arm=chip-ip · SEC 매출 믹스 ${mix.royaltyPct}/${mix.licenseOtherPct}`);
+} catch (error) {
+  failed = true;
+  console.error(`  FAIL  business classification audit: ${error.message}`);
+}
+
+try {
   const [candidates, boards, strategyView, architecture, workflow] = await Promise.all([
     readFile("partner-ma-candidates.json", "utf8").then(JSON.parse),
     readFile("boards.jsx", "utf8"),
@@ -2869,7 +2967,8 @@ try {
     && !boards.includes('SourcePipeline kind="startup"')
     && !architectureChildren.some(child => child.key === "evidence-signals");
   const automationReady = workflow.includes('"scripts/build-partner-ma-candidates.mjs"')
-    && workflow.includes('"scripts/validate-partner-ma-candidates.mjs"');
+    && workflow.includes('"scripts/validate-partner-ma-candidates.mjs"')
+    && workflow.includes('"scripts/validate-corporate-entities.mjs"');
   if (!candidateReady || !opportunityCopyReady || !uiReady || !automationReady) {
     throw new Error("concise opportunity cards or the generated partner/M&A decision dataset is incomplete");
   }

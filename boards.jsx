@@ -802,6 +802,35 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
           );
         })()}
 
+        {(() => {
+          const structure = c.live?.corporateStructure || c.corporateStructure || c.candidateAssessment?.corporateStructure;
+          if (!structure) return null;
+          const exposure = structure.aiRevenueExposure;
+          const exposureLabel = exposure?.value !== null && exposure?.value !== "" && Number.isFinite(Number(exposure?.value))
+            ? `${exposure.value}%`
+            : exposure?.status === "not-separately-disclosed" ? "별도 공시 없음" : "—";
+          return (
+            <div className="cd-section cd-corporate-structure">
+              <h4>지배구조·집계 기준 <em>Corporate Structure</em><b className="cd-coverage">{structure.lastVerifiedAt ? `${fmtMonthDay(structure.lastVerifiedAt)} 검증` : "검증 원문"}</b></h4>
+              <div className="cd-corp-facts">
+                <span><em>상장·지배 법인</em><b>{structure.parentName}</b></span>
+                <span><em>사업 형태</em><b>{structure.entityType === "diversified-infrastructure" ? "복합 인프라·플랫폼" : "상장 지배 법인"}</b></span>
+                {structure.ticker && <span><em>티커</em><b>{structure.ticker}</b></span>}
+                {exposure && <span><em>AI 매출 노출도</em><b>{exposureLabel}</b></span>}
+              </div>
+              {structure.businessSegments?.length > 0 && <div className="cd-corp-segments"><em>보고 사업부</em>{structure.businessSegments.map(segment => <span key={segment}>{segment}</span>)}</div>}
+              {structure.subsidiaries?.length > 0 && <div className="cd-corp-subsidiaries">
+                {structure.subsidiaries.map(item => <article key={item.name}>
+                  <div><b>{item.name}</b><span>{item.effectiveDate ? ` · ${fmtMonthDay(item.effectiveDate)} 편입` : " · 자회사"}</span></div>
+                  <p>{`${item.relationship === "acquired-subsidiary-and-product" ? "인수 자회사·제품" : "AI 사업부 기반 플랫폼"} · 기업/섹터 총량은 ${structure.parentName}에 합산`}</p>
+                  {item.sourceUrl && <a href={item.sourceUrl} target="_blank" rel="noopener">공식 관계 원문 ↗</a>}
+                </article>)}
+              </div>}
+              {exposure?.status === "not-separately-disclosed" && <p className="cd-corp-policy">AI 매출 비중은 공식 사업부 매출과 연결 매출이 같은 기간에 함께 공시될 때만 자동 산출합니다.</p>}
+            </div>
+          );
+        })()}
+
         {c.profile && (() => {
           const p = c.profile, lv = c.live || {};
           // 변동 항목은 자동 수집 값 우선(최신·출처 기반), 없으면 정적 폴백
@@ -2471,6 +2500,23 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, fam
           {real && <span className="sp-source">데이터 {String(real.source || "public feed").replace("yahoo-api", "Yahoo Finance").replace("yahoo-web", "Yahoo Finance")}</span>}
         </div>
 
+        {sel.businessClassification && (
+          <div className="cd-deal-facts" aria-label={`${sel.name} 수익모델 분류`}>
+            <span><em>수익모델</em><b>{sel.businessClassification.businessModel}</b></span>
+            {sel.businessClassification.latestRevenueMix && (
+              <span>
+                <em>{fmtMonthDay(sel.businessClassification.latestRevenueMix.periodEnd)} 매출 믹스</em>
+                <b>
+                  로열티 {sel.businessClassification.latestRevenueMix.royaltyPct}% · 라이선스 등 {sel.businessClassification.latestRevenueMix.licenseOtherPct}%
+                  {sel.businessClassification.latestRevenueMix.sourceUrl && <React.Fragment> · <a href={sel.businessClassification.latestRevenueMix.sourceUrl} target="_blank" rel="noopener noreferrer">SEC 원문 ↗</a></React.Fragment>}
+                </b>
+              </span>
+            )}
+            <span><em>동일 비교 기준</em><b>{sel.businessClassification.comparisonBasis}</b></span>
+            <span><em>분류 재검토 조건</em><b>{sel.businessClassification.transitionSignal}</b></span>
+          </div>
+        )}
+
         {sel.private ? (
           <div className="stock-private">
             <p className="stock-note">{sel.note}</p>
@@ -2517,10 +2563,10 @@ function StockRegionPanel({ title, eyebrow, stocks, stockData, cats, groups, fam
 
 function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectionRef, theme, dataVersion }) {
   const inView = useInView(sectionRef);
-  const STOCK_LAYER = window.DASH.STOCK_LAYER || {};
   const STOCK_GROUP_LAYER = window.DASH.STOCK_GROUP_LAYER || {};
   const VC = window.DASH.STOCK_VALUE_CHAIN || [];
   const VC_FAMILIES = window.DASH.STOCK_VALUE_CHAIN_FAMILIES || [];
+  const businessAudit = window.BUSINESS_CLASSIFICATION_AUDIT || {};
   const marketGroupMap = Object.fromEntries((groups || []).map(group => [group.id, group]));
   const generatedAt = stockData?.__generatedAt ? new Date(stockData.__generatedAt).toLocaleString("ko-KR") : "";
 
@@ -2544,9 +2590,10 @@ function StockBoard({ stocks, stockData, nvidiaInvestments, cats, groups, sectio
       const marketGroup = s.group;
       return {
         ...s,
-        group: STOCK_LAYER[s.ticker] || STOCK_GROUP_LAYER[marketGroup],
+        group: STOCK_GROUP_LAYER[marketGroup],
         marketGroup,
         marketCategory: marketGroupMap[marketGroup]?.ko || marketGroup,
+        businessClassification: businessAudit.stockProfiles?.[s.ticker] || null,
         region: undefined,
         events,
       };
@@ -2732,11 +2779,12 @@ const COMPANY_RELATION_ALIASES = {
   "Mistral AI": ["Mistral AI", "Mistral"],
   "Cohere": ["Cohere"],
   "Scale AI": ["Scale AI"],
+  "OneTrust": ["OneTrust"],
   "Runway": ["Runway"],
   "Glean": ["Glean"],
   "ElevenLabs": ["ElevenLabs"],
   "Harvey": ["Harvey"],
-  "SpaceX (xAI, Cursor)": ["SpaceX", "xAI", "Grok", "Cursor"],
+  "SpaceX": ["SpaceX", "xAI", "Grok", "Cursor", "Anysphere"],
 };
 
 const RELATION_TYPES = [

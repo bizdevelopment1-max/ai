@@ -322,7 +322,23 @@ infra.items = (infra.items || []).map(item => ({ ...item, provenance: derivedSou
 bizmodel.items = (bizmodel.items || []).map(item => ({ ...item, provenance: derivedSourceStatus(item) }));
 
 const stockRows = Object.values(stocks.stocks || {});
-const stockFresh = stockRows.filter(s => ageDays(`${s.asOf}T23:59:59Z`) <= 4).length;
+// A multi-day exchange holiday (China's National Day Golden Week, Lunar New
+// Year) leaves every ticker on that exchange at its last trading day, which a
+// flat 4-day window misreads as a collection failure and blocks publication.
+// A ticker is fresh when it is within 4 days, or when it carries its own
+// exchange's newest close and that close is within the longest regular
+// exchange closure (10 days). One ticker lagging its exchange, or a whole
+// exchange silent beyond 10 days, still fails.
+const stockMarketOf = row => (String(row.ticker || "").match(/\.([A-Z]+)$/) || [, "US"])[1];
+const latestCloseByMarket = new Map();
+for (const s of stockRows) {
+  const market = stockMarketOf(s);
+  if (s.asOf && (!latestCloseByMarket.has(market) || s.asOf > latestCloseByMarket.get(market))) latestCloseByMarket.set(market, s.asOf);
+}
+const stockFresh = stockRows.filter(s => {
+  const age = ageDays(`${s.asOf}T23:59:59Z`);
+  return age <= 4 || (age <= 10 && s.asOf === latestCloseByMarket.get(stockMarketOf(s)));
+}).length;
 const sourceCounts = {};
 for (const s of stockRows) sourceCounts[s.source || "unknown"] = (sourceCounts[s.source || "unknown"] || 0) + 1;
 const sourceCountsNews = {};
