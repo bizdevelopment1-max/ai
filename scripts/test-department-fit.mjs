@@ -57,11 +57,16 @@ assert(strategy.expertSignals?.length >= 5, "제품·플랫폼 원문 근거가 
 assert(!/Competitive Platform Portfolio|User Moment → Experience Stack → Revenue/.test(boards), "삭제된 경쟁·사용자 순간 프레임이 남아 있습니다");
 assert(!/Where to Play · How to Win/.test(boards) && !/msf-choices|msf-choice|msf-house-pillars/.test(boards), "삭제된 우선 플레이 UI가 남아 있습니다");
 assert(/priorityFramework\.items/.test(boards) && /className="msf-priority-grid"/.test(boards), "전략 하우스가 생성 우선순위 데이터와 연결되지 않았습니다");
-assert(/const recentSignalCount = Number\(c\.live\?\.mentions30 \|\| 0\)/.test(boards) && />최근 30일 신호</.test(boards), "기업 최근 신호는 AI 밸류체인 카드에만 유지해야 합니다");
-assert(/Evidence-weighted Opportunity Portfolio/.test(boards) && /Product · Platform · Business Evidence/.test(boards), "신사업과 공식 근거 화면이 필요합니다");
+// Since 2e18942 a company's 30-day signal is no longer a per-card counter
+// (test-visual-readability forbids it); it is aggregated per layer in the AI
+// value chain executive summary only.
+assert(/function ValueChainExecutiveSummary\(/.test(boards) && /mentions30/.test(boards) && /30일 신호/.test(boards)
+  && !boards.includes("const recentSignalCount = Number(c.live?.mentions30 || 0)") && !boards.includes(">최근 30일 신호<"),
+"기업 최근 신호는 AI 밸류체인 계층 요약에서만 집계해야 합니다");
+assert(/우선순위 사업 후보/.test(boards) && /STRATEGY EVIDENCE ARCHITECTURE/.test(boards), "신사업과 공식 근거 화면이 필요합니다");
 
 assert(strategy.opportunityPortfolio.every(item =>
-  item.sourceOpportunityId && item.title && item.thesis && item.gate && item.evidence?.length),
+  item.sourceOpportunityId && item.title && item.thesis && item.decision && item.evidence?.length),
 "신사업 포트폴리오가 누적 원장의 출처·판단 근거와 연결되지 않았습니다");
 assert(strategy.lineage?.generatedFrom?.includes("mobile-ai-business-view.json"),
 "신사업 포트폴리오의 누적 원장 lineage가 없습니다");
