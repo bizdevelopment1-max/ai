@@ -23,6 +23,7 @@ import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { bulletizeKorean } from "./korean-copy.mjs";
 import { corporateRelationship, corporateStructureFor, consolidatedCompanyName, loadCorporateEntities } from "./corporate-entities.mjs";
 import { loadLeadershipChanges } from "./leadership-changes.mjs";
+import { isUnreliableName, reliablePageExtractions, unreliableExtractedNames } from "./extracted-people.mjs";
 
 const leadershipChanges = loadLeadershipChanges();
 
@@ -394,11 +395,14 @@ async function main() {
   for (const startup of startupRows) {
     if (!startup?.name || !startup.organization) continue;
     const curated = orgSource[startup.name] || {};
-    orgSource[startup.name] = {
-      ...startup.organization,
-      ...curated,
-      leadership: curated.leadership || startup.organization.executiveTeam || startup.organization.leadership || [],
-    };
+    const startupTeam = startup.organization.executiveTeam || startup.organization.leadership || [];
+    // A carried-forward roster made only of rows the extraction guard rejects
+    // gives way to the startup crawl's current roster.
+    const curatedTeam = curated.executiveTeam?.length ? curated.executiveTeam : curated.leadership || [];
+    const discarded = curatedTeam.length > 0 && reliablePageExtractions(curatedTeam).length === 0;
+    orgSource[startup.name] = discarded
+      ? { ...startup.organization, ...curated, leadership: startupTeam, executiveTeam: startupTeam }
+      : { ...startup.organization, ...curated, leadership: curated.leadership || startupTeam };
   }
   const linkedinSource = {};
   for (const company of Object.values(previousCompanies)) {
@@ -569,9 +573,14 @@ async function main() {
     // the accumulated profile instead of being hidden by an older crawl.
     const canonicalBusiness = trackedCompany && base.unit ? [base.unit] : [];
     const o = orgSource[name] || {};
+    // Rosters are carried forward, so a row read from an investor or advisor
+    // list in an earlier crawl is dropped here as well as at extraction.
+    const sourceLeadership = Array.isArray(o.executiveTeam) && o.executiveTeam.length ? o.executiveTeam : o.leadership;
+    const sourceRows = Array.isArray(sourceLeadership) ? sourceLeadership : [];
+    const droppedNames = unreliableExtractedNames(sourceRows);
     const normalizedProfile = {
       ...p,
-      ceo: leadershipChanges.profileCeo(name) || rec.ceo || p.ceo || "",
+      ceo: leadershipChanges.profileCeo(name) || rec.ceo || (isUnreliableName(droppedNames, p.ceo) ? "" : p.ceo) || "",
       hq: rec.hq || p.hq || "",
       headcount: rec.employeesStale ? "" : (rec.employees || p.headcount || ""),
       business: uniqueText([
@@ -586,8 +595,7 @@ async function main() {
     };
     const official = officialCompanies[name] || {};
     const verificationByName = new Map((official.verifiedExecutives || []).map(person => [personKey(person.name).toLowerCase(), person]));
-    const sourceLeadership = Array.isArray(o.executiveTeam) && o.executiveTeam.length ? o.executiveTeam : o.leadership;
-    const curatedLeadership = leadershipChanges.applyRoster(name, Array.isArray(sourceLeadership) ? sourceLeadership : [])
+    const curatedLeadership = leadershipChanges.applyRoster(name, reliablePageExtractions(sourceRows))
       .slice(0, MAX_EXECUTIVES).map(withDirectLinkedIn);
     const liveOfficers = Array.isArray(rec.officers) ? rec.officers.slice(0, MAX_EXECUTIVES).map(withDirectLinkedIn) : [];
     const curatedByName = new Map(curatedLeadership.map(person => [personKey(person.name).toLowerCase(), person]));
@@ -632,6 +640,17 @@ async function main() {
     executiveTeam.splice(0, executiveTeam.length, ...announcedTeam);
     executiveTeam.sort((left, right) => executivePriority(left) - executivePriority(right));
     executiveTeam.splice(MAX_EXECUTIVES);
+    // An untracked startup's CEO is carried forward from earlier crawls, some
+    // of which read an investor or a quoted customer as the CEO. A CEO on a
+    // current roster takes precedence; otherwise the carried name is kept only
+    // when that person is on the company's or the startup crawl's roster.
+    if (!trackedCompany && !leadershipChanges.profileCeo(name) && !rec.ceo) {
+      const rosters = [...executiveTeam, ...reliablePageExtractions(base.organization?.executiveTeam || [])];
+      const rosterCeo = rosters.find(person => /\bCEO\b|chief executive/i.test(person.role || ""));
+      const carried = personKey(normalizedProfile.ceo).toLowerCase();
+      const listed = !!carried && rosters.some(person => personKey(person.name).toLowerCase() === carried);
+      normalizedProfile.ceo = rosterCeo?.name || (listed ? normalizedProfile.ceo : "");
+    }
     const normalizedOrg = {
       ...o,
       leadership: curatedLeadership,

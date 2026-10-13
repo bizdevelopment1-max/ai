@@ -26,8 +26,9 @@ export function loadLeadershipChanges({ root = process.cwd(), today = new Date()
   for (const list of byCompany.values()) list.sort((left, right) => left.effectiveFrom.localeCompare(right.effectiveFrom));
 
   // Applies changes in effective-date order: a departed person leaves the
-  // roster, a changed or new role is marked as an official announcement and
-  // loses any verification that was earned for the previous role.
+  // roster, and a changed or new role carries the type of its primary source
+  // (an official announcement or established press reporting) and loses any
+  // verification that was earned for the previous role.
   const applyRoster = (company, roster = []) => {
     const changes = byCompany.get(company) || [];
     if (!changes.length) return roster;
@@ -47,7 +48,7 @@ export function loadLeadershipChanges({ root = process.cwd(), today = new Date()
           ...current,
           name: person.name,
           role: person.role,
-          roleSourceType: "official-announcement",
+          roleSourceType: primary.tier === "official" ? "official-announcement" : "press-report",
           roleSourceUrl: primary.url,
           roleEffectiveFrom: change.effectiveFrom,
           ...(roleChanged || index < 0 ? { verification: "unverified", verificationUrl: primary.url, verifiedAt: "" } : {}),

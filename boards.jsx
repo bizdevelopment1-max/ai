@@ -1037,7 +1037,7 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
         {c.profile && (() => {
           const p = c.profile, lv = c.live || {};
           // 변동 항목은 자동 수집 값 우선(최신·출처 기반), 없으면 정적 폴백
-          const ceo = lv.ceo || p.ceo;
+          const ceo = lv.ceo || lv.profile?.ceo || p.ceo;
           const overviewOrg = lv.organization || c.organization || c.org || {};
           const overviewTeam = Array.isArray(overviewOrg.executiveTeam) && overviewOrg.executiveTeam.length
             ? overviewOrg.executiveTeam : overviewOrg.leadership || [];
@@ -1666,10 +1666,10 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                 {(p.career || p.bg) && <div><dt>빅테크·주요 경력</dt><dd>{p.career || p.bg}</dd></div>}
               </dl>}
               <div className="cd-org-verification">
-                <span className={p.verification === "official-role-match" || p.roleSourceType === "market-filing" || p.roleSourceType === "official-announcement" ? "verified" : "curated"}>
-                  {p.roleSourceType === "official-announcement" ? "공식 발표 직함" : p.roleSourceType === "market-filing" ? "최신 공시 직함" : p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "knowledge-graph-domain-match" ? "공식 도메인 일치 지식그래프" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : "큐레이션 검토"}
+                <span className={p.verification === "official-role-match" || ["market-filing", "official-announcement", "press-report"].includes(p.roleSourceType) ? "verified" : "curated"}>
+                  {p.roleSourceType === "official-announcement" ? "공식 발표 직함" : p.roleSourceType === "press-report" ? "보도 확인 직함" : p.roleSourceType === "market-filing" ? "최신 공시 직함" : p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "knowledge-graph-domain-match" ? "공식 도메인 일치 지식그래프" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : "큐레이션 검토"}
                 </span>
-                {(p.roleSourceType === "official-announcement" ? p.roleSourceUrl : p.verificationUrl) && <a href={p.roleSourceType === "official-announcement" ? p.roleSourceUrl : p.verificationUrl} target="_blank" rel="noopener">근거</a>}
+                {(p.roleSourceType === "official-announcement" || p.roleSourceType === "press-report" ? p.roleSourceUrl : p.verificationUrl) && <a href={p.roleSourceType === "official-announcement" || p.roleSourceType === "press-report" ? p.roleSourceUrl : p.verificationUrl} target="_blank" rel="noopener">근거</a>}
               </div>
             </React.Fragment>
           );

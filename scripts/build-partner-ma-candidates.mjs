@@ -9,6 +9,7 @@
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { corporateRelationship, corporateStructureFor, loadCorporateEntities } from "./corporate-entities.mjs";
+import { reliablePageExtractions } from "./extracted-people.mjs";
 
 const readJson = async (file, fallback = {}) => {
   try { return JSON.parse(await readFile(file, "utf8")); } catch { return fallback; }
@@ -252,7 +253,7 @@ for (const { name, company, seed, portfolioClass, isTracked } of universe) {
       founded: text(profile.founded),
       headquarters: text(profile.hq),
       headcount: text(seed?.headcount || profile.headcount || company?.employees),
-      leadership: (organization.executiveTeam || []).slice(0, 3).map(person => ({
+      leadership: reliablePageExtractions(organization.executiveTeam || []).slice(0, 3).map(person => ({
         name: text(person.name), role: text(person.role),
         url: https(person.profileUrl || person.li) ? (person.profileUrl || person.li) : "",
       })),
