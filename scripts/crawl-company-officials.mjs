@@ -8,6 +8,14 @@ import { readFile, writeFile } from "node:fs/promises";
 import { loadDash } from "./load-dash.mjs";
 import { COMPANY_SOURCES } from "./company-sources.mjs";
 import { isExcludedText } from "./news-policy.mjs";
+import { loadLeadershipChanges } from "./leadership-changes.mjs";
+
+// A role counts as confirmed only when its title follows the person's own
+// name on the official page, before the next rostered person begins. A wide
+// window around the name let a neighbour's title (another executive's
+// "Chief Executive Officer") confirm a role the person no longer holds.
+const ROLE_WINDOW_CHARS = 120;
+const leadershipChanges = loadLeadershipChanges();
 
 const UA = "Mozilla/5.0 (compatible; AI-Strategy-Research/1.0; +https://bizdevelopment1-max.github.io/ai/)";
 const clean = value => String(value || "").replace(/\s+/g, " ").trim();
@@ -113,14 +121,20 @@ async function main() {
       ...(config.updates || []).map(update => ({ ...update, category: "official-update" })),
     ];
     const pages = await Promise.all(pageEntries.map(fetchOfficial));
-    const leaders = people(orgs[company.name]?.leadership);
+    const leaders = people(leadershipChanges.applyRoster(company.name, orgs[company.name]?.leadership || []));
     const verifiedExecutives = leaders.map(person => {
       const lower = person.name.toLowerCase();
       const page = pages.find(item => item.body.toLowerCase().includes(lower));
-      const index = page ? page.body.toLowerCase().indexOf(lower) : -1;
-      const context = page && index >= 0 ? page.body.slice(Math.max(0, index - 260), index + lower.length + 260) : "";
+      const body = page ? page.body.toLowerCase() : "";
+      const others = leaders.map(other => other.name.toLowerCase()).filter(name => name && name !== lower);
+      const segments = [];
+      for (let index = body.indexOf(lower); index >= 0 && segments.length < 5; index = body.indexOf(lower, index + lower.length)) {
+        const start = index + lower.length;
+        const end = Math.min(start + ROLE_WINDOW_CHARS, ...others.map(name => body.indexOf(name, start)).filter(position => position >= 0));
+        segments.push(page.body.slice(start, end));
+      }
       const terms = roleTerms(person.role);
-      const roleMatched = !!page && (terms.length === 0 || terms.some(re => re.test(context)));
+      const roleMatched = !!page && (terms.length === 0 || segments.some(segment => terms.some(re => re.test(segment))));
       return {
         name: person.name,
         role: person.role,

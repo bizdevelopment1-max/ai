@@ -22,6 +22,9 @@ import { articleFocusedOnCompany, executiveTier } from "./company-sources.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 import { bulletizeKorean } from "./korean-copy.mjs";
 import { corporateRelationship, corporateStructureFor, consolidatedCompanyName, loadCorporateEntities } from "./corporate-entities.mjs";
+import { loadLeadershipChanges } from "./leadership-changes.mjs";
+
+const leadershipChanges = loadLeadershipChanges();
 
 const MAX_EXECUTIVES = 12;
 const cleanText = value => String(value || "").replace(/\s+/g, " ").trim();
@@ -568,7 +571,7 @@ async function main() {
     const o = orgSource[name] || {};
     const normalizedProfile = {
       ...p,
-      ceo: rec.ceo || p.ceo || "",
+      ceo: leadershipChanges.profileCeo(name) || rec.ceo || p.ceo || "",
       hq: rec.hq || p.hq || "",
       headcount: rec.employeesStale ? "" : (rec.employees || p.headcount || ""),
       business: uniqueText([
@@ -584,7 +587,8 @@ async function main() {
     const official = officialCompanies[name] || {};
     const verificationByName = new Map((official.verifiedExecutives || []).map(person => [personKey(person.name).toLowerCase(), person]));
     const sourceLeadership = Array.isArray(o.executiveTeam) && o.executiveTeam.length ? o.executiveTeam : o.leadership;
-    const curatedLeadership = Array.isArray(sourceLeadership) ? sourceLeadership.slice(0, MAX_EXECUTIVES).map(withDirectLinkedIn) : [];
+    const curatedLeadership = leadershipChanges.applyRoster(name, Array.isArray(sourceLeadership) ? sourceLeadership : [])
+      .slice(0, MAX_EXECUTIVES).map(withDirectLinkedIn);
     const liveOfficers = Array.isArray(rec.officers) ? rec.officers.slice(0, MAX_EXECUTIVES).map(withDirectLinkedIn) : [];
     const curatedByName = new Map(curatedLeadership.map(person => [personKey(person.name).toLowerCase(), person]));
     const executiveSeen = new Set();
@@ -594,8 +598,12 @@ async function main() {
       if (!key || executiveSeen.has(key)) continue;
       executiveSeen.add(key);
       const curated = curatedByName.get(key) || {};
-      const verification = verificationByName.get(key) || {};
       const role = person.role || person.title || curated.role || "Executive";
+      // An official-page check only vouches for the role it checked; after a
+      // role change it must not carry over to the new title.
+      const checked = verificationByName.get(key) || {};
+      const roleKey = value => String(value || "").normalize("NFKC").toLowerCase().replace(/\s+/g, " ").trim();
+      const verification = !checked.role || roleKey(checked.role) === roleKey(role) ? checked : {};
       executiveTeam.push({
         ...curated,
         ...person,
@@ -617,6 +625,11 @@ async function main() {
       "corporate-functions": 3,
       "executive-team": 4,
     }[executiveTier(person.role)] ?? 9);
+    // Market-filing officers override curated roles above; an official
+    // announcement that took effect later still has the final word.
+    const announcedTeam = leadershipChanges.applyRoster(name, executiveTeam)
+      .map(person => ({ ...person, tier: executiveTier(person.role) }));
+    executiveTeam.splice(0, executiveTeam.length, ...announcedTeam);
     executiveTeam.sort((left, right) => executivePriority(left) - executivePriority(right));
     executiveTeam.splice(MAX_EXECUTIVES);
     const normalizedOrg = {

@@ -1666,10 +1666,10 @@ function CompanyDetail({ company, cats, companyNews, generatedAt, articles, comp
                 {(p.career || p.bg) && <div><dt>빅테크·주요 경력</dt><dd>{p.career || p.bg}</dd></div>}
               </dl>}
               <div className="cd-org-verification">
-                <span className={p.verification === "official-role-match" || p.roleSourceType === "market-filing" ? "verified" : "curated"}>
-                  {p.roleSourceType === "market-filing" ? "최신 공시 직함" : p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "knowledge-graph-domain-match" ? "공식 도메인 일치 지식그래프" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : "큐레이션 검토"}
+                <span className={p.verification === "official-role-match" || p.roleSourceType === "market-filing" || p.roleSourceType === "official-announcement" ? "verified" : "curated"}>
+                  {p.roleSourceType === "official-announcement" ? "공식 발표 직함" : p.roleSourceType === "market-filing" ? "최신 공시 직함" : p.verification === "official-role-match" ? "공식 직함 확인" : p.verification === "knowledge-graph-domain-match" ? "공식 도메인 일치 지식그래프" : p.verification === "official-page-name-match" ? "공식 페이지 이름 일치" : "큐레이션 검토"}
                 </span>
-                {p.verificationUrl && <a href={p.verificationUrl} target="_blank" rel="noopener">근거</a>}
+                {(p.roleSourceType === "official-announcement" ? p.roleSourceUrl : p.verificationUrl) && <a href={p.roleSourceType === "official-announcement" ? p.roleSourceUrl : p.verificationUrl} target="_blank" rel="noopener">근거</a>}
               </div>
             </React.Fragment>
           );
