@@ -14,6 +14,7 @@
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
+import { NON_PERSON_NAME_WORD, reliablePageExtractions } from "./extracted-people.mjs";
 
 const DATA_FILE = "startups.json";
 const UA = "AI-Strategy-Research/1.0 (+https://bizdevelopment1-max.github.io/ai/)";
@@ -336,6 +337,7 @@ const plausiblePerson = name => {
     || words.some(word => word.length > 1 && word === word.toUpperCase())
     || /[.:]|\bCo-?$|\b(?:Our|We|AI|Founder|Co-Founder|Engineering|Product|Design|Customer|Success|Investors?|Advisory|Board|Model|Privacy|Education|Systems|Security|Secureworks|Former|Previously|Company|Pitch|Hiring|Partner|Member|Vice)\b/i.test(value)) return false;
   if (words.some(word => personNameStopWords.test(word.replace(/[.,]/g, "")))) return false;
+  if (NON_PERSON_NAME_WORD.test(value)) return false;
   return !/Our Team|The Team|About Us|Leadership Team|Executive Team|Chief Executive Officer/i.test(value);
 };
 const trustedLeadershipPath = value => {
@@ -408,12 +410,12 @@ function peopleFromOfficialPage(page) {
     push(match[2], match[1]);
   }
   const seen = new Set();
-  return people.filter(person => {
+  return reliablePageExtractions(people.filter(person => {
     const key = personKey(person.name);
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
-  }).slice(0, MAX_EXECUTIVES);
+  })).slice(0, MAX_EXECUTIVES);
 }
 
 function officialStructuredProfile(pages) {
@@ -607,7 +609,8 @@ function sourceAlignedSnapshot(record, officialSeed = "") {
 
 function normalizeStoredDepth(record) {
   const organization = record.organization || {};
-  const storedPeople = (organization.executiveTeam || organization.leadership || []).filter(reliableExtractedPerson);
+  const storedRows = organization.executiveTeam || organization.leadership || [];
+  const storedPeople = reliablePageExtractions(storedRows).filter(reliableExtractedPerson);
   const executiveTeam = mergePeople(storedPeople).map(person => {
     const li = directLinkedIn(person.li);
     const normalized = { ...person };
@@ -627,8 +630,14 @@ function normalizeStoredDepth(record) {
   const verifiedExecutiveCount = executiveTeam.filter(person =>
     person.verification === "official-role-match" || person.verification === "knowledge-graph-domain-match").length;
   const directLinkedInCount = executiveTeam.filter(person => person.li && person.linkedinVerification).length;
+  // The CEO follows the roster. A carried name that no current roster row
+  // backs was read from an investor, advisor or customer list.
+  const rosterCeo = executiveTeam.find(person => /\bCEO\b|chief executive/i.test(person.role || ""));
+  const carriedCeo = personKey(record.profile?.ceo);
+  const ceoListed = !!carriedCeo && executiveTeam.some(person => personKey(person.name) === carriedCeo);
   const profile = {
     ...(record.profile || {}),
+    ceo: rosterCeo?.name || (ceoListed ? record.profile.ceo : ""),
     legalName: record.profile?.legalName || record.publisher || record.name || "",
     operator: record.profile?.operator || record.publisher || "",
     business: Array.isArray(record.profile?.business) && record.profile.business.length
