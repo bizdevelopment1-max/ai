@@ -212,8 +212,42 @@ const taxonomyForSignal = (signal, workflowStage) => ({
   workflow_stage: [workflowStage],
 });
 
-const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {} }) => {
+// Latin terms match only as whole words; Hangul terms keep substring matching
+// because Korean attaches particles directly to the noun.
+const wholeTermHit = (text, term) => (/^[a-z0-9]/i.test(term)
+  ? new RegExp(`(^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![a-z0-9])`, "i").test(text)
+  : text.includes(term));
+
+const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {}, news = {} }) => {
   const rows = [];
+  // Source-backed articles from the current collection run. Matching and the
+  // cited span use the publisher's own headline only: extracted page text can
+  // carry neighbouring headlines from the same page, which would credit an
+  // opportunity with an unrelated story.
+  for (const article of news.articles || []) {
+    const url = String(article.url || "");
+    const headline = String(article.titleEn || article.title || "").trim();
+    if (article.displayEligible === false || article.provenance?.status !== "source-backed"
+      || !/^https?:\/\//.test(url) || !headline) continue;
+    rows.push({
+      id: `article:${stableHash(url)}`,
+      type: "news-article",
+      title: headline,
+      text: [headline, article.title !== headline ? article.title : ""].filter(Boolean).join(" "),
+      url,
+      source: article.source || normalizeSourceKey(url),
+      independentKey: independentSourceKey({ sourceName: article.source, sourceUrl: url }),
+      sourceOwnerGroup: sourceOwnerGroup({ sourceName: article.source, sourceUrl: url }) || null,
+      publishedAt: article.publishedAt || article.date || "",
+      observedAt: article.observedAt || article.collectedAt || "",
+      retrievedAt: article.retrievedAt || article.collectedAt || "",
+      verifiedAt: article.verifiedAt || article.provenance?.checkedAt || "",
+      spans: [headline],
+      sourceTier: article.evidenceTier === "official" ? "official" : "reported",
+      confidence: "high",
+      priority: "P2",
+    });
+  }
   for (const signal of signals) {
     for (const source of signal.evidence || []) {
       rows.push({
@@ -284,8 +318,13 @@ const buildOpportunityEvidence = ({ signals = [], market = {}, monetization = {}
   return rows;
 };
 
-const generateOpportunities = ({ policy, governance, publication, signals, market, monetization, previous, generatedAt }) => {
-  const evidencePool = buildOpportunityEvidence({ signals, market, monetization });
+const generateOpportunities = ({ policy, governance, publication, signals, market, monetization, news, previous, generatedAt }) => {
+  const evidencePool = buildOpportunityEvidence({ signals, market, monetization, news });
+  // Evidence published within the recency window is selected first; older
+  // evidence only fills the remaining slots, so a long-lived seed profile
+  // cannot keep displacing current sources on term-match count alone.
+  const recencyCutoffMs = Date.parse(generatedAt) - Number(policy.evidenceRecencyDays || 120) * DAY_MS;
+  const isRecent = row => Date.parse(String(row.publishedAt || "").slice(0, 10)) >= recencyCutoffMs;
   const assetMap = new Map((policy.assetCatalog || []).map(asset => [asset.id, asset]));
   const previousMap = new Map((previous.generatedOpportunities || []).map(item => [item.id, item]));
   const gate = policy.publicationGate || {};
@@ -293,10 +332,16 @@ const generateOpportunities = ({ policy, governance, publication, signals, marke
     const terms = (archetype.terms || []).map(term => String(term).toLowerCase());
     const matches = evidencePool.map(row => {
       const haystack = row.text.toLowerCase();
-      const matchedTerms = terms.filter(term => haystack.includes(term));
-      return matchedTerms.length ? { ...row, matchedTerms } : null;
+      // A headline is short, so one generic word ("plan" in "Planner",
+      // "source" in "open-source") is not evidence. Headlines need two
+      // distinct terms matched as whole words.
+      const headline = row.type === "news-article";
+      const matchedTerms = terms.filter(term => (headline ? wholeTermHit(haystack, term) : haystack.includes(term)));
+      return matchedTerms.length >= (headline ? 2 : 1) ? { ...row, matchedTerms } : null;
     }).filter(Boolean)
-      .sort((left, right) => right.matchedTerms.length - left.matchedTerms.length || String(right.publishedAt).localeCompare(String(left.publishedAt)))
+      .sort((left, right) => Number(isRecent(right)) - Number(isRecent(left))
+        || right.matchedTerms.length - left.matchedTerms.length
+        || String(right.publishedAt).localeCompare(String(left.publishedAt)))
       .slice(0, 12);
     const independentSources = new Set(matches.map(row => row.independentKey).filter(Boolean)).size;
     const revenueMatches = new Set(matches.map(row => row.revenueModel).filter(model => (archetype.revenueModels || []).includes(model))).size;
@@ -764,6 +809,7 @@ const main = async () => {
     signals,
     market,
     monetization,
+    news: await readJson("news.json", { articles: [] }),
     previous,
     generatedAt,
   });
