@@ -140,6 +140,12 @@ for (const article of articles) {
       matchTerms: hits,
       implication: `해당 변화가 제품·원가·파트너 구조에 미치는 영향을 후속 원문으로 검증`,
     });
+    // Classify trend dimensions on the same source text that placed the
+    // article in this track (title, summary, tag), not only on the one-line
+    // title the compact signal keeps.
+    signal.dimensionIds = (track.trendDimensions || [])
+      .filter(dimension => termHits(article._text, dimension.terms || []).length)
+      .map(dimension => dimension.id);
     trackMatches.get(track.id).push(signal);
   }
 }
@@ -181,7 +187,8 @@ const technologyTracks = trackDefs.map(track => {
     id: dimension.id,
     label: dimension.label,
     interpretation: dimension.interpretation,
-    count: signals.filter(signal => termHits(signalText(signal), dimension.terms || []).length).length,
+    count: signals.filter(signal => (signal.dimensionIds || []).includes(dimension.id)
+      || termHits(signalText(signal), dimension.terms || []).length).length,
   })).sort((left, right) => right.count - left.count || left.label.localeCompare(right.label));
   const dominantDimension = trendDimensions[0]?.count > 0 ? trendDimensions[0] : null;
   const sourceCount = new Set(signals.map(signal => signal.url)).size;
