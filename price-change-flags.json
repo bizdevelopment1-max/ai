@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13T01:31:16.508Z",
+  "generatedAt": "2026-10-13T02:42:03.438Z",
   "policy": "Compare price fields with the last verified snapshot; do not publish a changed price until its configured evidence literals are verified.",
   "summary": {
     "tracked": 2,
@@ -13,8 +13,35 @@
       "label": "Google AI consumer plans",
       "kind": "subscription-price",
       "region": "US",
-      "previousCheckedAt": null,
-      "previousValues": [],
+      "previousCheckedAt": "2026-10-13T01:34:19.408Z",
+      "previousValues": [
+        {
+          "plan": "AI Plus",
+          "value": 7.99,
+          "billingPeriod": "month",
+          "status": "official-US-list"
+        },
+        {
+          "plan": "AI Pro",
+          "value": 19.99,
+          "billingPeriod": "month",
+          "status": "official-US-list"
+        },
+        {
+          "plan": "AI Ultra 5x",
+          "value": 99.99,
+          "displayValue": "$100",
+          "billingPeriod": "month",
+          "status": "official-rounded-announcement"
+        },
+        {
+          "plan": "AI Ultra 20x",
+          "value": 199.99,
+          "displayValue": "$200",
+          "billingPeriod": "month",
+          "status": "official-rounded-announcement"
+        }
+      ],
       "currentValues": [
         {
           "plan": "AI Plus",
@@ -44,9 +71,9 @@
         }
       ],
       "changed": false,
-      "status": "baseline-required",
-      "sourceVerificationStatus": "partial",
-      "detectedAt": "2026-10-13T01:31:16.508Z"
+      "status": "unchanged",
+      "sourceVerificationStatus": "verified",
+      "detectedAt": "2026-10-13T02:42:03.438Z"
     },
     {
       "metricId": "meta-ai-glasses-us",
@@ -95,7 +122,7 @@
       "changed": false,
       "status": "unchanged",
       "sourceVerificationStatus": "verified",
-      "detectedAt": "2026-10-13T01:31:16.508Z"
+      "detectedAt": "2026-10-13T02:42:03.438Z"
     }
   ]
 }
