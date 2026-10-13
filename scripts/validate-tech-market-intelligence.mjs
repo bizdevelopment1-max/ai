@@ -35,13 +35,21 @@ if (!tracks.some(track => track.id === "inference-serving") || !tracks.some(trac
 const signals = tracks.flatMap(track => track.signals || []);
 if (!signals.length) fail("no source-backed technology signals were generated");
 if (signals.some(signal => !validUrl(signal.url) || !signal.title || !signal.date)) fail("technology signal lacks a title, date or source URL");
-if (tracks.some(track => !validKoreanBullets(track.summaryBullets)
-  || (track.trendDimensions || []).length < 4
-  || !(track.trendDimensions || []).some(dimension => Number(dimension.count || 0) > 0)
-  || (track.decisionMetrics || []).length < 4
-  || Number(track.evidence?.sourceCount || 0) !== Number(track.signalCount || 0)
-  || Number(track.evidence?.publisherCount || 0) < 1)) {
-  fail("technology track lacks a three-bullet trend brief, dimensions, decision metrics or evidence health");
+const trackProblems = tracks.map(track => {
+  const problems = [
+    !validKoreanBullets(track.summaryBullets) && "summary bullets",
+    (track.trendDimensions || []).length < 4 && "fewer than 4 dimensions",
+    !(track.trendDimensions || []).some(dimension => Number(dimension.count || 0) > 0) && "no signal in any dimension",
+    (track.decisionMetrics || []).length < 4 && "fewer than 4 decision metrics",
+    Number(track.evidence?.sourceCount || 0) !== Number(track.signalCount || 0) && "source count differs from signal count",
+    Number(track.evidence?.publisherCount || 0) < 1 && "no publisher",
+  ].filter(Boolean);
+  return problems.length
+    ? `${track.id} (${problems.join(", ")}; signals ${track.signalCount || 0}, carried ${track.evidence?.carriedForwardCount || 0})`
+    : "";
+}).filter(Boolean);
+if (trackProblems.length) {
+  fail(`technology track lacks a three-bullet trend brief, dimensions, decision metrics or evidence health: ${trackProblems.join("; ")}`);
 }
 if (allPublicSignals.some(signal => !validKoreanBullets(signal.bullets))) fail("a public signal lacks three distinct Korean fact/change/implication bullets");
 if (entities.some(entity => [...(entity.investmentMetrics || []), ...(entity.strategySignals || [])].some(signal => !validUrl(signal.url)))) {
