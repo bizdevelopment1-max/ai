@@ -698,9 +698,12 @@ function App() {
       </LazySection>
     );
     if (id === "valuechain") return (
-      <LazySection id="valuechain" active={active} sectionRef={refs.valuechain} height={4500}>
+      <LazySection id="valuechain" active={active} sectionRef={refs.valuechain} height={5300}>
         <SectionStack title="AI 밸류체인" eyebrow="CONTROL POINTS"
           description="고객 경험에서 모델·런타임까지 7개 계층을 중복 없이 연결">
+          <ValueChainExecutiveSummary dataVersion={dataVersion} companies={companiesLive}
+            focusLayerId={navCategory.section === "valuechain" ? navCategory.id : ""}
+            onLayer={layerId => handleCategoryNav("valuechain", layerId)} />
           <TechMarketIntelligence dataVersion={dataVersion} mode="valuechain" companies={companiesLive} onSelect={setSelected} />
           {(D.VALUE_CHAIN || [])
             .filter(layer => navCategory.section !== "valuechain" || !navCategory.id || layer.id === navCategory.id)

@@ -644,6 +644,201 @@ function StrategyPortfolioCard({
   );
 }
 
+// ---- AI 밸류체인 Executive Summary — 수치는 렌더 시점 계산, 문장은 고정 템플릿 ----
+// 모든 수치·날짜·원문은 기업 라이브 데이터에서 계산하고, 표시 원문은 날짜·출처·링크를 함께 노출한다.
+// 최신성은 오늘 기준 경과일로 판정하고, 30일 신호는 집계일이 VCX_FRESH_DAYS 이내일 때만 노출한다.
+const VCX_FRESH_DAYS = 14;
+const VCX_STALE_DAYS = 90;
+const VCX_SOURCE_KEYS = ["strategyDirection", "investmentDirection"];
+const vcxDay = value => {
+  const day = (String(value || "").match(/^\d{4}-\d{2}-\d{2}/) || [""])[0];
+  return day && Number.isFinite(Date.parse(`${day}T00:00:00Z`)) ? day : "";
+};
+const vcxAge = (day, nowMs) => Math.floor((nowMs - Date.parse(`${day}T00:00:00Z`)) / 86400000);
+const vcxAgeText = days => (days > 0 ? `${days}일 경과` : "당일");
+const vcxClip = (text, size) => (text.length > size ? `${text.slice(0, size - 1)}…` : text);
+const vcxCount = value => { const n = Number(value); return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0; };
+const vcxNames = rows => rows.map(r => r.layer.ko).join(" / ");
+const vcxBy = m => (m.source.toLowerCase() === m.company.toLowerCase() ? m.company : `${m.company} · ${m.source}`);
+const vcxWord = name => new RegExp(`(^|[^A-Za-z0-9-])${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![A-Za-z0-9])`);
+
+// 원문 귀속 검증 — 공식 채널(도메인 일치)이거나 제목에 기업명이 단어 경계로 표기된 원문만 요약에 올린다('Giga-Scale AI' ≠ Scale AI).
+function vcxOwnership(c) {
+  const full = String(c.name || "");
+  const base = full.replace(/\s*\(.*\)\s*$/, "").trim();
+  const alias = (full.match(/\(([^)]+)\)/) || [])[1] || "";
+  // 대소문자 구분 매칭(일반 명사 오탐 방지) — 전체 대문자 표기는 첫 글자 대문자 변형도 허용(NVIDIA → Nvidia).
+  const names = [base, alias].filter(name => name.length > 1)
+    .flatMap(name => (/^[A-Z0-9]{3,}$/.test(name) ? [name, name[0] + name.slice(1).toLowerCase()] : [name])).map(vcxWord);
+  const domain = String(c.domain || "").toLowerCase().replace(/^www\./, "");
+  return item => {
+    let host = "";
+    try { host = new URL(item.url).hostname.toLowerCase().replace(/^www\./, ""); } catch { return 0; }
+    if (domain && (host === domain || host.endsWith(`.${domain}`))) return 2;
+    return names.some(re => [item.title, item.titleKo, item.titleEn].some(text => re.test(String(text || "")))) ? 1 : 0;
+  };
+}
+
+function vcxSources(c, nowMs) {
+  const intel = c.live?.intelligence || {};
+  const owns = vcxOwnership(c);
+  return [c.live?.latest, ...VCX_SOURCE_KEYS.flatMap(key => intel[key]?.groundingStatus === "source-grounded" ? (intel[key].evidence || []).slice(0, 3) : [])]
+    .map(item => {
+      const source = safeDisplayString(item?.source);
+      const raw = safeDisplayString(item?.titleKo || item?.title || item?.titleEn);
+      const tail = [" - ", " | ", " – ", " — "].map(sep => `${sep}${source}`).find(t => source && raw.toLowerCase().endsWith(t.toLowerCase()));
+      const url = String(item?.url || "").trim();
+      return { company: c.name, layer: c.layer, m30: vcxCount(c.live?.mentions30), title: tail ? raw.slice(0, -tail.length).trim() : raw,
+        source, date: vcxDay(item?.date), url, own: /^https?:\/\//i.test(url) ? owns({ ...item, url }) : 0 };
+    })
+    .filter(m => m.own && m.title && m.source && m.date)
+    .filter(m => { const age = vcxAge(m.date, nowMs); return age >= -1 && age <= VCX_STALE_DAYS; });
+}
+
+// 동일 URL은 섹션 전체에서 한 기업에만 귀속 — 공식 채널 > 원어 제목 > 30일 신호 > 기업명 순.
+const vcxPrefer = (a, b) => b.own - a.own || /[가-힣]/.test(a.title) - /[가-힣]/.test(b.title)
+  || b.m30 - a.m30 || a.company.localeCompare(b.company);
+
+function buildValueChainSummary(companies, layers, nowMs) {
+  const placed = (companies || []).filter(c => layers.some(layer => layer.id === c.layer));
+  const countedAt = placed.map(c => vcxDay(c.live?.updatedAt)).filter(Boolean).sort().pop() || "";
+  const countAge = countedAt ? vcxAge(countedAt, nowMs) : null;
+  const usable = countAge !== null && countAge >= -1 && countAge <= VCX_FRESH_DAYS;
+  const owned = new Map(placed.map(c => [c.name, vcxSources(c, nowMs)]));
+  const best = new Map();
+  owned.forEach(list => list.forEach(m => {
+    const key = signalSourceKey(m.url);
+    if (!best.has(key) || vcxPrefer(m, best.get(key)) < 0) best.set(key, m);
+  }));
+  const pool = [...best.values()]
+    .sort((a, b) => b.date.localeCompare(a.date) || b.own - a.own || b.m30 - a.m30 || a.company.localeCompare(b.company) || a.url.localeCompare(b.url));
+  const rows = layers.map((layer, index) => {
+    const members = placed.filter(c => c.layer === layer.id);
+    const sources = pool.filter(m => m.layer === layer.id);
+    const used = new Set();
+    const picks = sources.filter(m => !used.has(m.company) && used.add(m.company)).slice(0, 3);
+    const lead = [...members].sort((a, b) => vcxCount(b.live?.mentions30) - vcxCount(a.live?.mentions30) || a.name.localeCompare(b.name))[0];
+    const newest = sources[0] || null;
+    const age = newest ? Math.max(0, vcxAge(newest.date, nowMs)) : null;
+    return { layer, index, n: members.length, newest, age, fresh: age !== null && age <= VCX_FRESH_DAYS, picks,
+      s30: usable ? members.reduce((sum, c) => sum + vcxCount(c.live?.mentions30), 0) : 0,
+      linked: members.filter(c => owned.get(c.name).length).length,
+      lead: usable && lead && vcxCount(lead.live?.mentions30) > 0 ? { name: lead.name, m30: vcxCount(lead.live.mentions30) } : null };
+  });
+  const L = rows.length;
+  const N = rows.reduce((s, r) => s + r.n, 0), S30 = rows.reduce((s, r) => s + r.s30, 0), G = rows.reduce((s, r) => s + r.linked, 0);
+  const max = L ? Math.max(...rows.map(r => r.s30)) : 0, min = L ? Math.min(...rows.map(r => r.s30)) : 0;
+  const ordered = [...rows].sort((a, b) => b.s30 - a.s30 || a.index - b.index);
+  // 집중 = 평균 초과 상위 계층(최대 3개, 경계 동률 제외) — 제목·히트맵·보드가 같은 정의를 쓴다.
+  const above = ordered.filter(r => r.s30 > 0 && r.s30 * L > S30);
+  const top = above.length > 3 ? above.slice(0, 3).filter(r => r.s30 > above[3].s30) : above;
+  const topShare = S30 ? Math.round(100 * top.reduce((s, r) => s + r.s30, 0) / S30) : 0;
+  const asOf = rows.map(r => r.newest?.date || "").sort().pop() || "";
+  rows.forEach(r => {
+    r.rank = 1 + rows.filter(o => o.s30 > r.s30).length;
+    r.share = S30 ? Math.round(100 * r.s30 / S30) : 0;
+    r.heat = max ? r.s30 / max : 0;
+    r.hot = top.includes(r);
+    r.tone = !r.newest ? "gap" : !r.fresh ? "stale" : r.hot ? "hot" : "fresh";
+    r.label = !r.newest ? "근거 공백" : `${S30 ? (r.hot ? "집중·" : "일반·") : ""}${r.fresh ? "최신" : "지연"}`;
+    r.note = { gap: "판단 보류", stale: "원문 갱신 필요", hot: "우선 검토", fresh: "" }[r.tone];
+  });
+  return { rows, L, N, S30, G, max, min, asOf, countedAt, usable, ordered, top, topShare,
+    fresh: rows.filter(r => r.fresh), ageDays: asOf ? Math.max(0, vcxAge(asOf, nowMs)) : null };
+}
+
+const vcxTies = s => s.ordered.filter(r => r.s30 === s.max);
+
+// 원문 연결 비율 최저 계층 — 모든 계층이 같은 비율이면 표시하지 않는다.
+function vcxWeakest(s) {
+  const rated = s.rows.filter(r => r.n > 0);
+  const ratio = r => r.linked / r.n;
+  if (!rated.length || rated.every(r => ratio(r) === ratio(rated[0]))) return null;
+  return [...rated].sort((a, b) => ratio(a) - ratio(b) || a.index - b.index)[0];
+}
+
+function valueChainActionTitle(s) {
+  if (!s.L || !s.N || !s.G || !s.asOf) return "";
+  const counted = `${fmtMonthDay(s.countedAt)} 집계`;
+  if (s.S30 && s.top.length) {
+    const staleTop = s.top.filter(r => !r.fresh);
+    const weak = vcxWeakest(s);
+    const tail = staleTop.length ? ` — ${vcxNames(staleTop)} 최신 원문 ${VCX_FRESH_DAYS}일 초과`
+      : weak && !weak.hot ? ` — ${weak.layer.ko} 원문 연결 ${weak.linked}/${weak.n}개사` : "";
+    return `${vcxNames(s.top)} ${s.top.length}개 계층에 30일 신호 ${s.topShare}% 집중(${counted})${tail}`;
+  }
+  if (s.S30) return `30일 신호 ${s.S30}건(${counted}) · ${s.max === s.min ? `${s.L}개 계층 균등 분포` : `최다 ${s.max}건 ${vcxTies(s).length}개 계층 동률`}`;
+  const partial = s.fresh.length > 0 && s.fresh.length < s.L;
+  const more = s.fresh.length > 3 ? ` 외 ${s.fresh.length - 3}개` : "";
+  return `${VCX_FRESH_DAYS}일 이내 원문 ${s.fresh.length}/${s.L}개 계층 — ${partial ? `${vcxNames(s.fresh.slice(0, 3))}${more}` : `마지막 원문 ${fmtMonthDay(s.asOf)} · ${vcxAgeText(s.ageDays)}`}`;
+}
+
+function valueChainKeyLines(s) {
+  const dated = s.rows.filter(r => r.newest);
+  const stale = dated.filter(r => !r.fresh);
+  const gaps = s.L - dated.length;
+  const ages = dated.map(r => r.age);
+  const lo = Math.min(...ages), hi = Math.max(...ages);
+  const weak = vcxWeakest(s);
+  return [
+    s.S30 > 0 && { label: "신호", text: `${s.S30}건 · ${s.max === s.min ? `${s.L}개 계층 각 ${s.max}건` : (s.top.length ? s.top : vcxTies(s)).map(r => `${r.layer.ko} ${r.s30}건(${r.share}%)`).join(" / ")}` },
+    dated.length > 0 && { label: "최신성", text: `${s.S30 > 0 ? `${VCX_FRESH_DAYS}일 이내 ${s.fresh.length}/${s.L}개 계층 · ` : ""}계층별 최신 원문 ${lo === hi ? vcxAgeText(lo) : `${lo}–${hi}일 경과`}${s.fresh.length && stale.length && stale.length <= 3 ? ` · 지연 ${vcxNames(stale)}` : ""}${gaps ? ` · 공백 ${gaps}개 계층` : ""}` },
+    { label: "근거", text: `원문 연결 ${s.G}/${s.N}개사(${Math.round(100 * s.G / s.N)}%)${weak ? ` · 최저 ${weak.layer.ko} ${weak.linked}/${weak.n}개사` : ""}` },
+  ].filter(Boolean);
+}
+
+function ValueChainExecutiveSummary({ dataVersion, companies, focusLayerId = "", onLayer }) {
+  React.useEffect(() => {
+    const id = "tech-market-styles";
+    if (document.getElementById(id)) return;
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `tech-market.css?v=${encodeURIComponent(dataVersion || "bootstrap")}`;
+    document.head.appendChild(link);
+  }, [dataVersion]);
+  const s = React.useMemo(() => buildValueChainSummary(companies, window.DASH.VALUE_CHAIN || [], Date.now()), [companies]);
+  const title = valueChainActionTitle(s);
+  if (!title) return null;
+  const lines = valueChainKeyLines(s);
+  const metrics = [["COMPANIES", s.N], s.S30 > 0 && ["30D SIGNALS", s.S30], ["LINKED", s.G], ["AS OF", fmtMonthDay(s.asOf)]].filter(Boolean);
+  const heads = ["계층 · 스탠스", "기업 · 원문 연결", s.S30 > 0 && "30일 신호", "최신 원문", "상태"].filter(Boolean);
+  const shade = [s.S30 > 0 && "최대 계층 대비 신호량", s.fresh.length > 0 && "원문 최신성"].filter(Boolean).join(" · ");
+  const note = [
+    s.S30 > 0 ? `30일 신호 = 계층 배치 기업 30일 원문 언급 합산(${fmtMonthDay(s.countedAt)} 집계 · 복수 기업 기사 중복 집계)`
+      : s.countedAt && !s.usable && `30일 신호 = ${fmtMonthDay(s.countedAt)} 집계 · ${VCX_FRESH_DAYS}일 초과로 비표시`,
+    `최신 원문 = 공식 채널 또는 기업명 표기 원문 중 최신 1건(${VCX_STALE_DAYS}일 이내 · URL 중복 제거)`,
+    `경과 = 오늘 기준 일수 · 최신/지연 = ${VCX_FRESH_DAYS}일 기준`,
+    s.S30 > 0 && "집중 = 평균 초과 상위 계층(최대 3개)",
+    shade && `음영 = ${shade}`,
+  ].filter(Boolean).join(" · ");
+  return (
+    <section className="tmi vcx-summary" aria-label="AI 밸류체인 Executive Summary">
+      <header className="tmi-head">
+        <div><span>00 · EXECUTIVE SUMMARY</span><h3>{title}</h3><p>{`${s.N}개사 · ${s.L}개 계층 단일 배치`}</p></div>
+        <dl className="tmi-tech-metrics" data-count={metrics.length} style={{ "--n": metrics.length }}>
+          {metrics.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
+        </dl>
+      </header>
+      <ul className="tmi-summary-bullets tmi-track-insights" style={{ "--n": lines.length }}>{lines.map(l => <li key={l.label}><em>{l.label}</em><span>{l.text}</span></li>)}</ul>
+      <div className="tmi-subhead"><span>LAYER HEATMAP</span><h4>{`계층별 ${s.S30 > 0 ? "30일 신호 · " : ""}최신 원문 · 상태`}</h4><p>계층 선택 시 해당 보드로 이동</p></div>
+      <div className="vcx-heat" role="table" aria-label="AI 밸류체인 계층 히트맵" aria-describedby="vcx-note" data-cols={heads.length}>
+        <div className="vcx-row vcx-head" role="row">{heads.map(h => <div role="columnheader" key={h}>{h}</div>)}</div>
+        {s.rows.map(r => (
+          <div className="vcx-row" role="row" key={r.layer.id} style={{ "--lc": r.layer.accent }} aria-current={focusLayerId === r.layer.id ? "true" : undefined}>
+            <div role="rowheader" className="vcx-c-layer"><button type="button" className="vcx-layer" aria-label={`${r.layer.ko} 보드로 이동`} onClick={() => onLayer && onLayer(r.layer.id)}><b>{r.layer.ko}</b><span>{r.layer.stanceKo}</span></button></div>
+            <div role="cell" className="vcx-c-co" data-label="기업 · 원문 연결"><b>{`${r.n}개사`}</b><small>{`원문 연결 ${r.linked}/${r.n}${r.lead ? ` · 최다 ${r.lead.name} ${r.lead.m30}건` : ""}`}</small></div>
+            {s.S30 > 0 && <div role="cell" className="vcx-c-sig vcx-hot" data-label="30일 신호" style={{ "--heat": `${Math.round(4 + 20 * r.heat)}%` }}><b>{`${r.s30}건`}</b><small>{`비중 ${r.share}% · ${r.rank}위`}</small></div>}
+            <div role="cell" className="vcx-c-news vcx-hot" data-label={r.newest ? "최신 원문" : undefined} style={{ "--heat": r.newest ? `${Math.round(4 + 20 * Math.max(0, 1 - r.age / VCX_FRESH_DAYS))}%` : "0%" }}>{r.newest && <a className="vcx-move" href={r.newest.url} target="_blank" rel="noopener"><b>{vcxClip(r.newest.title, 80)}</b><small>{`${fmtMonthDay(r.newest.date)} · ${vcxBy(r.newest)} · ${vcxAgeText(r.age)}`}<i aria-hidden="true"> ↗</i></small></a>}</div>
+            <div role="cell" className="vcx-c-state"><span className="vcx-state" data-tone={r.tone}>{r.label}</span>{r.note && <small>{r.note}</small>}</div>
+          </div>
+        ))}
+      </div>
+      <p className="vcx-note" id="vcx-note">{focusLayerId ? <button type="button" className="vcx-reset" onClick={() => onLayer && onLayer("")}>{`${s.L}개 계층 전체 보기`}</button> : null}{note}</p>
+    </section>
+  );
+}
+
 // ---- AI 밸류체인 계층 보드 — 회사별 대표 계층 한 곳에만 표시 ----
 function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
   const inView = useInView(sectionRef);
@@ -663,6 +858,8 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
   const visibleRows = vertical === "all" ? rows : rows.filter(c => (c.vchainVertical || "기타") === vertical);
   const primaryCount = rows.filter(c => c.layer === layerId).length;
   const adjacentCount = (companies || []).filter(c => c.layer !== layerId && (c.adjacentLayers || []).includes(layerId)).length;
+  const vcxRow = React.useMemo(() => buildValueChainSummary(companies, window.DASH.VALUE_CHAIN || [], Date.now())
+    .rows.find(r => r.layer.id === layerId && r.picks.length) || null, [companies, layerId]);
   return (
     <section className="board" ref={sectionRef} data-nav-anchor={layerId} data-screen-label={layer.en}>
       <AnimCtx.Provider value={inView}>
@@ -679,6 +876,12 @@ function ValueChainBoard({ layerId, companies, onSelect, sectionRef }) {
             {primaryCount}개사 · 단일 배치{adjacentCount > 0 ? ` · 인접 ${adjacentCount}개 상세` : ""}
           </div>
         </div>
+        {vcxRow && <aside className="vcx-sowhat" style={{ "--accent": layer.accent }} aria-label={`${layer.ko} 최신 원문`}>
+          <em>00 · SO WHAT</em>
+          <b>{`상태 ${vcxRow.label} — 최신 원문 ${vcxRow.picks.length}개사 · ${vcxAgeText(vcxRow.age)}`}</b>
+          <ol className="vcx-moves">{vcxRow.picks.map(m => <li key={m.url}><a className="vcx-move" href={m.url} target="_blank" rel="noopener">
+            <time dateTime={m.date}>{fmtMonthDay(m.date)}</time><b>{vcxClip(m.title, 110)}</b><small>{vcxBy(m)}<i aria-hidden="true"> ↗</i></small></a></li>)}</ol>
+        </aside>}
         <div className="vc-filter-bar" aria-label={`${layer.ko} 세부 영역 필터`}>
           <button className={vertical === "all" ? "on" : ""} onClick={() => setVertical("all")}>전체 <em>{rows.length}</em></button>
           {vkeys.map(v => <button key={v} className={vertical === v ? "on" : ""} onClick={() => setVertical(v)}>{v} <em>{counts[v]}</em></button>)}

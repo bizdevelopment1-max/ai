@@ -335,3 +335,56 @@
   .tmi-partner-card { grid-template-columns: 1fr; gap: 9px; }
   .tmi-partner-card > span + span { padding-top: 8px; border-top: 1px dashed var(--line); }
 }
+
+/* AI value chain executive summary · layer heatmap · layer so-what (lazy, value-chain section only) */
+.vcx-summary .tmi-head h3 { font-size: clamp(19px, 1.8vw, 26px); word-break: keep-all; text-wrap: balance; }
+.vcx-summary dl.tmi-tech-metrics:not([data-count="4"]) { grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); }
+@media (min-width: 1121px) { .vcx-summary .tmi-summary-bullets { grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); } }
+.vcx-heat { margin: 0 22px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.vcx-row { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(108px, .9fr) minmax(84px, .7fr) minmax(0, 2.2fr) minmax(108px, .8fr); border-top: 1px solid var(--line); }
+.vcx-heat[data-cols="4"] .vcx-row { grid-template-columns: minmax(0, 1.1fr) minmax(108px, .9fr) minmax(0, 2.6fr) minmax(108px, .8fr); }
+.vcx-row:first-child { border-top: 0; }
+.vcx-row > div { min-width: 0; padding: 10px 12px; border-left: 1px solid var(--line); color: var(--ink-2); font-size: var(--text-xs); font-weight: 650; line-height: 1.45; overflow-wrap: anywhere; word-break: keep-all; }
+.vcx-row > div:first-child { border-left: 0; }
+.vcx-head { background: var(--panel-2); }
+.vcx-head > div { color: var(--muted); font-weight: 850; letter-spacing: .06em; }
+.vcx-row b { display: block; color: var(--ink); font-size: 13px; font-weight: 850; line-height: 1.38; }
+.vcx-row small, .vcx-sowhat small { display: block; margin-top: 3px; color: var(--muted); font-size: var(--text-xs); font-weight: 700; }
+.vcx-hot { background: color-mix(in srgb, var(--lc) var(--heat, 0%), var(--panel)); }
+.vcx-hot small { color: var(--ink-2); }
+.vcx-row[aria-current="true"] { outline: 2px solid color-mix(in srgb, var(--lc) 60%, var(--line)); outline-offset: -2px; }
+.vcx-layer { display: grid; justify-items: start; gap: 4px; width: 100%; padding: 0; color: var(--ink); font: inherit; text-align: left; border: 0; background: none; cursor: pointer; }
+.vcx-sowhat > em { color: color-mix(in srgb, var(--accent) 60%, var(--ink)); font-size: var(--text-xs); font-style: normal; font-weight: 900; letter-spacing: .08em; }
+.vcx-layer span { padding: 1px 7px; color: var(--ink-2); font-size: var(--text-xs); font-weight: 800; border: 1px solid color-mix(in srgb, var(--lc) 40%, var(--line)); border-radius: 999px; }
+.vcx-move, .vcx-move:is(:hover, :focus-visible) { display: block; color: var(--ink); text-decoration: none; }
+.vcx-move b { text-decoration: underline dotted color-mix(in srgb, var(--ink) 45%, transparent); text-underline-offset: 3px; }
+.vcx-move time { margin-right: 6px; color: var(--ink-2); font-weight: 850; }
+.vcx-layer:is(:hover, :focus-visible) b, .vcx-move:is(:hover, :focus-visible) b { text-decoration: underline solid; text-underline-offset: 3px; }
+.vcx-layer:focus-visible, .vcx-move:focus-visible, .vcx-reset:focus-visible { outline: 2px solid var(--lc, var(--accent, #315A7D)); outline-offset: 2px; border-radius: 4px; }
+.vcx-state { display: inline-block; padding: 2px 8px; color: var(--ink); font-weight: 850; white-space: nowrap; border: 1px solid color-mix(in srgb, var(--tone) 45%, var(--line)); border-radius: 999px; background: color-mix(in srgb, var(--tone) 12%, var(--panel)); --tone: #64748B; }
+.vcx-state[data-tone="hot"] { --tone: #0F766E; }
+.vcx-state:is([data-tone="stale"], [data-tone="gap"]) { --tone: #B45309; }
+.vcx-note { margin: 10px 22px 22px; color: var(--muted); font-size: var(--text-xs); line-height: 1.5; }
+.vcx-reset { margin-right: 8px; padding: 2px 9px; color: var(--ink); font: inherit; font-weight: 800; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); cursor: pointer; }
+.vcx-sowhat { display: grid; gap: 5px; margin: 14px 20px 0; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line)); border-radius: 10px; background: color-mix(in srgb, var(--accent) 4%, var(--panel)); }
+.vcx-sowhat > b { color: var(--ink); font-size: 14px; font-weight: 850; line-height: 1.4; }
+.vcx-moves { display: grid; gap: 6px; margin: 4px 0 0; padding: 0; list-style: none; }
+.vcx-moves .vcx-move { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 8px; font-size: var(--text-xs); }
+.vcx-moves .vcx-move b { color: var(--ink); font-size: 13px; font-weight: 750; line-height: 1.42; overflow-wrap: anywhere; }
+.vcx-moves .vcx-move small { grid-column: 2; margin-top: 1px; }
+@media (max-width: 1120px) {
+  .vcx-head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .vcx-row, .vcx-heat[data-cols="4"] .vcx-row { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "layer state" "co sig" "news news"; }
+  .vcx-heat[data-cols="4"] .vcx-row { grid-template-areas: "layer state" "co co" "news news"; }
+  .vcx-c-layer { grid-area: layer; } .vcx-c-state { grid-area: state; text-align: right; } .vcx-c-co { grid-area: co; } .vcx-c-sig { grid-area: sig; } .vcx-c-news { grid-area: news; }
+  .vcx-row:nth-child(2) { border-top: 0; }
+  .vcx-row > div { border-left: 0; border-top: 1px dashed var(--line); }
+  .vcx-row > :is(.vcx-c-layer, .vcx-c-state) { border-top: 0; }
+  .vcx-row > .vcx-c-sig { border-left: 1px dashed var(--line); }
+  .vcx-row > div:empty { display: none; }
+  .vcx-row > div[data-label]::before { content: attr(data-label); display: block; margin-bottom: 3px; color: var(--ink-2); font-weight: 850; letter-spacing: .06em; }
+}
+@media (max-width: 760px) {
+  .vcx-heat, .vcx-note { margin-left: 12px; margin-right: 12px; }
+  .vcx-sowhat { margin: 12px 12px 0; }
+}
