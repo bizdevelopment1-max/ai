@@ -88,7 +88,7 @@ const isRssDocument = xml => /<rss[\s>]/i.test(String(xml || "")) && /<channel[\
 
 // 네트워크 복원력: 타임아웃 + 지수 백오프 재시도(소스 확대에 따른 일시적 실패 흡수)
 async function fetchText(url, opts = {}, tries = 3) {
-  const { timeoutMs = 12000, ...fetchOptions } = opts;
+  const { timeoutMs = 12000, shouldRetry = () => true, ...fetchOptions } = opts;
   for (let i = 0; i < tries; i++) {
     try {
       const ctrl = new AbortController();
@@ -98,7 +98,7 @@ async function fetchText(url, opts = {}, tries = 3) {
       if (!res.ok) throw new Error("HTTP " + res.status);
       return await res.text();
     } catch (e) {
-      if (i === tries - 1) throw e;
+      if (i === tries - 1 || !shouldRetry(e)) throw e;
       await new Promise(r => setTimeout(r, 400 * Math.pow(2, i)));   // 0.4s → 0.8s → 1.6s
     }
   }
@@ -442,9 +442,37 @@ function cleanTitle(t, source) {
   return s.trim() || String(t || "").trim();
 }
 
+// Google News circuit breaker. When news.google.com answers every query with
+// HTTP 429/503 (rate limit or outage), retrying ~150 queries with backoff
+// cannot finish inside the stage time limit, and the timeout then kills the
+// whole site refresh. After a run of consecutive throttled queries with no
+// success in between, the remaining Google News queries are skipped and
+// recorded as failed streams. First-party feeds, sitemaps and the registry
+// still refresh the site, and the watchdog still escalates a lasting outage.
+const GOOGLE_NEWS_BREAKER_THRESHOLD = Math.max(1, Number(process.env.GOOGLE_NEWS_BREAKER_THRESHOLD || 8));
+const googleNewsCircuit = { consecutiveThrottled: 0, open: false, skipped: 0 };
+const isThrottledResponse = error => /^HTTP (?:429|503)$/.test(String(error?.message || ""));
+
 async function fetchRss(query, locale = { hl: "en-US", gl: "US", ceid: "US:en" }) {
+  if (googleNewsCircuit.open) {
+    googleNewsCircuit.skipped += 1;
+    throw new Error("skipped: Google News circuit open after repeated HTTP 429/503");
+  }
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query + " when:14d")}&hl=${locale.hl}&gl=${locale.gl}&ceid=${locale.ceid}`;
-  return fetchText(url, { headers: { "User-Agent": UA } });
+  try {
+    const xml = await fetchText(url, { headers: { "User-Agent": UA }, shouldRetry: () => !googleNewsCircuit.open });
+    googleNewsCircuit.consecutiveThrottled = 0;
+    return xml;
+  } catch (error) {
+    if (isThrottledResponse(error)) {
+      googleNewsCircuit.consecutiveThrottled += 1;
+      if (!googleNewsCircuit.open && googleNewsCircuit.consecutiveThrottled >= GOOGLE_NEWS_BREAKER_THRESHOLD) {
+        googleNewsCircuit.open = true;
+        console.warn(`[news] Google News circuit opened after ${googleNewsCircuit.consecutiveThrottled} consecutive throttled queries; skipping the remaining Google News queries`);
+      }
+    }
+    throw error;
+  }
 }
 
 // pull authoritative English items for one query
