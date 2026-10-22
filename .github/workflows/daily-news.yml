@@ -169,7 +169,7 @@ jobs:
             assets/
           retention-days: 14
 
-      - name: Open data-only staging PR
+      - name: Publish data-only refresh to main
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -191,4 +191,12 @@ jobs:
             gh pr edit "$pr_number" --title "chore: cumulative intelligence refresh" --body "$body"
           else
             gh pr create --base main --head automation/data-staging --title "chore: cumulative intelligence refresh" --body "$body"
+            pr_number="$(gh pr list --base main --head automation/data-staging --state open --json number --jq '.[0].number // empty')"
           fi
+          # Every verification gate above has passed and the diff is data-only,
+          # so publish to main. A merge commit (not squash) keeps the staging
+          # history an ancestor of main, so the next refresh merges cleanly.
+          head_sha="$(git rev-parse HEAD)"
+          gh pr merge "$pr_number" --merge --match-head-commit "$head_sha" \
+            --subject "chore: publish verified intelligence refresh (run ${GITHUB_RUN_ID})" \
+            --body "Data-only refresh that passed every verification gate in run ${GITHUB_RUN_ID}."
