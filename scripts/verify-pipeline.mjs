@@ -364,7 +364,12 @@ const consumerSurveyRecords = (market.records || []).filter(record => record.typ
 const eligibleArticles = currentArticles.filter(article => article.displayEligible !== false).length;
 const sourceContentRate = eligibleArticles ? sourceExcerptArticles / eligibleArticles : 0;
 const duplicateRate = (currentArticles.length + duplicateArticles) ? duplicateArticles / (currentArticles.length + duplicateArticles) : 0;
-const persistentFailureStreams = (collectionHealth.watchdogBreaches || []).filter(row => row.state === "failed").length;
+// A source that refuses automated access (401/403/451) fails identically on
+// every run; it is reported, but only failures a retry can clear block
+// publication, so one publisher's bot wall cannot freeze the whole site.
+const accessDenied = row => /\bHTTP (?:401|403|451)\b/.test(String(row.error || ""));
+const persistentFailureStreams = (collectionHealth.watchdogBreaches || []).filter(row => row.state === "failed" && !accessDenied(row)).length;
+const persistentBlockedStreams = (collectionHealth.watchdogBreaches || []).filter(row => row.state === "failed" && accessDenied(row)).length;
 const persistentEmptyStreams = (collectionHealth.watchdogBreaches || []).filter(row => row.state === "empty").length;
 const failedStreamCount = (collectionHealth.failedStreams || []).length;
 const activeRegistryStreams = (sourceRegistryReport.streamHealth || []).length;
@@ -467,7 +472,7 @@ const checks = [
   { id: "source-backed", label: "원문 스니펫 근거", status: backedArticles >= Math.max(10, currentArticles.length * 0.35) ? "ok" : "warn", value: `${backedArticles}/${currentArticles.length}건` },
   { id: "source-content-mode", label: "원문 본문 추출", status: sourceContentRate >= Number(qualityThresholds.sourceContentExtractionRate || 0.97) ? "ok" : "warn", value: `${sourceExcerptArticles}/${eligibleArticles}건 · ${(sourceContentRate * 100).toFixed(1)}% / 목표 ${((qualityThresholds.sourceContentExtractionRate || 0.97) * 100).toFixed(0)}%` },
   { id: "feed-localization", label: "기사 한국어 표시·영문 폴백", status: localizedArticles + localizedFallbackArticles >= Math.max(10, currentArticles.length * 0.95) ? "ok" : "warn", value: `한국어 ${localizedArticles} · 영문 폴백 ${localizedFallbackArticles}` },
-  { id: "collection-health", label: "수집 스트림 상태", status: persistentFailureStreams > failedStreamBlockThreshold || persistentEmptyStreams > Number(qualityThresholds.maximumCriticalEmptyStreams ?? 0) ? "fail" : failedStreamCount || persistentFailureStreams || persistentEmptyStreams || (collectionHealth.emptyStreams || []).length ? "warn" : "ok", value: `현재 실패 ${failedStreamCount} · 지속 실패 ${persistentFailureStreams}/${failedStreamBlockThreshold} 허용 · 빈 스트림 ${(collectionHealth.emptyStreams || []).length} · 지속 빈 스트림 ${persistentEmptyStreams}` },
+  { id: "collection-health", label: "수집 스트림 상태", status: persistentFailureStreams > failedStreamBlockThreshold || persistentEmptyStreams > Number(qualityThresholds.maximumCriticalEmptyStreams ?? 0) ? "fail" : failedStreamCount || persistentFailureStreams || persistentBlockedStreams || persistentEmptyStreams || (collectionHealth.emptyStreams || []).length ? "warn" : "ok", value: `현재 실패 ${failedStreamCount} · 지속 실패 ${persistentFailureStreams}/${failedStreamBlockThreshold} 허용 · 접근 차단 ${persistentBlockedStreams} · 빈 스트림 ${(collectionHealth.emptyStreams || []).length} · 지속 빈 스트림 ${persistentEmptyStreams}` },
   { id: "direct-source-registry", label: "직접 소스 자동 수집", status: sourceRegistryFresh && activeRegistryStreams >= Number(qualityThresholds.minimumDirectSourceStreams || 25) && executedPublicConnectors >= Number(qualityThresholds.minimumExecutablePublicConnectors || 4) && registryCategoryCoverage >= Number(qualityThresholds.minimumSourceCategories || 8) && Number(sourceLedgerManifest.cumulativeEvents || 0) >= (sourceRegistrySnapshot.items || []).length ? "ok" : "warn", value: `스트림 ${healthyRegistryStreams}/${activeRegistryStreams} · 공개 API ${executedPublicConnectors} · 범주 ${registryCategoryCoverage} · 누적 변경 ${sourceLedgerManifest.cumulativeEvents || 0}` },
   { id: "briefing-evidence", label: "브리핑 근거 연결", status: linkedBriefs > 0 ? "ok" : "fail", value: `${linkedBriefs}건` },
   { id: "insight-evidence", label: "인사이트 근거 연결", status: linkedInsights > 0 ? "ok" : "warn", value: `${linkedInsights}건` },
@@ -533,6 +538,7 @@ const quality = {
     consumerSurveyRecords,
     criticalEmptyStreams: persistentEmptyStreams,
     persistentFailureStreams,
+    persistentBlockedStreams,
     activeRegistryStreams,
     healthyRegistryStreams,
     executedPublicConnectors,
