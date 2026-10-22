@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-22T08:54:27.200Z",
+  "generatedAt": "2026-10-22T13:50:33.750Z",
   "schemaVersion": 1,
   "policy": "상업 필드 6개 또는 행위 주체가 모두 확인되지 않으면 공개하지 않고 검토 대기열로 이동합니다.",
-  "total": 240,
+  "total": 234,
   "rows": [
     {
       "type": "monetization",
@@ -60,6 +60,29 @@
     },
     {
       "type": "direction",
+      "company": "Hugging Face",
+      "candidateKind": "expand",
+      "signal": "The team started with an existing language model and expanded its vocabulary to read DNA in groups of six letters",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The team started with an existing language model and expanded its vocabulary to read DNA in groups of six letters."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Wired",
+      "date": "2026-10-22",
+      "url": "https://www.wired.com/story/hugging-face-new-ai-biology-model-chat-with-dna/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
       "company": "Meta AI",
       "candidateKind": "expand",
       "signal": "Several competitors have launched similar products in recent months",
@@ -76,7 +99,7 @@
       },
       "source": "The Decoder",
       "date": "2026-10-22",
-      "url": "https://the-decoder.com/anthropic-takes-on-grok-bot-metas-muse-and-openais-dots-with-its-always-on-agent-claude-duet/",
+      "url": "https://the-decoder.com/anthropic-takes-on-grok-bot-metas-muse-and-openais-dots-with-its-always-on-agent-claude-duet",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -105,7 +128,7 @@
       },
       "source": "NVIDIA Blog",
       "date": "2026-10-22",
-      "url": "https://blogs.nvidia.com/blog/european-public-sector-open-models/",
+      "url": "https://blogs.nvidia.com/blog/european-public-sector-open-models",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
@@ -136,7 +159,7 @@
       },
       "source": "NVIDIA Blog",
       "date": "2026-10-22",
-      "url": "https://blogs.nvidia.com/blog/european-retail-open-models-robotics/",
+      "url": "https://blogs.nvidia.com/blog/european-retail-open-models-robotics",
       "reasons": [
         "missing:billingUnit",
         "missing:priceOrRevenue",
@@ -167,7 +190,7 @@
       },
       "source": "NVIDIA Blog",
       "date": "2026-10-22",
-      "url": "https://blogs.nvidia.com/blog/european-retail-open-models-robotics/",
+      "url": "https://blogs.nvidia.com/blog/european-retail-open-models-robotics",
       "reasons": [
         "missing:billingUnit",
         "missing:priceOrRevenue",
@@ -198,7 +221,7 @@
       },
       "source": "NVIDIA Blog",
       "date": "2026-10-22",
-      "url": "https://blogs.nvidia.com/blog/european-retail-open-models-robotics/",
+      "url": "https://blogs.nvidia.com/blog/european-retail-open-models-robotics",
       "reasons": [
         "missing:billingUnit",
         "missing:priceOrRevenue",
@@ -223,7 +246,7 @@
       },
       "source": "NVIDIA Blog",
       "date": "2026-10-22",
-      "url": "https://blogs.nvidia.com/blog/dsx-power/",
+      "url": "https://blogs.nvidia.com/blog/dsx-power",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -252,7 +275,7 @@
       },
       "source": "NVIDIA Blog",
       "date": "2026-10-22",
-      "url": "https://blogs.nvidia.com/blog/cosmos-open-train-evaluate-deploy-world-models/",
+      "url": "https://blogs.nvidia.com/blog/cosmos-open-train-evaluate-deploy-world-models",
       "reasons": [
         "missing:billingUnit",
         "missing:priceOrRevenue",
@@ -284,33 +307,83 @@
     },
     {
       "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "usage",
-      "signal": "Given that Duet may be taking action on sensitive information, it has a new “new dedicated classifier and safety system prompt” that are “designed to reject requests to share the strictest tier of information,” such as credit card numbers",
-      "model": "usage",
+      "company": "NVIDIA",
+      "candidateModel": "subscription",
+      "signal": "An Amazon Fire TV Stick, the GeForce NOW app and an Ultimate membership are all it takes to level up the living room with GeForce RTX 5080-powered gaming",
+      "model": "subscription",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Anthropic",
-          "buyer": "subscriber",
-          "offering": "its new AI agent",
-          "billingUnit": "",
+          "seller": "NVIDIA",
+          "buyer": "",
+          "offering": "the GeForce NOW app",
+          "billingUnit": "monthly",
           "priceOrRevenue": "",
-          "recurringRevenue": ""
+          "recurringRevenue": "yes"
         },
         "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
+          "buyer",
+          "priceOrRevenue"
         ]
       },
-      "source": "The Verge",
-      "date": "2026-10-21",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/1015843/anthropic-claude-duet-ai-agent",
+      "source": "NVIDIA Blog",
+      "date": "2026-10-22",
+      "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-call-of-duty-modern-warfare-4/",
       "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
+        "missing:buyer",
+        "missing:priceOrRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "NVIDIA",
+      "candidateKind": "expand",
+      "signal": "The Elder Scrolls Online ’s second season , Echoes of Skyrim , launched Wednesday, Oct. 21, free for all ESO players and ready to stream through GeForce NOW",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The Elder Scrolls Online ’s second season , Echoes of Skyrim , launched Wednesday, Oct. 21, free for all ESO players and ready to stream through GeForce NOW."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "NVIDIA Blog",
+      "date": "2026-10-22",
+      "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-call-of-duty-modern-warfare-4/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "NVIDIA",
+      "candidateModel": "subscription",
+      "signal": "Better yet, the cost of the day pass can be applied toward a first monthly membership — making it easy to try GeForce RTX-powered cloud gaming with the latest releases, then level up for more",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "NVIDIA",
+          "buyer": "",
+          "offering": "the GeForce NOW app",
+          "billingUnit": "monthly",
+          "priceOrRevenue": "",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer",
+          "priceOrRevenue"
+        ]
+      },
+      "source": "NVIDIA Blog",
+      "date": "2026-10-22",
+      "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-call-of-duty-modern-warfare-4/",
+      "reasons": [
+        "missing:buyer",
+        "missing:priceOrRevenue"
       ]
     },
     {
@@ -357,6 +430,37 @@
       "url": "https://www.theverge.com/tech/1015799/meta-shares-class-ai-q3-2026-earnings",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "usage",
+      "signal": "Given that Duet may be taking action on sensitive information, it has a new “new dedicated classifier and safety system prompt” that are “designed to reject requests to share the strictest tier of information,” such as credit card numbers",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "subscriber",
+          "offering": "its new AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-10-21",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1015843/anthropic-claude-duet-ai-agent",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -1507,6 +1611,62 @@
       ]
     },
     {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "Google first launched Personal Intelligence on Android phones and in Search, allowing its AI engine to tap into, retrieve, and synthesize information across your personal apps",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "you toggle access for specific app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "ZDNET",
+      "date": "2026-10-20",
+      "url": "https://www.zdnet.com/tech/gemini-on-android-auto-can-look-through-my-photos-emails-and-calendar-now-im-cautiously-optimistic",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "Google first launched Personal Intelligence on Android phones and in Search, allowing its AI engine to tap into, retrieve, and synthesize information across your personal apps",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Google first launched Personal Intelligence on Android phones and in Search, allowing its AI engine to tap into, retrieve, and synthesize information across your personal apps."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "ZDNET",
+      "date": "2026-10-20",
+      "url": "https://www.zdnet.com/tech/gemini-on-android-auto-can-look-through-my-photos-emails-and-calendar-now-im-cautiously-optimistic",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
       "type": "direction",
       "company": "Hugging Face",
       "candidateKind": "expand",
@@ -2059,62 +2219,6 @@
       "type": "monetization",
       "company": "Google DeepMind",
       "candidateModel": "hardware",
-      "signal": "Google first launched Personal Intelligence on Android phones and in Search, allowing its AI engine to tap into, retrieve, and synthesize information across your personal apps",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "you toggle access for specific app",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "ZDNET",
-      "date": "2026-10-20",
-      "url": "https://www.zdnet.com/tech/gemini-on-android-auto-can-look-through-my-photos-emails-and-calendar-now-im-cautiously-optimistic/",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "Google first launched Personal Intelligence on Android phones and in Search, allowing its AI engine to tap into, retrieve, and synthesize information across your personal apps",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google first launched Personal Intelligence on Android phones and in Search, allowing its AI engine to tap into, retrieve, and synthesize information across your personal apps."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "ZDNET",
-      "date": "2026-10-20",
-      "url": "https://www.zdnet.com/tech/gemini-on-android-auto-can-look-through-my-photos-emails-and-calendar-now-im-cautiously-optimistic/",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
       "signal": "Google said it will roll out “Personal Intelligence with Gemini” to vehicles in two ways — through Android Auto, an app that runs on the user’s phone and wirelessly communicates with and projects navigation, media, and messaging to the vehicle’s infotainment system, and Google Built-in , software and services that have been directly integrated into the vehicle",
       "model": "hardware",
       "classificationGate": {
@@ -2206,35 +2310,6 @@
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Writer",
-      "candidateModel": "enterprise",
-      "signal": "AI in the enterprise articles",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Writer",
-          "buyer": "",
-          "offering": "Why a unified AI platform",
-          "billingUnit": "Monthly",
-          "priceOrRevenue": "",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "buyer",
-          "priceOrRevenue"
-        ]
-      },
-      "source": "Writer",
-      "date": "2026-10-19",
-      "url": "https://writer.com/blog/category/ai-in-the-enterprise",
-      "reasons": [
-        "missing:buyer",
-        "missing:priceOrRevenue"
       ]
     },
     {
@@ -2545,6 +2620,35 @@
       ]
     },
     {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "AI in the enterprise articles",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "",
+          "offering": "Why a unified AI platform",
+          "billingUnit": "Monthly",
+          "priceOrRevenue": "",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer",
+          "priceOrRevenue"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-10-19",
+      "url": "https://writer.com/blog/category/ai-in-the-enterprise",
+      "reasons": [
+        "missing:buyer",
+        "missing:priceOrRevenue"
+      ]
+    },
+    {
       "type": "direction",
       "company": "Hailuo (MiniMax)",
       "candidateKind": "invest",
@@ -2743,64 +2847,31 @@
     },
     {
       "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "hardware",
-      "signal": "Amazon launches new Bee 'personal AI' devices that listen to conversations",
-      "model": "hardware",
+      "company": "Apple",
+      "candidateModel": "enterprise",
+      "signal": "Updated Apple Developer Program License Agreement now available The Apple Developer Program License Agreement has been revised to support new features and updated policies, and to provide clarification",
+      "model": "enterprise",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Amazon",
-          "buyer": "",
-          "offering": "which functions like other Bee device",
+          "seller": "Apple",
+          "buyer": "Developer",
+          "offering": "Specifies that App",
           "billingUnit": "",
-          "priceOrRevenue": "$100",
-          "recurringRevenue": ""
+          "priceOrRevenue": "",
+          "recurringRevenue": "yes"
         },
         "missing": [
-          "buyer",
           "billingUnit",
-          "recurringRevenue"
+          "priceOrRevenue"
         ]
       },
-      "source": "CNBC",
-      "date": "2026-10-15",
-      "url": "https://www.cnbc.com/2026/10/15/amazon-bee-frontier-eclipse-ai-devices.html",
+      "source": "Apple Developer",
+      "date": "2026-10-16",
+      "url": "https://developer.apple.com/news/",
       "reasons": [
-        "missing:buyer",
         "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "usage",
-      "signal": "Amazon also debuted the $100 Bee Eclipse, which functions like other Bee devices, but instead of being worn, the credit card-sized gadget magnetically snaps on to the back of a smartphone",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Amazon",
-          "buyer": "",
-          "offering": "which functions like other Bee device",
-          "billingUnit": "",
-          "priceOrRevenue": "$100",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "CNBC",
-      "date": "2026-10-15",
-      "url": "https://www.cnbc.com/2026/10/15/amazon-bee-frontier-eclipse-ai-devices.html",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
+        "missing:priceOrRevenue"
       ]
     },
     {
@@ -2959,6 +3030,68 @@
       "url": "https://siliconangle.com/2026/10/15/amazon-debuts-two-new-ai-wearable-devices-that-can-listen-to-conversations-and-help-you-shop",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Amazon",
+      "candidateModel": "hardware",
+      "signal": "Amazon launches new Bee 'personal AI' devices that listen to conversations",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Amazon",
+          "buyer": "",
+          "offering": "which functions like other Bee device",
+          "billingUnit": "",
+          "priceOrRevenue": "$100",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "CNBC",
+      "date": "2026-10-15",
+      "url": "https://www.cnbc.com/2026/10/15/amazon-bee-frontier-eclipse-ai-devices.html",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Amazon",
+      "candidateModel": "usage",
+      "signal": "Amazon also debuted the $100 Bee Eclipse, which functions like other Bee devices, but instead of being worn, the credit card-sized gadget magnetically snaps on to the back of a smartphone",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Amazon",
+          "buyer": "",
+          "offering": "which functions like other Bee device",
+          "billingUnit": "",
+          "priceOrRevenue": "$100",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "CNBC",
+      "date": "2026-10-15",
+      "url": "https://www.cnbc.com/2026/10/15/amazon-bee-frontier-eclipse-ai-devices.html",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -3128,83 +3261,6 @@
       ]
     },
     {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "SpaceX has since gone all-in on orbital data centers, and Satlyt’s software is set to launch Thursday on a SpaceX rocket alongside the first prototype for Google’s space data center effort, Project Suncatcher",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "SpaceX has since gone all-in on orbital data centers, and Satlyt’s software is set to launch Thursday on a SpaceX rocket alongside the first prototype for Google’s space data center effort, Project Suncatcher."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-10-13",
-      "url": "https://techcrunch.com/2026/10/13/satlyt-founded-by-a-former-google-and-spacex-product-manager-raises-8m-to-run-ai-on-satellites",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "Google was supposed to launch a 3.5 Pro model, but it moved on and released Argon instead",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google was supposed to launch a 3.5 Pro model, but it moved on and released Argon instead."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-10-13",
-      "url": "https://www.engadget.com/2285023/google-gemini-4-argon-is-now-available-in-the-gemini-app-and-ai-mode-in-search",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "hardware",
-      "signal": "This looks like a nifty bit of kit, but not everyone has $300 to spend on an updated streaming device",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Apple",
-          "buyer": "",
-          "offering": "Some older Apple TV model",
-          "billingUnit": "",
-          "priceOrRevenue": "$300",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-10-13",
-      "url": "https://www.engadget.com/2285346/some-older-apple-tv-models-are-also-getting-siri-ai",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
       "type": "monetization",
       "company": "Anthropic",
       "candidateModel": "hardware",
@@ -3289,6 +3345,83 @@
       "reasons": [
         "missing:billingUnit",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "This looks like a nifty bit of kit, but not everyone has $300 to spend on an updated streaming device",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "Some older Apple TV model",
+          "billingUnit": "",
+          "priceOrRevenue": "$300",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-10-13",
+      "url": "https://www.engadget.com/2285346/some-older-apple-tv-models-are-also-getting-siri-ai",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "Google was supposed to launch a 3.5 Pro model, but it moved on and released Argon instead",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Google was supposed to launch a 3.5 Pro model, but it moved on and released Argon instead."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-10-13",
+      "url": "https://www.engadget.com/2285023/google-gemini-4-argon-is-now-available-in-the-gemini-app-and-ai-mode-in-search",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "SpaceX has since gone all-in on orbital data centers, and Satlyt’s software is set to launch Thursday on a SpaceX rocket alongside the first prototype for Google’s space data center effort, Project Suncatcher",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "SpaceX has since gone all-in on orbital data centers, and Satlyt’s software is set to launch Thursday on a SpaceX rocket alongside the first prototype for Google’s space data center effort, Project Suncatcher."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-10-13",
+      "url": "https://techcrunch.com/2026/10/13/satlyt-founded-by-a-former-google-and-spacex-product-manager-raises-8m-to-run-ai-on-satellites",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -3912,74 +4045,16 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "hardware",
-      "signal": "GitHub - onehumanbeing/esp32-iphone-agent: Let an AI model use a real iPhone with a $7 ESP32: AirPlay eyes, USB HID hands, any OpenAI-compatible vision model. No Mac, no developer account, no jailbreak",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Apple",
-          "buyer": "developer",
-          "offering": "Let an AI model",
-          "billingUnit": "",
-          "priceOrRevenue": "$7",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "GitHub",
-      "date": "2026-10-12",
-      "url": "https://github.com/onehumanbeing/esp32-iphone-agent",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "hardware",
-      "signal": "Notifications You must be signed in to change notification settings Star 733 ( 733 ) You must be signed in to star a repository Let an AI model use a real iPhone with a $7 ESP32: AirPlay eyes, USB HID hands, any OpenAI-compatible vision model",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Apple",
-          "buyer": "developer",
-          "offering": "Let an AI model",
-          "billingUnit": "",
-          "priceOrRevenue": "$7",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "GitHub",
-      "date": "2026-10-12",
-      "url": "https://github.com/onehumanbeing/esp32-iphone-agent",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
       "type": "direction",
-      "company": "Microsoft",
+      "company": "Apple",
       "candidateKind": "expand",
-      "signal": "Intel first introduced the SSE4.2 instruction set on the first-generation Core i series launched in 2008, the second-generation Core i series in 2011 brought the AVX instruction set, and in 2013, the fourth-generation Core i series introduced AVX2",
+      "signal": "The recently launched Muse, on the other hand, tries to become an AI assistant that understands you in the long run",
       "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Intel first introduced the SSE4.2 instruction set on the first-generation Core i series launched in 2008, the second-generation Core i series in 2011 brought the AVX instruction set, and in 2013, the fourth-generation Core i series introduced AVX2."
+          "actionStatement": "The recently launched Muse, on the other hand, tries to become an AI assistant that understands you in the long run."
         },
         "missing": [
           "entityMentionInEvidenceLine"
@@ -3987,40 +4062,63 @@
       },
       "source": "36 Kr",
       "date": "2026-10-12",
-      "url": "http://eu.36kr.com/en/p/4021277687599239",
+      "url": "http://eu.36kr.com/en/p/4022218713011847",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "monetization",
-      "company": "Microsoft",
-      "candidateModel": "hardware",
-      "signal": "It announced that the next major version of the Windows 11 system after 26H2 will no longer support devices based on the Qualcomm Snapdragon 850 processor",
-      "model": "hardware",
+      "company": "Meta AI",
+      "candidateModel": "usage",
+      "signal": "Both versions cost nearly three times as much per API call as their predecessor, Muse Spark 1.3",
+      "model": "usage",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Microsoft",
-          "buyer": "Users",
-          "offering": "large number of old x86 platform",
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "s new frontier model",
           "billingUnit": "",
-          "priceOrRevenue": "",
+          "priceOrRevenue": "$4.52",
           "recurringRevenue": ""
         },
         "missing": [
+          "buyer",
           "billingUnit",
-          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "36 Kr",
+      "source": "The Decoder",
       "date": "2026-10-12",
-      "url": "http://eu.36kr.com/en/p/4021277687599239",
+      "url": "https://the-decoder.com/metas-new-frontier-model-muse-wonder-full-breaks-into-the-ai-top-tier",
       "reasons": [
+        "missing:buyer",
         "missing:billingUnit",
-        "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "invest",
+      "signal": "This can be a challenge when AI performs complex research or builds a large software project, for example, and can lead to expensive mistakes or compounded errors",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "This can be a challenge when AI performs complex research or builds a large software project, for example, and can lead to expensive mistakes or compounded errors."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Wired",
+      "date": "2026-10-12",
+      "url": "https://www.wired.com/story/muse-wonder-puts-meta-back-at-the-ai-frontier",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -4079,54 +4177,112 @@
     },
     {
       "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "invest",
-      "signal": "This can be a challenge when AI performs complex research or builds a large software project, for example, and can lead to expensive mistakes or compounded errors",
-      "kind": "invest",
+      "company": "Microsoft",
+      "candidateKind": "expand",
+      "signal": "Intel first introduced the SSE4.2 instruction set on the first-generation Core i series launched in 2008, the second-generation Core i series in 2011 brought the AVX instruction set, and in 2013, the fourth-generation Core i series introduced AVX2",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "This can be a challenge when AI performs complex research or builds a large software project, for example, and can lead to expensive mistakes or compounded errors."
+          "actionStatement": "Intel first introduced the SSE4.2 instruction set on the first-generation Core i series launched in 2008, the second-generation Core i series in 2011 brought the AVX instruction set, and in 2013, the fourth-generation Core i series introduced AVX2."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Wired",
+      "source": "36 Kr",
       "date": "2026-10-12",
-      "url": "https://www.wired.com/story/muse-wonder-puts-meta-back-at-the-ai-frontier",
+      "url": "http://eu.36kr.com/en/p/4021277687599239",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "usage",
-      "signal": "Both versions cost nearly three times as much per API call as their predecessor, Muse Spark 1.3",
-      "model": "usage",
+      "company": "Microsoft",
+      "candidateModel": "hardware",
+      "signal": "It announced that the next major version of the Windows 11 system after 26H2 will no longer support devices based on the Qualcomm Snapdragon 850 processor",
+      "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "s new frontier model",
+          "seller": "Microsoft",
+          "buyer": "Users",
+          "offering": "large number of old x86 platform",
           "billingUnit": "",
-          "priceOrRevenue": "$4.52",
+          "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
-          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "36 Kr",
+      "date": "2026-10-12",
+      "url": "http://eu.36kr.com/en/p/4021277687599239",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "GitHub - onehumanbeing/esp32-iphone-agent: Let an AI model use a real iPhone with a $7 ESP32: AirPlay eyes, USB HID hands, any OpenAI-compatible vision model. No Mac, no developer account, no jailbreak",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "developer",
+          "offering": "Let an AI model",
+          "billingUnit": "",
+          "priceOrRevenue": "$7",
+          "recurringRevenue": ""
+        },
+        "missing": [
           "billingUnit",
           "recurringRevenue"
         ]
       },
-      "source": "The Decoder",
+      "source": "GitHub",
       "date": "2026-10-12",
-      "url": "https://the-decoder.com/metas-new-frontier-model-muse-wonder-full-breaks-into-the-ai-top-tier",
+      "url": "https://github.com/onehumanbeing/esp32-iphone-agent",
       "reasons": [
-        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Notifications You must be signed in to change notification settings Star 733 ( 733 ) You must be signed in to star a repository Let an AI model use a real iPhone with a $7 ESP32: AirPlay eyes, USB HID hands, any OpenAI-compatible vision model",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "developer",
+          "offering": "Let an AI model",
+          "billingUnit": "",
+          "priceOrRevenue": "$7",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "GitHub",
+      "date": "2026-10-12",
+      "url": "https://github.com/onehumanbeing/esp32-iphone-agent",
+      "reasons": [
         "missing:billingUnit",
         "missing:recurringRevenue"
       ]
@@ -4837,29 +4993,6 @@
     },
     {
       "type": "direction",
-      "company": "Apple",
-      "candidateKind": "expand",
-      "signal": "The recently launched Muse, on the other hand, tries to become an AI assistant that understands you in the long run",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The recently launched Muse, on the other hand, tries to become an AI assistant that understands you in the long run."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "36 Kr",
-      "date": "2026-10-12",
-      "url": "http://eu.36kr.com/en/p/4022218713011847",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
       "company": "Google DeepMind",
       "candidateKind": "expand",
       "signal": "Playground, which Google launched this week , is part of Google Labs, the company’s landing page for its various AI experiments that haven’t made it into an app or official service quite yet",
@@ -5066,6 +5199,104 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "ma",
+      "signal": "Zhidx October 9 news, according to the latest data from Crunchbase, the world's well-known venture capital database, as of September 29 this year, the number of acquisitions of AI startups by VC-backed AI companies has reached 195 , 14% higher than the total number of acquisitions in 2025",
+      "kind": "ma",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Zhidx October 9 news, according to the latest data from Crunchbase, the world's well-known venture capital database, as of September 29 this year, the number of acquisitions of AI startups by VC-backed AI companies has reached 195 , 14% higher than the total number of acquisitions in 2025."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "36 Kr",
+      "date": "2026-10-09",
+      "url": "http://eu.36kr.com/en/p/4018587694420103",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "enterprise",
+      "signal": "Other companies with frequent acquisitions include Anthropic, which has launched 5 acquisitions, as well as vertical sector enterprises such as legal AI startup Legora and AI programming company Cursor",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
+          "buyer": "companies",
+          "offering": "api",
+          "billingUnit": "",
+          "priceOrRevenue": "$11 Billion",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "36 Kr",
+      "date": "2026-10-09",
+      "url": "http://eu.36kr.com/en/p/4018587694420103",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "ma",
+      "signal": "Other companies with frequent acquisitions include Anthropic, which has launched 5 acquisitions, as well as vertical sector enterprises such as legal AI startup Legora and AI programming company Cursor",
+      "kind": "ma",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Other companies with frequent acquisitions include Anthropic, which has launched 5 acquisitions, as well as vertical sector enterprises such as legal AI startup Legora and AI programming company Cursor ."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "36 Kr",
+      "date": "2026-10-09",
+      "url": "http://eu.36kr.com/en/p/4018587694420103",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "ma",
+      "signal": "Acquiring teams or products is far faster than in-house development, which is expected to help AI startups attract more attention from investors",
+      "kind": "ma",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Acquiring teams or products is far faster than in-house development, which is expected to help AI startups attract more attention from investors."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "36 Kr",
+      "date": "2026-10-09",
+      "url": "http://eu.36kr.com/en/p/4018587694420103",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
       "type": "monetization",
       "company": "Apple",
       "candidateModel": "hardware",
@@ -5125,6 +5356,108 @@
         "missing:buyer",
         "missing:billingUnit",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Amazon",
+      "candidateModel": "enterprise",
+      "signal": "McKinsey’s State of AI 2026 survey (n=1,719) found that only 6 percent of enterprises qualify as AI high performers with 5 percent or more of earnings before interest and taxes (EBIT) attributable to AI, even as 88 percent reported using AI in at least one function in 2025",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Amazon",
+          "buyer": "",
+          "offering": "Amazon Web Service",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Amazon Web Services (AWS)",
+      "date": "2026-10-08",
+      "url": "https://aws.amazon.com/blogs/publicsector/mission-ai-roi-strategy-framework",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "invest",
+      "signal": "China's Manus raises over $500M in first funding round since split with Meta",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "China's Manus raises over $500M in first funding round since split with Meta"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-10-08",
+      "url": "https://techcrunch.com/2026/10/08/chinas-manus-raises-over-500m-in-first-funding-round-since-split-with-meta",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "ma",
+      "signal": "Chinese AI lab Manus’ parent company, Butterfly Effect, said on Thursday in a WeChat post that it has raised more than $500 million, the company’s first funding round since Meta was forced to call off its $2 billion acquisition of the startup",
+      "kind": "ma",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Chinese AI lab Manus’ parent company, Butterfly Effect, said on Thursday in a WeChat post that it has raised more than $500 million, the company’s first funding round since Meta was forced to call off its $2 billion acquisition of the startup."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-10-08",
+      "url": "https://techcrunch.com/2026/10/08/chinas-manus-raises-over-500m-in-first-funding-round-since-split-with-meta",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "The company recently launched Manus 2.0 , which it says brings a new architecture with new products and capabilities built around a new harness",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The company recently launched Manus 2.0 , which it says brings a new architecture with new products and capabilities built around a new harness."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-10-08",
+      "url": "https://techcrunch.com/2026/10/08/chinas-manus-raises-over-500m-in-first-funding-round-since-split-with-meta",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -5215,75 +5548,6 @@
       "source": "CNBC",
       "date": "2026-10-08",
       "url": "https://www.cnbc.com/2026/10/08/manus-fund-raise-meta-muse-tencent.html",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "invest",
-      "signal": "China's Manus raises over $500M in first funding round since split with Meta",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "China's Manus raises over $500M in first funding round since split with Meta"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-10-08",
-      "url": "https://techcrunch.com/2026/10/08/chinas-manus-raises-over-500m-in-first-funding-round-since-split-with-meta",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "ma",
-      "signal": "Chinese AI lab Manus’ parent company, Butterfly Effect, said on Thursday in a WeChat post that it has raised more than $500 million, the company’s first funding round since Meta was forced to call off its $2 billion acquisition of the startup",
-      "kind": "ma",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Chinese AI lab Manus’ parent company, Butterfly Effect, said on Thursday in a WeChat post that it has raised more than $500 million, the company’s first funding round since Meta was forced to call off its $2 billion acquisition of the startup."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-10-08",
-      "url": "https://techcrunch.com/2026/10/08/chinas-manus-raises-over-500m-in-first-funding-round-since-split-with-meta",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "The company recently launched Manus 2.0 , which it says brings a new architecture with new products and capabilities built around a new harness",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The company recently launched Manus 2.0 , which it says brings a new architecture with new products and capabilities built around a new harness."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-10-08",
-      "url": "https://techcrunch.com/2026/10/08/chinas-manus-raises-over-500m-in-first-funding-round-since-split-with-meta",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -5532,63 +5796,78 @@
     {
       "type": "monetization",
       "company": "Amazon",
-      "candidateModel": "enterprise",
-      "signal": "McKinsey’s State of AI 2026 survey (n=1,719) found that only 6 percent of enterprises qualify as AI high performers with 5 percent or more of earnings before interest and taxes (EBIT) attributable to AI, even as 88 percent reported using AI in at least one function in 2025",
-      "model": "enterprise",
+      "candidateModel": "usage",
+      "signal": "A single Physical AI workflow spans high-bandwidth GPU clusters for foundation model training, elastic mid-tier GPU capacity for physics simulation, and edge GPUs for real-time inference on the robot",
+      "model": "usage",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Amazon",
-          "buyer": "",
+          "buyer": "organizations",
           "offering": "Amazon Web Service",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
-          "buyer",
           "billingUnit",
           "priceOrRevenue",
           "recurringRevenue"
         ]
       },
       "source": "Amazon Web Services (AWS)",
-      "date": "2026-10-08",
-      "url": "https://aws.amazon.com/blogs/publicsector/mission-ai-roi-strategy-framework",
+      "date": "2026-10-07",
+      "url": "https://aws.amazon.com/blogs/physical-ai/introducing-aws-physical-ai-toolchain",
       "reasons": [
-        "missing:buyer",
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
       ]
     },
     {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "hardware",
-      "signal": "We warned yesterday that this could be a risky thing to do, but it’s now being suggested that Apple may have to officially support an AI removal feature in order to protect hardware sales … There’s been growing pushback against generative AI in general, with opponents citing reasons ranging from fearing for the survival of the human species down to simply not wanting unwanted AI features to take up storage space on their devices",
-      "model": "hardware",
+      "type": "direction",
+      "company": "Amazon",
+      "candidateKind": "expand",
+      "signal": "A single Physical AI workflow spans high-bandwidth GPU clusters for foundation model training, elastic mid-tier GPU capacity for physics simulation, and edge GPUs for real-time inference on the robot",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Apple",
-          "buyer": "developer",
-          "offering": "may have to officially support App",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": "no"
+          "entity": "",
+          "actionStatement": "A single Physical AI workflow spans high-bandwidth GPU clusters for foundation model training, elastic mid-tier GPU capacity for physics simulation, and edge GPUs for real-time inference on the robot."
         },
         "missing": [
-          "billingUnit",
-          "priceOrRevenue"
+          "entityMentionInEvidenceLine"
         ]
       },
-      "source": "9to5Mac",
+      "source": "Amazon Web Services (AWS)",
       "date": "2026-10-07",
-      "url": "https://9to5mac.com/2026/10/07/apple-may-have-to-officially-support-apple-intelligence-removal-on-macs-to-protect-sales",
+      "url": "https://aws.amazon.com/blogs/physical-ai/introducing-aws-physical-ai-toolchain",
       "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue"
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Microsoft",
+      "candidateKind": "invest",
+      "signal": "Yahoo Finance is not a broker-dealer or investment adviser and does not offer securities or cryptocurrencies for sale or facilitate trading",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Yahoo Finance is not a broker-dealer or investment adviser and does not offer securities or cryptocurrencies for sale or facilitate trading."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-10-07",
+      "url": "https://finance.yahoo.com/video/microsoft-unveils-new-ai-laptop-powered-by-nvidia-chips-194227586.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -5684,80 +5963,32 @@
       ]
     },
     {
-      "type": "direction",
-      "company": "Microsoft",
-      "candidateKind": "invest",
-      "signal": "Yahoo Finance is not a broker-dealer or investment adviser and does not offer securities or cryptocurrencies for sale or facilitate trading",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Yahoo Finance is not a broker-dealer or investment adviser and does not offer securities or cryptocurrencies for sale or facilitate trading."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Yahoo Finance",
-      "date": "2026-10-07",
-      "url": "https://finance.yahoo.com/video/microsoft-unveils-new-ai-laptop-powered-by-nvidia-chips-194227586.html",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
       "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "usage",
-      "signal": "A single Physical AI workflow spans high-bandwidth GPU clusters for foundation model training, elastic mid-tier GPU capacity for physics simulation, and edge GPUs for real-time inference on the robot",
-      "model": "usage",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "We warned yesterday that this could be a risky thing to do, but it’s now being suggested that Apple may have to officially support an AI removal feature in order to protect hardware sales … There’s been growing pushback against generative AI in general, with opponents citing reasons ranging from fearing for the survival of the human species down to simply not wanting unwanted AI features to take up storage space on their devices",
+      "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Amazon",
-          "buyer": "organizations",
-          "offering": "Amazon Web Service",
+          "seller": "Apple",
+          "buyer": "developer",
+          "offering": "may have to officially support App",
           "billingUnit": "",
           "priceOrRevenue": "",
-          "recurringRevenue": ""
+          "recurringRevenue": "no"
         },
         "missing": [
           "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
+          "priceOrRevenue"
         ]
       },
-      "source": "Amazon Web Services (AWS)",
+      "source": "9to5Mac",
       "date": "2026-10-07",
-      "url": "https://aws.amazon.com/blogs/physical-ai/introducing-aws-physical-ai-toolchain",
+      "url": "https://9to5mac.com/2026/10/07/apple-may-have-to-officially-support-apple-intelligence-removal-on-macs-to-protect-sales",
       "reasons": [
         "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Amazon",
-      "candidateKind": "expand",
-      "signal": "A single Physical AI workflow spans high-bandwidth GPU clusters for foundation model training, elastic mid-tier GPU capacity for physics simulation, and edge GPUs for real-time inference on the robot",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "A single Physical AI workflow spans high-bandwidth GPU clusters for foundation model training, elastic mid-tier GPU capacity for physics simulation, and edge GPUs for real-time inference on the robot."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Amazon Web Services (AWS)",
-      "date": "2026-10-07",
-      "url": "https://aws.amazon.com/blogs/physical-ai/introducing-aws-physical-ai-toolchain",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
+        "missing:priceOrRevenue"
       ]
     },
     {
@@ -6282,29 +6513,6 @@
       ]
     },
     {
-      "type": "direction",
-      "company": "Harvey",
-      "candidateKind": "partner",
-      "signal": "Legalscape research tool to be integrated into US partner's platform Legalscape's proprietary AI research tool is built on data from specialized legal publications in addition to publicly available information",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Legalscape research tool to be integrated into US partner's platform Legalscape's proprietary AI research tool is built on data from specialized legal publications in addition to publicly available information."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Nikkei Asia",
-      "date": "2026-10-02",
-      "url": "https://asia.nikkei.com/business/technology/artificial-intelligence/japan-legal-tech-firm-teams-with-ai-provider-harvey-to-supply-data",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
       "type": "monetization",
       "company": "Stability AI",
       "candidateModel": "enterprise",
@@ -6354,416 +6562,6 @@
       "source": "TechCrunch",
       "date": "2026-10-02",
       "url": "https://techcrunch.com/2026/10/02/sean-parker-is-rebuilding-stability-ai-around-music",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Hugging Face",
-      "candidateModel": "enterprise",
-      "signal": "AutoSynthData: Generating Training Data for Enterprise Agents",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Hugging Face",
-          "buyer": "",
-          "offering": "Generating Training Data for Enterprise Agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Hugging Face Blog",
-      "date": "2026-10-02",
-      "url": "https://huggingface.co/blog/ServiceNow-AI/autosynthdata",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Hugging Face",
-      "candidateModel": "enterprise",
-      "signal": "System specification Agent-facing task Verifier Overview From model failures to a curriculum Generating and scaling tasks Target Multiply Implementation details High-quality synthetic data needs more than generation Sample-level verification and repair Batch-level review Moving the training frontier EnterpriseOps Gym experiments Hybrid Hybrid results ITSM Closing the loop Enterprises need agents that work well in their own environments",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Hugging Face",
-          "buyer": "",
-          "offering": "Generating Training Data for Enterprise Agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Hugging Face Blog",
-      "date": "2026-10-02",
-      "url": "https://huggingface.co/blog/ServiceNow-AI/autosynthdata",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "NVIDIA",
-      "candidateModel": "hardware",
-      "signal": "With up to 100-billion-parameter models running entirely on device, developers and enthusiasts can start with a single system for models that fit within its memory, or connect multiple DGX Spark systems with NVIDIA Sync Cluster Assistant for workloads that need more memory and compute",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "NVIDIA",
-          "buyer": "Developers",
-          "offering": "accelerated AI software",
-          "billingUnit": "",
-          "priceOrRevenue": "$4,999.",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "NVIDIA Blog",
-      "date": "2026-10-02",
-      "url": "https://blogs.nvidia.com/blog/local-ai-dgx-spark-64gb-sync",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "SpaceX",
-      "candidateKind": "expand",
-      "signal": "Industry experts say space-based data centers represent a far-out mission, if they can even become feasible, in part because rocket launches remain capacity-constrained and expensive",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Industry experts say space-based data centers represent a far-out mission, if they can even become feasible, in part because rocket launches remain capacity-constrained and expensive."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "CNBC",
-      "date": "2026-10-01",
-      "url": "https://www.cnbc.com/2026/10/01/spacex-to-launch-google-ai-chips-to-orbit-with-planet-labs-satellites.html",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "hardware",
-      "signal": "Amazon plans to have 20,000 drivers in smart glasses snapping photos at your door — with no opt-out for customers",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Amazon",
-          "buyer": "",
-          "offering": "Amazon plan",
-          "billingUnit": "",
-          "priceOrRevenue": "$1.9",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Yahoo Finance",
-      "date": "2026-10-01",
-      "url": "https://finance.yahoo.com/technology/ai/articles/amazon-plans-20-000-drivers-210000425.html",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "hardware",
-      "signal": "Amazon Takes Wearable AI Deeper Into Logistics GuruFocus.com • 21d ago AMZN Amazon Deepens Focus On Delivery Safety, AI And Driver Experience – Makes Fresh $1.9B Investment Stocktwits • 21d ago AMZN Amazon rolls out safety tech, pay bump for delivery providers FreightWaves • 18d ago AMZN RIVN Amazon's $60 AI smart glasses can take live HD video TheStreet • 13d ago Amazon (AMZN) Puts Another $1.9 Billion Into its Delivery Network",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Amazon",
-          "buyer": "",
-          "offering": "Amazon plan",
-          "billingUnit": "",
-          "priceOrRevenue": "$1.9",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Yahoo Finance",
-      "date": "2026-10-01",
-      "url": "https://finance.yahoo.com/technology/ai/articles/amazon-plans-20-000-drivers-210000425.html",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Amazon",
-      "candidateKind": "invest",
-      "signal": "Jeff Bezos backs a platform that lets anyone invest in rental homes for as little as $100 — 6 ways to build wealth like a landlord without actually being one A single line on your car insurance policy could be inflating your premium by up to 30% — here's what to change Dave Ramsey warns nearly 50% of Americans are making 1 big Social Security mistake",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Jeff Bezos backs a platform that lets anyone invest in rental homes for as little as $100 — 6 ways to build wealth like a landlord without actually being one A single line on your car insurance policy could be inflating your premium by up to 30% — here's what to change Dave Ramsey warns nearly 50% of Americans are making 1 big Social Security mistake."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Yahoo Finance",
-      "date": "2026-10-01",
-      "url": "https://finance.yahoo.com/technology/ai/articles/amazon-plans-20-000-drivers-210000425.html",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "hardware",
-      "signal": "Here's what it is and 3 simple steps to fix it ASAP Amazon plans to have 5,000 drivers wearing the glasses this year, and more than 20,000 by the end of 2027",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Amazon",
-          "buyer": "",
-          "offering": "Amazon plan",
-          "billingUnit": "",
-          "priceOrRevenue": "$1.9",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Yahoo Finance",
-      "date": "2026-10-01",
-      "url": "https://finance.yahoo.com/technology/ai/articles/amazon-plans-20-000-drivers-210000425.html",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "invest",
-      "signal": "(NASDAQ:GOOGL) as an investment, we believe certain AI stocks offer greater upside potential and carry less downside risk",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "(NASDAQ:GOOGL) as an investment, we believe certain AI stocks offer greater upside potential and carry less downside risk."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Yahoo Finance",
-      "date": "2026-10-01",
-      "url": "https://finance.yahoo.com/technology/ai/articles/alphabet-googl-answers-ai-roi-152445608.html",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "NVIDIA",
-      "candidateModel": "usage",
-      "signal": "“NVIDIA’s deep investment in tooling and documentation has enabled us to make our models exceptionally good at programming Blackwell and Rubin GPUs,” said Philippe Tillet, inference lead at OpenAI",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "NVIDIA",
-          "buyer": "",
-          "offering": "enabled us to make our model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "NVIDIA Blog",
-      "date": "2026-10-01",
-      "url": "https://blogs.nvidia.com/blog/gpus-openai-gpt-6-astra-ultrafast",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "NVIDIA",
-      "candidateModel": "usage",
-      "signal": "Accelerated by inference optimizations through OpenAI’s models that tap into the capabilities of the NVIDIA Blackwell architecture, Ultrafast offers up to 8x faster token generation than the Astra Standard mode",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "NVIDIA",
-          "buyer": "",
-          "offering": "enabled us to make our model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "NVIDIA Blog",
-      "date": "2026-10-01",
-      "url": "https://blogs.nvidia.com/blog/gpus-openai-gpt-6-astra-ultrafast",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "NVIDIA",
-      "candidateModel": "usage",
-      "signal": "OpenAI is using its own models to help refine the inference software running on NVIDIA GPUs, taking advantage of the platform’s programmability to test and implement improvements",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "NVIDIA",
-          "buyer": "",
-          "offering": "enabled us to make our model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "NVIDIA Blog",
-      "date": "2026-10-01",
-      "url": "https://blogs.nvidia.com/blog/gpus-openai-gpt-6-astra-ultrafast",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OneTrust",
-      "candidateModel": "enterprise",
-      "signal": "OneTrust Unveils Platform Innovations to Govern AI at Enterprise Scale",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OneTrust",
-          "buyer": "organizations",
-          "offering": "OneTrust Unveils Platform",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Yahoo Finance",
-      "date": "2026-09-30",
-      "url": "https://finance.yahoo.com/technology/ai/articles/onetrust-unveils-platform-innovations-govern-163000301.html",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Hugging Face",
-      "candidateKind": "invest",
-      "signal": "OpenAI had tried to invest $100 million into the startup after the cyberattack, though talks fell apart in the early stages, sources told CNBC",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "OpenAI had tried to invest $100 million into the startup after the cyberattack, though talks fell apart in the early stages, sources told CNBC."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "CNBC",
-      "date": "2026-09-30",
-      "url": "https://www.cnbc.com/2026/09/30/openai-sued-cyberattack.html",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
