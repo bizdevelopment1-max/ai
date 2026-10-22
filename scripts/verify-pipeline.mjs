@@ -377,7 +377,13 @@ const healthyRegistryStreams = (sourceRegistryReport.streamHealth || []).filter(
 const executedPublicConnectors = (sourceRegistryReport.connectorStatus || []).filter(row => row.status === "executed").length;
 const registryCategoryCoverage = (sourceRegistryReport.categoryCoverage || []).filter(row => Number(row.itemCount || 0) > 0).length;
 const sourceRegistryFresh = ageDays(sourceRegistryReport.generatedAt) <= 1;
-const failedStreamBlockThreshold = Number(qualityThresholds.maximumFailedStreamsBeforeBlock ?? 3);
+// Block publication when collection collapses, not when a handful of the
+// ~190 streams are down: the allowance scales with the number of streams.
+const monitoredStreams = (collectionHealth.streamHealth || []).length;
+const failedStreamBlockThreshold = Math.max(
+  Number(qualityThresholds.maximumFailedStreamsBeforeBlock ?? 3),
+  Math.ceil(monitoredStreams * Number(qualityThresholds.maximumFailedStreamShare ?? 0.05)),
+);
 const publishedMonetizationRows = (monetization.companies || []).flatMap(company => company.monetize || []);
 const ungatedMonetizationRows = publishedMonetizationRows.filter(row => row.classificationGate?.status !== "passed");
 const generatedOpportunities = opportunityView.generatedOpportunities || [];
