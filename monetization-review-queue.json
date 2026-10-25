@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-24T23:33:14.527Z",
+  "generatedAt": "2026-10-25T08:43:52.683Z",
   "schemaVersion": 1,
   "policy": "상업 필드 6개 또는 행위 주체가 모두 확인되지 않으면 공개하지 않고 검토 대기열로 이동합니다.",
-  "total": 232,
+  "total": 231,
   "rows": [
     {
       "type": "monetization",
@@ -462,16 +462,74 @@
     },
     {
       "type": "monetization",
-      "company": "Google DeepMind",
+      "company": "Anthropic",
       "candidateModel": "hardware",
-      "signal": "Google's Agent Compute Engine gives every Gemini agent its own hardware-isolated micro virtual machine",
+      "signal": "九州工業大学の学生フォーミュラチーム「KIT-FORMULA」を陰ながら支えたサイコムの高性能PC sponsored サイボウズとCDataが語るMCPフル活用までの道【前編】 kintoneデータを最強のAIコンテキストに MCP活用で変わるAIエージェント開発とデータアクセスレイヤーの重要性 sponsored 2027年には東名阪ルートの容量拡大と冗長化、大阪－福岡間の西日本ルートも完成へ 国内バックボーンNWを大幅増強したColt 東京－大阪間の低遅延サービスも提供へ sponsored iPhone 18シリーズを守り抜く強靱さと機能美！",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Google DeepMind",
+          "seller": "Anthropic",
           "buyer": "",
-          "offering": "s Agent",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "offering",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "ASCII.jp",
+      "date": "2026-10-22",
+      "url": "https://ascii.jp/elem/000/004/444/4444990",
+      "reasons": [
+        "missing:buyer",
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Microsoft",
+      "candidateKind": "ma",
+      "signal": "The following year, Google DeepMind acquired King’s startup Hark, a clinical task management app, and the two of them launched DeepMind Health together",
+      "kind": "ma",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The following year, Google DeepMind acquired King’s startup Hark, a clinical task management app, and the two of them launched DeepMind Health together."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-10-22",
+      "url": "https://techcrunch.com/2026/10/22/microsofts-mustafa-suleyman-says-its-ai-outperforms-doctors-on-hard-cases-as-he-chases-medical-superintelligence",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "ads",
+      "signal": "Support SiliconANGLE financially by buying your AWS services from our Marketplace portal page and links: https://siliconangle.com/aws-marketplace/ Founded by tech visionaries John Furrier and Dave Vellante, SiliconANGLE Media has built a dynamic ecosystem of industry-leading digital media brands that reach 15+ million elite tech professionals",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "a proactive AI agent",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
@@ -483,14 +541,68 @@
           "recurringRevenue"
         ]
       },
-      "source": "The Decoder",
+      "source": "SiliconANGLE",
       "date": "2026-10-22",
-      "url": "https://the-decoder.com/googles-agent-compute-engine-gives-every-gemini-agent-its-own-hardware-isolated-micro-virtual-machine",
+      "url": "https://siliconangle.com/2026/10/22/anthropic-introduces-claude-duet-a-proactive-ai-agent-for-professionals",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "enterprise",
+      "signal": "Cloud providers offer discounts to enterprises that sign long-term spending commitments",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "users",
+          "offering": "make its most advanced AI model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-10-22",
+      "url": "https://siliconangle.com/2026/10/21/openai-to-make-its-most-advanced-ai-models-available-in-google-cloud",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "Google Cloud customers will also receive access to GPT-6.1 Sol and GPT-6 Luna, two scaled-down versions of Astra that OpenAI launched in late September",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Google Cloud customers will also receive access to GPT-6.1 Sol and GPT-6 Luna, two scaled-down versions of Astra that OpenAI launched in late September."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-10-22",
+      "url": "https://siliconangle.com/2026/10/21/openai-to-make-its-most-advanced-ai-models-available-in-google-cloud",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -558,143 +670,31 @@
     {
       "type": "monetization",
       "company": "Google DeepMind",
-      "candidateModel": "enterprise",
-      "signal": "Cloud providers offer discounts to enterprises that sign long-term spending commitments",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "users",
-          "offering": "make its most advanced AI model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-10-22",
-      "url": "https://siliconangle.com/2026/10/21/openai-to-make-its-most-advanced-ai-models-available-in-google-cloud",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "Google Cloud customers will also receive access to GPT-6.1 Sol and GPT-6 Luna, two scaled-down versions of Astra that OpenAI launched in late September",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google Cloud customers will also receive access to GPT-6.1 Sol and GPT-6 Luna, two scaled-down versions of Astra that OpenAI launched in late September."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-10-22",
-      "url": "https://siliconangle.com/2026/10/21/openai-to-make-its-most-advanced-ai-models-available-in-google-cloud",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "ads",
-      "signal": "Support SiliconANGLE financially by buying your AWS services from our Marketplace portal page and links: https://siliconangle.com/aws-marketplace/ Founded by tech visionaries John Furrier and Dave Vellante, SiliconANGLE Media has built a dynamic ecosystem of industry-leading digital media brands that reach 15+ million elite tech professionals",
-      "model": "ads",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Anthropic",
-          "buyer": "",
-          "offering": "a proactive AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-10-22",
-      "url": "https://siliconangle.com/2026/10/22/anthropic-introduces-claude-duet-a-proactive-ai-agent-for-professionals",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Microsoft",
-      "candidateKind": "ma",
-      "signal": "The following year, Google DeepMind acquired King’s startup Hark, a clinical task management app, and the two of them launched DeepMind Health together",
-      "kind": "ma",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The following year, Google DeepMind acquired King’s startup Hark, a clinical task management app, and the two of them launched DeepMind Health together."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-10-22",
-      "url": "https://techcrunch.com/2026/10/22/microsofts-mustafa-suleyman-says-its-ai-outperforms-doctors-on-hard-cases-as-he-chases-medical-superintelligence",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Anthropic",
       "candidateModel": "hardware",
-      "signal": "九州工業大学の学生フォーミュラチーム「KIT-FORMULA」を陰ながら支えたサイコムの高性能PC sponsored サイボウズとCDataが語るMCPフル活用までの道【前編】 kintoneデータを最強のAIコンテキストに MCP活用で変わるAIエージェント開発とデータアクセスレイヤーの重要性 sponsored 2027年には東名阪ルートの容量拡大と冗長化、大阪－福岡間の西日本ルートも完成へ 国内バックボーンNWを大幅増強したColt 東京－大阪間の低遅延サービスも提供へ sponsored iPhone 18シリーズを守り抜く強靱さと機能美！",
+      "signal": "Google's Agent Compute Engine gives every Gemini agent its own hardware-isolated micro virtual machine",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Anthropic",
+          "seller": "Google DeepMind",
           "buyer": "",
-          "offering": "",
+          "offering": "s Agent",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
           "buyer",
-          "offering",
           "billingUnit",
           "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "ASCII.jp",
+      "source": "The Decoder",
       "date": "2026-10-22",
-      "url": "https://ascii.jp/elem/000/004/444/4444990",
+      "url": "https://the-decoder.com/googles-agent-compute-engine-gives-every-gemini-agent-its-own-hardware-isolated-micro-virtual-machine",
       "reasons": [
         "missing:buyer",
-        "missing:offering",
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
@@ -2363,77 +2363,66 @@
       ]
     },
     {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "Meta says it would’ve made over $22 billion if it didn’t have to pay a child safety settlement It’s been a busy past few weeks for Meta, which launched its AI agent, Muse , in September",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Meta says it would’ve made over $22 billion if it didn’t have to pay a child safety settlement It’s been a busy past few weeks for Meta, which launched its AI agent, Muse , in September."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-10-21",
-      "url": "https://www.theverge.com/tech/1015799/meta-shares-class-ai-q3-2026-earnings",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "invest",
-      "signal": "Susan Li, Meta’s chief financial officer, added during an earnings call that the new class of shares will “expand our funding tools and give us flexibility to invest behind the unprecedented momentum we’re seeing across every part of our business driven by AI.”",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Susan Li, Meta’s chief financial officer, added during an earnings call that the new class of shares will “expand our funding tools and give us flexibility to invest behind the unprecedented momentum we’re seeing across every part of our business driven by AI.”"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-10-21",
-      "url": "https://www.theverge.com/tech/1015799/meta-shares-class-ai-q3-2026-earnings",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
       "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "usage",
-      "signal": "Given that Duet may be taking action on sensitive information, it has a new “new dedicated classifier and safety system prompt” that are “designed to reject requests to share the strictest tier of information,” such as credit card numbers",
-      "model": "usage",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "GitHub - lycorp-jp/sim-use: Give your AI agent eyes and hands on iOS Simulator and Android emulator/devices",
+      "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Anthropic",
-          "buyer": "subscriber",
-          "offering": "its new AI agent",
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "Give your AI agent",
           "billingUnit": "",
           "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
+          "buyer",
           "billingUnit",
           "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "The Verge",
+      "source": "GitHub",
       "date": "2026-10-21",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/1015843/anthropic-claude-duet-ai-agent",
+      "url": "https://github.com/lycorp-jp/sim-use",
       "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "Notifications You must be signed in to change notification settings Star 1.5k ( 1.5k ) You must be signed in to star a repository Give your AI agent eyes and hands on iOS Simulator and Android emulator/devices",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "Give your AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "GitHub",
+      "date": "2026-10-21",
+      "url": "https://github.com/lycorp-jp/sim-use",
+      "reasons": [
+        "missing:buyer",
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
@@ -2491,6 +2480,83 @@
       "source": "Yahoo Finance",
       "date": "2026-10-21",
       "url": "https://finance.yahoo.com/technology/ai/articles/insight-named-openai-advanced-partner-122800257.html",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "usage",
+      "signal": "Given that Duet may be taking action on sensitive information, it has a new “new dedicated classifier and safety system prompt” that are “designed to reject requests to share the strictest tier of information,” such as credit card numbers",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "subscriber",
+          "offering": "its new AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-10-21",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1015843/anthropic-claude-duet-ai-agent",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "Meta says it would’ve made over $22 billion if it didn’t have to pay a child safety settlement It’s been a busy past few weeks for Meta, which launched its AI agent, Muse , in September",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Meta says it would’ve made over $22 billion if it didn’t have to pay a child safety settlement It’s been a busy past few weeks for Meta, which launched its AI agent, Muse , in September."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-10-21",
+      "url": "https://www.theverge.com/tech/1015799/meta-shares-class-ai-q3-2026-earnings",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "invest",
+      "signal": "Susan Li, Meta’s chief financial officer, added during an earnings call that the new class of shares will “expand our funding tools and give us flexibility to invest behind the unprecedented momentum we’re seeing across every part of our business driven by AI.”",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Susan Li, Meta’s chief financial officer, added during an earnings call that the new class of shares will “expand our funding tools and give us flexibility to invest behind the unprecedented momentum we’re seeing across every part of our business driven by AI.”"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-10-21",
+      "url": "https://www.theverge.com/tech/1015799/meta-shares-class-ai-q3-2026-earnings",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -3495,6 +3561,68 @@
       ]
     },
     {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "usage",
+      "signal": "Small models, such as Qwen3.5-9B, are capable of setting up inference servers on hardware from Jetson Nanos to Mac PCs and RTX 4090s",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "AI model",
+          "billingUnit": "",
+          "priceOrRevenue": "$55",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Anthropic",
+      "date": "2026-10-21",
+      "url": "https://www.anthropic.com/research/self-replicating-ai",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "hardware",
+      "signal": "B Going viral: autonomous setup and replication across a GCP node fleet Frontier Red Team Jun 8, 2026 Measuring LLMs’ impact on N-day exploits Our experiments suggest that small AI models may be months away from being capable enough to self-replicate on commercial internet-of-things (IoT) devices, like smart ovens and off-brand Android TV boxes",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "AI model",
+          "billingUnit": "",
+          "priceOrRevenue": "$55",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Anthropic",
+      "date": "2026-10-21",
+      "url": "https://www.anthropic.com/research/self-replicating-ai",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
       "type": "direction",
       "company": "Anthropic",
       "candidateKind": "expand",
@@ -3887,161 +4015,6 @@
       "type": "monetization",
       "company": "Google DeepMind",
       "candidateModel": "hardware",
-      "signal": "GitHub - lycorp-jp/sim-use: Give your AI agent eyes and hands on iOS Simulator and Android emulator/devices",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "Give your AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "GitHub",
-      "date": "2026-10-21",
-      "url": "https://github.com/lycorp-jp/sim-use",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
-      "signal": "Notifications You must be signed in to change notification settings Star 1.5k ( 1.5k ) You must be signed in to star a repository Give your AI agent eyes and hands on iOS Simulator and Android emulator/devices",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "Give your AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "GitHub",
-      "date": "2026-10-21",
-      "url": "https://github.com/lycorp-jp/sim-use",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "subscription",
-      "signal": "GitHub - stablyai/orca: Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run any coding agent with your own subscription. Available on desktop, mobile and remote runtime",
-      "model": "subscription",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Anthropic",
-          "buyer": "",
-          "offering": "working with a fleet of agent",
-          "billingUnit": "subscription",
-          "priceOrRevenue": "",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "buyer",
-          "priceOrRevenue"
-        ]
-      },
-      "source": "GitHub",
-      "date": "2026-10-20",
-      "url": "https://github.com/stablyai/orca",
-      "reasons": [
-        "missing:buyer",
-        "missing:priceOrRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "SpaceX",
-      "candidateModel": "subscription",
-      "signal": "GitHub - stablyai/orca: Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run any coding agent with your own subscription. Available on desktop, mobile and remote runtime",
-      "model": "subscription",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "SpaceX",
-          "buyer": "",
-          "offering": "working with a fleet of agent",
-          "billingUnit": "subscription",
-          "priceOrRevenue": "",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "buyer",
-          "priceOrRevenue"
-        ]
-      },
-      "source": "GitHub",
-      "date": "2026-10-20",
-      "url": "https://github.com/stablyai/orca",
-      "reasons": [
-        "missing:buyer",
-        "missing:priceOrRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "hardware",
-      "signal": "OpenAI announced on Tuesday that users can now lock ChatGPT conversations to keep sensitive chats private when others may have access to their screen or device",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OpenAI",
-          "buyer": "users",
-          "offering": "access to their screen or device",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-10-20",
-      "url": "https://techcrunch.com/2026/10/20/chatgpt-now-lets-you-lock-your-chats",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "hardware",
       "signal": "Google first launched Personal Intelligence on Android phones and in Search, allowing its AI engine to tap into, retrieve, and synthesize information across your personal apps",
       "model": "hardware",
       "classificationGate": {
@@ -4092,6 +4065,37 @@
       "url": "https://www.zdnet.com/tech/gemini-on-android-auto-can-look-through-my-photos-emails-and-calendar-now-im-cautiously-optimistic",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "hardware",
+      "signal": "OpenAI announced on Tuesday that users can now lock ChatGPT conversations to keep sensitive chats private when others may have access to their screen or device",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
+          "buyer": "users",
+          "offering": "access to their screen or device",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-10-20",
+      "url": "https://techcrunch.com/2026/10/20/chatgpt-now-lets-you-lock-your-chats",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -4486,6 +4490,64 @@
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "subscription",
+      "signal": "GitHub - stablyai/orca: Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run any coding agent with your own subscription. Available on desktop, mobile and remote runtime",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "working with a fleet of agent",
+          "billingUnit": "subscription",
+          "priceOrRevenue": "",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer",
+          "priceOrRevenue"
+        ]
+      },
+      "source": "GitHub",
+      "date": "2026-10-20",
+      "url": "https://github.com/stablyai/orca",
+      "reasons": [
+        "missing:buyer",
+        "missing:priceOrRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "SpaceX",
+      "candidateModel": "subscription",
+      "signal": "GitHub - stablyai/orca: Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run any coding agent with your own subscription. Available on desktop, mobile and remote runtime",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "SpaceX",
+          "buyer": "",
+          "offering": "working with a fleet of agent",
+          "billingUnit": "subscription",
+          "priceOrRevenue": "",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer",
+          "priceOrRevenue"
+        ]
+      },
+      "source": "GitHub",
+      "date": "2026-10-20",
+      "url": "https://github.com/stablyai/orca",
+      "reasons": [
+        "missing:buyer",
+        "missing:priceOrRevenue"
       ]
     },
     {
@@ -5905,6 +5967,147 @@
     },
     {
       "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Apple TV, HomePods, and HomeView are included in Apple's Wearables, Home, and Accessories category, which reported $7.88 billion in sales in the most recent quarter ended June, which was about 7% of the company's total revenue",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "as showcase for Siri AI\nApp",
+          "billingUnit": "",
+          "priceOrRevenue": "$7.88 billion",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "CNBC",
+      "date": "2026-10-13",
+      "url": "https://www.cnbc.com/2026/10/13/apple-homeview-smart-home-siri-ai.html",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "NVIDIA",
+      "candidateModel": "usage",
+      "signal": "Related open source projects Model Streamer and Grove complement the platform by accelerating model loading and orchestrating multicomponent inference workloads",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "NVIDIA",
+          "buyer": "",
+          "offering": "of NVIDIA DSX AI Factory Platform",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "NVIDIA Developer",
+      "date": "2026-10-13",
+      "url": "https://developer.nvidia.com/blog/nvidia-runai-is-now-open-source-as-part-of-nvidia-dsx-ai-factory-platform",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "SpaceX has since gone all-in on orbital data centers, and Satlyt’s software is set to launch Thursday on a SpaceX rocket alongside the first prototype for Google’s space data center effort, Project Suncatcher",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "SpaceX has since gone all-in on orbital data centers, and Satlyt’s software is set to launch Thursday on a SpaceX rocket alongside the first prototype for Google’s space data center effort, Project Suncatcher."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-10-13",
+      "url": "https://techcrunch.com/2026/10/13/satlyt-founded-by-a-former-google-and-spacex-product-manager-raises-8m-to-run-ai-on-satellites",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "Google was supposed to launch a 3.5 Pro model, but it moved on and released Argon instead",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Google was supposed to launch a 3.5 Pro model, but it moved on and released Argon instead."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-10-13",
+      "url": "https://www.engadget.com/2285023/google-gemini-4-argon-is-now-available-in-the-gemini-app-and-ai-mode-in-search",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "This looks like a nifty bit of kit, but not everyone has $300 to spend on an updated streaming device",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "Some older Apple TV model",
+          "billingUnit": "",
+          "priceOrRevenue": "$300",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-10-13",
+      "url": "https://www.engadget.com/2285346/some-older-apple-tv-models-are-also-getting-siri-ai",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
       "company": "Anthropic",
       "candidateModel": "hardware",
       "signal": "Anthropic study warns that small AI models could soon replicate across everyday devices",
@@ -5986,147 +6189,6 @@
       "date": "2026-10-13",
       "url": "https://the-decoder.com/anthropic-study-warns-that-small-ai-models-could-soon-replicate-across-everyday-devices",
       "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "hardware",
-      "signal": "This looks like a nifty bit of kit, but not everyone has $300 to spend on an updated streaming device",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Apple",
-          "buyer": "",
-          "offering": "Some older Apple TV model",
-          "billingUnit": "",
-          "priceOrRevenue": "$300",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-10-13",
-      "url": "https://www.engadget.com/2285346/some-older-apple-tv-models-are-also-getting-siri-ai",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "Google was supposed to launch a 3.5 Pro model, but it moved on and released Argon instead",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google was supposed to launch a 3.5 Pro model, but it moved on and released Argon instead."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-10-13",
-      "url": "https://www.engadget.com/2285023/google-gemini-4-argon-is-now-available-in-the-gemini-app-and-ai-mode-in-search",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "SpaceX has since gone all-in on orbital data centers, and Satlyt’s software is set to launch Thursday on a SpaceX rocket alongside the first prototype for Google’s space data center effort, Project Suncatcher",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "SpaceX has since gone all-in on orbital data centers, and Satlyt’s software is set to launch Thursday on a SpaceX rocket alongside the first prototype for Google’s space data center effort, Project Suncatcher."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-10-13",
-      "url": "https://techcrunch.com/2026/10/13/satlyt-founded-by-a-former-google-and-spacex-product-manager-raises-8m-to-run-ai-on-satellites",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "NVIDIA",
-      "candidateModel": "usage",
-      "signal": "Related open source projects Model Streamer and Grove complement the platform by accelerating model loading and orchestrating multicomponent inference workloads",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "NVIDIA",
-          "buyer": "",
-          "offering": "of NVIDIA DSX AI Factory Platform",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "NVIDIA Developer",
-      "date": "2026-10-13",
-      "url": "https://developer.nvidia.com/blog/nvidia-runai-is-now-open-source-as-part-of-nvidia-dsx-ai-factory-platform",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "hardware",
-      "signal": "Apple TV, HomePods, and HomeView are included in Apple's Wearables, Home, and Accessories category, which reported $7.88 billion in sales in the most recent quarter ended June, which was about 7% of the company's total revenue",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Apple",
-          "buyer": "",
-          "offering": "as showcase for Siri AI\nApp",
-          "billingUnit": "",
-          "priceOrRevenue": "$7.88 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "CNBC",
-      "date": "2026-10-13",
-      "url": "https://www.cnbc.com/2026/10/13/apple-homeview-smart-home-siri-ai.html",
-      "reasons": [
-        "missing:buyer",
         "missing:billingUnit",
         "missing:recurringRevenue"
       ]
@@ -6482,109 +6544,6 @@
       "source": "AWS Machine Learning Blog",
       "date": "2026-10-13",
       "url": "https://aws.amazon.com/blogs/machine-learning/build-long-horizon-agents-with-grok-4-7-on-amazon-bedrock",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Microsoft",
-      "candidateModel": "hardware",
-      "signal": "Open-source Integrated HSM for hardware security | Microsoft Azure Blog",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Microsoft",
-          "buyer": "",
-          "offering": "",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "offering",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Microsoft Azure Blog",
-      "date": "2026-10-13",
-      "url": "https://azure.microsoft.com/en-us/blog/advancing-hardware-security-with-open-source-integrated-hsm-technology",
-      "reasons": [
-        "missing:buyer",
-        "missing:offering",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Microsoft",
-      "candidateModel": "hardware",
-      "signal": "Advancing hardware security with open-source Integrated HSM technology At this year’s OCP Global Summit , Microsoft announced Project Tessera, the evolution of the Azure Integrated Hardware Security Module (HSM), into a fully open-source initiative developed in collaboration with Marvell®, Oracle, and Open Compute Project (OCP)",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Microsoft",
-          "buyer": "",
-          "offering": "",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "offering",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Microsoft Azure Blog",
-      "date": "2026-10-13",
-      "url": "https://azure.microsoft.com/en-us/blog/advancing-hardware-security-with-open-source-integrated-hsm-technology",
-      "reasons": [
-        "missing:buyer",
-        "missing:offering",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "usage",
-      "signal": "Review activity and credit usage across ChatGPT Work and Codex, identify where additional enablement may help and when members or groups are approaching credit limits",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OpenAI",
-          "buyer": "",
-          "offering": "when members or groups are app",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "OpenAI",
-      "date": "2026-10-13",
-      "url": "https://openai.com/index/introducing-admin-plugin",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
