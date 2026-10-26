@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { appendFile, mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
@@ -113,6 +113,25 @@ const recovery = [
   ...commonPublish,
 ];
 
+// Source collectors and enrichers. A remote source or model outage in one of
+// them must not stop the run: after its own retries fail, the files it
+// touched are rolled back and the run continues on the last collected data.
+// Freshness and evidence gates in commonPublish still decide publication, so
+// a collector that keeps failing ends in a blocked, reported run instead of
+// stale data being published as current.
+const COLLECTOR_STEPS = new Set([
+  "collect-direct-sources", "crawl-news", "crawl-stocks", "crawl-financials", "stock-events",
+  "briefing", "startup-radar", "insights", "research", "markets", "refresh-source-content",
+  "refresh-market-content", "reframe-source-briefs", "a16z-startups", "startup-profiles",
+  "startup-organizations", "localize-source-sentences", "company-officials", "company-profiles",
+  "technology-signals", "monetization", "strategic-ventures", "company-intelligence",
+  "company-news-index", "investment-map",
+]);
+const git = args => execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+const snapshot = () => {
+  try { return git(["stash", "create"]) || git(["rev-parse", "HEAD"]); } catch { return ""; }
+};
+
 const steps = mode === "full" ? full : mode === "recovery" ? recovery : commonPublish;
 const startedAt = new Date().toISOString();
 const report = { schemaVersion: 1, mode, dryRun, startedAt, completedAt: null, status: "running", stages: [] };
@@ -143,10 +162,21 @@ const run = step => new Promise((resolveRun, rejectRun) => {
 
 try {
   for (const step of steps) {
-    await run(step);
+    const optional = !dryRun && mode !== "publish" && COLLECTOR_STEPS.has(step.id);
+    const before = optional ? snapshot() : "";
+    try {
+      await run(step);
+    } catch (error) {
+      if (!optional || !before) throw error;
+      git(["checkout", before, "--", "."]);
+      const stage = report.stages.at(-1);
+      if (stage?.id === step.id) stage.status = "degraded-retained-previous";
+      report.degraded = [...(report.degraded || []), step.id];
+      console.warn(`[site-update] DEGRADED ${step.id}: ${error.message}; kept the previous data and continued`);
+    }
     await persist();
   }
-  report.status = dryRun ? "planned" : "completed";
+  report.status = dryRun ? "planned" : report.degraded?.length ? "completed-degraded" : "completed";
 } catch (error) {
   report.status = "failed";
   report.error = error.message;
