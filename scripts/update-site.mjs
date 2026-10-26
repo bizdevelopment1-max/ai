@@ -2,6 +2,7 @@
 import { execFileSync, spawn } from "node:child_process";
 import { appendFile, mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const root = process.cwd();
 const modeArg = process.argv.find(value => value.startsWith("--mode="));
@@ -136,6 +137,10 @@ const steps = mode === "full" ? full : mode === "recovery" ? recovery : commonPu
 const startedAt = new Date().toISOString();
 const report = { schemaVersion: 1, mode, dryRun, startedAt, completedAt: null, status: "running", stages: [] };
 
+// Every Node stage (and the retries run-with-retry spawns) loads the default
+// fetch timeout, so a source that stops responding cannot stall a stage.
+const nodeOptions = [process.env.NODE_OPTIONS, `--import=${pathToFileURL(resolve(root, "scripts/fetch-timeout.mjs")).href}`]
+  .filter(Boolean).join(" ");
 const persist = async () => writeFile(resolve(root, "automation-status.json"), `${JSON.stringify(report, null, 2)}\n`);
 const run = step => new Promise((resolveRun, rejectRun) => {
   const started = Date.now();
@@ -147,7 +152,7 @@ const run = step => new Promise((resolveRun, rejectRun) => {
   }
   const child = spawn(step.command, step.args, {
     cwd: root,
-    env: { ...process.env, ...(step.env || {}) },
+    env: { ...process.env, NODE_OPTIONS: nodeOptions, ...(step.env || {}) },
     stdio: "inherit",
     shell: false,
   });
