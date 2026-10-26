@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-26T15:39:20.394Z",
+  "generatedAt": "2026-10-26T16:16:47.125Z",
   "registryVersion": 5,
   "status": "partial",
   "summary": {
-    "runId": "6565876716dd6fdc865b1666",
-    "observedAt": "2026-10-26T15:39:20.394Z",
+    "runId": "4c08c18dc10c273f0451e9f4",
+    "observedAt": "2026-10-26T16:16:47.125Z",
     "registryVersion": 5,
     "attempted": 51,
     "healthy": 45,
-    "quiet": 3,
-    "failed": 3,
+    "quiet": 2,
+    "failed": 4,
     "observations": 397,
-    "newOrRevised": 61
+    "newOrRevised": 54
   },
   "categoryCoverage": [
     {
@@ -102,46 +102,18 @@
   ],
   "streamHealth": [
     {
-      "stream": "official-feed:GSMA Newsroom",
-      "source": "GSMA Newsroom",
-      "category": "carrier-and-standards",
-      "state": "failed",
-      "itemCount": 0,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-13T03:18:52.350Z",
-      "failureSince": "2026-10-13T10:54:47.394Z",
-      "consecutiveFailureRuns": 24,
-      "error": "https://www.gsma.com/newsroom/feed/: HTTP 403",
-      "durationMs": 232
-    },
-    {
       "stream": "official-feed:Google Blog",
       "source": "Google Blog",
       "category": "device-and-platform",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 271,
+      "durationMs": 270,
       "activeEndpoint": "https://blog.google/rss/",
       "attemptedEndpoints": [
         "https://blog.google/rss/"
-      ]
-    },
-    {
-      "stream": "official-feed:Hugging Face Blog",
-      "source": "Hugging Face Blog",
-      "category": "model-and-open-source",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 292,
-      "activeEndpoint": "https://huggingface.co/blog/feed.xml",
-      "attemptedEndpoints": [
-        "https://huggingface.co/blog/feed.xml"
       ]
     },
     {
@@ -150,13 +122,41 @@
       "category": "agentic-commerce",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 296,
+      "durationMs": 283,
       "activeEndpoint": "https://stripe.com/blog/feed.rss",
       "attemptedEndpoints": [
         "https://stripe.com/blog/feed.rss"
+      ]
+    },
+    {
+      "stream": "official-feed:GSMA Newsroom",
+      "source": "GSMA Newsroom",
+      "category": "carrier-and-standards",
+      "state": "failed",
+      "itemCount": 0,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-13T03:18:52.350Z",
+      "failureSince": "2026-10-13T10:54:47.394Z",
+      "consecutiveFailureRuns": 25,
+      "error": "https://www.gsma.com/newsroom/feed/: HTTP 403",
+      "durationMs": 294
+    },
+    {
+      "stream": "official-feed:Hugging Face Blog",
+      "source": "Hugging Face Blog",
+      "category": "model-and-open-source",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 365,
+      "activeEndpoint": "https://huggingface.co/blog/feed.xml",
+      "attemptedEndpoints": [
+        "https://huggingface.co/blog/feed.xml"
       ]
     },
     {
@@ -165,58 +165,13 @@
       "category": "cloud-workload-and-inference",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 369,
+      "durationMs": 438,
       "activeEndpoint": "https://aws.amazon.com/blogs/machine-learning/feed/",
       "attemptedEndpoints": [
         "https://aws.amazon.com/blogs/machine-learning/feed/"
-      ]
-    },
-    {
-      "stream": "official-feed:OpenAI News",
-      "source": "OpenAI News",
-      "category": "model-and-agent-platform",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 407,
-      "activeEndpoint": "https://openai.com/news/rss.xml",
-      "attemptedEndpoints": [
-        "https://openai.com/news/rss.xml"
-      ]
-    },
-    {
-      "stream": "official-feed:Apple Newsroom",
-      "source": "Apple Newsroom",
-      "category": "device-and-platform",
-      "state": "healthy",
-      "itemCount": 6,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 414,
-      "activeEndpoint": "https://www.apple.com/newsroom/rss-feed.rss",
-      "attemptedEndpoints": [
-        "https://www.apple.com/newsroom/rss-feed.rss"
-      ]
-    },
-    {
-      "stream": "official-feed:Databricks Blog",
-      "source": "Databricks Blog",
-      "category": "data-rag-and-vector",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 438,
-      "activeEndpoint": "https://www.databricks.com/feed",
-      "attemptedEndpoints": [
-        "https://www.databricks.com/feed"
       ]
     },
     {
@@ -225,43 +180,28 @@
       "category": "cloud-workload-and-inference",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 447,
+      "durationMs": 504,
       "activeEndpoint": "https://azure.microsoft.com/en-us/blog/feed/",
       "attemptedEndpoints": [
         "https://azure.microsoft.com/en-us/blog/feed/"
       ]
     },
     {
-      "stream": "official-feed:Microsoft Official Blog",
-      "source": "Microsoft Official Blog",
-      "category": "platform-and-enterprise",
+      "stream": "official-feed:Databricks Blog",
+      "source": "Databricks Blog",
+      "category": "data-rag-and-vector",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 575,
-      "activeEndpoint": "https://blogs.microsoft.com/feed/",
+      "durationMs": 534,
+      "activeEndpoint": "https://www.databricks.com/feed",
       "attemptedEndpoints": [
-        "https://blogs.microsoft.com/feed/"
-      ]
-    },
-    {
-      "stream": "official-feed:GitHub AI and ML",
-      "source": "GitHub AI and ML",
-      "category": "developer-ecosystem",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 588,
-      "activeEndpoint": "https://github.blog/ai-and-ml/feed/",
-      "attemptedEndpoints": [
-        "https://github.blog/ai-and-ml/feed/"
+        "https://www.databricks.com/feed"
       ]
     },
     {
@@ -270,13 +210,58 @@
       "category": "data-rag-and-vector",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 620,
+      "durationMs": 792,
       "activeEndpoint": "https://weaviate.io/blog/rss.xml",
       "attemptedEndpoints": [
         "https://weaviate.io/blog/rss.xml"
+      ]
+    },
+    {
+      "stream": "official-feed:Apple Newsroom",
+      "source": "Apple Newsroom",
+      "category": "device-and-platform",
+      "state": "healthy",
+      "itemCount": 6,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 821,
+      "activeEndpoint": "https://www.apple.com/newsroom/rss-feed.rss",
+      "attemptedEndpoints": [
+        "https://www.apple.com/newsroom/rss-feed.rss"
+      ]
+    },
+    {
+      "stream": "official-feed:OpenAI News",
+      "source": "OpenAI News",
+      "category": "model-and-agent-platform",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 842,
+      "activeEndpoint": "https://openai.com/news/rss.xml",
+      "attemptedEndpoints": [
+        "https://openai.com/news/rss.xml"
+      ]
+    },
+    {
+      "stream": "official-feed:Microsoft Official Blog",
+      "source": "Microsoft Official Blog",
+      "category": "platform-and-enterprise",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 892,
+      "activeEndpoint": "https://blogs.microsoft.com/feed/",
+      "attemptedEndpoints": [
+        "https://blogs.microsoft.com/feed/"
       ]
     },
     {
@@ -285,13 +270,43 @@
       "category": "compute-and-edge",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 637,
+      "durationMs": 958,
       "activeEndpoint": "https://blogs.nvidia.com/feed/",
       "attemptedEndpoints": [
         "https://blogs.nvidia.com/feed/"
+      ]
+    },
+    {
+      "stream": "official-feed:GitHub AI and ML",
+      "source": "GitHub AI and ML",
+      "category": "developer-ecosystem",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 987,
+      "activeEndpoint": "https://github.blog/ai-and-ml/feed/",
+      "attemptedEndpoints": [
+        "https://github.blog/ai-and-ml/feed/"
+      ]
+    },
+    {
+      "stream": "official-feed:Android Developers",
+      "source": "Android Developers",
+      "category": "device-and-platform",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 1172,
+      "activeEndpoint": "https://android-developers.googleblog.com/feeds/posts/default/-/AI",
+      "attemptedEndpoints": [
+        "https://android-developers.googleblog.com/feeds/posts/default/-/AI"
       ]
     },
     {
@@ -300,27 +315,12 @@
       "category": "model-and-agent-platform",
       "state": "failed",
       "itemCount": 0,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
       "lastSuccessAt": "2026-08-27T11:25:29.534Z",
       "failureSince": "2026-10-13T01:23:34.363Z",
-      "consecutiveFailureRuns": 30,
+      "consecutiveFailureRuns": 31,
       "error": "https://ir.kuaishou.com/rss/news-releases.xml: HTTP 403",
-      "durationMs": 724
-    },
-    {
-      "stream": "official-feed:Android Developers",
-      "source": "Android Developers",
-      "category": "device-and-platform",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 741,
-      "activeEndpoint": "https://android-developers.googleblog.com/feeds/posts/default/-/AI",
-      "attemptedEndpoints": [
-        "https://android-developers.googleblog.com/feeds/posts/default/-/AI"
-      ]
+      "durationMs": 1429
     },
     {
       "stream": "official-sitemap:Anthropic",
@@ -328,28 +328,13 @@
       "category": "model-provider",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 817,
+      "durationMs": 1459,
       "activeEndpoint": "https://www.anthropic.com/sitemap.xml",
       "attemptedEndpoints": [
         "https://www.anthropic.com/sitemap.xml"
-      ]
-    },
-    {
-      "stream": "official-sitemap:Stability AI",
-      "source": "Stability AI",
-      "category": "company",
-      "state": "healthy",
-      "itemCount": 3,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 921,
-      "activeEndpoint": "https://stability.ai/sitemap.xml",
-      "attemptedEndpoints": [
-        "https://stability.ai/sitemap.xml"
       ]
     },
     {
@@ -358,13 +343,28 @@
       "category": "company",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 952,
+      "durationMs": 1698,
       "activeEndpoint": "https://www.abridge.com/sitemap.xml",
       "attemptedEndpoints": [
         "https://www.abridge.com/sitemap.xml"
+      ]
+    },
+    {
+      "stream": "official-sitemap:Stability AI",
+      "source": "Stability AI",
+      "category": "company",
+      "state": "healthy",
+      "itemCount": 3,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 1856,
+      "activeEndpoint": "https://stability.ai/sitemap.xml",
+      "attemptedEndpoints": [
+        "https://stability.ai/sitemap.xml"
       ]
     },
     {
@@ -373,10 +373,10 @@
       "category": "competitor-device",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 1440,
+      "durationMs": 2350,
       "activeEndpoint": "https://www.honor.com/global/sitemap.xml",
       "attemptedEndpoints": [
         "https://www.honor.com/global/sitemap.xml"
@@ -388,10 +388,10 @@
       "category": "research-release",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 1767,
+      "durationMs": 3456,
       "activeEndpoint": "https://www.juniperresearch.com/sitemap.xml",
       "attemptedEndpoints": [
         "https://www.juniperresearch.com/sitemap.xml"
@@ -403,28 +403,28 @@
       "category": "compute-and-edge",
       "state": "healthy",
       "itemCount": 10,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 1974,
+      "durationMs": 3794,
       "activeEndpoint": "https://www.qualcomm.com/sitemap.xml",
       "attemptedEndpoints": [
         "https://www.qualcomm.com/sitemap.xml"
       ]
     },
     {
-      "stream": "official-sitemap:KT Corporate",
-      "source": "KT Corporate",
-      "category": "carrier-bundle",
-      "state": "reachable-quiet",
-      "itemCount": 0,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": null,
+      "stream": "official-sitemap:Visa Newsroom",
+      "source": "Visa Newsroom",
+      "category": "agentic-commerce",
+      "state": "healthy",
+      "itemCount": 1,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 1990,
-      "activeEndpoint": "https://corp.kt.com/sitemap.xml",
+      "durationMs": 3846,
+      "activeEndpoint": "https://usa.visa.com/sitemap.xml",
       "attemptedEndpoints": [
-        "https://corp.kt.com/sitemap.xml"
+        "https://usa.visa.com/sitemap.xml"
       ]
     },
     {
@@ -433,10 +433,10 @@
       "category": "research-release",
       "state": "reachable-quiet",
       "itemCount": 0,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
       "lastSuccessAt": null,
       "consecutiveFailureRuns": 0,
-      "durationMs": 2060,
+      "durationMs": 3908,
       "activeEndpoint": "https://www.canalys.com/sitemap.xml",
       "attemptedEndpoints": [
         "https://www.canalys.com/sitemap.xml"
@@ -448,25 +448,14 @@
       "category": "model-and-research",
       "state": "healthy",
       "itemCount": 7,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 2146,
+      "durationMs": 3964,
       "activeEndpoint": "https://deepmind.google/sitemap.xml",
       "attemptedEndpoints": [
         "https://deepmind.google/sitemap.xml"
       ]
-    },
-    {
-      "stream": "arxiv-on-device-ai",
-      "source": "arXiv",
-      "category": "academic-and-open-source",
-      "state": "healthy",
-      "itemCount": 20,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 2340
     },
     {
       "stream": "huggingface-trending",
@@ -474,55 +463,21 @@
       "category": "model-and-open-source",
       "state": "healthy",
       "itemCount": 20,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 2396
+      "durationMs": 4120
     },
     {
-      "stream": "official-sitemap:Runway",
-      "source": "Runway",
-      "category": "company",
+      "stream": "arxiv-on-device-ai",
+      "source": "arXiv",
+      "category": "academic-and-open-source",
       "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "itemCount": 20,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 2445,
-      "activeEndpoint": "https://runwayml.com/sitemap.xml",
-      "attemptedEndpoints": [
-        "https://runwayml.com/sitemap.xml"
-      ]
-    },
-    {
-      "stream": "official-sitemap:Writer",
-      "source": "Writer",
-      "category": "company",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 2539,
-      "activeEndpoint": "https://writer.com/sitemap_index.xml",
-      "attemptedEndpoints": [
-        "https://writer.com/sitemap_index.xml"
-      ]
-    },
-    {
-      "stream": "official-sitemap:OpenAI",
-      "source": "OpenAI",
-      "category": "model-provider",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 2563,
-      "activeEndpoint": "https://openai.com/sitemap.xml",
-      "attemptedEndpoints": [
-        "https://openai.com/sitemap.xml"
-      ]
+      "durationMs": 4238
     },
     {
       "stream": "coinbase-agentkit-releases",
@@ -530,54 +485,24 @@
       "category": "agentic-commerce",
       "state": "healthy",
       "itemCount": 18,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 2549
+      "durationMs": 4396
     },
     {
-      "stream": "official-feed:SK hynix Newsroom",
-      "source": "SK hynix Newsroom",
-      "category": "memory-and-supply-chain",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 2701,
-      "activeEndpoint": "https://news.skhynix.com/feed/",
-      "attemptedEndpoints": [
-        "https://news.skhynix.com/feed/"
-      ]
-    },
-    {
-      "stream": "official-sitemap:Lovable",
-      "source": "Lovable",
+      "stream": "official-sitemap:Runway",
+      "source": "Runway",
       "category": "company",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 2764,
-      "activeEndpoint": "https://lovable.dev/sitemap.xml",
+      "durationMs": 4423,
+      "activeEndpoint": "https://runwayml.com/sitemap.xml",
       "attemptedEndpoints": [
-        "https://lovable.dev/sitemap.xml"
-      ]
-    },
-    {
-      "stream": "official-sitemap:Sierra AI",
-      "source": "Sierra AI",
-      "category": "company",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 2784,
-      "activeEndpoint": "https://sierra.ai/sitemap.xml",
-      "attemptedEndpoints": [
-        "https://sierra.ai/sitemap.xml"
+        "https://runwayml.com/sitemap.xml"
       ]
     },
     {
@@ -586,42 +511,104 @@
       "category": "model-and-agent-platform",
       "state": "healthy",
       "itemCount": 1,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 2775,
+      "durationMs": 4429,
       "activeEndpoint": "https://www.minimax.io/news",
       "attemptedEndpoints": [
         "https://www.minimax.io/news"
       ]
     },
     {
-      "stream": "official-sitemap:Visa Newsroom",
-      "source": "Visa Newsroom",
-      "category": "agentic-commerce",
+      "stream": "official-sitemap:Writer",
+      "source": "Writer",
+      "category": "company",
       "state": "healthy",
-      "itemCount": 1,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 2846,
-      "activeEndpoint": "https://usa.visa.com/sitemap.xml",
+      "durationMs": 4468,
+      "activeEndpoint": "https://writer.com/sitemap_index.xml",
       "attemptedEndpoints": [
-        "https://usa.visa.com/sitemap.xml"
+        "https://writer.com/sitemap_index.xml"
       ]
     },
     {
-      "stream": "official-sitemap:Counterpoint Research",
-      "source": "Counterpoint Research",
-      "category": "research-release",
-      "state": "failed",
-      "itemCount": 0,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-08-27T11:25:29.534Z",
-      "failureSince": "2026-10-13T01:23:34.363Z",
-      "consecutiveFailureRuns": 30,
-      "error": "https://www.counterpointresearch.com/sitemap.xml: HTTP 403",
-      "durationMs": 2865
+      "stream": "official-sitemap:Lovable",
+      "source": "Lovable",
+      "category": "company",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 4519,
+      "activeEndpoint": "https://lovable.dev/sitemap.xml",
+      "attemptedEndpoints": [
+        "https://lovable.dev/sitemap.xml"
+      ]
+    },
+    {
+      "stream": "official-feed:SK hynix Newsroom",
+      "source": "SK hynix Newsroom",
+      "category": "memory-and-supply-chain",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 4551,
+      "activeEndpoint": "https://news.skhynix.com/feed/",
+      "attemptedEndpoints": [
+        "https://news.skhynix.com/feed/"
+      ]
+    },
+    {
+      "stream": "official-sitemap:OpenAI",
+      "source": "OpenAI",
+      "category": "model-provider",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 4618,
+      "activeEndpoint": "https://openai.com/sitemap.xml",
+      "attemptedEndpoints": [
+        "https://openai.com/sitemap.xml"
+      ]
+    },
+    {
+      "stream": "official-sitemap:OPPO Newsroom",
+      "source": "OPPO Newsroom",
+      "category": "competitor-device",
+      "state": "healthy",
+      "itemCount": 2,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 4666,
+      "activeEndpoint": "https://www.oppo.com/sitemap.xml",
+      "attemptedEndpoints": [
+        "https://www.oppo.com/sitemap.xml"
+      ]
+    },
+    {
+      "stream": "official-sitemap:Sierra AI",
+      "source": "Sierra AI",
+      "category": "company",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 4690,
+      "activeEndpoint": "https://sierra.ai/sitemap.xml",
+      "attemptedEndpoints": [
+        "https://sierra.ai/sitemap.xml"
+      ]
     },
     {
       "stream": "xiaomi-global-discovery",
@@ -629,25 +616,10 @@
       "category": "competitor-device",
       "state": "healthy",
       "itemCount": 10,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 2862
-    },
-    {
-      "stream": "official-sitemap:Verizon Newsroom",
-      "source": "Verizon Newsroom",
-      "category": "carrier-bundle",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 2929,
-      "activeEndpoint": "https://www.verizon.com/about/sitemap.xml",
-      "attemptedEndpoints": [
-        "https://www.verizon.com/about/sitemap.xml"
-      ]
+      "durationMs": 4678
     },
     {
       "stream": "github-ai-repositories",
@@ -655,10 +627,38 @@
       "category": "developer-ecosystem",
       "state": "healthy",
       "itemCount": 20,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 3013
+      "durationMs": 4841
+    },
+    {
+      "stream": "official-sitemap:Counterpoint Research",
+      "source": "Counterpoint Research",
+      "category": "research-release",
+      "state": "failed",
+      "itemCount": 0,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-08-27T11:25:29.534Z",
+      "failureSince": "2026-10-13T01:23:34.363Z",
+      "consecutiveFailureRuns": 31,
+      "error": "https://www.counterpointresearch.com/sitemap.xml: HTTP 403",
+      "durationMs": 4883
+    },
+    {
+      "stream": "official-sitemap:Verizon Newsroom",
+      "source": "Verizon Newsroom",
+      "category": "carrier-bundle",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 4966,
+      "activeEndpoint": "https://www.verizon.com/about/sitemap.xml",
+      "attemptedEndpoints": [
+        "https://www.verizon.com/about/sitemap.xml"
+      ]
     },
     {
       "stream": "official-sitemap:AT&T Newsroom",
@@ -666,10 +666,10 @@
       "category": "carrier-bundle",
       "state": "healthy",
       "itemCount": 10,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 3124,
+      "durationMs": 5168,
       "activeEndpoint": "https://news.google.com/rss/search?q=site%3Aabout.att.com%20(AI%20OR%20agent%20OR%20connectivity)&hl=en-US&gl=US&ceid=US:en",
       "attemptedEndpoints": [
         "https://about.att.com/sitemap.xml",
@@ -684,10 +684,10 @@
       "category": "app-economics",
       "state": "healthy",
       "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 3157,
+      "durationMs": 5252,
       "activeEndpoint": "https://sensortower.com/sitemap.xml",
       "attemptedEndpoints": [
         "https://sensortower.com/sitemap.xml"
@@ -699,10 +699,10 @@
       "category": "agentic-commerce",
       "state": "healthy",
       "itemCount": 12,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 3181,
+      "durationMs": 5283,
       "activeEndpoint": "https://news.google.com/rss/search?q=site%3Amastercard.com%2Fnews%20(AI%20OR%20agentic%20commerce%20OR%20payment)&hl=en-US&gl=US&ceid=US:en",
       "attemptedEndpoints": [
         "https://www.mastercard.com/sitemap.xml",
@@ -712,78 +712,33 @@
       "fallbackSourceTier": "reported"
     },
     {
-      "stream": "official-html:Suno Blog",
-      "source": "Suno Blog",
-      "category": "ai-application",
-      "state": "healthy",
-      "itemCount": 12,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 3412,
-      "activeEndpoint": "https://suno.com/blog",
-      "attemptedEndpoints": [
-        "https://suno.com/blog"
-      ]
-    },
-    {
       "stream": "official-sitemap:IDC Research",
       "source": "IDC Research",
       "category": "research-release",
       "state": "healthy",
       "itemCount": 12,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 3571,
+      "durationMs": 5738,
       "activeEndpoint": "https://www.idc.com/sitemap_index.xml",
       "attemptedEndpoints": [
         "https://www.idc.com/sitemap_index.xml"
       ]
     },
     {
-      "stream": "official-sitemap:OPPO Newsroom",
-      "source": "OPPO Newsroom",
-      "category": "competitor-device",
+      "stream": "official-html:Suno Blog",
+      "source": "Suno Blog",
+      "category": "ai-application",
       "state": "healthy",
-      "itemCount": 2,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "itemCount": 12,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 3879,
-      "activeEndpoint": "https://www.oppo.com/sitemap.xml",
+      "durationMs": 5905,
+      "activeEndpoint": "https://suno.com/blog",
       "attemptedEndpoints": [
-        "https://www.oppo.com/sitemap.xml"
-      ]
-    },
-    {
-      "stream": "official-sitemap:Arm Newsroom",
-      "source": "Arm Newsroom",
-      "category": "compute-and-edge",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 4229,
-      "activeEndpoint": "https://newsroom.arm.com/sitemap_index.xml",
-      "attemptedEndpoints": [
-        "https://newsroom.arm.com/sitemap_index.xml"
-      ]
-    },
-    {
-      "stream": "official-sitemap:Nomura Research Institute",
-      "source": "Nomura Research Institute",
-      "category": "consumer-survey",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 4313,
-      "activeEndpoint": "https://www.nri.com/sitemap.xml",
-      "attemptedEndpoints": [
-        "https://www.nri.com/sitemap.xml"
+        "https://suno.com/blog"
       ]
     },
     {
@@ -792,14 +747,73 @@
       "category": "consumer-survey",
       "state": "healthy",
       "itemCount": 1,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 4443,
+      "durationMs": 6173,
       "activeEndpoint": "https://www.pewresearch.org/sitemap_index.xml",
       "attemptedEndpoints": [
         "https://www.pewresearch.org/sitemap_index.xml"
       ]
+    },
+    {
+      "stream": "official-sitemap:Nomura Research Institute",
+      "source": "Nomura Research Institute",
+      "category": "consumer-survey",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 6824,
+      "activeEndpoint": "https://www.nri.com/sitemap.xml",
+      "attemptedEndpoints": [
+        "https://www.nri.com/sitemap.xml"
+      ]
+    },
+    {
+      "stream": "official-sitemap:Arm Newsroom",
+      "source": "Arm Newsroom",
+      "category": "compute-and-edge",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 7423,
+      "activeEndpoint": "https://newsroom.arm.com/sitemap_index.xml",
+      "attemptedEndpoints": [
+        "https://newsroom.arm.com/sitemap_index.xml"
+      ]
+    },
+    {
+      "stream": "official-feed:Owned-device Newsroom",
+      "source": "Owned-device Newsroom",
+      "category": "device-and-form-factor",
+      "state": "healthy",
+      "itemCount": 8,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 0,
+      "durationMs": 15404,
+      "activeEndpoint": "https://news.samsung.com/global/feed/",
+      "attemptedEndpoints": [
+        "https://news.samsung.com/global/feed/rss",
+        "https://news.samsung.com/global/feed/"
+      ]
+    },
+    {
+      "stream": "official-sitemap:KT Corporate",
+      "source": "KT Corporate",
+      "category": "carrier-bundle",
+      "state": "failed",
+      "itemCount": 0,
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": null,
+      "failureSince": "2026-10-26T16:16:47.125Z",
+      "consecutiveFailureRuns": 1,
+      "error": "https://corp.kt.com/sitemap.xml: fetch failed",
+      "durationMs": 20959
     },
     {
       "stream": "official-sitemap:SKT Newsroom",
@@ -807,10 +821,10 @@
       "category": "carrier-bundle",
       "state": "reachable-quiet",
       "itemCount": 0,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
       "lastSuccessAt": "2026-08-16T02:54:08.429Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 23043,
+      "durationMs": 22730,
       "activeEndpoint": "https://news.sktelecom.com/sitemap.xml",
       "attemptedEndpoints": [
         "https://news.sktelecom.com/sitemap.xml"
@@ -822,29 +836,10 @@
       "category": "app-economics",
       "state": "healthy",
       "itemCount": 16,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
+      "lastAttemptAt": "2026-10-26T16:16:47.125Z",
+      "lastSuccessAt": "2026-10-26T16:16:47.125Z",
       "consecutiveFailureRuns": 0,
-      "durationMs": 27243
-    },
-    {
-      "stream": "official-feed:Owned-device Newsroom",
-      "source": "Owned-device Newsroom",
-      "category": "device-and-form-factor",
-      "state": "healthy",
-      "itemCount": 8,
-      "lastAttemptAt": "2026-10-26T15:39:20.394Z",
-      "lastSuccessAt": "2026-10-26T15:39:20.394Z",
-      "consecutiveFailureRuns": 0,
-      "durationMs": 30615,
-      "activeEndpoint": "https://news.google.com/rss/search?q=site%3Anews.samsung.com%2Fglobal%20(AI%20OR%20fold%20OR%20satellite%20OR%20wearable)&hl=en-US&gl=US&ceid=US:en",
-      "attemptedEndpoints": [
-        "https://news.samsung.com/global/feed/rss",
-        "https://news.samsung.com/global/feed/",
-        "https://news.google.com/rss/search?q=site%3Anews.samsung.com%2Fglobal%20(AI%20OR%20fold%20OR%20satellite%20OR%20wearable)&hl=en-US&gl=US&ceid=US:en"
-      ],
-      "fallbackReason": "https://news.samsung.com/global/feed/rss: This operation was aborted | https://news.samsung.com/global/feed/: This operation was aborted",
-      "fallbackSourceTier": "reported"
+      "durationMs": 73303
     }
   ],
   "connectorStatus": [
@@ -946,6 +941,6 @@
       "2026-08",
       "2026-10"
     ],
-    "cumulativeEvents": 7120
+    "cumulativeEvents": 7174
   }
 }
