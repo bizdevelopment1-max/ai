@@ -124,10 +124,25 @@ const normalizeClause = value => {
   // Deterministic final gate: no Korean presentation clause may retain a
   // declarative -다 ending even when a previously unseen verb is generated
   if (/다$/u.test(clause)) clause = (nominalizeStatementEnding(clause) || clause.replace(/다$/u, "")).trim();
+  // A -ㅂ니다 ending already cut to "-ㅂ니" upstream ("가져옵니") becomes "가져옴"
+  const cut = clause.match(/([가-힣])니$/u);
+  if (cut && jongseongOf(cut[1]) === JONG_BIEUP) clause = clause.slice(0, -2) + withJongseong(cut[1], JONG_MIEUM);
   return `${clause}${closing}`;
 };
 
+// Repeats the single pass until the copy stops changing, so normalized copy is
+// always a fixed point of bulletizeKorean (the publication gate requires it).
 export function bulletizeKorean(value) {
+  let current = bulletizeOnce(value);
+  for (let pass = 0; pass < 4; pass += 1) {
+    const next = bulletizeOnce(current);
+    if (next === current) break;
+    current = next;
+  }
+  return current;
+}
+
+function bulletizeOnce(value) {
   const source = String(value ?? "");
   if (!source || !HANGUL.test(source) || URL_ONLY.test(source.trim())) return source;
 
@@ -152,8 +167,11 @@ export function hasKoreanProseEnding(value) {
     // Korean — it only appears when a -ㅂ니다 ending was cut without shifting
     // the stem's batchim (e.g. "가져옵니다" -> "가져옵니"). Treat it the same
     // as an un-nominalized declarative ending so it fails this gate.
+    // Only a 니 after a ㅂ-final syllable is that artefact; a word that simply
+    // ends in 니 ("미니", "어머니") is ordinary noun copy.
+    const cut = clause.match(/([가-힣])니["'”’]*\s*$/u);
     return /[가-힣](?:다|습니다|ㅂ니다)[.!?。！？]*["'”’]*\s*$/u.test(clause)
-      || /[가-힣]니["'”’]*\s*$/u.test(clause);
+      || (!!cut && jongseongOf(cut[1]) === JONG_BIEUP);
   });
 }
 
