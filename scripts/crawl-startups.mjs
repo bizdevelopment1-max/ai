@@ -27,6 +27,8 @@ import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const UA = CRAWLER_USER_AGENT;
 const TODAY = new Date().toISOString().slice(0, 10);
+const LATEST_CONCURRENCY = Math.max(1, Number(process.env.STARTUP_LATEST_CONCURRENCY || 6));
+const LATEST_BUDGET_MS = Math.max(10_000, Number(process.env.STARTUP_LATEST_BUDGET_MS || 90_000));
 const FORCE_REFRESH = /^(1|true|yes)$/i.test(String(process.env.STARTUP_REFRESH_FORCE || ""));
 const operationalCopy = /(?:수집|확인|분석|업데이트|준비)\s*중|신호\s*(?:없음|대기)|데이터\s*없음/i;
 const scrub = s => {
@@ -288,7 +290,7 @@ function retainVerifiedCompanyDepth(rows, previousRows) {
 async function latest(name, locale) {
   try {
     const q = `"${name.replace(/\s*\(.*\)/, "")}" AI when:21d`;
-    const res = await fetch(googleNewsUrl(q, locale, 21), { headers: { "User-Agent": UA } });
+    const res = await fetch(googleNewsUrl(q, locale, 21), { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(10_000) });
     if (!res.ok) return null;
     const xml = await res.text();
     const m = /<item>([\s\S]*?)<\/item>/.exec(xml);
@@ -514,11 +516,22 @@ async function main() {
     return;
   }
 
+  // Latest-news lookups run in parallel within a time budget. A row that is
+  // not reached keeps its earlier signal through retainSourceHistory, so a
+  // slow news source shortens this refresh instead of stalling the stage.
   const locales = rotatingLocales();
-  for (const [index, s] of [...large, ...small].entries()) {
-    const n = await latest(s.name, locales[index % locales.length]);
-    if (n && !isExcludedText(`${n.title} ${n.source}`)) s.latest = n;
-  }
+  const lookups = [...large, ...small];
+  const deadline = Date.now() + LATEST_BUDGET_MS;
+  let cursor = 0;
+  await Promise.all(Array.from({ length: Math.min(LATEST_CONCURRENCY, lookups.length) }, async () => {
+    while (cursor < lookups.length && Date.now() < deadline) {
+      const index = cursor++;
+      const s = lookups[index];
+      const n = await latest(s.name, locales[index % locales.length]);
+      if (n && !isExcludedText(`${n.title} ${n.source}`)) s.latest = n;
+    }
+  }));
+  if (cursor < lookups.length) console.warn(`[startups] latest-signal budget reached: ${cursor}/${lookups.length} looked up`);
   console.log(`[startups] large ${large.length} · small ${small.length}, globally localized latest signals attached`);
   await enrichLatestSources([...large, ...small]);
 
