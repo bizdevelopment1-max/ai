@@ -201,15 +201,17 @@ export function selectCoreLines(text, title = "") {
   return selectInsightLines(text, title).map(item => item.line);
 }
 
-// Google News decoding costs two requests per record. Unpaced batches hit
-// HTTP 429 for most records, which left new research and market records
-// permanently withheld. Requests to Google are serialized with a minimum
-// interval, a 429 is retried after a back-off, and once Google keeps
-// throttling the rest of the run skips decoding instead of failing records.
-const GOOGLE_MIN_INTERVAL_MS = Math.max(0, Number(process.env.GOOGLE_NEWS_MIN_INTERVAL_MS || 1200));
-const GOOGLE_BREAKER_THRESHOLD = Math.max(1, Number(process.env.GOOGLE_NEWS_DECODE_BREAKER || 4));
-const GOOGLE_RETRY_WAITS_MS = String(process.env.GOOGLE_NEWS_RETRY_WAITS_MS || "4000,12000")
-  .split(",").map(Number).filter(value => Number.isFinite(value) && value >= 0);
+// Google News decoding answers most requests from GitHub Actions with HTTP
+// 429 and lets an occasional one through. A throttled record is reported as
+// GOOGLE_NEWS_THROTTLED so callers keep its previous state instead of
+// recording a failed extraction. Pacing, back-off retries and a breaker are
+// available through the environment but are off by default: on the hosted
+// runners they slowed crawl-news from ~70s to ~210s and resolved fewer
+// records than failing fast and moving on.
+const GOOGLE_MIN_INTERVAL_MS = Math.max(0, Number(process.env.GOOGLE_NEWS_MIN_INTERVAL_MS || 0));
+const GOOGLE_BREAKER_THRESHOLD = Math.max(0, Number(process.env.GOOGLE_NEWS_DECODE_BREAKER || 0));
+const GOOGLE_RETRY_WAITS_MS = String(process.env.GOOGLE_NEWS_RETRY_WAITS_MS || "")
+  .split(",").filter(value => value.trim() !== "").map(Number).filter(value => Number.isFinite(value) && value >= 0);
 export const GOOGLE_NEWS_THROTTLED = "google-news-throttled";
 const googleGate = { chain: Promise.resolve(), lastAt: 0, consecutiveThrottled: 0, open: false };
 const isThrottled = error => /(?:^|-)(?:HTTP |http-)?429$/.test(String(error?.message || ""));
@@ -218,13 +220,15 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function googleRequest(task) {
   for (let attempt = 0; ; attempt++) {
     if (googleGate.open) throw new Error(GOOGLE_NEWS_THROTTLED);
-    const turn = googleGate.chain.then(async () => {
-      const wait = GOOGLE_MIN_INTERVAL_MS - (Date.now() - googleGate.lastAt);
-      if (wait > 0) await sleep(wait);
-      googleGate.lastAt = Date.now();
-    });
-    googleGate.chain = turn.catch(() => {});
-    await turn;
+    if (GOOGLE_MIN_INTERVAL_MS > 0) {
+      const turn = googleGate.chain.then(async () => {
+        const wait = GOOGLE_MIN_INTERVAL_MS - (Date.now() - googleGate.lastAt);
+        if (wait > 0) await sleep(wait);
+        googleGate.lastAt = Date.now();
+      });
+      googleGate.chain = turn.catch(() => {});
+      await turn;
+    }
     try {
       const result = await task();
       googleGate.consecutiveThrottled = 0;
@@ -236,7 +240,7 @@ async function googleRequest(task) {
         continue;
       }
       googleGate.consecutiveThrottled += 1;
-      if (googleGate.consecutiveThrottled >= GOOGLE_BREAKER_THRESHOLD && !googleGate.open) {
+      if (GOOGLE_BREAKER_THRESHOLD > 0 && googleGate.consecutiveThrottled >= GOOGLE_BREAKER_THRESHOLD && !googleGate.open) {
         googleGate.open = true;
         console.warn(`[source-content] Google News decoding paused for this run after ${googleGate.consecutiveThrottled} throttled records`);
       }
