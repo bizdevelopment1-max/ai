@@ -4083,6 +4083,16 @@ function BusinessModelForecasts({ dataVersion }) {
             </a>
           ))}
         </div>
+        {Array.isArray(selected.latestSignals) && selected.latestSignals.length > 0 && (
+          <div className="bmf-sources">
+            <em>최신 관측 신호 · 자동 수집</em>
+            {selected.latestSignals.map(signal => (
+              <a key={signal.url} href={signal.url} target="_blank" rel="noopener" title={signal.title}>
+                {signal.date} · {signal.publisher} · {signal.titleKo || signal.title}<span aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </div>
+        )}
       </article>
       <p className="bmf-method">{data.factForecastBoundary}</p>
     </section>
