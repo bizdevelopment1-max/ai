@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /** Refresh stored source text without deleting the cumulative feed ledger. */
 import { readFile, writeFile } from "node:fs/promises";
-import { enrichSourceBatch, isContentBacked } from "./source-content.mjs";
+import { enrichSourceBatch, isContentBacked, prioritizeRefresh, wasAttempted } from "./source-content.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const limit = Number(process.env.SOURCE_REFRESH_LIMIT || 0);
@@ -9,6 +9,7 @@ const concurrency = Number(process.env.SOURCE_REFRESH_CONCURRENCY || 4);
 const scope = String(process.env.SOURCE_REFRESH_SCOPE || "all").toLowerCase();
 const force = /^(1|true|yes)$/i.test(String(process.env.SOURCE_REFRESH_FORCE || ""));
 const match = String(process.env.SOURCE_REFRESH_MATCH || "").trim().toLowerCase();
+const budgetMs = Math.max(0, Number(process.env.SOURCE_REFRESH_BUDGET_MS || 150_000));
 const readJson = async (file, fallback) => { try { return JSON.parse(await readFile(file, "utf8")); } catch { return fallback; } };
 const suppression = await loadSuppressionRegistry();
 
@@ -21,9 +22,10 @@ async function refresh(file, key) {
     .filter(row => !match || [row.url, row.rssUrl, row.title, row.titleEn]
       .some(value => String(value || "").toLowerCase().includes(match)))
     .filter(row => force || !isContentBacked(row));
-  const target = limit > 0 ? candidates.slice(0, limit) : candidates;
-  console.log(`[source-refresh] ${file}: ${target.length}/${rows.length} record(s) need source-page extraction`);
-  const enriched = await enrichSourceBatch(target, concurrency);
+  const ordered = force ? candidates : prioritizeRefresh(candidates, { dateOf: row => row.date });
+  const target = limit > 0 ? ordered.slice(0, limit) : ordered;
+  console.log(`[source-refresh] ${file}: ${target.length}/${rows.length} record(s) need source-page extraction (${candidates.length - ordered.length} in retry cool-down)`);
+  const enriched = (await enrichSourceBatch(target, concurrency, { deadlineMs: budgetMs })).filter(wasAttempted);
   const byKey = new Map(enriched.map(item => [item.rssUrl || item.url, item]));
   const updated = rows
     .filter(row => !suppression.matches(row, itemScope))
@@ -33,7 +35,7 @@ async function refresh(file, key) {
   data[key] = updated;
   data.generatedAt = new Date().toISOString();
   await writeFile(file, JSON.stringify(data, null, 2) + "\n");
-  console.log(`[source-refresh] ${file}: content ${ok}, retained-not-displayed ${unavailable}`);
+  console.log(`[source-refresh] ${file}: content ${ok}, retained-not-displayed ${unavailable}, deferred ${target.length - enriched.length}`);
   return { ok, unavailable, total: rows.length };
 }
 

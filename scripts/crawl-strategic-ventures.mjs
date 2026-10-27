@@ -4,7 +4,8 @@
  * Facts remain attached to the exact publisher page that supports them and
  * every run re-checks source availability and key phrases.
  */
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
+import { isExcludedText } from "./news-policy.mjs";
 
 const UA = "Mozilla/5.0 (compatible; AI-Strategy-Research/1.0; +https://bizdevelopment1-max.github.io/ai/)";
 const SOURCES = [
@@ -157,6 +158,93 @@ const sourceRef = (sources, id) => {
     status: source.status,
     matchedTerms: source.matchedTerms,
   } : null;
+};
+
+// The curated observed moves cite fixed official pages, so on their own they
+// never change. Each model also lists the latest collected articles whose
+// publisher headline names at least one model-specific anchor term and one
+// more distinct term. Only the headline, publisher, date and link of
+// source-backed articles are shown; nothing is summarised or inferred.
+const SIGNAL_TERMS = {
+  "private-device-ai-bundle": {
+    anchors: ["on-device", "on device", "Private Cloud Compute", "Apple Intelligence", "Gemini Nano", "NPU", "온디바이스"],
+    context: ["subscription", "premium", "bundle", "smartphone", "smartphones", "phone", "phones", "iPhone", "Pixel", "AI phone", "assistant", "model", "models", "cloud", "구독", "스마트폰"],
+  },
+  "outcome-priced-digital-labor": {
+    anchors: ["outcome-based", "outcome based", "per resolution", "per-resolution", "results-based", "digital labor", "digital workforce", "digital workers", "성과 기반", "결과 기반"],
+    context: ["pricing", "price", "agent", "agents", "AI agents", "customer service", "Agentforce", "에이전트", "요금"],
+  },
+  "agent-marketplace-take-rate": {
+    anchors: ["agent marketplace", "agent store", "AgentExchange", "AgentCore", "MCP", "에이전트 마켓", "에이전트 스토어"],
+    context: ["agent", "agents", "marketplace", "store", "tools", "developers", "partners", "에이전트", "마켓플레이스"],
+  },
+  "agentic-commerce-take-rate": {
+    anchors: ["agentic commerce", "Instant Checkout", "Agentic Commerce Protocol", "agentic payments", "agent payments", "AI shopping", "shopping agent", "checkout", "에이전틱 커머스", "AI 쇼핑"],
+    context: ["ChatGPT", "Stripe", "Visa", "Mastercard", "PayPal", "Shopify", "Amazon", "payments", "shopping", "retail", "merchants", "결제", "쇼핑"],
+  },
+  "forward-deployed-ai-annuity": {
+    anchors: ["forward deployed", "forward-deployed", "deployment company", "DeployCo", "AI services company", "enterprise AI services", "AI consulting"],
+    context: ["OpenAI", "Anthropic", "enterprise", "enterprises", "consulting", "private equity", "Accenture", "Deloitte", "기업", "컨설팅"],
+  },
+  "machine-readable-data-toll": {
+    anchors: ["pay per crawl", "pay-per-crawl", "AI crawler", "AI crawlers", "AI bots", "content licensing", "licensing deal", "HTTP 402", "scraping"],
+    context: ["publishers", "publisher", "Cloudflare", "content", "news", "media", "license", "licensing", "언론", "저작권"],
+  },
+  "telco-ai-grid": {
+    anchors: ["AI-RAN", "AI RAN", "AI grid", "telco AI", "GPUaaS", "AI-native network", "AI-native networks", "통신사 AI"],
+    context: ["telecom", "telco", "operator", "operators", "5G", "6G", "network", "networks", "NVIDIA", "AI factory", "AI factories", "sovereign AI", "edge", "통신", "통신사", "네트워크"],
+  },
+};
+const SIGNAL_WINDOW_DAYS = 90;
+const SIGNALS_PER_MODEL = 3;
+const escapeRegExp = value => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const termHit = (text, term) => /[가-힣]/.test(term)
+  ? text.includes(term)
+  : new RegExp(`(?<![A-Za-z0-9])${escapeRegExp(term)}(?![A-Za-z0-9])`, "i").test(text);
+
+async function loadSignalArticles() {
+  let articles = [];
+  try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
+  const cutoff = new Date(Date.now() - SIGNAL_WINDOW_DAYS * 86_400_000).toISOString().slice(0, 10);
+  return articles.filter(article => article?.provenance?.status === "source-backed"
+    && article.displayEligible !== false
+    && /^https?:\/\//.test(String(article.url || ""))
+    && String(article.date || "") >= cutoff
+    && !isExcludedText([article.title, article.titleEn, article.titleKo, article.source, article.url].filter(Boolean).join(" ")));
+}
+
+const latestSignalsFor = (modelId, articles) => {
+  const terms = SIGNAL_TERMS[modelId];
+  if (!terms) return [];
+  const seen = new Set();
+  return articles
+    .map(article => {
+      // The publisher's own headline only: a machine-translated title would
+      // count one term twice (on-device / 온디바이스).
+      const headline = String(article.titleEn || article.title || "");
+      const anchors = terms.anchors.filter(term => termHit(headline, term));
+      const context = terms.context.filter(term => termHit(headline, term) && !anchors.includes(term));
+      return anchors.length && anchors.length + context.length >= 2
+        ? { article, matchedTerms: [...anchors, ...context].slice(0, 6) } : null;
+    })
+    .filter(Boolean)
+    .sort((left, right) => String(right.article.date).localeCompare(String(left.article.date)))
+    .filter(({ article }) => {
+      const key = String(article.titleEn || article.title || article.url).toLowerCase().replace(/\s+-\s+[^-]+$/, "");
+      if (seen.has(key) || seen.has(article.url)) return false;
+      seen.add(key);
+      seen.add(article.url);
+      return true;
+    })
+    .slice(0, SIGNALS_PER_MODEL)
+    .map(({ article, matchedTerms }) => ({
+      title: article.titleEn || article.title,
+      titleKo: article.titleKo || "",
+      publisher: article.source || "",
+      date: String(article.date || "").slice(0, 10),
+      url: article.url,
+      matchedTerms,
+    }));
 };
 
 const buildForecastModels = ref => [
@@ -352,10 +440,15 @@ async function main() {
     comparison,
     sources,
   };
-  const forecastModels = buildForecastModels(ref);
+  const signalArticles = await loadSignalArticles();
+  const forecastModels = buildForecastModels(ref).map(model => {
+    const latestSignals = latestSignalsFor(model.id, signalArticles);
+    return { ...model, latestSignals, latestSignalAsOf: latestSignals[0]?.date || "" };
+  });
   const forecastOut = {
     generatedAt: new Date().toISOString(),
     schemaVersion: 1,
+    latestSignalPolicy: `최근 ${SIGNAL_WINDOW_DAYS}일 원문 확인 기사 중 모델 핵심어가 제목에 포함된 기사만 자동 연결`,
     methodology: "official-source-recrawl+observed-move-to-business-model-inference",
     factForecastBoundary: "관측된 움직임은 공식 원문 근거 · 비즈니스 모델 예측은 관측 사실에서 도출한 전략적 추론",
     models: forecastModels,
@@ -366,7 +459,7 @@ async function main() {
   await writeFile("strategic-ventures.json", `${JSON.stringify(out)}\n`);
   await writeFile("business-model-forecasts.json", `${JSON.stringify(forecastOut)}\n`);
   console.log(`[ventures] ${sources.filter(item => item.status === "verified").length}/${sources.length} sources verified`);
-  console.log(`[business-model-forecasts] ${forecastModels.filter(item => item.evidenceStatus === "source-verified").length}/${forecastModels.length} models source verified`);
+  console.log(`[business-model-forecasts] ${forecastModels.filter(item => item.evidenceStatus === "source-verified").length}/${forecastModels.length} models source verified · ${forecastModels.reduce((sum, item) => sum + item.latestSignals.length, 0)} latest signals from ${signalArticles.length} source-backed articles`);
 }
 
 main().catch(error => {

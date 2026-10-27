@@ -8,12 +8,13 @@
  * publisher page can make a record displayEligible.
  */
 import { readFile, writeFile } from "node:fs/promises";
-import { cleanText, enrichSourceBatch, isContentBacked } from "./source-content.mjs";
+import { cleanText, enrichSourceBatch, isContentBacked, prioritizeRefresh, wasAttempted } from "./source-content.mjs";
 import { canonicalUrl, hasConsumerSurveyEvidence, sourceMetricValues } from "./market-db.mjs";
 import { loadSuppressionRegistry } from "./suppression-registry.mjs";
 
 const limit = Number(process.env.MARKET_SOURCE_REFRESH_LIMIT || 0);
 const concurrency = Math.max(1, Number(process.env.MARKET_SOURCE_REFRESH_CONCURRENCY || 4));
+const budgetMs = Math.max(0, Number(process.env.MARKET_SOURCE_REFRESH_BUDGET_MS || 180_000));
 const force = /^(1|true|yes)$/i.test(String(process.env.MARKET_SOURCE_REFRESH_FORCE || ""));
 const labelsOnly = /^(1|true|yes)$/i.test(String(process.env.MARKET_METRIC_LABELS_ONLY || ""));
 const now = () => new Date().toISOString();
@@ -230,10 +231,14 @@ async function main() {
   const candidates = (labelsOnly ? [] : labeledRecords)
     .filter(record => !suppression.matches(record, "market"))
     .filter(needsRefresh);
-  const target = limit > 0 ? candidates.slice(0, limit) : candidates;
-  console.log(`[market-source-refresh] ${target.length}/${records.length} records need publisher-page extraction`);
+  // Newest first: the per-run limit used to take the same old, failing rows
+  // in ledger order, so records collected in September and October were
+  // never attempted and stayed hidden.
+  const ordered = force ? candidates : prioritizeRefresh(candidates, { dateOf: record => record.publishedAt || record.date });
+  const target = limit > 0 ? ordered.slice(0, limit) : ordered;
+  console.log(`[market-source-refresh] ${target.length}/${records.length} records need publisher-page extraction (${candidates.length - ordered.length} in retry cool-down)`);
 
-  const enriched = await enrichSourceBatch(target.map(asSourceInput), concurrency);
+  const enriched = (await enrichSourceBatch(target.map(asSourceInput), concurrency, { deadlineMs: budgetMs })).filter(wasAttempted);
   const byId = new Map(enriched.map(row => [row.id, row]));
   const checkedAt = now();
   const updated = labeledRecords.map(record => {

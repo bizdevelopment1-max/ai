@@ -201,12 +201,56 @@ export function selectCoreLines(text, title = "") {
   return selectInsightLines(text, title).map(item => item.line);
 }
 
+// Google News decoding costs two requests per record. Unpaced batches hit
+// HTTP 429 for most records, which left new research and market records
+// permanently withheld. Requests to Google are serialized with a minimum
+// interval, a 429 is retried after a back-off, and once Google keeps
+// throttling the rest of the run skips decoding instead of failing records.
+const GOOGLE_MIN_INTERVAL_MS = Math.max(0, Number(process.env.GOOGLE_NEWS_MIN_INTERVAL_MS || 1200));
+const GOOGLE_BREAKER_THRESHOLD = Math.max(1, Number(process.env.GOOGLE_NEWS_DECODE_BREAKER || 4));
+const GOOGLE_RETRY_WAITS_MS = String(process.env.GOOGLE_NEWS_RETRY_WAITS_MS || "4000,12000")
+  .split(",").map(Number).filter(value => Number.isFinite(value) && value >= 0);
+export const GOOGLE_NEWS_THROTTLED = "google-news-throttled";
+const googleGate = { chain: Promise.resolve(), lastAt: 0, consecutiveThrottled: 0, open: false };
+const isThrottled = error => /(?:^|-)(?:HTTP |http-)?429$/.test(String(error?.message || ""));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+async function googleRequest(task) {
+  for (let attempt = 0; ; attempt++) {
+    if (googleGate.open) throw new Error(GOOGLE_NEWS_THROTTLED);
+    const turn = googleGate.chain.then(async () => {
+      const wait = GOOGLE_MIN_INTERVAL_MS - (Date.now() - googleGate.lastAt);
+      if (wait > 0) await sleep(wait);
+      googleGate.lastAt = Date.now();
+    });
+    googleGate.chain = turn.catch(() => {});
+    await turn;
+    try {
+      const result = await task();
+      googleGate.consecutiveThrottled = 0;
+      return result;
+    } catch (error) {
+      if (!isThrottled(error)) throw error;
+      if (attempt < GOOGLE_RETRY_WAITS_MS.length) {
+        await sleep(GOOGLE_RETRY_WAITS_MS[attempt]);
+        continue;
+      }
+      googleGate.consecutiveThrottled += 1;
+      if (googleGate.consecutiveThrottled >= GOOGLE_BREAKER_THRESHOLD && !googleGate.open) {
+        googleGate.open = true;
+        console.warn(`[source-content] Google News decoding paused for this run after ${googleGate.consecutiveThrottled} throttled records`);
+      }
+      throw new Error(GOOGLE_NEWS_THROTTLED);
+    }
+  }
+}
+
 async function resolveGoogleNews(url) {
   const parsed = new URL(url);
   if (!/(^|\.)news\.google\.com$/i.test(parsed.hostname)) return url;
   const articleId = parsed.pathname.match(/\/(?:rss\/)?articles\/([^/?]+)/i)?.[1];
   if (!articleId) return url;
-  const page = await fetchText(`https://news.google.com/articles/${articleId}?hl=en-US&gl=US&ceid=US:en`, 1);
+  const page = await googleRequest(() => fetchText(`https://news.google.com/articles/${articleId}?hl=en-US&gl=US&ceid=US:en`, 1));
   const encoded = page.text.match(/<c-wiz\b[^>]*\bdata-p="([^"]+)"/i)?.[1];
   if (!encoded) throw new Error("google-news-decode-params-missing");
   const decoded = encoded.replace(/&quot;/g, '"').replace(/&amp;/g, "&");
@@ -214,13 +258,16 @@ async function resolveGoogleNews(url) {
   if (!Array.isArray(payload) || payload.length < 5) throw new Error("google-news-decode-payload-invalid");
   const request = JSON.stringify([payload[0], payload[2], payload[1], payload.at(-2), payload.at(-1)]);
   const body = JSON.stringify([[["Fbv4je", request, null, "generic"]]]);
-  const response = await fetch("https://news.google.com/_/DotsSplashUi/data/batchexecute?rpcids=Fbv4je", {
-    method: "POST",
-    headers: { "User-Agent": UA, Referer: "https://news.google.com/", "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-    body: new URLSearchParams({ "f.req": body }).toString(),
+  const responseText = await googleRequest(async () => {
+    const response = await fetch("https://news.google.com/_/DotsSplashUi/data/batchexecute?rpcids=Fbv4je", {
+      method: "POST",
+      headers: { "User-Agent": UA, Referer: "https://news.google.com/", "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: new URLSearchParams({ "f.req": body }).toString(),
+      signal: AbortSignal.timeout(11_000),
+    });
+    if (!response.ok) throw new Error(`google-news-decode-http-${response.status}`);
+    return response.text();
   });
-  if (!response.ok) throw new Error(`google-news-decode-http-${response.status}`);
-  const responseText = await response.text();
   for (const line of responseText.split("\n")) {
     if (!line.startsWith("[[")) continue;
     try {
@@ -304,12 +351,38 @@ export async function enrichSourceRecord(record) {
   }
 }
 
-export async function enrichSourceBatch(records, concurrency = 4) {
+// With deadlineMs, workers stop starting new records once the time budget is
+// spent; records that were not started stay undefined in the result.
+export async function enrichSourceBatch(records, concurrency = 4, { deadlineMs = 0 } = {}) {
   const out = new Array(records.length); let cursor = 0;
+  const deadline = deadlineMs > 0 ? Date.now() + deadlineMs : Infinity;
   await Promise.all(Array.from({ length: Math.min(concurrency, records.length) }, async () => {
-    while (cursor < records.length) { const index = cursor++; out[index] = await enrichSourceRecord(records[index]); }
+    while (cursor < records.length && Date.now() < deadline) { const index = cursor++; out[index] = await enrichSourceRecord(records[index]); }
   }));
   return out;
+}
+
+// A record whose refresh was skipped because Google News was throttling, or
+// that was never started, keeps its previous state instead of being marked
+// as a failed extraction.
+export const wasAttempted = record => !!record && record.sourceContent?.error !== GOOGLE_NEWS_THROTTLED;
+
+// Newest records first, so new items become visible before old backlog;
+// pages that failed permanently (HTTP 4xx other than 429) are retried only
+// after a cool-down instead of taking a slot every run.
+const PERMANENT_FAILURE = /^HTTP (?!429)4\d\d$/;
+export function prioritizeRefresh(rows, { dateOf = row => row.date, retryAfterDays = 7, now = Date.now() } = {}) {
+  const cooledDown = row => {
+    const content = row?.sourceContent;
+    if (!content || content.status === "content-extracted" || !PERMANENT_FAILURE.test(String(content.error || ""))) return true;
+    const checked = Date.parse(content.checkedAt || "");
+    return !Number.isFinite(checked) || now - checked >= retryAfterDays * 86_400_000;
+  };
+  const time = row => {
+    const value = Date.parse(String(dateOf(row) || ""));
+    return Number.isFinite(value) ? value : -Infinity;
+  };
+  return rows.filter(cooledDown).sort((left, right) => time(right) - time(left));
 }
 
 export const isContentBacked = record => Number(record?.summaryVersion) >= 4
