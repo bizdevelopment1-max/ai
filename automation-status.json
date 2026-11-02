@@ -2,410 +2,410 @@
   "schemaVersion": 1,
   "mode": "full",
   "dryRun": false,
-  "startedAt": "2026-11-01T19:52:29.962Z",
-  "completedAt": "2026-11-01T20:10:57.767Z",
+  "startedAt": "2026-11-02T00:55:56.339Z",
+  "completedAt": "2026-11-02T01:14:50.312Z",
   "status": "completed-degraded",
   "stages": [
     {
       "id": "normalize-ingest",
       "status": "completed",
-      "durationMs": 150,
+      "durationMs": 213,
       "exitCode": 0
     },
     {
       "id": "validate-ingest-contracts",
       "status": "completed",
-      "durationMs": 55,
+      "durationMs": 75,
       "exitCode": 0
     },
     {
       "id": "collect-direct-sources",
       "status": "completed",
-      "durationMs": 23480,
+      "durationMs": 30607,
       "exitCode": 0
     },
     {
       "id": "crawl-news",
       "status": "degraded-retained-previous",
-      "durationMs": 908078,
+      "durationMs": 908281,
       "exitCode": 1
     },
     {
       "id": "focus-before-analysis",
       "status": "completed",
-      "durationMs": 652,
+      "durationMs": 937,
       "exitCode": 0
     },
     {
       "id": "crawl-stocks",
       "status": "completed",
-      "durationMs": 60355,
+      "durationMs": 55874,
       "exitCode": 0
     },
     {
       "id": "crawl-financials",
       "status": "completed",
-      "durationMs": 18262,
+      "durationMs": 16247,
       "exitCode": 0
     },
     {
       "id": "stock-events",
       "status": "completed",
-      "durationMs": 93,
+      "durationMs": 137,
       "exitCode": 0
     },
     {
       "id": "briefing",
       "status": "completed",
-      "durationMs": 112,
+      "durationMs": 163,
       "exitCode": 0
     },
     {
       "id": "startup-radar",
       "status": "completed",
-      "durationMs": 339,
+      "durationMs": 196,
       "exitCode": 0
     },
     {
       "id": "insights",
       "status": "completed",
-      "durationMs": 121,
+      "durationMs": 177,
       "exitCode": 0
     },
     {
       "id": "research",
       "status": "completed",
-      "durationMs": 3137,
+      "durationMs": 2983,
       "exitCode": 0
     },
     {
       "id": "markets",
       "status": "completed",
-      "durationMs": 103,
+      "durationMs": 145,
       "exitCode": 0
     },
     {
       "id": "refresh-source-content",
       "status": "completed",
-      "durationMs": 3376,
+      "durationMs": 3115,
       "exitCode": 0
     },
     {
       "id": "refresh-market-content",
       "status": "completed",
-      "durationMs": 10713,
+      "durationMs": 8702,
       "exitCode": 0
     },
     {
       "id": "reframe-source-briefs",
       "status": "completed",
-      "durationMs": 62,
+      "durationMs": 85,
       "exitCode": 0
     },
     {
       "id": "a16z-startups",
       "status": "completed",
-      "durationMs": 50,
+      "durationMs": 69,
       "exitCode": 0
     },
     {
       "id": "startup-profiles",
       "status": "completed",
-      "durationMs": 16855,
+      "durationMs": 14789,
       "exitCode": 0
     },
     {
       "id": "startup-organizations",
       "status": "completed",
-      "durationMs": 2685,
+      "durationMs": 2047,
       "exitCode": 0
     },
     {
       "id": "localize-source-sentences",
       "status": "completed",
-      "durationMs": 9631,
+      "durationMs": 25170,
       "exitCode": 0
     },
     {
       "id": "company-officials",
       "status": "completed",
-      "durationMs": 7441,
+      "durationMs": 6448,
       "exitCode": 0
     },
     {
       "id": "company-profiles",
       "status": "completed",
-      "durationMs": 580,
+      "durationMs": 872,
       "exitCode": 0
     },
     {
       "id": "technology-signals",
       "status": "completed",
-      "durationMs": 120,
+      "durationMs": 178,
       "exitCode": 0
     },
     {
       "id": "monetization",
       "status": "completed",
-      "durationMs": 159,
+      "durationMs": 236,
       "exitCode": 0
     },
     {
       "id": "initial-decisions",
       "status": "completed",
-      "durationMs": 327,
+      "durationMs": 451,
       "exitCode": 0
     },
     {
       "id": "focus-after-ingest",
       "status": "completed",
-      "durationMs": 650,
+      "durationMs": 967,
       "exitCode": 0
     },
     {
       "id": "company-registry",
       "status": "completed",
-      "durationMs": 299,
+      "durationMs": 517,
       "exitCode": 0
     },
     {
       "id": "strategic-ventures",
       "status": "completed",
-      "durationMs": 1126,
+      "durationMs": 1035,
       "exitCode": 0
     },
     {
       "id": "company-intelligence",
       "status": "completed",
-      "durationMs": 687,
+      "durationMs": 761,
       "exitCode": 0
     },
     {
       "id": "company-news-index",
       "status": "completed",
-      "durationMs": 174,
+      "durationMs": 261,
       "exitCode": 0
     },
     {
       "id": "investment-map",
       "status": "completed",
-      "durationMs": 669,
+      "durationMs": 197,
       "exitCode": 0
     },
     {
       "id": "ensure-source-localization",
       "status": "completed",
-      "durationMs": 5508,
+      "durationMs": 5717,
       "exitCode": 0
     },
     {
       "id": "normalize-final",
       "status": "completed",
-      "durationMs": 147,
+      "durationMs": 203,
       "exitCode": 0
     },
     {
       "id": "verify-evidence",
       "status": "completed",
-      "durationMs": 674,
+      "durationMs": 867,
       "exitCode": 0
     },
     {
       "id": "rebuild-decisions",
       "status": "completed",
-      "durationMs": 304,
+      "durationMs": 468,
       "exitCode": 0
     },
     {
       "id": "build-intelligence-tracks",
       "status": "completed",
-      "durationMs": 329,
+      "durationMs": 512,
       "exitCode": 0
     },
     {
       "id": "validate-intelligence-tracks",
       "status": "completed",
-      "durationMs": 83,
+      "durationMs": 123,
       "exitCode": 0
     },
     {
       "id": "build-tech-market-intelligence",
       "status": "completed",
-      "durationMs": 5746,
+      "durationMs": 10577,
       "exitCode": 0
     },
     {
       "id": "validate-tech-market-intelligence",
       "status": "completed",
-      "durationMs": 37,
+      "durationMs": 47,
       "exitCode": 0
     },
     {
       "id": "validate-decisions",
       "status": "completed",
-      "durationMs": 57,
+      "durationMs": 76,
       "exitCode": 0
     },
     {
       "id": "audit",
       "status": "completed",
-      "durationMs": 226,
+      "durationMs": 319,
       "exitCode": 0
     },
     {
       "id": "minimize-source-content",
       "status": "completed",
-      "durationMs": 816,
+      "durationMs": 740,
       "exitCode": 0
     },
     {
       "id": "focus-gate",
       "status": "completed",
-      "durationMs": 710,
+      "durationMs": 1002,
       "exitCode": 0
     },
     {
       "id": "build-partner-ma-candidates",
       "status": "completed",
-      "durationMs": 93,
+      "durationMs": 134,
       "exitCode": 0
     },
     {
       "id": "validate-partner-ma-candidates",
       "status": "completed",
-      "durationMs": 34,
+      "durationMs": 45,
       "exitCode": 0
     },
     {
       "id": "validate-corporate-entities",
       "status": "completed",
-      "durationMs": 67,
+      "durationMs": 93,
       "exitCode": 0
     },
     {
       "id": "refresh-business-classifications",
       "status": "completed",
-      "durationMs": 502,
+      "durationMs": 352,
       "exitCode": 0
     },
     {
       "id": "materialize-public-views",
       "status": "completed",
-      "durationMs": 2523,
+      "durationMs": 4026,
       "exitCode": 0
     },
     {
       "id": "validate-company-logos",
       "status": "completed",
-      "durationMs": 40,
+      "durationMs": 55,
       "exitCode": 0
     },
     {
       "id": "source-compliance",
       "status": "completed",
-      "durationMs": 29,
+      "durationMs": 41,
       "exitCode": 0
     },
     {
       "id": "dataset-lineage",
       "status": "completed",
-      "durationMs": 263,
+      "durationMs": 371,
       "exitCode": 0
     },
     {
       "id": "service-level-report",
       "status": "completed",
-      "durationMs": 28,
+      "durationMs": 40,
       "exitCode": 0
     },
     {
       "id": "immutable-archive",
       "status": "completed",
-      "durationMs": 26,
+      "durationMs": 38,
       "exitCode": 0
     },
     {
       "id": "validate-publish-contracts",
       "status": "completed",
-      "durationMs": 99,
+      "durationMs": 145,
       "exitCode": 0
     },
     {
       "id": "validate-publication-policy",
       "status": "completed",
-      "durationMs": 39,
+      "durationMs": 51,
       "exitCode": 0
     },
     {
       "id": "calibrate-dedup",
       "status": "completed",
-      "durationMs": 24,
+      "durationMs": 34,
       "exitCode": 0
     },
     {
       "id": "validate-boundaries",
       "status": "completed",
-      "durationMs": 90,
+      "durationMs": 126,
       "exitCode": 0
     },
     {
       "id": "validate-dag",
       "status": "completed",
-      "durationMs": 26,
+      "durationMs": 36,
       "exitCode": 0
     },
     {
       "id": "validate-consulting-architecture",
       "status": "completed",
-      "durationMs": 29,
+      "durationMs": 38,
       "exitCode": 0
     },
     {
       "id": "validate-nvidia-investments",
       "status": "completed",
-      "durationMs": 26,
+      "durationMs": 38,
       "exitCode": 0
     },
     {
       "id": "validate-content-registry",
       "status": "completed",
-      "durationMs": 28,
+      "durationMs": 37,
       "exitCode": 0
     },
     {
       "id": "test-data-platform",
       "status": "completed",
-      "durationMs": 30,
+      "durationMs": 41,
       "exitCode": 0
     },
     {
       "id": "build-browser-bundles",
       "status": "completed",
-      "durationMs": 14196,
+      "durationMs": 19412,
       "exitCode": 0
     },
     {
       "id": "audit-content-lifecycle",
       "status": "completed",
-      "durationMs": 31,
+      "durationMs": 41,
       "exitCode": 0
     },
     {
       "id": "validate-delivery-performance",
       "status": "completed",
-      "durationMs": 30,
+      "durationMs": 41,
       "exitCode": 0
     },
     {
       "id": "test-automation",
       "status": "completed",
-      "durationMs": 2615,
+      "durationMs": 4147,
       "exitCode": 0
     },
     {
       "id": "test-readability",
       "status": "completed",
-      "durationMs": 41,
+      "durationMs": 57,
       "exitCode": 0
     }
   ],
