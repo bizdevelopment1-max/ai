@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T01:49:25.450Z",
+  "generatedAt": "2026-11-04T11:42:58.081Z",
   "overall": "warn",
   "publicationState": "staging",
   "publicationBlockingChecks": [],
@@ -41,7 +41,7 @@
       "id": "direct-source-registry",
       "label": "직접 소스 자동 수집",
       "status": "ok",
-      "value": "스트림 48/51 · 공개 API 6 · 범주 21 · 누적 변경 10141"
+      "value": "스트림 48/51 · 공개 API 6 · 범주 21 · 누적 변경 10223"
     },
     {
       "id": "briefing-evidence",
@@ -83,13 +83,13 @@
       "id": "research-source",
       "label": "리서치 원문 링크",
       "status": "ok",
-      "value": "공개 60건 · 보존 90건"
+      "value": "공개 58건 · 보존 92건"
     },
     {
       "id": "research-localization",
       "label": "리서치 3줄 표시",
       "status": "ok",
-      "value": "한국어 148 · 영문 폴백 2"
+      "value": "한국어 127 · 영문 폴백 23"
     },
     {
       "id": "market-source",
@@ -101,13 +101,13 @@
       "id": "market-db-source",
       "label": "신사업 정량 DB 원문 직접 검증",
       "status": "warn",
-      "value": "210/584건 · 36.0% / 목표 90%"
+      "value": "210/585건 · 35.9% / 목표 90%"
     },
     {
       "id": "market-reverification-queue",
       "label": "정량 DB 우선 재검증 큐",
       "status": "warn",
-      "value": "374건 · P0 76건"
+      "value": "375건 · P0 77건"
     },
     {
       "id": "volatile-price-change",
@@ -158,15 +158,15 @@
     "totalStocks": 67,
     "linkedInfra": 163,
     "linkedBizmodel": 75,
-    "linkedResearch": 60,
-    "localizedResearch": 148,
-    "localizedFallbackResearch": 2,
+    "linkedResearch": 58,
+    "localizedResearch": 127,
+    "localizedFallbackResearch": 23,
     "archivedMarketBaselines": 43,
     "linkedMarketRecords": 210,
-    "marketDirectEvidenceRate": 0.3595890410958904,
+    "marketDirectEvidenceRate": 0.358974358974359,
     "marketDirectEvidenceTarget": 0.9,
-    "marketReverificationQueueSize": 374,
-    "marketReverificationP0": 76,
+    "marketReverificationQueueSize": 375,
+    "marketReverificationP0": 77,
     "pendingPriceChanges": 0,
     "verifiedPriceChanges": 0,
     "consumerSurveyRecords": 35,
@@ -177,8 +177,8 @@
     "healthyRegistryStreams": 48,
     "executedPublicConnectors": 6,
     "registryCategoryCoverage": 21,
-    "sourceLedgerEvents": 10141,
-    "sourceLedgerRuns": 141,
+    "sourceLedgerEvents": 10223,
+    "sourceLedgerRuns": 142,
     "publishedMonetizationRows": 3,
     "ungatedMonetizationRows": 0,
     "monetizationReviewQueue": 192,
@@ -259,10 +259,11 @@
       "Google Cloud": 1
     },
     "stocks": {
-      "nasdaq": 36,
+      "nasdaq": 33,
+      "yahoo-api": 10,
       "yahoo-spark": 2,
-      "yahoo-api": 7,
-      "eastmoney": 22
+      "sina": 1,
+      "eastmoney": 21
     }
   },
   "collection": {
