@@ -6,6 +6,7 @@
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { isExcludedText } from "./news-policy.mjs";
+import { isContentBacked } from "./source-content.mjs";
 
 const UA = "Mozilla/5.0 (compatible; AI-Strategy-Research/1.0; +https://bizdevelopment1-max.github.io/ai/)";
 const SOURCES = [
@@ -245,7 +246,9 @@ async function loadSignalArticles() {
   let articles = [];
   try { articles = JSON.parse(await readFile("news.json", "utf8")).articles || []; } catch {}
   const cutoff = new Date(Date.now() - SIGNAL_WINDOW_DAYS * 86_400_000).toISOString().slice(0, 10);
-  return articles.filter(article => article?.provenance?.status === "source-backed"
+  // This stage runs before verify-pipeline adds provenance to freshly crawled
+  // articles, so a publisher-page extraction (isContentBacked) also counts.
+  return articles.filter(article => (article?.provenance?.status === "source-backed" || isContentBacked(article))
     && article.displayEligible !== false
     && /^https?:\/\//.test(String(article.url || ""))
     && String(article.date || "") >= cutoff
