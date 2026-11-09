@@ -366,4 +366,7 @@ async function main() {
   console.log(`[market-db] appended ${added}/${budgetedCandidates.length} budgeted discovery records; P0 backlog ${p0ReverificationBacklog}; retained ${data.records.length}; RSS rows ${fetched} from ${successfulStreams}/${attemptedStreams} attempted streams`);
 }
 
-main().catch(error => { console.error(error); process.exit(1); });
+// Exit once the output is written: an unread error-response body can keep a
+// connection, and so the process, open until the HTTP client's 300s body
+// timeout, which made the stage overrun its limit and lose its output.
+main().then(() => process.exit(), error => { console.error(error); process.exit(1); });

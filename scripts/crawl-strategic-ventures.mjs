@@ -134,19 +134,57 @@ async function checkSource(source) {
       redirect: "follow",
       signal: AbortSignal.timeout(15_000),
     });
+    if (!response.ok) response.body?.cancel().catch(() => {});
     const text = response.ok ? strip(await response.text()) : "";
     const matched = source.required.filter(term => text.toLowerCase().includes(term.toLowerCase()));
+    const checkedAt = new Date().toISOString();
+    const verified = response.ok && matched.length >= Math.ceil(source.required.length / 2);
     return {
       ...source,
       resolvedUrl: response.url || source.url,
-      status: response.ok && matched.length >= Math.ceil(source.required.length / 2) ? "verified" : "reachable-partial",
+      status: verified ? "verified" : response.ok ? "reachable-partial" : "temporarily-unavailable",
       matchedTerms: matched,
-      checkedAt: new Date().toISOString(),
+      checkedAt,
+      ...(verified ? { verifiedAt: checkedAt } : { httpStatus: response.status }),
     };
   } catch (error) {
     return { ...source, status: "temporarily-unavailable", matchedTerms: [], checkedAt: new Date().toISOString(), error: error.message };
   }
 }
+
+// A page that could not be fetched this run (timeout, HTTP 403/429/5xx)
+// keeps a verification made within the window, so one blocked request does
+// not drop a model to unverified and fail the refresh. A page that loads but
+// no longer contains the required phrases is never retained.
+const VERIFICATION_RETAIN_DAYS = 14;
+async function loadPriorVerifications() {
+  const prior = new Map();
+  for (const file of ["strategic-ventures.json", "business-model-forecasts.json"]) {
+    try {
+      for (const source of JSON.parse(await readFile(file, "utf8")).sources || []) {
+        const verifiedAt = source.verifiedAt || (source.status === "verified" ? source.checkedAt : "");
+        if (source?.id && verifiedAt && (!prior.has(source.id) || verifiedAt > prior.get(source.id).verifiedAt)) {
+          prior.set(source.id, { ...source, verifiedAt });
+        }
+      }
+    } catch {}
+  }
+  return prior;
+}
+const withRetainedVerification = (source, prior) => {
+  const previous = prior.get(source.id);
+  if (source.status !== "temporarily-unavailable" || !previous) return source;
+  const ageDays = (Date.parse(source.checkedAt) - Date.parse(previous.verifiedAt)) / 86_400_000;
+  if (!(ageDays >= 0 && ageDays <= VERIFICATION_RETAIN_DAYS)) return source;
+  return {
+    ...source,
+    status: "verified",
+    resolvedUrl: previous.resolvedUrl || source.resolvedUrl || source.url,
+    matchedTerms: previous.matchedTerms || [],
+    verifiedAt: previous.verifiedAt,
+    verificationRetained: true,
+  };
+};
 
 const sourceRef = (sources, id) => {
   const source = sources.find(item => item.id === id);
@@ -157,6 +195,7 @@ const sourceRef = (sources, id) => {
     url: source.resolvedUrl || source.url,
     status: source.status,
     matchedTerms: source.matchedTerms,
+    ...(source.verifiedAt ? { verifiedAt: source.verifiedAt } : {}),
   } : null;
 };
 
@@ -388,7 +427,8 @@ const buildForecastModels = ref => [
 }));
 
 async function main() {
-  const sources = await Promise.all(SOURCES.map(checkSource));
+  const priorVerifications = await loadPriorVerifications();
+  const sources = (await Promise.all(SOURCES.map(checkSource))).map(source => withRetainedVerification(source, priorVerifications));
   const ref = id => sourceRef(sources, id);
   const companies = {
     OpenAI: [{
@@ -462,7 +502,10 @@ async function main() {
   console.log(`[business-model-forecasts] ${forecastModels.filter(item => item.evidenceStatus === "source-verified").length}/${forecastModels.length} models source verified · ${forecastModels.reduce((sum, item) => sum + item.latestSignals.length, 0)} latest signals from ${signalArticles.length} source-backed articles`);
 }
 
-main().catch(error => {
+// Exit once the output is written: an unread error-response body can keep a
+// connection, and so the process, open until the HTTP client's 300s body
+// timeout, which made the stage overrun its limit and lose its output.
+main().then(() => process.exit(), error => {
   console.error(error);
   process.exit(1);
 });

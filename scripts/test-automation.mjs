@@ -2329,7 +2329,7 @@ try {
     || !["xiaomi-global-discovery", "coinbase-agentkit-releases", "sec-edgar-company-submissions", "uspto-open-data", "sensor-tower-store-intelligence", "appfigures-app-intelligence"]
       .every(id => (officialSources.apiConnectors || []).some(connector => connector.id === id))
     || (sourceReport.streamHealth || []).length < Number(qualityThresholds.minimumDirectSourceStreams || 25)
-    || (sourceReport.connectorStatus || []).filter(row => row.status === "executed").length < Number(qualityThresholds.minimumExecutablePublicConnectors || 4)
+    || (sourceReport.connectorStatus || []).filter(row => ["executed", "recently-executed"].includes(row.status)).length < Number(qualityThresholds.minimumExecutablePublicConnectors || 4)
     || (sourceReport.categoryCoverage || []).filter(row => Number(row.itemCount || 0) > 0).length < Number(qualityThresholds.minimumSourceCategories || 8)
     || sourceSnapshot.itemCount !== (sourceSnapshot.items || []).length
     || sourceManifest.cumulativeEvents < sourceSnapshot.itemCount

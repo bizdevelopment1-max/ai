@@ -368,13 +368,18 @@ const duplicateRate = (currentArticles.length + duplicateArticles) ? duplicateAr
 // every run; it is reported, but only failures a retry can clear block
 // publication, so one publisher's bot wall cannot freeze the whole site.
 const accessDenied = row => /\bHTTP (?:401|403|451)\b/.test(String(row.error || ""));
+const newestArticleDate = (news.articles || [])
+  .map(article => String(article.date || article.publishedAt || "").slice(0, 10))
+  .filter(value => /^\d{4}-\d{2}-\d{2}$/.test(value))
+  .sort().at(-1) || "";
+const newestArticleAgeDays = newestArticleDate ? ageDays(`${newestArticleDate}T23:59:59Z`) : 999;
 const persistentFailureStreams = (collectionHealth.watchdogBreaches || []).filter(row => row.state === "failed" && !accessDenied(row)).length;
 const persistentBlockedStreams = (collectionHealth.watchdogBreaches || []).filter(row => row.state === "failed" && accessDenied(row)).length;
 const persistentEmptyStreams = (collectionHealth.watchdogBreaches || []).filter(row => row.state === "empty").length;
 const failedStreamCount = (collectionHealth.failedStreams || []).length;
 const activeRegistryStreams = (sourceRegistryReport.streamHealth || []).length;
 const healthyRegistryStreams = (sourceRegistryReport.streamHealth || []).filter(row => ["healthy", "reachable-quiet"].includes(row.state)).length;
-const executedPublicConnectors = (sourceRegistryReport.connectorStatus || []).filter(row => row.status === "executed").length;
+const executedPublicConnectors = (sourceRegistryReport.connectorStatus || []).filter(row => ["executed", "recently-executed"].includes(row.status)).length;
 const registryCategoryCoverage = (sourceRegistryReport.categoryCoverage || []).filter(row => Number(row.itemCount || 0) > 0).length;
 const sourceRegistryFresh = ageDays(sourceRegistryReport.generatedAt) <= 1;
 // Block publication when collection collapses, not when a handful of the
@@ -484,6 +489,10 @@ const checks = [
   { id: "insight-evidence", label: "인사이트 근거 연결", status: linkedInsights > 0 ? "ok" : "warn", value: `${linkedInsights}건` },
   { id: "stock-freshness", label: "주가 최신성", status: stockFresh >= Math.max(8, stockRows.length * 0.7) ? "ok" : "fail", value: `${stockFresh}/${stockRows.length}종목` },
   { id: "news-freshness", label: "뉴스 번들 최신성", status: ageDays(news.generatedAt) <= 2 ? "ok" : "fail", value: `${ageDays(news.generatedAt).toFixed(1)}일` },
+  // Later stages rewrite news.json every run, so its generatedAt stays fresh
+  // even when the crawler collected nothing. The newest article date shows
+  // whether new content actually arrived.
+  { id: "news-content-freshness", label: "최신 기사 날짜", status: newestArticleAgeDays <= 2 ? "ok" : "warn", value: `최신 기사 ${newestArticleDate || "없음"} · ${newestArticleAgeDays.toFixed(1)}일 경과` },
   { id: "infra-evidence", label: "인프라 시그널 근거", status: linkedInfra >= 3 ? "ok" : "warn", value: `공개 ${linkedInfra}건 · 보존 ${(infra.items || []).length - linkedInfra}건` },
   { id: "bizmodel-evidence", label: "수익화 시그널 근거", status: linkedBizmodel >= 3 ? "ok" : "warn", value: `공개 ${linkedBizmodel}건 · 보존 ${(bizmodel.items || []).length - linkedBizmodel}건` },
   { id: "research-source", label: "리서치 원문 링크", status: linkedResearch >= 3 ? "ok" : "warn", value: `공개 ${linkedResearch}건 · 보존 ${(research.feed || []).length - linkedResearch}건` },
@@ -572,6 +581,7 @@ const quality = {
 const runs = [...(priorHistory.runs || []), {
   generatedAt: now.toISOString(),
   newsGeneratedAt: news.generatedAt || null,
+  newestArticleDate: newestArticleDate || null,
   stocksGeneratedAt: stocks.generatedAt || null,
   articles: currentArticles.length,
   sourceBacked: backedArticles,

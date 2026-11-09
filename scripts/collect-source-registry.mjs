@@ -472,11 +472,29 @@ for (const connector of registry.apiConnectors || []) {
   }));
 }
 await Promise.all(jobs);
+// Only six public APIs run without credentials, against a minimum of six, so
+// one rate limit (arXiv HTTP 429) used to fail the whole refresh. A connector
+// that fails this run but succeeded within the grace window is reported as
+// recently-executed: its earlier observations stay in the ledger, and a
+// connector that stays down longer still fails the check.
+const CONNECTOR_GRACE_HOURS = Math.max(0, Number(process.env.CONNECTOR_GRACE_HOURS || 48));
+const priorConnectors = new Map((priorReport.connectorStatus || []).map(row => [row.id, row]));
 for (const connector of connectorStatus.filter(row => row.status === "scheduled")) {
   const health = streamHealth.find(row => row.stream === connector.id);
   connector.status = health?.state === "failed" ? "failed" : "executed";
   connector.itemCount = health?.itemCount || 0;
   if (health?.error) connector.error = health.error;
+  const prior = priorConnectors.get(connector.id);
+  if (connector.status === "executed") {
+    connector.lastExecutedAt = observedAt;
+  } else {
+    const lastExecutedAt = prior?.lastExecutedAt || (prior?.status === "executed" ? priorReport.generatedAt : "");
+    const hoursSince = (Date.parse(observedAt) - Date.parse(lastExecutedAt || "")) / 3_600_000;
+    if (Number.isFinite(hoursSince) && hoursSince <= CONNECTOR_GRACE_HOURS) {
+      connector.status = "recently-executed";
+      connector.lastExecutedAt = lastExecutedAt;
+    }
+  }
 }
 
 const latestByKey = new Map(priorByKey);
