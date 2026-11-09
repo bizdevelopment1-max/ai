@@ -205,6 +205,41 @@ jobs:
             --subject "chore: publish verified intelligence refresh (run ${GITHUB_RUN_ID})" \
             --body "Data-only refresh that passed every verification gate in run ${GITHUB_RUN_ID}."
 
+      # A run can publish while a collector fell back to its previous data
+      # (completed-degraded) or while no new article arrived. Keep one issue
+      # open with the current state, so a stalled collector is visible within
+      # a run instead of after days of unchanged content.
+      - name: Report degraded collection
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          title="수집 단계 저하: 일부 데이터가 최신이 아님"
+          summary="$(node -e '
+            const fs = require("fs");
+            const read = file => { try { return JSON.parse(fs.readFileSync(file, "utf8")); } catch { return {}; } };
+            const status = read("automation-status.json");
+            const quality = read("quality.json");
+            const lines = (status.degraded || []).map(id => "- " + id + ": 수집 실패로 이전 데이터 유지");
+            for (const check of quality.checks || []) {
+              if (check.id === "news-content-freshness" && check.status !== "ok") lines.push("- " + check.label + ": " + check.value);
+            }
+            process.stdout.write(lines.join("\n"));
+          ')"
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          numbers="$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[].number')"
+          if [ -n "$summary" ]; then
+            body="$(printf 'Run: %s\n\n%s\n' "$run_url" "$summary")"
+            if [ -n "$numbers" ]; then
+              for number in $numbers; do gh issue edit "$number" --body "$body"; done
+            else
+              gh issue create --title "$title" --body "$body"
+            fi
+          else
+            for number in $numbers; do gh issue close "$number" --comment "Recovered in run $run_url"; done
+          fi
+
       # A failed refresh leaves the site on its last verified data, so make
       # the reason visible at once instead of letting runs fail silently.
       - name: Report refresh failure

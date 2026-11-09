@@ -43,3 +43,7 @@ const results = [];
 if (scope === "all" || scope === "news") results.push(await refresh("news.json", "articles"));
 if (scope === "all" || scope === "research") results.push(await refresh("research.json", "feed"));
 console.log(`[source-refresh] complete: ${results.reduce((sum, value) => sum + value.ok, 0)} source-backed records; ${results.reduce((sum, value) => sum + value.unavailable, 0)} retained records withheld from display`);
+// Exit once the output is written: an unread error-response body can keep a
+// connection, and so the process, open until the HTTP client's 300s body
+// timeout, which made the stage overrun its limit and lose its output.
+process.exit();

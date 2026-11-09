@@ -57,7 +57,10 @@ async function fetchText(url, tries = 2) {
         headers: { "User-Agent": UA, Accept: "text/html,application/xhtml+xml" },
         signal: controller.signal,
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) {
+        response.body?.cancel().catch(() => {});
+        throw new Error(`HTTP ${response.status}`);
+      }
       const text = await response.text();
       if (text.length < 120) throw new Error("empty-html");
       return { text, url: response.url };
@@ -269,7 +272,10 @@ async function resolveGoogleNews(url) {
       body: new URLSearchParams({ "f.req": body }).toString(),
       signal: AbortSignal.timeout(11_000),
     });
-    if (!response.ok) throw new Error(`google-news-decode-http-${response.status}`);
+    if (!response.ok) {
+      response.body?.cancel().catch(() => {});
+      throw new Error(`google-news-decode-http-${response.status}`);
+    }
     return response.text();
   });
   for (const line of responseText.split("\n")) {

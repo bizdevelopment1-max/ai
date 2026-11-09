@@ -529,6 +529,11 @@ const safeFallback = (fallback, corpus) => {
   return out;
 };
 
+// Stock-quote and listing pages ("Purchase Info | Investment Information ...
+// - Yahoo Finance") describe a security, not something the company did.
+const LISTING_PAGE = /\b(?:purchase info|investment information|company level stock|stock quote|stock price(?: today)?|share price|quote & history|historical prices)\b/i;
+const isCompanyAction = signal => !LISTING_PAGE.test(String(signal?.signal || ""));
+
 // Sparse refreshes retain the last pipeline-verified section instead of
 // replacing it with operational status copy. Numeric claims must still occur
 // in the current source corpus.
@@ -540,7 +545,7 @@ const retainLastVerified = (next, previous, corpus) => {
     const body = `${prior?.summary || ""} ${(prior?.details || []).join(" ")}`;
     const refs = (prior?.evidence || []).filter(ref => /^https?:\/\//.test(String(ref?.url || "")));
     const grounded = /grounded|checked/i.test(String(prior?.groundingStatus || previous?.groundingStatus || ""));
-    if (!clean(prior?.summary) || placeholderCopy(body) || !supportedNumbers(body, corpus) || (!grounded && !refs.length)) continue;
+    if (!clean(prior?.summary) || placeholderCopy(body) || LISTING_PAGE.test(body) || !supportedNumbers(body, corpus) || (!grounded && !refs.length)) continue;
     out[key] = { ...prior, evidence: refs, retainedSnapshot: true };
   }
   return out;
@@ -743,11 +748,32 @@ const normaliseAnalysis = (analysis, evidence, fallback, corpus) => {
   }, { name: analysis?.name || "", evidence, fallback, corpus });
 };
 
-const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directionLabels }) => {
+// Monetization signals carry the publisher's original headline, often
+// English and ending in " - Publisher". The company page shows the article's
+// source-bound Korean title instead when one exists and keeps every number
+// of the original, and drops the trailing publisher name either way.
+const stripPublisherSuffix = (title, source) => {
+  const text = clean(title);
+  const match = text.match(/^(.*\S)\s+[-|–—]\s+([^-|–—]{2,60})$/);
+  if (!match) return text;
+  const suffix = match[2].trim().toLowerCase();
+  const publisher = clean(source).toLowerCase();
+  return publisher && (suffix === publisher || suffix.includes(publisher) || publisher.includes(suffix)) ? match[1] : text;
+};
+const displaySignalFor = articleByUrl => signal => {
+  if (!signal) return "";
+  const original = stripPublisherSuffix(signal.signal, signal.source);
+  const article = articleByUrl?.get(canon(signal.url));
+  const korean = article ? stripPublisherSuffix(first(article.titleKo, article.localization?.title), signal.source || article.source) : "";
+  return korean && /[가-힣]/.test(korean) && supportedNumbers(korean, original) ? korean : original;
+};
+
+const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directionLabels, articleByUrl }) => {
   const profile = rec.profile || {};
   const businessLines = compactBusinessProfile(profile.business || rec.strategyProfile?.currentBusiness, base?.name);
-  const revenueSignals = monet?.monetize || [];
-  const directionSignals = monet?.direction || [];
+  const displaySignal = displaySignalFor(articleByUrl);
+  const revenueSignals = (monet?.monetize || []).filter(isCompanyAction).map(signal => ({ ...signal, signal: displaySignal(signal) }));
+  const directionSignals = (monet?.direction || []).filter(isCompanyAction).map(signal => ({ ...signal, signal: displaySignal(signal) }));
   const primaryModel = modelLabels.get(monet?.primaryModel);
   const currentBusiness = businessLines.join(" · ")
     || compactBusinessLine(base?.unit || localizedTitle(rec.latest), base?.name);
@@ -755,8 +781,9 @@ const fallbackIntelligence = ({ base, rec, monet, evidence, modelLabels, directi
   const revenueSummary = primaryModel
     ? [primaryModel, revenueEvidence].filter(Boolean).join(" 중심 · ")
     : revenueEvidence;
-  const actionEvidence = evidence.find(item => isCompanyActionEvidenceFor(base?.name, item));
-  const actionEvidenceRows = evidence.filter(item => isCompanyActionEvidenceFor(base?.name, item));
+  const actionEvidenceRows = evidence.filter(item => isCompanyActionEvidenceFor(base?.name, item)
+    && !LISTING_PAGE.test(`${item.titleOriginal || ""} ${item.titleKo || ""}`));
+  const actionEvidence = actionEvidenceRows[0];
   const strategySummary = first(
     directionSignals[0]?.signal,
     actionEvidence?.titleKo,
@@ -978,6 +1005,7 @@ async function main() {
       evidence,
       modelLabels,
       directionLabels,
+      articleByUrl,
     });
     const corpus = analysisCorpus({ base: bases.get(name), rec, monet, evidence });
     const fallback = retainLastVerified(

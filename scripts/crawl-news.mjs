@@ -95,7 +95,10 @@ async function fetchText(url, opts = {}, tries = 3) {
       const t = setTimeout(() => ctrl.abort(), timeoutMs);
       const res = await fetch(url, { ...fetchOptions, signal: ctrl.signal });
       clearTimeout(t);
-      if (!res.ok) throw new Error("HTTP " + res.status);
+      if (!res.ok) {
+        res.body?.cancel().catch(() => {});
+        throw new Error("HTTP " + res.status);
+      }
       return await res.text();
     } catch (e) {
       if (i === tries - 1 || !shouldRetry(e)) throw e;
@@ -791,4 +794,7 @@ async function main() {
   console.log(`Wrote news.json with ${out.length} articles (${sums.filter(isContentBacked).length} new source-page briefings; registry articles: ${registryItems.length}; failed streams: ${failedStreams.length}).`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+// Exit once the output is written: an unread error-response body can keep a
+// connection, and so the process, open until the HTTP client's 300s body
+// timeout, which made the stage overrun its limit and lose its output.
+main().then(() => process.exit(), (e) => { console.error(e); process.exit(1); });
