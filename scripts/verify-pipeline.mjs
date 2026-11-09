@@ -181,13 +181,17 @@ function cleanLocalizationText(value) {
 // Verification may need to repair a stale localization after a source excerpt
 // changes. Keep that English fallback in the same compact bullet style as the
 // normal localization job, without modifying the source-bound evidence lines.
+// Runs of dots ("already..", "...") become an ellipsis first: the single-dot
+// rules below would otherwise leave "already." or "x. ·" behind, which the
+// display check rejects as sentence punctuation.
 function compactFallbackText(value) {
   return cleanLocalizationText(value)
     .replace(/\b(\d{4})\.(\d{1,2})\.(\d{1,2})\b/g, "$1-$2-$3")
+    .replace(/\.{2,}/g, "…")
     .replace(/(?<=[A-Za-z])\.(?=[A-Za-z])/g, "·")
     .replace(/([^0-9])\.(?=\s+)/g, "$1 ·")
     .replace(/([^0-9])\.(?=["”’']?\s*$)/g, "$1")
-    .replace(/[。!?]+$/g, "").trim();
+    .replace(/[。!?…\s]+$/g, "").trim();
 }
 function localizationHash(title, excerpt) {
   return createHash("sha256").update(`${cleanLocalizationText(title)}\n${cleanLocalizationText(excerpt)}`).digest("hex");
