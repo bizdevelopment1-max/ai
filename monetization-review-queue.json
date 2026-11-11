@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-11-11T17:27:52.895Z",
+  "generatedAt": "2026-11-11T22:16:35.468Z",
   "schemaVersion": 1,
   "policy": "상업 필드 6개 또는 행위 주체가 모두 확인되지 않으면 공개하지 않고 검토 대기열로 이동합니다.",
-  "total": 216,
+  "total": 225,
   "rows": [
     {
       "type": "monetization",
@@ -27,8 +27,72 @@
       },
       "source": "The Decoder",
       "date": "2026-11-11",
-      "url": "https://the-decoder.com/anthropic-says-ai-is-eroding-nvidias-cuda-lead-cutting-an-amd-chip-switch-from-months-to-three-days/",
+      "url": "https://the-decoder.com/anthropic-says-ai-is-eroding-nvidias-cuda-lead-cutting-an-amd-chip-switch-from-months-to-three-days",
       "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Use Gemini in CarPlay to catch-up on what you have coming up in your schedule, talk through your inbox, or... pic.twitter.com/1s4luZ6q0v To use the assistant on CarPlay, you'll need to make sure you have the latest version of the Gemini app on your iPhone and the microphone permissions are on",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "Google brings the Gemini app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-11-11",
+      "url": "https://www.engadget.com/2314093/google-brings-the-gemini-app-to-apple-carplay/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "usage",
+      "signal": "The API costs $0.10 per million input tokens with no output-token charge, about five times cheaper than Gemini 3.5 Flash-Lite according to Google",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "a single pass\nThe underlying model",
+          "billingUnit": "",
+          "priceOrRevenue": "$0.10",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-11",
+      "url": "https://the-decoder.com/google-joins-the-decision-model-wave-with-gemini-decision-1-scoring-1000-questions-in-a-single-pass/",
+      "reasons": [
+        "missing:buyer",
         "missing:billingUnit",
         "missing:recurringRevenue"
       ]
@@ -120,7 +184,7 @@
       },
       "source": "Google DeepMind",
       "date": "2026-11-11",
-      "url": "https://deepmind.google/blog/alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease/",
+      "url": "https://deepmind.google/blog/alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -452,7 +516,7 @@
       },
       "source": "AWS Machine Learning Blog",
       "date": "2026-11-11",
-      "url": "https://aws.amazon.com/blogs/machine-learning/introducing-usage-based-pricing-for-amazon-sagemaker-ai-bidirectional-streaming/",
+      "url": "https://aws.amazon.com/blogs/machine-learning/introducing-usage-based-pricing-for-amazon-sagemaker-ai-bidirectional-streaming",
       "reasons": [
         "missing:buyer",
         "missing:priceOrRevenue"
@@ -481,7 +545,7 @@
       },
       "source": "AWS Machine Learning Blog",
       "date": "2026-11-11",
-      "url": "https://aws.amazon.com/blogs/machine-learning/introducing-usage-based-pricing-for-amazon-sagemaker-ai-bidirectional-streaming/",
+      "url": "https://aws.amazon.com/blogs/machine-learning/introducing-usage-based-pricing-for-amazon-sagemaker-ai-bidirectional-streaming",
       "reasons": [
         "missing:buyer",
         "missing:priceOrRevenue"
@@ -510,7 +574,7 @@
       },
       "source": "AWS Machine Learning Blog",
       "date": "2026-11-11",
-      "url": "https://aws.amazon.com/blogs/machine-learning/introducing-usage-based-pricing-for-amazon-sagemaker-ai-bidirectional-streaming/",
+      "url": "https://aws.amazon.com/blogs/machine-learning/introducing-usage-based-pricing-for-amazon-sagemaker-ai-bidirectional-streaming",
       "reasons": [
         "missing:buyer",
         "missing:priceOrRevenue"
@@ -539,7 +603,7 @@
       },
       "source": "AWS Machine Learning Blog",
       "date": "2026-11-11",
-      "url": "https://aws.amazon.com/blogs/machine-learning/introducing-usage-based-pricing-for-amazon-sagemaker-ai-bidirectional-streaming/",
+      "url": "https://aws.amazon.com/blogs/machine-learning/introducing-usage-based-pricing-for-amazon-sagemaker-ai-bidirectional-streaming",
       "reasons": [
         "missing:buyer",
         "missing:priceOrRevenue"
@@ -649,6 +713,290 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "Databricks",
+      "candidateKind": "partner",
+      "signal": "Last week, we opened our new headquarters at One Sansome Street in San Francisco, welcoming employees, customers, and partners into what will ultimately be a 235,000+ square foot space that matches the scale of what we're building together",
+      "kind": "partner",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Last week, we opened our new headquarters at One Sansome Street in San Francisco, welcoming employees, customers, and partners into what will ultimately be a 235,000+ square foot space that matches the scale of what we're building together."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Databricks Blog",
+      "date": "2026-11-11",
+      "url": "https://www.databricks.com/blog/databricks-doubles-down-ai-products-opens-new-235000-square-foot-san-francisco-headquarters",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Amazon",
+      "candidateKind": "expand",
+      "signal": "As reported, the solution handles over 100,000 calls per day with 2.5-second response latency, achieving a 50x increase in testing capacity",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "As reported, the solution handles over 100,000 calls per day with 2.5-second response latency, achieving a 50x increase in testing capacity."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "AWS Machine Learning Blog",
+      "date": "2026-11-11",
+      "url": "https://aws.amazon.com/blogs/machine-learning/accelerating-generative-ai-delivery-with-reusable-assets/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Amazon",
+      "candidateModel": "usage",
+      "signal": "Every model DXC OASIS uses (Anthropic Claude, Amazon Nova, Meta Llama, and open-weight families) is reached through Amazon Bedrock model inference",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Amazon",
+          "buyer": "",
+          "offering": "Amazon Web Services\nEvery model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "AWS Machine Learning Blog",
+      "date": "2026-11-11",
+      "url": "https://aws.amazon.com/blogs/machine-learning/how-dxc-technology-built-a-multi-model-ai-substrate-on-amazon-bedrock/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "GitHub - wangzan101/Mika: An on-device AI agent for Android that operates apps and the web to get things done for you",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "An on-device AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "GitHub",
+      "date": "2026-11-11",
+      "url": "https://github.com/wangzan101/Mika",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "Send this to the AI agent on it and it will set everything up for you: Follow https://github.com/wangzan101/Mika/blob/main/docs/install-with-agent.en.md to install Mika on the Android phone connected over USB",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "An on-device AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "GitHub",
+      "date": "2026-11-11",
+      "url": "https://github.com/wangzan101/Mika",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "Blue Phone gives Google's Pixel 10 Pro an AI assistant that goes beyond Gemini",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "users",
+          "offering": "Pixel 10 Pro an AI assistant",
+          "billingUnit": "",
+          "priceOrRevenue": "$1,299,",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Android Authority",
+      "date": "2026-11-11",
+      "url": "https://www.androidauthority.com/blue-os-google-pixel-10-pro-3733835/",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "Blue Phone costs $1,299, but iPhone users can get it for free by trading in their old device within 30 days of purchase",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "users",
+          "offering": "Pixel 10 Pro an AI assistant",
+          "billingUnit": "",
+          "priceOrRevenue": "$1,299,",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Android Authority",
+      "date": "2026-11-11",
+      "url": "https://www.androidauthority.com/blue-os-google-pixel-10-pro-3733835/",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "Y Combinator-backed startup Blue has launched the public beta of Blue Phone, which runs Blue OS on the Pixel 10 Pro and Pro XL",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "users",
+          "offering": "Pixel 10 Pro an AI assistant",
+          "billingUnit": "",
+          "priceOrRevenue": "$1,299,",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Android Authority",
+      "date": "2026-11-11",
+      "url": "https://www.androidauthority.com/blue-os-google-pixel-10-pro-3733835/",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "Y Combinator-backed startup Blue has launched the public beta of Blue Phone, which runs Blue OS on the Pixel 10 Pro and Pro XL",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Y Combinator-backed startup Blue has launched the public beta of Blue Phone, which runs Blue OS on the Pixel 10 Pro and Pro XL."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Android Authority",
+      "date": "2026-11-11",
+      "url": "https://www.androidauthority.com/blue-os-google-pixel-10-pro-3733835/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "hardware",
+      "signal": "The offer requires you to send your iPhone to the company within 30 days of purchasing the Blue Phone",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "users",
+          "offering": "Pixel 10 Pro an AI assistant",
+          "billingUnit": "",
+          "priceOrRevenue": "$1,299,",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Android Authority",
+      "date": "2026-11-11",
+      "url": "https://www.androidauthority.com/blue-os-google-pixel-10-pro-3733835/",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
       "type": "monetization",
       "company": "Apple",
       "candidateModel": "hardware",
@@ -673,7 +1021,7 @@
       },
       "source": "MacRumors",
       "date": "2026-11-11",
-      "url": "https://www.macrumors.com/2026/11/11/apple-smart-glasses-mentioned-by-suppliers/",
+      "url": "https://www.macrumors.com/2026/11/11/apple-smart-glasses-mentioned-by-suppliers",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
@@ -706,7 +1054,7 @@
       },
       "source": "MacRumors",
       "date": "2026-11-11",
-      "url": "https://www.macrumors.com/2026/11/11/apple-smart-glasses-mentioned-by-suppliers/",
+      "url": "https://www.macrumors.com/2026/11/11/apple-smart-glasses-mentioned-by-suppliers",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
@@ -739,7 +1087,7 @@
       },
       "source": "MacRumors",
       "date": "2026-11-11",
-      "url": "https://www.macrumors.com/2026/11/11/apple-smart-glasses-mentioned-by-suppliers/",
+      "url": "https://www.macrumors.com/2026/11/11/apple-smart-glasses-mentioned-by-suppliers",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
@@ -772,7 +1120,7 @@
       },
       "source": "MacRumors",
       "date": "2026-11-11",
-      "url": "https://www.macrumors.com/2026/11/11/apple-smart-glasses-mentioned-by-suppliers/",
+      "url": "https://www.macrumors.com/2026/11/11/apple-smart-glasses-mentioned-by-suppliers",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
@@ -781,215 +1129,143 @@
       ]
     },
     {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "ChatGPT currently reaches 1.2 billion users per week, according to OpenAI, and the company plans to expand the offering to more markets and industries over time",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "ChatGPT currently reaches 1.2 billion users per week, according to OpenAI, and the company plans to expand the offering to more markets and industries over time."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-10",
-      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "ads",
-      "signal": "Eligible US e-commerce and online service providers can also create \"Business Agents,\" AI agents that answer customer questions in ChatGPT, help with product comparisons, and can serve as targets for ChatGPT ads",
-      "model": "ads",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "users",
-          "offering": "a business directory with AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "1.2 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-10",
-      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "OpenAI is launching a beta feature called \"Businesses in ChatGPT\" that could compete with Google's \"MyBusiness.\"",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "OpenAI is launching a beta feature called \"Businesses in ChatGPT\" that could compete with Google's \"MyBusiness.\""
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-10",
-      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "enterprise",
-      "signal": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "Ember to power cost-efficient AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "$125M",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-10",
-      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "invest",
-      "signal": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF ."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-10",
-      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
       "type": "monetization",
       "company": "Meta AI",
       "candidateModel": "hardware",
-      "signal": "All three algorithms were in “max” mode, which means they used the maximum amount of hardware at their disposal instead of prioritizing cost-efficiency",
+      "signal": "Meta warns some of its AI glasses may get 'too warm' if they get wet - Engadget",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Meta AI",
           "buyer": "",
-          "offering": "Ember to power cost-efficient AI agent",
+          "offering": "",
           "billingUnit": "",
-          "priceOrRevenue": "$125M",
+          "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
           "buyer",
+          "offering",
           "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-10",
-      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "subscription",
-      "signal": "Google AI Ultra subscribers paying $100 a month for membership will also get access to Carbon within the Gemini app, AI Model in Search and Antigravity, Google's agentic software development and AI coding platform",
-      "model": "subscription",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "subscribers",
-          "offering": "to Carbon within the Gemini app",
-          "billingUnit": "",
-          "priceOrRevenue": "$100",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
+          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
       "source": "Engadget",
       "date": "2026-11-10",
-      "url": "https://www.engadget.com/2311855/gemini-4-carbon-now-available-worldwide",
+      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
       "reasons": [
+        "missing:buyer",
+        "missing:offering",
         "missing:billingUnit",
+        "missing:priceOrRevenue",
         "missing:recurringRevenue"
       ]
     },
     {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "The model is launching with an introductory price of $2 per million input tokens and $10 per million output tokens, around a fifth the cost of OpenAI’s GPT-6 Astra and a quarter the cost of Anthropic’s Fable 5.2 model, which launched yesterday",
-      "kind": "expand",
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "While Meta doesn't use the word \"overheating,\" the company compares its glasses fix to how smartphones automatically shut down when they get too hot",
+      "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "entity": "",
-          "actionStatement": "The model is launching with an introductory price of $2 per million input tokens and $10 per million output tokens, around a fifth the cost of OpenAI’s GPT-6 Astra and a quarter the cost of Anthropic’s Fable 5.2 model, which launched yesterday ."
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
         },
         "missing": [
-          "entityMentionInEvidenceLine"
+          "buyer",
+          "offering",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
         ]
       },
-      "source": "The Verge",
+      "source": "Engadget",
       "date": "2026-11-10",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/1030787/google-gemini-4-carbon-public-rollout",
+      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
       "reasons": [
-        "missing:entityMentionInEvidenceLine"
+        "missing:buyer",
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "According to Meta , all of its AI glasses come with IPX4 water resistance which \"means your glasses are safe if you get caught in light rain while you wear them.\"",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "offering",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-11-10",
+      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
+      "reasons": [
+        "missing:buyer",
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "Have you experienced a pair of Meta Glasses getting too hot or unexpectedly shutting down?",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "offering",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-11-10",
+      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
+      "reasons": [
+        "missing:buyer",
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -1202,143 +1478,215 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "Meta warns some of its AI glasses may get 'too warm' if they get wet - Engadget",
-      "model": "hardware",
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "The model is launching with an introductory price of $2 per million input tokens and $10 per million output tokens, around a fifth the cost of OpenAI’s GPT-6 Astra and a quarter the cost of Anthropic’s Fable 5.2 model, which launched yesterday",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "",
+          "entity": "",
+          "actionStatement": "The model is launching with an introductory price of $2 per million input tokens and $10 per million output tokens, around a fifth the cost of OpenAI’s GPT-6 Astra and a quarter the cost of Anthropic’s Fable 5.2 model, which launched yesterday ."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-11-10",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1030787/google-gemini-4-carbon-public-rollout",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "subscription",
+      "signal": "Google AI Ultra subscribers paying $100 a month for membership will also get access to Carbon within the Gemini app, AI Model in Search and Antigravity, Google's agentic software development and AI coding platform",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "subscribers",
+          "offering": "to Carbon within the Gemini app",
           "billingUnit": "",
-          "priceOrRevenue": "",
+          "priceOrRevenue": "$100",
           "recurringRevenue": ""
         },
         "missing": [
-          "buyer",
-          "offering",
           "billingUnit",
-          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
       "source": "Engadget",
       "date": "2026-11-10",
-      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
+      "url": "https://www.engadget.com/2311855/gemini-4-carbon-now-available-worldwide",
       "reasons": [
-        "missing:buyer",
-        "missing:offering",
         "missing:billingUnit",
-        "missing:priceOrRevenue",
         "missing:recurringRevenue"
       ]
     },
     {
       "type": "monetization",
       "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "While Meta doesn't use the word \"overheating,\" the company compares its glasses fix to how smartphones automatically shut down when they get too hot",
-      "model": "hardware",
+      "candidateModel": "enterprise",
+      "signal": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF",
+      "model": "enterprise",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Meta AI",
           "buyer": "",
-          "offering": "",
+          "offering": "Ember to power cost-efficient AI agent",
           "billingUnit": "",
-          "priceOrRevenue": "",
+          "priceOrRevenue": "$125M",
           "recurringRevenue": ""
         },
         "missing": [
           "buyer",
-          "offering",
           "billingUnit",
-          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Engadget",
+      "source": "SiliconANGLE",
       "date": "2026-11-10",
-      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
+      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
       "reasons": [
         "missing:buyer",
-        "missing:offering",
         "missing:billingUnit",
-        "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "invest",
+      "signal": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF ."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-10",
+      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "monetization",
       "company": "Meta AI",
       "candidateModel": "hardware",
-      "signal": "According to Meta , all of its AI glasses come with IPX4 water resistance which \"means your glasses are safe if you get caught in light rain while you wear them.\"",
+      "signal": "All three algorithms were in “max” mode, which means they used the maximum amount of hardware at their disposal instead of prioritizing cost-efficiency",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Meta AI",
           "buyer": "",
-          "offering": "",
+          "offering": "Ember to power cost-efficient AI agent",
           "billingUnit": "",
-          "priceOrRevenue": "",
+          "priceOrRevenue": "$125M",
           "recurringRevenue": ""
         },
         "missing": [
           "buyer",
-          "offering",
           "billingUnit",
-          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Engadget",
+      "source": "SiliconANGLE",
       "date": "2026-11-10",
-      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
+      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
       "reasons": [
         "missing:buyer",
-        "missing:offering",
         "missing:billingUnit",
-        "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "ChatGPT currently reaches 1.2 billion users per week, according to OpenAI, and the company plans to expand the offering to more markets and industries over time",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "ChatGPT currently reaches 1.2 billion users per week, according to OpenAI, and the company plans to expand the offering to more markets and industries over time."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-10",
+      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "monetization",
       "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "Have you experienced a pair of Meta Glasses getting too hot or unexpectedly shutting down?",
-      "model": "hardware",
+      "candidateModel": "ads",
+      "signal": "Eligible US e-commerce and online service providers can also create \"Business Agents,\" AI agents that answer customer questions in ChatGPT, help with product comparisons, and can serve as targets for ChatGPT ads",
+      "model": "ads",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Meta AI",
-          "buyer": "",
-          "offering": "",
+          "buyer": "users",
+          "offering": "a business directory with AI agent",
           "billingUnit": "",
-          "priceOrRevenue": "",
+          "priceOrRevenue": "1.2 billion",
           "recurringRevenue": ""
         },
         "missing": [
-          "buyer",
-          "offering",
           "billingUnit",
-          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
-      "source": "Engadget",
+      "source": "The Decoder",
       "date": "2026-11-10",
-      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
+      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
       "reasons": [
-        "missing:buyer",
-        "missing:offering",
         "missing:billingUnit",
-        "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "OpenAI is launching a beta feature called \"Businesses in ChatGPT\" that could compete with Google's \"MyBusiness.\"",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "OpenAI is launching a beta feature called \"Businesses in ChatGPT\" that could compete with Google's \"MyBusiness.\""
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-10",
+      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -1609,7 +1957,7 @@
       },
       "source": "Microsoft Source",
       "date": "2026-11-10",
-      "url": "https://news.microsoft.com/source/2026/11/10/ibm-and-microsoft-announce-a-new-ai-agent-platform-designed-for-industry-specific-transformation/",
+      "url": "https://news.microsoft.com/source/2026/11/10/ibm-and-microsoft-announce-a-new-ai-agent-platform-designed-for-industry-specific-transformation",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
@@ -1640,7 +1988,7 @@
       },
       "source": "Microsoft Source",
       "date": "2026-11-10",
-      "url": "https://news.microsoft.com/source/2026/11/10/ibm-and-microsoft-announce-a-new-ai-agent-platform-designed-for-industry-specific-transformation/",
+      "url": "https://news.microsoft.com/source/2026/11/10/ibm-and-microsoft-announce-a-new-ai-agent-platform-designed-for-industry-specific-transformation",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
@@ -1649,77 +1997,46 @@
     },
     {
       "type": "direction",
-      "company": "ElevenLabs",
-      "candidateKind": "invest",
-      "signal": "The withdrawals come after Huang admitted to an extramarital affair over the weekend, and Nvidia opened an investigation into his relationship with a possible Chinese spy",
-      "kind": "invest",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "Meta is expanding AI age detection for Instagram teen accounts - Engadget",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "The withdrawals come after Huang admitted to an extramarital affair over the weekend, and Nvidia opened an investigation into his relationship with a possible Chinese spy."
+          "actionStatement": "Meta is expanding AI age detection for Instagram teen accounts - Engadget"
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "TechCrunch",
+      "source": "Engadget",
       "date": "2026-11-09",
-      "url": "https://techcrunch.com/2026/11/09/jensen-huang-pulls-out-of-elevenlabs-summit-amid-nvidia-controversy",
+      "url": "https://www.engadget.com/2310848/meta-is-expanding-ai-age-detection-for-instagram-teen-accounts",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "vertical",
-      "signal": "The company disclosed in its S-1 filing in May that it is paying SpaceX subsidiary xAI $1.25 billion per month through May 2029 to use xAI’s computing power",
-      "model": "vertical",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Anthropic",
-          "buyer": "",
-          "offering": "",
-          "billingUnit": "per month",
-          "priceOrRevenue": "$3.4",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "offering",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-09",
-      "url": "https://techcrunch.com/2026/11/09/anthropic-joins-ais-natural-gas-frenzy-buys-3-4b-worth-of-turbines",
-      "reasons": [
-        "missing:buyer",
-        "missing:offering",
-        "missing:recurringRevenue"
       ]
     },
     {
       "type": "direction",
       "company": "NVIDIA",
       "candidateKind": "invest",
-      "signal": "( WSJ $) 2 Democrats are planning a blitz of investigations into Big Tech Reportedly starting with Apple, Meta, and Musk’s companies",
+      "signal": "The board has launched an independent investigation",
       "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "( WSJ $) 2 Democrats are planning a blitz of investigations into Big Tech Reportedly starting with Apple, Meta, and Musk’s companies."
+          "actionStatement": "The board has launched an independent investigation."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "MIT Tech Review",
+      "source": "The Decoder",
       "date": "2026-11-09",
-      "url": "https://www.technologyreview.com/2026/11/09/1148176/the-download-empty-ai-climate-claims-and-an-nvidia-investigation",
+      "url": "https://the-decoder.com/nvidia-espionage-scandal-weakens-huangs-lobby-against-tighter-ai-chip-export-controls",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -1782,44 +2099,75 @@
       "type": "direction",
       "company": "NVIDIA",
       "candidateKind": "invest",
-      "signal": "The board has launched an independent investigation",
+      "signal": "( WSJ $) 2 Democrats are planning a blitz of investigations into Big Tech Reportedly starting with Apple, Meta, and Musk’s companies",
       "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "The board has launched an independent investigation."
+          "actionStatement": "( WSJ $) 2 Democrats are planning a blitz of investigations into Big Tech Reportedly starting with Apple, Meta, and Musk’s companies."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "The Decoder",
+      "source": "MIT Tech Review",
       "date": "2026-11-09",
-      "url": "https://the-decoder.com/nvidia-espionage-scandal-weakens-huangs-lobby-against-tighter-ai-chip-export-controls",
+      "url": "https://www.technologyreview.com/2026/11/09/1148176/the-download-empty-ai-climate-claims-and-an-nvidia-investigation",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "vertical",
+      "signal": "The company disclosed in its S-1 filing in May that it is paying SpaceX subsidiary xAI $1.25 billion per month through May 2029 to use xAI’s computing power",
+      "model": "vertical",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "",
+          "billingUnit": "per month",
+          "priceOrRevenue": "$3.4",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "offering",
+          "recurringRevenue"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-09",
+      "url": "https://techcrunch.com/2026/11/09/anthropic-joins-ais-natural-gas-frenzy-buys-3-4b-worth-of-turbines",
+      "reasons": [
+        "missing:buyer",
+        "missing:offering",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
       "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "Meta is expanding AI age detection for Instagram teen accounts - Engadget",
-      "kind": "expand",
+      "company": "ElevenLabs",
+      "candidateKind": "invest",
+      "signal": "The withdrawals come after Huang admitted to an extramarital affair over the weekend, and Nvidia opened an investigation into his relationship with a possible Chinese spy",
+      "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Meta is expanding AI age detection for Instagram teen accounts - Engadget"
+          "actionStatement": "The withdrawals come after Huang admitted to an extramarital affair over the weekend, and Nvidia opened an investigation into his relationship with a possible Chinese spy."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Engadget",
+      "source": "TechCrunch",
       "date": "2026-11-09",
-      "url": "https://www.engadget.com/2310848/meta-is-expanding-ai-age-detection-for-instagram-teen-accounts",
+      "url": "https://techcrunch.com/2026/11/09/jensen-huang-pulls-out-of-elevenlabs-summit-amid-nvidia-controversy",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -2372,35 +2720,6 @@
     },
     {
       "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "subscription",
-      "signal": "GitHub - stablyai/orca: Orca lets you run a fleet of coding agents (e.g. Claude Code, Codex) with your own subscription. Available on desktop, mobile and remote runtime",
-      "model": "subscription",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Anthropic",
-          "buyer": "",
-          "offering": "run a fleet of coding agent",
-          "billingUnit": "subscription",
-          "priceOrRevenue": "",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "buyer",
-          "priceOrRevenue"
-        ]
-      },
-      "source": "GitHub",
-      "date": "2026-11-08",
-      "url": "https://github.com/stablyai/orca",
-      "reasons": [
-        "missing:buyer",
-        "missing:priceOrRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
       "company": "Google DeepMind",
       "candidateModel": "subscription",
       "signal": "If you don't like Google Health's AI Coach or need a break from its constant advice, the easiest way to get rid of it is to cancel your Google Health Premium subscription, since AI Coach does not come with the free Google Health tier",
@@ -2423,6 +2742,35 @@
       "source": "Engadget",
       "date": "2026-11-08",
       "url": "https://www.engadget.com/2309626/dont-like-google-health-ai-coach-how-turn-off",
+      "reasons": [
+        "missing:buyer",
+        "missing:priceOrRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "subscription",
+      "signal": "GitHub - stablyai/orca: Orca lets you run a fleet of coding agents (e.g. Claude Code, Codex) with your own subscription. Available on desktop, mobile and remote runtime",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "run a fleet of coding agent",
+          "billingUnit": "subscription",
+          "priceOrRevenue": "",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer",
+          "priceOrRevenue"
+        ]
+      },
+      "source": "GitHub",
+      "date": "2026-11-08",
+      "url": "https://github.com/stablyai/orca",
       "reasons": [
         "missing:buyer",
         "missing:priceOrRevenue"
@@ -3170,84 +3518,49 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "ads",
-      "signal": "Agentic Commerce Optimization: Adobe Forecasts 130% AI Shopping Traffic Growth; Google Launches Universal Cart",
-      "model": "ads",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "retailers",
-          "offering": "in Search and the Gemini app",
-          "billingUnit": "",
-          "priceOrRevenue": "60 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Yahoo Finance",
-      "date": "2026-11-05",
-      "url": "https://finance.yahoo.com/technology/ai/articles/agentic-commerce-optimization-adobe-forecasts-153000869.html",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
       "type": "direction",
-      "company": "Google DeepMind",
+      "company": "Meta AI",
       "candidateKind": "expand",
-      "signal": "Agentic Commerce Optimization: Adobe Forecasts 130% AI Shopping Traffic Growth; Google Launches Universal Cart",
+      "signal": "Meta’s Muse launched with a lovable mascot and a string of privacy problems",
       "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Agentic Commerce Optimization: Adobe Forecasts 130% AI Shopping Traffic Growth; Google Launches Universal Cart"
+          "actionStatement": "Meta’s Muse launched with a lovable mascot and a string of privacy problems."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Yahoo Finance",
+      "source": "CNET",
       "date": "2026-11-05",
-      "url": "https://finance.yahoo.com/technology/ai/articles/agentic-commerce-optimization-adobe-forecasts-153000869.html",
+      "url": "https://www.cnet.com/tech/services-and-software/metas-muse-agentic-ai-privacy-violations-security-data",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "ads",
-      "signal": "Optimum7 today released a guide to agentic commerce optimization, covering the store data AI shopping tools read and the fixes legacy and custom-built ecommerce platforms can need to expose it",
-      "model": "ads",
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "Before Meta launched the ability for its Muse to make outbound business calls on your behalf, internal Meta documents revealed that the company planned to rely on human contractors at call centers to help make reservations and appointments",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "retailers",
-          "offering": "in Search and the Gemini app",
-          "billingUnit": "",
-          "priceOrRevenue": "60 billion",
-          "recurringRevenue": ""
+          "entity": "",
+          "actionStatement": "Before Meta launched the ability for its Muse to make outbound business calls on your behalf, internal Meta documents revealed that the company planned to rely on human contractors at call centers to help make reservations and appointments."
         },
         "missing": [
-          "billingUnit",
-          "recurringRevenue"
+          "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Yahoo Finance",
+      "source": "CNET",
       "date": "2026-11-05",
-      "url": "https://finance.yahoo.com/technology/ai/articles/agentic-commerce-optimization-adobe-forecasts-153000869.html",
+      "url": "https://www.cnet.com/tech/services-and-software/metas-muse-agentic-ai-privacy-violations-security-data",
       "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -3780,49 +4093,84 @@
       ]
     },
     {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "ads",
+      "signal": "Agentic Commerce Optimization: Adobe Forecasts 130% AI Shopping Traffic Growth; Google Launches Universal Cart",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "retailers",
+          "offering": "in Search and the Gemini app",
+          "billingUnit": "",
+          "priceOrRevenue": "60 billion",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Yahoo Finance",
+      "date": "2026-11-05",
+      "url": "https://finance.yahoo.com/technology/ai/articles/agentic-commerce-optimization-adobe-forecasts-153000869.html",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
       "type": "direction",
-      "company": "Meta AI",
+      "company": "Google DeepMind",
       "candidateKind": "expand",
-      "signal": "Meta’s Muse launched with a lovable mascot and a string of privacy problems",
+      "signal": "Agentic Commerce Optimization: Adobe Forecasts 130% AI Shopping Traffic Growth; Google Launches Universal Cart",
       "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Meta’s Muse launched with a lovable mascot and a string of privacy problems."
+          "actionStatement": "Agentic Commerce Optimization: Adobe Forecasts 130% AI Shopping Traffic Growth; Google Launches Universal Cart"
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "CNET",
+      "source": "Yahoo Finance",
       "date": "2026-11-05",
-      "url": "https://www.cnet.com/tech/services-and-software/metas-muse-agentic-ai-privacy-violations-security-data",
+      "url": "https://finance.yahoo.com/technology/ai/articles/agentic-commerce-optimization-adobe-forecasts-153000869.html",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "Before Meta launched the ability for its Muse to make outbound business calls on your behalf, internal Meta documents revealed that the company planned to rely on human contractors at call centers to help make reservations and appointments",
-      "kind": "expand",
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "ads",
+      "signal": "Optimum7 today released a guide to agentic commerce optimization, covering the store data AI shopping tools read and the fixes legacy and custom-built ecommerce platforms can need to expose it",
+      "model": "ads",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "entity": "",
-          "actionStatement": "Before Meta launched the ability for its Muse to make outbound business calls on your behalf, internal Meta documents revealed that the company planned to rely on human contractors at call centers to help make reservations and appointments."
+          "seller": "Google DeepMind",
+          "buyer": "retailers",
+          "offering": "in Search and the Gemini app",
+          "billingUnit": "",
+          "priceOrRevenue": "60 billion",
+          "recurringRevenue": ""
         },
         "missing": [
-          "entityMentionInEvidenceLine"
+          "billingUnit",
+          "recurringRevenue"
         ]
       },
-      "source": "CNET",
+      "source": "Yahoo Finance",
       "date": "2026-11-05",
-      "url": "https://www.cnet.com/tech/services-and-software/metas-muse-agentic-ai-privacy-violations-security-data",
+      "url": "https://finance.yahoo.com/technology/ai/articles/agentic-commerce-optimization-adobe-forecasts-153000869.html",
       "reasons": [
-        "missing:entityMentionInEvidenceLine"
+        "missing:billingUnit",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -4187,7 +4535,7 @@
       },
       "source": "TechCrunch",
       "date": "2026-11-04",
-      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor/",
+      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -4210,7 +4558,7 @@
       },
       "source": "TechCrunch",
       "date": "2026-11-04",
-      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor/",
+      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -4233,7 +4581,7 @@
       },
       "source": "TechCrunch",
       "date": "2026-11-04",
-      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor/",
+      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -4261,7 +4609,7 @@
       },
       "source": "TechCrunch",
       "date": "2026-11-04",
-      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor/",
+      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor",
       "reasons": [
         "missing:billingUnit",
         "missing:recurringRevenue"
@@ -4953,6 +5301,37 @@
       "source": "9to5Mac",
       "date": "2026-11-03",
       "url": "https://9to5mac.com/2026/11/03/eney-from-macpaw-ai-assistant-deep-apple-integrations",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Real-time translation across Messages, FaceTime, Phone, and compatible AirPods Siri improvements including Type to Siri, more natural language support, and ability to retain context during a conversation Essentially, none of the new AI capabilities introduced in iOS 27 are included",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "users",
+          "offering": "iOS 27.3 brings App",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "9to5Mac",
+      "date": "2026-11-03",
+      "url": "https://9to5mac.com/2026/11/03/ios-27-3-brings-apple-intelligence-features-to-china/",
       "reasons": [
         "missing:billingUnit",
         "missing:priceOrRevenue",
@@ -5856,7 +6235,7 @@
       },
       "source": "Android Authority",
       "date": "2026-10-30",
-      "url": "https://www.androidauthority.com/pixel-11-pro-hilight-android-17-notification-rules-apk-teardown-3729902/",
+      "url": "https://www.androidauthority.com/pixel-11-pro-hilight-android-17-notification-rules-apk-teardown-3729902",
       "reasons": [
         "missing:buyer",
         "missing:offering",
@@ -5894,6 +6273,52 @@
         "missing:billingUnit",
         "missing:priceOrRevenue",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "invest",
+      "signal": "Google's AI search problem finally shows up in the earnings report, some investors believe",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Google's AI search problem finally shows up in the earnings report, some investors believe"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-10-29",
+      "url": "https://the-decoder.com/googles-ai-search-problem-finally-shows-up-in-the-earnings-report-some-investors-believe",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "invest",
+      "signal": "Google lost up to ten percent of its market value because an old investor fear appears to be coming true",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Google lost up to ten percent of its market value because an old investor fear appears to be coming true."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-10-29",
+      "url": "https://the-decoder.com/googles-ai-search-problem-finally-shows-up-in-the-earnings-report-some-investors-believe",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
@@ -5952,164 +6377,6 @@
       "reasons": [
         "missing:billingUnit",
         "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "invest",
-      "signal": "Google's AI search problem finally shows up in the earnings report, some investors believe",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google's AI search problem finally shows up in the earnings report, some investors believe"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-10-29",
-      "url": "https://the-decoder.com/googles-ai-search-problem-finally-shows-up-in-the-earnings-report-some-investors-believe",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "invest",
-      "signal": "Google lost up to ten percent of its market value because an old investor fear appears to be coming true",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google lost up to ten percent of its market value because an old investor fear appears to be coming true."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-10-29",
-      "url": "https://the-decoder.com/googles-ai-search-problem-finally-shows-up-in-the-earnings-report-some-investors-believe",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Hugging Face",
-      "candidateModel": "usage",
-      "signal": "Apple platforms already have an API for it. macOS 26 and iOS 26 introduced SpeechAnalyzer , Apple's new speech-to-text API",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Hugging Face",
-          "buyer": "",
-          "offering": "Open Model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Hugging Face Blog",
-      "date": "2026-10-29",
-      "url": "https://huggingface.co/blog/anydecisionmodel",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Hugging Face",
-      "candidateModel": "usage",
-      "signal": "Like image support in AnyLanguageModel, this goes beyond what Apple's API offers today",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Hugging Face",
-          "buyer": "",
-          "offering": "Open Model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Hugging Face Blog",
-      "date": "2026-10-29",
-      "url": "https://huggingface.co/blog/anydecisionmodel",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Anthropic",
-      "candidateKind": "expand",
-      "signal": "AI for Science expands to foundations and institutions",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "AI for Science expands to foundations and institutions"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Anthropic",
-      "date": "2026-10-29",
-      "url": "https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Anthropic",
-      "candidateKind": "expand",
-      "signal": "(Over the last few months, we’ve also launched our discounted Team plan for scientists and have supported hundreds of projects across biology, medicine, physics, chemistry, climate science, and mathematics.)",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "(Over the last few months, we’ve also launched our discounted Team plan for scientists and have supported hundreds of projects across biology, medicine, physics, chemistry, climate science, and mathematics.)"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Anthropic",
-      "date": "2026-10-29",
-      "url": "https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
       ]
     }
   ]
