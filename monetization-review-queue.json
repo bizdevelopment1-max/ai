@@ -1,9 +1,96 @@
 {
-  "generatedAt": "2026-11-13T11:28:21.800Z",
+  "generatedAt": "2026-11-13T17:25:58.160Z",
   "schemaVersion": 1,
   "policy": "상업 필드 6개 또는 행위 주체가 모두 확인되지 않으면 공개하지 않고 검토 대기열로 이동합니다.",
-  "total": 229,
+  "total": 233,
   "rows": [
+    {
+      "type": "monetization",
+      "company": "NVIDIA",
+      "candidateModel": "enterprise",
+      "signal": "Anthropic launches IPO roadshow with $64B fundraising goal Mercor raises $750M at $20B valuation to take AI agent evaluation to enterprises",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "NVIDIA",
+          "buyer": "",
+          "offering": "20B valuation to take AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "$64",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-13",
+      "url": "https://siliconangle.com/2026/11/13/nvidia-ceo-jensen-huangs-abrupt-departure-shakes-ai-industrys-foundations/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "NVIDIA",
+      "candidateKind": "invest",
+      "signal": "Anthropic launches IPO roadshow with $64B fundraising goal Mercor raises $750M at $20B valuation to take AI agent evaluation to enterprises",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Anthropic launches IPO roadshow with $64B fundraising goal Mercor raises $750M at $20B valuation to take AI agent evaluation to enterprises"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-13",
+      "url": "https://siliconangle.com/2026/11/13/nvidia-ceo-jensen-huangs-abrupt-departure-shakes-ai-industrys-foundations/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "hardware",
+      "signal": "For that, Anthropic is separately developing the Model Hardware Standard as a research preview, connecting AI agents to devices like robotic arms and microscopes via standardized drivers",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "plugs AI directly into factory software",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-13",
+      "url": "https://the-decoder.com/anthropics-claude-for-manufacturing-plugs-ai-directly-into-factory-software-to-automate-industrial-workflows/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
     {
       "type": "direction",
       "company": "Sierra AI",
@@ -46,6 +133,720 @@
       "source": "Sierra AI",
       "date": "2026-11-13",
       "url": "https://sierra.ai/blog/poppy",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "How life science businesses transform communications using enterprise generative AI",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "",
+          "offering": "optimization.\nWith a generative AI platform",
+          "billingUnit": "annually",
+          "priceOrRevenue": "$18",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-13",
+      "url": "https://writer.com/blog/generative-ai-medcomms-life-sciences/",
+      "reasons": [
+        "missing:buyer"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "GEO, AEO, and SEO in 2026: The enterprise guide to AI visibility",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "",
+          "offering": "AI visibility\nWhere AI Overviews app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-13",
+      "url": "https://writer.com/blog/geo-aeo-optimization/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Writer",
+      "candidateKind": "expand",
+      "signal": "But with more launches in narrower indications, tighter regulator and journal scrutiny, and stretched writing and review capacity, credibility can slip, not because the science is weak, but because the system can’t keep up",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "But with more launches in narrower indications, tighter regulator and journal scrutiny, and stretched writing and review capacity, credibility can slip, not because the science is weak, but because the system can’t keep up."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-13",
+      "url": "https://writer.com/blog/scaling-medical-writing-generative-ai/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "Salesforce: rolling out enterprise-wide AI program management To make sure that technology and business objectives were in sync, Salesforce launched a strategic initiative to introduce WRITER to over 3,000 employees — focusing on scalable adoption and AI-driven workflows",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "companies",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "offering",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-13",
+      "url": "https://writer.com/blog/top-companies-it-business-alignment/",
+      "reasons": [
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Writer",
+      "candidateKind": "expand",
+      "signal": "Salesforce: rolling out enterprise-wide AI program management To make sure that technology and business objectives were in sync, Salesforce launched a strategic initiative to introduce WRITER to over 3,000 employees — focusing on scalable adoption and AI-driven workflows",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Salesforce: rolling out enterprise-wide AI program management To make sure that technology and business objectives were in sync, Salesforce launched a strategic initiative to introduce WRITER to over 3,000 employees — focusing on scalable adoption and AI-driven workflows."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-13",
+      "url": "https://writer.com/blog/top-companies-it-business-alignment/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "We’ve helped numerous enterprises achieve ROI and real results, which comes down to a strong business-tech alliance . 42% of executives are experiencing corporate power struggles and disruption because of generative AI. 41% feel IT leaders are not collaborating effectively with employees and 36% noting a lack of collaboration with other business units",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "companies",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "offering",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-13",
+      "url": "https://writer.com/blog/top-companies-it-business-alignment/",
+      "reasons": [
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Writer",
+      "candidateKind": "partner",
+      "signal": "We’ve helped numerous enterprises achieve ROI and real results, which comes down to a strong business-tech alliance . 42% of executives are experiencing corporate power struggles and disruption because of generative AI. 41% feel IT leaders are not collaborating effectively with employees and 36% noting a lack of collaboration with other business units",
+      "kind": "partner",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "We’ve helped numerous enterprises achieve ROI and real results, which comes down to a strong business-tech alliance . 42% of executives are experiencing corporate power struggles and disruption because of generative AI. 41% feel IT leaders are not collaborating effectively with employees and 36% noting a lack of collaboration with other business units."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-13",
+      "url": "https://writer.com/blog/top-companies-it-business-alignment/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "Enterprise transformation – 7 min read Evolving from AI on demand to continuous execution Writer Team AI agents at work – 4 min read From SEO to GEO: Why your keywords need a conversational upgrade Ben Popper Enterprise transformation – 38 min read GEO, AEO, and SEO in 2026: The enterprise guide to AI visibility Alaura Weaver",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "",
+          "offering": "continuous execution Writer Team AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-13",
+      "url": "https://writer.com/blog/ai-engines-rank-evidence/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Apple",
+      "candidateKind": "expand",
+      "signal": "Expanded access to such features will be available for a fee in the future",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Expanded access to such features will be available for a fee in the future."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Apple Newsroom",
+      "date": "2026-11-13",
+      "url": "https://www.apple.com/newsroom/2026/11/apple-homeview-available-today/",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Apple HomeView setup and multiuser support require a compatible iPhone or iPad running the latest software",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "user",
+          "offering": "and the U.S. can order App",
+          "billingUnit": "",
+          "priceOrRevenue": "$299",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Apple Newsroom",
+      "date": "2026-11-13",
+      "url": "https://www.apple.com/newsroom/2026/11/apple-homeview-available-today/",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Suno",
+      "candidateModel": "subscription",
+      "signal": "It’ll help you break through writer’s block, show you new sounds to experiment with, and allow you to hear your ideas with new instrumentation: Suno Bridge (beta) is included with all Premier subscriptions",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Suno",
+          "buyer": "",
+          "offering": "is included with all Premier subscription",
+          "billingUnit": "subscription",
+          "priceOrRevenue": "",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer",
+          "priceOrRevenue"
+        ]
+      },
+      "source": "Suno Blog",
+      "date": "2026-11-13",
+      "url": "https://suno.com/blog/introducing-bridge",
+      "reasons": [
+        "missing:buyer",
+        "missing:priceOrRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Databricks",
+      "candidateModel": "enterprise",
+      "signal": "OpenAI and Databricks: Enterprise AI on your governed data | Databricks Blog",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Databricks",
+          "buyer": "users",
+          "offering": "transforming business processes with GPT model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Databricks Blog",
+      "date": "2026-11-13",
+      "url": "https://www.databricks.com/blog/openai-and-databricks-enterprise-ai-your-governed-data",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Databricks",
+      "candidateModel": "enterprise",
+      "signal": "Three enterprise adoption patterns: accelerating work for business users with ChatGPT and the Genie plugin, coding with enterprise-level governance through Codex and Unity Gateway, and transforming business processes with GPT models and Databricks Apps",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Databricks",
+          "buyer": "users",
+          "offering": "transforming business processes with GPT model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Databricks Blog",
+      "date": "2026-11-13",
+      "url": "https://www.databricks.com/blog/openai-and-databricks-enterprise-ai-your-governed-data",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Databricks",
+      "candidateModel": "enterprise",
+      "signal": "Ali Ghodsi, co-founder and CEO of Databricks, and Greg Brockman, discussed the shift from chatbots to autonomous agents, and what enterprises need to get real value from them, in a conversation released earlier this week",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Databricks",
+          "buyer": "users",
+          "offering": "transforming business processes with GPT model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Databricks Blog",
+      "date": "2026-11-13",
+      "url": "https://www.databricks.com/blog/openai-and-databricks-enterprise-ai-your-governed-data",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Databricks",
+      "candidateModel": "enterprise",
+      "signal": "Ali Ghodsi, co-founder and CEO of Databricks, and Greg Brockman, co-founder and president of OpenAI, discussed best practices for rolling out enterprise AI Greg Brockman, co-founder and President of OpenAI, has a simple way to describe AI without company data: “it's like hiring someone with 20 PhDs and never inviting them to a meeting.”",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Databricks",
+          "buyer": "users",
+          "offering": "transforming business processes with GPT model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Databricks Blog",
+      "date": "2026-11-13",
+      "url": "https://www.databricks.com/blog/openai-and-databricks-enterprise-ai-your-governed-data",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Anthropic",
+      "candidateKind": "invest",
+      "signal": "Outside the workweek, users’ conversations shift from business correspondence, marketing copy, and slide decks to emotional support, medical questions, and investment advice",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Outside the workweek, users’ conversations shift from business correspondence, marketing copy, and slide decks to emotional support, medical questions, and investment advice."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Anthropic",
+      "date": "2026-11-13",
+      "url": "https://www.anthropic.com/research/economic-index-june-2026-report",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Anthropic",
+      "candidateKind": "partner",
+      "signal": "To see how these safeguards hold up in practice, we partnered with the Institute for Strategic Dialogue (ISD) and the McCain Institute , both independent research organizations, to pressure-test our protections in the US, Israel, and Brazil",
+      "kind": "partner",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "To see how these safeguards hold up in practice, we partnered with the Institute for Strategic Dialogue (ISD) and the McCain Institute , both independent research organizations, to pressure-test our protections in the US, Israel, and Brazil."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Anthropic",
+      "date": "2026-11-13",
+      "url": "https://www.anthropic.com/news/2026-us-midterms",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Sierra AI",
+      "candidateModel": "ads",
+      "signal": "Made it easier for companies to adopt the protocol in stages, starting with the basics and adding capabilities over time; Expanded a company’s ability to provide guidance and collect feedback from the personal agent; Introduced extensions, such as the commerce extension co-authored by Shopify, so industries can build on the core protocol without changing it",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Sierra AI",
+          "buyer": "bank",
+          "offering": "Releasing Personal Agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Sierra AI",
+      "date": "2026-11-13",
+      "url": "https://sierra.ai/blog/releasing-poppy",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Sierra AI",
+      "candidateKind": "expand",
+      "signal": "Made it easier for companies to adopt the protocol in stages, starting with the basics and adding capabilities over time; Expanded a company’s ability to provide guidance and collect feedback from the personal agent; Introduced extensions, such as the commerce extension co-authored by Shopify, so industries can build on the core protocol without changing it",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Made it easier for companies to adopt the protocol in stages, starting with the basics and adding capabilities over time; Expanded a company’s ability to provide guidance and collect feedback from the personal agent; Introduced extensions, such as the commerce extension co-authored by Shopify, so industries can build on the core protocol without changing it."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Sierra AI",
+      "date": "2026-11-13",
+      "url": "https://sierra.ai/blog/releasing-poppy",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Sierra AI",
+      "candidateModel": "ads",
+      "signal": "Sierra and Shopify bring Poppy to millions of merchants Shopify powers businesses in more than 175 countries, and every Shopify store supports Universal Commerce Protocol (UCP) by default",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Sierra AI",
+          "buyer": "bank",
+          "offering": "Releasing Personal Agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Sierra AI",
+      "date": "2026-11-13",
+      "url": "https://sierra.ai/blog/releasing-poppy",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Hugging Face",
+      "candidateKind": "ma",
+      "signal": "Nvidia had announced its plan to acquire the platform for open source AI models in September for $12.9 billion, making it the second-largest acquisition in the company’s history, just behind that of chipmaker Groq’s assets for $20 billion in December 2025",
+      "kind": "ma",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Nvidia had announced its plan to acquire the platform for open source AI models in September for $12.9 billion, making it the second-largest acquisition in the company’s history, just behind that of chipmaker Groq’s assets for $20 billion in December 2025."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-12",
+      "url": "https://techcrunch.com/2026/11/12/hugging-face-ceo-vows-to-keep-fighting-for-open-source-ai-after-jensen-huangs-exit",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Hugging Face",
+      "candidateModel": "enterprise",
+      "signal": "Last month, Nvidia expanded its Nemotron family of open-weight models with a large 120-billion-parameter model for agents used by the enterprise as well as with two new lightweight Bolt models that run on PCs",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Hugging Face",
+          "buyer": "companies",
+          "offering": "exit\nNvidia had announced its plan",
+          "billingUnit": "",
+          "priceOrRevenue": "$12.9 billion",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-12",
+      "url": "https://techcrunch.com/2026/11/12/hugging-face-ceo-vows-to-keep-fighting-for-open-source-ai-after-jensen-huangs-exit",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Hugging Face",
+      "candidateKind": "expand",
+      "signal": "Last month, Nvidia expanded its Nemotron family of open-weight models with a large 120-billion-parameter model for agents used by the enterprise as well as with two new lightweight Bolt models that run on PCs",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Last month, Nvidia expanded its Nemotron family of open-weight models with a large 120-billion-parameter model for agents used by the enterprise as well as with two new lightweight Bolt models that run on PCs."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-12",
+      "url": "https://techcrunch.com/2026/11/12/hugging-face-ceo-vows-to-keep-fighting-for-open-source-ai-after-jensen-huangs-exit",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Hugging Face",
+      "candidateModel": "enterprise",
+      "signal": "Open models strengthen safety and cybersecurity, accelerate innovation and diffusion, and enable sovereignty.… pic.twitter.com/t02bi51N4C In August, Nvidia also announced a $6 billion deal with the coding startup Poolside to help build out an open AI ecosystem in the U.S. to help the country compete against Chinese companies like DeepSeek and Kimi K3, The Wall Street Journal reported at the time",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Hugging Face",
+          "buyer": "companies",
+          "offering": "exit\nNvidia had announced its plan",
+          "billingUnit": "",
+          "priceOrRevenue": "$12.9 billion",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-12",
+      "url": "https://techcrunch.com/2026/11/12/hugging-face-ceo-vows-to-keep-fighting-for-open-source-ai-after-jensen-huangs-exit",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "expand",
+      "signal": "It’s this shortcoming that a startup called Clipto Inc. is trying to solve with the launch of a new AI chatbot memory platform called Clipto Studio, which enables AI assistants to listen in on calls, presentations and meetings and search through them or analyze them upon request",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "It’s this shortcoming that a startup called Clipto Inc. is trying to solve with the launch of a new AI chatbot memory platform called Clipto Studio, which enables AI assistants to listen in on calls, presentations and meetings and search through them or analyze them upon request."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-12",
+      "url": "https://siliconangle.com/2026/11/12/clipto-enables-chatgpt-and-claude-to-search-and-analyze-years-of-peoples-meetings-and-video-calls",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Anthropic",
+      "candidateKind": "expand",
+      "signal": "It’s this shortcoming that a startup called Clipto Inc. is trying to solve with the launch of a new AI chatbot memory platform called Clipto Studio, which enables AI assistants to listen in on calls, presentations and meetings and search through them or analyze them upon request",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "It’s this shortcoming that a startup called Clipto Inc. is trying to solve with the launch of a new AI chatbot memory platform called Clipto Studio, which enables AI assistants to listen in on calls, presentations and meetings and search through them or analyze them upon request."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-12",
+      "url": "https://siliconangle.com/2026/11/12/clipto-enables-chatgpt-and-claude-to-search-and-analyze-years-of-peoples-meetings-and-video-calls",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -135,156 +936,6 @@
       "reasons": [
         "missing:buyer",
         "missing:priceOrRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "expand",
-      "signal": "It’s this shortcoming that a startup called Clipto Inc. is trying to solve with the launch of a new AI chatbot memory platform called Clipto Studio, which enables AI assistants to listen in on calls, presentations and meetings and search through them or analyze them upon request",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "It’s this shortcoming that a startup called Clipto Inc. is trying to solve with the launch of a new AI chatbot memory platform called Clipto Studio, which enables AI assistants to listen in on calls, presentations and meetings and search through them or analyze them upon request."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-12",
-      "url": "https://siliconangle.com/2026/11/12/clipto-enables-chatgpt-and-claude-to-search-and-analyze-years-of-peoples-meetings-and-video-calls",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Anthropic",
-      "candidateKind": "expand",
-      "signal": "It’s this shortcoming that a startup called Clipto Inc. is trying to solve with the launch of a new AI chatbot memory platform called Clipto Studio, which enables AI assistants to listen in on calls, presentations and meetings and search through them or analyze them upon request",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "It’s this shortcoming that a startup called Clipto Inc. is trying to solve with the launch of a new AI chatbot memory platform called Clipto Studio, which enables AI assistants to listen in on calls, presentations and meetings and search through them or analyze them upon request."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-12",
-      "url": "https://siliconangle.com/2026/11/12/clipto-enables-chatgpt-and-claude-to-search-and-analyze-years-of-peoples-meetings-and-video-calls",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Hugging Face",
-      "candidateKind": "ma",
-      "signal": "Nvidia had announced its plan to acquire the platform for open source AI models in September for $12.9 billion, making it the second-largest acquisition in the company’s history, just behind that of chipmaker Groq’s assets for $20 billion in December 2025",
-      "kind": "ma",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Nvidia had announced its plan to acquire the platform for open source AI models in September for $12.9 billion, making it the second-largest acquisition in the company’s history, just behind that of chipmaker Groq’s assets for $20 billion in December 2025."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-12",
-      "url": "https://techcrunch.com/2026/11/12/hugging-face-ceo-vows-to-keep-fighting-for-open-source-ai-after-jensen-huangs-exit/",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Hugging Face",
-      "candidateModel": "enterprise",
-      "signal": "Last month, Nvidia expanded its Nemotron family of open-weight models with a large 120-billion-parameter model for agents used by the enterprise as well as with two new lightweight Bolt models that run on PCs",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Hugging Face",
-          "buyer": "companies",
-          "offering": "exit\nNvidia had announced its plan",
-          "billingUnit": "",
-          "priceOrRevenue": "$12.9 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-12",
-      "url": "https://techcrunch.com/2026/11/12/hugging-face-ceo-vows-to-keep-fighting-for-open-source-ai-after-jensen-huangs-exit/",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Hugging Face",
-      "candidateKind": "expand",
-      "signal": "Last month, Nvidia expanded its Nemotron family of open-weight models with a large 120-billion-parameter model for agents used by the enterprise as well as with two new lightweight Bolt models that run on PCs",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Last month, Nvidia expanded its Nemotron family of open-weight models with a large 120-billion-parameter model for agents used by the enterprise as well as with two new lightweight Bolt models that run on PCs."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-12",
-      "url": "https://techcrunch.com/2026/11/12/hugging-face-ceo-vows-to-keep-fighting-for-open-source-ai-after-jensen-huangs-exit/",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Hugging Face",
-      "candidateModel": "enterprise",
-      "signal": "Open models strengthen safety and cybersecurity, accelerate innovation and diffusion, and enable sovereignty.… pic.twitter.com/t02bi51N4C In August, Nvidia also announced a $6 billion deal with the coding startup Poolside to help build out an open AI ecosystem in the U.S. to help the country compete against Chinese companies like DeepSeek and Kimi K3, The Wall Street Journal reported at the time",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Hugging Face",
-          "buyer": "companies",
-          "offering": "exit\nNvidia had announced its plan",
-          "billingUnit": "",
-          "priceOrRevenue": "$12.9 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-12",
-      "url": "https://techcrunch.com/2026/11/12/hugging-face-ceo-vows-to-keep-fighting-for-open-source-ai-after-jensen-huangs-exit/",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
       ]
     },
     {
@@ -395,6 +1046,72 @@
       "url": "https://www.databricks.com/blog/how-constellation-building-governed-data-foundation-databricks",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "AI in the enterprise articles",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "",
+          "offering": "Why a unified AI platform",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-12",
+      "url": "https://writer.com/blog/category/ai-in-the-enterprise/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Writer",
+      "candidateModel": "enterprise",
+      "signal": "AI in the enterprise , Responsible AI at scale – 4 min read Two-thirds of business leaders believe their company has already suffered an AI data breach Ben Popper AI in the enterprise – 13 min read Beyond ‘build vs. buy’: Why a unified AI platform is the only way to scale agentic AI Andrew Miller AI in the enterprise – 25 min read AI ROI calculator: From generative to agentic AI success in 2025 Matthew Olson",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Writer",
+          "buyer": "",
+          "offering": "Why a unified AI platform",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Writer",
+      "date": "2026-11-12",
+      "url": "https://writer.com/blog/category/ai-in-the-enterprise/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -562,6 +1279,427 @@
       "type": "monetization",
       "company": "Apple",
       "candidateModel": "hardware",
+      "signal": "The Tandem OLED display reaches 1,000 nits full screen and 1,600 nits peak for HDR content, the M5 chip has a 10-core GPU and a 16-core Neural Engine for on-device AI work, and Apple’s N1 chip adds Wi-Fi 7, Bluetooth 6, and Thread support",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "299 on App",
+          "billingUnit": "",
+          "priceOrRevenue": "$299",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Android Authority",
+      "date": "2026-11-12",
+      "url": "https://www.androidauthority.com/apple-m5-ipad-pro-deal-3734459/",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Use Gemini in CarPlay to catch-up on what you have coming up in your schedule, talk through your inbox, or... pic.twitter.com/1s4luZ6q0v To use the assistant on CarPlay, you'll need to make sure you have the latest version of the Gemini app on your iPhone and the microphone permissions are on",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "Google brings the Gemini app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-11-11",
+      "url": "https://www.engadget.com/2314093/google-brings-the-gemini-app-to-apple-carplay",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "enterprise",
+      "signal": "OpenAI’s Businesses in ChatGPT targets enterprise trust",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
+          "buyer": "companies",
+          "offering": "2026 Smartsheet takes a people app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "AI Business",
+      "date": "2026-11-11",
+      "url": "https://aibusiness.com/generative-ai/openai-s-businesses-in-chatgpt-targets-enterprise-trust",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "enterprise",
+      "signal": "Anthropic IPO filing offers clues for enterprise AI, model price wars Oct 30, 2026 Smartsheet takes a people approach with AI adoption Oct 20, 2026 Musing about Muse’s new AI models, unruly DeepSeek Oct 14, 2026 Reflection Beam aims U.S. open-weight AI model at Chinese rivals Oct 7, 2026 To get started with generative AI, first focus on areas that can improve human experiences with information",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
+          "buyer": "companies",
+          "offering": "2026 Smartsheet takes a people app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "AI Business",
+      "date": "2026-11-11",
+      "url": "https://aibusiness.com/generative-ai/openai-s-businesses-in-chatgpt-targets-enterprise-trust",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "invest",
+      "signal": "Anthropic IPO filing offers clues for enterprise AI, model price wars Oct 30, 2026 Smartsheet takes a people approach with AI adoption Oct 20, 2026 Musing about Muse’s new AI models, unruly DeepSeek Oct 14, 2026 Reflection Beam aims U.S. open-weight AI model at Chinese rivals Oct 7, 2026 To get started with generative AI, first focus on areas that can improve human experiences with information",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Anthropic IPO filing offers clues for enterprise AI, model price wars Oct 30, 2026 Smartsheet takes a people approach with AI adoption Oct 20, 2026 Musing about Muse’s new AI models, unruly DeepSeek Oct 14, 2026 Reflection Beam aims U.S. open-weight AI model at Chinese rivals Oct 7, 2026 To get started with generative AI, first focus on areas that can improve human experiences with information."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "AI Business",
+      "date": "2026-11-11",
+      "url": "https://aibusiness.com/generative-ai/openai-s-businesses-in-chatgpt-targets-enterprise-trust",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "enterprise",
+      "signal": "Related: Meta’s Conductor deal puts enterprise AI coding workflows on deadline “There are legitimate concerns around how much OpenAI will take away from these clients,” he said, adding there is a need for the ChatGPT maker to make it clear to enterprises that it is not taking and using customer data",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
+          "buyer": "companies",
+          "offering": "2026 Smartsheet takes a people app",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "AI Business",
+      "date": "2026-11-11",
+      "url": "https://aibusiness.com/generative-ai/openai-s-businesses-in-chatgpt-targets-enterprise-trust",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "enterprise",
+      "signal": "Related: OpenAI’s Businesses in ChatGPT targets enterprise trust The releases and the vendor’s continued plans to pursue an IPO come after a week of upheaval in the financial markets, during which many investors responded to the shift in the political landscape and widespread dislike of AI data centers by selling their tech shares",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "Anthropic launches AI model",
+          "billingUnit": "",
+          "priceOrRevenue": "825 million",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "AI Business",
+      "date": "2026-11-11",
+      "url": "https://aibusiness.com/generative-ai/anthropic-launches-new-ai-models",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Anthropic",
+      "candidateKind": "invest",
+      "signal": "Related: OpenAI’s Businesses in ChatGPT targets enterprise trust The releases and the vendor’s continued plans to pursue an IPO come after a week of upheaval in the financial markets, during which many investors responded to the shift in the political landscape and widespread dislike of AI data centers by selling their tech shares",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Related: OpenAI’s Businesses in ChatGPT targets enterprise trust The releases and the vendor’s continued plans to pursue an IPO come after a week of upheaval in the financial markets, during which many investors responded to the shift in the political landscape and widespread dislike of AI data centers by selling their tech shares."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "AI Business",
+      "date": "2026-11-11",
+      "url": "https://aibusiness.com/generative-ai/anthropic-launches-new-ai-models",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "partner",
+      "signal": "Google’s Tabletop AI experiment lets you build custom collaboration apps",
+      "kind": "partner",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Google’s Tabletop AI experiment lets you build custom collaboration apps"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-11-11",
+      "url": "https://www.theverge.com/tech/1031526/google-tabletop-ai-experiment-waitlist-availability",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "partner",
+      "signal": "Google has cooked up a new experimental AI tool called Tabletop that generates customized collaborative hubs to help you coordinate with family, and friends",
+      "kind": "partner",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Google has cooked up a new experimental AI tool called Tabletop that generates customized collaborative hubs to help you coordinate with family, and friends."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-11-11",
+      "url": "https://www.theverge.com/tech/1031526/google-tabletop-ai-experiment-waitlist-availability",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "partner",
+      "signal": "Follow Follow See All Tech Tabletop provides customizable, collaborative spaces for all your personal planning needs",
+      "kind": "partner",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Follow Follow See All Tech Tabletop provides customizable, collaborative spaces for all your personal planning needs."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-11-11",
+      "url": "https://www.theverge.com/tech/1031526/google-tabletop-ai-experiment-waitlist-availability",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "usage",
+      "signal": "Google's GKE Labs turns reinforcement learning into a Kubernetes workload Nvidia's board reportedly preparing to oust Jensen Huang after reports of a second affair Google enters decision model market with Gemini Decisions API Edelbyte reels in $70M for its multipurpose data analytics platform British inference chip developer Fractile raises $720M in funding Red Hat and Nvidia's OpenShell puts AI agents on a deny-by-default leash",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "developer",
+          "offering": "letting groups build plan",
+          "billingUnit": "",
+          "priceOrRevenue": "$70M",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-11",
+      "url": "https://siliconangle.com/2026/11/11/google-tests-tabletop-letting-groups-build-planning-tools-with-an-ai-agent",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "ads",
+      "signal": "Support SiliconANGLE financially by buying your AWS services from our Marketplace portal page and links: https://siliconangle.com/aws-marketplace/ Founded by tech visionaries John Furrier and Dave Vellante, SiliconANGLE Media has built a dynamic ecosystem of industry-leading digital media brands that reach 15+ million elite tech professionals",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "developer",
+          "offering": "letting groups build plan",
+          "billingUnit": "",
+          "priceOrRevenue": "$70M",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-11",
+      "url": "https://siliconangle.com/2026/11/11/google-tests-tabletop-letting-groups-build-planning-tools-with-an-ai-agent",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "NVIDIA",
+      "candidateModel": "hardware",
+      "signal": "And because of its dominance in the AI chip market, Nvidia currently enjoys a margin of more than 70 percent, which is unusually high for hardware",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "NVIDIA",
+          "buyer": "companies",
+          "offering": "s own frontier model",
+          "billingUnit": "",
+          "priceOrRevenue": "$26 billion",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-11",
+      "url": "https://the-decoder.com/anthropic-says-ai-is-eroding-nvidias-cuda-lead-cutting-an-amd-chip-switch-from-months-to-three-days",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "usage",
+      "signal": "The API costs $0.10 per million input tokens with no output-token charge, about five times cheaper than Gemini 3.5 Flash-Lite according to Google",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "a single pass\nThe underlying model",
+          "billingUnit": "",
+          "priceOrRevenue": "$0.10",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-11",
+      "url": "https://the-decoder.com/google-joins-the-decision-model-wave-with-gemini-decision-1-scoring-1000-questions-in-a-single-pass",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
       "signal": "Rumored Apple Smart Glasses Mentioned in Supplier's Earnings Briefing",
       "model": "hardware",
       "classificationGate": {
@@ -683,396 +1821,6 @@
       "source": "MacRumors",
       "date": "2026-11-11",
       "url": "https://www.macrumors.com/2026/11/11/apple-smart-glasses-mentioned-by-suppliers",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "usage",
-      "signal": "The API costs $0.10 per million input tokens with no output-token charge, about five times cheaper than Gemini 3.5 Flash-Lite according to Google",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "a single pass\nThe underlying model",
-          "billingUnit": "",
-          "priceOrRevenue": "$0.10",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-11",
-      "url": "https://the-decoder.com/google-joins-the-decision-model-wave-with-gemini-decision-1-scoring-1000-questions-in-a-single-pass",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "NVIDIA",
-      "candidateModel": "hardware",
-      "signal": "And because of its dominance in the AI chip market, Nvidia currently enjoys a margin of more than 70 percent, which is unusually high for hardware",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "NVIDIA",
-          "buyer": "companies",
-          "offering": "s own frontier model",
-          "billingUnit": "",
-          "priceOrRevenue": "$26 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-11",
-      "url": "https://the-decoder.com/anthropic-says-ai-is-eroding-nvidias-cuda-lead-cutting-an-amd-chip-switch-from-months-to-three-days",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "usage",
-      "signal": "Google's GKE Labs turns reinforcement learning into a Kubernetes workload Nvidia's board reportedly preparing to oust Jensen Huang after reports of a second affair Google enters decision model market with Gemini Decisions API Edelbyte reels in $70M for its multipurpose data analytics platform British inference chip developer Fractile raises $720M in funding Red Hat and Nvidia's OpenShell puts AI agents on a deny-by-default leash",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "developer",
-          "offering": "letting groups build plan",
-          "billingUnit": "",
-          "priceOrRevenue": "$70M",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-11",
-      "url": "https://siliconangle.com/2026/11/11/google-tests-tabletop-letting-groups-build-planning-tools-with-an-ai-agent",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "ads",
-      "signal": "Support SiliconANGLE financially by buying your AWS services from our Marketplace portal page and links: https://siliconangle.com/aws-marketplace/ Founded by tech visionaries John Furrier and Dave Vellante, SiliconANGLE Media has built a dynamic ecosystem of industry-leading digital media brands that reach 15+ million elite tech professionals",
-      "model": "ads",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "developer",
-          "offering": "letting groups build plan",
-          "billingUnit": "",
-          "priceOrRevenue": "$70M",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-11",
-      "url": "https://siliconangle.com/2026/11/11/google-tests-tabletop-letting-groups-build-planning-tools-with-an-ai-agent",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "partner",
-      "signal": "Google’s Tabletop AI experiment lets you build custom collaboration apps",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google’s Tabletop AI experiment lets you build custom collaboration apps"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-11-11",
-      "url": "https://www.theverge.com/tech/1031526/google-tabletop-ai-experiment-waitlist-availability",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "partner",
-      "signal": "Google has cooked up a new experimental AI tool called Tabletop that generates customized collaborative hubs to help you coordinate with family, and friends",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Google has cooked up a new experimental AI tool called Tabletop that generates customized collaborative hubs to help you coordinate with family, and friends."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-11-11",
-      "url": "https://www.theverge.com/tech/1031526/google-tabletop-ai-experiment-waitlist-availability",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "partner",
-      "signal": "Follow Follow See All Tech Tabletop provides customizable, collaborative spaces for all your personal planning needs",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Follow Follow See All Tech Tabletop provides customizable, collaborative spaces for all your personal planning needs."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-11-11",
-      "url": "https://www.theverge.com/tech/1031526/google-tabletop-ai-experiment-waitlist-availability",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "enterprise",
-      "signal": "Related: OpenAI’s Businesses in ChatGPT targets enterprise trust The releases and the vendor’s continued plans to pursue an IPO come after a week of upheaval in the financial markets, during which many investors responded to the shift in the political landscape and widespread dislike of AI data centers by selling their tech shares",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Anthropic",
-          "buyer": "",
-          "offering": "Anthropic launches AI model",
-          "billingUnit": "",
-          "priceOrRevenue": "825 million",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AI Business",
-      "date": "2026-11-11",
-      "url": "https://aibusiness.com/generative-ai/anthropic-launches-new-ai-models",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Anthropic",
-      "candidateKind": "invest",
-      "signal": "Related: OpenAI’s Businesses in ChatGPT targets enterprise trust The releases and the vendor’s continued plans to pursue an IPO come after a week of upheaval in the financial markets, during which many investors responded to the shift in the political landscape and widespread dislike of AI data centers by selling their tech shares",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Related: OpenAI’s Businesses in ChatGPT targets enterprise trust The releases and the vendor’s continued plans to pursue an IPO come after a week of upheaval in the financial markets, during which many investors responded to the shift in the political landscape and widespread dislike of AI data centers by selling their tech shares."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "AI Business",
-      "date": "2026-11-11",
-      "url": "https://aibusiness.com/generative-ai/anthropic-launches-new-ai-models",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "enterprise",
-      "signal": "OpenAI’s Businesses in ChatGPT targets enterprise trust",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OpenAI",
-          "buyer": "companies",
-          "offering": "2026 Smartsheet takes a people app",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AI Business",
-      "date": "2026-11-11",
-      "url": "https://aibusiness.com/generative-ai/openai-s-businesses-in-chatgpt-targets-enterprise-trust",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "enterprise",
-      "signal": "Anthropic IPO filing offers clues for enterprise AI, model price wars Oct 30, 2026 Smartsheet takes a people approach with AI adoption Oct 20, 2026 Musing about Muse’s new AI models, unruly DeepSeek Oct 14, 2026 Reflection Beam aims U.S. open-weight AI model at Chinese rivals Oct 7, 2026 To get started with generative AI, first focus on areas that can improve human experiences with information",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OpenAI",
-          "buyer": "companies",
-          "offering": "2026 Smartsheet takes a people app",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AI Business",
-      "date": "2026-11-11",
-      "url": "https://aibusiness.com/generative-ai/openai-s-businesses-in-chatgpt-targets-enterprise-trust",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "invest",
-      "signal": "Anthropic IPO filing offers clues for enterprise AI, model price wars Oct 30, 2026 Smartsheet takes a people approach with AI adoption Oct 20, 2026 Musing about Muse’s new AI models, unruly DeepSeek Oct 14, 2026 Reflection Beam aims U.S. open-weight AI model at Chinese rivals Oct 7, 2026 To get started with generative AI, first focus on areas that can improve human experiences with information",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Anthropic IPO filing offers clues for enterprise AI, model price wars Oct 30, 2026 Smartsheet takes a people approach with AI adoption Oct 20, 2026 Musing about Muse’s new AI models, unruly DeepSeek Oct 14, 2026 Reflection Beam aims U.S. open-weight AI model at Chinese rivals Oct 7, 2026 To get started with generative AI, first focus on areas that can improve human experiences with information."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "AI Business",
-      "date": "2026-11-11",
-      "url": "https://aibusiness.com/generative-ai/openai-s-businesses-in-chatgpt-targets-enterprise-trust",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "enterprise",
-      "signal": "Related: Meta’s Conductor deal puts enterprise AI coding workflows on deadline “There are legitimate concerns around how much OpenAI will take away from these clients,” he said, adding there is a need for the ChatGPT maker to make it clear to enterprises that it is not taking and using customer data",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OpenAI",
-          "buyer": "companies",
-          "offering": "2026 Smartsheet takes a people app",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AI Business",
-      "date": "2026-11-11",
-      "url": "https://aibusiness.com/generative-ai/openai-s-businesses-in-chatgpt-targets-enterprise-trust",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "hardware",
-      "signal": "Use Gemini in CarPlay to catch-up on what you have coming up in your schedule, talk through your inbox, or... pic.twitter.com/1s4luZ6q0v To use the assistant on CarPlay, you'll need to make sure you have the latest version of the Gemini app on your iPhone and the microphone permissions are on",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Apple",
-          "buyer": "",
-          "offering": "Google brings the Gemini app",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-11-11",
-      "url": "https://www.engadget.com/2314093/google-brings-the-gemini-app-to-apple-carplay",
       "reasons": [
         "missing:buyer",
         "missing:billingUnit",
@@ -2219,215 +2967,24 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Microsoft",
-      "candidateModel": "enterprise",
-      "signal": "IBM Consulting brings more than 6,000 prebuilt AI agents and assets, the experience building them, and industry expertise, while Microsoft provides AI, cloud and security technologies New platform comes with forward-deployed engineering support from both Microsoft and IBM Consulting SEI’s enterprise transformation illustrates the types of business needs that agentic AI can help address ARMONK, N.Y., and REDMOND, Wash. — Nov",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Microsoft",
-          "buyer": "",
-          "offering": "Microsoft announce a new AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "$2 trillion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Microsoft Source",
-      "date": "2026-11-10",
-      "url": "https://news.microsoft.com/source/2026/11/10/ibm-and-microsoft-announce-a-new-ai-agent-platform-designed-for-industry-specific-transformation",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Microsoft",
-      "candidateModel": "enterprise",
-      "signal": "(NASDAQ: MSFT) on Tuesday announced Imagine Enterprise, an agentic platform designed to help enterprises build, run and govern AI agents that help people execute industry-specific processes",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Microsoft",
-          "buyer": "",
-          "offering": "Microsoft announce a new AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "$2 trillion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Microsoft Source",
-      "date": "2026-11-10",
-      "url": "https://news.microsoft.com/source/2026/11/10/ibm-and-microsoft-announce-a-new-ai-agent-platform-designed-for-industry-specific-transformation",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
       "type": "direction",
       "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "For scientists & researchers : Apply for a chance to get access to both Argon and Carbon via Google Antigravity’s highest usage tier free of charge for 6 months (onboarded on a rolling basis), subject to eligibility, capacity, and selection",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "For scientists & researchers : Apply for a chance to get access to both Argon and Carbon via Google Antigravity’s highest usage tier free of charge for 6 months (onboarded on a rolling basis), subject to eligibility, capacity, and selection."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "9to5Google",
-      "date": "2026-11-10",
-      "url": "https://9to5google.com/2026/11/10/gemini-app-4-carbon",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "ChatGPT currently reaches 1.2 billion users per week, according to OpenAI, and the company plans to expand the offering to more markets and industries over time",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "ChatGPT currently reaches 1.2 billion users per week, according to OpenAI, and the company plans to expand the offering to more markets and industries over time."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-10",
-      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "ads",
-      "signal": "Eligible US e-commerce and online service providers can also create \"Business Agents,\" AI agents that answer customer questions in ChatGPT, help with product comparisons, and can serve as targets for ChatGPT ads",
-      "model": "ads",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "users",
-          "offering": "a business directory with AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "1.2 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-10",
-      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "OpenAI is launching a beta feature called \"Businesses in ChatGPT\" that could compete with Google's \"MyBusiness.\"",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "OpenAI is launching a beta feature called \"Businesses in ChatGPT\" that could compete with Google's \"MyBusiness.\""
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-10",
-      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "enterprise",
-      "signal": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "Ember to power cost-efficient AI agent",
-          "billingUnit": "",
-          "priceOrRevenue": "$125M",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-10",
-      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
       "candidateKind": "invest",
-      "signal": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF",
+      "signal": "Purchases for goods or services like insurance, stock trades, investment consulting or tax preparation and filing should not use Google Play’s billing system",
       "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF ."
+          "actionStatement": "Purchases for goods or services like insurance, stock trades, investment consulting or tax preparation and filing should not use Google Play’s billing system."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "SiliconANGLE",
+      "source": "Google Help",
       "date": "2026-11-10",
-      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
+      "url": "https://support.google.com/googleplay/android-developer/answer/10281818?hl=en-GS",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -2436,83 +2993,140 @@
       "type": "monetization",
       "company": "Meta AI",
       "candidateModel": "hardware",
-      "signal": "All three algorithms were in “max” mode, which means they used the maximum amount of hardware at their disposal instead of prioritizing cost-efficiency",
+      "signal": "Meta warns some of its AI glasses may get 'too warm' if they get wet - Engadget",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Meta AI",
           "buyer": "",
-          "offering": "Ember to power cost-efficient AI agent",
+          "offering": "",
           "billingUnit": "",
-          "priceOrRevenue": "$125M",
+          "priceOrRevenue": "",
           "recurringRevenue": ""
         },
         "missing": [
           "buyer",
+          "offering",
           "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-10",
-      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "subscription",
-      "signal": "Google AI Ultra subscribers paying $100 a month for membership will also get access to Carbon within the Gemini app, AI Model in Search and Antigravity, Google's agentic software development and AI coding platform",
-      "model": "subscription",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "subscribers",
-          "offering": "to Carbon within the Gemini app",
-          "billingUnit": "",
-          "priceOrRevenue": "$100",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
+          "priceOrRevenue",
           "recurringRevenue"
         ]
       },
       "source": "Engadget",
       "date": "2026-11-10",
-      "url": "https://www.engadget.com/2311855/gemini-4-carbon-now-available-worldwide",
+      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
       "reasons": [
+        "missing:buyer",
+        "missing:offering",
         "missing:billingUnit",
+        "missing:priceOrRevenue",
         "missing:recurringRevenue"
       ]
     },
     {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "The model is launching with an introductory price of $2 per million input tokens and $10 per million output tokens, around a fifth the cost of OpenAI’s GPT-6 Astra and a quarter the cost of Anthropic’s Fable 5.2 model, which launched yesterday",
-      "kind": "expand",
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "While Meta doesn't use the word \"overheating,\" the company compares its glasses fix to how smartphones automatically shut down when they get too hot",
+      "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "entity": "",
-          "actionStatement": "The model is launching with an introductory price of $2 per million input tokens and $10 per million output tokens, around a fifth the cost of OpenAI’s GPT-6 Astra and a quarter the cost of Anthropic’s Fable 5.2 model, which launched yesterday ."
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
         },
         "missing": [
-          "entityMentionInEvidenceLine"
+          "buyer",
+          "offering",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
         ]
       },
-      "source": "The Verge",
+      "source": "Engadget",
       "date": "2026-11-10",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/1030787/google-gemini-4-carbon-public-rollout",
+      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
       "reasons": [
-        "missing:entityMentionInEvidenceLine"
+        "missing:buyer",
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "According to Meta , all of its AI glasses come with IPX4 water resistance which \"means your glasses are safe if you get caught in light rain while you wear them.\"",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "offering",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-11-10",
+      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
+      "reasons": [
+        "missing:buyer",
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "Have you experienced a pair of Meta Glasses getting too hot or unexpectedly shutting down?",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "offering",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-11-10",
+      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
+      "reasons": [
+        "missing:buyer",
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -2725,164 +3339,236 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "Meta warns some of its AI glasses may get 'too warm' if they get wet - Engadget",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "offering",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-11-10",
-      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
-      "reasons": [
-        "missing:buyer",
-        "missing:offering",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "While Meta doesn't use the word \"overheating,\" the company compares its glasses fix to how smartphones automatically shut down when they get too hot",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "offering",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-11-10",
-      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
-      "reasons": [
-        "missing:buyer",
-        "missing:offering",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "According to Meta , all of its AI glasses come with IPX4 water resistance which \"means your glasses are safe if you get caught in light rain while you wear them.\"",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "offering",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-11-10",
-      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
-      "reasons": [
-        "missing:buyer",
-        "missing:offering",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "Have you experienced a pair of Meta Glasses getting too hot or unexpectedly shutting down?",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "offering",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-11-10",
-      "url": "https://www.engadget.com/2312864/meta-warns-some-of-its-ai-glasses-may-get-too-warm-if-they-get-wet",
-      "reasons": [
-        "missing:buyer",
-        "missing:offering",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
       "type": "direction",
       "company": "Google DeepMind",
-      "candidateKind": "invest",
-      "signal": "Purchases for goods or services like insurance, stock trades, investment consulting or tax preparation and filing should not use Google Play’s billing system",
-      "kind": "invest",
+      "candidateKind": "expand",
+      "signal": "The model is launching with an introductory price of $2 per million input tokens and $10 per million output tokens, around a fifth the cost of OpenAI’s GPT-6 Astra and a quarter the cost of Anthropic’s Fable 5.2 model, which launched yesterday",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Purchases for goods or services like insurance, stock trades, investment consulting or tax preparation and filing should not use Google Play’s billing system."
+          "actionStatement": "The model is launching with an introductory price of $2 per million input tokens and $10 per million output tokens, around a fifth the cost of OpenAI’s GPT-6 Astra and a quarter the cost of Anthropic’s Fable 5.2 model, which launched yesterday ."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Google Help",
+      "source": "The Verge",
       "date": "2026-11-10",
-      "url": "https://support.google.com/googleplay/android-developer/answer/10281818?hl=en-GS",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1030787/google-gemini-4-carbon-public-rollout",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "subscription",
+      "signal": "Google AI Ultra subscribers paying $100 a month for membership will also get access to Carbon within the Gemini app, AI Model in Search and Antigravity, Google's agentic software development and AI coding platform",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "subscribers",
+          "offering": "to Carbon within the Gemini app",
+          "billingUnit": "",
+          "priceOrRevenue": "$100",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-11-10",
+      "url": "https://www.engadget.com/2311855/gemini-4-carbon-now-available-worldwide",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "enterprise",
+      "signal": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "Ember to power cost-efficient AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "$125M",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-10",
+      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "invest",
+      "signal": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Anthropic launches Fable 5.2 and Mythos 5.2 with science, coding upgrades Trump stands by Nvidia boss Jensen Huang despite spy scandal, but FBI is investigating IBM builds on hybrid cloud and governance to advance its enterprise AI operating model Alphabet’s Wing to invest $125M in new delivery drone factory Cisco research: Trust, not technology, is now the speed limit on enterprise AI On theCUBE Pod: Blue wave sends AI stock plunging AI - BY DEVONY HOF ."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-10",
+      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "All three algorithms were in “max” mode, which means they used the maximum amount of hardware at their disposal instead of prioritizing cost-efficiency",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "Ember to power cost-efficient AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "$125M",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-10",
+      "url": "https://siliconangle.com/2026/11/09/meta-introduces-muse-ember-to-power-cost-efficient-ai-agents",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "ChatGPT currently reaches 1.2 billion users per week, according to OpenAI, and the company plans to expand the offering to more markets and industries over time",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "ChatGPT currently reaches 1.2 billion users per week, according to OpenAI, and the company plans to expand the offering to more markets and industries over time."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-10",
+      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "ads",
+      "signal": "Eligible US e-commerce and online service providers can also create \"Business Agents,\" AI agents that answer customer questions in ChatGPT, help with product comparisons, and can serve as targets for ChatGPT ads",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "users",
+          "offering": "a business directory with AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "1.2 billion",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-10",
+      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "OpenAI is launching a beta feature called \"Businesses in ChatGPT\" that could compete with Google's \"MyBusiness.\"",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "OpenAI is launching a beta feature called \"Businesses in ChatGPT\" that could compete with Google's \"MyBusiness.\""
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-10",
+      "url": "https://the-decoder.com/openai-turns-chatgpt-into-a-business-directory-with-ai-agents-that-handle-customer-questions",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "For scientists & researchers : Apply for a chance to get access to both Argon and Carbon via Google Antigravity’s highest usage tier free of charge for 6 months (onboarded on a rolling basis), subject to eligibility, capacity, and selection",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "For scientists & researchers : Apply for a chance to get access to both Argon and Carbon via Google Antigravity’s highest usage tier free of charge for 6 months (onboarded on a rolling basis), subject to eligibility, capacity, and selection."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "9to5Google",
+      "date": "2026-11-10",
+      "url": "https://9to5google.com/2026/11/10/gemini-app-4-carbon",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -3524,124 +4210,132 @@
       ]
     },
     {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "Meta expands Instagram's AI age-guessing tech globally",
-      "kind": "expand",
+      "type": "monetization",
+      "company": "Microsoft",
+      "candidateModel": "enterprise",
+      "signal": "IBM Consulting brings more than 6,000 prebuilt AI agents and assets, the experience building them, and industry expertise, while Microsoft provides AI, cloud and security technologies New platform comes with forward-deployed engineering support from both Microsoft and IBM Consulting SEI’s enterprise transformation illustrates the types of business needs that agentic AI can help address ARMONK, N.Y., and REDMOND, Wash. — Nov",
+      "model": "enterprise",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "entity": "",
-          "actionStatement": "Meta expands Instagram's AI age-guessing tech globally"
+          "seller": "Microsoft",
+          "buyer": "",
+          "offering": "Microsoft announce a new AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "$2 trillion",
+          "recurringRevenue": ""
         },
         "missing": [
-          "entityMentionInEvidenceLine"
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
         ]
       },
-      "source": "TechCrunch",
-      "date": "2026-11-09",
-      "url": "https://techcrunch.com/2026/11/09/meta-expands-instagrams-ai-age-guessing-tech-globally",
+      "source": "Microsoft Source",
+      "date": "2026-11-10",
+      "url": "https://news.microsoft.com/source/2026/11/10/ibm-and-microsoft-announce-a-new-ai-agent-platform-designed-for-industry-specific-transformation",
       "reasons": [
-        "missing:entityMentionInEvidenceLine"
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Microsoft",
+      "candidateModel": "enterprise",
+      "signal": "(NASDAQ: MSFT) on Tuesday announced Imagine Enterprise, an agentic platform designed to help enterprises build, run and govern AI agents that help people execute industry-specific processes",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Microsoft",
+          "buyer": "",
+          "offering": "Microsoft announce a new AI agent",
+          "billingUnit": "",
+          "priceOrRevenue": "$2 trillion",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Microsoft Source",
+      "date": "2026-11-10",
+      "url": "https://news.microsoft.com/source/2026/11/10/ibm-and-microsoft-announce-a-new-ai-agent-platform-designed-for-industry-specific-transformation",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
       ]
     },
     {
       "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "Meta announced on Monday that it’s expanding its AI-powered age-estimation technology on Instagram worldwide to identify more teens and place them under its Teen Account protections, as it faces numerous lawsuits accusing its platforms of harming teens",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Meta announced on Monday that it’s expanding its AI-powered age-estimation technology on Instagram worldwide to identify more teens and place them under its Teen Account protections, as it faces numerous lawsuits accusing its platforms of harming teens."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-09",
-      "url": "https://techcrunch.com/2026/11/09/meta-expands-instagrams-ai-age-guessing-tech-globally",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Anthropic",
+      "company": "ElevenLabs",
       "candidateKind": "invest",
-      "signal": "The cost to run the evaluations in the Artificial Analysis Intelligence Index, calculated using the model's input, cache hit, cache write, reasoning, and answer token prices and the number of tokens used across evaluations (excluding repeats)",
+      "signal": "The withdrawals come after Huang admitted to an extramarital affair over the weekend, and Nvidia opened an investigation into his relationship with a possible Chinese spy",
       "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "The cost to run the evaluations in the Artificial Analysis Intelligence Index, calculated using the model's input, cache hit, cache write, reasoning, and answer token prices and the number of tokens used across evaluations (excluding repeats)."
+          "actionStatement": "The withdrawals come after Huang admitted to an extramarital affair over the weekend, and Nvidia opened an investigation into his relationship with a possible Chinese spy."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Artificial Analysis",
+      "source": "TechCrunch",
       "date": "2026-11-09",
-      "url": "https://artificialanalysis.ai/models/claude-fable-5-2",
+      "url": "https://techcrunch.com/2026/11/09/jensen-huang-pulls-out-of-elevenlabs-summit-amid-nvidia-controversy",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
-      "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "vertical",
-      "signal": "The company disclosed in its S-1 filing in May that it is paying SpaceX subsidiary xAI $1.25 billion per month through May 2029 to use xAI’s computing power",
-      "model": "vertical",
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "Meta is expanding AI age detection for Instagram teen accounts - Engadget",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Anthropic",
-          "buyer": "",
-          "offering": "",
-          "billingUnit": "per month",
-          "priceOrRevenue": "$3.4",
-          "recurringRevenue": ""
+          "entity": "",
+          "actionStatement": "Meta is expanding AI age detection for Instagram teen accounts - Engadget"
         },
         "missing": [
-          "buyer",
-          "offering",
-          "recurringRevenue"
+          "entityMentionInEvidenceLine"
         ]
       },
-      "source": "TechCrunch",
+      "source": "Engadget",
       "date": "2026-11-09",
-      "url": "https://techcrunch.com/2026/11/09/anthropic-joins-ais-natural-gas-frenzy-buys-3-4b-worth-of-turbines",
+      "url": "https://www.engadget.com/2310848/meta-is-expanding-ai-age-detection-for-instagram-teen-accounts",
       "reasons": [
-        "missing:buyer",
-        "missing:offering",
-        "missing:recurringRevenue"
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "direction",
       "company": "NVIDIA",
       "candidateKind": "invest",
-      "signal": "( WSJ $) 2 Democrats are planning a blitz of investigations into Big Tech Reportedly starting with Apple, Meta, and Musk’s companies",
+      "signal": "The board has launched an independent investigation",
       "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "( WSJ $) 2 Democrats are planning a blitz of investigations into Big Tech Reportedly starting with Apple, Meta, and Musk’s companies."
+          "actionStatement": "The board has launched an independent investigation."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "MIT Tech Review",
+      "source": "The Decoder",
       "date": "2026-11-09",
-      "url": "https://www.technologyreview.com/2026/11/09/1148176/the-download-empty-ai-climate-claims-and-an-nvidia-investigation",
+      "url": "https://the-decoder.com/nvidia-espionage-scandal-weakens-huangs-lobby-against-tighter-ai-chip-export-controls",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -3704,21 +4398,75 @@
       "type": "direction",
       "company": "NVIDIA",
       "candidateKind": "invest",
-      "signal": "The board has launched an independent investigation",
+      "signal": "( WSJ $) 2 Democrats are planning a blitz of investigations into Big Tech Reportedly starting with Apple, Meta, and Musk’s companies",
       "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "The board has launched an independent investigation."
+          "actionStatement": "( WSJ $) 2 Democrats are planning a blitz of investigations into Big Tech Reportedly starting with Apple, Meta, and Musk’s companies."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "The Decoder",
+      "source": "MIT Tech Review",
       "date": "2026-11-09",
-      "url": "https://the-decoder.com/nvidia-espionage-scandal-weakens-huangs-lobby-against-tighter-ai-chip-export-controls",
+      "url": "https://www.technologyreview.com/2026/11/09/1148176/the-download-empty-ai-climate-claims-and-an-nvidia-investigation",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Anthropic",
+      "candidateModel": "vertical",
+      "signal": "The company disclosed in its S-1 filing in May that it is paying SpaceX subsidiary xAI $1.25 billion per month through May 2029 to use xAI’s computing power",
+      "model": "vertical",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "",
+          "billingUnit": "per month",
+          "priceOrRevenue": "$3.4",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "offering",
+          "recurringRevenue"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-09",
+      "url": "https://techcrunch.com/2026/11/09/anthropic-joins-ais-natural-gas-frenzy-buys-3-4b-worth-of-turbines",
+      "reasons": [
+        "missing:buyer",
+        "missing:offering",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "Meta expands Instagram's AI age-guessing tech globally",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Meta expands Instagram's AI age-guessing tech globally"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-09",
+      "url": "https://techcrunch.com/2026/11/09/meta-expands-instagrams-ai-age-guessing-tech-globally",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -3727,36 +4475,13 @@
       "type": "direction",
       "company": "Meta AI",
       "candidateKind": "expand",
-      "signal": "Meta is expanding AI age detection for Instagram teen accounts - Engadget",
+      "signal": "Meta announced on Monday that it’s expanding its AI-powered age-estimation technology on Instagram worldwide to identify more teens and place them under its Teen Account protections, as it faces numerous lawsuits accusing its platforms of harming teens",
       "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Meta is expanding AI age detection for Instagram teen accounts - Engadget"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-11-09",
-      "url": "https://www.engadget.com/2310848/meta-is-expanding-ai-age-detection-for-instagram-teen-accounts",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "ElevenLabs",
-      "candidateKind": "invest",
-      "signal": "The withdrawals come after Huang admitted to an extramarital affair over the weekend, and Nvidia opened an investigation into his relationship with a possible Chinese spy",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The withdrawals come after Huang admitted to an extramarital affair over the weekend, and Nvidia opened an investigation into his relationship with a possible Chinese spy."
+          "actionStatement": "Meta announced on Monday that it’s expanding its AI-powered age-estimation technology on Instagram worldwide to identify more teens and place them under its Teen Account protections, as it faces numerous lawsuits accusing its platforms of harming teens."
         },
         "missing": [
           "entityMentionInEvidenceLine"
@@ -3764,7 +4489,7 @@
       },
       "source": "TechCrunch",
       "date": "2026-11-09",
-      "url": "https://techcrunch.com/2026/11/09/jensen-huang-pulls-out-of-elevenlabs-summit-amid-nvidia-controversy",
+      "url": "https://techcrunch.com/2026/11/09/meta-expands-instagrams-ai-age-guessing-tech-globally",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -4311,6 +5036,29 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "Anthropic",
+      "candidateKind": "invest",
+      "signal": "The cost to run the evaluations in the Artificial Analysis Intelligence Index, calculated using the model's input, cache hit, cache write, reasoning, and answer token prices and the number of tokens used across evaluations (excluding repeats)",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The cost to run the evaluations in the Artificial Analysis Intelligence Index, calculated using the model's input, cache hit, cache write, reasoning, and answer token prices and the number of tokens used across evaluations (excluding repeats)."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Artificial Analysis",
+      "date": "2026-11-09",
+      "url": "https://artificialanalysis.ai/models/claude-fable-5-2",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
       "type": "monetization",
       "company": "Apple",
       "candidateModel": "hardware",
@@ -4406,35 +5154,6 @@
     {
       "type": "monetization",
       "company": "Google DeepMind",
-      "candidateModel": "subscription",
-      "signal": "If you don't like Google Health's AI Coach or need a break from its constant advice, the easiest way to get rid of it is to cancel your Google Health Premium subscription, since AI Coach does not come with the free Google Health tier",
-      "model": "subscription",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "cancel your Google Health Premium subscription",
-          "billingUnit": "subscription",
-          "priceOrRevenue": "",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "buyer",
-          "priceOrRevenue"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-11-08",
-      "url": "https://www.engadget.com/2309626/dont-like-google-health-ai-coach-how-turn-off",
-      "reasons": [
-        "missing:buyer",
-        "missing:priceOrRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
       "candidateModel": "hardware",
       "signal": "Neural Dawn was initially locked to a very tight 60 FPS, but once the phone warmed up slightly and hit some more open-ended areas, the frame rate began to fluctuate due to the occasional missed frame",
       "model": "hardware",
@@ -4463,6 +5182,35 @@
         "missing:offering",
         "missing:billingUnit",
         "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "subscription",
+      "signal": "If you don't like Google Health's AI Coach or need a break from its constant advice, the easiest way to get rid of it is to cancel your Google Health Premium subscription, since AI Coach does not come with the free Google Health tier",
+      "model": "subscription",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "cancel your Google Health Premium subscription",
+          "billingUnit": "subscription",
+          "priceOrRevenue": "",
+          "recurringRevenue": "yes"
+        },
+        "missing": [
+          "buyer",
+          "priceOrRevenue"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-11-08",
+      "url": "https://www.engadget.com/2309626/dont-like-google-health-ai-coach-how-turn-off",
+      "reasons": [
+        "missing:buyer",
+        "missing:priceOrRevenue"
       ]
     },
     {
@@ -5883,602 +6631,6 @@
       "url": "https://www.theverge.com/ai-artificial-intelligence/1028302/perplexity-teammates-ai-agents-work",
       "reasons": [
         "missing:buyer"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "ma",
-      "signal": "Meta acquires AI coding startup Conductor",
-      "kind": "ma",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Meta acquires AI coding startup Conductor"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-04",
-      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "ma",
-      "signal": "Meta has acquired Conductor , an AI coding startup that allows users to spin up software projects by deploying multiple agents into parallel workspaces",
-      "kind": "ma",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Meta has acquired Conductor , an AI coding startup that allows users to spin up software projects by deploying multiple agents into parallel workspaces."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-04",
-      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "Meanwhile, the company’s recently launched Muse agents are seeing significant adoption, with the company recently reporting that the service had surpassed 10 million users",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Meanwhile, the company’s recently launched Muse agents are seeing significant adoption, with the company recently reporting that the service had surpassed 10 million users."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-04",
-      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "The company’s agentic teams, which can be deployed in the cloud, locally, or via a user’s phone, are designed to help software engineers work on separate, compartmentalized parts of a project in concert",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "users",
-          "offering": "allows users to spin up software",
-          "billingUnit": "",
-          "priceOrRevenue": "10 million",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-04",
-      "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Hugging Face",
-      "candidateKind": "ma",
-      "signal": "Nvidia, the world’s dominant AI chipmaker, announced that it would acquire the platform for $12.93 billion this September",
-      "kind": "ma",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Nvidia, the world’s dominant AI chipmaker, announced that it would acquire the platform for $12.93 billion this September."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "WIRED",
-      "date": "2026-11-04",
-      "url": "https://www.wired.com/story/wired-world-fair-2026-clement-delangue-hugging-face",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "To further advance the pace of research, we’re offering 10,000 scientists the highest usage tier in Google Antigravity free of charge for 6 months (onboarded on a rolling basis), subject to eligibility, capacity, and selection",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "To further advance the pace of research, we’re offering 10,000 scientists the highest usage tier in Google Antigravity free of charge for 6 months (onboarded on a rolling basis), subject to eligibility, capacity, and selection."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Google DeepMind",
-      "date": "2026-11-04",
-      "url": "https://deepmind.google/blog/agentic-cheminformatics-with-google-antigravity",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Amazon",
-      "candidateKind": "expand",
-      "signal": "Through 2026 the platform hardened and expanded, adding three-tier routing and reaching 6 agents by mid-year",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Through 2026 the platform hardened and expanded, adding three-tier routing and reaching 6 agents by mid-year."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "AWS Machine Learning Blog",
-      "date": "2026-11-04",
-      "url": "https://aws.amazon.com/blogs/machine-learning/how-u-mobile-built-agentic-telco-operations-with-amazon-bedrock-agentcore",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "enterprise",
-      "signal": "How Indegene is modernizing and scaling enterprise data quality in life sciences | Amazon Web Services",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Amazon",
-          "buyer": "",
-          "offering": "Amazon Web Service",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AWS Machine Learning Blog",
-      "date": "2026-11-04",
-      "url": "https://aws.amazon.com/blogs/machine-learning/how-indegene-is-modernizing-and-scaling-enterprise-data-quality-in-life-sciences",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "enterprise",
-      "signal": "The agent boosts data engineer and data steward productivity by accelerating rule creation, simplifying validation, and helping maintain consistent governance at enterprise scale",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Amazon",
-          "buyer": "",
-          "offering": "Amazon Web Service",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AWS Machine Learning Blog",
-      "date": "2026-11-04",
-      "url": "https://aws.amazon.com/blogs/machine-learning/how-indegene-is-modernizing-and-scaling-enterprise-data-quality-in-life-sciences",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Abridge",
-      "candidateModel": "enterprise",
-      "signal": "How We Evaluate Clinical Decision Support for Enterprise Readiness",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Abridge",
-          "buyer": "",
-          "offering": "the Abridge Workflow The Abridge Assistant",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Abridge",
-      "date": "2026-11-04",
-      "url": "https://www.abridge.com/blog/how-we-evaluate-clinical-decision-support-for-enterprise-readiness",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Abridge",
-      "candidateKind": "invest",
-      "signal": "The evaluation set includes over 1,000 rubrics — a material increase over the size of existing benchmarks that use real encounters, like the NOHARM study",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The evaluation set includes over 1,000 rubrics — a material increase over the size of existing benchmarks that use real encounters, like the NOHARM study."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Abridge",
-      "date": "2026-11-04",
-      "url": "https://www.abridge.com/blog/how-we-evaluate-clinical-decision-support-for-enterprise-readiness",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Hugging Face",
-      "candidateModel": "usage",
-      "signal": "Ours isn't billed per token: the model runs self-hosted, so the figure is GPU time on a single L40S at $2.24 per hour",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Hugging Face",
-          "buyer": "",
-          "offering": "deliberately nonexistent fields.\nA 2-billion-parameter model",
-          "billingUnit": "per token",
-          "priceOrRevenue": "$2.24",
-          "recurringRevenue": "yes"
-        },
-        "missing": [
-          "buyer"
-        ]
-      },
-      "source": "Hugging Face Blog",
-      "date": "2026-11-04",
-      "url": "https://huggingface.co/blog/Dharma-AI/dharma-field-extractor",
-      "reasons": [
-        "missing:buyer"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Amazon",
-      "candidateKind": "invest",
-      "signal": "Figure 3: How the code-based evaluator Lambda adapts OpenTelemetry spans for the decision model and maps the result back to AgentCore The adapter converts the model’s probability distribution into a result that AgentCore evaluation expects",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Figure 3: How the code-based evaluator Lambda adapts OpenTelemetry spans for the decision model and maps the result back to AgentCore The adapter converts the model’s probability distribution into a result that AgentCore evaluation expects."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "AWS Machine Learning Blog",
-      "date": "2026-11-04",
-      "url": "https://aws.amazon.com/blogs/machine-learning/use-decision-models-with-amazon-bedrock-agentcore-evaluations",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Databricks",
-      "candidateModel": "enterprise",
-      "signal": "The Enterprise Case for Open-Weight Models on Databricks | Databricks Blog",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Databricks",
-          "buyer": "",
-          "offering": "The Enterprise Case for Open-Weight Model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-04",
-      "url": "https://www.databricks.com/blog/enterprise-case-open-weight-models-databricks",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Databricks",
-      "candidateModel": "enterprise",
-      "signal": "As field engineers at Databricks, we spend our days inside enterprise AI deployments, where we’ve observed a clear shift in strategy",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Databricks",
-          "buyer": "",
-          "offering": "The Enterprise Case for Open-Weight Model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-04",
-      "url": "https://www.databricks.com/blog/enterprise-case-open-weight-models-databricks",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Databricks",
-      "candidateModel": "usage",
-      "signal": "Unity AI Gateway serves open-weight, frontier, and external models through one governed API with fast inference, smart routing, fallbacks, and budget controls",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Databricks",
-          "buyer": "",
-          "offering": "The Enterprise Case for Open-Weight Model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-04",
-      "url": "https://www.databricks.com/blog/enterprise-case-open-weight-models-databricks",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Microsoft",
-      "candidateModel": "hardware",
-      "signal": "Microsoft last week reported profit and loss accounts for Q1 of its fiscal 2027 , ended September 30, and revenue in the Windows OEM and Devices division shrank 22 percent from last year to $3.55 billion",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Microsoft",
-          "buyer": "",
-          "offering": "in the Windows OEM and Device",
-          "billingUnit": "",
-          "priceOrRevenue": "$3.55 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "The Register",
-      "date": "2026-11-04",
-      "url": "https://www.theregister.com/personal-tech/2026/11/04/windows-pushed-ai-pcs-but-now-its-hit-a-wall-of-ram-prices/5307335",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Microsoft",
-      "candidateKind": "expand",
-      "signal": "So there is a pent-up demand that we believe will come once it stabilizes and once IT budgets get a little bit more settled and expanded.\"",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "So there is a pent-up demand that we believe will come once it stabilizes and once IT budgets get a little bit more settled and expanded.\""
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Register",
-      "date": "2026-11-04",
-      "url": "https://www.theregister.com/personal-tech/2026/11/04/windows-pushed-ai-pcs-but-now-its-hit-a-wall-of-ram-prices/5307335",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Replit",
-      "candidateModel": "enterprise",
-      "signal": "The company announced its first Asian office at a press conference in partnership with Sumitomo Mitsui Finance and Leasing Company, Limited (SMFL), its first enterprise customer with operating assets of 9 trillion yen ($57 billion) in Japan",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Replit",
-          "buyer": "enterprise customer",
-          "offering": "the agentic software creation platform",
-          "billingUnit": "",
-          "priceOrRevenue": "$57 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Yahoo Finance Singapore",
-      "date": "2026-11-04",
-      "url": "https://sg.finance.yahoo.com/news/replit-opens-first-asia-office-100000871.html",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Replit",
-      "candidateKind": "partner",
-      "signal": "The company announced its first Asian office at a press conference in partnership with Sumitomo Mitsui Finance and Leasing Company, Limited (SMFL), its first enterprise customer with operating assets of 9 trillion yen ($57 billion) in Japan",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The company announced its first Asian office at a press conference in partnership with Sumitomo Mitsui Finance and Leasing Company, Limited (SMFL), its first enterprise customer with operating assets of 9 trillion yen ($57 billion) in Japan."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Yahoo Finance Singapore",
-      "date": "2026-11-04",
-      "url": "https://sg.finance.yahoo.com/news/replit-opens-first-asia-office-100000871.html",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Replit",
-      "candidateModel": "enterprise",
-      "signal": "4, 2026 /PRNewswire/ -- Replit, the agentic software creation platform used by builders in 85% of the Fortune 500 companies, today announced the opening of its office in Tokyo to support its growing enterprise business in the region",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Replit",
-          "buyer": "enterprise customer",
-          "offering": "the agentic software creation platform",
-          "billingUnit": "",
-          "priceOrRevenue": "$57 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Yahoo Finance Singapore",
-      "date": "2026-11-04",
-      "url": "https://sg.finance.yahoo.com/news/replit-opens-first-asia-office-100000871.html",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Microsoft",
-      "candidateKind": "expand",
-      "signal": "The research firm Currence estimates that 30% to 50% of planned data center capacity initially scheduled to come online this year could be pushed into 2027 or later due to electricity shortages and other construction issues",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The research firm Currence estimates that 30% to 50% of planned data center capacity initially scheduled to come online this year could be pushed into 2027 or later due to electricity shortages and other construction issues."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Business Insider",
-      "date": "2026-11-04",
-      "url": "https://www.businessinsider.com/microsoft-ai-buildout-delays-satellite-images-2026-11",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
       ]
     }
   ]
