@@ -1,9 +1,32 @@
 {
-  "generatedAt": "2026-11-23T01:57:34.070Z",
+  "generatedAt": "2026-11-23T13:34:55.414Z",
   "schemaVersion": 1,
   "policy": "상업 필드 6개 또는 행위 주체가 모두 확인되지 않으면 공개하지 않고 검토 대기열로 이동합니다.",
-  "total": 243,
+  "total": 237,
   "rows": [
+    {
+      "type": "direction",
+      "company": "Sierra AI",
+      "candidateKind": "invest",
+      "signal": "We’re raising $1.75 billion at a valuation of $30 billion, led by Greenoaks and Lightspeed Venture Partners",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "We’re raising $1.75 billion at a valuation of $30 billion, led by Greenoaks and Lightspeed Venture Partners."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Sierra AI",
+      "date": "2026-11-23",
+      "url": "https://sierra.ai/blog/series-f-30b",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
     {
       "type": "direction",
       "company": "Anthropic",
@@ -272,6 +295,72 @@
       ]
     },
     {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Last week in Power On : Apple bets on Siri AI app integrations as the main draw for its smart glasses coming in 2027",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "Apple Risks Losing the AI Agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Bloomberg.com",
+      "date": "2026-11-22",
+      "url": "https://www.bloomberg.com/news/newsletters/2026-11-22/apple-s-ai-agent-war-early-2027-product-plans-and-iphone-duo-face-unlock-review",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Apple",
+      "candidateModel": "hardware",
+      "signal": "Also: A look at the company’s next device updates and a review of the iPhone Duo’s new face unlock feature",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "Apple Risks Losing the AI Agent",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Bloomberg.com",
+      "date": "2026-11-22",
+      "url": "https://www.bloomberg.com/news/newsletters/2026-11-22/apple-s-ai-agent-war-early-2027-product-plans-and-iphone-duo-face-unlock-review",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
       "type": "direction",
       "company": "Microsoft",
       "candidateKind": "expand",
@@ -507,46 +596,139 @@
     },
     {
       "type": "direction",
-      "company": "Apple",
-      "candidateKind": "expand",
-      "signal": "Many companies have already launched AI agents for public use this year",
-      "kind": "expand",
+      "company": "NVIDIA",
+      "candidateKind": "invest",
+      "signal": "The laptop’s $3,199.99 price tag might be a bit heavy for most users, but if you’re into AI development or need the extra horsepower to use local AI and supercharge your productivity, this should be a solid investment",
+      "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Many companies have already launched AI agents for public use this year."
+          "actionStatement": "The laptop’s $3,199.99 price tag might be a bit heavy for most users, but if you’re into AI development or need the extra horsepower to use local AI and supercharge your productivity, this should be a solid investment."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Engadget",
+      "source": "Tom's Hardware",
       "date": "2026-11-20",
-      "url": "https://www.engadget.com/2322586/job-posting-seemingly-confirms-apple-is-working-on-its-own-ai-agent-for-coding-and-other-tasks",
+      "url": "https://www.tomshardware.com/laptops/you-can-now-put-a-powerful-ai-laptop-in-your-bag-with-the-hp-omnibook-ultra-this-nvidia-rtx-spark-laptop-is-now-available-on-best-buy-for-just-usd133-34-a-month",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
-      "type": "direction",
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "Amazon just slashed the price of Meta Ray-Ban smart glasses - up to 25% off - ZDNET",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "or Transition lenses.\nThe second-gen model",
+          "billingUnit": "",
+          "priceOrRevenue": "$113",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "ZDNET",
+      "date": "2026-11-20",
+      "url": "https://www.zdnet.com/article/meta-ray-ban-gen-2-smart-glasses-black-friday-deal-2026",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "Meta’s Ray-Bans are actually sleek and stylish, and designed for people who already wear glasses, with robust prescription lens support and the option for shaded or Transition lenses",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "",
+          "offering": "or Transition lenses.\nThe second-gen model",
+          "billingUnit": "",
+          "priceOrRevenue": "$113",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "ZDNET",
+      "date": "2026-11-20",
+      "url": "https://www.zdnet.com/article/meta-ray-ban-gen-2-smart-glasses-black-friday-deal-2026",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
       "company": "Anthropic",
-      "candidateKind": "ma",
-      "signal": "Palo Alto Networks remains one of the most acquisitive cybersecurity companies out there, once again laying out a tidy sum this week, buying AI startup Applied Compute this week $4.5 billion",
-      "kind": "ma",
+      "candidateModel": "ads",
+      "signal": "Support SiliconANGLE financially by buying your AWS services from our Marketplace portal page and links: https://siliconangle.com/aws-marketplace/ Founded by tech visionaries John Furrier and Dave Vellante, SiliconANGLE Media has built a dynamic ecosystem of industry-leading digital media brands that reach 15+ million elite tech professionals",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Anthropic",
+          "buyer": "",
+          "offering": "financially by buying your AWS service",
+          "billingUnit": "",
+          "priceOrRevenue": "$93 billion",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-20",
+      "url": "https://siliconangle.com/2026/11/20/anthropic-researcher-claims-to-have-proven-riemann-hypothesis-using-claude",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Apple",
+      "candidateKind": "expand",
+      "signal": "Major labs like Anthropic and OpenAI have launched such services, while other major tech brands — like Meta, which recently launched its Muse agent line — have also moved into the space",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Palo Alto Networks remains one of the most acquisitive cybersecurity companies out there, once again laying out a tidy sum this week, buying AI startup Applied Compute this week $4.5 billion."
+          "actionStatement": "Major labs like Anthropic and OpenAI have launched such services, while other major tech brands — like Meta, which recently launched its Muse agent line — have also moved into the space."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "SiliconANGLE",
+      "source": "TechCrunch",
       "date": "2026-11-20",
-      "url": "https://siliconangle.com/2026/11/20/anthropic-goes-public-but-is-it-too-late-to-save-the-ai-trade",
+      "url": "https://techcrunch.com/2026/11/19/apple-may-be-developing-its-own-ai-agent-that-runs-your-mac",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -615,139 +797,46 @@
     },
     {
       "type": "direction",
-      "company": "Apple",
-      "candidateKind": "expand",
-      "signal": "Major labs like Anthropic and OpenAI have launched such services, while other major tech brands — like Meta, which recently launched its Muse agent line — have also moved into the space",
-      "kind": "expand",
+      "company": "Anthropic",
+      "candidateKind": "ma",
+      "signal": "Palo Alto Networks remains one of the most acquisitive cybersecurity companies out there, once again laying out a tidy sum this week, buying AI startup Applied Compute this week $4.5 billion",
+      "kind": "ma",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Major labs like Anthropic and OpenAI have launched such services, while other major tech brands — like Meta, which recently launched its Muse agent line — have also moved into the space."
+          "actionStatement": "Palo Alto Networks remains one of the most acquisitive cybersecurity companies out there, once again laying out a tidy sum this week, buying AI startup Applied Compute this week $4.5 billion."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "TechCrunch",
+      "source": "SiliconANGLE",
       "date": "2026-11-20",
-      "url": "https://techcrunch.com/2026/11/19/apple-may-be-developing-its-own-ai-agent-that-runs-your-mac",
+      "url": "https://siliconangle.com/2026/11/20/anthropic-goes-public-but-is-it-too-late-to-save-the-ai-trade",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
-      "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "ads",
-      "signal": "Support SiliconANGLE financially by buying your AWS services from our Marketplace portal page and links: https://siliconangle.com/aws-marketplace/ Founded by tech visionaries John Furrier and Dave Vellante, SiliconANGLE Media has built a dynamic ecosystem of industry-leading digital media brands that reach 15+ million elite tech professionals",
-      "model": "ads",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Anthropic",
-          "buyer": "",
-          "offering": "financially by buying your AWS service",
-          "billingUnit": "",
-          "priceOrRevenue": "$93 billion",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-20",
-      "url": "https://siliconangle.com/2026/11/20/anthropic-researcher-claims-to-have-proven-riemann-hypothesis-using-claude",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "Amazon just slashed the price of Meta Ray-Ban smart glasses - up to 25% off - ZDNET",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "or Transition lenses.\nThe second-gen model",
-          "billingUnit": "",
-          "priceOrRevenue": "$113",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "ZDNET",
-      "date": "2026-11-20",
-      "url": "https://www.zdnet.com/article/meta-ray-ban-gen-2-smart-glasses-black-friday-deal-2026",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "Meta’s Ray-Bans are actually sleek and stylish, and designed for people who already wear glasses, with robust prescription lens support and the option for shaded or Transition lenses",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "",
-          "offering": "or Transition lenses.\nThe second-gen model",
-          "billingUnit": "",
-          "priceOrRevenue": "$113",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "ZDNET",
-      "date": "2026-11-20",
-      "url": "https://www.zdnet.com/article/meta-ray-ban-gen-2-smart-glasses-black-friday-deal-2026",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
       "type": "direction",
-      "company": "NVIDIA",
-      "candidateKind": "invest",
-      "signal": "The laptop’s $3,199.99 price tag might be a bit heavy for most users, but if you’re into AI development or need the extra horsepower to use local AI and supercharge your productivity, this should be a solid investment",
-      "kind": "invest",
+      "company": "Apple",
+      "candidateKind": "expand",
+      "signal": "Many companies have already launched AI agents for public use this year",
+      "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "The laptop’s $3,199.99 price tag might be a bit heavy for most users, but if you’re into AI development or need the extra horsepower to use local AI and supercharge your productivity, this should be a solid investment."
+          "actionStatement": "Many companies have already launched AI agents for public use this year."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Tom's Hardware",
+      "source": "Engadget",
       "date": "2026-11-20",
-      "url": "https://www.tomshardware.com/laptops/you-can-now-put-a-powerful-ai-laptop-in-your-bag-with-the-hp-omnibook-ultra-this-nvidia-rtx-spark-laptop-is-now-available-on-best-buy-for-just-usd133-34-a-month",
+      "url": "https://www.engadget.com/2322586/job-posting-seemingly-confirms-apple-is-working-on-its-own-ai-agent-for-coding-and-other-tasks",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -781,62 +870,6 @@
         "missing:buyer",
         "missing:offering",
         "missing:priceOrRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Sierra AI",
-      "candidateKind": "expand",
-      "signal": "Two years ago we launched the APX program, and our first two APX classes have done incredible work",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Two years ago we launched the APX program, and our first two APX classes have done incredible work."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Sierra AI",
-      "date": "2026-11-20",
-      "url": "https://sierra.ai/blog/corporate",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Sierra AI",
-      "candidateModel": "enterprise",
-      "signal": "The growth reflects a simple idea: when AI is built around real jobs to be done (not experiments), even the biggest enterprises can see meaningful impact fast",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Sierra AI",
-          "buyer": "",
-          "offering": "",
-          "billingUnit": "",
-          "priceOrRevenue": "$400M",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "offering",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Sierra AI",
-      "date": "2026-11-20",
-      "url": "https://sierra.ai/blog/corporate",
-      "reasons": [
-        "missing:buyer",
-        "missing:offering",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
       ]
     },
     {
@@ -1359,6 +1392,62 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "Sierra AI",
+      "candidateKind": "expand",
+      "signal": "Two years ago we launched the APX program, and our first two APX classes have done incredible work",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Two years ago we launched the APX program, and our first two APX classes have done incredible work."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Sierra AI",
+      "date": "2026-11-20",
+      "url": "https://sierra.ai/blog/corporate",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Sierra AI",
+      "candidateModel": "enterprise",
+      "signal": "The growth reflects a simple idea: when AI is built around real jobs to be done (not experiments), even the biggest enterprises can see meaningful impact fast",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Sierra AI",
+          "buyer": "",
+          "offering": "",
+          "billingUnit": "",
+          "priceOrRevenue": "$400M",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "offering",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Sierra AI",
+      "date": "2026-11-20",
+      "url": "https://sierra.ai/blog/corporate",
+      "reasons": [
+        "missing:buyer",
+        "missing:offering",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
       "type": "monetization",
       "company": "Google DeepMind",
       "candidateModel": "hardware",
@@ -1475,16 +1564,124 @@
       ]
     },
     {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "My bank accounts helps me budget runs numbers also pulls documents that I need that formally need to be filed as well as coordinates my outfits and shoes and accessories every single day answers any questions that I have for research provides phone numbers will send text has cleaned up my email straight and we’re just beginning we have found lots of little buggies in the system of which we have sent tickets to",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "companies",
+          "offering": "Muse from Meta App",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Apple",
+      "date": "2026-11-19",
+      "url": "https://apps.apple.com/us/app/muse-from-meta/id6760173601",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Meta AI",
+      "candidateModel": "hardware",
+      "signal": "14.4 Nov 7 This update adds support for iPhone Duo, makes shopping in chat easier, and adds a Feed widget for your Home Screen",
+      "model": "hardware",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Meta AI",
+          "buyer": "companies",
+          "offering": "Muse from Meta App",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Apple",
+      "date": "2026-11-19",
+      "url": "https://apps.apple.com/us/app/muse-from-meta/id6760173601",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
       "type": "direction",
-      "company": "Google DeepMind",
+      "company": "OpenAI",
       "candidateKind": "expand",
-      "signal": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Elon Musk tries to explain what’s going on with Ukraine and Starlink Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood",
+      "signal": "In an internal, non-representative survey of 101 employees, researchers said at the median that they would rather give up 40 percent of their team's staff or 30 percent of their compute capacity than go three months without current coding agents",
       "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Elon Musk tries to explain what’s going on with Ukraine and Starlink Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood"
+          "actionStatement": "In an internal, non-representative survey of 101 employees, researchers said at the median that they would rather give up 40 percent of their team's staff or 30 percent of their compute capacity than go three months without current coding agents."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-19",
+      "url": "https://the-decoder.com/openais-own-researchers-now-say-they-value-their-ai-tools-more-than-nearly-half-their-colleagues",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Meta AI",
+      "candidateKind": "expand",
+      "signal": "Launched in September, Muse is one of the fastest-growing apps on record, with more than 10 million downloads",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Launched in September, Muse is one of the fastest-growing apps on record, with more than 10 million downloads."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-19",
+      "url": "https://techcrunch.com/2026/11/19/metas-ai-agent-muse-is-mixing-up-conversations-and-exposing-private-data-report-says",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "expand",
+      "signal": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday"
         },
         "missing": [
           "entityMentionInEvidenceLine"
@@ -1492,7 +1689,30 @@
       },
       "source": "The Verge",
       "date": "2026-11-19",
-      "url": "https://www.theverge.com/tech/1038059/google-search-homepage-ai-chats",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1037634/openai-chatgpt-live-dictation",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Speak",
+      "candidateKind": "expand",
+      "signal": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-11-19",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1037634/openai-chatgpt-live-dictation",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -1500,22 +1720,76 @@
     {
       "type": "direction",
       "company": "Google DeepMind",
-      "candidateKind": "expand",
-      "signal": "The Mac version of Muse, Meta Platforms Inc.’s recently launched AI agent, can also interact with local apps and data",
-      "kind": "expand",
+      "candidateKind": "invest",
+      "signal": "In Google's own evaluations, Neon also leads individual categories on the Vals Index , Zapier's AutomationBench (56.3 percent) and science tests such as RiemannBench (84.0 percent)",
+      "kind": "invest",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "The Mac version of Muse, Meta Platforms Inc.’s recently launched AI agent, can also interact with local apps and data."
+          "actionStatement": "In Google's own evaluations, Neon also leads individual categories on the Vals Index , Zapier's AutomationBench (56.3 percent) and science tests such as RiemannBench (84.0 percent)."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
+      "source": "The Decoder",
+      "date": "2026-11-19",
+      "url": "https://the-decoder.com/googles-latest-ai-model-is-faster-cheaper-and-smarter-than-its-flagship-predecessor-from-just-weeks-ago",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "ads",
+      "signal": "Everpure beats expectations as AI accelerates revenue growth for ninth straight quarter Six days, six outages: Why reliability isn't resilience Google Cloud brings AI agents to the supercomputing bottleneck Google upgrades Gemini’s agentic Task mode with new model, e-commerce features Anthropic's record-breaking IPO priced at $83 per share, higher than expected Fintech startup Payhawk valued at $2B in $280M round CLOUD - BY MARIA DEUTSCHER",
+      "model": "ads",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "s latest midtier model",
+          "billingUnit": "",
+          "priceOrRevenue": "$83",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
       "source": "SiliconANGLE",
       "date": "2026-11-19",
-      "url": "https://siliconangle.com/2026/11/19/google-adds-computer-use-capabilities-to-geminis-mac-app",
+      "url": "https://siliconangle.com/2026/11/18/googles-latest-midtier-model-gemini-4-neon-is-three-times-faster-than-carbon-and-wins-on-some-metrics",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "expand",
+      "signal": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday"
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "The Verge",
+      "date": "2026-11-19",
+      "url": "https://www.theverge.com/tech/1037902/google-gemini-macos-ai-computer-use",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -1576,90 +1850,36 @@
       "type": "direction",
       "company": "Google DeepMind",
       "candidateKind": "expand",
-      "signal": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday",
+      "signal": "The Mac version of Muse, Meta Platforms Inc.’s recently launched AI agent, can also interact with local apps and data",
       "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday"
+          "actionStatement": "The Mac version of Muse, Meta Platforms Inc.’s recently launched AI agent, can also interact with local apps and data."
         },
         "missing": [
           "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-11-19",
-      "url": "https://www.theverge.com/tech/1037902/google-gemini-macos-ai-computer-use",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "ads",
-      "signal": "Everpure beats expectations as AI accelerates revenue growth for ninth straight quarter Six days, six outages: Why reliability isn't resilience Google Cloud brings AI agents to the supercomputing bottleneck Google upgrades Gemini’s agentic Task mode with new model, e-commerce features Anthropic's record-breaking IPO priced at $83 per share, higher than expected Fintech startup Payhawk valued at $2B in $280M round CLOUD - BY MARIA DEUTSCHER",
-      "model": "ads",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "s latest midtier model",
-          "billingUnit": "",
-          "priceOrRevenue": "$83",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
         ]
       },
       "source": "SiliconANGLE",
       "date": "2026-11-19",
-      "url": "https://siliconangle.com/2026/11/18/googles-latest-midtier-model-gemini-4-neon-is-three-times-faster-than-carbon-and-wins-on-some-metrics",
+      "url": "https://siliconangle.com/2026/11/19/google-adds-computer-use-capabilities-to-geminis-mac-app",
       "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
+        "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "direction",
       "company": "Google DeepMind",
-      "candidateKind": "invest",
-      "signal": "In Google's own evaluations, Neon also leads individual categories on the Vals Index , Zapier's AutomationBench (56.3 percent) and science tests such as RiemannBench (84.0 percent)",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "In Google's own evaluations, Neon also leads individual categories on the Vals Index , Zapier's AutomationBench (56.3 percent) and science tests such as RiemannBench (84.0 percent)."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-19",
-      "url": "https://the-decoder.com/googles-latest-ai-model-is-faster-cheaper-and-smarter-than-its-flagship-predecessor-from-just-weeks-ago",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
       "candidateKind": "expand",
-      "signal": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday",
+      "signal": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Elon Musk tries to explain what’s going on with Ukraine and Starlink Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood",
       "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday"
+          "actionStatement": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Elon Musk tries to explain what’s going on with Ukraine and Starlink Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood"
         },
         "missing": [
           "entityMentionInEvidenceLine"
@@ -1667,140 +1887,9 @@
       },
       "source": "The Verge",
       "date": "2026-11-19",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/1037634/openai-chatgpt-live-dictation",
+      "url": "https://www.theverge.com/tech/1038059/google-search-homepage-ai-chats",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Speak",
-      "candidateKind": "expand",
-      "signal": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Grand Theft Auto VI does something impossible — it lives up to the hype The first Nvidia RTX Spark mini PCs launch today from Asus, Dell, and MSI Shelly’s new smart valve shuts off your home’s water before a leak becomes a flood Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday"
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Verge",
-      "date": "2026-11-19",
-      "url": "https://www.theverge.com/ai-artificial-intelligence/1037634/openai-chatgpt-live-dictation",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Meta AI",
-      "candidateKind": "expand",
-      "signal": "Launched in September, Muse is one of the fastest-growing apps on record, with more than 10 million downloads",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Launched in September, Muse is one of the fastest-growing apps on record, with more than 10 million downloads."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-19",
-      "url": "https://techcrunch.com/2026/11/19/metas-ai-agent-muse-is-mixing-up-conversations-and-exposing-private-data-report-says",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "expand",
-      "signal": "In an internal, non-representative survey of 101 employees, researchers said at the median that they would rather give up 40 percent of their team's staff or 30 percent of their compute capacity than go three months without current coding agents",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "In an internal, non-representative survey of 101 employees, researchers said at the median that they would rather give up 40 percent of their team's staff or 30 percent of their compute capacity than go three months without current coding agents."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-19",
-      "url": "https://the-decoder.com/openais-own-researchers-now-say-they-value-their-ai-tools-more-than-nearly-half-their-colleagues",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "My bank accounts helps me budget runs numbers also pulls documents that I need that formally need to be filed as well as coordinates my outfits and shoes and accessories every single day answers any questions that I have for research provides phone numbers will send text has cleaned up my email straight and we’re just beginning we have found lots of little buggies in the system of which we have sent tickets to",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "companies",
-          "offering": "Muse from Meta App",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Apple",
-      "date": "2026-11-19",
-      "url": "https://apps.apple.com/us/app/muse-from-meta/id6760173601",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Meta AI",
-      "candidateModel": "hardware",
-      "signal": "14.4 Nov 7 This update adds support for iPhone Duo, makes shopping in chat easier, and adds a Feed widget for your Home Screen",
-      "model": "hardware",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Meta AI",
-          "buyer": "companies",
-          "offering": "Muse from Meta App",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Apple",
-      "date": "2026-11-19",
-      "url": "https://apps.apple.com/us/app/muse-from-meta/id6760173601",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
       ]
     },
     {
@@ -3080,6 +3169,52 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "NVIDIA",
+      "candidateKind": "partner",
+      "signal": "arXivLabs is a framework that allows collaborators to develop and share new arXiv features directly on our website",
+      "kind": "partner",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "arXivLabs is a framework that allows collaborators to develop and share new arXiv features directly on our website."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "arXiv",
+      "date": "2026-11-19",
+      "url": "https://arxiv.org/abs/2611.26831v1",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "NVIDIA",
+      "candidateKind": "partner",
+      "signal": "Both individuals and organizations that work with arXivLabs have embraced and accepted our values of openness, community, excellence, and user data privacy. arXiv is committed to these values and only works with partners that adhere to them",
+      "kind": "partner",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "Both individuals and organizations that work with arXivLabs have embraced and accepted our values of openness, community, excellence, and user data privacy. arXiv is committed to these values and only works with partners that adhere to them."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "arXiv",
+      "date": "2026-11-19",
+      "url": "https://arxiv.org/abs/2611.26831v1",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
       "type": "monetization",
       "company": "Amazon",
       "candidateModel": "subscription",
@@ -3315,77 +3450,114 @@
     },
     {
       "type": "monetization",
-      "company": "Apple",
-      "candidateModel": "hardware",
-      "signal": "5 new Apple Health features you should try in iOS 27.3 - if your phone qualifies - ZDNET",
-      "model": "hardware",
+      "company": "Replit",
+      "candidateModel": "enterprise",
+      "signal": "18, 2026 /PRNewswire/ -- Replit , the agentic software creation platform that enables anyone to build applications without learning to code, today announced Replit & Co., a new B2B creator program that brings together business and technology creators to demonstrate how enterprises can build software and put agents to work with Replit",
+      "model": "enterprise",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Apple",
-          "buyer": "",
-          "offering": "5 new App",
-          "billingUnit": "subscription",
-          "priceOrRevenue": "$119",
-          "recurringRevenue": "yes"
+          "seller": "Replit",
+          "buyer": "users",
+          "offering": "the agentic software creation platform",
+          "billingUnit": "",
+          "priceOrRevenue": "60 million",
+          "recurringRevenue": ""
         },
         "missing": [
-          "buyer"
+          "billingUnit",
+          "recurringRevenue"
         ]
       },
-      "source": "ZDNET",
+      "source": "Yahoo Finance",
       "date": "2026-11-18",
-      "url": "https://www.zdnet.com/health/apple-health-ios-27-3-ai-features-compatible-iphones",
+      "url": "https://finance.yahoo.com/technology/ai/articles/replit-launches-replit-co-creator-185600519.html",
       "reasons": [
-        "missing:buyer"
+        "missing:billingUnit",
+        "missing:recurringRevenue"
       ]
     },
     {
       "type": "monetization",
       "company": "Apple",
-      "candidateModel": "subscription",
-      "signal": "Also: I tested the Apple Watch Series 12 heart-rate claims against my gold-standard Polar strap Normally, you need an Apple Fitness+ subscription to fire up workout videos to help you exercise",
-      "model": "subscription",
+      "candidateModel": "hardware",
+      "signal": "LTD Available on iPhone, iPad Solve puzzles with pals on an open-world island, explore the shifting hallways of a mysterious mansion, and ride giant bears across a war-torn fantasy land",
+      "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Apple",
-          "buyer": "",
-          "offering": "5 new App",
-          "billingUnit": "subscription",
-          "priceOrRevenue": "$119",
-          "recurringRevenue": "yes"
+          "buyer": "Developer",
+          "offering": "re proud to recognize 45 App",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
         },
         "missing": [
-          "buyer"
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
         ]
       },
-      "source": "ZDNET",
+      "source": "Apple Developer",
       "date": "2026-11-18",
-      "url": "https://www.zdnet.com/health/apple-health-ios-27-3-ai-features-compatible-iphones",
+      "url": "https://developer.apple.com/app-store/app-store-awards-2026",
       "reasons": [
-        "missing:buyer"
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Google DeepMind",
+      "candidateModel": "usage",
+      "signal": "The model is live today through the API at $3 per million input tokens and $15 per million output tokens, above Carbon and Argon's introductory rate of $2/$10 (doubling to $4/$20 on December 1 ) and twice the price of Hydrogen at $1.50/$7.50",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Google DeepMind",
+          "buyer": "",
+          "offering": "its fourth new Gemini model",
+          "billingUnit": "",
+          "priceOrRevenue": "$3",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "buyer",
+          "billingUnit",
+          "recurringRevenue"
+        ]
+      },
+      "source": "The Decoder",
+      "date": "2026-11-18",
+      "url": "https://the-decoder.com/google-ships-gemini-4-neon-its-fourth-new-gemini-model-in-a-month",
+      "reasons": [
+        "missing:buyer",
+        "missing:billingUnit",
+        "missing:recurringRevenue"
       ]
     },
     {
       "type": "direction",
-      "company": "Google DeepMind",
+      "company": "Microsoft",
       "candidateKind": "expand",
-      "signal": "Besides the ability to connect and use other applications and services, a lot of AI assistants' utility comes from their capacity to shape their responses based on what they learn and remember about you",
+      "signal": "The Model Router in Foundry now also selects automatically from an expanded pool of models",
       "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "Besides the ability to connect and use other applications and services, a lot of AI assistants' utility comes from their capacity to shape their responses based on what they learn and remember about you."
+          "actionStatement": "The Model Router in Foundry now also selects automatically from an expanded pool of models."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "Engadget",
+      "source": "The Decoder",
       "date": "2026-11-18",
-      "url": "https://www.engadget.com/2315475/google-gemini-memory-summary-see-what-remembers-about-you",
+      "url": "https://the-decoder.com/microsoft-is-replacing-outside-ai-models-in-its-own-products-with-cheaper-in-house-alternatives",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -3444,116 +3616,79 @@
     },
     {
       "type": "direction",
-      "company": "Microsoft",
+      "company": "Google DeepMind",
       "candidateKind": "expand",
-      "signal": "The Model Router in Foundry now also selects automatically from an expanded pool of models",
+      "signal": "Besides the ability to connect and use other applications and services, a lot of AI assistants' utility comes from their capacity to shape their responses based on what they learn and remember about you",
       "kind": "expand",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "entity": "",
-          "actionStatement": "The Model Router in Foundry now also selects automatically from an expanded pool of models."
+          "actionStatement": "Besides the ability to connect and use other applications and services, a lot of AI assistants' utility comes from their capacity to shape their responses based on what they learn and remember about you."
         },
         "missing": [
           "entityMentionInEvidenceLine"
         ]
       },
-      "source": "The Decoder",
+      "source": "Engadget",
       "date": "2026-11-18",
-      "url": "https://the-decoder.com/microsoft-is-replacing-outside-ai-models-in-its-own-products-with-cheaper-in-house-alternatives",
+      "url": "https://www.engadget.com/2315475/google-gemini-memory-summary-see-what-remembers-about-you",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
     },
     {
       "type": "monetization",
-      "company": "Google DeepMind",
-      "candidateModel": "usage",
-      "signal": "The model is live today through the API at $3 per million input tokens and $15 per million output tokens, above Carbon and Argon's introductory rate of $2/$10 (doubling to $4/$20 on December 1 ) and twice the price of Hydrogen at $1.50/$7.50",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Google DeepMind",
-          "buyer": "",
-          "offering": "its fourth new Gemini model",
-          "billingUnit": "",
-          "priceOrRevenue": "$3",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "recurringRevenue"
-        ]
-      },
-      "source": "The Decoder",
-      "date": "2026-11-18",
-      "url": "https://the-decoder.com/google-ships-gemini-4-neon-its-fourth-new-gemini-model-in-a-month",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
       "company": "Apple",
       "candidateModel": "hardware",
-      "signal": "LTD Available on iPhone, iPad Solve puzzles with pals on an open-world island, explore the shifting hallways of a mysterious mansion, and ride giant bears across a war-torn fantasy land",
+      "signal": "5 new Apple Health features you should try in iOS 27.3 - if your phone qualifies - ZDNET",
       "model": "hardware",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
           "seller": "Apple",
-          "buyer": "Developer",
-          "offering": "re proud to recognize 45 App",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
+          "buyer": "",
+          "offering": "5 new App",
+          "billingUnit": "subscription",
+          "priceOrRevenue": "$119",
+          "recurringRevenue": "yes"
         },
         "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
+          "buyer"
         ]
       },
-      "source": "Apple Developer",
+      "source": "ZDNET",
       "date": "2026-11-18",
-      "url": "https://developer.apple.com/app-store/app-store-awards-2026",
+      "url": "https://www.zdnet.com/health/apple-health-ios-27-3-ai-features-compatible-iphones",
       "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
+        "missing:buyer"
       ]
     },
     {
       "type": "monetization",
-      "company": "Replit",
-      "candidateModel": "enterprise",
-      "signal": "18, 2026 /PRNewswire/ -- Replit , the agentic software creation platform that enables anyone to build applications without learning to code, today announced Replit & Co., a new B2B creator program that brings together business and technology creators to demonstrate how enterprises can build software and put agents to work with Replit",
-      "model": "enterprise",
+      "company": "Apple",
+      "candidateModel": "subscription",
+      "signal": "Also: I tested the Apple Watch Series 12 heart-rate claims against my gold-standard Polar strap Normally, you need an Apple Fitness+ subscription to fire up workout videos to help you exercise",
+      "model": "subscription",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Replit",
-          "buyer": "users",
-          "offering": "the agentic software creation platform",
-          "billingUnit": "",
-          "priceOrRevenue": "60 million",
-          "recurringRevenue": ""
+          "seller": "Apple",
+          "buyer": "",
+          "offering": "5 new App",
+          "billingUnit": "subscription",
+          "priceOrRevenue": "$119",
+          "recurringRevenue": "yes"
         },
         "missing": [
-          "billingUnit",
-          "recurringRevenue"
+          "buyer"
         ]
       },
-      "source": "Yahoo Finance",
+      "source": "ZDNET",
       "date": "2026-11-18",
-      "url": "https://finance.yahoo.com/technology/ai/articles/replit-launches-replit-co-creator-185600519.html",
+      "url": "https://www.zdnet.com/health/apple-health-ios-27-3-ai-features-compatible-iphones",
       "reasons": [
-        "missing:billingUnit",
-        "missing:recurringRevenue"
+        "missing:buyer"
       ]
     },
     {
@@ -4678,6 +4813,29 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "invest",
+      "signal": "The cost to run the evaluations in the Artificial Analysis Intelligence Index, calculated using the model's input, cache hit, cache write, reasoning, and answer token prices and the number of tokens used across evaluations (excluding repeats)",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The cost to run the evaluations in the Artificial Analysis Intelligence Index, calculated using the model's input, cache hit, cache write, reasoning, and answer token prices and the number of tokens used across evaluations (excluding repeats)."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Artificial Analysis",
+      "date": "2026-11-18",
+      "url": "https://artificialanalysis.ai/models/gemini-4-neon",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
       "type": "monetization",
       "company": "Suno",
       "candidateModel": "usage",
@@ -4733,158 +4891,31 @@
     },
     {
       "type": "monetization",
-      "company": "Microsoft",
-      "candidateModel": "enterprise",
-      "signal": "Microsoft and organizations across industries launch AI Transparency Initiative to strengthen enterprise trust in AI models and agents",
-      "model": "enterprise",
+      "company": "Anthropic",
+      "candidateModel": "subscription",
+      "signal": "GitHub - stablyai/orca: Orca lets you run a fleet of coding agents (e.g. Claude Code, Codex) with your own subscription. Available on desktop, mobile and remote runtime",
+      "model": "subscription",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Microsoft",
-          "buyer": "organizations",
-          "offering": "strengthen enterprise trust in AI model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Microsoft Source",
-      "date": "2026-11-17",
-      "url": "https://news.microsoft.com/source/2026/11/17/microsoft-and-organizations-across-industries-launch-ai-transparency-initiative-to-strengthen-enterprise-trust-in-ai-models-and-agents",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "OpenAI",
-      "candidateModel": "usage",
-      "signal": "OpenAI launches GPT-6.2 Astra and Sol with lower API prices and some benchmark gains",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "OpenAI",
+          "seller": "Anthropic",
           "buyer": "",
-          "offering": "Astra and Sol with lower API",
-          "billingUnit": "",
+          "offering": "run a fleet of coding agent",
+          "billingUnit": "subscription",
           "priceOrRevenue": "",
-          "recurringRevenue": ""
+          "recurringRevenue": "yes"
         },
         "missing": [
           "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
+          "priceOrRevenue"
         ]
       },
-      "source": "The Decoder",
+      "source": "GitHub",
       "date": "2026-11-17",
-      "url": "https://the-decoder.com/openai-launches-gpt-6-2-astra-and-sol-with-lower-api-prices-and-some-benchmark-gains",
+      "url": "https://github.com/stablyai/orca",
       "reasons": [
         "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "expand",
-      "signal": "The decision was announced the day before the company’s DevDay event in September, where GPT-6.1 Sol launched on its own",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The decision was announced the day before the company’s DevDay event in September, where GPT-6.1 Sol launched on its own."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "SiliconANGLE",
-      "date": "2026-11-17",
-      "url": "https://siliconangle.com/2026/11/17/openai-rolls-out-gpt-6-2-astra-for-professional-work-and-gpt-6-2-sol-for-everyday-work",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "invest",
-      "signal": "The company says it’s investing in its infrastructure, with its first Nvidia B300 cluster built on Open Compute Project (OCP) standards now going live in Switzerland",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The company says it’s investing in its infrastructure, with its first Nvidia B300 cluster built on Open Compute Project (OCP) standards now going live in Switzerland."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-17",
-      "url": "https://techcrunch.com/2026/11/17/protons-lumo-a-privacy-focused-alternative-to-chatgpt-and-claude-arrives-on-desktop",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Anthropic",
-      "candidateKind": "invest",
-      "signal": "The company says it’s investing in its infrastructure, with its first Nvidia B300 cluster built on Open Compute Project (OCP) standards now going live in Switzerland",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The company says it’s investing in its infrastructure, with its first Nvidia B300 cluster built on Open Compute Project (OCP) standards now going live in Switzerland."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "TechCrunch",
-      "date": "2026-11-17",
-      "url": "https://techcrunch.com/2026/11/17/protons-lumo-a-privacy-focused-alternative-to-chatgpt-and-claude-arrives-on-desktop",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Google DeepMind",
-      "candidateKind": "partner",
-      "signal": "Today, he has proprietary munition and missile designs, several government partnerships, and a defense-as-a-service business valued at more than $1 billion",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Today, he has proprietary munition and missile designs, several government partnerships, and a defense-as-a-service business valued at more than $1 billion."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Wired",
-      "date": "2026-11-17",
-      "url": "https://www.wired.com/story/ai-told-these-ex-google-guys-how-to-build-a-billion-dollar-weapons-business",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
+        "missing:priceOrRevenue"
       ]
     },
     {
@@ -4921,32 +4952,159 @@
       ]
     },
     {
-      "type": "monetization",
-      "company": "Anthropic",
-      "candidateModel": "subscription",
-      "signal": "GitHub - stablyai/orca: Orca lets you run a fleet of coding agents (e.g. Claude Code, Codex) with your own subscription. Available on desktop, mobile and remote runtime",
-      "model": "subscription",
+      "type": "direction",
+      "company": "Google DeepMind",
+      "candidateKind": "partner",
+      "signal": "Today, he has proprietary munition and missile designs, several government partnerships, and a defense-as-a-service business valued at more than $1 billion",
+      "kind": "partner",
       "classificationGate": {
         "status": "review-pending",
         "fields": {
-          "seller": "Anthropic",
+          "entity": "",
+          "actionStatement": "Today, he has proprietary munition and missile designs, several government partnerships, and a defense-as-a-service business valued at more than $1 billion."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Wired",
+      "date": "2026-11-17",
+      "url": "https://www.wired.com/story/ai-told-these-ex-google-guys-how-to-build-a-billion-dollar-weapons-business",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "invest",
+      "signal": "The company says it’s investing in its infrastructure, with its first Nvidia B300 cluster built on Open Compute Project (OCP) standards now going live in Switzerland",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The company says it’s investing in its infrastructure, with its first Nvidia B300 cluster built on Open Compute Project (OCP) standards now going live in Switzerland."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-17",
+      "url": "https://techcrunch.com/2026/11/17/protons-lumo-a-privacy-focused-alternative-to-chatgpt-and-claude-arrives-on-desktop",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "Anthropic",
+      "candidateKind": "invest",
+      "signal": "The company says it’s investing in its infrastructure, with its first Nvidia B300 cluster built on Open Compute Project (OCP) standards now going live in Switzerland",
+      "kind": "invest",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The company says it’s investing in its infrastructure, with its first Nvidia B300 cluster built on Open Compute Project (OCP) standards now going live in Switzerland."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "TechCrunch",
+      "date": "2026-11-17",
+      "url": "https://techcrunch.com/2026/11/17/protons-lumo-a-privacy-focused-alternative-to-chatgpt-and-claude-arrives-on-desktop",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "direction",
+      "company": "OpenAI",
+      "candidateKind": "expand",
+      "signal": "The decision was announced the day before the company’s DevDay event in September, where GPT-6.1 Sol launched on its own",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The decision was announced the day before the company’s DevDay event in September, where GPT-6.1 Sol launched on its own."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "SiliconANGLE",
+      "date": "2026-11-17",
+      "url": "https://siliconangle.com/2026/11/17/openai-rolls-out-gpt-6-2-astra-for-professional-work-and-gpt-6-2-sol-for-everyday-work",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "OpenAI",
+      "candidateModel": "usage",
+      "signal": "OpenAI launches GPT-6.2 Astra and Sol with lower API prices and some benchmark gains",
+      "model": "usage",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "OpenAI",
           "buyer": "",
-          "offering": "run a fleet of coding agent",
-          "billingUnit": "subscription",
+          "offering": "Astra and Sol with lower API",
+          "billingUnit": "",
           "priceOrRevenue": "",
-          "recurringRevenue": "yes"
+          "recurringRevenue": ""
         },
         "missing": [
           "buyer",
-          "priceOrRevenue"
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
         ]
       },
-      "source": "GitHub",
+      "source": "The Decoder",
       "date": "2026-11-17",
-      "url": "https://github.com/stablyai/orca",
+      "url": "https://the-decoder.com/openai-launches-gpt-6-2-astra-and-sol-with-lower-api-prices-and-some-benchmark-gains",
       "reasons": [
         "missing:buyer",
-        "missing:priceOrRevenue"
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
+      ]
+    },
+    {
+      "type": "monetization",
+      "company": "Microsoft",
+      "candidateModel": "enterprise",
+      "signal": "Microsoft and organizations across industries launch AI Transparency Initiative to strengthen enterprise trust in AI models and agents",
+      "model": "enterprise",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "seller": "Microsoft",
+          "buyer": "organizations",
+          "offering": "strengthen enterprise trust in AI model",
+          "billingUnit": "",
+          "priceOrRevenue": "",
+          "recurringRevenue": ""
+        },
+        "missing": [
+          "billingUnit",
+          "priceOrRevenue",
+          "recurringRevenue"
+        ]
+      },
+      "source": "Microsoft Source",
+      "date": "2026-11-17",
+      "url": "https://news.microsoft.com/source/2026/11/17/microsoft-and-organizations-across-industries-launch-ai-transparency-initiative-to-strengthen-enterprise-trust-in-ai-models-and-agents",
+      "reasons": [
+        "missing:billingUnit",
+        "missing:priceOrRevenue",
+        "missing:recurringRevenue"
       ]
     },
     {
@@ -6168,6 +6326,29 @@
       ]
     },
     {
+      "type": "direction",
+      "company": "Apple",
+      "candidateKind": "expand",
+      "signal": "The company is launching the Health AI Usage Study in conjunction with OpenEvidence , a clinical AI platform used by health professionals that draws medical data from sources like The New England Journal of Medicine",
+      "kind": "expand",
+      "classificationGate": {
+        "status": "review-pending",
+        "fields": {
+          "entity": "",
+          "actionStatement": "The company is launching the Health AI Usage Study in conjunction with OpenEvidence , a clinical AI platform used by health professionals that draws medical data from sources like The New England Journal of Medicine ."
+        },
+        "missing": [
+          "entityMentionInEvidenceLine"
+        ]
+      },
+      "source": "Engadget",
+      "date": "2026-11-16",
+      "url": "https://www.engadget.com/2317303/apple-new-research-app-designed-to-make-ai-health-tools-user-friendly",
+      "reasons": [
+        "missing:entityMentionInEvidenceLine"
+      ]
+    },
+    {
       "type": "monetization",
       "company": "Apple",
       "candidateModel": "hardware",
@@ -6217,29 +6398,6 @@
       "source": "Apple Developer",
       "date": "2026-11-16",
       "url": "https://developer.apple.com/news",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Apple",
-      "candidateKind": "expand",
-      "signal": "The company is launching the Health AI Usage Study in conjunction with OpenEvidence , a clinical AI platform used by health professionals that draws medical data from sources like The New England Journal of Medicine",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "The company is launching the Health AI Usage Study in conjunction with OpenEvidence , a clinical AI platform used by health professionals that draws medical data from sources like The New England Journal of Medicine ."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Engadget",
-      "date": "2026-11-16",
-      "url": "https://www.engadget.com/2317303/apple-new-research-app-designed-to-make-ai-health-tools-user-friendly",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
@@ -6371,336 +6529,6 @@
       "source": "NVIDIA Blog",
       "date": "2026-11-16",
       "url": "https://blogs.nvidia.com/blog/20-years-cuda",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "partner",
-      "signal": "In addition, we recently began participating in the Tech Coalition's Lantern program ⁠ (opens in a new window) , where we will share and receive signals relating to online child sexual exploitation and abuse to strengthen cross- platform collaboration",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "In addition, we recently began participating in the Tech Coalition's Lantern program ⁠ (opens in a new window) , where we will share and receive signals relating to online child sexual exploitation and abuse to strengthen cross- platform collaboration."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "OpenAI News",
-      "date": "2026-11-16",
-      "url": "https://openai.com/index/strengthening-online-child-safety",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "partner",
-      "signal": "New tools, practical guidance, and partnerships will help prevent, detect and respond to online child sexual exploitation and abuse",
-      "kind": "partner",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "New tools, practical guidance, and partnerships will help prevent, detect and respond to online child sexual exploitation and abuse."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "OpenAI News",
-      "date": "2026-11-16",
-      "url": "https://openai.com/index/strengthening-online-child-safety",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "invest",
-      "signal": "Today, we’re releasing a new tool to detect child sexual abuse material (CSAM), interventions that interrupt harmful behavior and point people toward help, practical resources for developers, and support for child-safety law enforcement investigators",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Today, we’re releasing a new tool to detect child sexual abuse material (CSAM), interventions that interrupt harmful behavior and point people toward help, practical resources for developers, and support for child-safety law enforcement investigators."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "OpenAI News",
-      "date": "2026-11-16",
-      "url": "https://openai.com/index/strengthening-online-child-safety",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "OpenAI",
-      "candidateKind": "expand",
-      "signal": "Our goal for the program as a whole is to reach 200,000 researchers, double the goal we announced when the pilot launched in July",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Our goal for the program as a whole is to reach 200,000 researchers, double the goal we announced when the pilot launched in July."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "OpenAI News",
-      "date": "2026-11-16",
-      "url": "https://openai.com/index/expanding-chatgpt-for-academic-researchers",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Databricks",
-      "candidateModel": "usage",
-      "signal": "From credit risk and customer churn to demand forecasting and predictive maintenance, these use cases have traditionally required teams to develop, train and maintain models for each prediction task",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Databricks",
-          "buyer": "",
-          "offering": "Tabular foundation model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-16",
-      "url": "https://www.databricks.com/blog/tabular-foundation-models-databricks-ai-runtime",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Databricks",
-      "candidateModel": "usage",
-      "signal": "Compare tabular foundation models with existing baselines on accuracy, inference latency, GPU memory use and cost before choosing a model",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Databricks",
-          "buyer": "",
-          "offering": "Tabular foundation model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-16",
-      "url": "https://www.databricks.com/blog/tabular-foundation-models-databricks-ai-runtime",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Databricks",
-      "candidateModel": "enterprise",
-      "signal": "Introducing the Databricks AI Index: The state of enterprise AI tokenomics | Databricks Blog",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Databricks",
-          "buyer": "users",
-          "offering": "Databricks Blog\nThe Index tracks model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-16",
-      "url": "https://www.databricks.com/blog/introducing-databricks-ai-index-state-enterprise-ai-tokenomics",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Databricks",
-      "candidateKind": "expand",
-      "signal": "Since May 2026, a new flagship proprietary or open-weight model has launched roughly every week, or every 3.7 days when regional labs are included",
-      "kind": "expand",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "Since May 2026, a new flagship proprietary or open-weight model has launched roughly every week, or every 3.7 days when regional labs are included."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-16",
-      "url": "https://www.databricks.com/blog/introducing-databricks-ai-index-state-enterprise-ai-tokenomics",
-      "reasons": [
-        "missing:entityMentionInEvidenceLine"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Databricks",
-      "candidateModel": "enterprise",
-      "signal": "Databricks also heavily leverages AI internally across our 12,000+ employees, and we've invested substantial research in evaluating the quality and cost of new frontier models on enterprise tasks",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Databricks",
-          "buyer": "users",
-          "offering": "Databricks Blog\nThe Index tracks model",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-16",
-      "url": "https://www.databricks.com/blog/introducing-databricks-ai-index-state-enterprise-ai-tokenomics",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Amazon",
-      "candidateModel": "usage",
-      "signal": "For a customer engagement platform, that means a capability already exposed as an API can become a tool an agent calls, and a campaign that once moved across several tools can move through one conversation instead",
-      "model": "usage",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Amazon",
-          "buyer": "",
-          "offering": "How MoEngage built agent",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "buyer",
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "AWS Machine Learning Blog",
-      "date": "2026-11-16",
-      "url": "https://aws.amazon.com/blogs/machine-learning/how-moengage-built-agentic-customer-engagement-on-amazon-bedrock-agentcore",
-      "reasons": [
-        "missing:buyer",
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "monetization",
-      "company": "Databricks",
-      "candidateModel": "enterprise",
-      "signal": "With more than 25 years of experience, IFS Copperleaf pioneered the AIP software category and is now part of IFS, a global leader in enterprise cloud and Industrial AI software",
-      "model": "enterprise",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "seller": "Databricks",
-          "buyer": "organizations",
-          "offering": "IFS Copperleaf pioneered the AIP software",
-          "billingUnit": "",
-          "priceOrRevenue": "",
-          "recurringRevenue": ""
-        },
-        "missing": [
-          "billingUnit",
-          "priceOrRevenue",
-          "recurringRevenue"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-16",
-      "url": "https://www.databricks.com/blog/clean-data-was-never-enough-how-ifs-copperleaf-taught-ai-its-business-databricks-genie-one-0",
-      "reasons": [
-        "missing:billingUnit",
-        "missing:priceOrRevenue",
-        "missing:recurringRevenue"
-      ]
-    },
-    {
-      "type": "direction",
-      "company": "Databricks",
-      "candidateKind": "invest",
-      "signal": "IFS Copperleaf is a leading global provider of Asset Investment Planning (AIP) software, helping asset-intensive organizations make better investment decisions, balance risk and value and maximize the impact of their capital investments",
-      "kind": "invest",
-      "classificationGate": {
-        "status": "review-pending",
-        "fields": {
-          "entity": "",
-          "actionStatement": "IFS Copperleaf is a leading global provider of Asset Investment Planning (AIP) software, helping asset-intensive organizations make better investment decisions, balance risk and value and maximize the impact of their capital investments."
-        },
-        "missing": [
-          "entityMentionInEvidenceLine"
-        ]
-      },
-      "source": "Databricks Blog",
-      "date": "2026-11-16",
-      "url": "https://www.databricks.com/blog/clean-data-was-never-enough-how-ifs-copperleaf-taught-ai-its-business-databricks-genie-one-0",
       "reasons": [
         "missing:entityMentionInEvidenceLine"
       ]
